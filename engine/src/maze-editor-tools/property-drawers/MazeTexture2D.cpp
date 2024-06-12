@@ -155,7 +155,7 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
             Vec2F(18, 18),
             Vec2F::c_zero,
-            materialManager->getColorMaterial(),
+            materialManager->getSpriteMaterial(),
             textureBlockLayout->getTransform(),
             _parent->getEntityRaw()->getEcsScene());
         textureHolder->setColor(ColorU32(50, 50, 50));
@@ -167,7 +167,7 @@ namespace Maze
             m_sprite,
             Vec2F(16, 16),
             Vec2F::c_zero,
-            materialManager->getColorTextureMaterial(),
+            materialManager->getSpriteMaterial(),
             textureHolder->getTransform(),
             _parent->getEntityRaw()->getEcsScene());
     }

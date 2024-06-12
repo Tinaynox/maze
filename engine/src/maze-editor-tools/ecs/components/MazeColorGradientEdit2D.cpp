@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -39,6 +40,7 @@
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/helpers/MazeSubMeshHelper.hpp"
@@ -191,103 +193,8 @@ namespace Maze
         if (!m_gradientRenderer)
             return;
 
-        m_gradientRenderer->setCustomRenderCallback(
-            [&](SpriteRenderer2D* _spriteRenderer) -> MeshPtr
-            {
-                ColorGradient gradient = m_gradient;
-                gradient.clamp01();
-                gradient.addKey(0.0f, gradient.evaluate(0.0f));
-                gradient.addKey(1.0f, gradient.evaluate(1.0f));
-
-                Vec2F const& size = _spriteRenderer->getTransform()->getSize();
-                Vec4F uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f);
-                F32 canvasRendererAlpha = _spriteRenderer->getCanvasRenderer()->getAlpha();
-                FastVector<Pair<F32, Vec4F>> gradientColors = gradient.toRawColors();
-                
-
-                F32 startTime = gradientColors.front().first;
-                F32 deltaTime = gradientColors.back().first - gradientColors.front().first;
-
-                MeshPtr mesh = Mesh::Create();
-
-                SubMeshPtr subMesh = SubMesh::Create();
-                subMesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
-
-                Vector<Vec3F> positions;
-                Vector<Vec3F> normals;
-                Vector<Vec4F> colors;
-                Vector<Vec2F> uvs;
-
-                Vector<U16> indices;
-
-                for (Size i = 0, in = gradientColors.size() - 1; i < in; ++i)
-                {
-                    F32 t0 = gradientColors[i].first;
-                    F32 t1 = gradientColors[i + 1].first;
-
-                    F32 p0 = (t0 - startTime) / deltaTime;
-                    F32 p1 = (t1 - startTime) / deltaTime;
-
-                    Vec4F color0 = gradientColors[i].second;
-                    Vec4F color1 = gradientColors[i + 1].second;
-
-                    color0.w *= canvasRendererAlpha;
-                    color1.w *= canvasRendererAlpha;
-
-                    F32 x0 = p0 * size.x;
-                    F32 x1 = p1 * size.x;
-
-                    positions.emplace_back(Vec3F(x1, size.y, 0.0f));    // Top right
-                    positions.emplace_back(Vec3F(x1, 0.0f, 0.0f));      // Bottom right
-                    positions.emplace_back(Vec3F(x0, 0.0f, 0.0f));      // Bottom left
-                    positions.emplace_back(Vec3F(x0, size.y, 0.0f));    // Top left
-                        
-                    normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Top right
-                    normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Bottom right
-                    normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Bottom left
-                    normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Top left                    
-
-                    if (gradient.getMode() == ColorGradient::EvaluateMode::Fixed)
-                    {
-                        colors.emplace_back(color0);    // Top right
-                        colors.emplace_back(color0);    // Bottom right
-                        colors.emplace_back(color0);    // Bottom left
-                        colors.emplace_back(color0);    // Top left
-                    }
-                    else
-                    {
-                        colors.emplace_back(color1);    // Top right
-                        colors.emplace_back(color1);    // Bottom right
-                        colors.emplace_back(color0);    // Bottom left
-                        colors.emplace_back(color0);    // Top left
-                    }
-                    
-                    uvs.emplace_back(Vec2F(uv.z, uv.w));    // Top right
-                    uvs.emplace_back(Vec2F(uv.z, uv.y));    // Bottom right
-                    uvs.emplace_back(Vec2F(uv.x, uv.y));    // Bottom left
-                    uvs.emplace_back(Vec2F(uv.x, uv.w));    // Top left
-                    
-                    U16 quadStart = (U16)i * 4;
-                    indices.emplace_back(0 + quadStart);
-                    indices.emplace_back(1 + quadStart);
-                    indices.emplace_back(3 + quadStart);
-                    indices.emplace_back(1 + quadStart);
-                    indices.emplace_back(2 + quadStart);
-                    indices.emplace_back(3 + quadStart);
-                }
-                
-                subMesh->setPositions(positions);
-                subMesh->setNormals(normals);
-                subMesh->setColors(colors);
-                subMesh->setTexCoords(0, uvs);
-
-                subMesh->setIndices(indices);
-
-                mesh->addSubMesh(subMesh);
-
-                return mesh;
-            });
-        m_gradientRenderer->setRenderMode(SpriteRenderMode::Custom);
+        m_gradientRenderer->setRenderMode(SpriteRenderMode::Simple);
+        processGradient();
     }
 
     //////////////////////////////////////////
@@ -296,17 +203,107 @@ namespace Maze
         if (!m_gradientRenderer)
             return;
 
-        m_gradientRenderer->setCustomRenderCallback(nullptr);
+        
     }
 
     //////////////////////////////////////////
     void ColorGradientEdit2D::processGradient()
-    {
-        if (m_gradientRenderer)
+    {        
+        if (!m_gradientRenderer)
+            return;
+
+        if (!getEntityRaw() && !getEntityRaw()->getEcsScene())
+            return;
+
+        ColorGradient gradient = m_gradient;
+        gradient.clamp01();
+        gradient.addKey(0.0f, gradient.evaluate(0.0f));
+        gradient.addKey(1.0f, gradient.evaluate(1.0f));
+
+        Vec4F uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f);
+        FastVector<Pair<F32, Vec4F>> gradientColors = gradient.toRawColors();
+
+
+        F32 startTime = gradientColors.front().first;
+        F32 deltaTime = gradientColors.back().first - gradientColors.front().first;
+
+        MeshPtr mesh = Mesh::Create();
+
+        SubMeshPtr subMesh = SubMesh::Create();
+        subMesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
+
+        Vector<Vec3F> positions;
+        Vector<Vec3F> normals;
+        Vector<Vec4F> colors;
+        Vector<Vec2F> uvs;
+
+        Vector<U16> indices;
+
+        for (Size i = 0, in = gradientColors.size() - 1; i < in; ++i)
         {
-            m_gradientRenderer->updateMesh();
+            F32 t0 = gradientColors[i].first;
+            F32 t1 = gradientColors[i + 1].first;
+
+            F32 p0 = (t0 - startTime) / deltaTime;
+            F32 p1 = (t1 - startTime) / deltaTime;
+
+            Vec4F color0 = gradientColors[i].second;
+            Vec4F color1 = gradientColors[i + 1].second;
+
+            F32 x0 = p0;
+            F32 x1 = p1;
+
+            positions.emplace_back(Vec3F(x1, 1.0f, 0.0f));    // Top right
+            positions.emplace_back(Vec3F(x1, 0.0f, 0.0f));      // Bottom right
+            positions.emplace_back(Vec3F(x0, 0.0f, 0.0f));      // Bottom left
+            positions.emplace_back(Vec3F(x0, 1.0f, 0.0f));    // Top left
+
+            normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Top right
+            normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Bottom right
+            normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Bottom left
+            normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Top left                    
+
+            if (gradient.getMode() == ColorGradient::EvaluateMode::Fixed)
+            {
+                colors.emplace_back(color0);    // Top right
+                colors.emplace_back(color0);    // Bottom right
+                colors.emplace_back(color0);    // Bottom left
+                colors.emplace_back(color0);    // Top left
+            }
+            else
+            {
+                colors.emplace_back(color1);    // Top right
+                colors.emplace_back(color1);    // Bottom right
+                colors.emplace_back(color0);    // Bottom left
+                colors.emplace_back(color0);    // Top left
+            }
+
+            uvs.emplace_back(Vec2F(uv.z, uv.w));    // Top right
+            uvs.emplace_back(Vec2F(uv.z, uv.y));    // Bottom right
+            uvs.emplace_back(Vec2F(uv.x, uv.y));    // Bottom left
+            uvs.emplace_back(Vec2F(uv.x, uv.w));    // Top left
+
+            U16 quadStart = (U16)i * 4;
+            indices.emplace_back(0 + quadStart);
+            indices.emplace_back(1 + quadStart);
+            indices.emplace_back(3 + quadStart);
+            indices.emplace_back(1 + quadStart);
+            indices.emplace_back(2 + quadStart);
+            indices.emplace_back(3 + quadStart);
         }
+
+        subMesh->setPositions(positions);
+        subMesh->setNormals(normals);
+        subMesh->setColors(colors);
+        subMesh->setTexCoords(0, uvs);
+
+        subMesh->setIndices(indices);
+
+        mesh->addSubMesh(subMesh);
         
+        RenderMeshPtr renderMesh = getEntityRaw()->getEcsScene()->castRaw<EcsRenderScene>()->getRenderTarget()->createRenderMeshFromPool(1);
+        renderMesh->loadFromMesh(mesh);
+        m_gradientRenderer->getMeshRenderer()->setRenderMesh(renderMesh);
     }
     
 

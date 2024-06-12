@@ -45,6 +45,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
@@ -101,7 +102,7 @@ namespace Maze
             SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
             spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
             spriteRenderer->setMaterialCopy(
-                renderSystem->getMaterialManager()->getColorTextureMaterial());
+                renderSystem->getMaterialManager()->getSpriteMaterial());
             spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
 
             auto updateEditBoxState =
@@ -183,7 +184,7 @@ namespace Maze
                 textRenderer->getColor(),
                 Vec2F(1.0f, cursorHeight),
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 textRenderer->getTransform(),
                 _ecsScene,
                 Vec2F::c_zero,
@@ -223,7 +224,7 @@ namespace Maze
             SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
             spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
             spriteRenderer->setMaterialCopy(
-                renderSystem->getMaterialManager()->getColorTextureMaterial());
+                renderSystem->getMaterialManager()->getSpriteMaterial());
             spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
             spriteRenderer->setColor(ColorU32(250, 250, 250));
 
@@ -304,7 +305,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
                 Vec2F(8.0f, 8.0f) * 1.75f,
                 Vec2F(-5.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 spriteRenderer->getEntityRaw()->getEcsScene(),
                 Vec2F(1.0f, 0.5f),
@@ -320,7 +321,7 @@ namespace Maze
                     UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
                     Vec2F(_size.x, 140.0f),
                     Vec2F::c_zero,
-                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                    renderSystem->getMaterialManager()->getSpriteMaterial(),
                     transform,
                     _ecsScene,
                     Vec2F(0.0f, 0.0f),
@@ -363,7 +364,7 @@ namespace Maze
                         ColorU32::c_white,
                         Vec2F(_size.x, 20.0f - 4.0f),
                         Vec2F(0.0f, 2.0f),
-                        renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                        renderSystem->getMaterialManager()->getSpriteMaterial(),
                         itemPrefabTransform,
                         _ecsScene);
                     backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
@@ -373,7 +374,7 @@ namespace Maze
                         UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::CheckMark),
                         Vec2F(8.0f, 8.0f) * 1.75f,
                         Vec2F(10.0f, 10.0f),
-                        renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                        renderSystem->getMaterialManager()->getSpriteMaterial(),
                         itemPrefabTransform,
                         spriteRenderer->getEntityRaw()->getEcsScene(),
                         Vec2F(0.0f, 0.0f),
@@ -514,7 +515,7 @@ namespace Maze
                 _default,
                 transform->getSize(),
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
             spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
@@ -557,7 +558,7 @@ namespace Maze
                 _default,
                 transform->getSize(),
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
             spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
@@ -658,7 +659,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
                 transform->getSize(),
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
             spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
@@ -712,7 +713,7 @@ namespace Maze
             SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
             spriteRenderer->setSprite(_default);
             spriteRenderer->setMaterialCopy(
-                renderSystem->getMaterialManager()->getColorTextureMaterial());
+                renderSystem->getMaterialManager()->getSpriteMaterial());
             spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
 
             SpriteWPtr defaultWeak = _default;
@@ -768,7 +769,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
                 transform->getSize(),
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
             spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
@@ -779,7 +780,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::CheckMark),
                 Vec2F(16.0f, 16.0f),
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 spriteRenderer->getTransform(),
                 _ecsScene);
             checkMarkSpriteRenderer->setColor(ColorU32(12, 12, 12));
@@ -879,7 +880,7 @@ namespace Maze
                     UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
                     _size,
                     Vec2F::c_zero,
-                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                    renderSystem->getMaterialManager()->getSpriteMaterial(),
                     transform,
                     _ecsScene,
                     Vec2F(0.0f, 0.5f),
@@ -905,7 +906,7 @@ namespace Maze
                     UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
                     Vec2F(0.25f * fillArea->getSize().x, fillArea->getSize().y),
                     Vec2F::c_zero,
-                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                    renderSystem->getMaterialManager()->getSpriteMaterial(),
                     fillArea,
                     _ecsScene,
                     Vec2F(0.0f, 0.5f),
@@ -932,7 +933,7 @@ namespace Maze
                     UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::SliderHandle),
                     Vec2F(_size.y, _size.y) * 0.8f,
                     Vec2F::c_zero,
-                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                    renderSystem->getMaterialManager()->getSpriteMaterial(),
                     handleSlideArea,
                     _ecsScene,
                     Vec2F(0.0f, 0.5f),
@@ -997,7 +998,7 @@ namespace Maze
                 ColorU32::c_white,
                 _size,
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
             backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
@@ -1011,7 +1012,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::CheckMark),
                 Vec2F(8.0f, 8.0f) * 1.75f,
                 Vec2F(10.0f, 10.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene,
                 Vec2F(0.0f, 0.0f),
@@ -1025,7 +1026,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::SubMenuMark),
                 Vec2F(4.0f, 7.0f),
                 Vec2F(-8.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene,
                 Vec2F(1.0f, 0.5f),
@@ -1084,7 +1085,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel03),
                 _size,
                 Vec2F::c_zero,
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene,
                 Vec2F(0.0f, 1.0f),
@@ -1214,7 +1215,7 @@ namespace Maze
                 ColorU32(245, 245, 245),
                 _size,
                 Vec2F::c_zero,
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene,
                 Vec2F(0.5f, 0.5f),
@@ -1257,7 +1258,7 @@ namespace Maze
                     ColorU32::c_red,
                     toggleTransform->getSize(),
                     Vec2F(0.0f, 0.0f),
-                    renderSystem->getMaterialManager()->getColorMaterial(),
+                    renderSystem->getMaterialManager()->getSpriteMaterial(),
                     toggleTransform,
                     _ecsScene);
                 toggleButtonSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -1322,7 +1323,7 @@ namespace Maze
             SpriteRenderer2DPtr spriteRenderer = scrollbarEntity->createComponent<SpriteRenderer2D>();
             spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
             spriteRenderer->setMaterialCopy(
-                renderSystem->getMaterialManager()->getColorTextureMaterial());
+                renderSystem->getMaterialManager()->getSpriteMaterial());
             spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
             spriteRenderer->setColor(227, 227, 227);
 
@@ -1339,7 +1340,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Focused),
                 Vec2F(transform->getWidth() * 0.5f, transform->getHeight()),
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 slidingAreaTransform,
                 _ecsScene,
                 Vec2F(0.0f, 0.5f),
@@ -1378,7 +1379,7 @@ namespace Maze
             SpriteRenderer2DPtr spriteRenderer = scrollbarEntity->createComponent<SpriteRenderer2D>();
             spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
             spriteRenderer->setMaterialCopy(
-                renderSystem->getMaterialManager()->getColorTextureMaterial());
+                renderSystem->getMaterialManager()->getSpriteMaterial());
             spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
             spriteRenderer->setColor(227, 227, 227);
 
@@ -1395,7 +1396,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Focused),
                 Vec2F(transform->getWidth() * 0.5f, transform->getHeight()),
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 slidingAreaTransform,
                 _ecsScene,
                 Vec2F(0.0f, 0.5f),
@@ -1452,7 +1453,7 @@ namespace Maze
             SpriteRenderer2DPtr spriteRenderer = scrollbarEntity->createComponent<SpriteRenderer2D>();
             spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
             spriteRenderer->setMaterialCopy(
-                renderSystem->getMaterialManager()->getColorTextureMaterial());
+                renderSystem->getMaterialManager()->getSpriteMaterial());
             spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
             spriteRenderer->setColor(255, 255, 255);
 

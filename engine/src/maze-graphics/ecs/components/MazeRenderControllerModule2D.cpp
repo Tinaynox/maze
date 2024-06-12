@@ -391,14 +391,6 @@ namespace Maze
                     _canvasRenderer->dirtyAlpha();
             });
 
-        m_spriteRenderer2DsSample->process(
-            [](Entity* _entity, SpriteRenderer2D* _spriteRenderer)
-            {
-                if (    _spriteRenderer->getTransform()->isSizeChanged()
-                    ||    _spriteRenderer->getCanvasRenderer()->isAlphaDirty())
-                    _spriteRenderer->updateMesh();
-            });
-
         m_systemTextRenderer2DsSample->process(
             [](Entity* _entity, SystemTextRenderer2D* _systemTextRenderer2D)
             {

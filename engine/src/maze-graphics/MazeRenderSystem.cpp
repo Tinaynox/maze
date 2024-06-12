@@ -58,6 +58,7 @@ namespace Maze
     //////////////////////////////////////////
     RenderSystem::~RenderSystem()
     {
+        m_spriteManager.reset();
         m_systemFontManager.reset();
         m_materialManager.reset();
     }
@@ -123,9 +124,10 @@ namespace Maze
         m_materialManager->createBuiltinMaterials();
         m_renderMeshManager->createBuiltinRenderMeshes();
         m_systemFontManager->createBuiltinSystemFonts();
+        m_spriteManager->createBuiltinSprites();
 
         if (!m_spriteManager->getDefaultSpriteMaterial())
-            m_spriteManager->setDefaultSpriteMaterial(m_materialManager->getColorTextureMaterial());
+            m_spriteManager->setDefaultSpriteMaterial(m_materialManager->getSpriteMaterial());
     }
 
 } // namespace Maze

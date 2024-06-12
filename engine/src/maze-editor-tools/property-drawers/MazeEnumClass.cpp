@@ -135,7 +135,7 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
             Vec2F(180, 18),
             Vec2F(0, 0),
-            renderSystem->getMaterialManager()->getColorTextureMaterial(),
+            renderSystem->getMaterialManager()->getSpriteMaterial(),
             layout->getTransform(),
             _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.5f, 0.5f),

@@ -54,7 +54,7 @@ namespace Maze
     // Enum BuiltinMaterialType
     //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_19_API(MAZE_GRAPHICS_API, BuiltinMaterialType,
+    MAZE_DECLARE_ENUMCLASS_20_API(MAZE_GRAPHICS_API, BuiltinMaterialType,
         Error,
         UV,
         Normal,
@@ -63,7 +63,8 @@ namespace Maze
         ColorTextureCustomUV,
         ColorTextureAdditive,
         ColorTextureAdditivePA,
-        ColorHDR,
+        ColorStreamHDR,
+        Sprite,
         HSVRect,
         HSVBand,
         ColorPickerChannel,
@@ -164,6 +165,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline MaterialPtr const& getColorTextureMaterial() const { return getBuiltinMaterial(BuiltinMaterialType::ColorTexture); }
+
+        //////////////////////////////////////////
+        inline MaterialPtr const& getSpriteMaterial() const { return getBuiltinMaterial(BuiltinMaterialType::Sprite); }
 
 
 

@@ -43,6 +43,7 @@
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
@@ -129,12 +130,6 @@ namespace Maze
             }
 
             m_colorTags.pop_back();
-        }
-
-        if (m_gradientRenderer)
-        {
-            m_gradientRenderer->setCustomRenderCallback(nullptr);
-            m_gradientRenderer.reset();
         }
 
         if (m_gradientClickButton)
@@ -368,7 +363,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
                 Vec2F(340.0f, 44.0f),
                 Vec2F(10.0f, -50.0f),
-                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getSpriteMaterial(),
                 m_canvas->getTransform(),
                 this,
                 Vec2F(0.0f, 1.0f),
@@ -379,7 +374,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
                 m_gradientRendererHolder->getTransform()->getSize() - Vec2F(2.0f, 2.0f),
                 Vec2F(1.0f, 1.0f),
-                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getSpriteMaterial(),
                 m_gradientRendererHolder->getTransform(),
                 this,
                 Vec2F(0.0f, 0.0f),
@@ -396,108 +391,12 @@ namespace Maze
                 ColorU32::c_white,
                 m_gradientRendererHolder->getTransform()->getSize() - Vec2F(2.0f, 2.0f),
                 Vec2F(1.0f, 1.0f),
-                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorMaterial(),
                 m_gradientRendererHolder->getTransform(),
                 this,
                 Vec2F(0.0f, 0.0f),
                 Vec2F(0.0f, 0.0f));
 
-            m_gradientRenderer->setCustomRenderCallback(
-                [](SpriteRenderer2D* _spriteRenderer) -> MeshPtr
-                {
-                    ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
-                    gradient.clamp01();
-                    gradient.addKey(0.0f, gradient.evaluate(0.0f));
-                    gradient.addKey(1.0f, gradient.evaluate(1.0f));
-
-                    Vec2F const& size = _spriteRenderer->getTransform()->getSize();
-                    Vec4F uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f);
-                    F32 canvasRendererAlpha = _spriteRenderer->getCanvasRenderer()->getAlpha();
-                    FastVector<Pair<F32, Vec4F>> gradientColors = gradient.toRawColors();
-
-                    F32 startTime = gradientColors.front().first;
-                    F32 deltaTime = gradientColors.back().first - gradientColors.front().first;
-
-                    MeshPtr mesh = Mesh::Create();
-
-                    SubMeshPtr subMesh = SubMesh::Create();
-                    subMesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
-
-                    Vector<Vec3F> positions;
-                    Vector<Vec3F> normals;
-                    Vector<Vec4F> colors;
-                    Vector<Vec2F> uvs;
-
-                    Vector<U16> indices;
-
-                    for (Size i = 0, in = gradientColors.size() - 1; i < in; ++i)
-                    {
-                        F32 t0 = gradientColors[i].first;
-                        F32 t1 = gradientColors[i + 1].first;
-
-                        F32 p0 = (t0 - startTime) / deltaTime;
-                        F32 p1 = (t1 - startTime) / deltaTime;
-
-                        Vec4F color0 = gradientColors[i].second;
-                        Vec4F color1 = gradientColors[i + 1].second;
-
-                        color0.w *= canvasRendererAlpha;
-                        color1.w *= canvasRendererAlpha;
-
-                        F32 x0 = p0 * size.x;
-                        F32 x1 = p1 * size.x;
-
-                        positions.emplace_back(Vec3F(x1, size.y, 0.0f));    // Top right
-                        positions.emplace_back(Vec3F(x1, 0.0f, 0.0f));      // Bottom right
-                        positions.emplace_back(Vec3F(x0, 0.0f, 0.0f));      // Bottom left
-                        positions.emplace_back(Vec3F(x0, size.y, 0.0f));    // Top left
-
-                        normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Top right
-                        normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Bottom right
-                        normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Bottom left
-                        normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Top left                    
-
-                        if (gradient.getMode() == ColorGradient::EvaluateMode::Fixed)
-                        {
-                            colors.emplace_back(color0);    // Top right
-                            colors.emplace_back(color0);    // Bottom right
-                            colors.emplace_back(color0);    // Bottom left
-                            colors.emplace_back(color0);    // Top left
-                        }
-                        else
-                        {
-                            colors.emplace_back(color1);    // Top right
-                            colors.emplace_back(color1);    // Bottom right
-                            colors.emplace_back(color0);    // Bottom left
-                            colors.emplace_back(color0);    // Top left
-                        }
-
-                        uvs.emplace_back(Vec2F(uv.z, uv.w));    // Top right
-                        uvs.emplace_back(Vec2F(uv.z, uv.y));    // Bottom right
-                        uvs.emplace_back(Vec2F(uv.x, uv.y));    // Bottom left
-                        uvs.emplace_back(Vec2F(uv.x, uv.w));    // Top left
-
-                        U16 quadStart = (U16)i * 4;
-                        indices.emplace_back(0 + quadStart);
-                        indices.emplace_back(1 + quadStart);
-                        indices.emplace_back(3 + quadStart);
-                        indices.emplace_back(1 + quadStart);
-                        indices.emplace_back(2 + quadStart);
-                        indices.emplace_back(3 + quadStart);
-                    }
-
-                    subMesh->setPositions(positions);
-                    subMesh->setNormals(normals);
-                    subMesh->setColors(colors);
-                    subMesh->setTexCoords(0, uvs);
-
-                    subMesh->setIndices(indices);
-
-                    mesh->addSubMesh(subMesh);
-
-                    return mesh;
-                });
-            m_gradientRenderer->setRenderMode(SpriteRenderMode::Custom);
 
             m_gradientClickButton = UIHelper::CreateDefaultClickButton(
                 nullptr,
@@ -684,7 +583,103 @@ namespace Maze
         if (getState() == EcsSceneState::Destroy)
             return;
 
-        m_gradientRenderer->updateMesh();
+        if (m_gradientRenderer)
+        {
+            ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+            gradient.clamp01();
+            gradient.addKey(0.0f, gradient.evaluate(0.0f));
+            gradient.addKey(1.0f, gradient.evaluate(1.0f));
+
+            Vec2F const& size = m_gradientRenderer->getTransform()->getSize();
+            Vec4F uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f);
+            F32 canvasRendererAlpha = m_gradientRenderer->getCanvasRenderer()->getAlpha();
+            FastVector<Pair<F32, Vec4F>> gradientColors = gradient.toRawColors();
+
+            F32 startTime = gradientColors.front().first;
+            F32 deltaTime = gradientColors.back().first - gradientColors.front().first;
+
+            MeshPtr mesh = Mesh::Create();
+
+            SubMeshPtr subMesh = SubMesh::Create();
+            subMesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
+
+            Vector<Vec3F> positions;
+            Vector<Vec3F> normals;
+            Vector<Vec4F> colors;
+            Vector<Vec2F> uvs;
+
+            Vector<U16> indices;
+
+            for (Size i = 0, in = gradientColors.size() - 1; i < in; ++i)
+            {
+                F32 t0 = gradientColors[i].first;
+                F32 t1 = gradientColors[i + 1].first;
+
+                F32 p0 = (t0 - startTime) / deltaTime;
+                F32 p1 = (t1 - startTime) / deltaTime;
+
+                Vec4F color0 = gradientColors[i].second;
+                Vec4F color1 = gradientColors[i + 1].second;
+
+                color0.w *= canvasRendererAlpha;
+                color1.w *= canvasRendererAlpha;
+
+                F32 x0 = p0;
+                F32 x1 = p1;
+
+                positions.emplace_back(Vec3F(x1, 1.0f, 0.0f));    // Top right
+                positions.emplace_back(Vec3F(x1, 0.0f, 0.0f));      // Bottom right
+                positions.emplace_back(Vec3F(x0, 0.0f, 0.0f));      // Bottom left
+                positions.emplace_back(Vec3F(x0, 1.0f, 0.0f));    // Top left
+
+                normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Top right
+                normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Bottom right
+                normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Bottom left
+                normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Top left                    
+
+                if (gradient.getMode() == ColorGradient::EvaluateMode::Fixed)
+                {
+                    colors.emplace_back(color0);    // Top right
+                    colors.emplace_back(color0);    // Bottom right
+                    colors.emplace_back(color0);    // Bottom left
+                    colors.emplace_back(color0);    // Top left
+                }
+                else
+                {
+                    colors.emplace_back(color1);    // Top right
+                    colors.emplace_back(color1);    // Bottom right
+                    colors.emplace_back(color0);    // Bottom left
+                    colors.emplace_back(color0);    // Top left
+                }
+
+                uvs.emplace_back(Vec2F(uv.z, uv.w));    // Top right
+                uvs.emplace_back(Vec2F(uv.z, uv.y));    // Bottom right
+                uvs.emplace_back(Vec2F(uv.x, uv.y));    // Bottom left
+                uvs.emplace_back(Vec2F(uv.x, uv.w));    // Top left
+
+                U16 quadStart = (U16)i * 4;
+                indices.emplace_back(0 + quadStart);
+                indices.emplace_back(1 + quadStart);
+                indices.emplace_back(3 + quadStart);
+                indices.emplace_back(1 + quadStart);
+                indices.emplace_back(2 + quadStart);
+                indices.emplace_back(3 + quadStart);
+            }
+
+            subMesh->setPositions(positions);
+            subMesh->setNormals(normals);
+            subMesh->setColors(colors);
+            subMesh->setTexCoords(0, uvs);
+
+            subMesh->setIndices(indices);
+
+            mesh->addSubMesh(subMesh);
+
+            RenderMeshPtr renderMesh = getRenderTarget()->createRenderMeshFromPool();
+            renderMesh->loadFromMesh(mesh);
+            m_gradientRenderer->getMeshRenderer()->setRenderMesh(renderMesh);
+        }
+        
         updateColorSliderTags();
         updateColorTagUI();
     }
@@ -717,7 +712,7 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::ColorSliderTagBody),
             size,
             Vec2F::c_zero,
-            renderSystem->getMaterialManager()->getColorTextureMaterial(),
+            renderSystem->getMaterialManager()->getSpriteMaterial(),
             colorSliderTag->getTransform(),
             this);
         colorSliderTag->setColorRenderer(colorRenderer);

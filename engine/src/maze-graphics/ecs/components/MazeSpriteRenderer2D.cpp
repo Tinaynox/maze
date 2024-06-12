@@ -26,7 +26,6 @@
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
@@ -35,9 +34,11 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
@@ -46,6 +47,7 @@
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
@@ -74,10 +76,6 @@ namespace Maze
 
     //////////////////////////////////////////
     SpriteRenderer2D::SpriteRenderer2D()
-        : m_renderSystem(nullptr)
-        , m_color(ColorU32::c_white)
-        , m_renderMode(SpriteRenderMode::Simple)
-        , m_customRenderCallback(nullptr)
     {
     }
 
@@ -136,10 +134,11 @@ namespace Maze
         if (m_spriteRef.getSprite())
         {
             m_spriteRef.getSprite()->eventDataChanged.subscribe(this, &SpriteRenderer2D::notifySpriteDataChanged);
-
-            updateMesh();
-            updateMaterial();
         }
+
+        enableFlag(SpriteRenderer2D::Flags::MaterialDirty);
+        enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
+        enableFlag(SpriteRenderer2D::Flags::UV0Dirty);
     }
 
     //////////////////////////////////////////
@@ -159,7 +158,7 @@ namespace Maze
 
         m_materialRef.setMaterial(_material.getMaterial());
 
-        updateMaterial();
+        enableFlag(SpriteRenderer2D::Flags::MaterialDirty);
     }
 
     //////////////////////////////////////////
@@ -173,14 +172,12 @@ namespace Maze
     void SpriteRenderer2D::setMaterialRefCopy(MaterialAssetRef const& _material)
     {
         setMaterial(_material.getMaterial() ? _material.getMaterial()->createCopy() : MaterialPtr());
-        updateMaterial();
     }
 
     //////////////////////////////////////////
     void SpriteRenderer2D::setMaterialCopy(MaterialPtr const& _material)
     {
         setMaterial(_material ? _material->createCopy() : MaterialPtr());
-        updateMaterial();
     }
 
     //////////////////////////////////////////
@@ -198,7 +195,7 @@ namespace Maze
 
         m_color = _color;
 
-        updateMaterial();
+        enableFlag(SpriteRenderer2D::Flags::ColorDirty);
     }
 
     //////////////////////////////////////////
@@ -209,28 +206,30 @@ namespace Maze
 
         m_renderMode = _renderMode;
 
-        updateMesh();
+        enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
     }
 
     //////////////////////////////////////////
-    void SpriteRenderer2D::setCustomRenderCallback(CustomRenderCallback _value)
+    void SpriteRenderer2D::setPixelPerfect(bool _value)
     {
-        m_customRenderCallback = _value;
+        if (m_pixelPerfect == _value)
+            return;
 
-        if (m_renderMode == SpriteRenderMode::Custom)
-            updateMesh();
+        m_pixelPerfect = _value;
+
+        enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
     }
-
+    
     //////////////////////////////////////////
     void SpriteRenderer2D::updateMaterial()
     {
-        if (m_meshRenderer)
-            m_meshRenderer->setMaterial(getMaterial());
+        if (!m_meshRenderer)
+            return;
+
+        m_meshRenderer->setMaterial(getMaterial());
 
         if (getMaterial())
         {
-            getMaterial()->setUniform(MAZE_HCS("u_color"), m_color.toVec4F32());
-
             Texture2DPtr texture;
 
             if (getSprite())
@@ -251,104 +250,310 @@ namespace Maze
                 getMaterial()->setUniform(MAZE_HCS("u_baseMapTexelSize"), 1.0f / (Vec2F)texture->getSize());
             }
         }
+
+        disableFlag(SpriteRenderer2D::Flags::MaterialDirty);
     }
 
     //////////////////////////////////////////
-    void SpriteRenderer2D::updateMesh()
+    void SpriteRenderer2D::updateMeshData()
     {
-        if (!m_canvasRenderer)
-            return;
+        S32 totalQuadsCount = 0;
 
-        if (!getEntityRaw() || !getEntityRaw()->getEcsScene())
-            return;
+        auto addQuad =
+            [&, this](TMat const& _tm, Vec4F const& _color, Vec4F const& _uv0)
+            {
+                if (totalQuadsCount < (S32)m_localMatrices.size())
+                {
+                    m_localMatrices[totalQuadsCount] = _tm;
+                    m_localColors[totalQuadsCount] = _color;
+                    m_localUV0s[totalQuadsCount] = _uv0;
+                }
+                else
+                {
+                    m_localMatrices.push_back(_tm);
+                    m_localColors.push_back(_color);
+                    m_localUV0s.push_back(_uv0);
+                }
 
-        Vec2F const& size = m_transform->getSize();
+                ++totalQuadsCount;
+            };
 
-        Vec4F uv;
-
-        if (getSprite())
-        {
-            uv = Vec4F(
-                getSprite()->getTextureCoordLB(),
-                getSprite()->getTextureCoordRT());
-        }
-        else
-        {
-            uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f);
-        }
-
-        MeshPtr mesh;
-            
         switch (m_renderMode)
         {
             case SpriteRenderMode::Simple:
             {
-                mesh = MeshHelper::CreateQuadMesh(
-                    size,
-                    size * 0.5f,
-                    false,
-                    uv,
-                    Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer->getAlpha()));
+                Vec4F uv;
+                if (getSprite())
+                    uv = Vec4F(
+                        getSprite()->getTextureCoordLB(),
+                        getSprite()->getTextureCoordRT());
+                else
+                    uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f);
 
+                addQuad(
+                    TMat::CreateScale(m_transform->getSize()),
+                    Vec4F::c_one,
+                    uv);
                 break;
             }
             case SpriteRenderMode::Sliced:
             {
                 if (getSprite())
                 {
-                    mesh = MeshHelper::CreateSlicedPanelMesh(
-                        size,
-                        size * 0.5f,
-                        getSprite()->getSliceBorder(),
-                        getSprite()->getNativeSize(),
-                        uv,
-                        Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer->getAlpha()));
+                    Vec2F const& size = m_transform->getSize();
+                    SpriteSliceBorder const& sliceBorder = getSprite()->getSliceBorder();
+                    Vec2F const& nativeSize = getSprite()->getNativeSize();
+                    Vec2F const& texCoordLB = getSprite()->getTextureCoordLB();
+                    Vec2F const& texCoordRT = getSprite()->getTextureCoordRT();
+
+                    Vec2F centerSize = Vec2F(
+                        Math::Max(size.x - sliceBorder.left - sliceBorder.right, 0.0f),
+                        Math::Max(size.y - sliceBorder.bottom - sliceBorder.top, 0.0f));
+
+                    Vec2F centerPositionLB = Vec2F(sliceBorder.left, sliceBorder.bottom);
+                    Vec2F centerPositionRT = centerPositionLB + centerSize;
+
+                    Vec2F deltaUV = texCoordRT - texCoordLB;
+
+                    Vec2F centerUVLB = texCoordLB + deltaUV * Vec2F(sliceBorder.left, sliceBorder.bottom) / nativeSize;
+                    Vec2F ltUVRT = Vec2F(centerUVLB.x, texCoordRT.y);
+                    Vec2F centerUVRT = texCoordRT - deltaUV * Vec2F(sliceBorder.right, sliceBorder.top) / nativeSize;
+
+
+                    if (sliceBorder.left > 0.0f)
+                    {
+                        // LB 
+                        if (sliceBorder.bottom > 0.0f)
+                        {
+                            addQuad(
+                                TMat::CreateScale(sliceBorder.left, sliceBorder.bottom),
+                                Vec4F::c_one,
+                                Vec4F(texCoordLB, centerUVLB));
+                        }
+
+                        // Left
+                        addQuad(
+                            TMat::CreateTranslation(0.0f, centerPositionLB.y).transform(TMat::CreateScale(sliceBorder.left, centerSize.y)),
+                            Vec4F::c_one,
+                            Vec4F(Vec2F(texCoordLB.x, centerUVLB.y), Vec2F(centerUVLB.x, centerUVRT.y)));
+
+                        // LT 
+                        if (sliceBorder.top > 0.0f)
+                        {
+                            addQuad(
+                                TMat::CreateTranslation(0.0f, centerPositionRT.y).transform(TMat::CreateScale(sliceBorder.left, sliceBorder.top)),
+                                Vec4F::c_one,
+                                Vec4F(Vec2F(texCoordLB.x, centerUVRT.y), Vec2F(centerUVLB.x, texCoordRT.y)));
+                        }
+                    }
+
+                    // Bottom
+                    if (sliceBorder.bottom > 0.0f)
+                    {
+                        addQuad(
+                            TMat::CreateTranslation(centerPositionLB.x, 0.0f).transform(TMat::CreateScale(centerSize.x, sliceBorder.bottom)),
+                            Vec4F::c_one,
+                            Vec4F(Vec2F(centerUVLB.x, texCoordLB.y), Vec2F(centerUVRT.x, centerUVLB.y)));
+                    }
+
+                    // Center
+                    addQuad(
+                        TMat::CreateTranslation(centerPositionLB).transform(TMat::CreateScale(centerSize)),
+                        Vec4F::c_one,
+                        Vec4F(centerUVLB, centerUVRT));
+
+                    // Top
+                    if (sliceBorder.top > 0.0f)
+                    {
+                        addQuad(
+                            TMat::CreateTranslation(centerPositionLB.x, centerPositionRT.y).transform(TMat::CreateScale(centerSize.x, sliceBorder.top)),
+                            Vec4F::c_one,
+                            Vec4F(Vec2F(centerUVLB.x, centerUVRT.y), Vec2F(centerUVRT.x, texCoordRT.y)));
+                    }
+
+                    if (sliceBorder.right > 0.0f)
+                    {
+                        // RB 
+                        if (sliceBorder.bottom > 0.0f)
+                        {
+                            addQuad(
+                                TMat::CreateTranslation(centerPositionRT.x, 0.0f).transform(TMat::CreateScale(sliceBorder.right, sliceBorder.bottom)),
+                                Vec4F::c_one,
+                                Vec4F(Vec2F(centerUVRT.x, texCoordLB.y), Vec2F(texCoordRT.x, centerUVLB.y)));
+                        }
+
+                        // Right
+                        addQuad(
+                            TMat::CreateTranslation(centerPositionRT.x, centerPositionLB.y).transform(TMat::CreateScale(sliceBorder.right, centerSize.y)),
+                            Vec4F::c_one,
+                            Vec4F(Vec2F(centerUVRT.x, centerUVLB.y), Vec2F(texCoordRT.x, centerUVRT.y)));
+
+                        // RT 
+                        if (sliceBorder.top > 0.0f)
+                        {
+                            addQuad(
+                                TMat::CreateTranslation(centerPositionRT.x, centerPositionRT.y).transform(TMat::CreateScale(sliceBorder.right, sliceBorder.top)),
+                                Vec4F::c_one,
+                                Vec4F(Vec2F(centerUVRT.x, centerUVRT.y), texCoordRT));
+                        }
+                    }
                 }
                 else
                 {
-                    mesh = MeshHelper::CreateQuadMesh(
-                        size,
-                        size * 0.5f,
-                        false,
-                        uv,
-                        Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer->getAlpha()));
+                    addQuad(
+                        TMat::CreateScale(m_transform->getSize()),
+                        Vec4F::c_one,
+                        Vec4F(0.0f, 0.0f, 1.0f, 1.0f));
                 }
+
                 break;
             }
-            case SpriteRenderMode::Custom:
+            case SpriteRenderMode::Tiled:
             {
-                if (!m_customRenderCallback)
-                    return;
-
-                mesh = m_customRenderCallback(this);
-
+                MAZE_NOT_IMPLEMENTED;
                 break;
             }
             default:
             {
-                MAZE_NOT_IMPLEMENTED;
+                break;
             }
         }
-        m_meshRenderer->setMesh(mesh);
+
+        m_meshRenderer->resize(totalQuadsCount);
+        if (totalQuadsCount == 0)
+        {
+            m_localMatrices.clear();
+            m_localColors.clear();
+            m_localUV0s.clear();
+        }
+
+        disableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
+    }
+
+    //////////////////////////////////////////
+    void SpriteRenderer2D::updateMeshRendererColors()
+    {
+        if (!m_meshRenderer)
+            return;
+
+        Vec4F vertexColor = m_color.toVec4F32();
+        if (m_canvasRenderer)
+            vertexColor.w *= m_canvasRenderer->getAlpha();
+
+        Size colorsCount = m_meshRenderer->getColors().size();
+        for (Size i = 0; i < colorsCount; ++i)
+            m_meshRenderer->setColor(i, m_localColors[i] * vertexColor);
+
+        disableFlag(SpriteRenderer2D::Flags::ColorDirty);
+    }
+
+    //////////////////////////////////////////
+    void SpriteRenderer2D::updateMeshRendererUV0s()
+    {
+        if (!m_meshRenderer)
+            return;
+
+        Size elementsCount = m_meshRenderer->getUV0().size();
+        // #TODO: optimize with memcpy
+        for (Size i = 0; i < elementsCount; ++i)
+            m_meshRenderer->setUV0(i, m_localUV0s[i]);
+
+        disableFlag(SpriteRenderer2D::Flags::UV0Dirty);
+    }
+
+    //////////////////////////////////////////
+    void SpriteRenderer2D::updateMeshRendererModelMatrices()
+    {
+        if (!m_meshRenderer)
+            return;
+
+        Size transformCount = m_meshRenderer->getModelMatrices().size();
+        MAZE_DEBUG_ERROR_IF(transformCount != m_localMatrices.size(), "Invalid elements count!");
+        if (transformCount == 0)
+            return;
+
+        Vec2F pixelPerfectShift = Vec2F::c_zero;
+        if (m_pixelPerfect)
+        {
+            TMat initTm = m_transform->getWorldTransform().transform(m_localMatrices[0]);
+            Vec2F translation = initTm.getTranslation2D();
+            pixelPerfectShift = Math::Round(translation) - translation;
+        }
+
+        for (Size i = 0; i < transformCount; ++i)
+        {
+            TMat tm = m_transform->getWorldTransform().transform(m_localMatrices[i]);
+            if (m_pixelPerfect)
+                tm.setTranslation(tm.getTranslation2D() + pixelPerfectShift);
+            m_meshRenderer->setModelMatrix(i, tm);
+        }
+
+        disableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
     }
 
     //////////////////////////////////////////
     void SpriteRenderer2D::processEntityAwakened()
     {
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
-        m_meshRenderer = getEntityRaw()->ensureComponent<MeshRenderer>();
+        m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
         m_canvasRenderer = getEntityRaw()->ensureComponent<CanvasRenderer>();
 
-        m_meshRenderer->setRenderMesh(RenderMeshPtr());
-        updateMesh();
-        updateMaterial();
+        
+        m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadNullPivotMesh());
+
+        enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
+        enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
+        enableFlag(SpriteRenderer2D::Flags::ColorDirty);
+        enableFlag(SpriteRenderer2D::Flags::MaterialDirty);
+        enableFlag(SpriteRenderer2D::Flags::UV0Dirty);
     }
     
     //////////////////////////////////////////
     void SpriteRenderer2D::notifySpriteDataChanged(Sprite* _sprite)
     {
-        updateMesh();
-        updateMaterial();
+        enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
+        enableFlag(SpriteRenderer2D::Flags::UV0Dirty);
+    }
+
+    //////////////////////////////////////////
+    void SpriteRenderer2D::prepareForRender()
+    {
+        if (getFlag(SpriteRenderer2D::Flags::MeshDataDirty))
+            updateMeshData();
+
+        if (getFlag(SpriteRenderer2D::Flags::ModelMatricesDirty))
+            updateMeshRendererModelMatrices();
+
+        if (getFlag(SpriteRenderer2D::Flags::ColorDirty))
+            updateMeshRendererColors();
+
+        if (getFlag(SpriteRenderer2D::Flags::MaterialDirty))
+            updateMaterial();
+
+        if (getFlag(SpriteRenderer2D::Flags::UV0Dirty))
+            updateMeshRendererUV0s();
+    }
+
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SpriteRenderer2DSystem,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
+        Render2DPostUpdateEvent& _event,
+        Entity* _entity,
+        SpriteRenderer2D* _spriteRenderer)
+    {
+        if (_spriteRenderer->getTransform()->isSizeChanged())
+            _spriteRenderer->enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
+        
+        if (_spriteRenderer->getTransform()->isWorldTransformChanged())
+            _spriteRenderer->enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
+
+        if (_spriteRenderer->getCanvasRenderer()->isAlphaDirty())
+            _spriteRenderer->enableFlag(SpriteRenderer2D::Flags::ColorDirty);
+        
+        _spriteRenderer->prepareForRender();
     }
     
 } // namespace Maze

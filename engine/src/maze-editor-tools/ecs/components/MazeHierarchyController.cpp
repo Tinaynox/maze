@@ -51,6 +51,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
@@ -148,7 +149,7 @@ namespace Maze
                 m_canvas->getTransform()->getSize().x,
                 EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
             Vec2F(0.0f, 0.0f),
-            materialManager->getColorTextureMaterial(),
+            materialManager->getSpriteMaterial(),
             m_titleTransform,
             getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
@@ -176,7 +177,7 @@ namespace Maze
                 m_titleTransform->getSize().x, 
                 m_titleTransform->getSize().y - EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
             Vec2F(0.0f, 0.0f),
-            materialManager->getColorTextureMaterial(),
+            materialManager->getSpriteMaterial(),
             m_canvas->getTransform(),
             getEntityRaw()->getEcsScene(),
             Vec2F::c_zero,
@@ -195,7 +196,7 @@ namespace Maze
             true);
         scrollRect->getViewportTransform()->getEntityRaw()->getComponent<ScissorMask2D>()->setPadding(0, 0, 0, 0);
         scrollRect->getEntityRaw()->ensureComponent<SizePolicy2D>();
-        scrollRect->getEntityRaw()->getComponent<MeshRenderer>()->setEnabled(false);
+        scrollRect->getEntityRaw()->getComponent<MeshRendererInstanced>()->setEnabled(false);
 
         m_hierarchyMainLayoutEntity = scrollRect->getContentTransform();
 

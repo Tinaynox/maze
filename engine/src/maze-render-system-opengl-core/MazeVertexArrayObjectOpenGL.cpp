@@ -320,6 +320,8 @@ namespace Maze
         {
             m_vbos[(Size)attribSemantic].vbo.reset();
         }
+
+        clear();
     }
 
     //////////////////////////////////////////

@@ -263,7 +263,7 @@ namespace Maze
                 _color,
                 _size - 2.0f,
                 Vec2F::c_zero,
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
             colorSpriteRenderer->getEntityRaw()->createComponent<SizePolicy2D>()->setSizeDelta(-2.0f, -2.0f);
@@ -274,7 +274,7 @@ namespace Maze
                 ColorU32::c_black,
                 { _size.x, 3.0f },
                 Vec2F(0.0f, 1.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene,
                 Vec2F(0.5f, 0.0f),
@@ -287,7 +287,7 @@ namespace Maze
                 ColorU32::c_white,
                 { (_size.x - 2.0f) * 0.5f, 3.0f },
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 alphaBackSpriteRenderer->getTransform(),
                 _ecsScene,
                 Vec2F(0.0f, 0.0f),
@@ -301,7 +301,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel01Default),
                 _size,
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
             SpriteRenderer2D* borderSpriteRendererRaw = borderSpriteRenderer.get();
@@ -381,7 +381,7 @@ namespace Maze
                 ColorU32::FromVec4F32((Vec4F)_color),
                 _size - 2.0f,
                 Vec2F::c_zero,
-                renderSystem->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorHDR),
+                renderSystem->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorStreamHDR),
                 transform,
                 _ecsScene);
             colorSpriteRenderer->getEntityRaw()->createComponent<SizePolicy2D>()->setSizeDelta(-2.0f, -2.0f);
@@ -411,7 +411,7 @@ namespace Maze
                     ColorU32::c_black,
                     { _size.x, 3.0f },
                     Vec2F(0.0f, 1.0f),
-                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                    renderSystem->getMaterialManager()->getSpriteMaterial(),
                     transform,
                     _ecsScene,
                     Vec2F(0.5f, 0.0f),
@@ -424,7 +424,7 @@ namespace Maze
                     ColorU32::c_white,
                     { (_size.x - 2.0f) * 0.5f, 3.0f },
                     Vec2F(0.0f, 0.0f),
-                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                    renderSystem->getMaterialManager()->getSpriteMaterial(),
                     alphaBackSpriteRenderer->getTransform(),
                     _ecsScene,
                     Vec2F(0.0f, 0.0f),
@@ -439,7 +439,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel01Default),
                 _size,
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
             SpriteRenderer2D* borderSpriteRendererRaw = borderSpriteRenderer.get();
@@ -540,7 +540,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
                 _size - 2.0f,
                 Vec2F::c_zero,
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
             transparentBackSpriteRenderer->getMaterial()->setUniform(
@@ -559,7 +559,6 @@ namespace Maze
                 renderSystem->getMaterialManager()->getColorMaterial(),
                 transform,
                 _ecsScene);
-            gradientSpriteRenderer->setRenderMode(SpriteRenderMode::Custom);
             gradientSpriteRenderer->getEntityRaw()->createComponent<SizePolicy2D>()->setSizeDelta(-2.0f, -2.0f);
             colorEdit->setGradientRenderer(gradientSpriteRenderer);
 
@@ -568,7 +567,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel01Default),
                 _size,
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
             SpriteRenderer2D* borderSpriteRendererRaw = borderSpriteRenderer.get();
@@ -643,7 +642,7 @@ namespace Maze
                 ColorU32::c_white,
                 _size - 2.0f,
                 Vec2F::c_zero,
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
             curveSpriteRenderer->getEntityRaw()->createComponent<SizePolicy2D>()->setSizeDelta(-2.0f, -2.0f);
@@ -654,7 +653,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel01Default),
                 _size,
                 Vec2F(0.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
             SpriteRenderer2D* borderSpriteRendererRaw = borderSpriteRenderer.get();

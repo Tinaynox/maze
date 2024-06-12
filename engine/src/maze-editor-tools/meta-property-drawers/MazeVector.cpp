@@ -143,7 +143,7 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
             Vec2F(8, 8) * 1.75f,
             Vec2F(10, 1),
-            materialManager->getColorTextureMaterial(),
+            materialManager->getSpriteMaterial(),
             titleLayout->getTransform(),
             _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),

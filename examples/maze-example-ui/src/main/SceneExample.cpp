@@ -57,6 +57,7 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
+#include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -74,6 +75,7 @@
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "Example.hpp"
@@ -199,6 +201,17 @@ namespace Maze
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
 
         /*
+        SpriteRenderer2DPtr sprite = SpriteHelper::CreateSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
+            Vec2F(200.0f, 150.0f),
+            Vec2F(0.0f, 0.0f),
+            materialManager->getSpriteMaterial(),
+            m_canvas->getTransform(),
+            this);
+        sprite->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
+        */
+
+        /*
         SystemUIHelper::CreateSystemText(
             "SOME TEST TEXT",
             8,
@@ -235,7 +248,7 @@ namespace Maze
             ColorU32(203, 203, 203),
             Vec2F32(640, 480),
             Vec2F32(0, 0),
-            materialManager->getColorTextureMaterial(),
+            materialManager->getSpriteMaterial(),
             canvasTransform2D,
             this);
         */
@@ -270,7 +283,7 @@ namespace Maze
             Vec2F32(0.5f, 0.5f));
 
         SpriteRenderer2DPtr spriteRenderer = m_scrollRect->getContentTransform()->getEntityRaw()->ensureComponent<SpriteRenderer2D>();
-        spriteRenderer->setMaterial(renderSystem->getMaterialManager()->getColorTextureMaterial());
+        spriteRenderer->setMaterial(renderSystem->getMaterialManager()->getSpriteMaterial());
         spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::MainScene));
         m_scrollRect->getContentTransform()->setSize(300.0f, 150.0f);
         */
@@ -492,7 +505,7 @@ namespace Maze
             ColorU32(255, 0, 0),
             Vec2F32(160, 30),
             Vec2F32(100, 100),
-            materialManager->getColorTextureMaterial(),
+            materialManager->getSpriteMaterial(),
             panel00->getTransform(),
             this);
 
@@ -500,7 +513,7 @@ namespace Maze
             ColorU32(0, 255, 0),
             Vec2F32(30, 50),
             Vec2F32(200, 200),
-            materialManager->getColorTextureMaterial(),
+            materialManager->getSpriteMaterial(),
             panel00->getTransform(),
             this);
 
@@ -508,7 +521,7 @@ namespace Maze
             ColorU32(0, 0, 255),
             Vec2F32(160, 90),
             Vec2F32(300, 300),
-            materialManager->getColorTextureMaterial(),
+            materialManager->getSpriteMaterial(),
             panel00->getTransform(),
             this);
             */
@@ -538,7 +551,7 @@ namespace Maze
         */
 
 
-        
+        /*
         UIHelper::CreateDefaultEditBox(
             "Tinaynox!",
             FontMaterialPtr(),
@@ -559,7 +572,49 @@ namespace Maze
             Vec2F32(0.5f, 0.5f),
             Vec2F32::c_zero);
         editBox->setText("Tinaynox!");
-        
+        */
+
+        /*
+        SpriteHelper::CreateSprite(
+            "Panel00.bmp",
+            Vec2F(400.0f, 200.0f),
+            Vec2F(-300.0f, 0.0f),
+            m_canvas->getTransform(),
+            this)->getEntityRaw()->ensureComponent<CanvasGroup>()->setLocalAlpha(0.2f);
+        */        
+
+        EditorToolsUIHelper::CreateDefaultColorGradientEdit(
+            ColorGradient(
+                0.0f,
+                Vec4F::c_one,
+                1.0f,
+                Vec4F::c_one),
+            Vec2F(60, 18),
+            Vec2F(0, 0),
+            m_canvas->getTransform(),
+            this,
+            Vec2F(0.5f, 0.5f),
+            Vec2F(0.5f, 0.5f));
+
+        /*
+        ColorEdit2DPtr colorEdit = EditorToolsUIHelper::CreateDefaultColorEdit(
+            ColorU32::c_red,
+            Vec2F32(150, 18),
+            Vec2F32(270, 300),
+            m_canvas->getTransform(),
+            this,
+            Vec2F32(0.0f, 0.0f),
+            Vec2F32::c_zero);
+
+        ColorHDREdit2DPtr colorHDREdit = EditorToolsUIHelper::CreateDefaultColorHDREdit(
+            ColorF128::c_green,
+            Vec2F32(150, 18),
+            Vec2F32(270, 270),
+            m_canvas->getTransform(),
+            this,
+            Vec2F32(0.0f, 0.0f),
+            Vec2F32::c_zero);
+        */
     }
 
     //////////////////////////////////////////

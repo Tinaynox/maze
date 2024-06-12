@@ -176,8 +176,12 @@ namespace Maze
             spriteRendererEntity->ensureComponent<Name>("Sprite");
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
+            spriteRenderer->setSprite(
+                SpriteManager::GetCurrentInstance()->ensureBuiltinSprite(
+                    BuiltinSpriteType::White));
             spriteRenderer->setColor(_color);
-            spriteRenderer->setMaterialCopy(_material ? _material : MaterialManager::GetCurrentInstance()->getColorMaterial());
+            spriteRenderer->setMaterialCopy(
+                _material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
 
             Maze::Transform2DPtr const& transform = spriteRenderer->getTransform();
             transform->setParent(_parent);
@@ -201,7 +205,8 @@ namespace Maze
             lineRendererEntity->ensureComponent<Name>("LineRenderer");
 
             LineRenderer2DPtr lineRenderer = lineRendererEntity->createComponent<LineRenderer2D>();
-            lineRenderer->getMeshRenderer()->setMaterial(MaterialManager::GetCurrentInstance()->getColorMaterial());
+            lineRenderer->getMeshRenderer()->setMaterial(
+                MaterialManager::GetCurrentInstance()->getColorMaterial());
 
             Transform2DPtr transform = lineRendererEntity->ensureComponent<Transform2D>();
             transform->setParent(_parent);
@@ -225,7 +230,8 @@ namespace Maze
             lineRendererEntity->ensureComponent<Name>("LineRenderer");
 
             SimpleLineRenderer2DPtr lineRenderer = lineRendererEntity->createComponent<SimpleLineRenderer2D>();
-            lineRenderer->getMeshRenderer()->setMaterial(MaterialManager::GetCurrentInstance()->getColorMaterial());
+            lineRenderer->getMeshRenderer()->setMaterial(
+                MaterialManager::GetCurrentInstance()->getColorMaterial());
 
             Transform2DPtr transform = lineRendererEntity->ensureComponent<Transform2D>();
             transform->setParent(_parent);

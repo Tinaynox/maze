@@ -204,7 +204,7 @@ namespace Maze
             ColorU32::c_lightGray,
             Vec2F(300.0f, 400.0f),
             Vec2F(0.0f, 0.0f),
-            renderSystem->getMaterialManager()->getColorTextureMaterial(),
+            renderSystem->getMaterialManager()->getSpriteMaterial(),
             m_canvas->getTransform(),
             this);
         VerticalLayout2DPtr verticalLayout = hierarchyHolderSprite->getEntityRaw()->ensureComponent<VerticalLayout2D>();

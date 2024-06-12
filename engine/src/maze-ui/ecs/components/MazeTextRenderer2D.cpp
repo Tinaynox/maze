@@ -847,8 +847,8 @@ namespace Maze
             _quadIndex,
             Vec4F(
                 _glyph.textureCoords.position.x,
-                _glyph.textureCoords.position.x + _glyph.textureCoords.size.x,
                 _glyph.textureCoords.position.y,
+                _glyph.textureCoords.position.x + _glyph.textureCoords.size.x,
                 _glyph.textureCoords.position.y + _glyph.textureCoords.size.y));
 
         m_meshRenderer->setUV1(

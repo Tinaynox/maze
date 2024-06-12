@@ -293,11 +293,16 @@ namespace Maze
 
                 break;
             }
-            case BuiltinMaterialType::ColorHDR:
+            case BuiltinMaterialType::ColorStreamHDR:
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::ColorHDR));
+
+                ShaderPtr shader = m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::ColorHDR)->createCopy();
+                shader->addLocalFeature("MAZE_COLOR_STREAM", "(1)");
+                shader->recompile();
+
+                renderPass->setShader(shader);
                 renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
                 renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
                 renderPass->setDepthWriteEnabled(false);
@@ -306,6 +311,22 @@ namespace Maze
                 renderPass->setRenderQueueIndex(3000);
                 material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 material->setUniform(MAZE_HCS("u_intensity"), 0.0f);
+                break;
+            }
+            case BuiltinMaterialType::Sprite:
+            {
+                MaterialPtr const& originMaterial = ensureBuiltinMaterial(BuiltinMaterialType::ColorTexture);
+                if (originMaterial)
+                {
+                    material = originMaterial->createCopy();
+
+                    RenderPassPtr const& renderPass = material->getFirstRenderPass();
+                    ShaderPtr shader = renderPass->getShader()->createCopy();
+                    shader->addLocalFeature("MAZE_COLOR_STREAM", "(1)");
+                    shader->addLocalFeature("MAZE_UV0_STREAM", "(1)");
+                    shader->recompile();
+                    renderPass->setShader(shader);
+                }
                 break;
             }
             case BuiltinMaterialType::HSVRect:

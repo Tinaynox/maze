@@ -47,6 +47,7 @@
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -199,7 +200,7 @@ namespace Maze
             true);
         scrollRect->getViewportTransform()->getEntityRaw()->getComponent<ScissorMask2D>()->setPadding(0, 0, 0, 0);
         scrollRect->getEntityRaw()->ensureComponent<SizePolicy2D>()->setSizeDelta(0.0f, -topOffset);
-        scrollRect->getEntityRaw()->getComponent<MeshRenderer>()->setEnabled(false);
+        scrollRect->getEntityRaw()->getComponent<MeshRendererInstanced>()->setEnabled(false);
 
         m_layout = scrollRect->getContentTransform()->getEntityRaw()->createComponent<VerticalLayout2D>();
         m_layout->setHorizontalAlignment(HorizontalAlignment2D::Left);
@@ -332,7 +333,7 @@ namespace Maze
             ColorU32::c_white,
             data.button->getTransform()->getSize() - Vec2F(6.0f, 6.0f),
             Vec2F::c_zero,
-            GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+            GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getSpriteMaterial(),
             data.button->getTransform(),
             data.bodyTransform->getEntityRaw()->getEcsScene());
 

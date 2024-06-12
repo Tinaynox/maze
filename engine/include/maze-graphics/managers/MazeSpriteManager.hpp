@@ -52,6 +52,16 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Enum BuiltinSpriteType
+    //
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_GRAPHICS_API, BuiltinSpriteType,
+        White,
+        Black,
+        Error);
+
+
+    //////////////////////////////////////////
     // Struct SpriteLibraryData
     //
     //////////////////////////////////////////
@@ -136,6 +146,23 @@ namespace Maze
         //////////////////////////////////////////
         HashedCString getSpriteName(Sprite const* _sprite);
 
+
+        //////////////////////////////////////////
+        inline SpritePtr const& getBuiltinSprite(BuiltinSpriteType _spriteType) const { return m_builtinSprites[(Size)_spriteType]; }
+
+        //////////////////////////////////////////
+        SpritePtr const& createBuiltinSprite(BuiltinSpriteType _spriteType);
+
+        //////////////////////////////////////////
+        SpritePtr const& ensureBuiltinSprite(BuiltinSpriteType _spriteType);
+
+        //////////////////////////////////////////
+        void createBuiltinSprites();
+
+    public:
+        //////////////////////////////////////////
+        MultiDelegate<> eventBuiltinSpritesCreated;
+
     protected:
 
         //////////////////////////////////////////
@@ -149,6 +176,7 @@ namespace Maze
         RenderSystem* m_renderSystemRaw;
 
         StringKeyMap<SpriteLibraryData> m_spritesLibrary;
+        SpritePtr m_builtinSprites[BuiltinSpriteType::MAX];
 
         MaterialPtr m_defaultSpriteMaterial;
     };

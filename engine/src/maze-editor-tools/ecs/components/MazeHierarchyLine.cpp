@@ -50,6 +50,7 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
@@ -262,7 +263,7 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
             Vec2F(m_rowHeight),
             Vec2F::c_zero,
-            MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
+            MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
             m_nodeContainer,
             getEntityRaw()->getEcsScene());
         m_dropDownRenderer->setColor(ColorU32::c_black);
@@ -276,7 +277,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::EntityObject3D),
                 Vec2F(m_rowHeight),
                 Vec2F::c_zero,
-                MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
+                MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
                 m_nodeContainer,
                 getEntityRaw()->getEcsScene(),
                 Vec2F(0.0f, 0.5f),
@@ -290,7 +291,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Scene),
                 Vec2F(m_rowHeight),
                 Vec2F::c_zero,
-                MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
+                MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
                 m_nodeContainer,
                 getEntityRaw()->getEcsScene(),
                 Vec2F(0.0f, 0.5f),

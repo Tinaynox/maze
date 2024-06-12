@@ -46,16 +46,15 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Material);
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
-    MAZE_USING_SHARED_PTR(MeshRenderer);
+    MAZE_USING_SHARED_PTR(MeshRendererInstanced);
     MAZE_USING_SHARED_PTR(CanvasRenderer);
 
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_GRAPHICS_API, SpriteRenderMode,
+    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_GRAPHICS_API, SpriteRenderMode,
         Simple,
         Sliced,
-        Tiled,
-        Custom);
+        Tiled);
 
 
     //////////////////////////////////////////
@@ -78,7 +77,16 @@ namespace Maze
         friend class Entity;
 
         //////////////////////////////////////////
-        using CustomRenderCallback = std::function<MeshPtr(SpriteRenderer2D*)>;
+        enum class Flags : U8
+        {
+            None = 0,
+
+            MeshDataDirty = MAZE_BIT(0),
+            ColorDirty = MAZE_BIT(1),
+            ModelMatricesDirty = MAZE_BIT(2),
+            UV0Dirty = MAZE_BIT(3),
+            MaterialDirty = MAZE_BIT(4),
+        };
 
     public:
 
@@ -94,6 +102,34 @@ namespace Maze
 
         //////////////////////////////////////////
         inline CanvasRendererPtr const& getCanvasRenderer() const { return m_canvasRenderer; }
+
+        //////////////////////////////////////////
+        inline MeshRendererInstancedPtr const& getMeshRenderer() const { return m_meshRenderer; }
+
+
+        //////////////////////////////////////////
+        inline U8 getFlags() const { return m_flags; }
+
+        //////////////////////////////////////////
+        inline void setFlags(U8 _flags) { m_flags = _flags; }
+
+        //////////////////////////////////////////
+        inline void setFlag(Flags _flag, bool _value)
+        {
+            if (_value)
+                setFlags(m_flags | static_cast<U8>(_flag));
+            else
+                setFlags(m_flags & ~static_cast<U8>(_flag));
+        }
+
+        //////////////////////////////////////////
+        inline bool getFlag(Flags flag) const { return (m_flags & static_cast<U8>(flag)) != 0; }
+
+        //////////////////////////////////////////
+        inline void enableFlag(Flags _flag) { setFlag(_flag, true); }
+
+        //////////////////////////////////////////
+        inline void disableFlag(Flags _flag) { setFlag(_flag, false); }
 
             
         //////////////////////////////////////////
@@ -153,7 +189,7 @@ namespace Maze
         inline void setColorAlpha(U8 _a) { setColor(ColorU32{ m_color.r, m_color.g, m_color.b, _a }); }
 
         //////////////////////////////////////////
-        ColorU32 getColor() const { return m_color; }            
+        inline ColorU32 getColor() const { return m_color; }            
 
 
         //////////////////////////////////////////
@@ -164,21 +200,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void updateMaterial();
+        inline bool getPixelPerfect() const { return m_pixelPerfect; }
 
         //////////////////////////////////////////
-        void updateMesh();
+        void setPixelPerfect(bool _value);
 
-
-        //////////////////////////////////////////
-        MeshRendererPtr const& getMeshRenderer() const { return m_meshRenderer; }
-
+        
 
         //////////////////////////////////////////
-        void setCustomRenderCallback(CustomRenderCallback _value);
-
-        //////////////////////////////////////////
-        inline CustomRenderCallback getCustomRenderCallback() const { return m_customRenderCallback; }
+        void prepareForRender();
+        
 
     protected:
 
@@ -203,20 +234,43 @@ namespace Maze
         //////////////////////////////////////////
         void notifySpriteDataChanged(Sprite* _sprite);
 
+
+        //////////////////////////////////////////
+        void updateMeshData();
+
+        //////////////////////////////////////////
+        void updateMaterial();
+
+        //////////////////////////////////////////
+        void updateMeshRendererColors();
+
+        //////////////////////////////////////////
+        void updateMeshRendererUV0s();
+
+        //////////////////////////////////////////
+        void updateMeshRendererModelMatrices();
+
     protected:
-        RenderSystem* m_renderSystem;
+        RenderSystem* m_renderSystem = nullptr;
 
         Transform2DPtr m_transform;
-        MeshRendererPtr m_meshRenderer;
+        MeshRendererInstancedPtr m_meshRenderer;
         CanvasRendererPtr m_canvasRenderer;
 
+    protected:
         SpriteAssetRef m_spriteRef;
         MaterialAssetRef m_materialRef;
-        ColorU32 m_color;
+        ColorU32 m_color = ColorU32::c_white;
 
-        SpriteRenderMode m_renderMode;
+        SpriteRenderMode m_renderMode = SpriteRenderMode::Simple;
 
-        CustomRenderCallback m_customRenderCallback;
+        bool m_pixelPerfect = false;
+
+    private:
+        U8 m_flags = 0u;
+        Vector<TMat> m_localMatrices;
+        Vector<Vec4F> m_localColors;
+        Vector<Vec4F> m_localUV0s;
     };
 
 

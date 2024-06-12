@@ -142,7 +142,7 @@ namespace Maze
                 canvasTransform->getSize().x, 
                 canvasTransform->getSize().y),
             Vec2F(0.0f, 0.0f),
-            materialManager->getColorTextureMaterial(),
+            materialManager->getSpriteMaterial(),
             m_canvas->getTransform(),
             getEntityRaw()->getEcsScene(),
             Vec2F::c_zero,
@@ -216,7 +216,7 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Pause),
             Vec2F(18.0f, 18.0f),
             Vec2F::c_zero,
-            MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
+            MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
             m_pauseButton->getTransform(),
             getEntityRaw()->getEcsScene())->setColor(85, 85, 85);
 
@@ -236,7 +236,7 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::StepUpdate),
             Vec2F(18.0f, 18.0f),
             Vec2F::c_zero,
-            MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
+            MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
             m_stepButton->getTransform(),
             getEntityRaw()->getEcsScene())->setColor(85, 85, 85);
 

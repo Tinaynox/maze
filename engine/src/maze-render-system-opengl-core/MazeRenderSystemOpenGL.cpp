@@ -81,6 +81,7 @@ namespace Maze
     //////////////////////////////////////////
     RenderSystemOpenGL::~RenderSystemOpenGL()
     {
+        m_spriteManager.reset();
         m_systemFontManager.reset();
         m_materialManager.reset();
     }

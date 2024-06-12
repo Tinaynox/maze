@@ -53,8 +53,8 @@ R"(
     #if (MAZE_UV0_STREAM)
         vec4 uv0Stream = GetUV0Stream(instanceId);
         v_uv0 = vec2(
-            mix(uv0Stream.x, uv0Stream.y, v_uv0.x),
-            mix(uv0Stream.z, uv0Stream.w, v_uv0.y));
+            mix(uv0Stream.x, uv0Stream.z, v_uv0.x),
+            mix(uv0Stream.y, uv0Stream.w, v_uv0.y));
     #endif
 
         gl_Position = positionCS;

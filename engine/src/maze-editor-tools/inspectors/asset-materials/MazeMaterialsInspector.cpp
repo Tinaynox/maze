@@ -368,7 +368,7 @@ namespace Maze
                 ColorU32(127, 127, 127),
                 Vec2F(m_parent->getWidth(), 1),
                 Vec2F(0, 0),
-                renderSystem->getMaterialManager()->getColorMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 m_shaderUniformVariantsRoot,
                 m_shaderUniformVariantsRoot->getEntityRaw()->getEcsScene(),
                 Vec2F(0.0f, 1.0f),

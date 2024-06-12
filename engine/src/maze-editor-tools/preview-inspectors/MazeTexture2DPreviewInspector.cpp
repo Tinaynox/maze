@@ -155,7 +155,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
                 Vec2F(m_scene->getCanvas()->getTransform()->getHeight()),
                 Vec2F::c_zero,
-                MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
+                MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
                 m_scene->getCanvas()->getTransform(),
                 m_scene.get(),
                 Vec2F(0.5f, 0.5f),
@@ -191,7 +191,7 @@ namespace Maze
                 sprite,
                 spriteSize,
                 Vec2F::c_zero,
-                MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
+                MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
                 spriteHolder->getTransform(),
                 m_scene.get());
 

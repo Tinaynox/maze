@@ -40,6 +40,12 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    // Enum BuiltinSpriteType
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(BuiltinSpriteType);
+
 
     //////////////////////////////////////////
     // Class SpriteManager
@@ -54,6 +60,12 @@ namespace Maze
     //////////////////////////////////////////
     SpriteManager::~SpriteManager()
     {
+        m_defaultSpriteMaterial.reset();
+
+        m_spritesLibrary.clear();
+
+        for (BuiltinSpriteType t = BuiltinSpriteType(1); t < BuiltinSpriteType::MAX; ++t)
+            m_builtinSprites[t].reset();
     }
 
     //////////////////////////////////////////
@@ -184,6 +196,71 @@ namespace Maze
         }
 
         return HashedCString();
+    }
+
+    //////////////////////////////////////////
+    SpritePtr const& SpriteManager::createBuiltinSprite(BuiltinSpriteType _spriteType)
+    {
+        SpritePtr& sprite = m_builtinSprites[_spriteType];
+
+        switch (_spriteType)
+        {
+        case BuiltinSpriteType::White:
+        {
+            sprite = Sprite::Create(
+                TextureManager::GetCurrentInstancePtr()->ensureBuiltinTexture2D(
+                    BuiltinTexture2DType::White));
+            break;
+        }
+        case BuiltinSpriteType::Black:
+        {
+            sprite = Sprite::Create(
+                TextureManager::GetCurrentInstancePtr()->ensureBuiltinTexture2D(
+                    BuiltinTexture2DType::Black));
+            break;
+        }
+        case BuiltinSpriteType::Error:
+        {
+            sprite = Sprite::Create(
+                TextureManager::GetCurrentInstancePtr()->ensureBuiltinTexture2D(
+                    BuiltinTexture2DType::Error));
+            break;
+        }
+        default:
+        {
+            MAZE_NOT_IMPLEMENTED;
+            break;
+        }
+        }
+
+        if (sprite)
+        {
+            sprite->setName(_spriteType.toCString());
+            addSpriteToLibrary(sprite);
+        }
+
+        return sprite;
+    }
+
+    //////////////////////////////////////////
+    SpritePtr const& SpriteManager::ensureBuiltinSprite(BuiltinSpriteType _spriteType)
+    {
+        SpritePtr const& sprite = getBuiltinSprite(_spriteType);
+        if (sprite)
+            return sprite;
+
+        return createBuiltinSprite(_spriteType);
+    }
+
+    //////////////////////////////////////////
+    void SpriteManager::createBuiltinSprites()
+    {
+        MAZE_PROFILE_EVENT("SpriteManager::createBuiltinSprites");
+
+        for (BuiltinSpriteType t = BuiltinSpriteType(1); t < BuiltinSpriteType::MAX; ++t)
+            ensureBuiltinSprite(t);
+
+        eventBuiltinSpritesCreated();
     }
 
 } // namespace Maze

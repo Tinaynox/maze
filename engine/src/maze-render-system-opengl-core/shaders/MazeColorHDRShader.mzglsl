@@ -22,7 +22,6 @@ R"(
     //////////////////////////////////////////
     void main()
     {
-    
         int instanceId = gl_InstanceID;
     
         mat4 modelMatrix = GetModelMatrix(instanceId);
@@ -44,6 +43,10 @@ R"(
 
         v_uv0 = a_texCoords0;
         v_color = a_color;
+
+	#if (MAZE_COLOR_STREAM)
+        v_color *= GetColorStream(instanceId);
+    #endif
 
         gl_Position = positionCS;
     }

@@ -35,6 +35,7 @@
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
@@ -161,7 +162,7 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Mesh),
             Vec2F(12, 12),
             Vec2F(9.0f, 0.0f),
-            materialManager->getColorTextureMaterial(),
+            materialManager->getSpriteMaterial(),
             m_renderMeshButton->getTransform(),
             _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),

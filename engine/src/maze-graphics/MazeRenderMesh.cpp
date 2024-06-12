@@ -149,6 +149,8 @@ namespace Maze
         AssetFilePtr const& _assetFile,
         RenderTarget* _renderTarget)
     {
+        MAZE_FATAL_IF(m_locked, "RenderMesh is locked!");
+
         MAZE_PROFILE_EVENT("RenderMesh::loadFromAssetFile");
 
         MAZE_ERROR_RETURN_IF(!_assetFile, "Null AssetFile");
@@ -162,6 +164,8 @@ namespace Maze
         String const& _assetFileName,
         RenderTarget* _renderTarget)
     {
+        MAZE_FATAL_IF(m_locked, "RenderMesh is locked!");
+
         MAZE_PROFILE_EVENT("RenderMesh::loadFromAssetFile");
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_assetFileName);
@@ -173,6 +177,8 @@ namespace Maze
         MeshPtr const& _mesh,
         RenderTarget* _renderTarget)
     {
+        MAZE_FATAL_IF(m_locked, "RenderMesh is locked!");
+
         MAZE_PROFILE_EVENT("RenderMesh::loadFromMesh");
 
         MAZE_ERROR_RETURN_IF(!_mesh, "Mesh is null!");
@@ -204,12 +210,16 @@ namespace Maze
     //////////////////////////////////////////
     void RenderMesh::clearVertexArrayObjects()
     {
+        MAZE_FATAL_IF(m_locked, "RenderMesh is locked!");
+
         m_vertexArrayObjects.clear();
     }
 
     //////////////////////////////////////////
     void RenderMesh::setVertexArrayObject(VertexArrayObjectPtr const& _vao)
     {
+        MAZE_FATAL_IF(m_locked, "RenderMesh is locked!");
+
         clearVertexArrayObjects();
 
         m_vertexArrayObjects.push_back(_vao);

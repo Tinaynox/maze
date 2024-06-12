@@ -152,6 +152,13 @@ namespace Maze
         void clear();
 
 
+        //////////////////////////////////////////
+        inline void lock() { m_locked = true; }
+
+        //////////////////////////////////////////
+        inline void unlock() { m_locked = false; }
+
+
 
         //////////////////////////////////////////
         static RenderMeshPtr FromString(String const& _string);
@@ -183,6 +190,7 @@ namespace Maze
 
 
     protected:
+        bool m_locked = false;
         RenderSystem* m_renderSystem;
 
         String m_name;

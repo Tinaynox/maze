@@ -41,6 +41,7 @@
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 
 

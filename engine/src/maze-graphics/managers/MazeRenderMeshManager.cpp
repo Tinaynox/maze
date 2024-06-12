@@ -170,6 +170,7 @@ namespace Maze
         if (renderMesh)
         {
             renderMesh->setName(_renderMeshType.toCString());
+            renderMesh->lock();
             addRenderMeshToLibrary(renderMesh);
         }
 
