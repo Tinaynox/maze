@@ -27,6 +27,7 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
@@ -215,8 +216,8 @@ namespace Maze
 
         for (auto it = m_entities.begin(), end = m_entities.end(); it != end; ++it)
         {
-            Name* component = (*it)->getComponentRaw<Name>();
-            if (component && component->getName() == _name)
+            CString componentName = EcsHelper::GetName((*it));
+            if (componentName && strcmp(componentName, _name) == 0)
                 return (*it)->getSharedPtr();
         }
 

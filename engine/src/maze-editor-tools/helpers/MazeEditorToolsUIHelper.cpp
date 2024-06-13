@@ -36,6 +36,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -79,7 +80,6 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
-#include "maze-editor-tools/ecs/components/MazeHierarchyControllerOBSOLETE.hpp"
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
@@ -245,7 +245,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr colorEditEntity = _ecsScene->createEntity();
-            colorEditEntity->ensureComponent<Name>("ColorEdit");
+            colorEditEntity->ensureComponent<StaticName>("ColorEdit");
 
             ColorEdit2DPtr colorEdit = colorEditEntity->createComponent<ColorEdit2D>();
             colorEdit->setColor(_color);
@@ -363,7 +363,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr colorEditEntity = _ecsScene->createEntity();
-            colorEditEntity->ensureComponent<Name>("ColorHDREdit");
+            colorEditEntity->ensureComponent<StaticName>("ColorHDREdit");
 
             ColorHDREdit2DPtr colorEdit = colorEditEntity->createComponent<ColorHDREdit2D>();
             colorEdit->setColor(_color);
@@ -522,7 +522,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr colorEditEntity = _ecsScene->createEntity();
-            colorEditEntity->ensureComponent<Name>("ColorGradientEdit");
+            colorEditEntity->ensureComponent<StaticName>("ColorGradientEdit");
 
             ColorGradientEdit2DPtr colorEdit = colorEditEntity->createComponent<ColorGradientEdit2D>();
             colorEdit->setGradient(_gradient);
@@ -624,7 +624,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr curveEditEntity = _ecsScene->createEntity();
-            curveEditEntity->ensureComponent<Name>("CurveEdit");
+            curveEditEntity->ensureComponent<StaticName>("CurveEdit");
 
             AnimationCurveEdit2DPtr curveEdit = curveEditEntity->createComponent<AnimationCurveEdit2D>();
             curveEdit->setCurve(_curve);

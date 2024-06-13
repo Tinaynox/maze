@@ -281,6 +281,8 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorld::reserveEntityIndices(Size _count)
     {
+        MAZE_PROFILE_EVENT("EcsWorld::reserveEntityIndices");
+
         S32 startIndex = (S32)m_entities.size();
         
         m_entities.resize(m_entities.size() + _count);
@@ -307,14 +309,20 @@ namespace Maze
         m_eventHolders.switchContainer()->processEvents();
 
         {
+            MAZE_PROFILE_EVENT("EcsWorld - PreUpdateEvent");
+
             PreUpdateEvent updateEvent(_dt);
             broadcastEventImmediate<PreUpdateEvent>(updateEvent);
         }
         {
+            MAZE_PROFILE_EVENT("EcsWorld - UpdateEvent");
+
             UpdateEvent updateEvent(_dt);
             broadcastEventImmediate<UpdateEvent>(updateEvent);
         }
         {
+            MAZE_PROFILE_EVENT("EcsWorld - PostUpdateEvent");
+
             PostUpdateEvent updateEvent(_dt);
             broadcastEventImmediate<PostUpdateEvent>(updateEvent);
         }

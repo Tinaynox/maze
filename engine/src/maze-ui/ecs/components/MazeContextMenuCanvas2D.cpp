@@ -34,6 +34,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -161,7 +162,7 @@ namespace Maze
         if (!contextMenuCanvas)
         {
             EntityPtr contextMenuCanvasEntity = _scene->createEntity();
-            contextMenuCanvasEntity->ensureComponent<Name>("Context Menu Canvas");
+            contextMenuCanvasEntity->ensureComponent<StaticName>("Context Menu Canvas");
             contextMenuCanvas = contextMenuCanvasEntity->createComponent<ContextMenuCanvas2D>();
 
             MenuListTree2DPtr menuListTree = UIHelper::CreateDefaultMenuListTree(

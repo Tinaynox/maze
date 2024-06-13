@@ -220,56 +220,72 @@ namespace Maze
     //////////////////////////////////////////
     void HierarchyLine::buildUI()
     {
-        m_transform = getEntityRaw()->ensureComponent<Transform2D>();
-        m_verticalLayout = getEntityRaw()->ensureComponent<VerticalLayout2D>();
-        m_verticalLayout->setAutoHeight(true);
-        m_sizePolicy = getEntityRaw()->ensureComponent<SizePolicy2D>();
-        m_sizePolicy->setFlag(SizePolicy2D::Height, false);
+        MAZE_PROFILE_EVENT("HierarchyLine::buildUI");
 
-        m_backgroundRenderer = SpriteHelper::CreateSprite(
-            ColorU32::c_red,
-            Vec2F(m_transform->getWidth(), m_rowHeight),
-            Vec2F::c_zero,
-            MaterialPtr(),
-            m_transform,
-            getEntityRaw()->getEcsScene());
-        SizePolicy2DPtr backgroundRendererSizePolicy = m_backgroundRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
-        backgroundRendererSizePolicy->setFlag(SizePolicy2D::Height, false);
+        {
+            m_transform = getEntityRaw()->ensureComponent<Transform2D>();
+            m_verticalLayout = getEntityRaw()->ensureComponent<VerticalLayout2D>();
+            m_verticalLayout->setAutoHeight(true);
+            m_sizePolicy = getEntityRaw()->ensureComponent<SizePolicy2D>();
+            m_sizePolicy->setFlag(SizePolicy2D::Height, false);
+        }
 
-        m_backgroundButton = m_backgroundRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
-        m_backgroundButton->eventClick.subscribe(this, &HierarchyLine::notifyLineClick);
-        m_backgroundButton->eventCursorPressIn.subscribe(this, &HierarchyLine::notifyLineCursorPressIn);
-        m_backgroundButton->eventDoubleClick.subscribe(this, &HierarchyLine::notifyLineDoubleClick);
-        m_backgroundButton->eventFocusChanged.subscribe(this, &HierarchyLine::notifyLineFocusChanged);
+        {
+            m_backgroundRenderer = SpriteHelper::CreateSprite(
+                ColorU32::c_red,
+                Vec2F(m_transform->getWidth(), m_rowHeight),
+                Vec2F::c_zero,
+                MaterialPtr(),
+                m_transform,
+                getEntityRaw()->getEcsScene());
+            SizePolicy2DPtr backgroundRendererSizePolicy = m_backgroundRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            backgroundRendererSizePolicy->setFlag(SizePolicy2D::Height, false);
+        }
 
-        m_contextMenu = m_backgroundButton->getEntityRaw()->ensureComponent<ContextMenu2D>();
+        {
+            m_backgroundButton = m_backgroundRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
+            m_backgroundButton->eventClick.subscribe(this, &HierarchyLine::notifyLineClick);
+            m_backgroundButton->eventCursorPressIn.subscribe(this, &HierarchyLine::notifyLineCursorPressIn);
+            m_backgroundButton->eventDoubleClick.subscribe(this, &HierarchyLine::notifyLineDoubleClick);
+            m_backgroundButton->eventFocusChanged.subscribe(this, &HierarchyLine::notifyLineFocusChanged);
+        }
 
-        m_nodeContainer = SpriteHelper::CreateTransform2D(
-            m_backgroundRenderer->getTransform()->getSize(),
-            Vec2F::c_zero,
-            m_backgroundRenderer->getTransform(),
-            getEntityRaw()->getEcsScene(),
-            Vec2F(1.0f, 0.5f),
-            Vec2F(1.0f, 0.5f));
-        m_nodeContainerSizePolicy = m_nodeContainer->getEntityRaw()->ensureComponent<SizePolicy2D>();
-        m_nodeContainerSizePolicy->setFlag(SizePolicy2D::Height, false);
-        updateNodeContainerIndent();
+        {
+            m_contextMenu = m_backgroundButton->getEntityRaw()->ensureComponent<ContextMenu2D>();
+        }
 
-        HorizontalLayout2DPtr horizontalLayout = m_nodeContainer->getEntityRaw()->ensureComponent<HorizontalLayout2D>();
-        horizontalLayout->setSpacing(2.0f);
-        horizontalLayout->setPaddingLeft(2.0f);
+        {
+            m_nodeContainer = SpriteHelper::CreateTransform2D(
+                m_backgroundRenderer->getTransform()->getSize(),
+                Vec2F::c_zero,
+                m_backgroundRenderer->getTransform(),
+                getEntityRaw()->getEcsScene(),
+                Vec2F(1.0f, 0.5f),
+                Vec2F(1.0f, 0.5f));
+            m_nodeContainerSizePolicy = m_nodeContainer->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            m_nodeContainerSizePolicy->setFlag(SizePolicy2D::Height, false);
+            updateNodeContainerIndent();
+        }
 
-        m_dropDownRenderer = SpriteHelper::CreateSprite(
-            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
-            Vec2F(m_rowHeight),
-            Vec2F::c_zero,
-            MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
-            m_nodeContainer,
-            getEntityRaw()->getEcsScene());
-        m_dropDownRenderer->setColor(ColorU32::c_black);
-        ClickButton2DPtr dropDownButton = m_dropDownRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
-        dropDownButton->eventClick.subscribe(this, &HierarchyLine::notifyDropDownClick);
-        m_dropDownRenderer->getMeshRenderer()->setEnabled(false);
+        {
+            HorizontalLayout2DPtr horizontalLayout = m_nodeContainer->getEntityRaw()->ensureComponent<HorizontalLayout2D>();
+            horizontalLayout->setSpacing(2.0f);
+            horizontalLayout->setPaddingLeft(2.0f);
+        }
+
+        {
+            m_dropDownRenderer = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
+                Vec2F(m_rowHeight),
+                Vec2F::c_zero,
+                MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
+                m_nodeContainer,
+                getEntityRaw()->getEcsScene());
+            m_dropDownRenderer->setColor(ColorU32::c_black);
+            ClickButton2DPtr dropDownButton = m_dropDownRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
+            dropDownButton->eventClick.subscribe(this, &HierarchyLine::notifyDropDownClick);
+            m_dropDownRenderer->getMeshRenderer()->setEnabled(false);
+        }
 
         if (m_type == HierarchyLineType::Entity)
         {
@@ -299,32 +315,41 @@ namespace Maze
             m_iconRenderer->setColor(ColorU32::c_black);
         }
 
-        m_textRenderer = EditorToolsUIHelper::CreateText(
-            "Element",
-            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
-            12,
-            HorizontalAlignment2D::Left,
-            VerticalAlignment2D::Middle,
-            Vec2F(m_rowHeight),
-            Vec2F::c_zero,
-            m_nodeContainer,
-            getEntityRaw()->getEcsScene());
-        m_textRenderer->setColor(ColorU32::c_black);
+        {
+            m_textRenderer = EditorToolsUIHelper::CreateText(
+                "",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                12,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                Vec2F(m_rowHeight),
+                Vec2F::c_zero,
+                m_nodeContainer,
+                getEntityRaw()->getEcsScene());
+            m_textRenderer->setColor(ColorU32::c_black);
+        }
 
-        m_childrenLayout = UIHelper::CreateVerticalLayout(
-            HorizontalAlignment2D::Left,
-            VerticalAlignment2D::Top,
-            Vec2F(m_transform->getWidth(), 0.0f),
-            Vec2F::c_zero,
-            m_transform,
-            getEntityRaw()->getEcsScene());
-        m_childrenLayout->setAutoHeight(true);
-        SizePolicy2DPtr childrenLayoutSizePolicy = m_childrenLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
-        childrenLayoutSizePolicy->setFlag(SizePolicy2D::Height, false);
-        setExpanded(false);
+        {
+            m_childrenLayout = UIHelper::CreateVerticalLayout(
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Top,
+                Vec2F(m_transform->getWidth(), 0.0f),
+                Vec2F::c_zero,
+                m_transform,
+                getEntityRaw()->getEcsScene());
+            m_childrenLayout->setAutoHeight(true);
+            SizePolicy2DPtr childrenLayoutSizePolicy = m_childrenLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            childrenLayoutSizePolicy->setFlag(SizePolicy2D::Height, false);
+            setExpanded(false);
+        }
 
-        updateDropDownRenderer();
-        updateState();
+        {
+            updateDropDownRenderer();
+        }
+
+        {
+            updateState();
+        }
     }
 
     //////////////////////////////////////////

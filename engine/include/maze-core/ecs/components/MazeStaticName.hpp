@@ -25,83 +25,84 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeHierarchyLinePoolOBSOLETE_hpp_))
-#define _MazeHierarchyLinePoolOBSOLETE_hpp_
+#if (!defined(_MazeStaticName_hpp_))
+#define _MazeStaticName_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
+#include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/utils/MazeSharedObjectPool.hpp"
-#include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-ui/MazeCursorInputEvent.hpp"
-#include "maze-editor-tools/ecs/components/MazeHierarchyLineOBSOLETE.hpp"
+#include "maze-core/math/MazeMat4.hpp"
+#include "maze-core/math/MazeRotation2D.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(Transform2D);
-    MAZE_USING_SHARED_PTR(Transform3D);
-    MAZE_USING_SHARED_PTR(HierarchyLinePoolOBSOLETE);
-    MAZE_USING_SHARED_PTR(Bounds2D);
-    MAZE_USING_SHARED_PTR(Canvas);
-    MAZE_USING_SHARED_PTR(SpriteRenderer2D);
-    MAZE_USING_SHARED_PTR(HierarchyLineOBSOLETE);
+    MAZE_USING_SHARED_PTR(StaticName);
 
 
     //////////////////////////////////////////
-    // Class HierarchyLinePoolOBSOLETE
+    // Class StaticName
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API HierarchyLinePoolOBSOLETE
+    class MAZE_CORE_API StaticName
         : public Component
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(HierarchyLinePoolOBSOLETE, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(StaticName, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(HierarchyLinePoolOBSOLETE);
+        MAZE_DECLARE_MEMORY_ALLOCATION(StaticName);
+
+        //////////////////////////////////////////
+        friend class Entity;
 
     public:
 
         //////////////////////////////////////////
-        virtual ~HierarchyLinePoolOBSOLETE();
+        virtual ~StaticName();
 
         //////////////////////////////////////////
-        static HierarchyLinePoolOBSOLETEPtr Create();
+        static StaticNamePtr Create(CString _name = nullptr);
 
 
         //////////////////////////////////////////
-        HierarchyLineOBSOLETEPtr createHierarchyLineOBSOLETE(HierarchyLineOBSOLETEType _type);
+        inline CString getName() const { return m_name; }
 
         //////////////////////////////////////////
-        void releaseHierarchyLineOBSOLETE(HierarchyLineOBSOLETEPtr const& _hierarchyLine);
+        inline void setStaticName(CString _name) { m_name = _name; }
+
 
     protected:
 
         //////////////////////////////////////////
-        HierarchyLinePoolOBSOLETE();
+        StaticName();
 
         //////////////////////////////////////////
         using Component::init;
         
         //////////////////////////////////////////
-        bool init();
+        bool init(CString _name);
+
+        //////////////////////////////////////////
+        virtual bool init(
+            Component* _component,
+            EcsWorld* _world,
+            EntityCopyData _copyData) MAZE_OVERRIDE;
 
     protected:
-        SharedPtr<SharedObjectPool<HierarchyLineOBSOLETE>> m_pools[(Size)HierarchyLineOBSOLETEType::MAX];
+        CString m_name = nullptr;
     };
+
 
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeHierarchyLinePoolOBSOLETE_hpp_
+#endif // _MazeStaticName_hpp_
 //////////////////////////////////////////

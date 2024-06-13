@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeTMat.hpp"
@@ -393,11 +394,8 @@ namespace Maze
                 if (!result)
                     continue;
 
-                Name* name = child->getEntityRaw()->getComponentRaw<Name>();
-                if (!name)
-                    continue;
-
-                if (name->getName() == _name)
+                CString name = EcsHelper::GetName(child->getEntityRaw());
+                if (name && name == _name)
                     return result;
             }
 
@@ -414,12 +412,9 @@ namespace Maze
                 if (result)
                 {
 
-                    Name* name = child->getEntityRaw()->getComponentRaw<Name>();
-                    if (name)
-                    {
-                        if (name->getName() == _name)
-                            return result;
-                    }
+                    CString name = EcsHelper::GetName(child->getEntityRaw());
+                    if (name && name == _name)
+                        return result;
                 }
 
                 result = child->findChildComponentRecursive<TComponent>(_name);
@@ -440,11 +435,8 @@ namespace Maze
                 if (!result)
                     continue;
 
-                Name* name = child->getEntityRaw()->getComponentRaw<Name>();
-                if (!name)
-                    continue;
-
-                if (name->getName() == _name)
+                CString name = EcsHelper::GetName(child->getEntityRaw());
+                if (name && name == _name)
                     return result;
             }
 
@@ -461,12 +453,9 @@ namespace Maze
                 if (result)
                 {
 
-                    Name* name = child->getEntityRaw()->getComponentRaw<Name>();
-                    if (name)
-                    {
-                        if (name->getName() == _name)
-                            return result;
-                    }
+                    CString name = EcsHelper::GetName(child->getEntityRaw());
+                    if (name && name == _name)
+                        return result;
                 }
 
                 result = child->findChildComponentInheritedFromRecursive<TComponent>(_name);

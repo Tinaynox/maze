@@ -31,6 +31,7 @@
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLineRenderer2D.hpp"
@@ -65,7 +66,7 @@ namespace Maze
             Vec2F const& _pivot)
         {
             Maze::EntityPtr textRendererEntity = _ecsScene->createEntity();
-            textRendererEntity->ensureComponent<Name>("Text");
+            textRendererEntity->ensureComponent<StaticName>("Text");
         
             Maze::SystemTextRenderer2DPtr textRenderer = textRendererEntity->createComponent<Maze::SystemTextRenderer2D>();
             textRenderer->setText(_text);

@@ -71,6 +71,8 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorldEventsQueue::processEvents()
     {
+        MAZE_PROFILE_EVENT("EcsWorldEventsQueue::processEvents");
+
         m_processingEvents = true;
 
         for (EcsWorldEventType eventType : m_eventTypes)
@@ -246,6 +248,8 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorldEventsQueue::invokeAddingEntityEvent()
     {
+        MAZE_PROFILE_EVENT("EcsWorldEventsQueue::invokeAddingEntityEvent");
+
         EntityPtr entity = m_addingEntities.front();
         m_addingEntities.pop_front();
 
@@ -266,6 +270,8 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorldEventsQueue::invokeRemovingEntityEvent()
     {
+        MAZE_PROFILE_EVENT("EcsWorldEventsQueue::invokeRemovingEntityEvent");
+
         EntityId entityId = m_removingEntities.front();
         m_removingEntities.pop();
 
@@ -318,6 +324,8 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorldEventsQueue::invokeComponentsChangedEvent()
     {
+        MAZE_PROFILE_EVENT("EcsWorldEventsQueue::invokeComponentsChangedEvent");
+
         EntityId entityId = m_componentsChangedEntities.front();
         m_componentsChangedEntities.pop();
 
@@ -336,6 +344,8 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorldEventsQueue::invokeActiveChangedEvent()
     {
+        MAZE_PROFILE_EVENT("EcsWorldEventsQueue::invokeActiveChangedEvent");
+
         EntityId entityId = m_activeChangedEntities.front();
         m_activeChangedEntities.pop();
 
@@ -369,6 +379,8 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorldEventsQueue::invokeUsualEventEvent()
     {
+        MAZE_PROFILE_EVENT("EcsWorldEventsQueue::invokeUsualEventEvent");
+
         EventPtr evt = m_usualEvents.front();
         m_usualEvents.pop();
 

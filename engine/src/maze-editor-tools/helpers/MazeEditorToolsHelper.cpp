@@ -72,7 +72,6 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
-#include "maze-editor-tools/ecs/components/MazeHierarchyControllerOBSOLETE.hpp"
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 
@@ -220,7 +219,7 @@ namespace Maze
                 mainScene);
 
             if (_entityName)
-                transform->getEntity()->ensureComponent<Name>()->setName(_entityName);
+                EcsHelper::SetName(transform->getEntityRaw(), _entityName);
 
             return transform->getEntity();
         }

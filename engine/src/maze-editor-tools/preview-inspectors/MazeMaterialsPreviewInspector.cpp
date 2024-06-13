@@ -31,6 +31,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
@@ -181,7 +182,7 @@ namespace Maze
             mainLight3D->getTransform()->setParent(m_scene->getPreviewNodeTransform());
             mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
             mainLight3D->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
-            lightEntity->ensureComponent<Name>("Light");
+            lightEntity->ensureComponent<StaticName>("Light");
 
             // Sphere
             EntityPtr sphere = m_scene->createEntity();

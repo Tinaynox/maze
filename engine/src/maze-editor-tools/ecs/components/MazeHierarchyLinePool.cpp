@@ -96,20 +96,27 @@ namespace Maze
                 new SharedObjectPool<HierarchyLine>(
                     [this, type]() -> HierarchyLinePtr
                     {
+                        MAZE_PROFILE_EVENT("HierarchyLinePool Create");
+
                         EntityPtr entity = this->getEntityRaw()->getEcsScene()->createEntity();
 
                         entity->ensureComponent<ComponentPoolObject<HierarchyLine>>(m_pools[(Size)type]);
 
                         HierarchyLinePtr hierarchyLine = entity->createComponent<HierarchyLine>(type);
+                        
                         return hierarchyLine;
                     },
                     [](HierarchyLinePtr const& _hierarchyLine)
                     {
+                        MAZE_PROFILE_EVENT("HierarchyLinePool Get");
+
                         _hierarchyLine->getEntityRaw()->setActiveSelf(true);
                         _hierarchyLine->prepare();
                     },
                     [](HierarchyLinePtr const& _hierarchyLine)
                     {
+                        MAZE_PROFILE_EVENT("HierarchyLinePool Release");
+
                         _hierarchyLine->getEntityRaw()->setActiveSelf(false);
 
                         if (_hierarchyLine->getTransform() && _hierarchyLine->getTransform()->getParent())
@@ -127,6 +134,8 @@ namespace Maze
                     },
                     [](HierarchyLinePtr const& _hierarchyLine)
                     {
+                        MAZE_PROFILE_EVENT("HierarchyLinePool Destroy");
+
                         if (_hierarchyLine->getEntityRaw())
                             _hierarchyLine->getEntityRaw()->removeFromEcsWorld();
                     }));

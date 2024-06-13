@@ -36,6 +36,7 @@
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -75,7 +76,6 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
-#include "maze-editor-tools/ecs/components/MazeHierarchyControllerOBSOLETE.hpp"
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
@@ -203,14 +203,14 @@ namespace Maze
         // RenderController
         {
             EntityPtr entity = m_previewWorld->createEntity();
-            entity->createComponent<Name>("RenderController");
+            entity->createComponent<StaticName>("RenderController");
             m_renderController = entity->createComponent<RenderController>(m_renderTarget->getRenderSystem()->cast<RenderSystem>());
         }
 
         // 2D Input
         {
             EntityPtr entity = m_previewWorld->createEntity();
-            entity->createComponent<Name>("InputSystem2D");
+            entity->createComponent<StaticName>("InputSystem2D");
             m_inputSystem2D = entity->createComponent<InputSystem2D>();
         }
     }

@@ -33,6 +33,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -85,7 +86,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr editBoxEntity = _ecsScene->createEntity();
-            editBoxEntity->ensureComponent<Name>("EditBox");
+            editBoxEntity->ensureComponent<StaticName>("EditBox");
 
             EditBox2DPtr editBox = editBoxEntity->createComponent<EditBox2D>();
 
@@ -209,7 +210,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr dropdownEntity = _ecsScene->createEntity();
-            dropdownEntity->ensureComponent<Name>("Dropdown");
+            dropdownEntity->ensureComponent<StaticName>("Dropdown");
 
             Dropdown2DPtr dropdown = dropdownEntity->createComponent<Dropdown2D>();
 
@@ -367,7 +368,7 @@ namespace Maze
                         renderSystem->getMaterialManager()->getSpriteMaterial(),
                         itemPrefabTransform,
                         _ecsScene);
-                    backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
+                    backgroundSpriteRenderer->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Background");
                     backgroundSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
                     SpriteRenderer2DPtr checkMarkSprite = SpriteHelper::CreateSprite(
@@ -379,7 +380,7 @@ namespace Maze
                         spriteRenderer->getEntityRaw()->getEcsScene(),
                         Vec2F(0.0f, 0.0f),
                         Vec2F(0.5f, 0.5f));
-                    checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
+                    checkMarkSprite->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("CheckMark");
                     checkMarkSprite->setColor(ColorU32::c_black);
 
                     AbstractTextRenderer2DPtr itemTextRenderer = UIHelper::CreateTextOrSystemText(
@@ -394,7 +395,7 @@ namespace Maze
                         _ecsScene,
                         Vec2F::c_zero,
                         Vec2F::c_zero);
-                    itemTextRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Label");
+                    itemTextRenderer->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Label");
                     itemTextRenderer->setColor(ColorU32::c_black);
                     ScissorMask2DPtr scissorMask = itemTextRenderer->getEntityRaw()->createComponent<ScissorMask2D>();
                     SizePolicy2DPtr itemTextRendererSizePolicy = itemTextRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -439,7 +440,7 @@ namespace Maze
             Vec2F const& _pivot)
         {
             EntityPtr entity = _ecsScene->createEntity();
-            entity->ensureComponent<Name>("HLayout");
+            entity->ensureComponent<StaticName>("HLayout");
 
             HorizontalLayout2DPtr layout = entity->createComponent<HorizontalLayout2D>();
             layout->setHorizontalAlignment(_horizontalAlignment);
@@ -467,7 +468,7 @@ namespace Maze
             Vec2F const& _pivot)
         {
             EntityPtr entity = _ecsScene->createEntity();
-            entity->ensureComponent<Name>("VLayout");
+            entity->ensureComponent<StaticName>("VLayout");
 
             VerticalLayout2DPtr layout = entity->createComponent<VerticalLayout2D>();
             layout->setHorizontalAlignment(_horizontalAlignment);
@@ -496,7 +497,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr entity = _ecsScene->createEntity();
-            entity->ensureComponent<Name>("ClickButton");
+            entity->ensureComponent<StaticName>("ClickButton");
 
             ClickButton2DPtr clickButton = entity->createComponent<ClickButton2D>();
             clickButton->setNormalColor(ColorU32{ 245, 245, 245 });
@@ -543,7 +544,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr entity = _ecsScene->createEntity();
-            entity->ensureComponent<Name>("ToggleButton");
+            entity->ensureComponent<StaticName>("ToggleButton");
 
             ToggleButton2DPtr toggleButton = entity->createComponent<ToggleButton2D>();
 
@@ -640,7 +641,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr entity = _ecsScene->createEntity();
-            entity->ensureComponent<Name>("ClickButton");
+            entity->ensureComponent<StaticName>("ClickButton");
 
             ClickButton2DPtr clickButton = entity->createComponent<ClickButton2D>();
             clickButton->setNormalColor(ColorU32{ 245, 245, 245 });
@@ -698,7 +699,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr entity = _ecsScene->createEntity();
-            entity->ensureComponent<Name>("ClickButton");
+            entity->ensureComponent<StaticName>("ClickButton");
 
             ClickButton2DPtr clickButton = entity->createComponent<ClickButton2D>();
 
@@ -754,7 +755,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr entity = _ecsScene->createEntity();
-            entity->ensureComponent<Name>("ToggleButton");
+            entity->ensureComponent<StaticName>("ToggleButton");
 
             ToggleButton2DPtr toggleButton = entity->createComponent<ToggleButton2D>();
 
@@ -864,7 +865,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr sliderEntity = _ecsScene->createEntity();
-            sliderEntity->ensureComponent<Name>("Slider");
+            sliderEntity->ensureComponent<StaticName>("Slider");
 
             Slider2DPtr slider = sliderEntity->createComponent<Slider2D>();
 
@@ -887,7 +888,7 @@ namespace Maze
                     Vec2F(0.0f, 0.5f));
                 background->setRenderMode(SpriteRenderMode::Sliced);
                 background->setColor(ColorU32(144, 144, 144));
-                background->getEntityRaw()->ensureComponent<Name>()->setName("Background");
+                background->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Background");
                 background->getEntityRaw()->ensureComponent<SizePolicy2D>()->setSizeDelta(0.0f, -0.75f * _size.y);
             }
 
@@ -899,7 +900,7 @@ namespace Maze
                     _ecsScene,
                     Vec2F(0.0f, 0.5f),
                     Vec2F(0.0f, 0.5f));
-                fillArea->getEntityRaw()->ensureComponent<Name>()->setName("Fill Area");
+                fillArea->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Fill Area");
                 fillArea->getEntityRaw()->ensureComponent<SizePolicy2D>()->setSizeDelta(0.0f, -0.75f * _size.y);
 
                 SpriteRenderer2DPtr fill = SpriteHelper::CreateSprite(
@@ -912,7 +913,7 @@ namespace Maze
                     Vec2F(0.0f, 0.5f),
                     Vec2F(0.0f, 0.5f));
                 fill->setRenderMode(SpriteRenderMode::Sliced);
-                fill->getEntityRaw()->ensureComponent<Name>()->setName("Fill");
+                fill->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Fill");
 
                 slider->setFillRectTransform(fill->getTransform());
             }
@@ -926,7 +927,7 @@ namespace Maze
                     _ecsScene,
                     Vec2F(0.0f, 0.5f),
                     Vec2F(0.0f, 0.5f));
-                handleSlideArea->getEntityRaw()->ensureComponent<Name>()->setName("Handle Slide Area");
+                handleSlideArea->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Handle Slide Area");
                 handleSlideArea->getEntityRaw()->ensureComponent<SizePolicy2D>()->setSizeDelta(0.0f, -0.75f * _size.y);
 
                 handleRenderer = SpriteHelper::CreateSprite(
@@ -938,7 +939,7 @@ namespace Maze
                     _ecsScene,
                     Vec2F(0.0f, 0.5f),
                     Vec2F(0.5f, 0.5f));
-                handleRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Handle");
+                handleRenderer->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Handle");
 
                 slider->setHandleTransform(handleRenderer->getTransform());
             }
@@ -982,7 +983,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr menuListItemEntity = _ecsScene->createEntity();
-            menuListItemEntity->ensureComponent<Name>("Menu List Item");
+            menuListItemEntity->ensureComponent<StaticName>("Menu List Item");
 
             MenuListItem2DPtr menuListItem = menuListItemEntity->createComponent<MenuListItem2D>();
 
@@ -1001,7 +1002,7 @@ namespace Maze
                 renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 _ecsScene);
-            backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
+            backgroundSpriteRenderer->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Background");
             backgroundSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
             menuListItem->getButton()->setTransitionSprite(backgroundSpriteRenderer);
             menuListItem->getButton()->setNormalColor(ColorU32(240, 240, 240));
@@ -1017,7 +1018,7 @@ namespace Maze
                 _ecsScene,
                 Vec2F(0.0f, 0.0f),
                 Vec2F(0.5f, 0.5f));
-            checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
+            checkMarkSprite->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("CheckMark");
             checkMarkSprite->setColor(ColorU32::c_black);
             menuListItem->setCheckedNode(checkMarkSprite->getEntity());
 
@@ -1031,7 +1032,7 @@ namespace Maze
                 _ecsScene,
                 Vec2F(1.0f, 0.5f),
                 Vec2F(1.0f, 0.5f));
-            subMenuMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("SubMenuMark");
+            subMenuMarkSprite->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("SubMenuMark");
             subMenuMarkSprite->setColor(ColorU32::c_black);
             menuListItem->setSubMenuNode(subMenuMarkSprite->getEntity());
 
@@ -1047,7 +1048,7 @@ namespace Maze
                 _ecsScene,
                 Vec2F::c_zero,
                 Vec2F::c_zero);
-            itemTextRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Label");
+            itemTextRenderer->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Label");
             itemTextRenderer->setColor(ColorU32::c_black);
             ScissorMask2DPtr scissorMask = itemTextRenderer->getEntityRaw()->createComponent<ScissorMask2D>();
             SizePolicy2DPtr itemTextRendererSizePolicy = itemTextRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -1069,7 +1070,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr menuListEntity = _ecsScene->createEntity();
-            menuListEntity->ensureComponent<Name>("Menu List");
+            menuListEntity->ensureComponent<StaticName>("Menu List");
 
             MenuList2DPtr menuList = menuListEntity->createComponent<MenuList2D>();
 
@@ -1091,7 +1092,7 @@ namespace Maze
                 Vec2F(0.0f, 1.0f),
                 Vec2F(0.0f, 1.0f));
             itemsListSpriteRenderer->setColor(240, 240, 240);
-            itemsListSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("List Layout");
+            itemsListSpriteRenderer->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("List Layout");
             VerticalLayout2DPtr itemsListLayout = itemsListSpriteRenderer->getEntityRaw()->ensureComponent<VerticalLayout2D>();
             itemsListLayout->setHorizontalAlignment(HorizontalAlignment2D::Center);
             itemsListLayout->setVerticalAlignment(VerticalAlignment2D::Middle);
@@ -1150,7 +1151,7 @@ namespace Maze
             Vec2F const& _pivot)
         {
             EntityPtr menuListTreeEntity = _ecsScene->createEntity();
-            menuListTreeEntity->ensureComponent<Name>("Menu List Tree");
+            menuListTreeEntity->ensureComponent<StaticName>("Menu List Tree");
 
             MenuListTree2DPtr menuListTree = menuListTreeEntity->createComponent<MenuListTree2D>();
 
@@ -1168,7 +1169,7 @@ namespace Maze
                 _ecsScene,
                 Vec2F(0.0f, 1.0f),
                 Vec2F(0.0f, 1.0f));
-            itemsListTransform->getEntityRaw()->ensureComponent<Name>()->setName("List");
+            itemsListTransform->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("List");
 
             menuListTree->setItemsListTransform(itemsListTransform);
 
@@ -1200,7 +1201,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr menuListTreeEntity = _ecsScene->createEntity();
-            menuListTreeEntity->ensureComponent<Name>("Menu Bar");
+            menuListTreeEntity->ensureComponent<StaticName>("Menu Bar");
 
             MenuBar2DPtr menuBar = menuListTreeEntity->createComponent<MenuBar2D>(_fontMaterial);
 
@@ -1238,7 +1239,7 @@ namespace Maze
             {
                 EntityPtr buttonEntity = _ecsScene->createEntity();
                 buttonEntity->setActiveSelf(false);
-                buttonEntity->ensureComponent<Name>("ToggleButton");
+                buttonEntity->ensureComponent<StaticName>("ToggleButton");
 
                 ToggleButton2DPtr toggleButton = buttonEntity->createComponent<ToggleButton2D>();
                 toggleButton->setCheckByClick(false);
@@ -1275,7 +1276,7 @@ namespace Maze
                     toggleButtonSpriteRenderer->getTransform(),
                     _ecsScene);
                 text->getEntityRaw()->ensureComponent<SizePolicy2D>();
-                text->getEntityRaw()->ensureComponent<Name>()->setName("Label");
+                text->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Label");
                 text->setColor(ColorU32::c_black);
 
                 menuBar->setMenuButtonPrefab(toggleButton);
@@ -1308,7 +1309,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr scrollbarEntity = _ecsScene->createEntity();
-            scrollbarEntity->ensureComponent<Name>("Horizontal Scrollbar");
+            scrollbarEntity->ensureComponent<StaticName>("Horizontal Scrollbar");
 
             Scrollbar2DPtr scrollbar = scrollbarEntity->createComponent<Scrollbar2D>();
             scrollbar->setDirection(Scrollbar2DDirection::LeftToRight);
@@ -1364,7 +1365,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr scrollbarEntity = _ecsScene->createEntity();
-            scrollbarEntity->ensureComponent<Name>("Vertical Scrollbar");
+            scrollbarEntity->ensureComponent<StaticName>("Vertical Scrollbar");
 
             Scrollbar2DPtr scrollbar = scrollbarEntity->createComponent<Scrollbar2D>();
             scrollbar->setDirection(Scrollbar2DDirection::TopToBottom);
@@ -1467,7 +1468,7 @@ namespace Maze
                     _ecsScene,
                     Vec2F(0.0f, 1.0f),
                     Vec2F(0.0f, 1.0f));
-                viewportTransform->getEntityRaw()->ensureComponent<Name>()->setName("Viewport");
+                viewportTransform->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Viewport");
                 ScissorMask2DPtr scissorMark = viewportTransform->getEntityRaw()->ensureComponent<ScissorMask2D>();
                 scissorMark->setPadding(1.0f, 1.0f, 1.0f, 1.0f);
                 scrollRect->setViewportTransform(viewportTransform);
@@ -1481,7 +1482,7 @@ namespace Maze
                         _ecsScene,
                         Vec2F(0.0f, 1.0f),
                         Vec2F(0.0f, 1.0f));
-                    contentTransform->getEntityRaw()->ensureComponent<Name>()->setName("Content");
+                    contentTransform->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Content");
                     scrollRect->setContentTransform(contentTransform);
                 }
             }
@@ -1537,7 +1538,7 @@ namespace Maze
             Vec2F const& _pivot)
         {
             EntityPtr textRendererEntity = _ecsScene->createEntity();
-            textRendererEntity->ensureComponent<Name>("Text");
+            textRendererEntity->ensureComponent<StaticName>("Text");
 
             TextRenderer2DPtr textRenderer = textRendererEntity->createComponent<TextRenderer2D>();
             textRenderer->setText(_text);

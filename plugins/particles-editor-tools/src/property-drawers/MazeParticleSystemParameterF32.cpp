@@ -30,6 +30,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
@@ -440,7 +441,7 @@ namespace Maze
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
         EntityPtr dropdownEntity = m_layout->getEntityRaw()->getEcsScene()->createEntity();
-        dropdownEntity->ensureComponent<Name>("Dropdown");
+        dropdownEntity->ensureComponent<StaticName>("Dropdown");
 
         m_modeDropdown = dropdownEntity->createComponent<Dropdown2D>();
 
@@ -572,7 +573,7 @@ namespace Maze
                     renderSystem->getMaterialManager()->getSpriteMaterial(),
                     itemPrefabTransform,
                     m_layout->getEntityRaw()->getEcsScene());
-                backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
+                backgroundSpriteRenderer->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Background");
                 backgroundSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
                 SpriteRenderer2DPtr checkMarkSprite = SpriteHelper::CreateSprite(
@@ -584,7 +585,7 @@ namespace Maze
                     spriteRenderer->getEntityRaw()->getEcsScene(),
                     Vec2F(0.0f, 0.0f),
                     Vec2F(0.5f, 0.5f));
-                checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
+                checkMarkSprite->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("CheckMark");
                 checkMarkSprite->setColor(ColorU32::c_black);
 
                 AbstractTextRenderer2DPtr itemTextRenderer = UIHelper::CreateText(
@@ -598,7 +599,7 @@ namespace Maze
                     m_layout->getEntityRaw()->getEcsScene(),
                     Vec2F::c_zero,
                     Vec2F::c_zero);
-                itemTextRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Label");
+                itemTextRenderer->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Label");
                 itemTextRenderer->setColor(ColorU32::c_black);
                 ScissorMask2DPtr scissorMask = itemTextRenderer->getEntityRaw()->createComponent<ScissorMask2D>();
                 SizePolicy2DPtr itemTextRendererSizePolicy = itemTextRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();

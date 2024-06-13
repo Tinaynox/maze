@@ -31,6 +31,7 @@
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLineRenderer2D.hpp"
@@ -61,7 +62,7 @@ namespace Maze
             Vec2F const& _pivot)
         {
             Maze::EntityPtr spriteRendererEntity = _ecsScene->createEntity();
-            spriteRendererEntity->ensureComponent<Name>("Node2D");
+            spriteRendererEntity->ensureComponent<StaticName>("Node2D");
         
             Maze::Transform2DPtr const& transform = spriteRendererEntity->ensureComponent<Transform2D>();
             transform->setParent(_parent);
@@ -85,7 +86,7 @@ namespace Maze
             Vec2F const& _pivot)
         {
             Maze::EntityPtr spriteRendererEntity = _ecsScene->createEntity();
-            spriteRendererEntity->ensureComponent<Name>("Sprite");
+            spriteRendererEntity->ensureComponent<StaticName>("Sprite");
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setSprite(_sprite);
@@ -116,7 +117,7 @@ namespace Maze
             Vec2F const& _pivot)
         {
             Maze::EntityPtr spriteRendererEntity = _ecsScene->createEntity();
-            spriteRendererEntity->ensureComponent<Name>("Sprite");
+            spriteRendererEntity->ensureComponent<StaticName>("Sprite");
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setSprite(HashedString(_spriteName));
@@ -173,7 +174,7 @@ namespace Maze
             Vec2F const& _pivot)
         {
             Maze::EntityPtr spriteRendererEntity = _ecsScene->createEntity();
-            spriteRendererEntity->ensureComponent<Name>("Sprite");
+            spriteRendererEntity->ensureComponent<StaticName>("Sprite");
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setSprite(
@@ -202,7 +203,7 @@ namespace Maze
             Vec2F const& _pivot)
         {
             Maze::EntityPtr lineRendererEntity = _ecsScene->createEntity();
-            lineRendererEntity->ensureComponent<Name>("LineRenderer");
+            lineRendererEntity->ensureComponent<StaticName>("LineRenderer");
 
             LineRenderer2DPtr lineRenderer = lineRendererEntity->createComponent<LineRenderer2D>();
             lineRenderer->getMeshRenderer()->setMaterial(
@@ -227,7 +228,7 @@ namespace Maze
             Vec2F const& _pivot)
         {
             Maze::EntityPtr lineRendererEntity = _ecsScene->createEntity();
-            lineRendererEntity->ensureComponent<Name>("LineRenderer");
+            lineRendererEntity->ensureComponent<StaticName>("LineRenderer");
 
             SimpleLineRenderer2DPtr lineRenderer = lineRendererEntity->createComponent<SimpleLineRenderer2D>();
             lineRenderer->getMeshRenderer()->setMaterial(

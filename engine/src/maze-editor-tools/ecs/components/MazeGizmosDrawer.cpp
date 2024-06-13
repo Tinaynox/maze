@@ -48,6 +48,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-core/math/MazeRay.hpp"
 #include "maze-core/math/MazePlane.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
@@ -173,7 +174,7 @@ namespace Maze
                     EntityPtr entity = Entity::Create();
                     m_world->addEntity(entity);
 
-                    entity->ensureComponent<Name>("Gizmo Billboard");
+                    entity->ensureComponent<StaticName>("Gizmo Billboard");
 
                     MaterialPtr material = Material::Create(
                         GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->ensureBuiltinMaterial(BuiltinMaterialType::ColorTextureCustomUV));

@@ -313,6 +313,8 @@ namespace Maze
     //////////////////////////////////////////
     HierarchyLinePtr HierarchyController::addEcsScene(EcsScenePtr const& _scene)
     {
+        MAZE_PROFILE_EVENT("HierarchyController::addEcsScene");
+
         if (!getEntityRaw() || !getEntityRaw()->getEcsScene())
             return nullptr;
 
@@ -336,6 +338,8 @@ namespace Maze
         if (it != m_sceneLines.end())
             return it->second;
 
+        Debug::Log("HierarchyController::addEcsScene %s...", _scene->getClassName());
+
         HierarchyLinePtr hierarchyLine = createHierarchyLine(HierarchyLineType::Scene);
         hierarchyLine->setText(_scene->getMetaClass()->getName().str);
         hierarchyLine->getTransform()->setParent(m_hierarchyMainLayoutEntity);
@@ -354,12 +358,16 @@ namespace Maze
             ++entitiesAdded;
         }
 
+        Debug::Log("HierarchyController::addEcsScene %s finished.", _scene->getClassName());
+
         return hierarchyLine;
     }
 
     //////////////////////////////////////////
     void HierarchyController::removeEcsScene(EcsSceneId _sceneId)
     {
+        MAZE_PROFILE_EVENT("HierarchyController::removeEcsScene");
+
         auto sceneHierarchyLineIt = m_sceneLines.find(_sceneId);
         if (sceneHierarchyLineIt == m_sceneLines.end())
             return;
@@ -387,6 +395,8 @@ namespace Maze
     //////////////////////////////////////////
     HierarchyLinePtr HierarchyController::addEntity(EntityPtr const& _entity)
     {
+        MAZE_PROFILE_EVENT("HierarchyController::addEntity");
+
         if (!_entity)
             return nullptr;
 
@@ -433,6 +443,8 @@ namespace Maze
     //////////////////////////////////////////
     void HierarchyController::removeEntity(EntityId _entityId)
     {
+        MAZE_PROFILE_EVENT("HierarchyController::removeEntity");
+
         auto entityHierarchyLineIt = m_entityLines.find(_entityId);
         if (entityHierarchyLineIt == m_entityLines.end())
             return;
@@ -443,6 +455,8 @@ namespace Maze
     //////////////////////////////////////////
     void HierarchyController::updateEntity(EntityPtr const& _entity)
     {
+        MAZE_PROFILE_EVENT("HierarchyController::updateEntity");
+
         if (!_entity)
             return;
 
@@ -475,13 +489,15 @@ namespace Maze
 
         HierarchyLinePtr const& hierarchyLine = it->second;
 
-        Name* name = _entity->getComponentRaw<Name>();
-        hierarchyLine->setText(name ? name->getName() : "Unnamed");
+        CString name = EcsHelper::GetName(_entity.get());
+        hierarchyLine->setText(name && name[0] ? name : "Unnamed");
     }
 
     //////////////////////////////////////////
     HierarchyLinePtr HierarchyController::createHierarchyLine(HierarchyLineType _type)
     {
+        MAZE_PROFILE_EVENT("HierarchyController::createHierarchyLine");
+
         HierarchyLinePtr hierarchyLine = m_hierarchyLinePool->createHierarchyLine(_type);
         subscribeHierarchyLine(hierarchyLine.get());
 
@@ -523,8 +539,8 @@ namespace Maze
                         EntityPtr entity = entityWeak.lock();
                         if (entity)
                         {
-                            Name* name = entity->getComponentRaw<Name>();
-                            String filename = name ? name->getName() : "Unnamed";
+                            CString name = EcsHelper::GetName(entity.get());
+                            String filename = name && name[0] ? name : "Unnamed";
                             EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(entity, filename + ".mzdata");
                         }
                     });
@@ -605,6 +621,8 @@ namespace Maze
     //////////////////////////////////////////
     void HierarchyController::subscribeHierarchyLine(HierarchyLine* _hierarchyLine)
     {
+        MAZE_PROFILE_EVENT("HierarchyController::subscribeHierarchyLine");
+
         _hierarchyLine->eventRelease.subscribe(
             this,
             &HierarchyController::notifyHierarchyLineRelease);

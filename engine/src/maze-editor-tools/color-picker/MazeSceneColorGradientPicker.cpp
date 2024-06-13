@@ -36,6 +36,7 @@
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -702,7 +703,7 @@ namespace Maze
         Vec2F size(9.0f, 14.0f);
 
         EntityPtr entity = createEntity();
-        entity->ensureComponent<Name>("ClickButton");
+        entity->ensureComponent<StaticName>("ClickButton");
 
         ColorSliderTag2DPtr colorSliderTag = entity->createComponent<ColorSliderTag2D>();
         colorSliderTag->getTransform()->setSize(size);
