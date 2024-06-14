@@ -37,6 +37,7 @@
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeEntityAspect.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
+#include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
@@ -81,6 +82,9 @@ namespace Maze
         //////////////////////////////////////////
         static EcsWorldEventsQueuePtr Create(EcsWorld* _world);
 
+
+        //////////////////////////////////////////
+        inline Size getEventsCount() const { return m_eventTypes.size(); }
 
         //////////////////////////////////////////
         void processEvents();
@@ -149,7 +153,9 @@ namespace Maze
     private:
         EcsWorld* m_world = nullptr;
 
-        FastVector<EcsWorldEventType> m_eventTypes;
+        Timer m_timer;
+
+        Queue<EcsWorldEventType> m_eventTypes;
         Deque<EntityPtr> m_addingEntities;
 
         Queue<EntityId> m_removingEntities;

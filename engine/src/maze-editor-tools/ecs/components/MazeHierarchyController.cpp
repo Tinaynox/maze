@@ -120,7 +120,24 @@ namespace Maze
     //////////////////////////////////////////
     void HierarchyController::update(F32 _dt)
     {
-        
+        U32 startTime = m_timer.getMilliseconds();
+
+        bool delayedEntitiesChanged = false;
+        while (!m_delayedEntitiesToAdd.empty() && m_timer.getMilliseconds() - startTime < 5)
+        {
+            EntityPtr entity = m_delayedEntitiesToAdd.begin()->second;
+            m_delayedEntitiesToAdd.erase(m_delayedEntitiesToAdd.begin());
+            addEntity(entity);
+
+            delayedEntitiesChanged = true;
+        }
+
+        if (delayedEntitiesChanged)
+            if (!m_delayedEntitiesToAdd.empty())
+                m_titleText->setTextFormatted("Hierarchy (Loading: %d)", (S32)m_delayedEntitiesToAdd.size());
+            else
+                m_titleText->setTextFormatted("Hierarchy");
+
     }
 
     //////////////////////////////////////////
@@ -157,7 +174,7 @@ namespace Maze
         m_titleBackground->setColor(EditorToolsStyles::GetInstancePtr()->getTitleBackgroundColor());
         m_titleBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
-        AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
+        m_titleText = EditorToolsUIHelper::CreateText(
             "Hierarchy",
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getTitleFontSize(),
@@ -169,7 +186,7 @@ namespace Maze
             getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
-        titleText->setColor(ColorU32::c_black);
+        m_titleText->setColor(ColorU32::c_black);
         
         m_bodyBackground = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
@@ -347,15 +364,15 @@ namespace Maze
 
         m_sceneLines[_scene->getId()] = hierarchyLine;
 
-        Size entitiesAdded = 0u;
         for (Entity* entity : _scene->getEntities())
         {
             if (entity->getAdding() || entity->getRemoving())
                 continue;
 
-            addEntity(entity->cast<Entity>());
-
-            ++entitiesAdded;
+            m_delayedEntitiesToAdd.emplace(
+                std::piecewise_construct,
+                std::forward_as_tuple(entity->getId()),
+                std::forward_as_tuple(entity->cast<Entity>()));
         }
 
         Debug::Log("HierarchyController::addEcsScene %s finished.", _scene->getClassName());
@@ -437,6 +454,12 @@ namespace Maze
         updateEntityName(_entity);
         updateEntity(hierarchyLine, _entity);
 
+        {
+            auto it = m_delayedEntitiesToAdd.find(_entity->getId());
+            if (it != m_delayedEntitiesToAdd.end())
+                m_delayedEntitiesToAdd.erase(it);
+        }
+
         return hierarchyLine;
     }
 
@@ -447,7 +470,13 @@ namespace Maze
 
         auto entityHierarchyLineIt = m_entityLines.find(_entityId);
         if (entityHierarchyLineIt == m_entityLines.end())
+        {
+            auto it = m_delayedEntitiesToAdd.find(_entityId);
+            if (it != m_delayedEntitiesToAdd.end())
+                m_delayedEntitiesToAdd.erase(it);
+                
             return;
+        }
 
         entityHierarchyLineIt->second->release();
     }
@@ -761,7 +790,10 @@ namespace Maze
         if (!addEcsScene(_entity->getEcsScene()->cast<EcsScene>()))
             return;
 
-        addEntity(_entity);
+        m_delayedEntitiesToAdd.emplace(
+            std::piecewise_construct,
+            std::forward_as_tuple(_entity->getId()),
+            std::forward_as_tuple(_entity->cast<Entity>()));
     }
 
     //////////////////////////////////////////

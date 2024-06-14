@@ -75,8 +75,13 @@ namespace Maze
 
         m_processingEvents = true;
 
-        for (EcsWorldEventType eventType : m_eventTypes)
+        // U32 startTime = m_timer.getMilliseconds();
+
+        while (!m_eventTypes.empty())
         {
+            EcsWorldEventType eventType = m_eventTypes.front();
+            m_eventTypes.pop();
+
             switch (eventType)
             {
                 case EcsWorldEventType::AddingEntity:
@@ -120,8 +125,6 @@ namespace Maze
             }
         }
 
-        m_eventTypes.clear();
-
         MAZE_DEBUG_ASSERT(m_addingEntities.empty());
         MAZE_DEBUG_ASSERT(m_removingEntities.empty());
         MAZE_DEBUG_ASSERT(m_componentsChangedEntities.empty());
@@ -154,7 +157,7 @@ namespace Maze
         _entity->setEcsWorld(m_world);
 
         m_addingEntities.push_back(_entity);
-        m_eventTypes.push_back(EcsWorldEventType::AddingEntity);
+        m_eventTypes.push(EcsWorldEventType::AddingEntity);
 
         processEntityComponentsChanged(entityId);
 
@@ -172,7 +175,7 @@ namespace Maze
         _entity->setRemoving(true);
         
         m_removingEntities.push(_entity->getId());
-        m_eventTypes.push_back(EcsWorldEventType::RemovingEntity);
+        m_eventTypes.push(EcsWorldEventType::RemovingEntity);
 
         return true;
     }
@@ -214,7 +217,7 @@ namespace Maze
         entity->setComponentsChanged(true);
 
         m_componentsChangedEntities.push(_id);
-        m_eventTypes.push_back(EcsWorldEventType::ComponentsChanged);
+        m_eventTypes.push(EcsWorldEventType::ComponentsChanged);
     }
 
     //////////////////////////////////////////
@@ -228,7 +231,7 @@ namespace Maze
 
         entity->setActiveChanged(true);
         m_activeChangedEntities.push(_id);
-        m_eventTypes.push_back(EcsWorldEventType::ActiveChanged);
+        m_eventTypes.push(EcsWorldEventType::ActiveChanged);
 
         m_world->sendEventImmediate<EntityActiveChangedEvent>(_id, entity->getActiveInHierarchy());
     }
@@ -392,7 +395,7 @@ namespace Maze
     {
         MAZE_DEBUG_ASSERT(!m_processingEvents);
 
-        m_eventTypes.clear();
+        while (!m_eventTypes.empty()) { m_eventTypes.pop(); }
         m_addingEntities.clear();
         while (!m_removingEntities.empty()) { m_removingEntities.pop(); }
         while (!m_componentsChangedEntities.empty()) { m_componentsChangedEntities.pop(); }

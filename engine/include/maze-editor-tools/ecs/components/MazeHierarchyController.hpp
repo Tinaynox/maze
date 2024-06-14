@@ -35,6 +35,7 @@
 #include "maze-editor-tools/ecs/components/MazeHierarchyLine.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/MazeEcsScene.hpp"
+#include "maze-core/system/MazeTimer.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 
@@ -194,6 +195,8 @@ namespace Maze
 
         Transform2DPtr m_transform;
 
+        AbstractTextRenderer2DPtr m_titleText;
+
         SpriteRenderer2DPtr m_bodyBackground;
 
         HierarchyLinePoolPtr m_hierarchyLinePool;
@@ -207,10 +210,12 @@ namespace Maze
 
         Set<ClassUID> m_ignoreScenes;
 
-
+        UnorderedMap<EntityId, EntityPtr> m_delayedEntitiesToAdd;
 
         UnorderedMap<EcsSceneId, HierarchyLinePtr> m_sceneLines;
         UnorderedMap<EntityId, HierarchyLinePtr> m_entityLines;
+
+        Timer m_timer;
     };
 
 
