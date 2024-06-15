@@ -140,7 +140,7 @@ namespace Maze
         Example();
 
         //////////////////////////////////////////
-        bool init(EngineConfig const& _config);
+        bool init(EngineConfig const& _config) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;

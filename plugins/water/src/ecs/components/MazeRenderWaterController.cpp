@@ -39,7 +39,7 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-graphics/ecs/components/MazeRenderControllerModule3D.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"

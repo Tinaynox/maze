@@ -86,7 +86,7 @@ namespace Maze
         static ParticleEffectInfoPtr Create();
 
         //////////////////////////////////////////
-        virtual void update(F32 _dt);
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         inline Transform2DPtr const& getTransform() const { return m_transform; }

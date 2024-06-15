@@ -37,7 +37,7 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeWaterRenderer3D.hpp"
-#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-graphics/ecs/components/MazeRenderController.hpp"
 
 
