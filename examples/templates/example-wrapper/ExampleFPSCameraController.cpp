@@ -152,7 +152,7 @@ namespace Maze
             {
                 m_targetPosition += cameraRightDirection * _dt * speed;
             }
-            else
+
             if (m_jump)
             {
                 if (m_jumpProgress >= 1.0f)
