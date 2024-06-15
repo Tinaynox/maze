@@ -439,6 +439,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool Texture2DOpenGL::setAnisotropyLevel(F32 _value)
+    {
+        if (m_anisotropyLevel == _value)
+            return true;
+
+        m_anisotropyLevel = Math::Clamp(_value, 1.0f, m_renderSystem->getTextureMaxAnisotropyLevel());
+        
+        {
+            ContextOpenGLScopeBind contextScopedBind(m_context);
+            MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+            Texture2DOpenGLScopeBind textureScopedBind(this);
+
+            MAZE_GL_CALL(mzglTexParameterf(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_MAX_ANISOTROPY_EXT, m_anisotropyLevel));
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
     void Texture2DOpenGL::saveToFileAsTGA(
         String const& _fileName,
         Vec2U _size,

@@ -90,7 +90,6 @@
 #include "maze-plugin-loader-jpg/MazeLoaderJPGPlugin.hpp"
 #include "maze-plugin-loader-fbx/MazeLoaderFBXPlugin.hpp"
 #include "Example.hpp"
-#include "ExampleHelper.hpp"
 #include "ExampleFPSCameraController.hpp"
 
 
@@ -252,13 +251,12 @@ namespace Maze
         getLightingSettings()->setSkyBoxMaterial("Skybox00.mzmaterial");
 
 
-        ExampleHelper::SimpleLevelConfig config;
-        config.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Terrain00.mzmaterial");
-        config.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Wall00.mzmaterial");
+        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Terrain00.mzmaterial");
+        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Wall00.mzmaterial");
         ExampleHelper::BuildSimpleLevel(
             this,
             levelSize,
-            config);
+            m_simpleLevelConfig);
 
         // BMP
         addTexturePreview("SP3DLogo_16.bmp");
@@ -306,6 +304,10 @@ namespace Maze
         addMeshPreview("TestBox.obj", "TestBox.mzmaterial", testBoxScale);
         addMeshPreview("TestBox.fbx", "TestBox.mzmaterial", testBoxScale);
         addMeshPreview("TestBox.mzmesh", "TestBox.mzmaterial", testBoxScale);
+
+
+        setTextureMipmapsEnabled(true);
+        setTextureAnisotropy(16.0f);
 
         return true;
     }
@@ -621,17 +623,21 @@ namespace Maze
             "[CONTROLS]\n"
             "Movement - WASD, Camera - RMB (Hold)\n"
             "%s - M\n"
+            "%s - O\n"
             "Change Mesh Material - 1..%d\n"
             "%s - R\n"
             "\n"
             "[INFO]\n"
             "Texture Mipmaps: %s\n"
+            "Anisotropy: %.1f\n"
             "Mesh Material: %s\n"
             "Mesh Rotor: %s",
             m_textureMipmapsEnabled ? "Disable Mipmaps" : "Enable Mipmaps",
+            m_textureAnisotropyLevel != 0.0f ? "Disable Anisotropy" : "Enable Anisotropy",
             (S32)ExampleMeshRenderMode::MAX - 1,
             m_rotorEnabled ? "Disable Rotor" : "Enable Rotor",
             m_textureMipmapsEnabled ? "ON" : "OFF",
+            m_textureAnisotropyLevel,
             m_meshRenderMode.toCString(),
             m_rotorEnabled ? "ON" : "OFF"
         );
@@ -660,6 +666,42 @@ namespace Maze
                     m_textureMipmapsEnabled ? TextureFilter::LinearMipmapLinear : TextureFilter::Linear);
                 updateTextureLabel(textureData);
             }
+        }
+
+        {
+            Texture2DPtr texture = m_simpleLevelConfig.floorMaterial->getUniform(MAZE_HCS("u_baseMap"))->getTexture2D();
+            texture->setMinFilter(
+                m_textureMipmapsEnabled ? TextureFilter::LinearMipmapLinear : TextureFilter::Linear);
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::setTextureAnisotropy(F32 _value)
+    {
+        if (m_textureAnisotropyLevel == _value)
+            return;
+
+        m_textureAnisotropyLevel = _value;
+
+        updateTextureAnisotropy();
+        updateHintText();
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::updateTextureAnisotropy()
+    {
+        for (ExampleTextureData const& textureData : m_textureData)
+        {
+            if (textureData.texture)
+            {
+                textureData.texture->setAnisotropyLevel(m_textureAnisotropyLevel);
+                updateTextureLabel(textureData);
+            }
+        }
+
+        {
+            Texture2DPtr texture = m_simpleLevelConfig.floorMaterial->getUniform(MAZE_HCS("u_baseMap"))->getTexture2D();
+            texture->setAnisotropyLevel(m_textureAnisotropyLevel);;
         }
     }
 
@@ -776,6 +818,13 @@ namespace Maze
                     case KeyCode::M:
                     {
                         setTextureMipmapsEnabled(!m_textureMipmapsEnabled);
+                        break;
+                    }
+                    case KeyCode::O:
+                    {
+                        setTextureAnisotropy(
+                            m_textureAnisotropyLevel == 0.0f ? RenderSystem::GetCurrentInstancePtr()->getTextureMaxAnisotropyLevel()
+                                                             : 0.0f);
                         break;
                     }
                     default:

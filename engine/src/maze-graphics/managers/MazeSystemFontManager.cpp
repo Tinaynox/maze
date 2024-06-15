@@ -157,6 +157,7 @@ namespace Maze
                 {
                     systemFont->texture->setMagMinFilters(TextureFilter::Linear, TextureFilter::LinearMipmapLinear);
                     systemFont->material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                    systemFont->texture->setAnisotropyLevel(16.0f);
                 }
 
                 break;
@@ -170,6 +171,7 @@ namespace Maze
                 {
                     systemFont->texture->setMagMinFilters(TextureFilter::Linear, TextureFilter::LinearMipmapLinear);
                     systemFont->material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                    systemFont->texture->setAnisotropyLevel(16.0f);
                 }
 
                 break;

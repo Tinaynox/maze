@@ -132,6 +132,9 @@ namespace Maze
         virtual bool setWrapT(TextureWrap _value) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        virtual bool setAnisotropyLevel(F32 _value) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         virtual void saveToFileAsTGA(
             String const& _fileName,
             Vec2U _size = Vec2U::c_zero,

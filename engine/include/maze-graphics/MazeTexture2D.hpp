@@ -153,6 +153,12 @@ namespace Maze
             setMinFilter(_min);
         }
 
+        //////////////////////////////////////////
+        virtual bool setAnisotropyLevel(F32 _value) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        inline F32 getAnisotropyLevel() const { return m_anisotropyLevel; }
+
 
         //////////////////////////////////////////
         virtual bool setWrapS(TextureWrap _value) MAZE_ABSTRACT;
@@ -244,6 +250,7 @@ namespace Maze
         TextureFilter m_minFilter;
         TextureWrap m_wrapS;
         TextureWrap m_wrapT;
+        F32 m_anisotropyLevel = 0.0f;
 
         PixelFormat::Enum m_internalPixelFormat;
     };

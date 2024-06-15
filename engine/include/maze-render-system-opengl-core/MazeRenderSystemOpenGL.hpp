@@ -118,6 +118,9 @@ namespace Maze
         virtual S32 getTextureMaxAntialiasingLevelSupport() MAZE_OVERRIDE { return m_textureMaxAntialiasingLevelSupport; }
 
         //////////////////////////////////////////
+        virtual F32 getTextureMaxAnisotropyLevel() MAZE_OVERRIDE { return m_textureMaxAnisotropyLevel; }
+
+        //////////////////////////////////////////
         inline void lockGLMutex() { m_glMutex.lock(); }
 
         //////////////////////////////////////////
@@ -262,6 +265,7 @@ namespace Maze
         S32 m_textureMaxSize = 0;
         S32 m_textureUniformsMaxCount = 0;
         S32 m_textureMaxAntialiasingLevelSupport = 0;
+        F32 m_textureMaxAnisotropyLevel = 0.0f;
 
         GPUBuffersControllerOpenGLPtr m_GPUBuffersController;
 

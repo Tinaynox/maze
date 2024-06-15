@@ -124,6 +124,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual S32 getTextureMaxAntialiasingLevelSupport() MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual F32 getTextureMaxAnisotropyLevel() MAZE_ABSTRACT;
+
 
         //////////////////////////////////////////
         virtual bool setCurrentRenderTarget(RenderTarget* _renderTarget) MAZE_ABSTRACT;

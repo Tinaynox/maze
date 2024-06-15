@@ -45,6 +45,7 @@
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
+#include "ExampleHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -176,6 +177,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void setTextureAnisotropy(F32 _value);
+
+        //////////////////////////////////////////
+        void updateTextureAnisotropy();
+
+
+        //////////////////////////////////////////
         void setExampleMeshRenderMode(ExampleMeshRenderMode _mode);
 
         //////////////////////////////////////////
@@ -193,6 +201,8 @@ namespace Maze
         CanvasPtr m_canvas;
         Camera3DPtr m_camera3D;
 
+        ExampleHelper::SimpleLevelConfig m_simpleLevelConfig;
+
         SystemTextRenderer2DPtr m_hintText;
         
         ExampleFPSCameraControllerPtr m_fpsController;
@@ -200,6 +210,7 @@ namespace Maze
         Vec2F32 m_cursorPositionLastFrame = Vec2F32::c_zero;
 
         bool m_textureMipmapsEnabled = false;
+        F32 m_textureAnisotropyLevel = 0.0f;
         Vector<ExampleTextureData> m_textureData;
         F32 m_texturesOffset = 0.0f;
 

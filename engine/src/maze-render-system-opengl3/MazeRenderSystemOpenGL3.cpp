@@ -215,9 +215,15 @@ namespace Maze
             MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_MAX_SAMPLES, &m_textureMaxAntialiasingLevelSupport));
         }
 
+        if (mzglGetFloatv != nullptr)
+        {
+            MAZE_GL_CALL(mzglGetFloatv(MAZE_GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_textureMaxAnisotropyLevel));
+        }
+
         Debug::log << "GL_MAX_TEXTURE_SIZE: " << m_textureMaxSize << endl;
         Debug::log << "GL_MAX_TEXTURE_IMAGE_UNITS: " << m_textureUniformsMaxCount << endl;
         Debug::log << "GL_MAX_SAMPLES: " << m_textureMaxAntialiasingLevelSupport << endl;
+        Debug::log << "GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT: " << m_textureMaxAnisotropyLevel << endl;
 
         if (mzglGetFloatv != nullptr)
         {
