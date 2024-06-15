@@ -83,7 +83,13 @@ namespace Maze
     //////////////////////////////////////////
     bool ExampleFPSCameraController::init()
     {
-            
+        m_jumpCurve.setMode(AnimationCurve::EvaluateMode::Smooth);
+        m_jumpCurve.addKey(0.0f, 0.0f);
+        m_jumpCurve.addKey(0.1f, -0.1f);
+        m_jumpCurve.addKey(0.4f, 1.0f);
+        m_jumpCurve.addKey(0.5f, 1.0f);
+        m_jumpCurve.addKey(0.9f, -0.25f);
+        m_jumpCurve.addKey(1.0f, 0.0f);
 
         return true;
     }
@@ -146,6 +152,12 @@ namespace Maze
             {
                 m_targetPosition += cameraRightDirection * _dt * speed;
             }
+            else
+            if (m_jump)
+            {
+                if (m_jumpProgress >= 1.0f)
+                    m_jumpProgress = 0.0f;
+            }
 
             Vec2F32 clampedSize = m_levelSize - Vec2F32(m_radius);
             m_targetPosition.x = Math::Clamp(m_targetPosition.x, -clampedSize.x * 0.5f, +clampedSize.x * 0.5f);
@@ -163,6 +175,15 @@ namespace Maze
                 m_camera3D->getTransform()->getLocalRotation(),
                 Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
             m_camera3D->getTransform()->setLocalRotation(q);
+
+
+            if (m_jumpProgress < 1.0f)
+            {
+                m_jumpProgress += _dt * 1.1f;
+                m_jumpProgress = Math::Clamp01(m_jumpProgress);
+
+                m_targetPosition.y = m_jumpCurve.evaluate(m_jumpProgress) * 1.5f;
+            }
         }
     }
 

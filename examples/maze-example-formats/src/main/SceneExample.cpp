@@ -340,6 +340,7 @@ namespace Maze
         m_fpsController->setBackward(InputManager::GetInstancePtr()->getKeyState(KeyCode::S));
         m_fpsController->setRight(InputManager::GetInstancePtr()->getKeyState(KeyCode::A));
         m_fpsController->setLeft(InputManager::GetInstancePtr()->getKeyState(KeyCode::D));
+        m_fpsController->setJump(InputManager::GetInstancePtr()->getKeyState(KeyCode::Space));
     }
 
     //////////////////////////////////////////

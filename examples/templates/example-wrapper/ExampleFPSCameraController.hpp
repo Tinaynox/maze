@@ -34,6 +34,7 @@
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-core/math/MazeRay.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
+#include "maze-core/math/MazeAnimationCurve.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 
 
@@ -108,6 +109,12 @@ namespace Maze
         //////////////////////////////////////////
         inline void setRight(bool _value) { m_right = _value; }
 
+        //////////////////////////////////////////
+        inline bool getJump() const { return m_jump; }
+
+        //////////////////////////////////////////
+        inline void setJump(bool _value) { m_jump = _value; }
+
 
         //////////////////////////////////////////
         inline F32 getYawAngle() const { return m_yawAngle; }
@@ -149,6 +156,9 @@ namespace Maze
         Transform3DPtr m_transform;
         Camera3DPtr m_camera3D;
 
+        AnimationCurve m_jumpCurve;
+        F32 m_jumpProgress = 1.0f;
+
         Vec3F32 m_targetPosition = Vec3F32::c_zero;
         F32 m_yawAngle = 0.0f;
         F32 m_pitchAngle = 0.0f;
@@ -159,6 +169,7 @@ namespace Maze
         bool m_backward = false;
         bool m_left = false;
         bool m_right = false;
+        bool m_jump = false;
 
         F32 m_radius = 0.5f;
         Vec2F32 m_levelSize = Vec2F32(5.0f, 10.0f);
