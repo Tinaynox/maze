@@ -307,7 +307,7 @@ namespace Maze
 
 
         setTextureMipmapsEnabled(true);
-        setTextureAnisotropy(16.0f);
+        setTextureAnisotropy(RenderSystem::GetCurrentInstancePtr()->getTextureMaxAnisotropyLevel());
 
         return true;
     }
