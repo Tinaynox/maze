@@ -133,10 +133,12 @@ namespace Maze
         }
 
         if (delayedEntitiesChanged)
+        {
             if (!m_delayedEntitiesToAdd.empty())
                 m_titleText->setTextFormatted("Hierarchy (Loading: %d)", (S32)m_delayedEntitiesToAdd.size());
             else
                 m_titleText->setTextFormatted("Hierarchy");
+        }
 
     }
 
