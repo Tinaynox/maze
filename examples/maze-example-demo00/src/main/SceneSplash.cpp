@@ -186,7 +186,7 @@ namespace Maze
         canvasScaler->setMatchWidthOrHeight(1.0f);
         canvasScaler->updateCanvasScale();
 
-        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::ColorTexture);
+        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::Sprite);
         SpriteManager::GetCurrentInstance()->setDefaultSpriteMaterial(material);
         SpriteHelper::CreateSprite(
             "MazeLogo_128x128.png",
@@ -220,7 +220,7 @@ namespace Maze
         {
             case 0:
             {
-                MaterialPtr const& material = MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::Color);
+                MaterialPtr const& material = MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::Sprite);
                 SpriteRenderer2DPtr frame = SpriteHelper::CreateSprite(
                     ColorU32::c_lightGray,
                     Vec2F32(96.0f, 10.0f),
