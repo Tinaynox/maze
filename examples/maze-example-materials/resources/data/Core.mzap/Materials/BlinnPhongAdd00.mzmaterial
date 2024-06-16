@@ -41,7 +41,7 @@ renderPass
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"
   blendDestFactor:String = "One"
-  depthTestCompareFunction:String = "Disabled"
+  depthTestCompareFunction:String = "LessEqual"
   depthWriteEnabled:Bool = false
   cullMode:String = "Back"
 }

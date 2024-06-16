@@ -243,8 +243,8 @@ namespace Maze
         getLightingSettings()->setSkyBoxMaterial("Skybox02.mzmaterial");
 
 
-        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Floor00.mzmaterial");
-        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Floor00.mzmaterial");
+        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Checkerboard00.mzmaterial");
+        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Checkerboard00.mzmaterial");
         ExampleHelper::BuildSimpleLevel(
             this,
             levelSize,
@@ -277,6 +277,9 @@ namespace Maze
             Vec3F::c_unitY,
             2.0f,
             1.0f);
+
+        addMeshPreview("TorusKnot.fbx", "Checkerboard01.mzmaterial", "Checkerboard", torusKnotScale);
+        addMeshPreviewSpace();
         
 
         return true;
@@ -382,7 +385,7 @@ namespace Maze
         
         meshData.rotor = rotor;
         
-        F32 x = ((S32)m_meshData.size() - 1) * 3.0f + m_meshesOffset;
+        F32 x = ((S32)m_meshData.size() - 6) * 3.0f + m_meshesOffset;
         transform->setLocalPosition(-x, 2.0f, -8.0f);
 
 
@@ -397,7 +400,7 @@ namespace Maze
             MeshRendererPtr meshRenderer = pedestalEntity->createComponent<MeshRenderer>();
             meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getBuiltinRenderMesh(BuiltinRenderMeshType::Cylinder));
 
-            meshRenderer->setMaterial("MeshPreview");
+            meshRenderer->setMaterial("Checkerboard00.mzmaterial");
         }
 
         if (renderMesh)

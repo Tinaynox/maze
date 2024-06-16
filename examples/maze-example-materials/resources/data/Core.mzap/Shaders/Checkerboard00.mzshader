@@ -1,0 +1,67 @@
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:Vec4F = 1.0, 1.0, 1.0, 1.0
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:F32 = 1.0
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 1.0, 1.0, 1.0, 1.0
+}
+
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 0.1, 0.1, 0.1, 1.0
+}
+
+uniform
+{
+  name:String = "u_checkerScale"
+  type:String = "UniformF32"
+  value:F32 = 0.5
+}
+
+uniform
+{
+  name:String = "u_checkerColor0"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 0.61, 0.61, 0.61, 1.0
+}
+
+uniform
+{
+  name:String = "u_checkerColor1"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 0.47, 0.47, 0.47, 1.0
+}
+
+uniform
+{
+  name:String = "u_checkerColor0b"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 0.58, 0.58, 0.58, 1.0
+}
+
+uniform
+{
+  name:String = "u_checkerColor1b"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 0.50, 0.50, 0.50, 1.0
+}
+
+GLSL
+{
+  shader:String = "Checkerboard00.mzglsl"
+}

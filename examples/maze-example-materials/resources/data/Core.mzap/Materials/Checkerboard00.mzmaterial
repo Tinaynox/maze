@@ -1,0 +1,82 @@
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:Vec4F = 1.000000, 1.000000, 1.000000, 1.000000
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:Vec4F = 1.000000, 0.596274, 0.164706, 1.000000
+}
+
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.300000, 0.300000, 0.300000, 1.000000
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:F32 = 0.01
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.113725, 0.113725, 0.113725, 1.000000
+}
+
+uniform
+{
+  name:String = "u_checkerScale"
+  type:String = "UniformF32"
+  value:F32 = 1.0
+}
+
+uniform
+{
+  name:String = "u_checkerColor0"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.61, 0.61, 0.61, 1.0
+}
+
+uniform
+{
+  name:String = "u_checkerColor1"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.47, 0.47, 0.47, 1.0
+}
+
+uniform
+{
+  name:String = "u_checkerColor0b"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.58, 0.58, 0.58, 1.0
+}
+
+uniform
+{
+  name:String = "u_checkerColor1b"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.50, 0.50, 0.50, 1.0
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 2000
+  shader:String = "Checkerboard00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:Bool = true
+  cullMode:String = "Back"
+}
