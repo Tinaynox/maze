@@ -1,0 +1,378 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Vertex.mzglsl"
+
+
+//////////////////////////////////////////
+#if defined(FLAT_NORMAL) && (FLAT_NORMAL)
+#define NORMAL_INTERPOL flat
+#else
+#define NORMAL_INTERPOL smooth
+#endif
+
+
+//////////////////////////////////////////
+IN vec3 a_position;
+IN vec3 a_normal;
+IN vec3 a_tangent;
+IN vec3 a_bitangent;
+IN vec4 a_color;
+IN vec2 a_texCoords0;
+
+
+//////////////////////////////////////////
+OUT vec3 v_positionOS;
+OUT vec3 v_positionWS;
+OUT vec3 v_positionVS;
+NORMAL_INTERPOL OUT vec3 v_normalOS;
+NORMAL_INTERPOL OUT vec3 v_normalWS;
+NORMAL_INTERPOL OUT vec3 v_tangentWS;
+NORMAL_INTERPOL OUT vec3 v_bitangentWS;
+OUT vec4 v_color;
+OUT vec2 v_uv0;
+OUT vec3 v_viewDirWS;
+
+
+//////////////////////////////////////////
+#include "Utils/Core.mzglsl"
+
+
+//////////////////////////////////////////
+// Main
+void main()
+{
+    
+    int instanceId = gl_InstanceID;
+    
+    mat4 modelMatrix = GetModelMatrix(instanceId);
+    mat4 viewMatrix = GetViewMatrix();
+
+    vec4 positionOS = vec4(a_position, 1.0);
+    vec4 positionWS = modelMatrix * positionOS;
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+    vec4 positionVS = viewMatrix * positionWS;
+    vec4 positionCS = u_projectionMatrix * positionVS;
+    
+    vec4 normalOS = vec4(a_normal, 1.0);
+    vec4 tangentOS = vec4(a_tangent, 1.0);
+    vec4 bitangentOS = vec4(a_bitangent, 1.0);
+    
+    mat3 normalMatrix = mat3(MAZE_INVERSE(modelMatrix));
+    
+    
+        
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+    
+    v_positionOS = positionOS.xyz;
+    v_positionWS = positionWS.xyz;
+    v_positionVS = positionVS.xyz;
+    
+    vec3 normalWS = normalize(normalOS.xyz * normalMatrix).xyz;
+    
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    vec3 tangentWS = normalize(tangentOS.xyz * normalMatrix).xyz;
+    vec3 bitangentWS = normalize(bitangentOS.xyz * normalMatrix).xyz;
+    
+    v_tangentWS = tangentWS.xyz;
+    v_bitangentWS = bitangentWS.xyz;
+#endif
+    
+    v_normalOS = normalOS.xyz;
+    v_normalWS = normalWS.xyz;
+    
+    v_color = a_color;
+    v_uv0 = a_texCoords0;
+
+    v_viewDirWS = u_viewPosition - v_positionWS;
+
+    gl_Position = positionCS;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Fragment.mzglsl"
+#include "Utils/Core.mzglsl"
+
+
+//////////////////////////////////////////
+#if defined(FLAT_NORMAL) && (FLAT_NORMAL)
+#define NORMAL_INTERPOL flat
+#else
+#define NORMAL_INTERPOL smooth
+#endif
+
+
+//////////////////////////////////////////
+uniform sampler2D u_baseMap;
+uniform sampler2D u_fakeReflectionMap;
+uniform sampler2D u_reflectionMaskMap;
+uniform vec4 u_reflectionColor;
+uniform vec4 u_reflectionBaseColor;
+uniform vec4 u_color;
+uniform vec4 u_ambientLightColor;
+uniform float u_shininess;
+uniform vec4 u_specularColor;
+
+// EMISSION_MAP
+uniform sampler2D u_emissionMap;
+uniform vec4 u_emissionColor;
+
+// SPECULAR_MAP
+uniform sampler2D u_specularMap;
+
+// SHININESS_MAP
+uniform sampler2D u_shininessMap;
+
+// NORMAL_MAP
+uniform sampler2D u_normalMap;
+uniform float u_normalScale;
+
+// BACK_LIGHT
+uniform vec4 u_backLightColor;
+uniform vec3 u_backLightDirection;
+uniform float u_backLightBend;
+
+// LAMBERT_THRESHOLD
+uniform float u_lambertThreshold;
+
+// SHOT_MAP
+uniform sampler2D u_shotMap;
+uniform vec4 u_shotColor;
+uniform float u_shotValue;
+
+
+//////////////////////////////////////////
+IN vec3 v_positionOS;
+IN vec3 v_positionWS;
+IN vec3 v_positionVS;
+NORMAL_INTERPOL IN vec3 v_normalOS;
+NORMAL_INTERPOL IN vec3 v_normalWS;
+NORMAL_INTERPOL IN vec3 v_tangentWS;
+NORMAL_INTERPOL IN vec3 v_bitangentWS;
+IN vec4 v_color;
+IN vec2 v_uv0;
+IN vec3 v_viewDirWS;
+
+
+//////////////////////////////////////////
+MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
+
+
+//////////////////////////////////////////
+// BlinnPhong
+vec3 BlinnPhongLighting(
+    vec3 diffuseColor,
+    vec3 normalWS,
+    vec3 fragmentToViewDirection,
+    vec3 lightDirection,
+    vec3 lightColor,
+    vec3 environmentColor,
+    float reflectionMask)
+{
+    // Light
+    vec3 fragmentToLightDirection = -lightDirection;
+    float lightAttenuation = 1.0;
+    
+    // Lambertian
+    float NdotL = dot(normalWS, fragmentToLightDirection);
+    float lambertian = clamp(NdotL, 0.0, 1.0);
+    
+    // Lambertian threshold
+#if defined(LAMBERT_THRESHOLD) && (LAMBERT_THRESHOLD)
+    lambertian = u_lambertThreshold + lambertian * (1.0f - u_lambertThreshold);
+#endif
+    
+    // Light final
+    vec3 lightColorFinal = lightColor * lightAttenuation;
+    
+    // Half vector
+    vec3 H = normalize(fragmentToLightDirection + fragmentToViewDirection);
+    
+    // Shininess
+    float shininess = u_shininess;
+#if defined(SHININESS_MAP) && (SHININESS_MAP)
+    shininess *= MAZE_GET_TEXEL2D(u_shininessMap, v_uv0).r;
+#endif
+    
+    // Specular
+    float NdotH = dot(normalWS, H);    
+    float specular = pow(clamp(NdotH, 0.0, 1.0), max(pow(shininess, 3.0) * 512.0, 1.0));
+    vec3 specularColor = u_specularColor.rgb * clamp(specular, 0.0, 1.0);    
+    
+    // Specular map
+#if defined(SPECULAR_MAP) && (SPECULAR_MAP)
+    specularColor *= MAZE_GET_TEXEL2D(u_specularMap, v_uv0).rgb;
+#endif
+
+    return 
+        diffuseColor * lambertian * lightColorFinal +
+        specularColor * lightColorFinal;
+}
+
+//////////////////////////////////////////
+vec3 BackLighting(
+    vec3 diffuseColor,
+    vec3 normalWS,
+    vec3 fragmentToViewDirection,
+    vec3 lightDirection,
+    vec3 lightColor,
+    vec3 environmentColor,
+    float reflectionMask,
+    float specularMultiplier,
+    float bend)
+{
+    // Light
+    vec3 fragmentToLightDirection = -lightDirection;
+    float lightAttenuation = 1.0;
+    
+    // Lambertian
+    float NdotL = dot(normalWS, fragmentToLightDirection);
+    
+    float lambertian = NdotL;
+    if (lambertian > 0.0)
+        lambertian = pow(lambertian, 0.45);
+    lambertian = clamp(lambertian + bend, 0.0, 1.0);
+    
+    // Lambertian threshold
+#if defined(LAMBERT_THRESHOLD) && (LAMBERT_THRESHOLD)
+    lambertian = u_lambertThreshold + lambertian * (1.0f - u_lambertThreshold);
+#endif
+    
+    // Light final
+    vec3 lightColorFinal = lightColor * lightAttenuation;
+    
+    // Half vector
+    vec3 H = normalize(fragmentToLightDirection + fragmentToViewDirection);
+    
+    // Shininess
+    float shininess = u_shininess;
+#if defined(SHININESS_MAP) && (SHININESS_MAP)
+    shininess *= MAZE_GET_TEXEL2D(u_shininessMap, v_uv0).r;
+#endif
+    
+    // Specular
+    float NdotH = dot(normalWS, H);    
+    float specular = pow(clamp(NdotH, 0.0, 1.0), max(pow(shininess, 3.0) * 512.0, 1.0));
+    vec3 specularColor = u_specularColor.rgb * clamp(specular, 0.0, 1.0);    
+    
+    // Specular map
+#if defined(SPECULAR_MAP) && (SPECULAR_MAP)
+    specularColor *= MAZE_GET_TEXEL2D(u_specularMap, v_uv0).rgb;
+#endif
+
+
+    return 
+        diffuseColor * lambertian * lightColorFinal +
+        specularColor * lightColorFinal * specularMultiplier;
+}
+
+//////////////////////////////////////////
+vec3 RotateY(vec3 dir, float alpha) {
+    float s = sin(alpha);
+    float c = cos(alpha);
+    mat3 rotMat = mat3(
+        c, 0.0, -s,
+        0.0, 1.0, 0.0,
+        s, 0.0, c
+    );
+    return rotMat * dir;
+}
+
+//////////////////////////////////////////
+// Main
+void main()
+{
+    MAZE_CLIP_DISTANCE_FRAGMENT;
+
+    // View direction
+    vec3 fragmentToViewDirection = normalize(v_viewDirWS);
+    
+    // Normal
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    vec3 normalTS = SampleNormalTS(u_normalMap, v_uv0, u_normalScale);
+    mat3 tangentToWorld = mat3(normalize(v_tangentWS), normalize(v_bitangentWS), normalize(v_normalWS));
+    vec3 normalWS = normalize(TransformTangentToWorld(normalTS, tangentToWorld));
+#else
+    vec3 normalWS = normalize(v_normalWS);
+#endif
+
+    // Reflected direction
+    vec3 reflectedDirection = reflect(-fragmentToViewDirection, v_normalWS);
+    
+    // Fake reflection dir
+    vec3 fakeReflectionDir = reflectedDirection;
+    float m = 2.0 * sqrt(
+        pow(fakeReflectionDir.x, 2.0) +
+        pow(fakeReflectionDir.y, 2.0) +
+        pow(fakeReflectionDir.z + 1.0, 2.0));
+    vec2 fakeReflectionUV = fakeReflectionDir.xy / m + vec2(0.5, 0.5);
+    
+    // Environment color
+    float reflectionMask = texture(u_reflectionMaskMap, v_uv0).r;
+    vec3 fakeReflectionColor = texture(u_fakeReflectionMap, fakeReflectionUV).rgb * u_reflectionColor.rgb;
+    
+    // Ambient light
+    vec3 ambientLightColor = u_ambientLightColor.rgb;
+    
+    // Albedo
+    vec4 albedo = MAZE_GET_TEXEL2D(u_baseMap, v_uv0) * u_color;
+    
+    // Diffuse color
+    vec3 diffuseColor = albedo.rgb;
+        
+    // Linear color
+    vec3 linearColor = diffuseColor * ambientLightColor;
+    
+    // Back light
+#if defined(BACK_LIGHT) && (BACK_LIGHT)
+    vec3 backLight = BackLighting(
+        diffuseColor, normalWS, fragmentToViewDirection, normalize(u_backLightDirection),
+        u_backLightColor.rgb, fakeReflectionColor, reflectionMask, 0.0, u_backLightBend);
+    linearColor += backLight;
+#endif
+        
+    // Main light
+    vec3 mainLightColor = u_mainLightColor.rgb;
+    linearColor += BlinnPhongLighting(
+        diffuseColor, normalWS, fragmentToViewDirection, normalize(u_mainLightDirection),
+        mainLightColor, fakeReflectionColor, reflectionMask);
+    
+    // Reset to LDR
+    linearColor.r = min(linearColor.r, 1.0);
+    linearColor.g = min(linearColor.g, 1.0);
+    linearColor.b = min(linearColor.b, 1.0);
+    
+    linearColor += 2.0 * (fakeReflectionColor + u_reflectionBaseColor.rgb) * reflectionMask;
+    
+    // Emission map
+    float emissionPower = 1.0;
+#if defined(EMISSION_PERIOD)
+    emissionPower *= step(0.0, sin(u_time * 3.14 / EMISSION_PERIOD));
+#endif
+#if defined(EMISSION_MAP) && (EMISSION_MAP)
+    vec3 emissionColor = u_emissionColor.rgb * MAZE_GET_TEXEL2D(u_emissionMap, v_uv0).rgb;
+    emissionColor *= emissionPower;
+    linearColor += emissionColor;
+#endif
+#if defined(SHOT_MAP)
+    vec3 shotColor = u_shotValue * MAZE_GET_TEXEL2D(u_shotMap, v_uv0).rgb * u_shotColor.rgb * 2.0;
+    linearColor += shotColor;
+#endif    
+        
+    out_color = vec4(linearColor, albedo.a);
+}

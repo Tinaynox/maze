@@ -239,6 +239,7 @@ namespace Maze
         m_camera3D = m_fpsController->getCamera3D();
         m_camera3D->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
         m_camera3D->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
+        m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
         
         getLightingSettings()->setSkyBoxMaterial("Skybox02.mzmaterial");
 
@@ -279,6 +280,9 @@ namespace Maze
             1.0f);
 
         addMeshPreview("TorusKnot.fbx", "Checkerboard01.mzmaterial", "Checkerboard", torusKnotScale);
+        addMeshPreviewSpace();
+
+        addMeshPreview("TorusKnot.fbx", "GoldTest.mzmaterial", "Gold", torusKnotScale);
         addMeshPreviewSpace();
         
 
