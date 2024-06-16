@@ -42,6 +42,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SinMovement3D, Component,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, active, true, getActive, setActive),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, axis, Vec3F::c_unitY, getAxis, setAxis),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, frequency, 2.0f, getFrequency, setFrequency),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, amplitude, 1.0f, getAmplitude, setAmplitude));
@@ -124,6 +125,9 @@ namespace Maze
         SinMovement3D* _sinMovement,
         Transform3D* _transform)
     {
+        if (!_sinMovement->getActive())
+            return;
+
         _sinMovement->setTimer(_sinMovement->getTimer() + _event.getDt());
         F32 value = _sinMovement->getAmplitude() * Math::Sin(_sinMovement->getFrequency() * _sinMovement->getTimer());
         _transform->setLocalPosition(_sinMovement->getStartPosition() + _sinMovement->getAxis() * value);

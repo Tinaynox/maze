@@ -31,6 +31,7 @@
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
+#include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -169,6 +170,8 @@ namespace Maze
             texture2D->setWrapS(TextureWrap::FromString(metaData["wrapS"]));
         if (metaData["wrapT"] != String())
             texture2D->setWrapT(TextureWrap::FromString(metaData["wrapT"]));
+        if (metaData["anisotropy"] != String())
+            texture2D->setAnisotropyLevel(StringHelper::StringToF32Safe(metaData["anisotropy"]));
 
         return true;
     }
@@ -185,6 +188,7 @@ namespace Maze
         metaData["minFilter"] = texture2D->getMinFilter().toString();
         metaData["wrapS"] = texture2D->getWrapS().toString();
         metaData["wrapT"] = texture2D->getWrapT().toString();
+        metaData["anisotropy"] = StringHelper::ToString(texture2D->getAnisotropyLevel());
 
         AssetManager::GetInstancePtr()->saveMetaData(_assetFile, metaData);
 

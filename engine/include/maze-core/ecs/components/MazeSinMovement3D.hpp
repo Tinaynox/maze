@@ -74,6 +74,12 @@ namespace Maze
             F32 _amplitude = 1.0f);
 
 
+        //////////////////////////////////////////
+        inline bool getActive() const { return m_active; }
+
+        //////////////////////////////////////////
+        inline void setActive(bool _value) { m_active = _value; }
+
 
         //////////////////////////////////////////
         inline Vec3F const& getAxis() const { return m_axis; }
@@ -124,6 +130,8 @@ namespace Maze
             F32 _amplitude = 1.0f);
 
     protected:
+        bool m_active = true;
+
         Vec3F m_axis;
         F32 m_frequency;
         F32 m_amplitude;

@@ -12,6 +12,8 @@
 //////////////////////////////////////////
 IN vec3 a_position;
 IN vec3 a_normal;
+IN vec3 a_tangent;
+IN vec3 a_bitangent;
 IN vec4 a_color;
 IN vec2 a_texCoords0;
 
@@ -20,8 +22,13 @@ IN vec2 a_texCoords0;
 OUT vec3 v_positionOS;
 OUT vec3 v_positionWS;
 OUT vec3 v_positionVS;
-OUT vec4 v_color0;
+OUT vec3 v_normalOS;
+OUT vec3 v_normalWS;
+OUT vec3 v_tangentWS;
+OUT vec3 v_bitangentWS;
+OUT vec4 v_color;
 OUT vec2 v_uv0;
+OUT vec3 v_viewDirWS;
 
 
 //////////////////////////////////////////
@@ -43,6 +50,12 @@ void main()
     MAZE_CLIP_DISTANCE_VERTEX(positionWS);
     vec4 positionVS = viewMatrix * positionWS;
     vec4 positionCS = u_projectionMatrix * positionVS;
+    
+    vec4 normalOS = vec4(a_normal, 1.0);
+    vec4 tangentOS = vec4(a_tangent, 1.0);
+    vec4 bitangentOS = vec4(a_bitangent, 1.0);
+    
+    mat3 normalMatrix = mat3(MAZE_INVERSE(modelMatrix));
         
 #if (MAZE_LHCS)
     positionCS.z = -positionCS.z;
@@ -51,8 +64,24 @@ void main()
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
     v_positionVS = positionVS.xyz;
-    v_color0 = a_color;
+    
+    vec3 normalWS = normalize(normalOS.xyz * normalMatrix).xyz;
+    
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    vec3 tangentWS = normalize(tangentOS.xyz * normalMatrix).xyz;
+    vec3 bitangentWS = normalize(bitangentOS.xyz * normalMatrix).xyz;
+    
+    v_tangentWS = tangentWS.xyz;
+    v_bitangentWS = bitangentWS.xyz;
+#endif
+    
+    v_normalOS = normalOS.xyz;
+    v_normalWS = normalWS.xyz;
+    
+    v_color = a_color;
     v_uv0 = a_texCoords0;
+
+    v_viewDirWS = u_viewPosition - v_positionWS;
 
     gl_Position = positionCS;
 }
@@ -71,9 +100,13 @@ void main()
 
 //////////////////////////////////////////
 uniform sampler2D u_baseMap;
-uniform sampler2D u_baseMap2;
 uniform vec4 u_color;
+uniform float u_progress;
+uniform float u_fresnelPower;
 
+// NORMAL_MAP
+uniform sampler2D u_normalMap;
+uniform float u_normalScale;
 
 //////////////////////////////////////////
 IN vec3 v_positionOS;
@@ -81,8 +114,11 @@ IN vec3 v_positionWS;
 IN vec3 v_positionVS;
 IN vec3 v_normalOS;
 IN vec3 v_normalWS;
-IN vec4 v_color0;
+IN vec3 v_tangentWS;
+IN vec3 v_bitangentWS;
+IN vec4 v_color;
 IN vec2 v_uv0;
+IN vec3 v_viewDirWS;
 
 
 //////////////////////////////////////////
@@ -94,19 +130,35 @@ uniform sampler2D u_modelMatricesTexture;
 
 
 //////////////////////////////////////////
+#include "Utils/Core.mzglsl"
+#include "Utils/Math.mzglsl"
+
+
+//////////////////////////////////////////
 // Main
 void main()
 {
     MAZE_CLIP_DISTANCE_FRAGMENT;
     
-    // Albedo
-    vec4 albedo = texture(u_baseMap, v_uv0) * u_color;
-    
-    // Diffuse color
-    vec3 diffuseColor = albedo.rgb;
-        
+    // View direction
+    vec3 toView = normalize(v_viewDirWS);
+
+    // Normal
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    vec3 normalTS = SampleNormalTS(u_normalMap, v_uv0, u_normalScale);
+    mat3 tangentToWorld = mat3(normalize(v_tangentWS), normalize(v_bitangentWS), normalize(v_normalWS));
+    vec3 normalWS = normalize(TransformTangentToWorld(normalTS, tangentToWorld));
+#else
+    vec3 normalWS = normalize(v_normalWS);
+#endif
+
+    float NdotV = dot(normalWS, toView);
+    float fresnel = clamp(1.0 - NdotV, 0.0, 1.0);
+    fresnel = pow(fresnel, u_fresnelPower);
+
     // Linear color
-    vec3 linearColor = diffuseColor;
+    vec3 linearColor = u_color.rgb * fresnel * fresnel;
     
-    out_color = vec4(linearColor, albedo.a);
+    
+    out_color = vec4(linearColor * u_progress, u_color.a);
 }

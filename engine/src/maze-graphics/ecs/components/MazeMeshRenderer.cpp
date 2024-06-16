@@ -132,6 +132,23 @@ namespace Maze
         setMaterial(material);
     }
 
+
+    //////////////////////////////////////////
+    void MeshRenderer::addMaterial(MaterialPtr const& _material)
+    {
+        Vector<MaterialAssetRef> materials = getMaterialRefs();
+        materials.push_back(MaterialAssetRef(_material));
+        setMaterialRefs(materials);
+    }
+
+    //////////////////////////////////////////
+    void MeshRenderer::addMaterial(String const& _materialName)
+    {
+        MaterialPtr const& material = m_renderSystem->getMaterialManager()->getMaterial(_materialName);
+        MAZE_ERROR_IF(!material, "Undefined material: %s", _materialName.c_str());
+        addMaterial(material);
+    }
+
     //////////////////////////////////////////
     void MeshRenderer::setMesh(MeshPtr const& _mesh)
     {

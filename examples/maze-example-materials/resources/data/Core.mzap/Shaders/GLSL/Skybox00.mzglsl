@@ -20,8 +20,8 @@ IN vec2 a_texCoords0;
 OUT vec3 v_positionOS;
 OUT vec3 v_positionWS;
 OUT vec3 v_positionVS;
-OUT vec4 v_color0;
-OUT vec2 v_uv0;
+OUT vec4 v_color;
+OUT vec3 v_cubeCoords;
 
 
 //////////////////////////////////////////
@@ -51,8 +51,8 @@ void main()
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
     v_positionVS = positionVS.xyz;
-    v_color0 = a_color;
-    v_uv0 = a_texCoords0;
+    v_color = a_color;
+    v_cubeCoords = a_position;
 
     gl_Position = positionCS;
 }
@@ -70,8 +70,7 @@ void main()
 
 
 //////////////////////////////////////////
-uniform sampler2D u_baseMap;
-uniform sampler2D u_baseMap2;
+uniform samplerCube u_baseMap;
 uniform vec4 u_color;
 
 
@@ -81,8 +80,8 @@ IN vec3 v_positionWS;
 IN vec3 v_positionVS;
 IN vec3 v_normalOS;
 IN vec3 v_normalWS;
-IN vec4 v_color0;
-IN vec2 v_uv0;
+IN vec4 v_color;
+IN vec3 v_cubeCoords;
 
 
 //////////////////////////////////////////
@@ -99,14 +98,6 @@ void main()
 {
     MAZE_CLIP_DISTANCE_FRAGMENT;
     
-    // Albedo
-    vec4 albedo = texture(u_baseMap, v_uv0) * u_color;
-    
-    // Diffuse color
-    vec3 diffuseColor = albedo.rgb;
-        
-    // Linear color
-    vec3 linearColor = diffuseColor;
-    
-    out_color = vec4(linearColor, albedo.a);
+    vec3 cubeCoords = v_cubeCoords;
+    out_color = v_color * texture(u_baseMap, cubeCoords) * u_color;
 }

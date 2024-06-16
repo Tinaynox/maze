@@ -98,7 +98,7 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void setLocalPosition(F32 _x, F32 _y, F32 _z = 0.0f) { setLocalPosition(Vec3F(_x, _y, _z)); }
-
+        
         //////////////////////////////////////////
         inline void setLocalX(F32 _x) { setLocalPosition(Vec3F(_x, m_localPosition.y, m_localPosition.z)); }
 
@@ -131,6 +131,12 @@ namespace Maze
         inline void setLocalRotation(F32 _x, F32 _y, F32 _z)
         {
             setLocalRotation(Quaternion(_x, _y, _z));
+        }
+
+        //////////////////////////////////////////
+        inline void setLocalRotation(F32 _x, F32 _y, F32 _z, F32 _w)
+        {
+            setLocalRotation(Quaternion(_x, _y, _z, _w));
         }
 
         //////////////////////////////////////////

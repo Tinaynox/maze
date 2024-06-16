@@ -129,6 +129,12 @@ namespace Maze
         //////////////////////////////////////////
         void setMaterial(String const& _materialName);
 
+        //////////////////////////////////////////
+        void addMaterial(MaterialPtr const& _material);
+
+        //////////////////////////////////////////
+        void addMaterial(String const& _materialName);
+
 
         //////////////////////////////////////////
         inline RenderMaskPtr const& getRenderMask() const { return m_renderMask; }
