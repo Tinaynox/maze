@@ -284,6 +284,9 @@ namespace Maze
 
         addMeshPreview("TorusKnot.fbx", "GoldTest.mzmaterial", "Gold", torusKnotScale);
         addMeshPreviewSpace();
+
+        addMeshPreview("TorusKnot.fbx", "Cel00.mzmaterial", "Cel/Toon", torusKnotScale);
+        addMeshPreviewSpace();
         
 
         return true;

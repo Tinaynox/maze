@@ -227,13 +227,13 @@ namespace Maze
     //////////////////////////////////////////
     String ColorU32::toString() const
     {
-        return toString(';');
+        return toString(',');
     }
 
     //////////////////////////////////////////
     void ColorU32::setString(CString _data, Size _count)
     {
-        (*this) = ColorU32::FromString(String(_data, _count), ';');
+        (*this) = ColorU32::FromString(String(_data, _count), ',');
     }
 
     //////////////////////////////////////////
