@@ -134,13 +134,13 @@ namespace Maze
     //////////////////////////////////////////
     String ColorF128::toString() const
     {
-        return toString(';');
+        return toString(',');
     }
 
     //////////////////////////////////////////
     void ColorF128::setString(CString _data, Size _count)
     {
-        (*this) = ColorF128::FromString(String(_data, _count), ';');
+        (*this) = ColorF128::FromString(String(_data, _count), ',');
     }
 
     //////////////////////////////////////////

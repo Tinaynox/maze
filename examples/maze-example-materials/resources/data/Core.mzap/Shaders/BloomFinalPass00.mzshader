@@ -1,0 +1,4 @@
+GLSL
+{
+  shader:String = "BloomFinalPass00.mzglsl"
+}

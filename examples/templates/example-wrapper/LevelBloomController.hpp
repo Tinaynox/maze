@@ -56,6 +56,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SceneExample);
     MAZE_USING_SHARED_PTR(SpaceObject);
     MAZE_USING_SHARED_PTR(Projectile);
+    MAZE_USING_SHARED_PTR(RenderBuffer);
 
 
     //////////////////////////////////////////
@@ -71,7 +72,7 @@ namespace Maze
         virtual ~LevelBloomController();
 
         //////////////////////////////////////////
-        static LevelBloomControllerPtr Create(SceneExample* _sceneGame);
+        static LevelBloomControllerPtr Create(RenderBufferPtr const& _renderBuffer);
 
 
         //////////////////////////////////////////
@@ -92,7 +93,7 @@ namespace Maze
         LevelBloomController();
         
         //////////////////////////////////////////
-        bool init(SceneExample* _sceneGame);
+        bool init(RenderBufferPtr const& _renderBuffer);
 
         //////////////////////////////////////////
         void notifyPostGameplayUpdate(F32 _dt);
@@ -107,7 +108,7 @@ namespace Maze
         void updateBuffers();
 
     protected:
-        SceneExample* m_sceneGame;
+        RenderBufferPtr m_renderBuffer;
 
         Size m_currentBloomRenderBufferIndex;
         RenderBufferPtr m_bloomRenderBuffer[2];

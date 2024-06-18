@@ -9,18 +9,18 @@ uniform
 {
   name:String = "u_color"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.000000, 0.318841, 2.391304, 1.000000
+  value:Vec4F = 1.0, 1.0, 1.0, 1.0
 }
 
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:S32 = 2900
-  shader:String = "Unlit00.mzshader"
+  renderQueueIndex:S32 = 3000
+  shader:String = "PostFX00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"
-  blendDestFactor:String = "One"
-  depthTestCompareFunction:String = "Greater"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "Always"
   depthWriteEnabled:Bool = false
-  cullMode:String = "Back"
+  cullMode:String = "Off"
 }

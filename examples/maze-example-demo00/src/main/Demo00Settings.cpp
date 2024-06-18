@@ -24,7 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "ExampleSettings.hpp"
+#include "Demo00Settings.hpp"
 
 
 //////////////////////////////////////////
@@ -38,24 +38,23 @@ namespace Maze
     // Class EditorSceneSettings
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ExampleSettings, Settings,
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Demo00Settings, Settings,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, debugMenu, false, getDebugMenu, setDebugMenu),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, particlesEnabled, true, getParticlesEnabled, setParticlesEnabled),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, waterEnabled, true, getWaterEnabled, setWaterEnabled),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, bloomEnabled, true, getBloomEnabled, setBloomEnabled),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ExampleWaterRenderMode, exampleWaterRenderMode, ExampleWaterRenderMode::Default, getExampleWaterRenderMode, setExampleWaterRenderMode));
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(ExampleSettings);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Demo00Settings);
 
     //////////////////////////////////////////
-    ExampleSettings::ExampleSettings()
+    Demo00Settings::Demo00Settings()
     {
 
     }
 
     //////////////////////////////////////////
-    ExampleSettings::~ExampleSettings()
+    Demo00Settings::~Demo00Settings()
     {
 
     }

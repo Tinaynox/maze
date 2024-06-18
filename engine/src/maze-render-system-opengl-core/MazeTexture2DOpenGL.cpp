@@ -445,7 +445,7 @@ namespace Maze
             return true;
 
         m_anisotropyLevel = Math::Clamp(_value, 1.0f, m_renderSystem->getTextureMaxAnisotropyLevel());
-        
+
         {
             ContextOpenGLScopeBind contextScopedBind(m_context);
             MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());

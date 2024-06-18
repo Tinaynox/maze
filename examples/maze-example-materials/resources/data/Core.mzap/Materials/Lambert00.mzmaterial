@@ -9,7 +9,7 @@ uniform
 {
   name:String = "u_color"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.380392, 0.185882, 0.003922, 0.968627
+  value:Vec4F = 1.000000, 0.596274, 0.164706, 1.000000
 }
 
 uniform
@@ -19,29 +19,15 @@ uniform
   value:Vec4F = 0.301961, 0.301961, 0.301961, 1.000000
 }
 
-uniform
-{
-  name:String = "u_shininess"
-  type:String = "UniformF32"
-  value:F32 = 0.1
-}
-
-uniform
-{
-  name:String = "u_specularColor"
-  type:String = "UniformColorF128"
-  value:Vec4F = 0.549020, 0.549020, 0.549020, 1.000000
-}
-
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:S32 = 3000
-  shader:String = "Default.mzshader"
+  renderQueueIndex:S32 = 2000
+  shader:String = "Lambert00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"
-  blendDestFactor:String = "One"
+  blendDestFactor:String = "Zero"
   depthTestCompareFunction:String = "LessEqual"
-  depthWriteEnabled:Bool = false
+  depthWriteEnabled:Bool = true
   cullMode:String = "Back"
 }

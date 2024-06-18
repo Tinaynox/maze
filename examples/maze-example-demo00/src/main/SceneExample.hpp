@@ -43,7 +43,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
-#include "ExampleSettings.hpp"
+#include "Demo00Settings.hpp"
 
 
 //////////////////////////////////////////
@@ -115,10 +115,10 @@ namespace Maze
         void notifyTouch(InputEventTouchData const& _data);
 
         //////////////////////////////////////////
-        void notifyExampleSettingsChanged(bool const& _value);
+        void notifyDemo00SettingsChanged(bool const& _value);
 
         //////////////////////////////////////////
-        void notifyExampleSettingsChanged(ExampleWaterRenderMode const& _value);
+        void notifyDemo00SettingsChanged(ExampleWaterRenderMode const& _value);
 
         //////////////////////////////////////////
         void updateDebugMenu();

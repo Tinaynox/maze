@@ -93,8 +93,8 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "main/SceneExample.hpp"
-#include "main/LevelBloomController.hpp"
-#include "ExampleSettings.hpp"
+#include "LevelBloomController.hpp"
+#include "Demo00Settings.hpp"
 #include "Example.hpp"
 
 
@@ -195,7 +195,7 @@ namespace Maze
             m_canvas->getTransform(),
             this);
 
-        SettingsManager::GetInstancePtr()->registerSettings<ExampleSettings>();
+        SettingsManager::GetInstancePtr()->registerSettings<Demo00Settings>();
 
         nextLoadingStep(1);
 

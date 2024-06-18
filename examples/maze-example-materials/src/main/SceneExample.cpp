@@ -38,6 +38,7 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeSinMovement3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/math/MazeTMat.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -92,6 +93,8 @@
 #include "maze-plugin-loader-fbx/MazeLoaderFBXPlugin.hpp"
 #include "Example.hpp"
 #include "ExampleFPSCameraController.hpp"
+#include "ExampleCommonSettings.hpp"
+#include "LevelBloomController.hpp"
 
 
 //////////////////////////////////////////
@@ -164,6 +167,12 @@ namespace Maze
         if (InputManager::GetInstancePtr())
             InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
 
+        if (SettingsManager::GetInstancePtr())
+        {
+            ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
+            exampleCommonSettings->getBloomEnabledChangedEvent().unsubscribe(this);
+        }
+
         Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.unsubscribe(this);
         Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.unsubscribe(this);
     }
@@ -181,15 +190,88 @@ namespace Maze
     {
         if (!EcsRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
+
+        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
+        exampleCommonSettings->getBloomEnabledChangedEvent().subscribe(this, &SceneExample::notifyExampleCommonSettingsChanged);
+
+        Vec2U32 renderBufferSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
+
+        S32 samples = RenderSystem::GetCurrentInstancePtr()->getTextureMaxAntialiasingLevelSupport();
+
+        if (samples > 0)
+        {
+            Debug::Log("RenderBuffer MSAA(x%d) creating...", samples);
+            m_renderBufferMSAA = RenderBuffer::Create(
+                {
+                    renderBufferSize,
+                    { PixelFormat::RGBA_F16, samples },
+                    { PixelFormat::DEPTH_U24, samples }
+                });
+            if (m_renderBufferMSAA)
+            {
+                m_renderBufferMSAA->eventRenderBufferEndDraw.subscribe(
+                    [&](RenderBuffer* _renderBuffer)
+                {
+                    MAZE_PROFILE_EVENT("RenderBufferMSAA end draw");
+                    
+                    m_renderBuffer->blit(m_renderBufferMSAA);
+                    m_renderBuffer->eventRenderBufferEndDraw(m_renderBuffer.get());
+                });
+                Debug::Log("RenderBuffer MSAA(x%d) created.", samples);
+            }
+            else
+            {
+                Debug::Log("RenderBuffer MSAA(x%d) creating failed.", samples);
+            }
+        }
+
+        m_renderBuffer = RenderBuffer::Create(
+            {
+                renderBufferSize,
+                PixelFormat::RGBA_F16,
+                PixelFormat::DEPTH_U24
+            });
+        m_renderBuffer->setName("RenderBuffer");
+        m_renderBuffer->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
+        m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
+
                      
         EntityPtr canvasEntity = createEntity("Canvas");
         m_canvas = canvasEntity->createComponent<Canvas>();
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
         m_canvas->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
 
+        CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
+        canvasScaler->setScaleMode(CanvasScalerScaleMode::ScaleWithViewportSize);
+        canvasScaler->setScreenMatchMode(CanvasScalerScreenMatchMode::MatchWidthOrHeight);
+        canvasScaler->setMatchWidthOrHeight(1.0f);
+        canvasScaler->updateCanvasScale();
+
+
         UIElement2DPtr canvasUIElement = canvasEntity->ensureComponent<UIElement2D>();
         canvasUIElement->eventCursorPressIn.subscribe(this, &SceneExample::processCursorPress);
         canvasUIElement->eventCursorDrag.subscribe(this, &SceneExample::processCursorDrag);
+
+
+        EntityPtr canvasUIEntity = createEntity("CanvasUI");
+        m_canvasUI = canvasUIEntity->createComponent<Canvas>();
+        m_canvasUI->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
+        m_canvasUI->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
+        m_canvasUI->setSortOrder(100);
+
+
+        MaterialPtr const& postFXMaterial = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("PostFX00.mzmaterial");
+        m_renderColorSprite = SpriteHelper::CreateSprite(
+            Sprite::Create(m_renderBuffer->getColorTexture2D()),
+            m_canvas->getTransform()->getSize(),
+            Vec2F32::c_zero,
+            postFXMaterial,
+            m_canvas->getTransform(),
+            this);
+        m_renderColorSprite->getTransform()->setZ(1000);
+        m_renderColorSprite->getEntityRaw()->ensureComponent<Name>("RenderColorSprite");
+        m_renderColorSprite->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        m_renderColorSprite->setPixelPerfect(true);
 
 
         m_hintText = SystemUIHelper::CreateSystemText(
@@ -199,10 +281,11 @@ namespace Maze
             VerticalAlignment2D::Top,
             Vec2F32::c_zero,
             Vec2F32(10.0f, -10.0f),
-            m_canvas->getTransform(),
+            m_canvasUI->getTransform(),
             this,
             Vec2F32(0.0f, 1.0f),
             Vec2F32(0.0f, 1.0f));
+        m_hintText->getTransform()->setZ(2000);
         m_hintText->setColor(ColorU32(255, 255, 255, 220));
         m_hintText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getBuiltinSystemFont(BuiltinSystemFontType::DefaultOutlined));
         updateHintText();
@@ -230,18 +313,19 @@ namespace Maze
 
         // FPS Controller
         EntityPtr fpsControllerEntity = createEntity();
-        m_fpsController = fpsControllerEntity->ensureComponent<ExampleFPSCameraController>();
+        m_fpsController = fpsControllerEntity->ensureComponent<ExampleFPSCameraController>(m_canvas);
         m_fpsController->setLevelSize(levelSize);
         m_fpsController->setYawAngle(Math::DegreesToRadians(180.0f));
 
 
         // Camera
         m_camera3D = m_fpsController->getCamera3D();
-        m_camera3D->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
-        m_camera3D->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
         m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
         
         getLightingSettings()->setSkyBoxMaterial("Skybox02.mzmaterial");
+
+        m_bloomController = LevelBloomController::Create(m_renderBuffer);
+        updateRenderTarget();
 
 
         m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Checkerboard00.mzmaterial");
@@ -256,6 +340,9 @@ namespace Maze
         F32 const torusKnotScale = 20.0f;
 
         addMeshPreview("TorusKnot.fbx", "Unlit00.mzmaterial", "Unlit", torusKnotScale);
+        addMeshPreviewSpace();
+
+        addMeshPreview("TorusKnot.fbx", "Lambert00.mzmaterial", "Lambert Lighting", torusKnotScale);
         addMeshPreviewSpace();
 
         addMeshPreview("TorusKnot.fbx", "BlinnPhong00.mzmaterial", "Blinn-Phong Lighting", torusKnotScale);
@@ -287,6 +374,9 @@ namespace Maze
 
         addMeshPreview("TorusKnot.fbx", "Cel00.mzmaterial", "Cel/Toon", torusKnotScale);
         addMeshPreviewSpace();
+
+        addMeshPreview("TorusKnot.fbx", "BlinnPhongHDR00.mzmaterial", "Emission (HDR)", torusKnotScale);
+        addMeshPreviewSpace();
         
 
         return true;
@@ -299,15 +389,32 @@ namespace Maze
             return;
 
         m_canvas->setViewport(_mainRenderWindowViewport);
-        m_camera3D->setViewport(_mainRenderWindowViewport);
+        m_canvasUI->setViewport(_mainRenderWindowViewport);
+
+        if (!Example::GetInstancePtr()->isDebugEditorProgress())
+        {
+            m_renderBuffer->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
+
+            if (m_renderBufferMSAA)
+                m_renderBufferMSAA->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
+        }
+
+        updateRenderTargetViewport();
     }
 
     //////////////////////////////////////////
     void SceneExample::notifyRenderTargetResized(RenderTarget* _renderTarget)
     {
+        Vec2U32 size = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
+        Debug::Log("Render target resized: %ux%u", size.x, size.y);
+
         if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
             return;
 
+        m_renderBuffer->setSize(size);
+
+        if (m_renderBufferMSAA)
+            m_renderBufferMSAA->setSize(size);
     }
 
     //////////////////////////////////////////
@@ -315,6 +422,16 @@ namespace Maze
     {
         EcsRenderScene::update(_dt);
 
+        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
+
+        if (exampleCommonSettings->getBloomEnabled())
+        {
+            m_bloomController->update(_dt);
+            m_renderColorSprite->getMaterial()->ensureUniform(
+                MAZE_HS("u_bloomMap"),
+                ShaderUniformType::UniformTexture2D)->set(
+                    m_bloomController->getBloomRenderBuffer()->getColorTexture2D());
+        }
 
         m_fpsController->setForward(InputManager::GetInstancePtr()->getKeyState(KeyCode::W));
         m_fpsController->setBackward(InputManager::GetInstancePtr()->getKeyState(KeyCode::S));
@@ -392,7 +509,7 @@ namespace Maze
         
         meshData.rotor = rotor;
         
-        F32 x = ((S32)m_meshData.size() - 6) * 3.0f + m_meshesOffset;
+        F32 x = ((S32)m_meshData.size() - 8) * 2.0f + m_meshesOffset;
         transform->setLocalPosition(-x, 2.0f, -8.0f);
 
 
@@ -463,21 +580,27 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::addMeshPreviewSpace()
     {
-        m_meshesOffset += 3.0f;
+        m_meshesOffset += 2.0f;
     }
 
     //////////////////////////////////////////
     void SceneExample::updateHintText()
     {
+        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();        
+
         m_hintText->setTextFormatted(
             "[CONTROLS]\n"
             "Movement - WASD, Jump - Space, Camera - RMB (Hold)\n"
             "%s - R\n"
+            "%s - P\n"
             "\n"
             "[INFO]\n"
-            "Mesh Movement: %s",
+            "Mesh Movement: %s\n"
+            "Post Processing: %s",
             m_meshMovementEnabled ? "Disable Mesh Movement" : "Enable Mesh Movement",
-            m_meshMovementEnabled ? "ON" : "OFF"
+            exampleCommonSettings->getBloomEnabled() ? "Disable Post Processing" : "Enable Post Processing",
+            m_meshMovementEnabled ? "ON" : "OFF",
+            exampleCommonSettings->getBloomEnabled() ? "ON" : "OFF"
         );
     }
 
@@ -515,6 +638,14 @@ namespace Maze
                         setMeshMovementEnabled(!m_meshMovementEnabled);
                         break;
                     }
+                    case KeyCode::P:
+                    {
+                        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
+
+                        exampleCommonSettings->setBloomEnabled(
+                            !exampleCommonSettings->getBloomEnabled());
+                        break;
+                    }
                     default:
                         break;
                 }
@@ -523,6 +654,53 @@ namespace Maze
             default:
                 break;
         }
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::notifyExampleCommonSettingsChanged(bool const& _value)
+    {
+        updateRenderTarget();
+        updateHintText();
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::updateRenderTarget()
+    {
+        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
+
+        if (exampleCommonSettings->getBloomEnabled())
+        {
+            m_renderColorSprite->getEntityRaw()->setActiveSelf(true);
+            if (m_renderBufferMSAA)
+                m_camera3D->setRenderTarget(m_renderBufferMSAA);
+            else
+                m_camera3D->setRenderTarget(m_renderBuffer);
+
+            m_renderColorSprite->getMaterial()->ensureUniform(
+                MAZE_HS("u_bloomMap"),
+                ShaderUniformType::UniformTexture2D)->set(
+                    m_renderBuffer->getColorTexture2D());
+
+        }
+        else
+        {
+            m_renderColorSprite->getEntityRaw()->setActiveSelf(false);
+            m_camera3D->setRenderTarget(
+                Example::GetInstancePtr()->getMainRenderWindow());
+        }
+
+        updateRenderTargetViewport();
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::updateRenderTargetViewport()
+    {
+        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
+
+        if (exampleCommonSettings->getBloomEnabled())
+            m_camera3D->setViewport(Rect2DF(0.0f, 0.0f, 1.0f, 1.0f));
+        else
+            m_camera3D->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
     }
 
 

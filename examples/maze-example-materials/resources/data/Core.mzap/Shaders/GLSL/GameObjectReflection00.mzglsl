@@ -149,10 +149,6 @@ uniform float u_backLightBend;
 // LAMBERT_THRESHOLD
 uniform float u_lambertThreshold;
 
-// SHOT_MAP
-uniform sampler2D u_shotMap;
-uniform vec4 u_shotColor;
-uniform float u_shotValue;
 
 
 //////////////////////////////////////////
@@ -350,12 +346,7 @@ void main()
     linearColor += BlinnPhongLighting(
         diffuseColor, normalWS, fragmentToViewDirection, normalize(u_mainLightDirection),
         mainLightColor, fakeReflectionColor, reflectionMask);
-    
-    // Reset to LDR
-    linearColor.r = min(linearColor.r, 1.0);
-    linearColor.g = min(linearColor.g, 1.0);
-    linearColor.b = min(linearColor.b, 1.0);
-    
+        
     linearColor += 2.0 * (fakeReflectionColor + u_reflectionBaseColor.rgb) * reflectionMask;
     
     // Emission map
@@ -367,11 +358,12 @@ void main()
     vec3 emissionColor = u_emissionColor.rgb * MAZE_GET_TEXEL2D(u_emissionMap, v_uv0).rgb;
     emissionColor *= emissionPower;
     linearColor += emissionColor;
-#endif
-#if defined(SHOT_MAP)
-    vec3 shotColor = u_shotValue * MAZE_GET_TEXEL2D(u_shotMap, v_uv0).rgb * u_shotColor.rgb * 2.0;
-    linearColor += shotColor;
-#endif    
+#endif  
+
+    // Reset to LDR
+    linearColor.r = min(linearColor.r, 1.0);
+    linearColor.g = min(linearColor.g, 1.0);
+    linearColor.b = min(linearColor.b, 1.0);
         
     out_color = vec4(linearColor, albedo.a);
 }

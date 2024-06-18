@@ -92,9 +92,10 @@
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include "maze-plugin-water/MazeWaterPlugin.hpp"
 #include "maze-plugin-water/ecs/components/MazeRenderWaterController.hpp"
-#include "main/LevelBloomController.hpp"
+#include "LevelBloomController.hpp"
 #include "maze-plugin-console/MazeConsoleService.hpp"
-#include "ExampleSettings.hpp"
+#include "Demo00Settings.hpp"
+#include "ExampleCommonSettings.hpp"
 #include "Example.hpp"
 
 
@@ -124,11 +125,13 @@ namespace Maze
 
         if (SettingsManager::GetInstancePtr())
         {
-            ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+            ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
+            exampleCommonSettings->getBloomEnabledChangedEvent().unsubscribe(this);
+
+            Demo00Settings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>();
             exampleSettings->getDebugMenuChangedEvent().unsubscribe(this);
             exampleSettings->getParticlesEnabledChangedEvent().unsubscribe(this);
             exampleSettings->getWaterEnabledChangedEvent().unsubscribe(this);
-            exampleSettings->getBloomEnabledChangedEvent().unsubscribe(this);
             exampleSettings->getExampleWaterRenderModeChangedEvent().unsubscribe(this);
         }
 
@@ -150,12 +153,14 @@ namespace Maze
         if (!EcsRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
 
-        ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
-        exampleSettings->getDebugMenuChangedEvent().subscribe(this, &SceneExample::notifyExampleSettingsChanged);
-        exampleSettings->getParticlesEnabledChangedEvent().subscribe(this, &SceneExample::notifyExampleSettingsChanged);
-        exampleSettings->getWaterEnabledChangedEvent().subscribe(this, &SceneExample::notifyExampleSettingsChanged);
-        exampleSettings->getBloomEnabledChangedEvent().subscribe(this, &SceneExample::notifyExampleSettingsChanged);
-        exampleSettings->getExampleWaterRenderModeChangedEvent().subscribe(this, &SceneExample::notifyExampleSettingsChanged);
+        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
+        exampleCommonSettings->getBloomEnabledChangedEvent().subscribe(this, &SceneExample::notifyDemo00SettingsChanged);
+
+        Demo00Settings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>();
+        exampleSettings->getDebugMenuChangedEvent().subscribe(this, &SceneExample::notifyDemo00SettingsChanged);
+        exampleSettings->getParticlesEnabledChangedEvent().subscribe(this, &SceneExample::notifyDemo00SettingsChanged);
+        exampleSettings->getWaterEnabledChangedEvent().subscribe(this, &SceneExample::notifyDemo00SettingsChanged);
+        exampleSettings->getExampleWaterRenderModeChangedEvent().subscribe(this, &SceneExample::notifyDemo00SettingsChanged);
 
 
         InputManager* inputManager = InputManager::GetInstancePtr();
@@ -254,7 +259,7 @@ namespace Maze
         m_camera3D->setNearZ(0.01f);
         m_camera3D->setFarZ(100.0f);
 
-        m_bloomController = LevelBloomController::Create(this);
+        m_bloomController = LevelBloomController::Create(m_renderBuffer);
         updateBloom();
 
         getLightingSettings()->setSkyBoxMaterial("Skybox00.mzmaterial");
@@ -291,10 +296,10 @@ namespace Maze
                     return false;
 
                 if (_argc == 0)
-                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setWaterEnabled(
-                        !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->getWaterEnabled());
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->setWaterEnabled(
+                        !SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->getWaterEnabled());
                 else
-                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setWaterEnabled(StringHelper::StringToBool(_argv[0]));
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->setWaterEnabled(StringHelper::StringToBool(_argv[0]));
 
                 return true;
             }, 1);
@@ -374,8 +379,8 @@ namespace Maze
                     if (_event.button != 0)
                         return;
 
-                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setDebugMenu(
-                        !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->getDebugMenu());
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->setDebugMenu(
+                        !SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->getDebugMenu());
                     SettingsManager::GetInstancePtr()->saveSettings();
                 });
             SpriteHelper::CreateSprite(
@@ -455,8 +460,8 @@ namespace Maze
                 if (_event.button != 0)
                     return;
 
-                SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setBloomEnabled(
-                    !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->getBloomEnabled());
+                SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>()->setBloomEnabled(
+                    !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>()->getBloomEnabled());
                 SettingsManager::GetInstancePtr()->saveSettings();
             });
 
@@ -468,8 +473,8 @@ namespace Maze
                     if (_event.button != 0)
                         return;
 
-                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setParticlesEnabled(
-                        !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->getParticlesEnabled());
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->setParticlesEnabled(
+                        !SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->getParticlesEnabled());
                     SettingsManager::GetInstancePtr()->saveSettings();
                 });
 
@@ -481,8 +486,8 @@ namespace Maze
                     if (_event.button != 0)
                         return;
 
-                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setWaterEnabled(
-                        !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->getWaterEnabled());
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->setWaterEnabled(
+                        !SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->getWaterEnabled());
                     SettingsManager::GetInstancePtr()->saveSettings();
                 });
 
@@ -511,7 +516,7 @@ namespace Maze
                         if (_event.button != 0)
                             return;
 
-                        SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setExampleWaterRenderMode(mode);
+                        SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->setExampleWaterRenderMode(mode);
                         SettingsManager::GetInstancePtr()->saveSettings();
                     });
             }
@@ -552,9 +557,10 @@ namespace Maze
     {
         EcsRenderScene::update(_dt);
 
-        ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
+        Demo00Settings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>();
 
-        if (exampleSettings->getBloomEnabled())
+        if (exampleCommonSettings->getBloomEnabled())
         {
             m_bloomController->update(_dt);
             m_renderColorSprite->getMaterial()->ensureUniform(
@@ -666,10 +672,10 @@ namespace Maze
 
                 m_particleSystem->restart();
                 if (_argc == 0)
-                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setParticlesEnabled(
-                        !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->getParticlesEnabled());
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->setParticlesEnabled(
+                        !SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->getParticlesEnabled());
                 else
-                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setParticlesEnabled(StringHelper::StringToBool(_argv[0]));
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>()->setParticlesEnabled(StringHelper::StringToBool(_argv[0]));
 
                 return true;
             }, 1);
@@ -792,7 +798,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::notifyExampleSettingsChanged(bool const& _value)
+    void SceneExample::notifyDemo00SettingsChanged(bool const& _value)
     {
         updateDebugMenu();
         updateParticleSystem();
@@ -801,7 +807,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::notifyExampleSettingsChanged(ExampleWaterRenderMode const& _value)
+    void SceneExample::notifyDemo00SettingsChanged(ExampleWaterRenderMode const& _value)
     {
         updateDebugMenu();
         updateWater();
@@ -810,7 +816,8 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::updateDebugMenu()
     {
-        ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
+        Demo00Settings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>();
 
         bool debugMenuActive = exampleSettings->getDebugMenu();
         
@@ -819,7 +826,7 @@ namespace Maze
         m_debugMenuBackground->getEntityRaw()->setActiveSelf(debugMenuActive);
         m_debugMenuBackgroundCollapsed->getEntityRaw()->setActiveSelf(!debugMenuActive);
 
-        m_debugMenuBloomButton->setChecked(exampleSettings->getBloomEnabled());
+        m_debugMenuBloomButton->setChecked(exampleCommonSettings->getBloomEnabled());
         m_debugMenuParticlesButton->setChecked(exampleSettings->getParticlesEnabled());
         m_debugMenuWaterButton->setChecked(exampleSettings->getWaterEnabled());
 
@@ -867,7 +874,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::updateParticleSystem()
     {
-        ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+        Demo00Settings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>();
         if (exampleSettings->getParticlesEnabled() != m_particleSystem->getEntityRaw()->getActiveSelf())
         {
             m_particleSystem->restart();
@@ -878,7 +885,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::updateWater()
     {
-        ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+        Demo00Settings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<Demo00Settings>();
 
         m_renderWaterController->setEnabled(exampleSettings->getWaterEnabled());
 
@@ -909,9 +916,9 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::updateBloom()
     {
-        ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
 
-        if (exampleSettings->getBloomEnabled())
+        if (exampleCommonSettings->getBloomEnabled())
         {
             m_renderColorSprite->getEntityRaw()->setActiveSelf(true);
             m_camera3D->setRenderTarget(m_renderBuffer);

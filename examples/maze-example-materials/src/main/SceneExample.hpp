@@ -59,6 +59,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ExampleFPSCameraController);
     MAZE_USING_SHARED_PTR(Rotor3D);
     MAZE_USING_SHARED_PTR(SystemTextRenderer3D);
+    MAZE_USING_SHARED_PTR(LevelBloomController);
+    MAZE_USING_SHARED_PTR(SpriteRenderer2D);
 
 
     //////////////////////////////////////////
@@ -141,9 +143,27 @@ namespace Maze
         //////////////////////////////////////////
         void notifyKeyboard(InputEventKeyboardData const& _data);
 
+
+        //////////////////////////////////////////
+        void notifyExampleCommonSettingsChanged(bool const& _value);
+
+        //////////////////////////////////////////
+        void updateRenderTarget();
+
+        //////////////////////////////////////////
+        void updateRenderTargetViewport();
+
     protected:
         CanvasPtr m_canvas;
+        CanvasPtr m_canvasUI;
         Camera3DPtr m_camera3D;
+
+        SpriteRenderer2DPtr m_renderColorSprite;
+        SpriteRenderer2DPtr m_renderDepthSprite;
+
+        RenderBufferPtr m_renderBuffer;
+        RenderBufferPtr m_renderBufferMSAA;
+        LevelBloomControllerPtr m_bloomController;
 
         ExampleHelper::SimpleLevelConfig m_simpleLevelConfig;
 

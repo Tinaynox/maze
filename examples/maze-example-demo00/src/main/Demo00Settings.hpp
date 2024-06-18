@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_ExampleSettings_hpp_))
-#define _ExampleSettings_hpp_
+#if (!defined(_Demo00Settings_hpp_))
+#define _Demo00Settings_hpp_
 
 
 //////////////////////////////////////////
@@ -38,7 +38,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ExampleSettings);
+    MAZE_USING_SHARED_PTR(Demo00Settings);
 
 
     //////////////////////////////////////////
@@ -54,27 +54,27 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class ExampleSettings
+    // Class Demo00Settings
     //
     //////////////////////////////////////////
-    class ExampleSettings
+    class Demo00Settings
         : public Settings
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(ExampleSettings, Settings);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Demo00Settings, Settings);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(ExampleSettings);
+        MAZE_DECLARE_MEMORY_ALLOCATION(Demo00Settings);
 
     public:
 
         //////////////////////////////////////////
-        ExampleSettings();
+        Demo00Settings();
 
         //////////////////////////////////////////
-        virtual ~ExampleSettings();
+        virtual ~Demo00Settings();
 
 
         //////////////////////////////////////////
@@ -108,16 +108,6 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setBloomEnabled(bool _value) { m_bloomEnabled = _value; }
-
-        //////////////////////////////////////////
-        inline bool getBloomEnabled() const { return m_bloomEnabled.getValue(); }
-
-        //////////////////////////////////////////
-        inline MultiDelegate<bool const&>& getBloomEnabledChangedEvent() { return m_bloomEnabled.eventValueChanged; }
-
-
-        //////////////////////////////////////////
         void setExampleWaterRenderMode(ExampleWaterRenderMode _value) { m_exampleWaterRenderMode = _value; }
 
         //////////////////////////////////////////
@@ -132,7 +122,6 @@ namespace Maze
         ObservableValue<bool> m_debugMenu = false;
         ObservableValue<bool> m_particlesEnabled = true;
         ObservableValue<bool> m_waterEnabled = true;
-        ObservableValue<bool> m_bloomEnabled = true;
         ObservableValue<ExampleWaterRenderMode> m_exampleWaterRenderMode = ExampleWaterRenderMode::Default;
     };
 
@@ -141,5 +130,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _ExampleSettings_hpp_
+#endif // _Demo00Settings_hpp_
 //////////////////////////////////////////

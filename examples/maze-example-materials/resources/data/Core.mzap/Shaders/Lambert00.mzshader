@@ -1,0 +1,32 @@
+uniform
+{
+  name:String = "u_baseMapST"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 1.0, 1.0, 0.0, 0.0
+}
+
+uniform
+{
+  name:String = "u_baseMapST"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 1.0, 1.0, 0.0, 0.0
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 1.0, 1.0, 1.0, 1.0
+}
+
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 0.45, 0.45, 0.45, 1.0
+}
+
+GLSL
+{
+  shader:String = "Lambert00.mzglsl"
+}

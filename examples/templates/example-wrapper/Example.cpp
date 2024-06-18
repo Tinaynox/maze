@@ -57,6 +57,7 @@
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
+#include "ExampleCommonSettings.hpp"
 
 #if MAZE_RENDER_SYSTEM_OPENGL_ENABLED
 #   include "maze-render-system-opengl3/MazeRenderSystemOpenGL3.hpp"
@@ -240,6 +241,8 @@ namespace Maze
     {
         if (!loadPlugins())
             return false;
+
+        SettingsManager::GetInstancePtr()->registerSettings<ExampleCommonSettings>();
 
         processReadyToCreateWindowAndGoToSplash();
 

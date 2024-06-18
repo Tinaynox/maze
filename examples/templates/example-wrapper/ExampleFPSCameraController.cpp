@@ -31,6 +31,7 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "Example.hpp"
@@ -73,16 +74,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ExampleFPSCameraControllerPtr ExampleFPSCameraController::Create()
+    ExampleFPSCameraControllerPtr ExampleFPSCameraController::Create(CanvasPtr const& _canvas)
     {
         ExampleFPSCameraControllerPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ExampleFPSCameraController, object, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ExampleFPSCameraController, object, init(_canvas));
         return object;
     }
 
     //////////////////////////////////////////
-    bool ExampleFPSCameraController::init()
+    bool ExampleFPSCameraController::init(CanvasPtr const& _canvas)
     {
+        m_canvas = _canvas;
+
         m_jumpCurve.setMode(AnimationCurve::EvaluateMode::Smooth);
         m_jumpCurve.addKey(0.0f, 0.0f);
         m_jumpCurve.addKey(0.1f, -0.1f);
@@ -109,14 +112,14 @@ namespace Maze
         if (!Example::GetInstancePtr() || !Example::GetInstancePtr()->isWindowFocused())
             return;
 
-        Rect2DF viewportRect = m_camera3D->getViewport();
-        viewportRect.position *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
-        viewportRect.size *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
+        Rect2DF viewportRect = m_canvas->getViewport();
+        viewportRect.position *= (Vec2F32)m_canvas->getRenderTarget()->getRenderTargetSize();
+        viewportRect.size *= (Vec2F32)m_canvas->getRenderTarget()->getRenderTargetSize();
 
         AABB2D aabb = AABB2D::FromRect2D(viewportRect);
         Vec2F32 cursorPositionRWS = InputManager::GetInstancePtr()->getCursorPosition(0);
 
-        if (m_camera3D && aabb.contains(cursorPositionRWS))
+        if (aabb.contains(cursorPositionRWS))
         {
             Vec3F32 cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F32::c_unitZ;
             cameraForwardDirection.y = 0.0f;
@@ -127,11 +130,15 @@ namespace Maze
 
             F32 speed = m_speed;
 
+#if (MAZE_PLATFORM != MAZE_PLATFORM_EMSCRIPTEN)
             if (InputManager::GetInstancePtr()->getKeyState(KeyCode::LShift) ||
                 InputManager::GetInstancePtr()->getKeyState(KeyCode::RShift))
             {
                 speed *= 3.0f;
             }
+#else
+            speed *= 2.0f;
+#endif
 
             if (m_forward)
             {
@@ -158,32 +165,32 @@ namespace Maze
                 if (m_jumpProgress >= 1.0f)
                     m_jumpProgress = 0.0f;
             }
+        }
 
-            Vec2F32 clampedSize = m_levelSize - Vec2F32(m_radius);
-            m_targetPosition.x = Math::Clamp(m_targetPosition.x, -clampedSize.x * 0.5f, +clampedSize.x * 0.5f);
-            m_targetPosition.z = Math::Clamp(m_targetPosition.z, -clampedSize.y * 0.5f, +clampedSize.y * 0.5f);
-
-
-            getTransform()->setLocalPosition(
-                Math::Lerp(
-                    getTransform()->getLocalPosition(),
-                    m_targetPosition,
-                    _dt * 16.0f));
-
-            Quaternion q = Quaternion::Slerp(
-                36.0f * _dt,
-                m_camera3D->getTransform()->getLocalRotation(),
-                Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
-            m_camera3D->getTransform()->setLocalRotation(q);
+        Vec2F32 clampedSize = m_levelSize - Vec2F32(m_radius);
+        m_targetPosition.x = Math::Clamp(m_targetPosition.x, -clampedSize.x * 0.5f, +clampedSize.x * 0.5f);
+        m_targetPosition.z = Math::Clamp(m_targetPosition.z, -clampedSize.y * 0.5f, +clampedSize.y * 0.5f);
 
 
-            if (m_jumpProgress < 1.0f)
-            {
-                m_jumpProgress += _dt * 1.1f;
-                m_jumpProgress = Math::Clamp01(m_jumpProgress);
+        getTransform()->setLocalPosition(
+            Math::Lerp(
+                getTransform()->getLocalPosition(),
+                m_targetPosition,
+                _dt * 16.0f));
 
-                m_targetPosition.y = m_jumpCurve.evaluate(m_jumpProgress) * 1.5f;
-            }
+        Quaternion q = Quaternion::Slerp(
+            36.0f * _dt,
+            m_camera3D->getTransform()->getLocalRotation(),
+            Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
+        m_camera3D->getTransform()->setLocalRotation(q);
+
+
+        if (m_jumpProgress < 1.0f)
+        {
+            m_jumpProgress += _dt * 1.1f;
+            m_jumpProgress = Math::Clamp01(m_jumpProgress);
+
+            m_targetPosition.y = m_jumpCurve.evaluate(m_jumpProgress) * 1.5f;
         }
     }
 

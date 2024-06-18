@@ -47,8 +47,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     LevelBloomController::LevelBloomController()
-        : m_sceneGame(nullptr)
-        , m_currentBloomRenderBufferIndex(0)
+        : m_currentBloomRenderBufferIndex(0)
         , m_blurIterations(5)
     {
 
@@ -57,27 +56,31 @@ namespace Maze
     //////////////////////////////////////////
     LevelBloomController::~LevelBloomController()
     {
-        m_sceneGame->getRenderBuffer()->eventRenderBufferSizeChanged.unsubscribe(this);
-        m_sceneGame->getRenderBuffer()->eventRenderBufferEndDraw.unsubscribe(this);
+        if (m_renderBuffer)
+        {
+            m_renderBuffer->eventRenderBufferSizeChanged.unsubscribe(this);
+            m_renderBuffer->eventRenderBufferEndDraw.unsubscribe(this);
+        }
     }
 
     //////////////////////////////////////////
-    LevelBloomControllerPtr LevelBloomController::Create(SceneExample* _sceneGame)
+    LevelBloomControllerPtr LevelBloomController::Create(RenderBufferPtr const& _renderBuffer)
     {
         LevelBloomControllerPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(LevelBloomController, object, init(_sceneGame));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(LevelBloomController, object, init(_renderBuffer));
         return object;
     }
 
     //////////////////////////////////////////
-    bool LevelBloomController::init(SceneExample* _sceneGame)
+    bool LevelBloomController::init(RenderBufferPtr const& _renderBuffer)
     {
-        m_sceneGame = _sceneGame;
-        
         RenderSystem* renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
+
+        m_renderBuffer = _renderBuffer;
         
-        _sceneGame->getRenderBuffer()->eventRenderBufferSizeChanged.subscribe(this, &LevelBloomController::notifyRenderBufferSizeChanged);
-        _sceneGame->getRenderBuffer()->eventRenderBufferEndDraw.subscribe(this, &LevelBloomController::notifyRenderBufferEndDraw);
+        
+        m_renderBuffer->eventRenderBufferSizeChanged.subscribe(this, &LevelBloomController::notifyRenderBufferSizeChanged);
+        m_renderBuffer->eventRenderBufferEndDraw.subscribe(this, &LevelBloomController::notifyRenderBufferEndDraw);
 
         m_bloomMaterial = renderSystem->getMaterialManager()->getMaterial("Bloom00.mzmaterial");
         m_bloomBaseMapUniform = m_bloomMaterial->ensureUniform(MAZE_HS("u_baseMap"), ShaderUniformType::UniformTexture2D);
@@ -129,7 +132,7 @@ namespace Maze
 
         // First downscale
         {
-            Texture2DPtr baseMap = m_sceneGame->getRenderBuffer()->getColorTexture2D();
+            Texture2DPtr baseMap = m_renderBuffer->getColorTexture2D();
             m_bloomBaseMapUniform->set(baseMap);
             m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2F32)baseMap->getSize());
             currentRenderBuffer->blit(m_bloomMaterial, 0);
@@ -184,8 +187,8 @@ namespace Maze
     void LevelBloomController::updateBuffers()
     {
         Vec2U32 bloomRenderBufferSize(
-            m_sceneGame->getRenderBuffer()->getWidth() >> 1,
-            m_sceneGame->getRenderBuffer()->getHeight() >> 1);
+            m_renderBuffer->getWidth() >> 1,
+            m_renderBuffer->getHeight() >> 1);
 
         for (Size i = 0; i < 2; ++i)
         {

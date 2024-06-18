@@ -45,6 +45,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderTarget);
     MAZE_USING_SHARED_PTR(ExampleFPSCameraController);
     MAZE_USING_SHARED_PTR(Transform3D);
+    MAZE_USING_SHARED_PTR(Canvas);
 
 
     //////////////////////////////////////////
@@ -71,7 +72,7 @@ namespace Maze
         virtual ~ExampleFPSCameraController();
 
         //////////////////////////////////////////
-        static ExampleFPSCameraControllerPtr Create();
+        static ExampleFPSCameraControllerPtr Create(CanvasPtr const& _canvas);
 
 
         //////////////////////////////////////////
@@ -144,7 +145,7 @@ namespace Maze
         using Component::init;
         
         //////////////////////////////////////////
-        bool init();
+        bool init(CanvasPtr const& _canvas);
 
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
@@ -155,6 +156,7 @@ namespace Maze
     protected:
         Transform3DPtr m_transform;
         Camera3DPtr m_camera3D;
+        CanvasPtr m_canvas;
 
         AnimationCurve m_jumpCurve;
         F32 m_jumpProgress = 1.0f;
