@@ -377,6 +377,9 @@ namespace Maze
 
         addMeshPreview("TorusKnot.fbx", "BlinnPhongHDR00.mzmaterial", "Emission (HDR)", torusKnotScale);
         addMeshPreviewSpace();
+
+        addMeshPreview("TorusKnot.fbx", "Dissolve00.mzmaterial", "Dissolve", torusKnotScale);
+        addMeshPreviewSpace();
         
 
         return true;

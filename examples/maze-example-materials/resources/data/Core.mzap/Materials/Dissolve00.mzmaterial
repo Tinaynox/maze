@@ -1,0 +1,75 @@
+uniform
+{
+  name:String = "u_baseMap"
+  type:String = "UniformTexture2D"
+  value:String = "White"
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:Vec4F = 1.000000, 0.596274, 0.164706, 1.000000
+}
+
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.301961,0.301961,0.301961,1.000000
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:F32 = 0.5
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.450980,0.450980,0.450980,1.000000
+}
+
+uniform
+{
+  name:String = "u_wavesNoise"
+  type:String = "UniformF32"
+  value:F32 = 60.0
+}
+
+uniform
+{
+  name:String = "u_dissolveProgress"
+  type:String = "UniformF32"
+  value:F32 = 0.0
+}
+
+uniform
+{
+  name:String = "u_edgeWidth"
+  type:String = "UniformF32"
+  value:F32 = 0.06
+}
+
+uniform
+{
+  name:String = "u_edgeColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.584314,0.194771,0.000000,1.000000
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 2000
+  shader:String = "Dissolve00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:Bool = true
+  cullMode:String = "Back"
+}
