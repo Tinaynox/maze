@@ -82,7 +82,10 @@ namespace Maze
         void loadFromXMLElement(tinyxml2::XMLElement const* _element);
 
         //////////////////////////////////////////
-        RenderBufferPtr const& getBloomRenderBuffer() const { return m_bloomRenderBuffer[m_currentBloomRenderBufferIndex]; }
+        RenderBufferPtr const& getBloomRenderBuffer() const { return m_bloomRenderBuffer[m_currentBloomRenderBufferIndex == 0u ? 1u : 0u]; }
+
+        //////////////////////////////////////////
+        RenderBufferPtr const& getPrevBloomRenderBuffer() const { return m_bloomRenderBuffer[m_currentBloomRenderBufferIndex == 0u ? 0u : 1u]; }
 
         //////////////////////////////////////////
         Vector<RenderBufferPtr> const& getBloomMipMapRenderBuffer() const { return m_bloomMipMapRenderBuffers; }
