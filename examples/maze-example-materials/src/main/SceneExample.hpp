@@ -158,6 +158,11 @@ namespace Maze
         CanvasPtr m_canvasUI;
         Camera3DPtr m_camera3D;
 
+        RenderBufferPtr m_distortionRenderBuffer;
+        Camera3DPtr m_distortionCamera3D;
+
+        MaterialPtr m_postFXMaterial;
+
         SpriteRenderer2DPtr m_renderColorSprite;
         SpriteRenderer2DPtr m_renderDepthSprite;
 

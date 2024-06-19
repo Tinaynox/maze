@@ -20,6 +20,9 @@ IN vec2 a_texCoords0;
 OUT vec3 v_positionOS;
 OUT vec3 v_positionWS;
 OUT vec3 v_positionVS;
+OUT vec4 v_positionCS;
+OUT vec3 v_normalOS;
+OUT vec3 v_normalWS;
 OUT vec4 v_color;
 OUT vec2 v_uv0;
 
@@ -43,6 +46,10 @@ void main()
     MAZE_CLIP_DISTANCE_VERTEX(positionWS);
     vec4 positionVS = viewMatrix * positionWS;
     vec4 positionCS = u_projectionMatrix * positionVS;
+    
+    vec4 normalOS = vec4(a_normal, 1.0);
+    
+    mat3 normalMatrix = mat3(MAZE_INVERSE(modelMatrix));
         
 #if (MAZE_LHCS)
     positionCS.z = -positionCS.z;
@@ -51,6 +58,13 @@ void main()
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
     v_positionVS = positionVS.xyz;
+    v_positionCS = positionCS;
+    
+    vec3 normalWS = normalize(normalOS.xyz * normalMatrix).xyz;
+    
+    v_normalOS = normalOS.xyz;
+    v_normalWS = normalWS.xyz;
+    
     v_color = a_color;
     v_uv0 = a_texCoords0;
 
@@ -70,17 +84,14 @@ void main()
 
 
 //////////////////////////////////////////
-uniform sampler2D u_baseMap;
-uniform sampler2D u_bloomMap;
-uniform sampler2D u_distortionMap;
-uniform float u_invAspectRatio;
-uniform float u_distortionMult;
+uniform vec4 u_color;
 
 
 //////////////////////////////////////////
 IN vec3 v_positionOS;
 IN vec3 v_positionWS;
 IN vec3 v_positionVS;
+IN vec4 v_positionCS;
 IN vec3 v_normalOS;
 IN vec3 v_normalWS;
 IN vec4 v_color;
@@ -92,46 +103,13 @@ MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
 
 
 //////////////////////////////////////////
-#define DISTORTION_BORDER_OFFSET 0.1
-
-
-//////////////////////////////////////////
-uniform sampler2D u_modelMatricesTexture;
-
-
-//////////////////////////////////////////
 // Main
 void main()
 {
-    MAZE_CLIP_DISTANCE_FRAGMENT;
-    
-    // Distortion color
-    vec2 distortion = texture(u_distortionMap, v_uv0).rg;
-    vec2 uv = v_uv0;
-    
-    distortion.x *= u_invAspectRatio;
-    distortion *= u_distortionMult;
-    
-    distortion.x *= smoothstep(0.0, DISTORTION_BORDER_OFFSET * u_invAspectRatio, uv.x) * (1.0 - smoothstep(1.0 - DISTORTION_BORDER_OFFSET * u_invAspectRatio, 1.0, uv.x));
-    distortion.y *= smoothstep(0.0, DISTORTION_BORDER_OFFSET, uv.y) * (1.0 - smoothstep(1.0 - DISTORTION_BORDER_OFFSET, 1.0, uv.y));
-    
-    vec2 distortedUV = uv + distortion;
-    uv = distortedUV;
-    uv.x = clamp(uv.x, 0.0, 1.0);
-    uv.y = clamp(uv.y, 0.0, 1.0);
-    
-    
-    // Albedo
-    vec4 albedo = texture(u_baseMap, uv);
-    
-    // Diffuse color
-    vec3 diffuseColor = albedo.rgb;
-    
-    // Bloom color
-    vec3 bloomColor = texture(u_bloomMap, uv).rgb;
-        
-    // Linear color
-    vec3 linearColor = diffuseColor + bloomColor * 1.75;
-    
-    out_color = vec4(linearColor, 1.0);
+    MAZE_CLIP_DISTANCE_FRAGMENT;    
+    vec2 distortion = vec2(v_normalWS.x, v_normalWS.y);
+#if defined(DISTORTION_INVERTED) && (DISTORTION_INVERTED)
+    distortion = -distortion;
+#endif
+    out_color = vec4(distortion * u_color.rg, 0.0, 1.0);
 }

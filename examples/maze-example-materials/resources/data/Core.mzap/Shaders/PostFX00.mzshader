@@ -1,3 +1,10 @@
+uniform
+{
+  name:String = "u_distortionMult"
+  type:String = "UniformF32"
+  value:F32 = 0.011
+}
+
 GLSL
 {
   shader:String = "PostFX00.mzglsl"

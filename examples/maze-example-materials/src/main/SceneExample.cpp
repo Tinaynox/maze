@@ -98,6 +98,10 @@
 
 
 //////////////////////////////////////////
+#define DISTORTION_BUFFER_DIV 1u
+
+
+//////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
@@ -260,7 +264,7 @@ namespace Maze
         m_canvasUI->setSortOrder(100);
 
 
-        MaterialPtr const& postFXMaterial = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("PostFX00.mzmaterial");
+        MaterialPtr postFXMaterial = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("PostFX00.mzmaterial");
         m_renderColorSprite = SpriteHelper::CreateSprite(
             Sprite::Create(m_renderBuffer->getColorTexture2D()),
             m_canvas->getTransform()->getSize(),
@@ -268,6 +272,7 @@ namespace Maze
             postFXMaterial,
             m_canvas->getTransform(),
             this);
+        m_postFXMaterial = m_renderColorSprite->getMaterial();
         m_renderColorSprite->getTransform()->setZ(1000);
         m_renderColorSprite->getEntityRaw()->ensureComponent<Name>("RenderColorSprite");
         m_renderColorSprite->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -321,6 +326,38 @@ namespace Maze
         // Camera
         m_camera3D = m_fpsController->getCamera3D();
         m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
+        m_camera3D->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::UserMask0);
+
+
+        // Distortion render buffer
+        {
+            Debug::Log("Distortion Render Buffer creating...");
+            m_distortionRenderBuffer = RenderBuffer::Create(
+                {
+                    renderBufferSize / DISTORTION_BUFFER_DIV,
+                    PixelFormat::RGBA_F16
+                });
+            Debug::Log("Distortion Render Buffer created.");
+
+            if (m_distortionRenderBuffer->getColorTexture()->getType() == TextureType::TwoDimensional)
+            {
+                m_distortionRenderBuffer->getColorTexture()->castRaw<Texture2D>()->setMinFilter(TextureFilter::Linear);
+                m_distortionRenderBuffer->getColorTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Linear);
+            }
+        }
+
+        EntityPtr distortionCameraEntity = createEntity("DistortionCamera");
+        m_distortionCamera3D = distortionCameraEntity->createComponent<Camera3D>();
+        m_distortionCamera3D->getTransform()->setParent(m_camera3D->getTransform());
+        m_distortionCamera3D->setFOV(m_camera3D->getFOV());
+        m_distortionCamera3D->setClearColor(ColorU32::c_black);
+        m_distortionCamera3D->setClearColorFlag(true);
+        m_distortionCamera3D->setRenderMask((S32)DefaultRenderMask::UserMask0);
+        m_distortionCamera3D->setNearZ(m_camera3D->getNearZ());
+        m_distortionCamera3D->setFarZ(m_camera3D->getFarZ());
+        m_distortionCamera3D->setSortOrder(m_camera3D->getSortOrder() + 100);
+        m_distortionCamera3D->setRenderTarget(m_distortionRenderBuffer);
+
         
         getLightingSettings()->setSkyBoxMaterial("Skybox02.mzmaterial");
 
@@ -380,6 +417,10 @@ namespace Maze
 
         addMeshPreview("TorusKnot.fbx", "Dissolve00.mzmaterial", "Dissolve", torusKnotScale);
         addMeshPreviewSpace();
+
+        addMeshPreview("TorusKnot.fbx", "Distortion00.mzmaterial", "Distortion", torusKnotScale);
+        addMeshPreviewSpace();
+        m_meshData.back().renderer->getRenderMask()->setMask((S32)DefaultRenderMask::UserMask0);
         
 
         return true;
@@ -396,10 +437,15 @@ namespace Maze
 
         if (!Example::GetInstancePtr()->isDebugEditorProgress())
         {
-            m_renderBuffer->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
+            Vec2F renderWindowSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
+
+            m_renderBuffer->setSize(renderWindowSize);
 
             if (m_renderBufferMSAA)
-                m_renderBufferMSAA->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
+                m_renderBufferMSAA->setSize(renderWindowSize);
+
+            m_distortionRenderBuffer->setSize(renderWindowSize / DISTORTION_BUFFER_DIV);
+
         }
 
         updateRenderTargetViewport();
@@ -684,6 +730,15 @@ namespace Maze
                 ShaderUniformType::UniformTexture2D)->set(
                     m_renderBuffer->getColorTexture2D());
 
+
+            m_postFXMaterial->setUniform(
+                MAZE_HASHED_CSTRING("u_distortionMap"), m_distortionRenderBuffer->getColorTexture2D());
+            m_postFXMaterial->setUniform(
+                MAZE_HASHED_CSTRING("u_invAspectRatio"),
+                (F32)m_renderBuffer->getHeight() / (F32)m_renderBuffer->getWidth());
+            m_postFXMaterial->setUniform(
+                MAZE_HASHED_CSTRING("u_baseMapTexelSize"),
+                1.0f / (Vec2F)m_renderBuffer->getColorTexture()->cast<Texture2D>()->getSize());
         }
         else
         {
