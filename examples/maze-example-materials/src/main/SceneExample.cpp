@@ -406,7 +406,10 @@ namespace Maze
         addMeshPreview("TorusKnot.fbx", "Checkerboard01.mzmaterial", "Checkerboard", torusKnotScale);
         addMeshPreviewSpace();
 
-        addMeshPreview("TorusKnot.fbx", "GoldTest.mzmaterial", "Gold", torusKnotScale);
+        addMeshPreview("TorusKnot.fbx", "GoldTest.mzmaterial", "Gold (SER)", torusKnotScale);
+        addMeshPreviewSpace();
+
+        addMeshPreview("TorusKnot.fbx", "SkyboxReflection.mzmaterial", "Skybox Reflection", torusKnotScale);
         addMeshPreviewSpace();
 
         addMeshPreview("TorusKnot.fbx", "Cel00.mzmaterial", "Cel/Toon", torusKnotScale);
@@ -492,7 +495,11 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::processCursorPress(Vec2F32 const& _positionOS, CursorInputEvent const& _event)
     {
-        if (_event.button == 0 || _event.button == 1)
+#if (MAZE_PLATFORM_MOBILE)
+        if (_event.button == 0)
+#else
+        if (_event.button == 1)
+#endif
         {
             m_cursorPositionLastFrame = _positionOS;
         }
@@ -503,7 +510,11 @@ namespace Maze
     {
         Vec2F32 deltaPosition = _positionOS - m_cursorPositionLastFrame;
 
-        if (_event.button == 0 || _event.button == 1)
+#if (MAZE_PLATFORM_MOBILE)
+        if (_event.button == 0)
+#else
+        if (_event.button == 1)
+#endif
         {
             F32 yawAngle = m_fpsController->getYawAngle();
             F32 pitchAngle = m_fpsController->getPitchAngle();
@@ -558,7 +569,7 @@ namespace Maze
         
         meshData.rotor = rotor;
         
-        F32 x = ((S32)m_meshData.size() - 8) * 2.0f + m_meshesOffset;
+        F32 x = ((S32)m_meshData.size() - 12) * 2.0f + m_meshesOffset;
         transform->setLocalPosition(-x, 2.0f, -8.0f);
 
 

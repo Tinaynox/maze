@@ -100,8 +100,6 @@ void main()
 uniform sampler2D u_baseMap;
 uniform vec4 u_color;
 uniform vec4 u_ambientLightColor;
-uniform float u_shininess;
-uniform vec4 u_specularColor;
 
 
 //////////////////////////////////////////

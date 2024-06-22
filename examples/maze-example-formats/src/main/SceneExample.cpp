@@ -346,7 +346,11 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::processCursorPress(Vec2F32 const& _positionOS, CursorInputEvent const& _event)
     {
-        if (_event.button == 0 || _event.button == 1)
+#if (MAZE_PLATFORM_MOBILE)
+        if (_event.button == 0)
+#else
+        if (_event.button == 1)
+#endif
         {
             m_cursorPositionLastFrame = _positionOS;
         }
@@ -357,7 +361,11 @@ namespace Maze
     {
         Vec2F32 deltaPosition = _positionOS - m_cursorPositionLastFrame;
 
-        if (_event.button == 0 || _event.button == 1)
+#if (MAZE_PLATFORM_MOBILE)
+        if (_event.button == 0)
+#else
+        if (_event.button == 1)
+#endif
         {
             F32 yawAngle = m_fpsController->getYawAngle();
             F32 pitchAngle = m_fpsController->getPitchAngle();

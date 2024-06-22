@@ -141,11 +141,6 @@ uniform sampler2D u_shininessMap;
 uniform sampler2D u_normalMap;
 uniform float u_normalScale;
 
-// BACK_LIGHT
-uniform vec4 u_backLightColor;
-uniform vec3 u_backLightDirection;
-uniform float u_backLightBend;
-
 // LAMBERT_THRESHOLD
 uniform float u_lambertThreshold;
 
@@ -332,14 +327,7 @@ void main()
         
     // Linear color
     vec3 linearColor = diffuseColor * ambientLightColor;
-    
-    // Back light
-#if defined(BACK_LIGHT) && (BACK_LIGHT)
-    vec3 backLight = BackLighting(
-        diffuseColor, normalWS, fragmentToViewDirection, normalize(u_backLightDirection),
-        u_backLightColor.rgb, fakeReflectionColor, reflectionMask, 0.0, u_backLightBend);
-    linearColor += backLight;
-#endif
+   
         
     // Main light
     vec3 mainLightColor = u_mainLightColor.rgb;
@@ -351,9 +339,6 @@ void main()
     
     // Emission map
     float emissionPower = 1.0;
-#if defined(EMISSION_PERIOD)
-    emissionPower *= step(0.0, sin(u_time * 3.14 / EMISSION_PERIOD));
-#endif
 #if defined(EMISSION_MAP) && (EMISSION_MAP)
     vec3 emissionColor = u_emissionColor.rgb * MAZE_GET_TEXEL2D(u_emissionMap, v_uv0).rgb;
     emissionColor *= emissionPower;

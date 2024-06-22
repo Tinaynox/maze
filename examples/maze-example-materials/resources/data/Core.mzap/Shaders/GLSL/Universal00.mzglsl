@@ -127,11 +127,6 @@ uniform sampler2D u_specularMap;
 uniform sampler2D u_normalMap;
 uniform float u_normalScale;
 
-// BACK_LIGHT
-uniform vec4 u_backLightColor;
-uniform vec3 u_backLightDirection;
-uniform float u_backLightBend;
-
 // LAMBERT_THRESHOLD
 uniform float u_lambertThreshold;
 
