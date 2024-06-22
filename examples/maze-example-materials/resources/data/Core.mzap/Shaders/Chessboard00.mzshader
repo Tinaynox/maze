@@ -63,5 +63,5 @@ uniform
 
 GLSL
 {
-  shader:String = "Checkerboard00.mzglsl"
+  shader:String = "Chessboard00.mzglsl"
 }

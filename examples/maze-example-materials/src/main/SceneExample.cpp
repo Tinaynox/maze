@@ -365,8 +365,8 @@ namespace Maze
         updateRenderTarget();
 
 
-        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Checkerboard00.mzmaterial");
-        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Checkerboard00.mzmaterial");
+        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Chessboard00.mzmaterial");
+        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Chessboard00.mzmaterial");
         ExampleHelper::BuildSimpleLevel(
             this,
             levelSize,
@@ -403,7 +403,7 @@ namespace Maze
             2.0f,
             1.0f);
 
-        addMeshPreview("TorusKnot.fbx", "Checkerboard01.mzmaterial", "Checkerboard", torusKnotScale);
+        addMeshPreview("TorusKnot.fbx", "Chessboard01.mzmaterial", "Chessboard", torusKnotScale);
         addMeshPreviewSpace();
 
         addMeshPreview("TorusKnot.fbx", "GoldTest.mzmaterial", "Gold (SER)", torusKnotScale);
@@ -584,7 +584,7 @@ namespace Maze
             MeshRendererPtr meshRenderer = pedestalEntity->createComponent<MeshRenderer>();
             meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getBuiltinRenderMesh(BuiltinRenderMeshType::Cylinder));
 
-            meshRenderer->setMaterial("Checkerboard00.mzmaterial");
+            meshRenderer->setMaterial("Chessboard00.mzmaterial");
         }
 
         if (renderMesh)
