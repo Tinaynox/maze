@@ -25,6 +25,7 @@ OUT vec3 v_normalOS;
 OUT vec3 v_normalWS;
 OUT vec4 v_color;
 OUT vec2 v_uv0;
+OUT vec3 v_viewDirWS;
 
 
 //////////////////////////////////////////
@@ -67,6 +68,8 @@ void main()
     
     v_color = a_color;
     v_uv0 = a_texCoords0;
+    
+    v_viewDirWS = u_viewPosition - v_positionWS;
 
     gl_Position = positionCS;
 }
@@ -85,6 +88,8 @@ void main()
 
 //////////////////////////////////////////
 uniform vec4 u_color;
+uniform float u_refractionIndex; 
+uniform float u_refractionFactor;
 
 
 //////////////////////////////////////////
@@ -96,6 +101,7 @@ IN vec3 v_normalOS;
 IN vec3 v_normalWS;
 IN vec4 v_color;
 IN vec2 v_uv0;
+IN vec3 v_viewDirWS;
 
 
 //////////////////////////////////////////
@@ -107,9 +113,13 @@ MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
 void main()
 {
     MAZE_CLIP_DISTANCE_FRAGMENT;    
-    vec2 distortion = vec2(v_normalWS.x, v_normalWS.y);
-#if defined(DISTORTION_INVERTED) && (DISTORTION_INVERTED)
-    distortion = -distortion;
-#endif
+    
+    // View direction
+    vec3 viewToFragmentDirection = -normalize(v_viewDirWS);
+    
+    // Calculate the refraction vector
+    vec3 refractDir = refract(viewToFragmentDirection, v_normalWS, 1.0 / u_refractionIndex);
+    
+    vec2 distortion = refractDir.xy * vec2(u_refractionFactor, u_refractionFactor);
     out_color = vec4(distortion * u_color.rg, 0.0, 1.0);
 }

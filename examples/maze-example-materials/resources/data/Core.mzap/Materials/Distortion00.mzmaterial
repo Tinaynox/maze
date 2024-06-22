@@ -5,6 +5,20 @@ uniform
   value:Vec4F = 1.0, 1.0, 1.0, 1.0
 }
 
+uniform
+{
+  name:String = "u_refractionIndex"
+  type:String = "UniformF32"
+  value:F32 = 3.0
+}
+
+uniform
+{
+  name:String = "u_refractionFactor"
+  type:String = "UniformF32"
+  value:F32 = 2.0
+}
+
 renderPass
 {
   passType:String = "Default"
