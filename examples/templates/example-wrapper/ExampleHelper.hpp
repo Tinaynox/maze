@@ -61,6 +61,7 @@ namespace Maze
             F32 floorTextureScale = 5.0f;
             MaterialPtr wallMaterial;
             F32 wallTextureScale = 5.0f;
+            bool copyMaterial = false;
         };
 
 
@@ -70,7 +71,8 @@ namespace Maze
             Vec3F32 const& _position,
             Vec3F32 const& _scale,
             MaterialPtr const& _material = nullptr,
-            Vec2F32 textureScale = Vec2F32::c_one);
+            Vec2F32 textureScale = Vec2F32::c_one,
+            bool _copyMaterial = true);
 
         //////////////////////////////////////////
         void BuildSimpleLevel(

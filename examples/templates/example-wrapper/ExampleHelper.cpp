@@ -72,7 +72,8 @@ namespace Maze
             Vec3F32 const& _position,
             Vec3F32 const& _scale,
             MaterialPtr const& _material,
-            Vec2F32 textureScale)
+            Vec2F32 _textureScale,
+            bool _copyMaterial)
         {
             EntityPtr objectEntity = _scene->createEntity();
             Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
@@ -81,9 +82,16 @@ namespace Maze
 
             if (_material)
             {
-                MaterialPtr material = _material->createCopy();
-                material->setUniform(MAZE_HS("u_baseMapST"), Vec4F32(textureScale, 0.0f, 0.0f));
-                meshRenderer->setMaterial(material);
+                if (_copyMaterial)
+                {
+                    MaterialPtr material = _material->createCopy();
+                    material->setUniform(MAZE_HS("u_baseMapST"), Vec4F32(_textureScale, 0.0f, 0.0f));
+                    meshRenderer->setMaterial(material);
+                }
+                else
+                {
+                    meshRenderer->setMaterial(_material);
+                }
             }
             else
             {
@@ -100,7 +108,7 @@ namespace Maze
         void BuildSimpleLevel(
             EcsRenderScene* _scene,
             Vec2F32 const& _levelSize,
-            SimpleLevelConfig config)
+            SimpleLevelConfig _config)
         {
             F32 floorThickness = 0.1f;
 
@@ -108,8 +116,9 @@ namespace Maze
                 _scene,
                 Vec3F32(0.0f, -floorThickness * 0.5f, 0.0f),
                 Vec3F32(_levelSize.x, floorThickness, _levelSize.y),
-                config.floorMaterial,
-                _levelSize / config.floorTextureScale);
+                _config.floorMaterial,
+                _levelSize / _config.floorTextureScale,
+                _config.copyMaterial);
 
             F32 wallsHeight = 0.6f;
             F32 wallsWidth = 0.2f;
@@ -120,16 +129,18 @@ namespace Maze
                 _scene,
                 Vec3F32(_levelSize.x * 0.5f + wallsWidth * 0.5f, (wallsHeight - floorThickness) * 0.5f, 0.0f),
                 wallPositiveXSize,
-                config.wallMaterial,
-                Vec2F32(wallPositiveXSize.z, wallPositiveXSize.y) / config.wallTextureScale);
+                _config.wallMaterial,
+                Vec2F32(wallPositiveXSize.z, wallPositiveXSize.y) / _config.wallTextureScale,
+                _config.copyMaterial);
             // -X Wall
             Vec3F32 const wallNegativeXSize = Vec3F32(wallsWidth, wallsHeight + floorThickness, _levelSize.y);
             CreateBox(
                 _scene,
                 Vec3F32(-_levelSize.x * 0.5f - wallsWidth * 0.5f, (wallsHeight - floorThickness) * 0.5f, 0.0f),
                 wallNegativeXSize,
-                config.wallMaterial,
-                Vec2F32(wallPositiveXSize.z, wallPositiveXSize.y) / config.wallTextureScale);
+                _config.wallMaterial,
+                Vec2F32(wallPositiveXSize.z, wallPositiveXSize.y) / _config.wallTextureScale,
+                _config.copyMaterial);
 
             // +Z Wall
             Vec3F32 const wallPositiveZSize = Vec3F32(_levelSize.x + wallsWidth * 2.0f, wallsHeight + floorThickness, wallsWidth);
@@ -137,16 +148,18 @@ namespace Maze
                 _scene,
                 Vec3F32(0.0f, (wallsHeight - floorThickness) * 0.5f, _levelSize.y * 0.5f + wallsWidth * 0.5f),
                 wallPositiveZSize,
-                config.wallMaterial,
-                Vec2F32(wallPositiveZSize.x, wallPositiveXSize.y) / config.wallTextureScale);
+                _config.wallMaterial,
+                Vec2F32(wallPositiveZSize.x, wallPositiveXSize.y) / _config.wallTextureScale,
+                _config.copyMaterial);
             // -Z Wall
             Vec3F32 const wallNegativeZSize = Vec3F32(_levelSize.x + wallsWidth * 2.0f, wallsHeight + floorThickness, wallsWidth);
             CreateBox(
                 _scene,
                 Vec3F32(0.0f, (wallsHeight - floorThickness) * 0.5f, -_levelSize.y * 0.5f - wallsWidth * 0.5f),
                 wallNegativeZSize,
-                config.wallMaterial,
-                Vec2F32(wallNegativeZSize.x, wallPositiveXSize.y) / config.wallTextureScale);
+                _config.wallMaterial,
+                Vec2F32(wallNegativeZSize.x, wallPositiveXSize.y) / _config.wallTextureScale,
+                _config.copyMaterial);
         }
 
 

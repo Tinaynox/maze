@@ -176,6 +176,7 @@ namespace Maze
         getLightingSettings()->setSkyBoxMaterial("Skybox00.mzmaterial");
         m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Terrain00.mzmaterial");
         m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Wall00.mzmaterial");
+        m_simpleLevelConfig.copyMaterial = true;
         ExampleHelper::BuildSimpleLevel(
             this,
             m_fpsController->getLevelSize(),

@@ -130,7 +130,7 @@ namespace Maze
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG);
         // MAZE_LOAD_PLATFORM_PLUGIN(LoaderDDS);
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderTGA);
-        // MAZE_LOAD_PLATFORM_PLUGIN(LoaderJPG);
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderJPG);
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderFBX);
 
         return true;
