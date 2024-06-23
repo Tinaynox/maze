@@ -137,7 +137,7 @@ namespace Maze
     // Class SceneExample
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, EcsRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, BaseSceneExample);
 
     //////////////////////////////////////////
     SceneExample::SceneExample()
@@ -148,27 +148,8 @@ namespace Maze
     //////////////////////////////////////////
     SceneExample::~SceneExample()
     {
-        InputManager* inputManager = InputManager::GetInstancePtr();
-        if (inputManager)
-        {
-            inputManager->eventMouse.unsubscribe(this);
-        }
-
-        if (m_canvas)
-        {
-            UIElement2D* canvasUIElement = m_canvas->getEntityRaw()->getComponentRaw<UIElement2D>();
-            if (canvasUIElement)
-            {
-                canvasUIElement->eventCursorPressIn.unsubscribe(this);
-                canvasUIElement->eventCursorDrag.unsubscribe(this);
-            }
-        }
-
         if (InputManager::GetInstancePtr())
             InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
-
-        Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.unsubscribe(this);
-        Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -182,80 +163,22 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneExample::init()
     {
-        if (!EcsRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
+        if (!BaseSceneExample::init(Vec2F(100.0f, 30.0f)))
             return false;
-                     
-        EntityPtr canvasEntity = createEntity("Canvas");
-        m_canvas = canvasEntity->createComponent<Canvas>();
-        m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
-        m_canvas->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
 
-        UIElement2DPtr canvasUIElement = canvasEntity->ensureComponent<UIElement2D>();
-        canvasUIElement->eventCursorPressIn.subscribe(this, &SceneExample::processCursorPress);
-        canvasUIElement->eventCursorDrag.subscribe(this, &SceneExample::processCursorDrag);
-
-        /*
-        CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
-        canvasScaler->setReferenceResolution(Vec2F32(1600, 800));
-        canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
-        canvasScaler->setScreenMatchMode(CanvasScaler::ScreenMatchMode::MatchWidthOrHeight);
-        canvasScaler->setMatchWidthOrHeight(1.0f);
-        canvasScaler->updateCanvasScale();
-        */
-
-        m_hintText = SystemUIHelper::CreateSystemText(
-            "",
-            8,
-            HorizontalAlignment2D::Left,
-            VerticalAlignment2D::Top,
-            Vec2F32::c_zero,
-            Vec2F32(10.0f, -10.0f),
-            m_canvas->getTransform(),
-            this,
-            Vec2F32(0.0f, 1.0f),
-            Vec2F32(0.0f, 1.0f));
-        m_hintText->setColor(ColorU32(255, 255, 255, 220));
-        m_hintText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getBuiltinSystemFont(BuiltinSystemFontType::DefaultOutlined));
-        updateHintText();
-
+        m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 0.0f, 0.0f);
+        m_fpsController->setYawAngle(Math::DegreesToRadians(0.0f));
+        m_mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
 
         InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &SceneExample::notifyKeyboard);
 
-        Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.subscribe(this, &SceneExample::notifyMainRenderWindowViewportChanged);
-        Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneExample::notifyRenderTargetResized);
 
-
-        // Light
-        EntityPtr lightEntity = createEntity();
-        Light3DPtr mainLight3D = lightEntity->createComponent<Light3D>();
-        mainLight3D->setColor(ColorU32(255, 244, 214));
-        mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
-        mainLight3D->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
-        lightEntity->ensureComponent<Name>("Light");
-
-
-        Vec2F32 levelSize(100.0f, 30.0f);
-
-
-        // FPS Controller
-        EntityPtr fpsControllerEntity = createEntity();
-        m_fpsController = fpsControllerEntity->ensureComponent<ExampleFPSCameraController>(m_canvas);
-        m_fpsController->setLevelSize(levelSize);
-
-
-        // Camera
-        m_camera3D = m_fpsController->getCamera3D();
-        m_camera3D->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
-        m_camera3D->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
-        
         getLightingSettings()->setSkyBoxMaterial("Skybox00.mzmaterial");
-
-
         m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Terrain00.mzmaterial");
         m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Wall00.mzmaterial");
         ExampleHelper::BuildSimpleLevel(
             this,
-            levelSize,
+            m_fpsController->getLevelSize(),
             m_simpleLevelConfig);
 
         // BMP
@@ -313,70 +236,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
-    {
-        if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
-            return;
-
-        m_canvas->setViewport(_mainRenderWindowViewport);
-        m_camera3D->setViewport(_mainRenderWindowViewport);
-    }
-
-    //////////////////////////////////////////
-    void SceneExample::notifyRenderTargetResized(RenderTarget* _renderTarget)
-    {
-        if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
-            return;
-
-    }
-
-    //////////////////////////////////////////
     void SceneExample::update(F32 _dt)
     {
-        EcsRenderScene::update(_dt);
-
-
-        m_fpsController->setForward(InputManager::GetInstancePtr()->getKeyState(KeyCode::W));
-        m_fpsController->setBackward(InputManager::GetInstancePtr()->getKeyState(KeyCode::S));
-        m_fpsController->setRight(InputManager::GetInstancePtr()->getKeyState(KeyCode::A));
-        m_fpsController->setLeft(InputManager::GetInstancePtr()->getKeyState(KeyCode::D));
-        m_fpsController->setJump(InputManager::GetInstancePtr()->getKeyState(KeyCode::Space));
-    }
-
-    //////////////////////////////////////////
-    void SceneExample::processCursorPress(Vec2F32 const& _positionOS, CursorInputEvent const& _event)
-    {
-#if (MAZE_PLATFORM_MOBILE)
-        if (_event.button == 0)
-#else
-        if (_event.button == 1)
-#endif
-        {
-            m_cursorPositionLastFrame = _positionOS;
-        }
-    }
-
-    //////////////////////////////////////////
-    void SceneExample::processCursorDrag(Vec2F32 const& _positionOS, CursorInputEvent const& _event)
-    {
-        Vec2F32 deltaPosition = _positionOS - m_cursorPositionLastFrame;
-
-#if (MAZE_PLATFORM_MOBILE)
-        if (_event.button == 0)
-#else
-        if (_event.button == 1)
-#endif
-        {
-            F32 yawAngle = m_fpsController->getYawAngle();
-            F32 pitchAngle = m_fpsController->getPitchAngle();
-            yawAngle += deltaPosition.x * 0.0075f;
-            pitchAngle -= deltaPosition.y * 0.0075f;
-            pitchAngle = Math::Clamp(pitchAngle, -Math::c_halfPi, Math::c_halfPi);
-            m_fpsController->setYawAngle(yawAngle);
-            m_fpsController->setPitchAngle(pitchAngle);
-
-            m_cursorPositionLastFrame = _positionOS;
-        }
+        BaseSceneExample::update(_dt);
     }
 
     //////////////////////////////////////////

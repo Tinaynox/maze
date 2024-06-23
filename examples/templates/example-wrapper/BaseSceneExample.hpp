@@ -61,6 +61,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SystemTextRenderer3D);
     MAZE_USING_SHARED_PTR(LevelBloomController);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
+    MAZE_USING_SHARED_PTR(Light3D);
 
 
     //////////////////////////////////////////
@@ -76,9 +77,6 @@ namespace Maze
         MAZE_DECLARE_METACLASS_WITH_PARENT(BaseSceneExample, EcsRenderScene);
 
     public:
-
-        //////////////////////////////////////////
-        static BaseSceneExamplePtr Create();
     
         //////////////////////////////////////////
         virtual ~BaseSceneExample();
@@ -92,7 +90,7 @@ namespace Maze
         BaseSceneExample();
 
         //////////////////////////////////////////
-        virtual bool init() MAZE_OVERRIDE;
+        bool init(Vec2F const& _levelSize);
 
         //////////////////////////////////////////
         void notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport);
@@ -106,6 +104,9 @@ namespace Maze
         //////////////////////////////////////////
         void processCursorDrag(Vec2F32 const& _positionOS, CursorInputEvent const& _event);
 
+
+        //////////////////////////////////////////
+        virtual void updateHintText();
 
 
         //////////////////////////////////////////
@@ -121,6 +122,8 @@ namespace Maze
         CanvasPtr m_canvas;
         CanvasPtr m_canvasUI;
         Camera3DPtr m_camera3D;
+
+        Light3DPtr m_mainLight3D;
 
         RenderBufferPtr m_distortionRenderBuffer;
         Camera3DPtr m_distortionCamera3D;

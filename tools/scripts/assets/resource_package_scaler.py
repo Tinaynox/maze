@@ -20,6 +20,9 @@ class ResourcePackageScaler:
         self.iterator = folder_iterator.FolderIterator()
 
     def rescale(self, src_path, dst_path, scale):
+        if not isinstance(scale, float):
+            raise ValueError("Scale should have float type!")
+
         dst_folder_dir = os.path.dirname(dst_path)
         dst_folder_fullname = os.path.basename(dst_path)
         dst_folder_name, dst_folder_ext = os.path.splitext(dst_folder_fullname)

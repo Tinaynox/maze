@@ -46,6 +46,7 @@
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "ExampleHelper.hpp"
+#include "BaseSceneExample.hpp"
 
 
 //////////////////////////////////////////
@@ -79,12 +80,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class SceneExample
-        : public EcsRenderScene
+        : public BaseSceneExample
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneExample, EcsRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneExample, BaseSceneExample);
 
     public:
 
@@ -105,20 +106,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        void notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport);
-
-        //////////////////////////////////////////
-        void notifyRenderTargetResized(RenderTarget* _renderTarget);
-
-        //////////////////////////////////////////
-        void processCursorPress(Vec2F32 const& _positionOS, CursorInputEvent const& _event);
-
-        //////////////////////////////////////////
-        void processCursorDrag(Vec2F32 const& _positionOS, CursorInputEvent const& _event);
-
-
-
 
         //////////////////////////////////////////
         void addMeshPreview(
@@ -131,7 +118,7 @@ namespace Maze
         void addMeshPreviewSpace();
 
         //////////////////////////////////////////
-        void updateHintText();
+        virtual void updateHintText() MAZE_OVERRIDE;
 
 
 
@@ -144,41 +131,7 @@ namespace Maze
         void notifyKeyboard(InputEventKeyboardData const& _data);
 
 
-        //////////////////////////////////////////
-        void notifyExampleCommonSettingsChanged(bool const& _value);
-
-        //////////////////////////////////////////
-        void updateRenderTarget();
-
-        //////////////////////////////////////////
-        void updateRenderTargetViewport();
-
     protected:
-        CanvasPtr m_canvas;
-        CanvasPtr m_canvasUI;
-        Camera3DPtr m_camera3D;
-
-        RenderBufferPtr m_distortionRenderBuffer;
-        Camera3DPtr m_distortionCamera3D;
-
-        MaterialPtr m_postFXMaterial;
-
-        SpriteRenderer2DPtr m_renderColorSprite;
-        SpriteRenderer2DPtr m_renderDepthSprite;
-
-        RenderBufferPtr m_renderBuffer;
-        RenderBufferPtr m_renderBufferMSAA;
-        LevelBloomControllerPtr m_bloomController;
-
-        ExampleHelper::SimpleLevelConfig m_simpleLevelConfig;
-
-        SystemTextRenderer2DPtr m_hintText;
-        
-        ExampleFPSCameraControllerPtr m_fpsController;
-
-        Vec2F32 m_cursorPositionLastFrame = Vec2F32::c_zero;
-
-        
         Vector<ExampleMeshData> m_meshData;
         F32 m_meshesOffset = 0.0f;
 

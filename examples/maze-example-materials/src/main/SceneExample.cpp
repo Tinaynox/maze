@@ -141,7 +141,7 @@ namespace Maze
     // Class SceneExample
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, EcsRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, BaseSceneExample);
 
     //////////////////////////////////////////
     SceneExample::SceneExample()
@@ -152,33 +152,9 @@ namespace Maze
     //////////////////////////////////////////
     SceneExample::~SceneExample()
     {
-        InputManager* inputManager = InputManager::GetInstancePtr();
-        if (inputManager)
-        {
-            inputManager->eventMouse.unsubscribe(this);
-        }
-
-        if (m_canvas)
-        {
-            UIElement2D* canvasUIElement = m_canvas->getEntityRaw()->getComponentRaw<UIElement2D>();
-            if (canvasUIElement)
-            {
-                canvasUIElement->eventCursorPressIn.unsubscribe(this);
-                canvasUIElement->eventCursorDrag.unsubscribe(this);
-            }
-        }
-
         if (InputManager::GetInstancePtr())
             InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
 
-        if (SettingsManager::GetInstancePtr())
-        {
-            ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
-            exampleCommonSettings->getBloomEnabledChangedEvent().unsubscribe(this);
-        }
-
-        Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.unsubscribe(this);
-        Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -192,184 +168,17 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneExample::init()
     {
-        if (!EcsRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
+        if (!BaseSceneExample::init(Vec2F(100.0f, 30.0f)))
             return false;
-
-        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
-        exampleCommonSettings->getBloomEnabledChangedEvent().subscribe(this, &SceneExample::notifyExampleCommonSettingsChanged);
-
-        Vec2U32 renderBufferSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
-
-        S32 samples = RenderSystem::GetCurrentInstancePtr()->getTextureMaxAntialiasingLevelSupport();
-
-        if (samples > 0)
-        {
-            Debug::Log("RenderBuffer MSAA(x%d) creating...", samples);
-            m_renderBufferMSAA = RenderBuffer::Create(
-                {
-                    renderBufferSize,
-                    { PixelFormat::RGBA_F16, samples },
-                    { PixelFormat::DEPTH_U24, samples }
-                });
-            if (m_renderBufferMSAA)
-            {
-                m_renderBufferMSAA->eventRenderBufferEndDraw.subscribe(
-                    [&](RenderBuffer* _renderBuffer)
-                {
-                    MAZE_PROFILE_EVENT("RenderBufferMSAA end draw");
-                    
-                    m_renderBuffer->blit(m_renderBufferMSAA);
-                    m_renderBuffer->eventRenderBufferEndDraw(m_renderBuffer.get());
-                });
-                Debug::Log("RenderBuffer MSAA(x%d) created.", samples);
-            }
-            else
-            {
-                Debug::Log("RenderBuffer MSAA(x%d) creating failed.", samples);
-            }
-        }
-
-        m_renderBuffer = RenderBuffer::Create(
-            {
-                renderBufferSize,
-                PixelFormat::RGBA_F16,
-                PixelFormat::DEPTH_U24
-            });
-        m_renderBuffer->setName("RenderBuffer");
-        m_renderBuffer->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
-        m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
-
-                     
-        EntityPtr canvasEntity = createEntity("Canvas");
-        m_canvas = canvasEntity->createComponent<Canvas>();
-        m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
-        m_canvas->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
-
-        CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
-        canvasScaler->setScaleMode(CanvasScalerScaleMode::ScaleWithViewportSize);
-        canvasScaler->setScreenMatchMode(CanvasScalerScreenMatchMode::MatchWidthOrHeight);
-        canvasScaler->setMatchWidthOrHeight(1.0f);
-        canvasScaler->updateCanvasScale();
-
-
-        UIElement2DPtr canvasUIElement = canvasEntity->ensureComponent<UIElement2D>();
-        canvasUIElement->eventCursorPressIn.subscribe(this, &SceneExample::processCursorPress);
-        canvasUIElement->eventCursorDrag.subscribe(this, &SceneExample::processCursorDrag);
-
-
-        EntityPtr canvasUIEntity = createEntity("CanvasUI");
-        m_canvasUI = canvasUIEntity->createComponent<Canvas>();
-        m_canvasUI->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
-        m_canvasUI->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
-        m_canvasUI->setSortOrder(100);
-
-
-        MaterialPtr postFXMaterial = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("PostFX00.mzmaterial");
-        m_renderColorSprite = SpriteHelper::CreateSprite(
-            Sprite::Create(m_renderBuffer->getColorTexture2D()),
-            m_canvas->getTransform()->getSize(),
-            Vec2F32::c_zero,
-            postFXMaterial,
-            m_canvas->getTransform(),
-            this);
-        m_postFXMaterial = m_renderColorSprite->getMaterial();
-        m_renderColorSprite->getTransform()->setZ(1000);
-        m_renderColorSprite->getEntityRaw()->ensureComponent<Name>("RenderColorSprite");
-        m_renderColorSprite->getEntityRaw()->ensureComponent<SizePolicy2D>();
-        m_renderColorSprite->setPixelPerfect(true);
-
-
-        m_hintText = SystemUIHelper::CreateSystemText(
-            "",
-            8,
-            HorizontalAlignment2D::Left,
-            VerticalAlignment2D::Top,
-            Vec2F32::c_zero,
-            Vec2F32(10.0f, -10.0f),
-            m_canvasUI->getTransform(),
-            this,
-            Vec2F32(0.0f, 1.0f),
-            Vec2F32(0.0f, 1.0f));
-        m_hintText->getTransform()->setZ(2000);
-        m_hintText->setColor(ColorU32(255, 255, 255, 220));
-        m_hintText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getBuiltinSystemFont(BuiltinSystemFontType::DefaultOutlined));
-        updateHintText();
-
 
         InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &SceneExample::notifyKeyboard);
 
-        Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.subscribe(this, &SceneExample::notifyMainRenderWindowViewportChanged);
-        Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneExample::notifyRenderTargetResized);
-
-
-        // Light
-        EntityPtr lightEntity = createEntity();
-        Light3DPtr mainLight3D = lightEntity->createComponent<Light3D>();
-        mainLight3D->setColor(ColorU32(255, 244, 214));
-        //mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
-        mainLight3D->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
-        mainLight3D->getTransform()->setLocalRotation(0.408979f, 0.906161f, -0.068055f, -0.083529f);
-        
-        lightEntity->ensureComponent<Name>("Light");
-
-
-        Vec2F32 levelSize(100.0f, 30.0f);
-
-
-        // FPS Controller
-        EntityPtr fpsControllerEntity = createEntity();
-        m_fpsController = fpsControllerEntity->ensureComponent<ExampleFPSCameraController>(m_canvas);
-        m_fpsController->setLevelSize(levelSize);
-        m_fpsController->setYawAngle(Math::DegreesToRadians(180.0f));
-
-
-        // Camera
-        m_camera3D = m_fpsController->getCamera3D();
-        m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
-        m_camera3D->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::UserMask0);
-
-
-        // Distortion render buffer
-        {
-            Debug::Log("Distortion Render Buffer creating...");
-            m_distortionRenderBuffer = RenderBuffer::Create(
-                {
-                    renderBufferSize / DISTORTION_BUFFER_DIV,
-                    PixelFormat::RGBA_F16
-                });
-            Debug::Log("Distortion Render Buffer created.");
-
-            if (m_distortionRenderBuffer->getColorTexture()->getType() == TextureType::TwoDimensional)
-            {
-                m_distortionRenderBuffer->getColorTexture()->castRaw<Texture2D>()->setMinFilter(TextureFilter::Linear);
-                m_distortionRenderBuffer->getColorTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Linear);
-            }
-        }
-
-        EntityPtr distortionCameraEntity = createEntity("DistortionCamera");
-        m_distortionCamera3D = distortionCameraEntity->createComponent<Camera3D>();
-        m_distortionCamera3D->getTransform()->setParent(m_camera3D->getTransform());
-        m_distortionCamera3D->setFOV(m_camera3D->getFOV());
-        m_distortionCamera3D->setClearColor(ColorU32::c_black);
-        m_distortionCamera3D->setClearColorFlag(true);
-        m_distortionCamera3D->setRenderMask((S32)DefaultRenderMask::UserMask0);
-        m_distortionCamera3D->setNearZ(m_camera3D->getNearZ());
-        m_distortionCamera3D->setFarZ(m_camera3D->getFarZ());
-        m_distortionCamera3D->setSortOrder(m_camera3D->getSortOrder() + 100);
-        m_distortionCamera3D->setRenderTarget(m_distortionRenderBuffer);
-
-        
         getLightingSettings()->setSkyBoxMaterial("Skybox02.mzmaterial");
-
-        m_bloomController = LevelBloomController::Create(m_renderBuffer);
-        updateRenderTarget();
-
-
         m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Chessboard00.mzmaterial");
         m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Chessboard00.mzmaterial");
         ExampleHelper::BuildSimpleLevel(
             this,
-            levelSize,
+            m_fpsController->getLevelSize(),
             m_simpleLevelConfig);
 
         
@@ -430,104 +239,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
-    {
-        if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
-            return;
-
-        m_canvas->setViewport(_mainRenderWindowViewport);
-        m_canvasUI->setViewport(_mainRenderWindowViewport);
-
-        if (!Example::GetInstancePtr()->isDebugEditorProgress())
-        {
-            Vec2F renderWindowSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
-
-            m_renderBuffer->setSize(renderWindowSize);
-
-            if (m_renderBufferMSAA)
-                m_renderBufferMSAA->setSize(renderWindowSize);
-
-            m_distortionRenderBuffer->setSize(renderWindowSize / DISTORTION_BUFFER_DIV);
-
-        }
-
-        updateRenderTargetViewport();
-    }
-
-    //////////////////////////////////////////
-    void SceneExample::notifyRenderTargetResized(RenderTarget* _renderTarget)
-    {
-        Vec2U32 size = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
-        Debug::Log("Render target resized: %ux%u", size.x, size.y);
-
-        if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
-            return;
-
-        m_renderBuffer->setSize(size);
-
-        if (m_renderBufferMSAA)
-            m_renderBufferMSAA->setSize(size);
-    }
-
-    //////////////////////////////////////////
     void SceneExample::update(F32 _dt)
     {
-        EcsRenderScene::update(_dt);
-
-        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
-
-        if (exampleCommonSettings->getBloomEnabled())
-        {
-            m_bloomController->update(_dt);
-            m_renderColorSprite->getMaterial()->ensureUniform(
-                MAZE_HS("u_bloomMap"),
-                ShaderUniformType::UniformTexture2D)->set(
-                    m_bloomController->getBloomRenderBuffer()->getColorTexture2D());
-        }
-
-        m_fpsController->setForward(InputManager::GetInstancePtr()->getKeyState(KeyCode::W));
-        m_fpsController->setBackward(InputManager::GetInstancePtr()->getKeyState(KeyCode::S));
-        m_fpsController->setRight(InputManager::GetInstancePtr()->getKeyState(KeyCode::A));
-        m_fpsController->setLeft(InputManager::GetInstancePtr()->getKeyState(KeyCode::D));
-        m_fpsController->setJump(InputManager::GetInstancePtr()->getKeyState(KeyCode::Space));
+        BaseSceneExample::update(_dt);
     }
-
-    //////////////////////////////////////////
-    void SceneExample::processCursorPress(Vec2F32 const& _positionOS, CursorInputEvent const& _event)
-    {
-#if (MAZE_PLATFORM_MOBILE)
-        if (_event.button == 0)
-#else
-        if (_event.button == 1)
-#endif
-        {
-            m_cursorPositionLastFrame = _positionOS;
-        }
-    }
-
-    //////////////////////////////////////////
-    void SceneExample::processCursorDrag(Vec2F32 const& _positionOS, CursorInputEvent const& _event)
-    {
-        Vec2F32 deltaPosition = _positionOS - m_cursorPositionLastFrame;
-
-#if (MAZE_PLATFORM_MOBILE)
-        if (_event.button == 0)
-#else
-        if (_event.button == 1)
-#endif
-        {
-            F32 yawAngle = m_fpsController->getYawAngle();
-            F32 pitchAngle = m_fpsController->getPitchAngle();
-            yawAngle += deltaPosition.x * 0.0075f;
-            pitchAngle -= deltaPosition.y * 0.0075f;
-            pitchAngle = Math::Clamp(pitchAngle, -Math::c_halfPi, Math::c_halfPi);
-            m_fpsController->setYawAngle(yawAngle);
-            m_fpsController->setPitchAngle(pitchAngle);
-
-            m_cursorPositionLastFrame = _positionOS;
-        }
-    }
-
 
     //////////////////////////////////////////
     void SceneExample::addMeshPreview(
@@ -716,61 +431,6 @@ namespace Maze
         }
     }
 
-    //////////////////////////////////////////
-    void SceneExample::notifyExampleCommonSettingsChanged(bool const& _value)
-    {
-        updateRenderTarget();
-        updateHintText();
-    }
-
-    //////////////////////////////////////////
-    void SceneExample::updateRenderTarget()
-    {
-        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
-
-        if (exampleCommonSettings->getBloomEnabled())
-        {
-            m_renderColorSprite->getEntityRaw()->setActiveSelf(true);
-            if (m_renderBufferMSAA)
-                m_camera3D->setRenderTarget(m_renderBufferMSAA);
-            else
-                m_camera3D->setRenderTarget(m_renderBuffer);
-
-            m_renderColorSprite->getMaterial()->ensureUniform(
-                MAZE_HS("u_bloomMap"),
-                ShaderUniformType::UniformTexture2D)->set(
-                    m_renderBuffer->getColorTexture2D());
-
-
-            m_postFXMaterial->setUniform(
-                MAZE_HASHED_CSTRING("u_distortionMap"), m_distortionRenderBuffer->getColorTexture2D());
-            m_postFXMaterial->setUniform(
-                MAZE_HASHED_CSTRING("u_invAspectRatio"),
-                (F32)m_renderBuffer->getHeight() / (F32)m_renderBuffer->getWidth());
-            m_postFXMaterial->setUniform(
-                MAZE_HASHED_CSTRING("u_baseMapTexelSize"),
-                1.0f / (Vec2F)m_renderBuffer->getColorTexture()->cast<Texture2D>()->getSize());
-        }
-        else
-        {
-            m_renderColorSprite->getEntityRaw()->setActiveSelf(false);
-            m_camera3D->setRenderTarget(
-                Example::GetInstancePtr()->getMainRenderWindow());
-        }
-
-        updateRenderTargetViewport();
-    }
-
-    //////////////////////////////////////////
-    void SceneExample::updateRenderTargetViewport()
-    {
-        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
-
-        if (exampleCommonSettings->getBloomEnabled())
-            m_camera3D->setViewport(Rect2DF(0.0f, 0.0f, 1.0f, 1.0f));
-        else
-            m_camera3D->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
-    }
 
 
 } // namespace Maze

@@ -1,0 +1,72 @@
+uniform
+{
+  name:String = "u_baseMap"
+  type:String = "UniformTexture2D"
+  value:String = "White"
+}
+
+uniform
+{
+  name:String = "u_bloomSpread"
+  type:String = "UniformF32"
+  value:F32 = 1.0
+}
+
+uniform
+{
+  name:String = "u_bloomThreshold"
+  type:String = "UniformF32"
+  value:F32 = 1.0
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 3000
+  shader:String = "BloomFirstPass00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "Always"
+  depthWriteEnabled:Bool = false
+  cullMode:String = "Off"
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 3000
+  shader:String = "BloomDownscale00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "Always"
+  depthWriteEnabled:Bool = false
+  cullMode:String = "Off"
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 3000
+  shader:String = "BloomUpscale00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "Always"
+  depthWriteEnabled:Bool = false
+  cullMode:String = "Off"
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 3000
+  shader:String = "BloomFinalPass00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "Always"
+  depthWriteEnabled:Bool = false
+  cullMode:String = "Off"
+}

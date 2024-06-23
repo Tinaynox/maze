@@ -73,7 +73,7 @@ class AssemblyResources:
 
                     self.resource_package_scaler.rescale(
                         info_file_path_folder,
-                        '{0}/{1}'.format(self.output, full_path), tscale)
+                        '{0}/{1}'.format(self.output, full_path), float(tscale))
 
                 return False
 

@@ -119,11 +119,6 @@ namespace Maze
     //////////////////////////////////////////
     BaseSceneExample::~BaseSceneExample()
     {
-        InputManager* inputManager = InputManager::GetInstancePtr();
-        if (inputManager)
-        {
-            inputManager->eventMouse.unsubscribe(this);
-        }
 
         if (m_canvas)
         {
@@ -135,9 +130,6 @@ namespace Maze
             }
         }
 
-        if (InputManager::GetInstancePtr())
-            InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
-
         if (SettingsManager::GetInstancePtr())
         {
             ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
@@ -148,16 +140,9 @@ namespace Maze
         Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.unsubscribe(this);
     }
 
-    //////////////////////////////////////////
-    BaseSceneExamplePtr BaseSceneExample::Create()
-    {
-        BaseSceneExamplePtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(BaseSceneExample, object, init());
-        return object;
-    }
 
     //////////////////////////////////////////
-    bool BaseSceneExample::init()
+    bool BaseSceneExample::init(Vec2F const& _levelSize)
     {
         if (!EcsRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
@@ -268,22 +253,20 @@ namespace Maze
 
         // Light
         EntityPtr lightEntity = createEntity();
-        Light3DPtr mainLight3D = lightEntity->createComponent<Light3D>();
-        mainLight3D->setColor(ColorU32(255, 244, 214));
-        //mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
-        mainLight3D->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
-        mainLight3D->getTransform()->setLocalRotation(0.408979f, 0.906161f, -0.068055f, -0.083529f);
+        m_mainLight3D = lightEntity->createComponent<Light3D>();
+        m_mainLight3D->setColor(ColorU32(255, 244, 214));
+        
+        m_mainLight3D->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
+        m_mainLight3D->getTransform()->setLocalRotation(0.408979f, 0.906161f, -0.068055f, -0.083529f);
         
         lightEntity->ensureComponent<Name>("Light");
 
-
-        Vec2F32 levelSize(100.0f, 30.0f);
 
 
         // FPS Controller
         EntityPtr fpsControllerEntity = createEntity();
         m_fpsController = fpsControllerEntity->ensureComponent<ExampleFPSCameraController>(m_canvas);
-        m_fpsController->setLevelSize(levelSize);
+        m_fpsController->setLevelSize(_levelSize);
         m_fpsController->setYawAngle(Math::DegreesToRadians(180.0f));
 
 
@@ -323,21 +306,10 @@ namespace Maze
         m_distortionCamera3D->setRenderTarget(m_distortionRenderBuffer);
 
         
-        getLightingSettings()->setSkyBoxMaterial("Skybox02.mzmaterial");
-
         m_bloomController = LevelBloomController::Create(m_renderBuffer);
-        updateRenderTarget();
 
-
-        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Chessboard00.mzmaterial");
-        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Chessboard00.mzmaterial");
-        ExampleHelper::BuildSimpleLevel(
-            this,
-            levelSize,
-            m_simpleLevelConfig);
-
-        
-
+        updateRenderTarget();        
+        updateHintText();
 
         return true;
     }
@@ -442,9 +414,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void BaseSceneExample::updateHintText()
+    {
+
+    }
+
+    //////////////////////////////////////////
     void BaseSceneExample::notifyExampleCommonSettingsChanged(bool const& _value)
     {
         updateRenderTarget();
+        updateHintText();
     }
 
     //////////////////////////////////////////
