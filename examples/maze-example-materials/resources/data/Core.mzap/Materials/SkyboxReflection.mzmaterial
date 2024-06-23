@@ -11,7 +11,7 @@ uniform
 {
   name:String = "u_skyboxMap"
   type:String = "UniformTextureCube"
-  value:String = "Skybox02.mzcubemap"
+  value:String = "Skybox00.mzcubemap"
 }
 
 uniform

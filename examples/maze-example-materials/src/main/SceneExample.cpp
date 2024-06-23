@@ -171,9 +171,13 @@ namespace Maze
         if (!BaseSceneExample::init(Vec2F(100.0f, 30.0f)))
             return false;
 
+        m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 0.0f, 0.0f);
+        m_fpsController->setYawAngle(Math::DegreesToRadians(0.0f));
+        m_mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
+
         InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &SceneExample::notifyKeyboard);
 
-        getLightingSettings()->setSkyBoxMaterial("Skybox02.mzmaterial");
+        getLightingSettings()->setSkyBoxMaterial("Skybox00.mzmaterial");
         m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Chessboard00.mzmaterial");
         m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Chessboard00.mzmaterial");
         ExampleHelper::BuildSimpleLevel(
@@ -285,7 +289,7 @@ namespace Maze
         meshData.rotor = rotor;
         
         F32 x = ((S32)m_meshData.size() - 12) * 2.0f + m_meshesOffset;
-        transform->setLocalPosition(-x, 2.0f, -8.0f);
+        transform->setLocalPosition(x, 2.0f, 8.0f);
 
 
         {
@@ -310,7 +314,7 @@ namespace Maze
                 transform->getLocalPosition().x,
                 0.75f,
                 transform->getLocalPosition().z);
-            labelRenderer->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
+            // labelRenderer->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
 
             S32 indicesCount = 0;
             S32 verticesCount = 0;
