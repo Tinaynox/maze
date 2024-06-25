@@ -60,6 +60,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline Quaternion::Quaternion(Vec4F const& _vec)
+        : w(_vec.w)
+        , x(_vec.x)
+        , y(_vec.y)
+        , z(_vec.z)
+    {     
+    }
+
+    //////////////////////////////////////////
     inline Quaternion::Quaternion(Mat3F const& _rotationMatrix)
     {
         setRotationMatrix(_rotationMatrix);

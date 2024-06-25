@@ -72,6 +72,9 @@ namespace Maze
         inline Quaternion(F32 _w, F32 _x, F32 _y, F32 _z);
         
         //////////////////////////////////////////
+        explicit inline Quaternion(Vec4F const& _vec);
+
+        //////////////////////////////////////////
         explicit inline Quaternion(Mat3F const& _rotationMatrix);
 
         //////////////////////////////////////////

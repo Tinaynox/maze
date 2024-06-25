@@ -140,6 +140,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline void setLocalRotation(Vec4F const& _vec)
+        {
+            setLocalRotation(Quaternion(_vec));
+        }
+
+        //////////////////////////////////////////
         inline void setLocalRotation(Vec3F const& _euler)
         {
             setLocalRotation(_euler.x, _euler.y, _euler.z);

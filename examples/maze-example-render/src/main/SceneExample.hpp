@@ -130,17 +130,48 @@ namespace Maze
         Rect2DF getRedCameraViewport();
 
         //////////////////////////////////////////
+        Vec2U32 getRedRenderBufferSize();
+
+        //////////////////////////////////////////
         Rect2DF getGreenCameraViewport();
+
+        //////////////////////////////////////////
+        Vec2U32 getGreenRenderBufferSize();
+
+        //////////////////////////////////////////
+        Vec2U32 getBlueRenderBufferSize();
+
+        //////////////////////////////////////////
+        virtual void updateRenderBuffersSize();
 
         //////////////////////////////////////////
         void createMeshForCamera(
             Camera3DPtr const& _camera,
             String const& _material);
 
-    protected:
+        //////////////////////////////////////////
+        EntityPtr createTV(
+            Vec3F const& _pos,
+            Vec4F const& _rotation,
+            Vec3F const& _scale,
+            Texture2DPtr const& _texture);
 
+    protected:
+        RenderBufferPtr m_renderBufferRed;
+        RenderBufferPtr m_renderBufferRedTV;
         Camera3DPtr m_cameraRed;
+        CanvasPtr m_canvasRed;
+        SpriteRenderer2DPtr m_renderColorSpriteRed;
+
+        RenderBufferPtr m_renderBufferGreen;
+        RenderBufferPtr m_renderBufferGreenTV;
         Camera3DPtr m_cameraGreen;
+        CanvasPtr m_canvasGreen;
+        SpriteRenderer2DPtr m_renderColorSpriteGreen;
+
+        RenderBufferPtr m_renderBufferBlue;
+        RenderBufferPtr m_renderBufferBlueTV;
+        Camera3DPtr m_cameraBlue;
     };
 
 

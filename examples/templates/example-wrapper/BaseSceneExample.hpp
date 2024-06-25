@@ -113,7 +113,7 @@ namespace Maze
         void notifyExampleCommonSettingsChanged(bool const& _value);
 
         //////////////////////////////////////////
-        void updateRenderBuffersSize();
+        virtual void updateRenderBuffersSize();
 
         //////////////////////////////////////////
         void updateRenderTarget();
