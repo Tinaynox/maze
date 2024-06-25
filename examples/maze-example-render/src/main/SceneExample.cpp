@@ -168,7 +168,11 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneExample::init()
     {
-        if (!BaseSceneExample::init(Vec2F(100.0f, 30.0f)))
+        ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
+
+        exampleCommonSettings->setBloomEnabled(false);
+
+        if (!BaseSceneExample::init(Vec2F(20.0f, 20.0f)))
             return false;
 
         InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &SceneExample::notifyKeyboard);
@@ -181,7 +185,62 @@ namespace Maze
             m_fpsController->getLevelSize(),
             m_simpleLevelConfig);
 
+        createMeshForCamera(m_camera3D, "PlayerCamera00.mzmaterial");
+
         
+        m_fpsController->setPosition(Vec3F(-8.031569f, 0.000000f, 8.586735f));
+        m_fpsController->setYawAngle(Math::DegreesToRadians(120.0f));
+
+        // Red Camera
+        {
+            EntityPtr cameraEntity = createEntity();
+            Transform3DPtr cameraTransform = cameraEntity->ensureComponent<Transform3D>();
+
+            m_cameraRed = cameraEntity->createComponent<Camera3D>();
+            m_cameraRed->setClearColorFlag(false);
+            m_cameraRed->setClearSkyBoxFlag(true);
+            m_cameraRed->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::Gizmos);
+            m_cameraRed->getEntityRaw()->ensureComponent<Name>("Red Camera");
+            m_cameraRed->setNearZ(0.01f);
+            m_cameraRed->setFarZ(666.0f);
+            m_cameraRed->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
+
+            m_cameraRed->setViewport(getRedCameraViewport());
+
+            createMeshForCamera(m_cameraRed, "RedCamera00.mzmaterial");
+
+            cameraTransform->setLocalPosition(-4.000000f, 3.672040f, 0.000000f);
+            cameraTransform->setLocalRotation(0.702228f, 0.219007f, 0.646709f, -0.201692f);
+
+            SinMovement3DPtr cameraSinMovement = cameraEntity->ensureComponent<SinMovement3D>();
+            cameraSinMovement->setAxis(Vec3F::c_unitX);
+            cameraSinMovement->setAmplitude(5.0f);
+            cameraSinMovement->setFrequency(0.6f);
+        }
+
+        // Green Camera
+        {
+            EntityPtr cameraEntity = createEntity();
+            Transform3DPtr cameraTransform = cameraEntity->ensureComponent<Transform3D>();
+
+            m_cameraGreen = cameraEntity->createComponent<Camera3D>();
+            m_cameraGreen->setClearColorFlag(false);
+            m_cameraGreen->setClearSkyBoxFlag(true);
+            m_cameraGreen->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::Gizmos);
+            m_cameraGreen->getEntityRaw()->ensureComponent<Name>("Green Camera");
+            m_cameraGreen->setNearZ(0.01f);
+            m_cameraGreen->setFarZ(666.0f);
+            m_cameraGreen->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
+
+            m_cameraGreen->setViewport(getGreenCameraViewport());
+
+            createMeshForCamera(m_cameraGreen, "GreenCamera00.mzmaterial");
+
+            m_cameraGreen->setFOV(Math::DegreesToRadians(100.0f));
+            cameraTransform->setLocalPosition(12.444103f, 5.068819f, -4.097405f);
+            cameraTransform->setLocalRotation(0.761028f, 0.117517f, -0.627810f, 0.113489f);
+        }
+
 
         return true;
     }
@@ -225,10 +284,12 @@ namespace Maze
                 {
                     case KeyCode::P:
                     {
+                        /*
                         ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
 
                         exampleCommonSettings->setBloomEnabled(
                             !exampleCommonSettings->getBloomEnabled());
+                        */
                         break;
                     }
                     default:
@@ -241,7 +302,69 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    void SceneExample::updateRenderTargetViewport()
+    {
+        BaseSceneExample::updateRenderTargetViewport();
 
+        if (m_cameraRed)
+            m_cameraRed->setViewport(getRedCameraViewport());
+
+        if (m_cameraGreen)
+            m_cameraGreen->setViewport(getGreenCameraViewport());
+    }
+
+    //////////////////////////////////////////
+    Rect2DF SceneExample::getMainViewport()
+    {
+        Rect2DF viewport = Example::GetInstancePtr()->getMainRenderWindowViewport();
+        viewport.size.x *= 0.65f;
+        return viewport;
+    }
+
+    //////////////////////////////////////////
+    Rect2DF SceneExample::getRedCameraViewport()
+    {
+        Rect2DF viewport = Example::GetInstancePtr()->getMainRenderWindowViewport();
+        viewport.position.x += viewport.size.x * 0.65f;
+        viewport.size.x *= 0.35f;
+        viewport.size.y *= 0.5f;
+        return viewport;
+    }
+
+    //////////////////////////////////////////
+    Rect2DF SceneExample::getGreenCameraViewport()
+    {
+        Rect2DF viewport = Example::GetInstancePtr()->getMainRenderWindowViewport();
+        viewport.position.x += viewport.size.x * 0.65f;
+        viewport.position.y += viewport.size.y * 0.5f;
+        viewport.size.x *= 0.35f;
+        viewport.size.y *= 0.5f;
+        return viewport;
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::createMeshForCamera(
+        Camera3DPtr const& _camera,
+        String const& _material)
+    {
+        EntityPtr meshEntity = createEntity();
+
+        meshEntity->ensureComponent<Name>("Mesh");
+
+        Transform3DPtr meshTransform = meshEntity->createComponent<Transform3D>();
+        meshTransform->setParent(_camera->getTransform());
+
+        meshTransform->setLocalY(-0.3f);
+        meshTransform->setLocalZ(-0.8f);
+        meshTransform->setLocalRotationDegrees(0.0f, 90.0f, 0.0f);
+        meshTransform->setLocalScale(10.0f);
+
+        MeshRendererPtr meshRenderer = meshEntity->createComponent<MeshRenderer>();
+
+        meshRenderer->setRenderMesh("Camera01.fbx");
+        meshRenderer->setMaterial(_material);
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

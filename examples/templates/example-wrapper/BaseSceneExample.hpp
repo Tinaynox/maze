@@ -113,10 +113,20 @@ namespace Maze
         void notifyExampleCommonSettingsChanged(bool const& _value);
 
         //////////////////////////////////////////
+        void updateRenderBuffersSize();
+
+        //////////////////////////////////////////
         void updateRenderTarget();
 
         //////////////////////////////////////////
-        void updateRenderTargetViewport();
+        virtual void updateRenderTargetViewport();
+
+
+        //////////////////////////////////////////
+        virtual Rect2DF getMainViewport();
+
+        //////////////////////////////////////////
+        virtual Vec2U32 getMainRenderBufferSize();
 
     protected:
         CanvasPtr m_canvas;

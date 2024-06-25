@@ -1,0 +1,26 @@
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.0,0.0,0.745098,1.000000
+}
+
+uniform
+{
+  name:String = "u_fresnelPower"
+  type:String = "UniformF32"
+  value:F32 = 0.9
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 3000
+  shader:String = "Fresnel00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "One"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:Bool = false
+  cullMode:String = "Back"
+}

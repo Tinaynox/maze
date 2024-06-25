@@ -120,7 +120,27 @@ namespace Maze
         void notifyKeyboard(InputEventKeyboardData const& _data);
 
 
+        //////////////////////////////////////////
+        virtual void updateRenderTargetViewport() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual Rect2DF getMainViewport() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        Rect2DF getRedCameraViewport();
+
+        //////////////////////////////////////////
+        Rect2DF getGreenCameraViewport();
+
+        //////////////////////////////////////////
+        void createMeshForCamera(
+            Camera3DPtr const& _camera,
+            String const& _material);
+
     protected:
+
+        Camera3DPtr m_cameraRed;
+        Camera3DPtr m_cameraGreen;
     };
 
 

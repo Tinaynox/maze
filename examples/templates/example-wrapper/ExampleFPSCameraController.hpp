@@ -83,6 +83,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void setPosition(Vec3F const& _position);
+
+        //////////////////////////////////////////
         void update(F32 _dt);
 
 

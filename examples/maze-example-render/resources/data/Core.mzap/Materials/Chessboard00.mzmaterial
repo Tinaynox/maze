@@ -44,21 +44,21 @@ uniform
 {
   name:String = "u_checkerColor0"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.61, 0.61, 0.61, 1.0
+  value:Vec4F = 0.627451,0.627451,0.627451,1.000000
 }
 
 uniform
 {
   name:String = "u_checkerColor1"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.47, 0.47, 0.47, 1.0
+  value:Vec4F = 0.445752,0.419608,0.615686,1.000000
 }
 
 uniform
 {
   name:String = "u_checkerColor0b"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.58, 0.58, 0.58, 1.0
+  value:Vec4F = 0.576471,0.576471,0.576471,1.000000
 }
 
 uniform

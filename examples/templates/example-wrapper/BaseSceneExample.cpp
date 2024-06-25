@@ -150,7 +150,7 @@ namespace Maze
         ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
         exampleCommonSettings->getBloomEnabledChangedEvent().subscribe(this, &BaseSceneExample::notifyExampleCommonSettingsChanged);
 
-        Vec2U32 renderBufferSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
+        Vec2U32 renderBufferSize = getMainRenderBufferSize();
 
         S32 samples = RenderSystem::GetCurrentInstancePtr()->getTextureMaxAntialiasingLevelSupport();
 
@@ -194,7 +194,7 @@ namespace Maze
                      
         EntityPtr canvasEntity = createEntity("Canvas");
         m_canvas = canvasEntity->createComponent<Canvas>();
-        m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
+        m_canvas->setViewport(getMainViewport());
         m_canvas->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
 
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
@@ -320,19 +320,12 @@ namespace Maze
         if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
             return;
 
-        m_canvas->setViewport(_mainRenderWindowViewport);
+        m_canvas->setViewport(getMainViewport());
         m_canvasUI->setViewport(_mainRenderWindowViewport);
 
         if (!Example::GetInstancePtr()->isDebugEditorProgress())
         {
-            Vec2F renderWindowSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
-
-            m_renderBuffer->setSize(renderWindowSize);
-
-            if (m_renderBufferMSAA)
-                m_renderBufferMSAA->setSize(renderWindowSize);
-
-            m_distortionRenderBuffer->setSize(renderWindowSize / DISTORTION_BUFFER_DIV);
+            updateRenderBuffersSize();
 
         }
 
@@ -342,16 +335,13 @@ namespace Maze
     //////////////////////////////////////////
     void BaseSceneExample::notifyRenderTargetResized(RenderTarget* _renderTarget)
     {
-        Vec2U32 size = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
+        Vec2U32 size = getMainRenderBufferSize();
         Debug::Log("Render target resized: %ux%u", size.x, size.y);
 
         if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
             return;
 
-        m_renderBuffer->setSize(size);
-
-        if (m_renderBufferMSAA)
-            m_renderBufferMSAA->setSize(size);
+        updateRenderBuffersSize();
     }
 
     //////////////////////////////////////////
@@ -427,6 +417,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void BaseSceneExample::updateRenderBuffersSize()
+    {
+        Vec2F renderWindowSize = getMainRenderBufferSize();
+
+        m_renderBuffer->setSize(renderWindowSize);
+
+        if (m_renderBufferMSAA)
+            m_renderBufferMSAA->setSize(renderWindowSize);
+
+        m_distortionRenderBuffer->setSize(renderWindowSize / DISTORTION_BUFFER_DIV);
+    }
+
+    //////////////////////////////////////////
     void BaseSceneExample::updateRenderTarget()
     {
         ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
@@ -472,7 +475,20 @@ namespace Maze
         if (exampleCommonSettings->getBloomEnabled())
             m_camera3D->setViewport(Rect2DF(0.0f, 0.0f, 1.0f, 1.0f));
         else
-            m_camera3D->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
+            m_camera3D->setViewport(getMainViewport());
+    }
+
+    //////////////////////////////////////////
+    Rect2DF BaseSceneExample::getMainViewport()
+    {
+        return Example::GetInstancePtr()->getMainRenderWindowViewport();
+    }
+
+    //////////////////////////////////////////
+    Vec2U32 BaseSceneExample::getMainRenderBufferSize()
+    {
+        return Vec2U32(Vec2F32(
+            Example::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize()) * getMainViewport().size);
     }
 
 

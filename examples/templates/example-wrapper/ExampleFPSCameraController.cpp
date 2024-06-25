@@ -107,6 +107,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ExampleFPSCameraController::setPosition(Vec3F const& _position)
+    {
+        m_transform->setLocalPosition(_position);
+        m_targetPosition = _position;
+    }
+
+    //////////////////////////////////////////
     void ExampleFPSCameraController::update(F32 _dt)
     {
         if (!Example::GetInstancePtr() || !Example::GetInstancePtr()->isWindowFocused())
