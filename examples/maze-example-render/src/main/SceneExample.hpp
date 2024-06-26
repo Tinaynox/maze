@@ -142,7 +142,7 @@ namespace Maze
         Vec2U32 getBlueRenderBufferSize();
 
         //////////////////////////////////////////
-        virtual void updateRenderBuffersSize();
+        virtual void updateRenderBuffersSize() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void createMeshForCamera(
@@ -154,7 +154,8 @@ namespace Maze
             Vec3F const& _pos,
             Vec4F const& _rotation,
             Vec3F const& _scale,
-            Texture2DPtr const& _texture);
+            Texture2DPtr const& _texture,
+            String const& _materialName);
 
     protected:
         RenderBufferPtr m_renderBufferRed;

@@ -175,6 +175,17 @@ namespace Maze
         if (!BaseSceneExample::init(Vec2F(20.0f, 20.0f)))
             return false;
 
+        m_canvas->getEntityRaw()->getComponent<CanvasScaler>()->setScaleMode(CanvasScalerScaleMode::ConstantPixelSize);
+
+        SpriteRenderer2DPtr mainBorder = SpriteHelper::CreateSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
+            m_canvas->getTransform()->getSize(),
+            Vec2F::c_zero,
+            SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial(),
+            m_canvas->getTransform(),
+            this);
+        mainBorder->getEntityRaw()->ensureComponent<SizePolicy2D>();
+
         m_mainLight3D->getTransform()->setLocalRotation(0.401372f, 0.861992f, 0.103903f, 0.291678f);
 
         InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &SceneExample::notifyKeyboard);
@@ -247,11 +258,13 @@ namespace Maze
             m_canvasRed->setViewport(getRedCameraViewport());
             m_canvasRed->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
 
+            /*
             CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
             canvasScaler->setScaleMode(CanvasScalerScaleMode::ScaleWithViewportSize);
             canvasScaler->setScreenMatchMode(CanvasScalerScreenMatchMode::MatchWidthOrHeight);
             canvasScaler->setMatchWidthOrHeight(1.0f);
             canvasScaler->updateCanvasScale();
+            */
 
             m_renderColorSpriteRed = SpriteHelper::CreateSprite(
                 Sprite::Create(m_renderBufferRed->getColorTexture2D()),
@@ -261,6 +274,30 @@ namespace Maze
                 m_canvasRed->getTransform(),
                 this);
             m_renderColorSpriteRed->getEntityRaw()->ensureComponent<SizePolicy2D>();
+
+            SpriteRenderer2DPtr redBorder = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
+                m_canvasRed->getTransform()->getSize(),
+                Vec2F::c_zero,
+                SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial(),
+                m_canvasRed->getTransform(),
+                this);
+            redBorder->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            redBorder->setColor(ColorU32::FromVec3F32(Vec3F(1.000000f, 0.329412f, 0.508235f)));
+
+            SystemTextRenderer2DPtr hint = SystemUIHelper::CreateSystemText(
+                "Red Camera",
+                8,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Top,
+                Vec2F32::c_zero,
+                Vec2F32(10.0f, -10.0f),
+                m_canvasRed->getTransform(),
+                this,
+                Vec2F32(0.0f, 1.0f),
+                Vec2F32(0.0f, 1.0f));
+            hint->setColor(redBorder->getColor());
+            hint->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getBuiltinSystemFont(BuiltinSystemFontType::DefaultOutlined));
         }
 
         // Green Camera
@@ -312,11 +349,13 @@ namespace Maze
             m_canvasGreen->setViewport(getGreenCameraViewport());
             m_canvasGreen->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
 
+            /*
             CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
             canvasScaler->setScaleMode(CanvasScalerScaleMode::ScaleWithViewportSize);
             canvasScaler->setScreenMatchMode(CanvasScalerScreenMatchMode::MatchWidthOrHeight);
             canvasScaler->setMatchWidthOrHeight(1.0f);
             canvasScaler->updateCanvasScale();
+            */
 
             m_renderColorSpriteGreen = SpriteHelper::CreateSprite(
                 Sprite::Create(m_renderBufferGreen->getColorTexture2D()),
@@ -327,6 +366,30 @@ namespace Maze
                 this);
 
             m_renderColorSpriteGreen->getEntityRaw()->ensureComponent<SizePolicy2D>();
+
+            SpriteRenderer2DPtr greenBorder = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
+                m_canvasGreen->getTransform()->getSize(),
+                Vec2F::c_zero,
+                SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial(),
+                m_canvasGreen->getTransform(),
+                this);
+            greenBorder->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            greenBorder->setColor(ColorU32::FromVec3F32(Vec3F(0.290196f, 0.933333f, 0.504575f)));
+
+            SystemTextRenderer2DPtr hint = SystemUIHelper::CreateSystemText(
+                "Green Camera",
+                8,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Top,
+                Vec2F32::c_zero,
+                Vec2F32(10.0f, -10.0f),
+                m_canvasGreen->getTransform(),
+                this,
+                Vec2F32(0.0f, 1.0f),
+                Vec2F32(0.0f, 1.0f));
+            hint->setColor(greenBorder->getColor());
+            hint->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getBuiltinSystemFont(BuiltinSystemFontType::DefaultOutlined));
         }
 
         // Blue Camera
@@ -377,7 +440,8 @@ namespace Maze
             Vec3F(11.086767f, 2.399250f, -2.787267f),
             Vec4F(0.000000f, 0.707107f, 0.000000f, 0.707107f),
             Vec3F(2.000000f, 2.000000f, 1.000000f),
-            m_renderBufferRedTV->getColorTexture2D());
+            m_renderBufferRedTV->getColorTexture2D(),
+            "RedTV00.mzmaterial");
         SinMovement3DPtr tvRedSinMovement = tvRed->ensureComponent<SinMovement3D>();
         tvRedSinMovement->setAmplitude(0.75f);
         tvRedSinMovement->setFrequency(0.25f);
@@ -386,7 +450,8 @@ namespace Maze
             Vec3F(11.086767f, 2.399250f, 6.787267f),
             Vec4F(0.000000f, 0.707107f, 0.000000f, 0.707107f),
             Vec3F(3.000000f, 3.000000f, 1.000000f),
-            m_renderBufferGreenTV->getColorTexture2D());
+            m_renderBufferGreenTV->getColorTexture2D(),
+            "GreenTV00.mzmaterial");
         SinMovement3DPtr tvGreenSinMovement = tvGreen->ensureComponent<SinMovement3D>();
         tvGreenSinMovement->setAmplitude(0.5f);
         tvGreenSinMovement->setFrequency(0.325f);
@@ -395,7 +460,8 @@ namespace Maze
             Vec3F(12.478155f, 3.611719f, 2.024486f),
             Vec4F(0.000000f, 0.707107f, 0.000000f, 0.707107f),
             Vec3F(6.000000f, 5.00000f, 1.000000f),
-            m_renderBufferBlueTV->getColorTexture2D());
+            m_renderBufferBlueTV->getColorTexture2D(),
+            "BlueTV00.mzmaterial");
         SinMovement3DPtr tvBlueSinMovement = tvBlue->ensureComponent<SinMovement3D>();
         tvBlueSinMovement->setAmplitude(0.25f);
         tvBlueSinMovement->setFrequency(0.225f);
@@ -537,8 +603,11 @@ namespace Maze
     //////////////////////////////////////////
     Vec2U32 SceneExample::getBlueRenderBufferSize()
     {
-        return Vec2U32(Vec2F32(
-            Example::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize()) * getMainViewport().size * 2.0f);
+        F32 width = getMainViewport().size.x * Vec2F32(Example::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize()).x;
+        F32 height = getMainViewport().size.y * Vec2F32(Example::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize()).y;
+        F32 value = Math::Max(width, height);
+
+        return Vec2U32(Vec2F(1.2f * value, value) * 2.0f);
     }
 
     //////////////////////////////////////////
@@ -593,7 +662,8 @@ namespace Maze
         Vec3F const& _pos,
         Vec4F const& _rotation,
         Vec3F const& _scale,
-        Texture2DPtr const& _texture)
+        Texture2DPtr const& _texture,
+        String const& _materialName)
     {
         EntityPtr quadEntity = createEntity();
 
@@ -610,7 +680,7 @@ namespace Maze
         meshRenderer->setRenderMesh(
             RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadMesh());
 
-        MaterialPtr material = MaterialManager::GetCurrentInstance()->getColorTextureMaterial()->createCopy();
+        MaterialPtr material = MaterialManager::GetCurrentInstance()->getMaterial(MAZE_HCS("TV00.mzmaterial"))->createCopy();
         RenderPassPtr const& renderPass = material->getFirstRenderPass();
         renderPass->setDepthWriteEnabled(true);
         renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
@@ -628,9 +698,9 @@ namespace Maze
 
             boxMeshRenderer->setRenderMesh(
                 RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
-            boxMeshRenderer->setMaterial("Specular");
+            boxMeshRenderer->setMaterial(_materialName);
 
-            boxTransform->setLocalPosition(-0.000010f, 0.000000f, 0.104284f);
+            boxTransform->setLocalPosition(-0.000010f, 0.000000f, 0.154284f);
             boxTransform->setLocalScale(1.200000f, 1.200000f, 0.200000f);
         }
 
