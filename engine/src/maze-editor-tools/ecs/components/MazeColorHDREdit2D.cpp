@@ -148,10 +148,13 @@ namespace Maze
         if (_inputEvent.button != 0)
             return;
 
+        ColorHDREdit2DWPtr weakPtr = cast<ColorHDREdit2D>();
         ColorPickerManager::GetInstancePtr()->openColorHDRPicker(
-            [this](ColorF128 const& _color)
+            [weakPtr](ColorF128 const& _color)
             {
-                setColor(_color);
+                ColorHDREdit2DPtr ptr = weakPtr.lock();
+                if (ptr)
+                    ptr->setColor(_color);
             },
             m_color);
 

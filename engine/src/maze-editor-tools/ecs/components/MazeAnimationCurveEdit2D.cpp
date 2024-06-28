@@ -160,10 +160,13 @@ namespace Maze
         if (_inputEvent.button != 0)
             return;
 
+        AnimationCurveEdit2DWPtr weakPtr = cast<AnimationCurveEdit2D>();
         AnimationCurveManager::GetInstancePtr()->openCurveEditor(
-            [this](AnimationCurve const& _value)
+            [weakPtr](AnimationCurve const& _value)
             {
-                setCurve(_value);
+                AnimationCurveEdit2DPtr ptr = weakPtr.lock();
+                if (ptr)
+                    ptr->setCurve(_value);
             },
             m_curve);
 

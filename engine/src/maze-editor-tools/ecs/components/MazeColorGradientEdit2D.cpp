@@ -153,10 +153,13 @@ namespace Maze
         if (_inputEvent.button != 0)
             return;
 
+        ColorGradientEdit2DWPtr weakPtr = cast<ColorGradientEdit2D>();
         ColorGradientPickerManager::GetInstancePtr()->openGradientPicker(
-            [this](ColorGradient const& _gradient)
+            [weakPtr](ColorGradient const& _gradient)
             {
-                setGradient(_gradient);
+                ColorGradientEdit2DPtr ptr = weakPtr.lock();
+                if (ptr)
+                    ptr->setGradient(_gradient);
             },
             m_gradient);
 

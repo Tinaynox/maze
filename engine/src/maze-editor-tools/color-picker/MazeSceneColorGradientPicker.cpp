@@ -264,8 +264,9 @@ namespace Maze
             rowLayout->setAutoWidth(false);
             rowLayout->setSpacing(5.0f);
 
-            AbstractTextRenderer2DPtr label = UIHelper::CreateText(
+            AbstractTextRenderer2DPtr label = EditorToolsUIHelper::CreateText(
                 "Mode",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
                 12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
@@ -489,8 +490,9 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            AbstractTextRenderer2DPtr label = UIHelper::CreateText(
+            AbstractTextRenderer2DPtr label = EditorToolsUIHelper::CreateText(
                 "Color",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
                 12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
@@ -535,8 +537,9 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            AbstractTextRenderer2DPtr label = UIHelper::CreateText(
+            AbstractTextRenderer2DPtr label = EditorToolsUIHelper::CreateText(
                 "Location",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
                 12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
@@ -556,8 +559,9 @@ namespace Maze
                 this);
             m_locationEdit->eventTextInput.subscribe(this, &SceneColorGradientPicker::notifyLocationEditTextInput);
 
-            AbstractTextRenderer2DPtr label2 = UIHelper::CreateText(
+            AbstractTextRenderer2DPtr label2 = EditorToolsUIHelper::CreateText(
                 "%",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
                 12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,

@@ -59,6 +59,7 @@ namespace Maze
     class MAZE_EDITOR_TOOLS_API ShaderUniformVariantDrawerTexture2D
         : public ShaderUniformVariantDrawer
         , public MultiDelegateCallbackReceiver
+        , public SharedObject<ShaderUniformVariantDrawerTexture2D>
     {
     public:
 

@@ -211,11 +211,16 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerRenderMesh::notifySelectAssetClick(Button2D* _button, CursorInputEvent const& _event)
     {
+        PropertyDrawerRenderMeshWPtr weakPtr = cast<PropertyDrawerRenderMesh>();
         RenderMeshPickerManager::GetInstancePtr()->openRenderMeshPicker(
-            [this](RenderMeshPtr const& _material)
+            [weakPtr](RenderMeshPtr const& _material)
             {
-                setValue(_material);
-                eventUIData();
+                PropertyDrawerRenderMeshPtr ptr = weakPtr.lock();
+                if (ptr)
+                {
+                    ptr->setValue(_material);
+                    ptr->eventUIData();
+                }
             },
             m_renderMesh);
     }

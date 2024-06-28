@@ -147,10 +147,13 @@ namespace Maze
         if (_inputEvent.button != 0)
             return;
 
+        ColorEdit2DWPtr weakPtr = cast<ColorEdit2D>();
         ColorPickerManager::GetInstancePtr()->openColorPicker(
-            [this](ColorU32 const& _color)
+            [weakPtr](ColorU32 const& _color)
             {
-                setColor(_color);
+                ColorEdit2DPtr ptr = weakPtr.lock();
+                if (ptr)
+                    ptr->setColor(_color);
             },
             m_color);
 

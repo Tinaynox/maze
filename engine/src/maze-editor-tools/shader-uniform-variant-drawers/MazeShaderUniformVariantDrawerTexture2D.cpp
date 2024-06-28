@@ -203,15 +203,20 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderUniformVariantDrawerTexture2D::notifySelectAssetClick(Button2D* _button, CursorInputEvent const& _event)
     {
+        ShaderUniformVariantDrawerTexture2DWPtr weakPtr = cast<ShaderUniformVariantDrawerTexture2D>();
         TexturePickerManager::GetInstancePtr()->openTexturePicker(
-            [this](Texture2DPtr const& _texture)
+            [weakPtr](Texture2DPtr const& _texture)
             {
-                m_texture = _texture;
+                ShaderUniformVariantDrawerTexture2DPtr ptr = weakPtr.lock();
+                if (ptr)
+                {
+                    ptr->m_texture = _texture;
 
-                if (!m_texture)
-                    m_texture = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getTextureManager()->getWhiteTexture();
+                    if (!ptr->m_texture)
+                        ptr->m_texture = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getTextureManager()->getWhiteTexture();
 
-                processDataFromUI();
+                    ptr->processDataFromUI();
+                }
             },
             m_texture);
     }
