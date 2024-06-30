@@ -171,6 +171,8 @@ namespace Maze
         if (!BaseSceneExample::init(Vec2F(100.0f, 30.0f)))
             return false;
 
+        Example::GetInstancePtr()->getMainRenderWindow()->setVSync(true);
+
         m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 0.0f, 0.0f);
         m_fpsController->setYawAngle(Math::DegreesToRadians(0.0f));
         m_mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
