@@ -154,6 +154,8 @@ namespace Maze
         ExampleFPSCameraControllerPtr m_fpsController;
 
         Vec2F32 m_cursorPositionLastFrame = Vec2F32::c_zero;
+
+        F32 m_cursorDragDeltaKoef = 0.0065f;
     };
 
 

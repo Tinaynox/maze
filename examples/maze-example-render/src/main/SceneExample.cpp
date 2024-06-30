@@ -168,6 +168,8 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneExample::init()
     {
+        Example::GetInstancePtr()->getMainRenderWindow()->setVSync(true);
+
         ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
 
         exampleCommonSettings->setBloomEnabled(false);

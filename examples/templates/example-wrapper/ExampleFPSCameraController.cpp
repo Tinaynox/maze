@@ -183,10 +183,10 @@ namespace Maze
             Math::Lerp(
                 getTransform()->getLocalPosition(),
                 m_targetPosition,
-                _dt * 16.0f));
+                _dt * m_positionLerpKoef));
 
         Quaternion q = Quaternion::Slerp(
-            36.0f * _dt,
+            m_rotationLerpKoef * _dt,
             m_camera3D->getTransform()->getLocalRotation(),
             Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
         m_camera3D->getTransform()->setLocalRotation(q);

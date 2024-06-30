@@ -389,8 +389,8 @@ namespace Maze
         {
             F32 yawAngle = m_fpsController->getYawAngle();
             F32 pitchAngle = m_fpsController->getPitchAngle();
-            yawAngle += deltaPosition.x * 0.0075f;
-            pitchAngle -= deltaPosition.y * 0.0075f;
+            yawAngle += deltaPosition.x * m_cursorDragDeltaKoef;
+            pitchAngle -= deltaPosition.y * m_cursorDragDeltaKoef;
             pitchAngle = Math::Clamp(pitchAngle, -Math::c_halfPi, Math::c_halfPi);
             m_fpsController->setYawAngle(yawAngle);
             m_fpsController->setPitchAngle(pitchAngle);
