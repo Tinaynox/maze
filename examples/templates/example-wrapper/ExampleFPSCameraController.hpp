@@ -178,6 +178,9 @@ namespace Maze
 
         F32 m_radius = 0.5f;
         Vec2F32 m_levelSize = Vec2F32(5.0f, 10.0f);
+
+        F32 m_positionLerpKoef = 12.0f;
+        F32 m_rotationLerpKoef = 24.0f;
     };
 
 
