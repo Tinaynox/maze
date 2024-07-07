@@ -28,6 +28,7 @@
 #include "maze-core/helpers/MazeAssetHelper.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/assets/MazeAssetDirectory.hpp"
 
 
 //////////////////////////////////////////
@@ -51,6 +52,23 @@ namespace Maze
             }
 
             return result;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void CollectAllRegularAssetFilesInDirectoryRecursive(
+            Path const& _path,
+            Vector<AssetFilePtr>& _outResult)
+        {
+            Vector<AssetFilePtr> filesInDirectory = GetAllAssetFilesInDirectory(_path);
+
+            for (AssetFilePtr const& assetFile : filesInDirectory)
+            {
+                if (assetFile->getMetaClass()->isInheritedFrom<AssetDirectory>())
+                    CollectAllRegularAssetFilesInDirectoryRecursive(
+                        assetFile->getFullPath(), _outResult);
+                else
+                    _outResult.push_back(assetFile);
+            }
         }
 
     } // namespace AssetHelper

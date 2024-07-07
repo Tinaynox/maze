@@ -44,6 +44,11 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Vector<AssetFilePtr> GetAllAssetFilesInDirectory(Path const& _path);
 
+        //////////////////////////////////////////
+        MAZE_CORE_API void CollectAllRegularAssetFilesInDirectoryRecursive(
+            Path const& _path,
+            Vector<AssetFilePtr>& _outResult);
+
 
     } // namespace AssetHelper
     //////////////////////////////////////////

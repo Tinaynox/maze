@@ -81,9 +81,11 @@ namespace Maze
         m_renderTarget = _renderTarget;
         m_renderTarget->eventRenderTargetDestroyed.subscribe(this, &GizmosController::notifyRenderTargetDestroyed);
 
-        GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.subscribe(this, &GizmosController::notifyGizmosPerComponentClass);        
+        if (GizmosManager::GetInstancePtr())
+            GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.subscribe(this, &GizmosController::notifyGizmosPerComponentClass);        
 
-        EditorToolsManager::GetInstancePtr()->setGizmosController(this);
+        if (EditorToolsManager::GetInstancePtr())
+            EditorToolsManager::GetInstancePtr()->setGizmosController(this);
 
         return true;
     }
@@ -109,18 +111,21 @@ namespace Maze
     {
         m_samples.clear();
 
-        auto const& gizmosPerComponentClass = GizmosManager::GetInstancePtr()->getGizmosPerComponentClass();
-        for (auto const& gizmoPerComponentClass : gizmosPerComponentClass)
+        if (GizmosManager::GetInstancePtr())
         {
-            GizmosSample gizmosSample;
-            gizmosSample.componentClassUID = gizmoPerComponentClass.first;
-            gizmosSample.sample = getEntityRaw()->getEcsWorld()->requestCommonSample(
-                EntityAspect(
-                    EntityAspectType::HaveAllOfComponents,
-                    { gizmosSample.componentClassUID }));
-            gizmosSample.gizmos = gizmoPerComponentClass.second;
+            auto const& gizmosPerComponentClass = GizmosManager::GetInstancePtr()->getGizmosPerComponentClass();
+            for (auto const& gizmoPerComponentClass : gizmosPerComponentClass)
+            {
+                GizmosSample gizmosSample;
+                gizmosSample.componentClassUID = gizmoPerComponentClass.first;
+                gizmosSample.sample = getEntityRaw()->getEcsWorld()->requestCommonSample(
+                    EntityAspect(
+                        EntityAspectType::HaveAllOfComponents,
+                        { gizmosSample.componentClassUID }));
+                gizmosSample.gizmos = gizmoPerComponentClass.second;
 
-            m_samples.push_back(gizmosSample);
+                m_samples.push_back(gizmosSample);
+            }
         }
     }
 

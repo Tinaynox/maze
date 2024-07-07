@@ -90,7 +90,7 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetArchivedFile::isFileExists() const
     {
-        return m_archive->isFileExists();
+        return m_archive->isFileExists(m_zipArchiveFilePath);
     }
 
     //////////////////////////////////////////
