@@ -1,4 +1,5 @@
 from enum import Enum
+import os
 from maze_types import *
 
 
@@ -27,7 +28,8 @@ class DataBlockParamType(Enum):
     Vec4B = 21
     Mat3F32 = 22
     Mat4F32 = 23
-    String = 24
+    TMat = 24
+    String = 25
 
 
 class DataBlockParamTypeInfo:
@@ -61,6 +63,7 @@ data_block_param_type_info = {
     DataBlockParamType.Vec4B: DataBlockParamTypeInfo("Vec4B", Vec4B),
     DataBlockParamType.Mat3F32: DataBlockParamTypeInfo("Mat3F", Mat3F32),
     DataBlockParamType.Mat4F32: DataBlockParamTypeInfo("Mat4F", Mat4F32),
+    DataBlockParamType.TMat: DataBlockParamTypeInfo("TMat", TMat),
     DataBlockParamType.String: DataBlockParamTypeInfo("String", String)
 }
 
@@ -100,6 +103,7 @@ data_block_param_type_from_string = {
     "Mat3F": DataBlockParamType.Mat3F32,
     "Mat4F32": DataBlockParamType.Mat4F32,
     "Mat4F": DataBlockParamType.Mat4F32,
+    "TMat": DataBlockParamType.TMat,
     "String": DataBlockParamType.String
 }
 
@@ -230,7 +234,56 @@ class DataBlock:
 
     # Params
     def add_param(self, param_name, param_type, param_value):
-        self.params.append(DataBlockParam(param_name, param_type, param_value))
+        if param_type == DataBlockParamType.S32:
+            self.params.append(DataBlockParam(param_name, param_type, S32(param_value)))
+        elif param_type == DataBlockParamType.S64:
+            self.params.append(DataBlockParam(param_name, param_type, S64(param_value)))
+        elif param_type == DataBlockParamType.U32:
+            self.params.append(DataBlockParam(param_name, param_type, U32(param_value)))
+        elif param_type == DataBlockParamType.U64:
+            self.params.append(DataBlockParam(param_name, param_type, U64(param_value)))
+        elif param_type == DataBlockParamType.F32:
+            self.params.append(DataBlockParam(param_name, param_type, F32(param_value)))
+        elif param_type == DataBlockParamType.F64:
+            self.params.append(DataBlockParam(param_name, param_type, F64(param_value)))
+        elif param_type == DataBlockParamType.Bool:
+            self.params.append(DataBlockParam(param_name, param_type, Bool(param_value)))
+        elif param_type == DataBlockParamType.Vec4S8:
+            self.params.append(DataBlockParam(param_name, param_type, Vec4S8.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec4U8:
+            self.params.append(DataBlockParam(param_name, param_type, Vec4U8.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec2S32:
+            self.params.append(DataBlockParam(param_name, param_type, Vec2S32.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec3S32:
+            self.params.append(DataBlockParam(param_name, param_type, Vec3S32.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec4S32:
+            self.params.append(DataBlockParam(param_name, param_type, Vec4S32.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec2U32:
+            self.params.append(DataBlockParam(param_name, param_type, Vec2U32.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec3U32:
+            self.params.append(DataBlockParam(param_name, param_type, Vec3U32.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec4U32:
+            self.params.append(DataBlockParam(param_name, param_type, Vec4U32.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec2F32:
+            self.params.append(DataBlockParam(param_name, param_type, Vec2F32.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec3F32:
+            self.params.append(DataBlockParam(param_name, param_type, Vec3F32.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec4F32:
+            self.params.append(DataBlockParam(param_name, param_type, Vec4F32.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec2B:
+            self.params.append(DataBlockParam(param_name, param_type, Vec2B.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec3B:
+            self.params.append(DataBlockParam(param_name, param_type, Vec3B.from_str(param_value)))
+        elif param_type == DataBlockParamType.Vec4B:
+            self.params.append(DataBlockParam(param_name, param_type, Vec4B.from_str(param_value)))
+        elif param_type == DataBlockParamType.Mat3F32:
+            self.params.append(DataBlockParam(param_name, param_type, Mat3F32.from_str(param_value)))
+        elif param_type == DataBlockParamType.Mat4F32:
+            self.params.append(DataBlockParam(param_name, param_type, Mat4F32.from_str(param_value)))
+        elif param_type == DataBlockParamType.TMat:
+            self.params.append(DataBlockParam(param_name, param_type, TMat.from_str(param_value)))
+        elif param_type == DataBlockParamType.String:
+            self.params.append(DataBlockParam(param_name, param_type, param_value))
 
     def add_param_s32(self, param_name, param_value):
         self.params.append(DataBlockParam(param_name, DataBlockParamType.S32, param_value))
@@ -301,6 +354,9 @@ class DataBlock:
     def add_param_mat4f32(self, param_name, param_value):
         self.params.append(DataBlockParam(param_name, DataBlockParamType.Mat4F32, param_value))
 
+    def add_param_tmat(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.TMat, param_value))
+
     def add_param_string(self, param_name, param_value):
         self.params.append(DataBlockParam(param_name, DataBlockParamType.String, param_value))
 
@@ -334,6 +390,15 @@ class DataBlock:
         if default_value is None:
             default_value = DataBlock()
         return next((x for x in self.data_blocks if x.name == data_block_name), default_value)
+
+    def get_data_block_as_string_list(self, data_block_name):
+        result = []
+        child_block = self.get_data_block(data_block_name)
+        for i in range(len(child_block.params)):
+            param = child_block.params[i]
+            if param.type == DataBlockParamType.String:
+                result.append(param.value)
+        return result
 
     # Utils
     def is_empty(self):
@@ -434,11 +499,17 @@ class DataBlock:
                     param.value.m10, param.value.m11, param.value.m12,
                     param.value.m20, param.value.m21, param.value.m22, ))
             elif param.type == DataBlockParamType.Mat4F32:
-                file.write("[[{0}, {1}, {2}, {3}] [{4}, {5}, {6}, {7}] [{8}, {9}, {10}, {11}]]".format(
+                file.write("[[{0}, {1}, {2}, {3}] [{4}, {5}, {6}, {7}] [{8}, {9}, {10}, {11}] [{12}, {13}, {14}, {15}]]".format(
                     param.value.m00, param.value.m01, param.value.m02, param.value.m03,
                     param.value.m10, param.value.m11, param.value.m12, param.value.m13,
                     param.value.m20, param.value.m21, param.value.m22, param.value.m23,
                     param.value.m30, param.value.m31, param.value.m32, param.value.m33))
+            elif param.type == DataBlockParamType.TMat:
+                file.write("[[{0}, {1}, {2}] [{3}, {4}, {5}] [{6}, {7}, {8}] [{9}, {10}, {11}]]".format(
+                    param.value.m00, param.value.m01, param.value.m02,
+                    param.value.m10, param.value.m11, param.value.m12,
+                    param.value.m20, param.value.m21, param.value.m22,
+                    param.value.m30, param.value.m31, param.value.m32))
             elif param.type == DataBlockParamType.String:
                 _write_complex_string(file, param.value)
 
@@ -540,14 +611,15 @@ class DataBlockTextParser:
     def parse(self, file_path):
         data_block = DataBlock()
 
-        with open(file_path, "r") as file:
-            self.file = file
+        if os.path.exists(file_path):
+            with open(file_path, "rb") as file:
+                self.file = file
 
-            current_pos = self.file.tell()
-            self.file.seek(0, 2)
-            self.file_size = file.tell()
-            self.file.seek(current_pos)
-            self._parse_data_block(data_block, True)
+                current_pos = self.file.tell()
+                self.file.seek(0, 2)
+                self.file_size = file.tell()
+                self.file.seek(current_pos)
+                self._parse_data_block(data_block, True)
 
         return data_block
 
@@ -561,7 +633,7 @@ class DataBlockTextParser:
 
             if self._is_eof():
                 if not is_topmost:
-                    self._process_syntax_error("Unexpected EOF")
+                    self._process_syntax_error("Unexpected EOF #1")
                     return False
                 break
 
@@ -584,7 +656,7 @@ class DataBlockTextParser:
                 return False
 
             if self._is_eof():
-                self._process_syntax_error("Unexpected EOF")
+                self._process_syntax_error("Unexpected EOF #2")
                 return False
 
             if self._read_char_no_rewind() == '{':
@@ -603,7 +675,7 @@ class DataBlockTextParser:
 
                 self._rewind(1)
                 type_name_text = self._parse_identifier()
-                if type_name_text != "":
+                if type_name_text == "":
                     self._process_syntax_error("Expected type identifier")
                     return False
 
@@ -616,7 +688,7 @@ class DataBlockTextParser:
                     return False
 
                 if self._is_eof():
-                    self._process_syntax_error("Unexpected EOF")
+                    self._process_syntax_error("Unexpected EOF #3")
                     return False
 
                 if self._read_char() != '=':
@@ -632,7 +704,7 @@ class DataBlockTextParser:
                     return False
 
                 if self._is_eof():
-                    self._process_syntax_error("Unexpected EOF")
+                    self._process_syntax_error("Unexpected EOF #4")
                     return False
 
                 value_text = self._parse_value()
@@ -665,12 +737,12 @@ class DataBlockTextParser:
                     next_ch = self._read_char_no_rewind()
                     if not self._is_eof() and next_ch == '\n':
                         self._rewind(1)
-                        self.inc_current_line()
+                        self._inc_current_line()
                         if track_new_line_after_param:
                             self.was_new_line_after_statement = True
                     continue
                 elif ch == '\n':
-                    self.inc_current_line()
+                    self._inc_current_line()
                     if track_new_line_after_param:
                         self.was_new_line_after_statement = True
                     continue
@@ -712,16 +784,20 @@ class DataBlockTextParser:
 
                             if next_next_chars[0] == '/' and next_next_chars[1] == '*':
                                 self._rewind(2)
-                                ++count
+                                count = count + 1
                             elif next_next_chars[0] == '*' and next_next_chars[1] == '/':
                                 self._rewind(2)
-                                if --count <= 0:
+                                count = count - 1
+                                if count <= 0:
                                     break
                             else:
                                 self._rewind(1)
 
                         if count > 0 and not self._can_read_size(2):
-                            self._process_syntax_error("Unexpected EOF inside comment")
+                            self._process_syntax_error(
+                                "Unexpected EOF inside comment (count={0}, tell={1}, size={2} "
+                                "c_comment_start_offset={3})".format(
+                                count, self.file.tell(), self.file_size, c_comment_start_offset))
                             return False
 
                         if self.was_new_line_after_statement or self.last_statement == DataBlockTextParser.Statement.NONE:
@@ -803,8 +879,9 @@ class DataBlockTextParser:
                     if ch == '\n':
                         eol_found = True
                         break
-                    elif ch != ' ' or ch != '\r' or ch != '\t':
+                    elif ch != ' ' and ch != '\r' and ch != '\t':
                         break
+                    ch = self._read_char()
 
                 if not eol_found:
                     self.file.seek(offs)
@@ -813,8 +890,7 @@ class DataBlockTextParser:
 
         while True:
             if self._is_eof():
-                self._process_syntax_error("Unexpected EOF")
-                return ""
+                break
 
             ch = self._read_char_no_rewind(0)
 
@@ -858,7 +934,7 @@ class DataBlockTextParser:
                       self._read_char_no_rewind(2) == quot_ch):
                     # Crop last multiline \n (end)
                     if len(value) > 1 and value[len(value) - 1] == '\n':
-                        value.erase(len(value) - 1, 1)
+                        value = value[0:len(value) - 1]
                     self._rewind(3)
 
                     if not self._skip_white():
@@ -940,7 +1016,7 @@ class DataBlockTextParser:
             comment_key = MAZE_DATA_BLOCK_COMMENT_CPP if pending_comment.cpp_style else MAZE_DATA_BLOCK_COMMENT_C
 
             comment_text = self._read_text(
-                        pending_comment.start_offset, pending_comment.start_offset - pending_comment.end_offset)
+                        pending_comment.start_offset, pending_comment.end_offset - pending_comment.start_offset)
 
             if to_params:
                 data_block.add_param_string(comment_key, comment_text)
@@ -957,26 +1033,26 @@ class DataBlockTextParser:
         self.current_line_offset = self.file.tell()
 
     def _read_char(self):
-        return self.file.read(1)
+        return str(chr(self.file.read(1)[0]))
 
     def _read_char_no_rewind(self, index=0):
         current_pos = self.file.tell()
         text = self.file.read(3)
         self.file.seek(current_pos)
-        return text[index]
+        return str(chr(text[index]))
 
     def _read_text_no_rewind(self, size):
         current_pos = self.file.tell()
         text = self.file.read(size)
         self.file.seek(current_pos)
-        return text
+        return ''.join(chr(b) for b in text)
 
     def _read_text(self, from_pos, size):
         current_pos = self.file.tell()
         self.file.seek(from_pos)
         text = self.file.read(size)
         self.file.seek(current_pos)
-        return text
+        return ''.join(chr(b) for b in text)
 
     def _can_read_size(self, size):
         return (self.file_size - self.file.tell()) >= size

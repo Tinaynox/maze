@@ -1,0 +1,2 @@
+minFilter:String = LinearMipmapLinear
+magFilter:String = Linear

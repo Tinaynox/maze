@@ -218,10 +218,10 @@ namespace Maze
         AssetFilePtr getMetaDataFile(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
-        StringKeyMap<String> getMetaData(AssetFilePtr const& _assetFile);
+        bool getMetaData(AssetFilePtr const& _assetFile, DataBlock& _metaData);
 
         //////////////////////////////////////////
-        void saveMetaData(AssetFilePtr const& _assetFile, StringKeyMap<String> const& _metaData);
+        void saveMetaData(AssetFilePtr const& _assetFile, DataBlock const& _metaData);
 
 
         //////////////////////////////////////////

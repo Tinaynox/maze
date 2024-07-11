@@ -1,5 +1,6 @@
 import os
 import shutil
+import data_block
 
 import folder_iterator
 
@@ -32,20 +33,11 @@ class ResourcePackageScaler:
 
         self.dst_path = dst_folder_dir + '/' + dst_folder_name + '-x' + str(self.scale) + dst_folder_ext
 
-        self.src_parameters = {}
-        src_info_file_path = '{0}.meta'
-        if os.path.exists(src_info_file_path):
-            info_input_file = open(src_info_file_path)
-            content = info_input_file.read()
-            info_input_file.close()
-
-            for entry in content.split('\n'):
-                s = entry.split('=')
-                if len(s) == 2:
-                    self.src_parameters[s[0]] = s[1]
+        src_info_file_path = '{0}.mzmeta'.format(src_path)
+        self.src_parameters = data_block.DataBlock.load_text_file(src_info_file_path)
 
         self.rescale_enabled = True
-        if ('rescale_disabled' in self.src_parameters) and (self.src_parameters['rescale_disabled'] == '1'):
+        if self.src_parameters.get_param_value('rescale_disabled', False):
             self.rescale_enabled = False
 
         def it_file_function(full_path, file_name):
@@ -58,17 +50,8 @@ class ResourcePackageScaler:
             copy_from_stat = os.stat(copy_from)
             copy_from_time = copy_from_stat.st_mtime
 
-            info_file_path = '{0}.meta'.format(copy_from)
-            parameters = {}
-            if os.path.exists(info_file_path):
-                info_input_file = open(info_file_path)
-                content = info_input_file.read()
-                info_input_file.close()
-
-                for entry in content.split('\n'):
-                    s = entry.split('=')
-                    if len(s) == 2:
-                        parameters[s[0]] = s[1]
+            info_file_path = '{0}.mzmeta'.format(copy_from)
+            parameters = data_block.DataBlock.load_text_file(info_file_path)
 
             if not copy_required:
 
@@ -95,11 +78,11 @@ class ResourcePackageScaler:
                 if is_texture:
                     rescale_enabled = self.rescale_enabled
 
-                    if ('rescale_disabled' in parameters) and (parameters['rescale_disabled'] == '1'):
+                    if parameters.get_param_value('rescale_disabled', False):
                         rescale_enabled = False
 
                     if os.path.exists(info_file_path):
-                        shutil.copy2(info_file_path, "{0}.meta".format(copy_to))
+                        shutil.copy2(info_file_path, "{0}.mzmeta".format(copy_to))
 
                     if (scale == 1.0) or (not rescale_enabled):
                         shutil.copy2(copy_from, copy_to)
@@ -111,14 +94,15 @@ class ResourcePackageScaler:
                         im_src.close()
                         os.utime(copy_to, (copy_from_time, copy_from_time))
 
-                        new_info_input_file = open("{0}.meta".format(copy_to), 'a')
-                        new_info_input_file.write('\nrescale={0}'.format(self.scale))
-                        new_info_input_file.close()
+                        new_meta_file_path = "{0}.mzmeta".format(copy_to)
+                        new_meta_data_block = data_block.DataBlock.load_text_file(new_meta_file_path)
+                        new_meta_data_block.add_param_f32("rescale", self.scale)
+                        new_meta_data_block.save_text_file(new_meta_file_path)
                 else:
-                    if ext == ".meta":
+                    if ext == ".mzmeta":
                         _, origin_ext = os.path.splitext(name)
                         if origin_ext in maze_config.textures_extensions:
-                            # We will process texture meta data manually
+                            # We will process texture mzmeta data manually
                             return
 
                     shutil.copy2(copy_from, copy_to)

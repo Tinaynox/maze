@@ -24,6 +24,17 @@ if __name__ == '__main__':
     vec2fValue = Vec2F32(f32Value, f32Value)
     vec3fValue = Vec3F32(f32Value, f32Value, f32Value)
     vec4fValue = Vec4F32(f32Value, f32Value, f32Value, f32Value)
+    mat3fValue = Mat3F32(f32Value, 0.0, 0.0,
+                         0.0, f32Value, 0.0,
+                         0.0, 0.0, f32Value)
+    mat4fValue = Mat4F32(f32Value, 0.0, 0.0, 0.0,
+                         0.0, f32Value, 0.0, 0.0,
+                         0.0, 0.0, f32Value, 0.0,
+                         0.0, 0.0, 0.0, f32Value)
+    tmValue = TMat(1.0, 0.0, 0.0,
+                   0.0, 1.0, 0.0,
+                   0.0, 0.0, 1.0,
+                   3.0, 4.0, 5.0)
     stringValue = "Single line string"
     stringValue2 = "Multi\n" "\tline\n" "\t\tstring"
 
@@ -60,6 +71,12 @@ if __name__ == '__main__':
     vectorsBlock.add_param_vec2f32("vec2fValue", vec2fValue)
     vectorsBlock.add_param_vec3f32("vec3fValue", vec3fValue)
     vectorsBlock.add_param_vec4f32("vec4fValue", vec4fValue)
+
+    matricesBlock = subBlock.add_new_data_block("matrices")
+    matricesBlock.add_param_string(data_block.MAZE_DATA_BLOCK_COMMENT_C, " Matrices ")
+    matricesBlock.add_param_mat3f32("mat3fValue", mat3fValue)
+    matricesBlock.add_param_mat4f32("mat4fValue", mat4fValue)
+    matricesBlock.add_param_tmat("tmValue", tmValue)
 
     stringsBlock = subBlock.add_new_data_block("strings")
     stringsBlock.add_param_string(data_block.MAZE_DATA_BLOCK_COMMENT_C, " Strings ")

@@ -219,9 +219,10 @@ namespace Maze
         Debug::Log("Loading sound data: %s...", _assetFile->getFileName().toUTF8().c_str());
         Timer timer;
 
-        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+        DataBlock metaData;
+        AssetManager::GetInstancePtr()->getMetaData(_assetFile, metaData);
 
-        if (metaData.empty() || !metaData.contains("ext"))
+        if (metaData.isEmpty() || !metaData.isParamExists(MAZE_HCS("ext")))
         {
             bool loaderFound = false;
             for (auto const& soundLoaderData : m_soundLoaders)
@@ -239,7 +240,10 @@ namespace Maze
         }
         else
         {
-            HashedString fileExtension = HashedString(StringHelper::ToLower(metaData["ext"]));
+            HashedString fileExtension = HashedString(
+                StringHelper::ToLower(
+                    metaData.getString(
+                        MAZE_HCS("ext"))));
 
             auto it = m_soundLoaders.find(fileExtension);
             if (it != m_soundLoaders.end())

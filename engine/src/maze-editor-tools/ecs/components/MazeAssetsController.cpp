@@ -533,7 +533,7 @@ namespace Maze
             Path fileName = assetFile->getFileName();
             Path fullPath = assetFile->getFullPath();
 
-            if (assetFile->getExtension() == "meta")
+            if (assetFile->getExtension() == "mzmeta")
                 continue;
 
             Transform2DPtr lineParent = m_selectedAssetsFolderLayoutTransform;

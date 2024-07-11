@@ -73,6 +73,9 @@ S32 main(S32 _argc, S8 const* _argv[])
     Vec2F32 const vec2fValue = { f32Value, f32Value };
     Vec3F32 const vec3fValue = { f32Value, f32Value, f32Value };
     Vec4F32 const vec4fValue = { f32Value, f32Value, f32Value, f32Value };
+    Mat3F const mat3fValue = Mat3F::c_identity;
+    Mat4F const mat4fValue = Mat4F::CreateAffineTranslation(1.0f, 2.0f, 3.0f);
+    TMat const tmValue = TMat::CreateTranslation(4.0f, 5.0f, 6.0f);
     String const stringValue = "Single line string";
     String const stringValue2 = "Multi\n" "\tline\n" "\t\tstring";
 
@@ -103,6 +106,12 @@ S32 main(S32 _argc, S8 const* _argv[])
     vectorsBlock->addVec3F32(MAZE_HS("vec3fValue"), vec3fValue);
     vectorsBlock->addVec4F32(MAZE_HS("vec4fValue"), vec4fValue);
 
+    DataBlock* matBlock = subBlock->addNewDataBlock(MAZE_HS("matrices"));
+    matBlock->addCString(MAZE_HS(MAZE_DATA_BLOCK_COMMENT_C), " Matrices ");
+    matBlock->addMat3F(MAZE_HS("mat3fValue"), mat3fValue);
+    matBlock->addMat4F(MAZE_HS("mat4fValue"), mat4fValue);
+    matBlock->addTMat(MAZE_HS("tmValue"), tmValue);
+
     DataBlock* stringsBlock = subBlock->addNewDataBlock(MAZE_HS("strings"));
     stringsBlock->addCString(MAZE_HS(MAZE_DATA_BLOCK_COMMENT_C), " Strings ");
     stringsBlock->addString(MAZE_HS("stringValue"), stringValue);
@@ -112,6 +121,7 @@ S32 main(S32 _argc, S8 const* _argv[])
     // Write test
     Path const binaryFileName = "TestBinary.mzdata";
     Path const textFileName = "TestText.mzdata";
+    Path const text2FileName = "TestText2.mzdata";
     Path const textCompactFileName = "TestTextCompact.mzdata";
 
     testBuffer.saveBinaryFile(binaryFileName);
@@ -121,49 +131,54 @@ S32 main(S32 _argc, S8 const* _argv[])
     auto validateBuffer =
         [&](DataBlock& _dataBlock)
         {
-            auto v00 = _dataBlock.getBool(MAZE_HS("boolValue")); MAZE_ASSERT(v00 == true);
-            auto v01 = _dataBlock.getS32(MAZE_HS("s32Value")); MAZE_ASSERT(v01 == s32Value);
-            auto v02 = _dataBlock.getS64(MAZE_HS("s64Value")); MAZE_ASSERT(v02 == s64Value);
-            auto v03 = _dataBlock.getU32(MAZE_HS("u32Value")); MAZE_ASSERT(v03 == u32Value);
-            auto v04 = _dataBlock.getU64(MAZE_HS("u64Value")); MAZE_ASSERT(v04 == u64Value);
-            auto v05 = _dataBlock.getF32(MAZE_HS("f32Value")); MAZE_ASSERT(Math::IsNear(v05, f32Value, FLT_EPSILON));
-            auto v06 = _dataBlock.getF64(MAZE_HS("f64Value")); MAZE_ASSERT(Math::IsNear(v06, f64Value, DBL_EPSILON));
+            auto v00 = _dataBlock.getBool(MAZE_HS("boolValue")); MAZE_DEBUG_ASSERT(v00 == true);
+            auto v01 = _dataBlock.getS32(MAZE_HS("s32Value")); MAZE_DEBUG_ASSERT(v01 == s32Value);
+            auto v02 = _dataBlock.getS64(MAZE_HS("s64Value")); MAZE_DEBUG_ASSERT(v02 == s64Value);
+            auto v03 = _dataBlock.getU32(MAZE_HS("u32Value")); MAZE_DEBUG_ASSERT(v03 == u32Value);
+            auto v04 = _dataBlock.getU64(MAZE_HS("u64Value")); MAZE_DEBUG_ASSERT(v04 == u64Value);
+            auto v05 = _dataBlock.getF32(MAZE_HS("f32Value")); MAZE_DEBUG_ASSERT(Math::IsNear(v05, f32Value, FLT_EPSILON));
+            auto v06 = _dataBlock.getF64(MAZE_HS("f64Value")); MAZE_DEBUG_ASSERT(Math::IsNear(v06, f64Value, DBL_EPSILON));
 
-            auto v07 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec2B(MAZE_HS("vec2bValue")); MAZE_ASSERT(v07 == vec2bValue);
-            auto v08 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec3B(MAZE_HS("vec3bValue")); MAZE_ASSERT(v08 == vec3bValue);
-            auto v09 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec4B(MAZE_HS("vec4bValue")); MAZE_ASSERT(v09 == vec4bValue);
-            auto v10 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec2S32(MAZE_HS("vec2sValue")); MAZE_ASSERT(v10 == vec2sValue);
-            auto v11 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec3S32(MAZE_HS("vec3sValue")); MAZE_ASSERT(v11 == vec3sValue);
-            auto v12 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec4S32(MAZE_HS("vec4sValue")); MAZE_ASSERT(v12 == vec4sValue);
-            auto v13 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec2U32(MAZE_HS("vec2uValue")); MAZE_ASSERT(v13 == vec2uValue);
-            auto v14 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec3U32(MAZE_HS("vec3uValue")); MAZE_ASSERT(v14 == vec3uValue);
-            auto v15 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec4U32(MAZE_HS("vec4uValue")); MAZE_ASSERT(v15 == vec4uValue);
-            auto v16 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec2F32(MAZE_HS("vec2fValue")); MAZE_ASSERT(v16 == vec2fValue);
-            auto v17 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec3F32(MAZE_HS("vec3fValue")); MAZE_ASSERT(v17 == vec3fValue);
-            auto v18 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec4F32(MAZE_HS("vec4fValue")); MAZE_ASSERT(v18 == vec4fValue);
+            auto v07 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec2B(MAZE_HS("vec2bValue")); MAZE_DEBUG_ASSERT(v07 == vec2bValue);
+            auto v08 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec3B(MAZE_HS("vec3bValue")); MAZE_DEBUG_ASSERT(v08 == vec3bValue);
+            auto v09 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec4B(MAZE_HS("vec4bValue")); MAZE_DEBUG_ASSERT(v09 == vec4bValue);
+            auto v10 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec2S32(MAZE_HS("vec2sValue")); MAZE_DEBUG_ASSERT(v10 == vec2sValue);
+            auto v11 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec3S32(MAZE_HS("vec3sValue")); MAZE_DEBUG_ASSERT(v11 == vec3sValue);
+            auto v12 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec4S32(MAZE_HS("vec4sValue")); MAZE_DEBUG_ASSERT(v12 == vec4sValue);
+            auto v13 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec2U32(MAZE_HS("vec2uValue")); MAZE_DEBUG_ASSERT(v13 == vec2uValue);
+            auto v14 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec3U32(MAZE_HS("vec3uValue")); MAZE_DEBUG_ASSERT(v14 == vec3uValue);
+            auto v15 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec4U32(MAZE_HS("vec4uValue")); MAZE_DEBUG_ASSERT(v15 == vec4uValue);
+            auto v16 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec2F32(MAZE_HS("vec2fValue")); MAZE_DEBUG_ASSERT(v16 == vec2fValue);
+            auto v17 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec3F32(MAZE_HS("vec3fValue")); MAZE_DEBUG_ASSERT(v17 == vec3fValue);
+            auto v18 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("vectors")].getVec4F32(MAZE_HS("vec4fValue")); MAZE_DEBUG_ASSERT(v18 == vec4fValue);
 
-            auto v19 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("strings")].getString(MAZE_HS("stringValue")); MAZE_ASSERT(v19 == stringValue);
-            auto v20 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("strings")].getString(MAZE_HS("stringValue2")); MAZE_ASSERT(v20 == stringValue2);
+            auto v19 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("strings")].getString(MAZE_HS("stringValue")); MAZE_DEBUG_ASSERT(v19 == stringValue);
+            auto v20 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("strings")].getString(MAZE_HS("stringValue2")); MAZE_DEBUG_ASSERT(v20 == stringValue2);
+
+            auto v21 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("matrices")].getMat3F(MAZE_HS("mat3fValue")); MAZE_DEBUG_ASSERT(v21 == mat3fValue);
+            auto v22 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("matrices")].getMat4F(MAZE_HS("mat4fValue")); MAZE_DEBUG_ASSERT(v22 == mat4fValue);
+            auto v23 = _dataBlock[MAZE_HS("subBlock")][MAZE_HS("matrices")].getTMat(MAZE_HS("tmValue")); MAZE_DEBUG_ASSERT(v23 == tmValue);
         };
 
     // Read binary test
     {
         DataBlock readTestBuffer;
-        MAZE_ASSERT(readTestBuffer.loadBinaryFile(binaryFileName));
+        MAZE_DEBUG_ASSERT(readTestBuffer.loadBinaryFile(binaryFileName));
         validateBuffer(readTestBuffer);
     }
 
     // Read text test
     {
         DataBlock readTestBuffer;
-        MAZE_ASSERT(readTestBuffer.loadTextFile(textFileName));
+        MAZE_DEBUG_ASSERT(readTestBuffer.loadTextFile(textFileName));
         validateBuffer(readTestBuffer);
+        readTestBuffer.saveTextFile(text2FileName);
     }
 
     // Read text compact test
     {
         DataBlock readTestBuffer;
-        MAZE_ASSERT(readTestBuffer.loadTextFile(textCompactFileName));
+        MAZE_DEBUG_ASSERT(readTestBuffer.loadTextFile(textCompactFileName));
         validateBuffer(readTestBuffer);
     }
 

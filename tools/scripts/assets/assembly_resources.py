@@ -55,19 +55,7 @@ class AssemblyResources:
             name, ext = os.path.splitext(folder_name)
 
             if ext == '.mzap':
-                parameters = {}
-
                 info_file_path_folder = '{0}/{1}'.format(self.input, full_path)
-                info_file_path = '{0}.meta'.format(info_file_path_folder)
-                if os.path.exists(info_file_path):
-                    info_input_file = open(info_file_path)
-                    content = info_input_file.read()
-                    info_input_file.close()
-
-                    for entry in content.split('\n'):
-                        s = entry.split('=')
-                        if len(s) == 2:
-                            parameters[s[0]] = s[1]
 
                 for tscale in self.tscales:
 
