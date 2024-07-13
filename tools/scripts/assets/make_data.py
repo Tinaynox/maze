@@ -148,10 +148,10 @@ class MakeData:
                 compression_enabled = True
 
                 if len(tags) > 0:
-                    tags_value = data_block.DataBlock()
+                    tags_value = data_block.DataBlock("tags")
                     for tag in tags:
                         tags_value.add_param_string("tag", tag)
-                    parameters.add_data_block("tags", tags_value)
+                    parameters.add_data_block(tags_value)
 
                 if os.path.exists(info_file_path):
                     self.cache.is_up_to_date(info_file_path)

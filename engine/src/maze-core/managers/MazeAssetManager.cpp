@@ -319,6 +319,9 @@ namespace Maze
     //////////////////////////////////////////
     void AssetManager::updateFileInfo(AssetFilePtr const& _file)
     {
+        if (_file->getExtension() == Path("mzmeta"))
+            return;
+
         DataBlock metaData;
         getMetaData(_file, metaData);
         Vector<String> tagsVector = metaData.getDataBlockAsVectorString(MAZE_HCS("tags"));
