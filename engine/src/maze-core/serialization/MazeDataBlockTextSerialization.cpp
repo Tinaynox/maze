@@ -877,10 +877,7 @@ namespace Maze
         for (;;)
         {
             if (isEndOfBuffer())
-            {
-                processSyntaxError("Unexpected EOF");
-                return false;
-            }
+                break;
 
             Char ch = 0;
             m_readStream.readNoRewind(ch);

@@ -920,6 +920,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Vector<String> DataBlock::getDataBlockAsVectorString(HashedCString _name)
+    {
+        DataBlock const* dataBlock = getDataBlock(_name);
+        if (!dataBlock)
+            return Vector<String>();
+
+        Vector<String> result;
+
+        for (ParamIndex i = 0, in = (ParamIndex)dataBlock->getParamsCount(); i < in; ++i)
+        {
+            Param const& param = dataBlock->getParam(i);
+            if (param.type == U32(DataBlockParamType::ParamString))            
+                result.push_back(getParamValueCString(param.value));
+        }
+
+        return std::move(result);
+    }
+
+    //////////////////////////////////////////
     DataBlock& DataBlock::operator[](HashedCString _name)
     {
         DataBlock* result = getDataBlock(_name);

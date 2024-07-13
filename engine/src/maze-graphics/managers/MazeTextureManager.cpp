@@ -161,17 +161,33 @@ namespace Maze
         if (!texture2D)
             return false;
 
-        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
-        if (metaData["magFilter"] != String())
-            texture2D->setMagFilter(TextureFilter::FromString(metaData["magFilter"]));
-        if (metaData["minFilter"] != String())
-            texture2D->setMinFilter(TextureFilter::FromString(metaData["minFilter"]));
-        if (metaData["wrapS"] != String())
-            texture2D->setWrapS(TextureWrap::FromString(metaData["wrapS"]));
-        if (metaData["wrapT"] != String())
-            texture2D->setWrapT(TextureWrap::FromString(metaData["wrapT"]));
-        if (metaData["anisotropy"] != String())
-            texture2D->setAnisotropyLevel(StringHelper::StringToF32Safe(metaData["anisotropy"]));
+        DataBlock metaData;
+        if (AssetManager::GetInstancePtr()->getMetaData(_assetFile, metaData))
+        {
+            if (metaData.isParamExists(MAZE_HCS("magFilter")))
+                texture2D->setMagFilter(
+                    TextureFilter::FromString(
+                        metaData.getString(MAZE_HCS("magFilter"))));
+            
+            if (metaData.isParamExists(MAZE_HCS("minFilter")))
+                texture2D->setMinFilter(
+                    TextureFilter::FromString(
+                        metaData.getString(MAZE_HCS("minFilter"))));
+            
+            if (metaData.isParamExists(MAZE_HCS("wrapS")))
+                texture2D->setWrapS(
+                    TextureWrap::FromString(
+                        metaData.getString(MAZE_HCS("wrapS"))));
+            
+            if (metaData.isParamExists(MAZE_HCS("wrapT")))
+                texture2D->setWrapT(
+                    TextureWrap::FromString(
+                        metaData.getString(MAZE_HCS("wrapT"))));
+            
+            if (metaData.isParamExists(MAZE_HCS("anisotropy")))
+                texture2D->setAnisotropyLevel(
+                    metaData.getF32(MAZE_HCS("anisotropy")));
+        }
 
         return true;
     }
@@ -183,12 +199,14 @@ namespace Maze
         if (!texture2D)
             return false;
 
-        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
-        metaData["magFilter"] = texture2D->getMagFilter().toString();
-        metaData["minFilter"] = texture2D->getMinFilter().toString();
-        metaData["wrapS"] = texture2D->getWrapS().toString();
-        metaData["wrapT"] = texture2D->getWrapT().toString();
-        metaData["anisotropy"] = StringHelper::ToString(texture2D->getAnisotropyLevel());
+        DataBlock metaData;
+        AssetManager::GetInstancePtr()->getMetaData(_assetFile, metaData);
+        
+        metaData.setString(MAZE_HCS("magFilter"), texture2D->getMagFilter().toString());
+        metaData.setString(MAZE_HCS("minFilter"), texture2D->getMinFilter().toString());
+        metaData.setString(MAZE_HCS("wrapS"), texture2D->getWrapS().toString());
+        metaData.setString(MAZE_HCS("wrapT"), texture2D->getWrapT().toString());
+        metaData.setF32(MAZE_HCS("anisotropy"), texture2D->getAnisotropyLevel());
 
         AssetManager::GetInstancePtr()->saveMetaData(_assetFile, metaData);
 
@@ -389,9 +407,10 @@ namespace Maze
         Debug::Log("Loading texture pixel sheet: %s...", _assetFile->getFileName().toUTF8().c_str());
         Timer timer;
 
-        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+        DataBlock metaData;
+        AssetManager::GetInstancePtr()->getMetaData(_assetFile, metaData);
 
-        if (metaData.empty() || !metaData.contains("ext"))
+        if (metaData.isEmpty() || !metaData.isParamExists(MAZE_HCS("ext")))
         {
             String assetFileExtension = _assetFile->getExtension().toUTF8();
             bool loaderFound = false;
@@ -423,7 +442,9 @@ namespace Maze
         }
         else
         {
-            HashedString fileExtension = HashedString(StringHelper::ToLower(metaData["ext"]));
+            HashedString fileExtension = HashedString(
+                StringHelper::ToLower(
+                    metaData.getString(MAZE_HCS("ext"))));
 
             auto it = m_textureLoaders.find(fileExtension);
             if (it != m_textureLoaders.end())
@@ -490,17 +511,34 @@ namespace Maze
         TextureCubePtr textureCube = TextureCube::Create(_assetFile, m_renderSystemRaw);
         textureCube->setName(_assetFile->getFileName());
 
-        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
-        if (metaData["magFilter"] != String())
-            textureCube->setMagFilter(TextureFilter::FromString(metaData["magFilter"]));
-        if (metaData["minFilter"] != String())
-            textureCube->setMinFilter(TextureFilter::FromString(metaData["minFilter"]));
-        if (metaData["wrapS"] != String())
-            textureCube->setWrapS(TextureWrap::FromString(metaData["wrapS"]));
-        if (metaData["wrapT"] != String())
-            textureCube->setWrapT(TextureWrap::FromString(metaData["wrapT"]));
-        if (metaData["wrapR"] != String())
-            textureCube->setWrapR(TextureWrap::FromString(metaData["wrapR"]));
+        DataBlock metaData;
+        if (AssetManager::GetInstancePtr()->getMetaData(_assetFile, metaData))
+        {
+            if (metaData.isParamExists(MAZE_HCS("magFilter")))
+                textureCube->setMagFilter(
+                    TextureFilter::FromString(
+                        metaData.getString(MAZE_HCS("magFilter"))));
+
+            if (metaData.isParamExists(MAZE_HCS("minFilter")))
+                textureCube->setMinFilter(
+                    TextureFilter::FromString(
+                        metaData.getString(MAZE_HCS("minFilter"))));
+
+            if (metaData.isParamExists(MAZE_HCS("wrapS")))
+                textureCube->setWrapS(
+                    TextureWrap::FromString(
+                        metaData.getString(MAZE_HCS("wrapS"))));
+
+            if (metaData.isParamExists(MAZE_HCS("wrapT")))
+                textureCube->setWrapT(
+                    TextureWrap::FromString(
+                        metaData.getString(MAZE_HCS("wrapT"))));
+
+            if (metaData.isParamExists(MAZE_HCS("wrapR")))
+                textureCube->setWrapR(
+                    TextureWrap::FromString(
+                        metaData.getString(MAZE_HCS("wrapR"))));
+        }
 
         TextureCubeLibraryData* data = addTextureToLibrary(textureCube);
         if (data)

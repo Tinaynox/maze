@@ -192,18 +192,18 @@ namespace Maze
         Debug::Log("Loading render mesh: %s...", _assetFile->getFileName().toUTF8().c_str());
         Timer timer;
 
-        StringKeyMap<String> metaData;
+        DataBlock metaData;
         if (AssetManager::GetInstancePtr())
-            metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+            AssetManager::GetInstancePtr()->getMetaData(_assetFile, metaData);
 
         MeshLoaderProperties loaderProps;
-        if (metaData.contains("scale"))
-            loaderProps.scale = StringHelper::StringToF32(metaData["scale"]);
+        if (metaData.isParamExists(MAZE_HCS("scale")))
+            loaderProps.scale = metaData.getF32(MAZE_HCS("scale"));
 
-        if (metaData.contains("mergeSubMeshes"))
-            loaderProps.mergeSubMeshes = StringHelper::StringToBool(metaData["mergeSubMeshes"]);
+        if (metaData.isParamExists(MAZE_HCS("mergeSubMeshes")))
+            loaderProps.mergeSubMeshes = metaData.getBool(MAZE_HCS("mergeSubMeshes"));
 
-        if (metaData.empty() || !metaData.contains("ext"))
+        if (metaData.isEmpty() || !metaData.isParamExists(MAZE_HCS("ext")))
         {
             String assetFileExtension = _assetFile->getExtension().toUTF8();
             bool loaderFound = false;
@@ -235,7 +235,8 @@ namespace Maze
         }
         else
         {
-            HashedString fileExtension = HashedString(StringHelper::ToLower(metaData["ext"]));
+            HashedString fileExtension = HashedString(
+                StringHelper::ToLower(metaData.getString(MAZE_HCS("ext"))));
 
             auto it = m_meshLoaders.find(fileExtension);
             if (it != m_meshLoaders.end())

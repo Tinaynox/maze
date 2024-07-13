@@ -118,14 +118,16 @@ namespace Maze
         Texture2DLibraryData const* textureLibraryData = m_renderSystemRaw->getTextureManager()->getTexture2DLibraryData(texture2D->getName().asHashedCString());
         if (textureLibraryData && textureLibraryData->assetFile)
         {
-            StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(textureLibraryData->assetFile);
-            auto metaDataIt = metaData.find("sliceBorder");
-            if (metaDataIt != metaData.end())
+            DataBlock metaData;
+            AssetManager::GetInstancePtr()->getMetaData(textureLibraryData->assetFile, metaData);
+            DataBlock* sliceBorder = metaData.getDataBlock(MAZE_HCS("sliceBorder"));
+            if (sliceBorder)
             {
-                String const& borderData = metaDataIt->second;
-                Vec4F sliceBorder;
-                if (Vec4F::ParseString(borderData.c_str(), borderData.size(), sliceBorder, ','))
-                    sprite->setSliceBorder(sliceBorder.x, sliceBorder.y, sliceBorder.z, sliceBorder.w);
+                F32 left = sliceBorder->getF32(MAZE_HCS("left"), 0.0f);
+                F32 bottom = sliceBorder->getF32(MAZE_HCS("bottom"), 0.0f);
+                F32 right = sliceBorder->getF32(MAZE_HCS("right"), 0.0f);
+                F32 top = sliceBorder->getF32(MAZE_HCS("top"), 0.0f);
+                sprite->setSliceBorder(left, bottom, right, top);
             }
         }
 

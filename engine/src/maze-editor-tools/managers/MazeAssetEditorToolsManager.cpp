@@ -160,7 +160,7 @@ namespace Maze
             return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TextFile);
         };
         registerIconCallbackForAssetFileExtension("txt", textFileIconCallback);
-        registerIconCallbackForAssetFileExtension("meta", textFileIconCallback);
+        registerIconCallbackForAssetFileExtension("mzmeta", textFileIconCallback);
 
         std::function<SpritePtr(AssetFilePtr const&)> meshFileIconCallback =
             [](AssetFilePtr const& _assetFile)

@@ -1,0 +1,4 @@
+tags
+{
+  tag:String = "_editor"
+}

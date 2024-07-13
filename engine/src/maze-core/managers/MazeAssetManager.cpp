@@ -319,18 +319,14 @@ namespace Maze
     //////////////////////////////////////////
     void AssetManager::updateFileInfo(AssetFilePtr const& _file)
     {
-        Set<String> tags;
+        if (_file->getExtension() == Path("mzmeta"))
+            return;
 
-        StringKeyMap<String> metaData = getMetaData(_file);
-        String const& tagsString = metaData["tags"];
-        if (!tagsString.empty())
-        {
-            Vector<String> words;
-            StringHelper::SplitWords(tagsString, words, ',');
-            for (String& word : words)
-                tags.emplace(std::move(word));
-        }
-
+        DataBlock metaData;
+        getMetaData(_file, metaData);
+        Vector<String> tagsVector = metaData.getDataBlockAsVectorString(MAZE_HCS("tags"));
+        Set<String> tags(tagsVector.begin(), tagsVector.end());
+        
         _file->setTags(tags);
     }
 
@@ -447,7 +443,7 @@ namespace Maze
     //////////////////////////////////////////
     Path AssetManager::getMetaDataFullPath(AssetFilePtr const& _assetFile)
     {
-        return _assetFile->getFullPath() + ".meta";
+        return _assetFile->getFullPath() + ".mzmeta";
     }
 
     //////////////////////////////////////////
@@ -457,60 +453,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    StringKeyMap<String> AssetManager::getMetaData(AssetFilePtr const& _assetFile)
+    bool AssetManager::getMetaData(AssetFilePtr const& _assetFile, DataBlock& _metaData)
     {
-        StringKeyMap<String> metaData;
+        _metaData.clear();
 
         AssetFilePtr metaFile = getMetaDataFile(_assetFile);
         if (metaFile)
-        {
-            String metaDataString;
-            metaFile->readToString(metaDataString);
+            return _metaData.loadFile(metaFile->getFullPath());
 
-            Vector<String > metaDataLines;
-            StringHelper::SplitWords(metaDataString, metaDataLines, '\n');
-            for (Size i = 0; i < metaDataLines.size(); ++i)
-            {
-                if (!metaDataLines[i].size())
-                    continue;
-                StringHelper::RemoveSymbols(metaDataLines[i], "\r");
-
-                Vector<String> metaDataValues;
-                StringHelper::SplitWords(metaDataLines[i], metaDataValues, '=');
-
-                if (metaDataValues.size() == 1)
-                    metaData.emplace(HashedString(std::move(metaDataValues[0])), String());
-                else
-                if (metaDataValues.size() == 2)
-                    metaData.emplace(HashedString(std::move(metaDataValues[0])), std::move(metaDataValues[1]));
-            }
-        }
-
-        return metaData;
+        return false;
     }
 
     //////////////////////////////////////////
-    void AssetManager::saveMetaData(AssetFilePtr const& _assetFile, StringKeyMap<String> const& _metaData)
+    void AssetManager::saveMetaData(AssetFilePtr const& _assetFile, DataBlock const& _metaData)
     {
-        StringStream ss;
-
-        for (auto it = _metaData.begin(), end = _metaData.end(); it != end; ++it)
-            ss << it->first << "=" << it->second << "\n";
-
-        String str = ss.str();
-        if (str.empty())
-            return;
-
-        String assetFullPath = getMetaDataFullPath(_assetFile);
-
-        std::ofstream file;
-        file.open(assetFullPath.c_str(), std::ofstream::binary);
-        if (!file.is_open())
-            return;
-        
-        file << str;
-        file.flush();
-        file.close();
+        Path assetFullPath = getMetaDataFullPath(_assetFile);
+        _metaData.saveTextFile(assetFullPath);
     }
 
     //////////////////////////////////////////

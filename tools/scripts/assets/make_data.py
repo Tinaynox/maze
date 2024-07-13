@@ -3,6 +3,7 @@ import errno
 import os
 import shutil
 import time
+import data_block
 
 from PIL import Image
 
@@ -91,7 +92,7 @@ class MakeData:
 
         def it_file_function(full_path, file_name):
 
-            if full_path.find('.meta') != -1:
+            if full_path.find('.mzmeta') != -1:
                 return False
 
             if file_name.startswith('.'):
@@ -104,7 +105,7 @@ class MakeData:
             is_texture = ext in maze_config.textures_extensions
             is_sound = ext in maze_config.sounds_extensions
 
-            info_file_path = '{0}/{1}.meta'.format(self.input, full_path)
+            info_file_path = '{0}/{1}.mzmeta'.format(self.input, full_path)
             is_up_to_date = self.cache.is_up_to_date('{0}/{1}'.format(self.input, full_path))
 
             dir_name = copy_to.replace(file_name, '')
@@ -114,18 +115,11 @@ class MakeData:
             final_full_path_name = copy_to
             if is_texture and self.need_to_change_textures_extensions:
             
-                parameters = []
+                parameters = data_block.DataBlock.load_text_file(info_file_path)
                 if os.path.exists(info_file_path):
                     self.cache.is_up_to_date(info_file_path)
-                    info_input_file = open(info_file_path)
-                    content = info_input_file.read()
-                    info_input_file.close()
-                    
-                    for entry in content.split('\n'):
-                        parameters.append(entry)
-                    
-                    if 'changeExtension=0' in parameters:
-                        change_extension_enabled = False
+
+                change_extension_enabled = parameters.get_param_value('changeExtension', True)
                     
                 if change_extension_enabled:
                     final_full_path_name = dir_name + name + maze_config.maze_texture_extension
@@ -150,31 +144,23 @@ class MakeData:
                 if not os.path.exists(dir_name):
                     os.makedirs(dir_name)
 
-                parameters = []
+                parameters = data_block.DataBlock.load_text_file(info_file_path)
                 compression_enabled = True
 
                 if len(tags) > 0:
-                    tags_value = ''
+                    tags_value = data_block.DataBlock("tags")
                     for tag in tags:
-                        if tags_value != '':
-                            tags_value += ','
-                        tags_value += tag
-                    parameters.append("tags={0}".format(tags_value))
+                        tags_value.add_param_string("tag", tag)
+                    parameters.add_data_block(tags_value)
 
                 if os.path.exists(info_file_path):
                     self.cache.is_up_to_date(info_file_path)
-                    info_input_file = open(info_file_path)
-                    content = info_input_file.read()
-                    info_input_file.close()
 
-                    for entry in content.split('\n'):
-                        parameters.append(entry)
-
-                    if 'compress=disabled' in parameters:
+                    if not parameters.get_param_value('compress', True):
                         compression_enabled = False
 
                     if is_sound:
-                        if 'encrypted=1' in parameters:
+                        if parameters.get_param_value('encrypted', False):
                             self.resource_encryptor.encrypt(copy_from, copy_to)
                         else:
                             shutil.copyfile(copy_from, copy_to)
@@ -201,8 +187,8 @@ class MakeData:
                         compression_enabled = False
 
                     im_src = Image.open(copy_to)
-                    parameters.append('width={0}'.format(im_src.size[0]))
-                    parameters.append('height={0}'.format(im_src.size[1]))
+                    parameters.add_param_s32('width', im_src.size[0])
+                    parameters.add_param_s32('height', im_src.size[1])
                     im_src.close()
 
                     if compression_enabled:
@@ -221,14 +207,11 @@ class MakeData:
                     os.rename(copy_to, final_full_path_name)
 
                 if is_texture:
-                    parameters.append('ext={0}'.format(compressed_ext.replace('.', '')))
+                    parameters.add_param_string('ext', compressed_ext.replace('.', ''))
 
-                if len(parameters) > 0:
-                    output_info_file = open(final_full_path_name + '.meta', 'wt')
+                if len(parameters.params) > 0 or len(parameters.data_blocks) > 0:
+                    parameters.save_text_file(final_full_path_name + '.mzmeta')
 
-                    for param in parameters:
-                        output_info_file.write(param + '\n')
-                    output_info_file.close()
 
             return True
 
@@ -245,7 +228,7 @@ class MakeData:
                 self.cache.save_cache()
 
                 info_file_path_folder = '{0}/{1}'.format(self.input, full_path)
-                info_file_path = '{0}/mzap.meta'.format(info_file_path_folder)
+                info_file_path = '{0}/mzap.mzmeta'.format(info_file_path_folder)
 
                 is_up_to_date = True
 
@@ -253,24 +236,14 @@ class MakeData:
                     if os.path.exists(info_file_path):
                         is_up_to_date = self.cache.is_up_to_date(info_file_path)
 
-                parameters = []
-                tags = []
+                parameters = data_block.DataBlock.load_text_file(info_file_path)
+                tags = parameters.get_data_block_as_string_list("tags")
+                required_build_tags = parameters.get_data_block_as_string_list("requiredBuildTags")
 
-                if os.path.exists(info_file_path):
-                    info_input_file = open(info_file_path)
-                    content = info_input_file.read()
-                    info_input_file.close()
-
-                    for entry in content.split('\n'):
-                        if entry.startswith('requiredBuildTags'):
-                            required_build_tags = entry.split('=')[1].split(',')
-                            for required_build_tag in required_build_tags:
-                                if required_build_tag not in self.build_tags:
-                                    print('\tSKIPPED(' + required_build_tag + ')')
-                                    return False
-                        elif entry.startswith('tags'):
-                            tags = entry.split('=')[1].split(',')
-                        parameters.append(entry)
+                for required_build_tag in required_build_tags:
+                    if required_build_tag not in self.build_tags:
+                        print('\tSKIPPED(' + required_build_tag + ')')
+                        return False
 
                 self.tags_by_folder[full_path] = tags
 
@@ -286,12 +259,11 @@ class MakeData:
                             raise
                         pass
 
-                    output_info_file = open('{0}.meta'.format(output_info_file_folder), 'wt')
-                    for param in parameters:
-                        output_info_file.write(param + '\n')
-                    output_info_file.close()
+                    parameters.save_text_file('{0}.mzmeta'.format(output_info_file_folder))
 
             if full_path.endswith('.atlas'):
+                print('NOT IMPLEMENTED!')
+                return False
 
                 input_folder = '{0}/{1}'.format(self.input, full_path)
                 name, ext = os.path.splitext(folder_name)
@@ -304,7 +276,7 @@ class MakeData:
                 if is_up_to_date and not os.path.exists(output_folder):
                     is_up_to_date = False
 
-                info_file_path = '{0}/{1}'.format(self.input, full_path) + '.meta'
+                info_file_path = '{0}/{1}'.format(self.input, full_path) + '.mzmeta'
 
                 try:
                     if not os.path.exists(output_folder):
@@ -330,20 +302,17 @@ class MakeData:
 
                     print('\tBAKING ATLAS: ' + folder_name)
 
-                    parameters = []
+                    parameters = data_block.DataBlock.load_text_file(info_file_path)
 
                     if os.path.exists(info_file_path):
                         self.cache.is_up_to_date(info_file_path)
-                        info_input_file = open(info_file_path)
-                        content = info_input_file.read()
-                        info_input_file.close()
 
-                        for entry in content.split('\n'):
-                            parameters.append(entry)
-
-                    atlas_info_file_path = input_folder + '.meta'
+                    atlas_info_file_path = input_folder + '.mzmeta'
                     extrude = 5
                     additional_params = ''
+
+                    atlas_info_params = data_block.DataBlock.load_text_file(atlas_info_file_path)
+
                     if os.path.exists(atlas_info_file_path):
                         atlas_info_input_file = open(atlas_info_file_path)
                         content = atlas_info_input_file.read()
@@ -419,7 +388,7 @@ class MakeData:
                                 local_parameters.append('atlas={0}'.format(local_name + '.atlas'))
                                 local_parameters.append('ext={0}'.format(compressed_ext.replace('.', '')))
 
-                                output_info_file = open(full_name + '.meta', 'wt')
+                                output_info_file = open(full_name + '.mzmeta', 'wt')
 
                                 for param in local_parameters:
                                     output_info_file.write(param + '\n')
