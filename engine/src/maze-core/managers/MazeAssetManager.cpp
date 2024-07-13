@@ -459,7 +459,13 @@ namespace Maze
 
         AssetFilePtr metaFile = getMetaDataFile(_assetFile);
         if (metaFile)
-            return _metaData.loadFile(metaFile->getFullPath());
+        {
+            ByteBuffer byteBuffer;
+            if (!metaFile->readToByteBuffer(byteBuffer))
+                return false;
+
+            return _metaData.loadFromByteBuffer(byteBuffer);
+        }
 
         return false;
     }

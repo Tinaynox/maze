@@ -247,7 +247,7 @@ class DataBlock:
         elif param_type == DataBlockParamType.F64:
             self.params.append(DataBlockParam(param_name, param_type, F64(param_value)))
         elif param_type == DataBlockParamType.Bool:
-            self.params.append(DataBlockParam(param_name, param_type, Bool(param_value)))
+            self.params.append(DataBlockParam(param_name, param_type, True if (param_value == 'true') else False))
         elif param_type == DataBlockParamType.Vec4S8:
             self.params.append(DataBlockParam(param_name, param_type, Vec4S8.from_str(param_value)))
         elif param_type == DataBlockParamType.Vec4U8:
