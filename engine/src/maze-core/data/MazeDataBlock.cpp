@@ -498,7 +498,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool DataBlock::loadFile(Path const& _path)
+    bool DataBlock::loadRegularFile(Path const& _path)
     {
         FILE* file = StdHelper::OpenFile(_path, "rb");
         if (!file)

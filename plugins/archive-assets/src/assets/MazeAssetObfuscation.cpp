@@ -142,7 +142,7 @@ namespace Maze
 
         FileHelper::CreateDirectoryRecursive(_destPath);
 
-        CString mzapMetaExt = "mzap.meta";
+        CString mzapMetaExt = "mzap.mzmeta";
         Path::StringType mzapMetaExtPath = Path::StringType((Char*)mzapMetaExt, (Char*)mzapMetaExt + strlen(mzapMetaExt));
 
         Vector<AssetFilePtr> files = AssetHelper::GetAllAssetFilesInDirectory(_srcPath);

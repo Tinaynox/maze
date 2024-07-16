@@ -438,7 +438,7 @@ namespace Maze
         bool loadTextFile(Path const& _path);
 
         //////////////////////////////////////////
-        bool loadFile(Path const& _path);
+        bool loadRegularFile(Path const& _path);
 
         //////////////////////////////////////////
         bool loadFromByteBuffer(ByteBuffer const& _byteBuffer);

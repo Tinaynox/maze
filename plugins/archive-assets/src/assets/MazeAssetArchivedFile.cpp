@@ -154,6 +154,10 @@ namespace Maze
     bool AssetArchivedFile::readToByteBuffer(ByteBuffer& _byteBuffer) const
     {
         _byteBuffer.resize(getFileSize());
+
+        if (_byteBuffer.getSize() == 0u)
+            return true;
+
         return m_archive->readArchivedFileToBuffer(
             m_zipArchiveFilePath,
             _byteBuffer.getDataRW(),
