@@ -396,7 +396,7 @@ namespace Maze
             vertexShaderBody;
 
         
-        
+        MAZE_ERROR_IF(completeVertexShader.size() >= 100000, "Vertex shader size is too big - %d", (S32)completeVertexShader.size());
 
 
         if (!compileGLShader(vertexShaderId, MAZE_GL_VERTEX_SHADER, completeVertexShader.c_str()))
@@ -439,7 +439,9 @@ namespace Maze
             buildMissingShaderDefines(fragmentShaderBody) + '\n' +
             fragmentShaderBody;
 
-         if (!compileGLShader(fragmentShaderId, MAZE_GL_FRAGMENT_SHADER, completeFragmentShader.c_str())) 
+        MAZE_ERROR_IF(completeFragmentShader.size() >= 100000, "Fragment shader size is too big - %d", (S32)completeFragmentShader.size());
+
+        if (!compileGLShader(fragmentShaderId, MAZE_GL_FRAGMENT_SHADER, completeFragmentShader.c_str())) 
         {
              Debug::LogError("Fragment shader compilation error!");
             if (m_assetFile)

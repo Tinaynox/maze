@@ -549,7 +549,7 @@ namespace Maze
     void Material::applyRenderPassUniforms(RenderPass* _renderPass)
     {
         ShaderPtr const& shader = _renderPass->getShader();
-        MAZE_DEBUG_ERROR_IF(!shader, "Render pass has no shader!");
+        MAZE_DEBUG_ERROR_RETURN_IF(!shader, "Render pass has no shader!");
 
         for (auto const& uniformVariantData : m_uniforms)
             shader->setUniform(*uniformVariantData.get());
