@@ -1,7 +1,0 @@
-sliceBorder
-{
-    left:F32 = 16
-    bottom:F32 = 20
-    right:F32 = 16
-    top:F32 = 16
-}

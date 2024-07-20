@@ -1,4 +1,0 @@
-GLSL
-{
-  shader:String = "BloomFirstPass00.mzglsl"
-}

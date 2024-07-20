@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Level>
-    <SpawnData>
-        <LevelSpawnDataUnit time="1.0" avatarType="Drone001" spawnX="2.0" spawnY="0.3" />
-        <LevelSpawnDataUnit time="1.0" avatarType="Drone000" spawnX="1.0" spawnY="0.4" />        
-        <LevelSpawnDataUnit time="1.0" avatarType="Mine000" spawnX="1.0" spawnY="0.6" />
-        <LevelSpawnDataUnit time="1.0" avatarType="Mine001" spawnX="2.0" spawnY="0.7" />
-    </SpawnData>
-</Level>

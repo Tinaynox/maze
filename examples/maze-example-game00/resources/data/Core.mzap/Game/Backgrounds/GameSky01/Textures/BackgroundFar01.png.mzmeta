@@ -1,4 +1,0 @@
-minFilter:String = Linear
-magFilter:String = Linear
-wrapS:String = ClampToEdge
-wrapT:String = ClampToEdge

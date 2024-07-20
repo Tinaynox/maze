@@ -1,5 +1,0 @@
-gLSL
-{
-  vertex:String = "SplashUnlit00V.mzglsl"
-  fragment:String = "SplashUnlit00F.mzglsl"
-}

@@ -1,4 +1,0 @@
-GLSL
-{
-  shader:String = "BloomDownscale00.mzglsl"
-}

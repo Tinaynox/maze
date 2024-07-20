@@ -1,4 +1,0 @@
-GLSL
-{
-  shader:String = "Fresnel00.mzglsl"
-}
