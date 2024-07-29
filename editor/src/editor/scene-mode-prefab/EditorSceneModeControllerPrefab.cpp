@@ -162,7 +162,7 @@ namespace Maze
                 m_canvasNode->getSize().x,
                 20.0f),
             Vec2F32(0.0f, 0.0f),
-            MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
+            MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
             m_canvasNode,
             scene.get(),
             Vec2F32(0.0f, 1.0f),

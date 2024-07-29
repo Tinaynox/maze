@@ -130,7 +130,7 @@ namespace Maze
         String editorConfigFullPath = FileHelper::GetWorkingDirectory() + "/config.mzdata";
 
         DataBlock dataBlock;
-        if (!dataBlock.loadFile(editorConfigFullPath))
+        if (!dataBlock.loadRegularFile(editorConfigFullPath))
             return false;
 
         for (DataBlock const* subBlock : dataBlock)

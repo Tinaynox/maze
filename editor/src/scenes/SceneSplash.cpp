@@ -244,7 +244,7 @@ namespace Maze
             {
                 MaterialManager::GetCurrentInstance()->createBuiltinMaterials();
                 SpriteManager::GetCurrentInstance()->setDefaultSpriteMaterial(
-                    MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::ColorTexture));
+                    MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Sprite));
                 setCurrentProgress(0.45f);
                 break;
             }
