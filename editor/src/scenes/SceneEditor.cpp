@@ -111,6 +111,8 @@
 #include "editor/scene-mode-none/EditorSceneModeControllerNone.hpp"
 #include "editor/scene-mode-prefab/EditorSceneModeControllerPrefab.hpp"
 #include "editor/scene-mode-scene/EditorSceneModeControllerScene.hpp"
+#include "scenes/SceneWorkspaceTools.hpp"
+#include "scenes/ScenePlaytestTools.hpp"
 
 
 //////////////////////////////////////////
@@ -427,6 +429,8 @@ namespace Maze
             hierarchyController->addIgnoreScene(SceneMaterialPicker::GetMetaClass()->getClassUID());
             hierarchyController->addIgnoreScene(SceneRenderMeshPicker::GetMetaClass()->getClassUID());
             hierarchyController->addIgnoreScene(SceneTexturePicker::GetMetaClass()->getClassUID());
+            hierarchyController->addIgnoreScene(SceneWorkspaceTools::GetMetaClass()->getClassUID());
+            hierarchyController->addIgnoreScene(ScenePlaytestTools::GetMetaClass()->getClassUID());
         }
 
         {
