@@ -147,13 +147,15 @@ namespace Maze
 
         if (_event.button == 1)
         {
-            F32 yawAngle = m_scene->getYawAngle();
-            F32 pitchAngle = m_scene->getPitchAngle();
+            SceneDebugPreviewPtr scene = m_scene.lock();
+
+            F32 yawAngle = scene->getYawAngle();
+            F32 pitchAngle = scene->getPitchAngle();
             yawAngle += deltaPosition.x * 0.0075f;
             pitchAngle -= deltaPosition.y * 0.0075f;
             pitchAngle = Math::Clamp(pitchAngle, -Math::c_halfPi, Math::c_halfPi);
-            m_scene->setYawAngle(yawAngle);
-            m_scene->setPitchAngle(pitchAngle);
+            scene->setYawAngle(yawAngle);
+            scene->setPitchAngle(pitchAngle);
 
             updateCameraPosition();
 
@@ -180,34 +182,36 @@ namespace Maze
     //////////////////////////////////////////
     void RenderMeshPreviewInspector::buildRenderMeshes()
     {
-        m_scene->clear();
+        SceneDebugPreviewPtr scene = m_scene.lock();
+
+        scene->clear();
 
         if (!m_renderMeshes.empty())
         {
             // Main Light
-            EntityPtr lightEntity = m_scene->createEntity();
+            EntityPtr lightEntity = scene->createEntity();
             Light3DPtr mainLight3D = lightEntity->createComponent<Light3D>();
             mainLight3D->setColor(ColorU32(255, 255, 255));
-            mainLight3D->getTransform()->setParent(m_scene->getPreviewNodeTransform());
+            mainLight3D->getTransform()->setParent(scene->getPreviewNodeTransform());
             mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
             mainLight3D->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
             lightEntity->ensureComponent<StaticName>("Light");
 
             // DebugGrid
-            EntityPtr debugGridRendererEntity = m_scene->createEntity();
-            debugGridRendererEntity->createComponent<DebugGridRenderer>(m_scene->getCamera());
-            debugGridRendererEntity->getComponent<Transform3D>()->setParent(m_scene->getPreviewNodeTransform());
+            EntityPtr debugGridRendererEntity = scene->createEntity();
+            debugGridRendererEntity->createComponent<DebugGridRenderer>(scene->getCamera());
+            debugGridRendererEntity->getComponent<Transform3D>()->setParent(scene->getPreviewNodeTransform());
 
             // Axes
-            EntityPtr axesMeshRendererEntity = m_scene->createEntity();
-            axesMeshRendererEntity->createComponent<Transform3D>()->setParent(m_scene->getPreviewNodeTransform());
+            EntityPtr axesMeshRendererEntity = scene->createEntity();
+            axesMeshRendererEntity->createComponent<Transform3D>()->setParent(scene->getPreviewNodeTransform());
             MeshRendererPtr axesMeshRenderer = axesMeshRendererEntity->createComponent<MeshRenderer>();
             axesMeshRenderer->setRenderMesh(RenderMesh::Create(MeshHelper::CreateCoordinateAxes()));
             axesMeshRenderer->setMaterial(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::DebugAxis));
 
             // RenderMesh
-            EntityPtr renderMesh = m_scene->createEntity();
-            renderMesh->ensureComponent<Transform3D>()->setParent(m_scene->getPreviewNodeTransform());
+            EntityPtr renderMesh = scene->createEntity();
+            renderMesh->ensureComponent<Transform3D>()->setParent(scene->getPreviewNodeTransform());
             MeshRendererPtr meshRenderer = renderMesh->ensureComponent<MeshRenderer>();
             meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::MeshPreview));
             meshRenderer->setRenderMesh(*m_renderMeshes.begin());
@@ -221,13 +225,15 @@ namespace Maze
     //////////////////////////////////////////
     void RenderMeshPreviewInspector::updateCameraPosition()
     {
-        F32 yawAngle = m_scene->getYawAngle();
-        F32 pitchAngle = m_scene->getPitchAngle();
+        SceneDebugPreviewPtr scene = m_scene.lock();
+
+        F32 yawAngle = scene->getYawAngle();
+        F32 pitchAngle = scene->getPitchAngle();
         Quaternion q(pitchAngle, yawAngle, 0.0f);
 
         Vec3F direction = q * Vec3F::c_unitZ;
 
-        m_scene->getCamera()->getTransform()->setLocalPosition(-direction * m_cameraDistance);
+        scene->getCamera()->getTransform()->setLocalPosition(-direction * m_cameraDistance);
     }
 
     //////////////////////////////////////////

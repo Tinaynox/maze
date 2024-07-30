@@ -115,7 +115,7 @@ namespace Maze
 
     protected:
         Transform2DPtr m_parent2D;
-        SceneDebugPreviewPtr m_scene;
+        SceneDebugPreviewWPtr m_scene;
     };
 
 

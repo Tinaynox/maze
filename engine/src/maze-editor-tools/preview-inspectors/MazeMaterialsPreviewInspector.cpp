@@ -146,13 +146,15 @@ namespace Maze
 
         if (_event.button == 1)
         {
-            F32 yawAngle = m_scene->getYawAngle();
-            F32 pitchAngle = m_scene->getPitchAngle();
+            SceneDebugPreviewPtr scene = m_scene.lock();
+
+            F32 yawAngle = scene->getYawAngle();
+            F32 pitchAngle = scene->getPitchAngle();
             yawAngle += deltaPosition.x * 0.0075f;
             pitchAngle -= deltaPosition.y * 0.0075f;
             pitchAngle = Math::Clamp(pitchAngle, -Math::c_halfPi, Math::c_halfPi);
-            m_scene->setYawAngle(yawAngle);
-            m_scene->setPitchAngle(pitchAngle);
+            scene->setYawAngle(yawAngle);
+            scene->setPitchAngle(pitchAngle);
 
             updateCameraPosition();
 
@@ -171,22 +173,24 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialsPreviewInspector::buildMaterials()
     {
-        m_scene->clear();
+        SceneDebugPreviewPtr scene = m_scene.lock();
+
+        scene->clear();
 
         if (!m_materials.empty())
         {
             // Main Light
-            EntityPtr lightEntity = m_scene->createEntity();
+            EntityPtr lightEntity = scene->createEntity();
             Light3DPtr mainLight3D = lightEntity->createComponent<Light3D>();
             mainLight3D->setColor(ColorU32(255, 255, 255));
-            mainLight3D->getTransform()->setParent(m_scene->getPreviewNodeTransform());
+            mainLight3D->getTransform()->setParent(scene->getPreviewNodeTransform());
             mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
             mainLight3D->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
             lightEntity->ensureComponent<StaticName>("Light");
 
             // Sphere
-            EntityPtr sphere = m_scene->createEntity();
-            sphere->ensureComponent<Transform3D>()->setParent(m_scene->getPreviewNodeTransform());
+            EntityPtr sphere = scene->createEntity();
+            sphere->ensureComponent<Transform3D>()->setParent(scene->getPreviewNodeTransform());
             MeshRendererPtr sphereMeshRenderer = sphere->ensureComponent<MeshRenderer>();
             sphereMeshRenderer->setMaterial(*m_materials.begin());
             sphereMeshRenderer->setMesh(MeshHelper::CreateSpherifiedCubeMesh(3.0f));
@@ -200,13 +204,15 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialsPreviewInspector::updateCameraPosition()
     {
-        F32 yawAngle = m_scene->getYawAngle();
-        F32 pitchAngle = m_scene->getPitchAngle();
+        SceneDebugPreviewPtr scene = m_scene.lock();
+
+        F32 yawAngle = scene->getYawAngle();
+        F32 pitchAngle = scene->getPitchAngle();
         Quaternion q(pitchAngle, yawAngle, 0.0f);
 
         Vec3F direction = q * Vec3F::c_unitZ;
 
-        m_scene->getCamera()->getTransform()->setLocalPosition(-direction * 7.0f);
+        scene->getCamera()->getTransform()->setLocalPosition(-direction * 7.0f);
     }
 
     //////////////////////////////////////////

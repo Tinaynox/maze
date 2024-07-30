@@ -147,17 +147,19 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2DPreviewInspector::buildTextures()
     {
-        m_scene->clear();
+        SceneDebugPreviewPtr scene = m_scene.lock();
+
+        scene->clear();
 
         if (!m_textures.empty())
         {
             SpriteRenderer2DPtr spriteHolder = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
-                Vec2F(m_scene->getCanvas()->getTransform()->getHeight()),
+                Vec2F(scene->getCanvas()->getTransform()->getHeight()),
                 Vec2F::c_zero,
                 MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
-                m_scene->getCanvas()->getTransform(),
-                m_scene.get(),
+                scene->getCanvas()->getTransform(),
+                scene.get(),
                 Vec2F(0.5f, 0.5f),
                 Vec2F(1.0f, 0.5f));
             spriteHolder->getMaterial()->setUniform(
@@ -193,7 +195,7 @@ namespace Maze
                 Vec2F::c_zero,
                 MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
                 spriteHolder->getTransform(),
-                m_scene.get());
+                scene.get());
 
             String pixelFormat = PixelFormat::ToString(texture->getInternalPixelFormat());
             U32 bytes = (U32)PixelFormat::CalculateRequiredBytes(texture->getSize().x, texture->getSize().y, 1u, texture->getInternalPixelFormat());
@@ -215,10 +217,10 @@ namespace Maze
                 12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Top,
-                Vec2F(m_scene->getCanvas()->getTransform()->getHeight(), m_scene->getCanvas()->getTransform()->getHeight() - 4.0f),
-                Vec2F(m_scene->getCanvas()->getTransform()->getHeight() * 0.5f + 2.0f, 0.0f),
-                m_scene->getCanvas()->getTransform(),
-                m_scene.get(),
+                Vec2F(scene->getCanvas()->getTransform()->getHeight(), scene->getCanvas()->getTransform()->getHeight() - 4.0f),
+                Vec2F(scene->getCanvas()->getTransform()->getHeight() * 0.5f + 2.0f, 0.0f),
+                scene->getCanvas()->getTransform(),
+                scene.get(),
                 Vec2F(0.5f, 0.5f),
                 Vec2F(0.5f, 0.5f));
             info->setColor(ColorU32::c_black);

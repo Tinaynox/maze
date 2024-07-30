@@ -115,6 +115,12 @@ namespace Maze
         if (!Component::init(_component, _world, _copyData))
             return false;
 
+        enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
+        enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
+        enableFlag(SpriteRenderer2D::Flags::ColorDirty);
+        enableFlag(SpriteRenderer2D::Flags::MaterialDirty);
+        enableFlag(SpriteRenderer2D::Flags::UV0Dirty);
+
         return true;
     }
 
@@ -258,23 +264,16 @@ namespace Maze
     void SpriteRenderer2D::updateMeshData()
     {
         S32 totalQuadsCount = 0;
+        m_localMatrices.clear();
+        m_localColors.clear();
+        m_localUV0s.clear();
 
         auto addQuad =
             [&, this](TMat const& _tm, Vec4F const& _color, Vec4F const& _uv0)
             {
-                if (totalQuadsCount < (S32)m_localMatrices.size())
-                {
-                    m_localMatrices[totalQuadsCount] = _tm;
-                    m_localColors[totalQuadsCount] = _color;
-                    m_localUV0s[totalQuadsCount] = _uv0;
-                }
-                else
-                {
-                    m_localMatrices.push_back(_tm);
-                    m_localColors.push_back(_color);
-                    m_localUV0s.push_back(_uv0);
-                }
-
+                m_localMatrices.push_back(_tm);
+                m_localColors.push_back(_color);
+                m_localUV0s.push_back(_uv0);
                 ++totalQuadsCount;
             };
 
@@ -420,12 +419,6 @@ namespace Maze
         }
 
         m_meshRenderer->resize(totalQuadsCount);
-        if (totalQuadsCount == 0)
-        {
-            m_localMatrices.clear();
-            m_localColors.clear();
-            m_localUV0s.clear();
-        }
 
         disableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
     }
