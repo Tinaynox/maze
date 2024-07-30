@@ -164,6 +164,16 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        EcsSceneId getEcsSceneIdByClassUID(ClassUID _classUID)
+        {
+            for (Size i = 0; i < m_scenes.size(); ++i)
+                if (m_scenes[i].scene && m_scenes[i].scene->getClassUID() == _classUID)
+                    return m_scenes[i].id;
+
+            return EcsSceneId();
+        }
+
+        //////////////////////////////////////////
         template <class TScene>
         SharedPtr<TScene> ensureScene()
         {

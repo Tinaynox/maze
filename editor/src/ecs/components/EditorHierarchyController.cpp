@@ -248,6 +248,15 @@ namespace Maze
     }
     
     //////////////////////////////////////////
+    void EditorHierarchyController::addIgnoreScene(ClassUID _classUID)
+    {
+        m_ignoreScenes.insert(_classUID);
+
+        if (SceneManager::GetInstancePtr())
+            removeEcsScene(SceneManager::GetInstancePtr()->getEcsSceneIdByClassUID(_classUID));
+    }
+
+    //////////////////////////////////////////
     void EditorHierarchyController::setEcsWorld(EcsWorld* _world)
     {
         if (m_world == _world)

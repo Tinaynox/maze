@@ -94,7 +94,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void addIgnoreScene(ClassUID _classUID) { m_ignoreScenes.insert(_classUID); }
+        void addIgnoreScene(ClassUID _classUID);
 
 
         //////////////////////////////////////////
