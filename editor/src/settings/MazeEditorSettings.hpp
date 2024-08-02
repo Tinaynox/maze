@@ -36,7 +36,6 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
-#include "editor/EditorMode.hpp"
 
 
 //////////////////////////////////////////
@@ -69,30 +68,18 @@ namespace Maze
         virtual ~EditorSettings();
 
 
-        //////////////////////////////////////////
-        void setEditorMode(EditorMode _value) { m_editorMode = _value; }
 
         //////////////////////////////////////////
-        inline EditorMode getEditorMode() const { return m_editorMode.getValue(); }
+        void setProjectFullPath(String _value) { m_projectFullPath = _value; }
 
         //////////////////////////////////////////
-        inline MultiDelegate<EditorMode const&>& getEditorModeChangedEvent() { return m_editorMode.eventValueChanged; }
-
-
+        inline String getProjectFullPath() const { return m_projectFullPath.getValue(); }
 
         //////////////////////////////////////////
-        void setAssetsFullPath(String _value) { m_assetsFullPath = _value; }
-
-        //////////////////////////////////////////
-        inline String getAssetsFullPath() const { return m_assetsFullPath.getValue(); }
-
-        //////////////////////////////////////////
-        inline MultiDelegate<String const&>& getAssetsFullPathChangedEvent() { return m_assetsFullPath.eventValueChanged; }
+        inline MultiDelegate<String const&>& getProjectFullPathChangedEvent() { return m_projectFullPath.eventValueChanged; }
 
     protected:
-
-        ObservableValue<EditorMode> m_editorMode = EditorMode::None;
-        ObservableValue<String> m_assetsFullPath;
+        ObservableValue<String> m_projectFullPath;
     };
 
 

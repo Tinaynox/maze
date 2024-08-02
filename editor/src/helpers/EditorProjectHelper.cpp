@@ -24,7 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "helpers/EditorAssetsModeHelper.hpp"
+#include "helpers/EditorProjectHelper.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
@@ -33,7 +33,6 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
-#include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -89,7 +88,6 @@
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "scenes/SceneEditor.hpp"
-#include "scenes/SceneSelectMode.hpp"
 
 
 //////////////////////////////////////////
@@ -99,20 +97,14 @@ namespace Maze
     namespace EditorHelper
     {
         //////////////////////////////////////////
-        bool IsAssetsMode()
+        Path SelectProjectFolder()
         {
-            return EditorManager::GetInstancePtr()->getMode() == EditorMode::Assets;
-        }
-
-        /////////////////////////////////////////
-        String SelectAssetsFolder()
-        {
-            String path;
+            Path path;
 
             do
             {
                 path = SystemDialogHelper::OpenFolder(
-                    "Select Assets Folder",
+                    "Select Project Folder",
                     Editor::GetInstancePtr()->getMainRenderWindow()->getWindowRaw());
 
                 if (path.empty())
@@ -124,42 +116,60 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void OpenAssets()
+        bool IsProjectPathValid(String const& _path)
         {
-            if (!IsAssetsMode())
-                return;
+            if (_path.empty() || !FileHelper::IsDirectory(_path))
+                return false;
 
-            String path = SelectAssetsFolder();
-            if (path.empty())
-                return;
-
-            SceneManager::GetInstancePtr()->unloadScene<SceneEditor>();
-
-            TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
-                2,
-                [path]()
-                {
-                    EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-                    editorSettings->setAssetsFullPath(path);
-                    SettingsManager::GetInstancePtr()->saveSettings();
-
-                    SceneManager::GetInstancePtr()->loadScene<SceneEditor>();
-                });
+            return true;
         }
 
         //////////////////////////////////////////
-        void CloseAssets()
+        bool IsProjectPathValid()
         {
-            if (!IsAssetsMode())
-                return;
+            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+            return IsProjectPathValid(editorSettings->getProjectFullPath());
+        }
+
+        //////////////////////////////////////////
+        bool SelectProject()
+        {
+            SceneManager::GetInstancePtr()->unloadScene<SceneEditor>();
 
             EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-            editorSettings->setEditorMode(EditorMode::None);
-            editorSettings->setAssetsFullPath(String());
+
+            AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(editorSettings->getProjectFullPath());
+
+            editorSettings->setProjectFullPath(String());
             SettingsManager::GetInstancePtr()->saveSettings();
 
-            SceneManager::GetInstancePtr()->loadScene<SceneSelectMode>();
-            SceneManager::GetInstancePtr()->unloadScene<SceneEditor>();
+            bool isProjectFullPathValid = false;
+
+            String projectFullPath;
+            do
+            {
+                projectFullPath = EditorHelper::SelectProjectFolder().toUTF8();
+                isProjectFullPathValid = IsProjectPathValid(projectFullPath);
+
+                if (projectFullPath.empty())
+                    break;
+            }
+            while (!isProjectFullPathValid);
+
+            if (!isProjectFullPathValid)
+            {
+                Editor::GetInstancePtr()->shutdown();
+                return false;
+            }
+
+            editorSettings->setProjectFullPath(projectFullPath);
+            SettingsManager::GetInstancePtr()->saveSettings();
+
+            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(editorSettings->getProjectFullPath());
+
+            SceneManager::GetInstancePtr()->loadScene<SceneEditor>();
+
+            return true;
         }
     };
 

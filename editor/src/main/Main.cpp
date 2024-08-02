@@ -77,7 +77,7 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
 
     Maze::EngineConfig engineConfig;
     engineConfig.commandLineArguments = commandLineArguments;
-    engineConfig.projectName = "Editor";
+    engineConfig.projectName = "Maze Editor";
 
     {
         Maze::EditorPtr editor = Maze::Editor::Create(engineConfig);

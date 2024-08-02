@@ -64,6 +64,7 @@ namespace Maze
         //////////////////////////////////////////
         struct SceneData
         {
+            String name;
             EcsSceneId id;
             EcsScenePtr scene;
         };
@@ -129,6 +130,7 @@ namespace Maze
                 MAZE_DEBUG_ASSERT(sceneId.getIndex() < (S32)m_scenes.size() && !m_scenes[sceneId.getIndex()].scene);
                 m_scenes[sceneId.getIndex()].id = sceneId;
                 m_scenes[sceneId.getIndex()].scene = scene;
+                m_scenes[sceneId.getIndex()].name = ClassInfo<TScene>::Name();
 
                 scene->setId(sceneId);
                 scene->setState(EcsSceneState::Created);                

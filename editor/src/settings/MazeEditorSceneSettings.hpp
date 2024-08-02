@@ -36,7 +36,6 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
-#include "editor/EditorMode.hpp"
 
 
 //////////////////////////////////////////

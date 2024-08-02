@@ -88,7 +88,6 @@
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "scenes/SceneEditor.hpp"
-#include "scenes/SceneSelectMode.hpp"
 
 
 //////////////////////////////////////////
@@ -257,15 +256,12 @@ namespace Maze
         //////////////////////////////////////////
         bool SaveValidate()
         {
-            return EditorManager::GetInstancePtr()->getMode() == EditorMode::Project;
+            return true;
         }
 
         //////////////////////////////////////////
         void Save()
         {
-            if (!SaveValidate())
-                return;
-
             switch (EditorManager::GetInstancePtr()->getSceneMode())
             {
                 case EditorSceneMode::Scene:
@@ -304,14 +300,12 @@ namespace Maze
         //////////////////////////////////////////
         bool SaveAsValidate()
         {
-            return EditorManager::GetInstancePtr()->getMode() == EditorMode::Project;
+            return true;
         }
 
         //////////////////////////////////////////
         void SaveAs()
         {
-            if (!SaveAsValidate())
-                return;
 
             switch (EditorManager::GetInstancePtr()->getSceneMode())
             {
@@ -346,15 +340,12 @@ namespace Maze
         //////////////////////////////////////////
         bool LoadValidate()
         {
-            return EditorManager::GetInstancePtr()->getMode() == EditorMode::Project;
+            return true;
         }
 
         //////////////////////////////////////////
         void Load()
         {
-            if (!LoadValidate())
-                return;
-
             Clear();
 
             String fullPath = SystemDialogHelper::OpenFile(

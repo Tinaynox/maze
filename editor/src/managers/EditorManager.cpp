@@ -85,8 +85,7 @@
 #include "settings/MazeEditorSettings.hpp"
 #include "Editor.hpp"
 #include "managers/EditorAssetsManager.hpp"
-#include "managers/EditorAssetsModeManager.hpp"
-#include "managers/EditorProjectModeManager.hpp"
+#include "managers/EditorProjectManager.hpp"
 #include "managers/EditorGizmosManager.hpp"
 #include "managers/EditorEntityManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
@@ -137,12 +136,8 @@ namespace Maze
         if (!m_editorPrefabManager)
             return false;
 
-        EditorAssetsModeManager::Initialize(m_editorAssetsModeManager);
-        if (!m_editorAssetsModeManager)
-            return false;
-
-        EditorProjectModeManager::Initialize(m_editorProjectModeManager);
-        if (!m_editorProjectModeManager)
+        EditorProjectManager::Initialize(m_editorProjectManager);
+        if (!m_editorProjectManager)
             return false;
 
         EditorGizmosManager::Initialize(m_editorGizmosManager);
@@ -169,16 +164,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EditorMode EditorManager::getMode() const
-    {
-        EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-        if (!editorSettings)
-            return EditorMode::None;
-
-        return editorSettings->getEditorMode();
-    }
-
-    //////////////////////////////////////////
     void EditorManager::setSceneMode(EditorSceneMode _mode)
     {
         if (m_sceneMode == _mode)
@@ -199,7 +184,7 @@ namespace Maze
         m_editorPrefabManager->setPrefabAssetFile(nullptr);
         m_editorPrefabManager->setPrefabEntity(nullptr);
 
-        setWindowTitle("Editor");
+        setWindowTitle(Editor::GetInstancePtr()->getConfig().projectName);
     }
 
     //////////////////////////////////////////

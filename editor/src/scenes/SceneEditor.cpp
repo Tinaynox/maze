@@ -33,6 +33,7 @@
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeTaskManager.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
@@ -100,10 +101,8 @@
 #include "maze-editor-tools/render-mesh-picker/MazeSceneRenderMeshPicker.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "helpers/EditorHelper.hpp"
-#include "helpers/EditorAssetsModeHelper.hpp"
-#include "helpers/EditorProjectModeHelper.hpp"
 #include "helpers/EditorAssetHelper.hpp"
-#include "managers/EditorAssetsModeManager.hpp"
+#include "helpers/EditorProjectHelper.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
 #include "managers/EditorEntityManager.hpp"
@@ -113,6 +112,7 @@
 #include "editor/scene-mode-scene/EditorSceneModeControllerScene.hpp"
 #include "scenes/SceneWorkspaceTools.hpp"
 #include "scenes/ScenePlaytestTools.hpp"
+#include "settings/MazeEditorSettings.hpp"
 
 
 //////////////////////////////////////////
@@ -141,9 +141,6 @@ namespace Maze
             }
         }
 
-        if (EditorAssetsModeManager::GetInstancePtr())
-            EditorAssetsModeManager::GetInstancePtr()->eventCurrentAssetsFullPath.unsubscribe(this);
-
         if (EditorManager::GetInstancePtr())
         {
             EditorManager::GetInstancePtr()->eventSceneModeChanged.unsubscribe(this);
@@ -171,7 +168,6 @@ namespace Maze
         create2D();
         createSceneModeController();
 
-        EditorAssetsModeManager::GetInstancePtr()->eventCurrentAssetsFullPath.subscribe(this, &SceneEditor::notifyCurrentAssetsFullPath);
         EditorManager::GetInstancePtr()->eventSceneModeChanged.subscribe(this, &SceneEditor::notifySceneModeChanged);
         EditorManager::GetInstancePtr()->eventPlaytestModeEnabledChanged.subscribe(this, &SceneEditor::notifyPlaytestModeEnabledChanged);
 
@@ -238,17 +234,9 @@ namespace Maze
                 [](String const& _text) { EditorHelper::Clear(); },
                 EditorHelper::ClearValidate);
             menuBar->addOption(
-                "File", "Open Assets",
-                [](String const& _text) { EditorHelper::OpenAssets(); },
-                EditorHelper::IsAssetsMode);
-            menuBar->addOption(
-                "File", "Close Assets",
-                [](String const& _text) { EditorHelper::CloseAssets(); },
-                EditorHelper::IsAssetsMode);
-            menuBar->addOption(
                 "File", "Close Project",
-                [](String const& _text) { EditorHelper::CloseProject(); },
-                EditorHelper::IsProjectMode);
+                [](String const& _text) { EditorHelper::SelectProject(); },
+                []() { return true; });
             menuBar->addOption(
                 "File", "Exit",
                 [](String const& _text) { Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->close(); });
@@ -583,15 +571,10 @@ namespace Maze
         if (!m_assetsController)
             return;
 
-        String const& currentAssetsFullPath = EditorAssetsModeManager::GetInstancePtr()->getCurrentAssetsFullPath();
-        if (!currentAssetsFullPath.empty())
-        {
-            m_assetsController->setAssetsFullPath(currentAssetsFullPath);
-        }
-        else
-        {
-            m_assetsController->setAssetsFullPath(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory());
-        }
+        EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+
+        String projectFullPath = editorSettings->getProjectFullPath();
+        m_assetsController->setAssetsFullPath(projectFullPath);
     }
 
     //////////////////////////////////////////

@@ -24,7 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "EditorAssetsModeManager.hpp"
+#include "EditorProjectManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
@@ -32,13 +32,11 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
-#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
 #include "maze-core/ecs/components/MazeSinMovement3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
-#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -81,106 +79,44 @@
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "Editor.hpp"
-#include "settings/MazeEditorSettings.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class EditorAssetsModeManager
+    // Class EditorProjectManager
     //
     //////////////////////////////////////////
-    EditorAssetsModeManager* EditorAssetsModeManager::s_instance = nullptr;
+    EditorProjectManager* EditorProjectManager::s_instance = nullptr;
 
     //////////////////////////////////////////
-    EditorAssetsModeManager::EditorAssetsModeManager()
+    EditorProjectManager::EditorProjectManager()
     {
         s_instance = this;
     }
 
     //////////////////////////////////////////
-    EditorAssetsModeManager::~EditorAssetsModeManager()
+    EditorProjectManager::~EditorProjectManager()
     {
         s_instance = nullptr;
 
-        if (SettingsManager::GetInstancePtr())
-        {
-            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-            if (editorSettings)
-            {
-                editorSettings->getEditorModeChangedEvent().unsubscribe(this);
-                editorSettings->getAssetsFullPathChangedEvent().unsubscribe(this);
-            }
-        }
-    }
-
-    //////////////////////////////////////////
-    void EditorAssetsModeManager::Initialize(EditorAssetsModeManagerPtr& _manager)
-    {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorAssetsModeManager, _manager, init());
-    }
-
-    //////////////////////////////////////////
-    bool EditorAssetsModeManager::init()
-    {
-        EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-        editorSettings->getEditorModeChangedEvent().subscribe(this, &EditorAssetsModeManager::notifyEditorModeChanged);
-        editorSettings->getAssetsFullPathChangedEvent().subscribe(this, &EditorAssetsModeManager::notifyAssetsFullPathChanged);
         
-        updateAssets();
+    }
 
+    //////////////////////////////////////////
+    void EditorProjectManager::Initialize(EditorProjectManagerPtr& _manager)
+    {
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorProjectManager, _manager, init());
+    }
+
+    //////////////////////////////////////////
+    bool EditorProjectManager::init()
+    {
+        
         return true;
     }
 
-    //////////////////////////////////////////
-    void EditorAssetsModeManager::notifyEditorModeChanged(EditorMode const& _mode)
-    {
-        updateAssets();
-    }
-
-    //////////////////////////////////////////
-    void EditorAssetsModeManager::notifyAssetsFullPathChanged(String const& _mode)
-    {
-        updateAssets();
-    }
-
-    //////////////////////////////////////////
-    void EditorAssetsModeManager::updateAssets()
-    {
-        EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-        EditorMode editorMode = editorSettings->getEditorMode();
-        String assetsFullPath = editorSettings->getAssetsFullPath();
-        bool isAssetsFullPathValid = !assetsFullPath.empty() && FileHelper::IsDirectory(assetsFullPath);
-
-        if (editorMode == EditorMode::Assets && isAssetsFullPathValid)
-            setCurrentAssetsFolder(assetsFullPath);
-        else
-            setCurrentAssetsFolder(String());
-
-        AssetManager::GetInstancePtr()->updateAssets();
-    }
-
-    //////////////////////////////////////////
-    void EditorAssetsModeManager::setCurrentAssetsFolder(String const& _folder)
-    {
-        if (m_currentAssetsFullPath == _folder)
-            return;
-
-        if (!m_currentAssetsFullPath.empty())
-        {
-            AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(m_currentAssetsFullPath);
-        }
-
-        m_currentAssetsFullPath = _folder;
-
-        if (!m_currentAssetsFullPath.empty())
-        {
-            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(m_currentAssetsFullPath);
-        }
-
-        eventCurrentAssetsFullPath(m_currentAssetsFullPath);
-    }
 
 } // namespace Maze
 //////////////////////////////////////////

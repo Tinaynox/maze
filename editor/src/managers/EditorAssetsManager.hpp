@@ -47,7 +47,6 @@
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "scenes/SceneWorkspace.hpp"
 #include "editor/EditorSceneMode.hpp"
-#include "editor/EditorMode.hpp"
 
 
 //////////////////////////////////////////

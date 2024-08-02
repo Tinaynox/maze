@@ -237,7 +237,7 @@ namespace Maze
     AssetFilePtr const& AssetManager::getAssetFileByFullPath(Path const& _fileFullPath)
     {
         static AssetFilePtr nullPtr;
-        
+
         UnorderedMap<Path, AssetFilePtr>::iterator it = m_assetFilesByFullPath.find(_fileFullPath);
         if (it == m_assetFilesByFullPath.end())
             return nullPtr;

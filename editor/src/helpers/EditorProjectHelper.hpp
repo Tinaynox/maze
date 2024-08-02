@@ -59,10 +59,11 @@ namespace Maze
     namespace EditorHelper
     {
         //////////////////////////////////////////
-        bool IsProjectMode();
+        bool IsProjectPathValid();
 
         //////////////////////////////////////////
-        void CloseProject();
+        bool SelectProject();
+
     };
 
 

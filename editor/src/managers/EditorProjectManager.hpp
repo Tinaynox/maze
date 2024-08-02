@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorAssetsModeManager_hpp_))
-#define _EditorAssetsModeManager_hpp_
+#if (!defined(_EditorProjectManager_hpp_))
+#define _EditorProjectManager_hpp_
 
 
 //////////////////////////////////////////
@@ -47,76 +47,52 @@
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "scenes/SceneWorkspace.hpp"
 #include "editor/EditorSceneMode.hpp"
-#include "editor/EditorMode.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorAssetsModeManager);
+    MAZE_USING_SHARED_PTR(EditorProjectManager);
     MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(SceneWorkspace);
 
 
     //////////////////////////////////////////
-    // Class EditorAssetsModeManager
+    // Class EditorProjectManager
     //
     //////////////////////////////////////////
-    class EditorAssetsModeManager
+    class EditorProjectManager
         : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        ~EditorAssetsModeManager();
+        ~EditorProjectManager();
 
         //////////////////////////////////////////
-        static void Initialize(EditorAssetsModeManagerPtr& _manager);
+        static void Initialize(EditorProjectManagerPtr& _manager);
         
 
         //////////////////////////////////////////
-        static inline EditorAssetsModeManager* GetInstancePtr() { return s_instance; }
+        static inline EditorProjectManager* GetInstancePtr() { return s_instance; }
 
         //////////////////////////////////////////
-        static inline EditorAssetsModeManager& GetInstance() { return *s_instance; }
+        static inline EditorProjectManager& GetInstance() { return *s_instance; }
 
-
-        //////////////////////////////////////////
-        String const& getCurrentAssetsFullPath() const { return m_currentAssetsFullPath; }
 
     protected:
 
         //////////////////////////////////////////
-        EditorAssetsModeManager();
+        EditorProjectManager();
 
         //////////////////////////////////////////
         bool init();
 
 
 
-        //////////////////////////////////////////
-        void notifyEditorModeChanged(EditorMode const& _mode);
-
-        //////////////////////////////////////////
-        void notifyAssetsFullPathChanged(String const& _mode);
-
-        //////////////////////////////////////////
-        void updateAssets();
-
-        //////////////////////////////////////////
-        void setCurrentAssetsFolder(String const& _folder);
-
-
-    public:
-
-        //////////////////////////////////////////
-        MultiDelegate<String const&> eventCurrentAssetsFullPath;
-
     protected:
-        static EditorAssetsModeManager* s_instance;
-
-        String m_currentAssetsFullPath;
+        static EditorProjectManager* s_instance;
     };
 
 
@@ -124,5 +100,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorAssetsModeManager_hpp_
+#endif // _EditorProjectManager_hpp_
 //////////////////////////////////////////

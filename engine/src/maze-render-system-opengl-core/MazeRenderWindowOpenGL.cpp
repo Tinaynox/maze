@@ -51,6 +51,7 @@ namespace Maze
     //////////////////////////////////////////
     RenderWindowOpenGL::~RenderWindowOpenGL()
     {
+        destroySystemWindow();
     }
 
     //////////////////////////////////////////

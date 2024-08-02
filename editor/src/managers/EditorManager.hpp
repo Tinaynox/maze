@@ -46,7 +46,6 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "editor/EditorSceneMode.hpp"
-#include "editor/EditorMode.hpp"
 #include "managers/EditorPrefabManager.hpp"
 #include "scenes/SceneMain.hpp"
 #include "scenes/SceneMainTools.hpp"
@@ -58,8 +57,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EditorManager);
     MAZE_USING_SHARED_PTR(EditorAssetsManager);
-    MAZE_USING_SHARED_PTR(EditorAssetsModeManager);
-    MAZE_USING_SHARED_PTR(EditorProjectModeManager);
+    MAZE_USING_SHARED_PTR(EditorProjectManager);
     MAZE_USING_SHARED_PTR(EditorGizmosManager);
     MAZE_USING_SHARED_PTR(EditorEntityManager);
     MAZE_USING_SHARED_PTR(EditorWorkspaceManager);
@@ -95,8 +93,6 @@ namespace Maze
         EditorPrefabManagerPtr const& getEditorPrefabManager() const { return m_editorPrefabManager; }
 
 
-        //////////////////////////////////////////
-        EditorMode getMode() const;
 
 
         //////////////////////////////////////////
@@ -179,8 +175,7 @@ namespace Maze
 
         EditorAssetsManagerPtr m_editorAssetsManager;
         EditorPrefabManagerPtr m_editorPrefabManager;
-        EditorAssetsModeManagerPtr m_editorAssetsModeManager;
-        EditorProjectModeManagerPtr m_editorProjectModeManager;
+        EditorProjectManagerPtr m_editorProjectManager;
         EditorGizmosManagerPtr m_editorGizmosManager;
         EditorEntityManagerPtr m_editorEntityManager;
         EditorWorkspaceManagerPtr m_editorWorkspaceManager;

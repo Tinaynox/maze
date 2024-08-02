@@ -157,13 +157,9 @@ namespace Maze
         for (String const& extension : extensions)
             AssetEditorToolsManager::GetInstancePtr()->addPrefabExtension(extension);
 
-        String const& editorMode = getConfig("editorMode");
-        if (!editorMode.empty())
-            editorSettings->setEditorMode(EditorMode::FromString(editorMode));
-
-        String const& assetsFullPath = getConfig("assetsFullPath");
-        if (!assetsFullPath.empty())
-            editorSettings->setAssetsFullPath(FileHelper::NormalizedFilePath(assetsFullPath));
+        String const& projectFullPath = getConfig("projectFullPath");
+        if (!projectFullPath.empty())
+            editorSettings->setProjectFullPath(FileHelper::NormalizedFilePath(projectFullPath));
     }
 
     //////////////////////////////////////////

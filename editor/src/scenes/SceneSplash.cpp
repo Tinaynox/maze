@@ -94,8 +94,8 @@
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "layout/EditorLayout.hpp"
+#include "helpers/EditorProjectHelper.hpp"
 #include "scenes/SceneEditor.hpp"
-#include "scenes/SceneSelectMode.hpp"
 #include "scenes/SceneDebug.hpp"
 #include "managers/EditorGizmosManager.hpp"
 #include "managers/EditorManager.hpp"
@@ -193,7 +193,7 @@ namespace Maze
         {
             case 0:
             {
-                MaterialPtr const& material = MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::Color);
+                MaterialPtr const& material = MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::Sprite);
                 SpriteRenderer2DPtr frame = SpriteHelper::CreateSprite(
                     ColorU32::c_lightGray,
                     Vec2F32(96.0f, 10.0f),
@@ -353,22 +353,19 @@ namespace Maze
                 m_progressBarFill->getEntity()->setActiveSelf(false);
 
                 EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-                EditorMode editorMode = editorSettings->getEditorMode();
-                String assetsFullPath = editorSettings->getAssetsFullPath();
-                bool isAssetsFullPathValid = !assetsFullPath.empty() && FileHelper::IsDirectory(assetsFullPath);
-
-                if (editorMode == EditorMode::None ||
-                    (editorMode == EditorMode::Assets && !isAssetsFullPathValid))
+                
+                if (!EditorHelper::IsProjectPathValid())
                 {
-                    SceneManager::GetInstancePtr()->loadScene<SceneSelectMode>();
-                    SceneManager::GetInstancePtr()->unloadScene<SceneSplash>();
-                    return;
+                    if (!EditorHelper::SelectProject())
+                        return;
                 }
                 else
                 {
+                    AssetManager::GetInstancePtr()->addAssetsDirectoryPath(editorSettings->getProjectFullPath());
                     SceneManager::GetInstancePtr()->loadScene<SceneEditor>();
-                    SceneManager::GetInstancePtr()->unloadScene<SceneSplash>();
                 }
+
+                SceneManager::GetInstancePtr()->unloadScene<SceneSplash>();
                 return;
             }
         }
