@@ -85,9 +85,10 @@
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
-#include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "scenes/SceneEditor.hpp"
+#include "events/EditorEvents.hpp"
+#include "Editor.hpp"
 
 
 //////////////////////////////////////////
@@ -116,7 +117,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        bool IsProjectPathValid(String const& _path)
+        bool IsProjectPathValid(Path const& _path)
         {
             if (_path.empty() || !FileHelper::IsDirectory(_path))
                 return false;
@@ -136,16 +137,9 @@ namespace Maze
         {
             SceneManager::GetInstancePtr()->unloadScene<SceneEditor>();
 
-            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-
-            AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(editorSettings->getProjectFullPath());
-
-            editorSettings->setProjectFullPath(String());
-            SettingsManager::GetInstancePtr()->saveSettings();
-
             bool isProjectFullPathValid = false;
 
-            String projectFullPath;
+            Path projectFullPath;
             do
             {
                 projectFullPath = EditorHelper::SelectProjectFolder().toUTF8();
@@ -157,19 +151,79 @@ namespace Maze
             while (!isProjectFullPathValid);
 
             if (!isProjectFullPathValid)
+                return false;
+
+            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+
+            EventManager::GetInstancePtr()->broadcastEventImmediate<EditorProjectWillBeClosedEvent>();
+            editorSettings->setProjectFullPath(String());
+
+            // AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(editorSettings->getProjectFullPath());            
+
+            editorSettings->setProjectFullPath(projectFullPath.toUTF8());
+            SettingsManager::GetInstancePtr()->saveSettings();
+
+            EventManager::GetInstancePtr()->broadcastEventImmediate<EditorProjectOpenedEvent>();
+            // AssetManager::GetInstancePtr()->addAssetsDirectoryPath(editorSettings->getProjectFullPath());
+
+
+            SceneManager::GetInstancePtr()->loadScene<SceneEditor>();
+
+
+            return true;
+        }
+
+        //////////////////////////////////////////
+        bool SelectProjectOrShutdown()
+        {
+            if (!SelectProject())
             {
                 Editor::GetInstancePtr()->shutdown();
                 return false;
             }
 
-            editorSettings->setProjectFullPath(projectFullPath);
-            SettingsManager::GetInstancePtr()->saveSettings();
+            return true;
+        }
 
-            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(editorSettings->getProjectFullPath());
+        //////////////////////////////////////////
+        bool ValidateProjectOrSelect()
+        {
+            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
 
-            SceneManager::GetInstancePtr()->loadScene<SceneEditor>();
+            if (!EditorHelper::IsProjectPathValid())
+            {
+                if (!EditorHelper::SelectProjectOrShutdown())
+                    return false;
+            }
+            else
+            {
+                EventManager::GetInstancePtr()->broadcastEventImmediate<EditorProjectOpenedEvent>();
+
+                // AssetManager::GetInstancePtr()->addAssetsDirectoryPath(editorSettings->getProjectFullPath());
+                SceneManager::GetInstancePtr()->loadScene<SceneEditor>();
+            }
 
             return true;
+        }
+
+        //////////////////////////////////////////
+        Path GetProjectAssetsFolder()
+        {
+            if (!IsProjectPathValid())
+                return Path();
+
+            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+            return editorSettings->getProjectFullPath() + "/Assets";
+        }
+
+        //////////////////////////////////////////
+        Path GetProjectPackagesFolder()
+        {
+            if (!IsProjectPathValid())
+                return Path();
+
+            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+            return editorSettings->getProjectFullPath() + "/Packages";
         }
     };
 

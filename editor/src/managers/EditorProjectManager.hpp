@@ -90,6 +90,8 @@ namespace Maze
         bool init();
 
 
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
 
     protected:
         static EditorProjectManager* s_instance;

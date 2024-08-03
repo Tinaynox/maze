@@ -122,6 +122,9 @@ namespace Maze
     //////////////////////////////////////////
     void AssetsController::update(F32 _dt)
     {
+        if (!getEntityRaw() || !getEntityRaw()->getEcsScene())
+            return;
+
         MAZE_PROFILE_EVENT("AssetsController::update");
 
         if (m_assetsTreeDirty)

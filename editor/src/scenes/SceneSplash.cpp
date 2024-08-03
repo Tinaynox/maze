@@ -352,18 +352,7 @@ namespace Maze
             {
                 m_progressBarFill->getEntity()->setActiveSelf(false);
 
-                EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-                
-                if (!EditorHelper::IsProjectPathValid())
-                {
-                    if (!EditorHelper::SelectProject())
-                        return;
-                }
-                else
-                {
-                    AssetManager::GetInstancePtr()->addAssetsDirectoryPath(editorSettings->getProjectFullPath());
-                    SceneManager::GetInstancePtr()->loadScene<SceneEditor>();
-                }
+                EditorHelper::ValidateProjectOrSelect();
 
                 SceneManager::GetInstancePtr()->unloadScene<SceneSplash>();
                 return;

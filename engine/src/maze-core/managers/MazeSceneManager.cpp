@@ -124,30 +124,29 @@ namespace Maze
         Size scenesCount = m_scenes.size();
         for (Size i = 0; i < scenesCount; ++i)
         {
-            SceneData& sceneData = m_scenes[i];
-            if (!sceneData.scene)
+            if (!m_scenes[i].scene)
                 continue;
 
-            if (EcsSceneState::None == sceneData.scene->getState())
+            if (EcsSceneState::None == m_scenes[i].scene->getState())
             {
                 continue;
             }
             else
-            if (EcsSceneState::Active == sceneData.scene->getState())
+            if (EcsSceneState::Active == m_scenes[i].scene->getState())
             {
-                sceneData.scene->update(_dt);
+                m_scenes[i].scene->update(_dt);
             }
             else
-            if (EcsSceneState::Destroy == sceneData.scene->getState())
+            if (EcsSceneState::Destroy == m_scenes[i].scene->getState())
             {
-                EcsScenePtr scenePointerCopy = sceneData.scene;
+                EcsScenePtr scenePointerCopy = m_scenes[i].scene;
 
                 scenePointerCopy->processSceneWillBeDestroyed();
 
                 m_deadScenes.push_back(scenePointerCopy);
-                m_freeSceneIndices.push(sceneData.id.getIndex());
-                sceneData.id.incrementGeneration();
-                sceneData.scene.reset();
+                m_freeSceneIndices.push(m_scenes[i].id.getIndex());
+                m_scenes[i].id.incrementGeneration();
+                m_scenes[i].scene.reset();
 
                 if (scenePointerCopy == m_mainScene)
                     setMainScene(findNewMainScene());

@@ -114,7 +114,7 @@ namespace Maze
 
                 m_previewInspector = TInspector::Create(
                     m_layout->getTransform(),
-                    m_scene);
+                    m_scene.lock());
 
                 if (m_previewInspector)
                 {

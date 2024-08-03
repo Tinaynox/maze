@@ -127,6 +127,9 @@ namespace Maze
     {
         Engine::update(_dt);
 
+        if (m_sceneManager)
+            m_sceneManager->getScene<SceneSplash>();
+
         if (m_mainRenderWindowState == EditorMainRenderWindowState::ReadyToCreate)
         {
             if (createMainRenderWindowAndGoToFirstSceneNow())

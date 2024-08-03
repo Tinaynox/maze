@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
@@ -78,6 +79,8 @@
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
+#include "events/EditorEvents.hpp"
+#include "helpers/EditorProjectHelper.hpp"
 #include "Editor.hpp"
 
 
@@ -99,9 +102,13 @@ namespace Maze
     //////////////////////////////////////////
     EditorProjectManager::~EditorProjectManager()
     {
-        s_instance = nullptr;
+        if (EventManager::GetInstancePtr())
+        {
+            EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectOpenedEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectWillBeClosedEvent>(this);
+        }
 
-        
+        s_instance = nullptr;
     }
 
     //////////////////////////////////////////
@@ -113,8 +120,32 @@ namespace Maze
     //////////////////////////////////////////
     bool EditorProjectManager::init()
     {
+        EventManager::GetInstancePtr()->subscribeEvent<EditorProjectOpenedEvent>(this, &EditorProjectManager::notifyEvent);
+        EventManager::GetInstancePtr()->subscribeEvent<EditorProjectWillBeClosedEvent>(this, &EditorProjectManager::notifyEvent);
         
         return true;
+    }
+
+    //////////////////////////////////////////
+    void EditorProjectManager::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+        if (_eventUID == ClassInfo<EditorProjectOpenedEvent>::UID())
+        {
+            Path assetsPath = EditorHelper::GetProjectAssetsFolder();
+            Path packagesPath = EditorHelper::GetProjectPackagesFolder();
+
+            FileHelper::CreateDirectoryRecursive(assetsPath);
+            FileHelper::CreateDirectoryRecursive(packagesPath);
+
+            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(assetsPath);
+            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(packagesPath);
+        }
+        else
+        if (_eventUID == ClassInfo<EditorProjectWillBeClosedEvent>::UID())
+        {
+            AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(EditorHelper::GetProjectAssetsFolder());
+            AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(EditorHelper::GetProjectPackagesFolder());
+        }
     }
 
 

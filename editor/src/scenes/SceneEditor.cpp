@@ -571,10 +571,8 @@ namespace Maze
         if (!m_assetsController)
             return;
 
-        EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-
-        String projectFullPath = editorSettings->getProjectFullPath();
-        m_assetsController->setAssetsFullPath(projectFullPath);
+        Path assetsFolder = EditorHelper::GetProjectAssetsFolder();
+        m_assetsController->setAssetsFullPath(assetsFolder);
     }
 
     //////////////////////////////////////////
