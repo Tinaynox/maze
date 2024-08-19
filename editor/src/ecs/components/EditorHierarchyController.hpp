@@ -56,6 +56,15 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    enum class EditorHierarchyMode
+    {
+        None = 0,
+        Scene,
+        Prefab
+    };
+
+
+    //////////////////////////////////////////
     // Class EditorHierarchyController
     //
     //////////////////////////////////////////
@@ -199,7 +208,16 @@ namespace Maze
         //////////////////////////////////////////
         void notifyPrefabEntityChanged(EntityPtr const& _entity);
 
+
+        //////////////////////////////////////////
+        void updateMode();
+
+        //////////////////////////////////////////
+        void setHierarchyMode(EditorHierarchyMode _mode);
+
     protected:
+        EditorHierarchyMode m_hierarchyMode = EditorHierarchyMode::None;
+
         Canvas* m_canvas = nullptr;
 
         Transform2DPtr m_transform;

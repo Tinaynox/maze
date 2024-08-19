@@ -230,7 +230,6 @@ namespace Maze
 
 
 
-        setEcsWorld(EditorManager::GetInstancePtr()->getMainEcsWorld());
         EventManager::GetInstancePtr()->subscribeEvent<EcsSceneStateChangedEvent>(
             this,
             &EditorHierarchyController::notifyEventManagerEvent);
@@ -245,6 +244,8 @@ namespace Maze
         SelectionManager::GetInstancePtr()->eventSelectionChanged.subscribe(
             this,
             &EditorHierarchyController::notifySelectionChanged);
+
+        updateMode();
     }
     
     //////////////////////////////////////////
@@ -309,9 +310,10 @@ namespace Maze
             m_world->eventEntityRemoved.subscribe(this, &EditorHierarchyController::notifyEntityRemoved);
             m_world->eventEntityChanged.subscribe(this, &EditorHierarchyController::notifyEntityChanged);
 
-            for (SceneManager::SceneData const& sceneData : SceneManager::GetInstancePtr()->getScenes())
-                if (sceneData.scene && sceneData.scene->getState() == EcsSceneState::Active)
-                    addEcsScene(sceneData.scene);
+            if (m_hierarchyMode == EditorHierarchyMode::Scene)
+                for (SceneManager::SceneData const& sceneData : SceneManager::GetInstancePtr()->getScenes())
+                    if (sceneData.scene && sceneData.scene->getState() == EcsSceneState::Active)
+                        addEcsScene(sceneData.scene);
         }
     }
 
@@ -341,6 +343,9 @@ namespace Maze
     //////////////////////////////////////////
     HierarchyLinePtr EditorHierarchyController::addEcsScene(EcsScenePtr const& _scene)
     {
+        if (m_hierarchyMode != EditorHierarchyMode::Scene)
+            return nullptr;
+
         if (!getEntityRaw() || !getEntityRaw()->getEcsScene())
             return nullptr;
 
@@ -436,17 +441,23 @@ namespace Maze
         }
         else
         {
-            auto sceneIt = m_sceneLines.find(_entity->getEcsScene()->getId());
-            MAZE_ERROR_RETURN_VALUE_IF(sceneIt == m_sceneLines.end(), nullptr, "Undefined scene");
-            parentLine = sceneIt->second;
+            if (m_hierarchyMode == EditorHierarchyMode::Scene)
+            {
+                auto sceneIt = m_sceneLines.find(_entity->getEcsScene()->getId());
+                MAZE_ERROR_RETURN_VALUE_IF(sceneIt == m_sceneLines.end(), nullptr, "Undefined scene");
+                parentLine = sceneIt->second;
+            }
         }
 
-        MAZE_ERROR_RETURN_VALUE_IF(!parentLine, nullptr, "Parent line is not found!");
+        MAZE_ERROR_RETURN_VALUE_IF(m_hierarchyMode == EditorHierarchyMode::Scene && !parentLine, nullptr, "Parent line is not found!");
 
         HierarchyLinePtr hierarchyLine = createHierarchyLine(HierarchyLineType::Entity);
         hierarchyLine->setUserData(reinterpret_cast<void*>((Size)(S32)_entity->getId()));
 
-        parentLine->addChild(hierarchyLine);
+        if (parentLine)
+            parentLine->addChild(hierarchyLine);
+        else
+            hierarchyLine->getTransform()->setParent(m_hierarchyMainLayoutEntity);
 
         m_entityLines[_entity->getId()] = hierarchyLine;
         updateEntityName(_entity);
@@ -510,20 +521,27 @@ namespace Maze
         HierarchyLinePtr hierarchyLine = m_hierarchyLinePool->createHierarchyLine(_type);
         subscribeHierarchyLine(hierarchyLine.get());
 
+        EditorHierarchyControllerWPtr controllerWeak = cast<EditorHierarchyController>();
+
         HierarchyLineWPtr hierarchyLineWeak = hierarchyLine;
         hierarchyLine->getContextMenu()->setCallbackFunction(
-            [hierarchyLineWeak](MenuListTree2DPtr const& _menuListTree)
-            {
+            [controllerWeak, hierarchyLineWeak](MenuListTree2DPtr const& _menuListTree)
+        {
+                EditorHierarchyControllerPtr controller = controllerWeak.lock();
+                if (!controller)
+                    return;
                 HierarchyLinePtr hierarchyLine = hierarchyLineWeak.lock();
+                if (!hierarchyLine)
+                    return;
 
                 if (hierarchyLine->getType() == HierarchyLineType::Entity)
                 {
-                    if (!hierarchyLine->getEntityRaw()->getEcsWorld())
+                    if (!hierarchyLine->getEntityRaw()->getEcsWorld() || !controller->m_world)
                         return;
 
                     EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(hierarchyLine->getUserData()));
 
-                    EntityPtr const& entity = hierarchyLine->getEntityRaw()->getEcsWorld()->getEntity(entityId);
+                    EntityPtr const& entity = controller->m_world->getEntity(entityId);
 
                     if (!entity)
                         return;
@@ -761,12 +779,21 @@ namespace Maze
 
     //////////////////////////////////////////
     void EditorHierarchyController::notifyEntityAdded(EntityPtr const& _entity)
-    {
+    {        
         if (!_entity->getEcsScene())
             return;
         
-        if (!addEcsScene(_entity->getEcsScene()->cast<EcsScene>()))
-            return;
+        if (m_hierarchyMode == EditorHierarchyMode::Scene)
+        {
+            if (!addEcsScene(_entity->getEcsScene()->cast<EcsScene>()))
+                return;
+        }
+        else
+        if (m_hierarchyMode == EditorHierarchyMode::Prefab)
+        {
+            if (!_entity->getEcsScene() || _entity->getEcsScene()->getClassUID() != ClassInfo<SceneWorkspace>::UID())
+                return;
+        }
 
         addEntity(_entity);
     }
@@ -798,13 +825,58 @@ namespace Maze
     //////////////////////////////////////////
     void EditorHierarchyController::notifyPlaytestModeEnabled(bool _value)
     {
-        setEcsWorld(EditorManager::GetInstancePtr()->getMainEcsWorld());
+        updateMode();
     }
 
     //////////////////////////////////////////
     void EditorHierarchyController::notifyPrefabEntityChanged(EntityPtr const& _entity)
     {
+        if (m_hierarchyMode == EditorHierarchyMode::Prefab && !_entity)
+            setHierarchyMode(EditorHierarchyMode::None);
+        else
+        if (m_hierarchyMode != EditorHierarchyMode::Prefab && _entity)
+        {
+            setHierarchyMode(EditorHierarchyMode::Prefab);
+            updateMode();
+        }
+    }
 
+    //////////////////////////////////////////
+    void EditorHierarchyController::updateMode()
+    {
+        switch (m_hierarchyMode)
+        {
+            case EditorHierarchyMode::None:
+            {
+                setEcsWorld(nullptr);
+                break;
+            }
+            case EditorHierarchyMode::Scene:
+            {
+                setEcsWorld(EditorManager::GetInstancePtr()->getMainEcsWorld());
+                break;
+            }
+            case EditorHierarchyMode::Prefab:
+            {
+                setEcsWorld(nullptr);
+                setEcsWorld(EditorManager::GetInstancePtr()->getMainEcsWorld());
+                addEntity(EditorPrefabManager::GetInstancePtr()->getPrefabEntity());
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::setHierarchyMode(EditorHierarchyMode _mode)
+    {
+        if (m_hierarchyMode == _mode)
+            return;
+
+        m_hierarchyMode = _mode;
+
+        updateMode();
     }
 
     

@@ -109,9 +109,9 @@ namespace Maze
         if (AssetManager::GetInstancePtr())
             AssetManager::GetInstancePtr()->eventAssetFileRemoved.unsubscribe(this);
 
-        if (m_scene)
+        if (SceneDebugPreviewPtr scene = m_scene.lock())
         {
-            SceneManager::GetInstancePtr()->destroyScene(m_scene);
+            SceneManager::GetInstancePtr()->destroyScene(scene);
             m_scene.reset();
         }
 
@@ -272,9 +272,9 @@ namespace Maze
     //////////////////////////////////////////
     void PreviewController::processEntityRemoved()
     {
-        if (m_scene)
+        if (SceneDebugPreviewPtr scene = m_scene.lock())
         {
-            SceneManager::GetInstancePtr()->destroyScene(m_scene);
+            SceneManager::GetInstancePtr()->destroyScene(scene);
             m_scene.reset();
         }
     }
@@ -408,8 +408,8 @@ namespace Maze
         m_layout->alignChildren();
         m_previewInspector.reset();
 
-        if (m_scene)
-            m_scene->clear();
+        if (SceneDebugPreviewPtr scene = m_scene.lock())
+            scene->clear();
         
 
         setSceneVisibleSettings(false, false);
@@ -430,10 +430,10 @@ namespace Maze
             m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
         }
 
-        if (m_scene)
+        if (SceneDebugPreviewPtr scene = m_scene.lock())
         {
-            m_scene->getCamera()->getEntityRaw()->setActiveSelf(_camera);
-            m_scene->getCanvas()->getEntityRaw()->setActiveSelf(_canvas);
+            scene->getCamera()->getEntityRaw()->setActiveSelf(_camera);
+            scene->getCanvas()->getEntityRaw()->setActiveSelf(_canvas);
         }
     }
 

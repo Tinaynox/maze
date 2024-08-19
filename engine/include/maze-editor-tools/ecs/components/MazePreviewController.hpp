@@ -229,7 +229,7 @@ namespace Maze
         UIElement2DPtr m_bodyBackgroundElement;
         VerticalLayout2DPtr m_layout;
 
-        SceneDebugPreviewPtr m_scene;
+        SceneDebugPreviewWPtr m_scene;
         RenderBufferPtr m_renderBuffer;
 
         PreviewInspectorPtr m_previewInspector;
