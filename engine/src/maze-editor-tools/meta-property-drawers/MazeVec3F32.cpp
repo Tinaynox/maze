@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeVec3F32.hpp"
+#include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
@@ -38,6 +39,8 @@
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
+#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
 
 
 //////////////////////////////////////////
@@ -120,8 +123,13 @@ namespace Maze
 
         Vec3F value = m_drawer->getValue();
 
-        for (MetaInstance const& metaInstance : m_metaInstances)
-            m_metaProperty->setValue(metaInstance, &value);
+        if (MetaClassHelper::IsValueEqual(value, m_metaProperty, m_metaInstances))
+            return;
+
+        if (m_useEditorActions && EditorActionManager::GetInstancePtr())
+            EditorActionHelper::SetValue(value, m_metaProperty, m_metaInstances);
+        else
+            MetaClassHelper::SetValue(value, m_metaProperty, m_metaInstances);
     }
 
 } // namespace Maze

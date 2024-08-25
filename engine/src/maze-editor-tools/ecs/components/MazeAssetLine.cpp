@@ -57,6 +57,7 @@
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
@@ -290,7 +291,9 @@ namespace Maze
                 // SelectionManager::GetInstancePtr()->unselectObject(m_assetFile);
             }
             else
-                SelectionManager::GetInstancePtr()->selectObject(m_assetFile);
+            {
+                EditorActionHelper::SelectObjects(m_assetFile);
+            }
         }
 
         eventLineClick(this);

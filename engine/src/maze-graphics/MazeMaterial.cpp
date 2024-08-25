@@ -37,6 +37,8 @@
 #include "maze-core/helpers/MazeXMLHelper.hpp"
 #include "maze-core/helpers/MazeDataBlockHelper.hpp"
 #include "maze-core/serialization/MazeDataBlockSerializable.hpp"
+#include "maze-core/serialization/MazeDataBlockBinarySerialization.hpp"
+#include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
 #include "maze-core/system/MazeTimer.hpp"
 
 
@@ -642,7 +644,7 @@ namespace Maze
     {
         for (ShaderUniformVariantPtr const& uniformVariant : m_uniforms)
         {
-            uniformVariant->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HCS("shaderUniformVariant")));
+            uniformVariant->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HCS("uniform")));
         }
 
         for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
@@ -670,10 +672,12 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    bool Material::saveToFile(String const& _fullpath)
+    bool Material::saveToFile(Path const& _path)
     {
-        MAZE_WARNING("Save to XML is obsolete");
-        return XMLHelper::SaveXMLFile(_fullpath, this);
+        DataBlock dataBlock;
+        toDataBlock(dataBlock);
+
+        return DataBlockTextSerialization::SaveTextFile(dataBlock, _path);
     }
 
     //////////////////////////////////////////

@@ -191,7 +191,7 @@ namespace Maze
         if (_clearSelectionList)
             m_selectedEntities.clear();
 
-        for (Size i = 0, in = m_selectedEntities.size(); i != in; ++i)
+        for (Size i = 0, in = _objects.size(); i != in; ++i)
             selectObject(_objects[i], false, false);
 
         eventSelectionChanged();
@@ -215,6 +215,16 @@ namespace Maze
 
         if (_throwEvent)
             eventSelectionChanged();
+    }
+
+    //////////////////////////////////////////
+    void SelectionManager::unselectObjects(
+        Vector<EntityPtr> const& _objects)
+    {
+        for (Size i = 0, in = _objects.size(); i != in; ++i)
+            unselectObject(_objects[i], false);
+
+        eventSelectionChanged();
     }
 
     //////////////////////////////////////////
@@ -270,6 +280,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void SelectionManager::selectObjects(
+        Vector<ObjectPtr> const& _objects,
+        bool _clearSelectionList)
+    {
+        if (_clearSelectionList)
+            m_selectedObjects.clear();
+
+        for (Size i = 0, in = _objects.size(); i != in; ++i)
+            selectObject(_objects[i], false, false);
+
+        eventSelectionChanged();
+    }
+
+    //////////////////////////////////////////
     void SelectionManager::unselectObject(
         ObjectPtr const& _object,
         bool _throwEvent)
@@ -287,6 +311,16 @@ namespace Maze
 
         if (_throwEvent)
             eventSelectionChanged();
+    }
+
+    //////////////////////////////////////////
+    void SelectionManager::unselectObjects(
+        Vector<ObjectPtr> const& _objects)
+    {
+        for (Size i = 0, in = _objects.size(); i != in; ++i)
+            unselectObject(_objects[i], false);
+
+        eventSelectionChanged();
     }
 
     //////////////////////////////////////////

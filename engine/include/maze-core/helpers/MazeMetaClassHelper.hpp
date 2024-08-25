@@ -51,6 +51,48 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API bool IsEqual(ConstMetaInstance _metaInstance0, ConstMetaInstance _metaInstance1);
 
+        //////////////////////////////////////////
+        template <typename TValue> 
+        inline bool IsValueEqual(
+            TValue const& _value,
+            MetaProperty* _metaProperty,
+            Set<MetaInstance> const& _metaInstances)
+        {
+            if (_metaInstances.empty())
+                return false;
+
+            bool result = true;
+            for (MetaInstance const& metaInstance : _metaInstances)
+            {
+                TValue prevValue;
+                _metaProperty->getValue(metaInstance, &prevValue);
+                if (_value != prevValue)
+                {
+                    result = false;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        //////////////////////////////////////////
+        template <typename TValue>
+        inline void SetValue(
+            TValue const& _value,
+            MetaProperty* _metaProperty,
+            Set<MetaInstance> const& _metaInstances)
+        {
+            for (MetaInstance const& metaInstance : _metaInstances)
+                _metaProperty->setValue(metaInstance, &_value);
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void SetValueString(
+            String const& _value,
+            MetaProperty* _metaProperty,
+            Set<MetaInstance> const& _metaInstances);
+
 
     } // namespace MetaClassHelper
     //////////////////////////////////////////

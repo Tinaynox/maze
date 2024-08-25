@@ -25,55 +25,75 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
-#include "maze-core/helpers/MazeMetaClassHelper.hpp"
-#include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
-#include "maze-core/memory/MazeMemory.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorAction.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-
-
     //////////////////////////////////////////
-    // Class MetaPropertyDrawer
+    // Class EditorAction
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS(MetaPropertyDrawer);
-
+    MAZE_IMPLEMENT_METACLASS(EditorAction);
+    
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MetaPropertyDrawer);
-
-    //////////////////////////////////////////
-    MetaPropertyDrawer::MetaPropertyDrawer()
-        : m_metaProperty(nullptr)
+    EditorAction::EditorAction()
     {
-        
+
+    }
+     
+    //////////////////////////////////////////
+    EditorAction::~EditorAction()
+    {
+
     }
 
     //////////////////////////////////////////
-    MetaPropertyDrawer::~MetaPropertyDrawer()
+    S32 EditorAction::GetCurrentTimestamp()
     {
+        return static_cast<S32>(time(0));
     }
 
     //////////////////////////////////////////
-    bool MetaPropertyDrawer::init(MetaProperty* _metaProperty)
+    bool EditorAction::apply()
     {
-        m_metaProperty = _metaProperty;
+        MAZE_DEBUG_ERROR_RETURN_VALUE_IF(m_applied, false, "Action is already applied!");
+
+        setApplied(true);
+        applyImpl();
 
         return true;
     }
 
     //////////////////////////////////////////
-    void MetaPropertyDrawer::linkMetaInstances(
-        Set<MetaInstance> const& _metaInstances)
+    bool EditorAction::revert()
     {
-        m_metaInstances = _metaInstances;
+        MAZE_DEBUG_ERROR_RETURN_VALUE_IF(!m_applied, false, "Action is not applied!");
 
-        processMetaInstancesChanged();
+        setApplied(false);
+        revertImpl();
+
+        return true;
     }
 
+    //////////////////////////////////////////
+    void EditorAction::setApplied(bool _applied)
+    {
+        if (m_applied == _applied)
+            return;
+
+        m_applied = _applied;
+
+        resetTimestamp();
+        eventAppliedChanged(m_applied);
+    }
+
+    //////////////////////////////////////////
+    void EditorAction::resetTimestamp()
+    {
+        m_timestamp = GetCurrentTimestamp();
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

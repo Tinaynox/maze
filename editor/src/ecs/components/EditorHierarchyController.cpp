@@ -63,6 +63,7 @@
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
@@ -715,9 +716,9 @@ namespace Maze
                 if (entity)
                 {
                     if (SelectionManager::GetInstancePtr()->isObjectSelected(entity))
-                        SelectionManager::GetInstancePtr()->unselectObject(entity);
+                        EditorActionHelper::UnselectEntities(entity);
                     else
-                        SelectionManager::GetInstancePtr()->selectObject(entity);
+                        EditorActionHelper::SelectEntities(entity);
                 }
 
                 break;

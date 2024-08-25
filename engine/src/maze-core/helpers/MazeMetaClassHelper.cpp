@@ -106,6 +106,16 @@ namespace Maze
             return true;
         }
 
+        //////////////////////////////////////////
+        MAZE_CORE_API void SetValueString(
+            String const& _value,
+            MetaProperty* _metaProperty,
+            Set<MetaInstance> const& _metaInstances)
+        {
+            for (MetaInstance const& metaInstance : _metaInstances)
+                _metaProperty->setString(metaInstance, _value);
+        }
+
     } // namespace MetaClassHelper
     //////////////////////////////////////////
     

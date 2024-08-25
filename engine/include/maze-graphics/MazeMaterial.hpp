@@ -243,7 +243,7 @@ namespace Maze
         bool hasUniform(HashedCString _uniformName);
 
         //////////////////////////////////////////
-        bool saveToFile(String const& _fullpath);
+        bool saveToFile(Path const& _path);
 
     public:
 

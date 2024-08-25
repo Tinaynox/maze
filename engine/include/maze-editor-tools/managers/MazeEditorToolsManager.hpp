@@ -42,6 +42,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EditorToolsManager);
+    MAZE_USING_SHARED_PTR(EditorActionManager);
     MAZE_USING_SHARED_PTR(SelectionManager);
     MAZE_USING_SHARED_PTR(InspectorManager);
     MAZE_USING_SHARED_PTR(GizmosManager);
@@ -144,6 +145,7 @@ namespace Maze
     protected:
         static EditorToolsManager* s_instance;
 
+        EditorActionManagerPtr m_editorActionManager;
         ColorPickerManagerPtr m_colorPickerManager;
         ColorGradientPickerManagerPtr m_colorGradientPickerManager;
         AnimationCurveManagerPtr m_animationCurveManager;

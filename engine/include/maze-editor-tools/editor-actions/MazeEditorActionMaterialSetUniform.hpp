@@ -25,104 +25,101 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeShaderUniformVariantDrawer_hpp_))
-#define _MazeShaderUniformVariantDrawer_hpp_
+#if (!defined(_MazeEditorActionMaterialSetUniform_hpp_))
+#define _MazeEditorActionMaterialSetUniform_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/system/MazeTimer.hpp"
-#include "maze-core/reflection/MazeMetaClass.hpp"
-#include "maze-core/settings/MazeSettings.hpp"
-#include "maze-graphics/MazeShaderUniformVariant.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorAction.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ShaderUniformVariantDrawer);
-    MAZE_USING_SHARED_PTR(Transform2D);
+    MAZE_USING_SHARED_PTR(EditorActionMaterialSetUniform);
+    MAZE_USING_SHARED_PTR(Material);
 
 
     //////////////////////////////////////////
-    // Class ShaderUniformVariantDrawer
+    // Class EditorActionMaterialSetUniform
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API ShaderUniformVariantDrawer
+    class MAZE_EDITOR_TOOLS_API EditorActionMaterialSetUniform
+        : public EditorAction
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS(ShaderUniformVariantDrawer);
-
-        //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(ShaderUniformVariantDrawer);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorActionMaterialSetUniform, EditorAction);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~ShaderUniformVariantDrawer();
+        virtual ~EditorActionMaterialSetUniform();
 
         //////////////////////////////////////////
-        virtual void buildUI(
-            Transform2DPtr const& _parent,
-            CString _label = nullptr) MAZE_ABSTRACT;
+        static EditorActionMaterialSetUniformPtr Create(
+            MaterialPtr const& _material,
+            HashedString const& _shaderUniformName,
+            DataBlock const& _newValue);
+
+        //////////////////////////////////////////
+        static EditorActionMaterialSetUniformPtr Create(
+            Vector<MaterialPtr> const& _materials,
+            HashedString const& _shaderUniformName,
+            DataBlock const& _newValue);
+
+
+        //////////////////////////////////////////
+        Vector<MaterialPtr> const& getMaterials() const { return m_materials; }
 
         //////////////////////////////////////////
         HashedString const& getShaderUniformName() const { return m_shaderUniformName; }
 
-        //////////////////////////////////////////
-        ShaderUniformType getShaderUniformType() const { return m_shaderUniformType; }
-
 
         //////////////////////////////////////////
-        void linkMaterials(
-            Set<MaterialPtr> const& _materials);
+        inline DataBlock const& getNewValue() const { return m_newValue; }
 
         //////////////////////////////////////////
-        virtual void processDataToUI() MAZE_ABSTRACT;
-
-        //////////////////////////////////////////
-        virtual void processDataFromUI() MAZE_ABSTRACT;
-
-
-        //////////////////////////////////////////
-        inline void setUseEditorActions(bool _value) { m_useEditorActions = _value; }
-
-        //////////////////////////////////////////
-        inline bool getUseEditorActions() const { return m_useEditorActions; }
+        void merge(DataBlock const& _newValue);
 
     protected:
 
         //////////////////////////////////////////
-        ShaderUniformVariantDrawer();
+        EditorActionMaterialSetUniform();
 
         //////////////////////////////////////////
-        virtual bool init(
-            HashedCString _shaderUniformName,
-            ShaderUniformType _shaderUniformType);
+        bool init(
+            MaterialPtr const& _material,
+            HashedString const& _shaderUniformName,
+            DataBlock const& _newValue);
 
         //////////////////////////////////////////
-        bool fetchPropertyValue(
-            ShaderUniformVariant& _value,
-            bool& _isMultiValue);
+        bool init(
+            Vector<MaterialPtr> const& _materials,
+            HashedString const& _shaderUniformName,
+            DataBlock const& _newValue);
+
+
+        ////////////////////////////////////
+        virtual void applyImpl() MAZE_OVERRIDE;
+
+        ////////////////////////////////////
+        virtual void revertImpl() MAZE_OVERRIDE;
 
     protected:
+        Vector<MaterialPtr> m_materials;
         HashedString m_shaderUniformName;
-        ShaderUniformType m_shaderUniformType;
 
-        Set<MaterialPtr> m_materials;
-
-        bool m_useEditorActions = true;
+        Vector<DataBlock> m_prevValues;
+        DataBlock m_newValue;
     };
-
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeShaderUniformVariantDrawer_hpp_
+#endif // _MazeEditorActionMaterialSetUniform_hpp_
 //////////////////////////////////////////

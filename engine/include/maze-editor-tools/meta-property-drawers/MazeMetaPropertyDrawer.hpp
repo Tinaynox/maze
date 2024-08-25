@@ -87,6 +87,14 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processMetaInstancesChanged() {};
 
+
+
+        //////////////////////////////////////////
+        inline void setUseEditorActions(bool _value) { m_useEditorActions = _value; }
+
+        //////////////////////////////////////////
+        inline bool getUseEditorActions() const { return m_useEditorActions; }
+
     protected:
 
         //////////////////////////////////////////
@@ -99,6 +107,8 @@ namespace Maze
     protected:
         MetaProperty* m_metaProperty;
         Set<MetaInstance> m_metaInstances;
+
+        bool m_useEditorActions = true;
     };
 
 

@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeVector.hpp"
+#include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"

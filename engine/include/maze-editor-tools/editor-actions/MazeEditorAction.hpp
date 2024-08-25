@@ -25,104 +25,108 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeShaderUniformVariantDrawer_hpp_))
-#define _MazeShaderUniformVariantDrawer_hpp_
+#if (!defined(_MazeEditorAction_hpp_))
+#define _MazeEditorAction_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
-#include "maze-core/settings/MazeSettings.hpp"
-#include "maze-graphics/MazeShaderUniformVariant.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ShaderUniformVariantDrawer);
-    MAZE_USING_SHARED_PTR(Transform2D);
+    MAZE_USING_SHARED_PTR(EditorAction);
 
 
     //////////////////////////////////////////
-    // Class ShaderUniformVariantDrawer
+    // Class EditorAction
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API ShaderUniformVariantDrawer
+    class MAZE_EDITOR_TOOLS_API EditorAction
+        : public std::enable_shared_from_this<EditorAction>
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS(ShaderUniformVariantDrawer);
+        MAZE_DECLARE_METACLASS(EditorAction);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(ShaderUniformVariantDrawer);
+        static S32 GetCurrentTimestamp();
 
     public:
 
         //////////////////////////////////////////
-        virtual ~ShaderUniformVariantDrawer();
+        virtual ~EditorAction();
+
+        
 
         //////////////////////////////////////////
-        virtual void buildUI(
-            Transform2DPtr const& _parent,
-            CString _label = nullptr) MAZE_ABSTRACT;
+        bool apply();
 
         //////////////////////////////////////////
-        HashedString const& getShaderUniformName() const { return m_shaderUniformName; }
-
-        //////////////////////////////////////////
-        ShaderUniformType getShaderUniformType() const { return m_shaderUniformType; }
+        bool revert();
 
 
         //////////////////////////////////////////
-        void linkMaterials(
-            Set<MaterialPtr> const& _materials);
+        inline bool getApplied() const { return m_applied; }
 
         //////////////////////////////////////////
-        virtual void processDataToUI() MAZE_ABSTRACT;
+        inline void setName(String const& _name) { m_name = _name; }
 
         //////////////////////////////////////////
-        virtual void processDataFromUI() MAZE_ABSTRACT;
+        inline String const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        inline S32 getTimestamp() const { return m_timestamp; }
 
 
         //////////////////////////////////////////
-        inline void setUseEditorActions(bool _value) { m_useEditorActions = _value; }
+        template <typename TEditorAction>
+        SharedPtr<TEditorAction> castSafe()
+        {
+            if (getClassUID() == ClassInfo<TEditorAction>::UID())
+                return std::static_pointer_cast<TEditorAction>(shared_from_this());
+
+            return nullptr;
+        }
+
+    public:
 
         //////////////////////////////////////////
-        inline bool getUseEditorActions() const { return m_useEditorActions; }
+        MultiDelegate<bool> eventAppliedChanged;
 
     protected:
 
         //////////////////////////////////////////
-        ShaderUniformVariantDrawer();
+        EditorAction();
 
         //////////////////////////////////////////
-        virtual bool init(
-            HashedCString _shaderUniformName,
-            ShaderUniformType _shaderUniformType);
+        void setApplied(bool _applied);
 
-        //////////////////////////////////////////
-        bool fetchPropertyValue(
-            ShaderUniformVariant& _value,
-            bool& _isMultiValue);
+        ////////////////////////////////////
+        void resetTimestamp();
+
+
+        ////////////////////////////////////
+        virtual void applyImpl() MAZE_ABSTRACT;
+
+        ////////////////////////////////////
+        virtual void revertImpl() MAZE_ABSTRACT;
 
     protected:
-        HashedString m_shaderUniformName;
-        ShaderUniformType m_shaderUniformType;
+        bool m_applied = false;
 
-        Set<MaterialPtr> m_materials;
-
-        bool m_useEditorActions = true;
+        String m_name;
+        
+        S32 m_timestamp = 0;
     };
-
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeShaderUniformVariantDrawer_hpp_
+#endif // _MazeEditorAction_hpp_
 //////////////////////////////////////////

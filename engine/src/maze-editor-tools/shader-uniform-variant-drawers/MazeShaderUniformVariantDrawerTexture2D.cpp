@@ -44,6 +44,8 @@
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
+#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
 
 
 //////////////////////////////////////////
@@ -196,8 +198,17 @@ namespace Maze
     {
         Texture2DPtr const& value = m_texture;
 
-        for (MaterialPtr const& material : m_materials)
-            material->getUniform(m_shaderUniformName)->set(value);
+        if (m_useEditorActions && EditorActionManager::GetInstancePtr())
+        {
+            ShaderUniformVariant variant(RenderSystem::GetCurrentInstancePtr(), value);
+            variant.setName(m_shaderUniformName);
+            EditorActionHelper::SetMaterialsUniform(
+                m_materials,
+                variant);
+        }
+        else
+            for (MaterialPtr const& material : m_materials)
+                material->getUniform(m_shaderUniformName)->set(value);
     }
 
     //////////////////////////////////////////

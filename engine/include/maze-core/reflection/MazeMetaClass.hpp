@@ -179,10 +179,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual bool setString(MetaInstance const& _instance, CString _value, Size _count) MAZE_ABSTRACT;
+        virtual bool setString(MetaInstance const& _instance, CString _value, Size _count) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        inline bool setString(MetaInstance const& _instance, String const& _value)
+        inline bool setString(MetaInstance const& _instance, String const& _value) const
         {
             return setString(_instance, _value.c_str(), _value.size());
         }
@@ -214,7 +214,7 @@ namespace Maze
         virtual bool isDataBlockSerializable(ConstMetaInstance const& _instance) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual bool setDataBlock(MetaInstance const& _instance, DataBlock const& _data) MAZE_ABSTRACT;
+        virtual bool setDataBlock(MetaInstance const& _instance, DataBlock const& _data) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual bool toDataBlock(ConstMetaInstance const& _instance, DataBlock& _data) const MAZE_ABSTRACT;
@@ -828,7 +828,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual bool setString(MetaInstance const& _instance, CString _data, Size _count) MAZE_OVERRIDE
+        virtual bool setString(MetaInstance const& _instance, CString _data, Size _count) const MAZE_OVERRIDE
         {
             TObject* obj = castMetaInstanceObject(_instance);
                         
@@ -913,7 +913,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual bool setDataBlock(MetaInstance const& _instance, DataBlock const& _data) MAZE_OVERRIDE
+        virtual bool setDataBlock(MetaInstance const& _instance, DataBlock const& _data) const MAZE_OVERRIDE
         {
             TObject* obj = castMetaInstanceObject(_instance);
 

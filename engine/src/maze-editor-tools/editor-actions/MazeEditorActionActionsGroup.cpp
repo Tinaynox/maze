@@ -25,53 +25,64 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
-#include "maze-core/helpers/MazeMetaClassHelper.hpp"
-#include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
-#include "maze-core/memory/MazeMemory.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionActionsGroup.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-
-
     //////////////////////////////////////////
-    // Class MetaPropertyDrawer
+    // Class EditorActionActionsGroup
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS(MetaPropertyDrawer);
-
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditorActionActionsGroup, EditorAction);
+ 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MetaPropertyDrawer);
-
-    //////////////////////////////////////////
-    MetaPropertyDrawer::MetaPropertyDrawer()
-        : m_metaProperty(nullptr)
+    EditorActionActionsGroup::EditorActionActionsGroup()
     {
-        
+
+    }
+     
+    //////////////////////////////////////////
+    EditorActionActionsGroup::~EditorActionActionsGroup()
+    {
+
     }
 
     //////////////////////////////////////////
-    MetaPropertyDrawer::~MetaPropertyDrawer()
+    EditorActionActionsGroupPtr EditorActionActionsGroup::Create()
     {
+        EditorActionActionsGroupPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorActionActionsGroup, object, init());
+        return object;
     }
 
     //////////////////////////////////////////
-    bool MetaPropertyDrawer::init(MetaProperty* _metaProperty)
+    bool EditorActionActionsGroup::init()
     {
-        m_metaProperty = _metaProperty;
-
         return true;
     }
 
     //////////////////////////////////////////
-    void MetaPropertyDrawer::linkMetaInstances(
-        Set<MetaInstance> const& _metaInstances)
+    void EditorActionActionsGroup::addAction(EditorActionPtr const& _action)
     {
-        m_metaInstances = _metaInstances;
+        MAZE_DEBUG_BP_RETURN_IF(std::find(m_actions.begin(), m_actions.end(), _action) != m_actions.end());
 
-        processMetaInstancesChanged();
+        m_actions.push_back(_action);
+    }
+
+    //////////////////////////////////////////
+    void EditorActionActionsGroup::applyImpl()
+    {
+        for (Size i = 0, in = m_actions.size(); i < in; ++i)
+            m_actions[i]->apply();
+    }
+
+    //////////////////////////////////////////
+    void EditorActionActionsGroup::revertImpl()
+    {
+        for (S32 i = (S32)m_actions.size() - 1; i >= 0; --i)
+            m_actions[i]->revert();
     }
 
 

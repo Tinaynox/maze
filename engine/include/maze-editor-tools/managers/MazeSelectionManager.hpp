@@ -118,12 +118,16 @@ namespace Maze
         //////////////////////////////////////////
         void selectObjects(
             Vector<EntityPtr> const& _objects,
-            bool _clearSelectionList);
+            bool _clearSelectionList = true);
 
         //////////////////////////////////////////
         void unselectObject(
             EntityPtr const& _object,
             bool _throwEvent = true);
+
+        //////////////////////////////////////////
+        void unselectObjects(
+            Vector<EntityPtr> const& _objects);
 
         //////////////////////////////////////////
         bool isSelectedObjectsEqual(Vector<EntityPtr> const& _objects);
@@ -139,9 +143,18 @@ namespace Maze
             bool _throwEvent = true);
 
         //////////////////////////////////////////
+        void selectObjects(
+            Vector<ObjectPtr> const& _objects,
+            bool _clearSelectionList = true);
+
+        //////////////////////////////////////////
         void unselectObject(
             ObjectPtr const& _object,
             bool _throwEvent = true);
+
+        //////////////////////////////////////////
+        void unselectObjects(
+            Vector<ObjectPtr> const& _objects);
 
         //////////////////////////////////////////
         inline SelectionType getSelectionType() const { return m_selectionType; }

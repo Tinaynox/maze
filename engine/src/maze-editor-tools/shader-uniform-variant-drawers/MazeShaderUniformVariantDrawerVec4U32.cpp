@@ -41,6 +41,8 @@
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
+#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
 
 
 //////////////////////////////////////////
@@ -276,8 +278,17 @@ namespace Maze
         value.z = StringHelper::StringToF32Safe(m_editBoxZ->getText());
         value.w = StringHelper::StringToF32Safe(m_editBoxW->getText());
 
-        for (MaterialPtr const& material : m_materials)
-            material->getUniform(m_shaderUniformName)->set(value);
+        if (m_useEditorActions && EditorActionManager::GetInstancePtr())
+        {
+            ShaderUniformVariant variant(RenderSystem::GetCurrentInstancePtr(), value);
+            variant.setName(m_shaderUniformName);
+            EditorActionHelper::SetMaterialsUniform(
+                m_materials,
+                variant);
+        }
+        else
+            for (MaterialPtr const& material : m_materials)
+                material->getUniform(m_shaderUniformName)->set(value);
     }
 
 } // namespace Maze

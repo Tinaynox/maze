@@ -189,8 +189,7 @@ namespace Maze
     ConstMetaInstance::ConstMetaInstance(MetaInstance const& _instance)
         : m_metaClass(_instance.m_metaClass)
         , m_object(_instance.m_object)
-    {
-    }
+    {}
 
     //////////////////////////////////////////
     void* ConstMetaInstance::createCopy()
