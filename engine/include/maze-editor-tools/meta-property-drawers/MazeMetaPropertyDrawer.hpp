@@ -44,6 +44,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(MetaPropertyDrawer);
     MAZE_USING_SHARED_PTR(Transform2D);
+    MAZE_USING_SHARED_PTR(Event);
 
 
     //////////////////////////////////////////
@@ -51,6 +52,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API MetaPropertyDrawer
+        : public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -103,6 +105,12 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             MetaProperty* _metaProperty);
+
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
+        ////////////////////////////////////////////
+        virtual void unselectUI() {};
 
     protected:
         MetaProperty* m_metaProperty;

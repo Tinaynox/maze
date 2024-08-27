@@ -77,6 +77,7 @@ namespace Maze
     //////////////////////////////////////////
     EditorToolsManager::~EditorToolsManager()
     {
+        m_editorActionManager.reset();
         m_selectionManager.reset();
 
         setGizmosController(nullptr);

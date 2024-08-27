@@ -136,6 +136,12 @@ namespace Maze
         m_editBox->eventSelectedChanged.subscribe(this, &PropertyDrawerS32::notifySelectedChanged);
     }
 
+    ////////////////////////////////////////////
+    void PropertyDrawerS32::unselectUI()
+    {
+        m_editBox->setSelected(false);
+    }
+
     //////////////////////////////////////////
     void PropertyDrawerS32::notifyTextInput(EditBox2D* _editBox)
     {

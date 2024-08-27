@@ -120,14 +120,22 @@ namespace Maze
     void EditorActionMaterialSetUniform::applyImpl()
     {
         for (Size i = 0, in = m_materials.size(); i != in; ++i)
-            m_materials[i]->getUniform(m_shaderUniformName)->loadFromDataBlock(m_newValue);
+        {
+            ShaderUniformVariantPtr const& variant = m_materials[i]->getUniform(m_shaderUniformName);
+            if (variant)
+                variant->loadFromDataBlock(m_newValue);
+        }
     }
 
     //////////////////////////////////////////
     void EditorActionMaterialSetUniform::revertImpl()
     {
         for (Size i = 0, in = m_materials.size(); i != in; ++i)
-            m_materials[i]->getUniform(m_shaderUniformName)->loadFromDataBlock(m_prevValues[i]);
+        {
+            ShaderUniformVariantPtr const& variant = m_materials[i]->getUniform(m_shaderUniformName);
+            if (variant)
+                variant->loadFromDataBlock(m_prevValues[i]);
+        }
     }
 
 

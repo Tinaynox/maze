@@ -56,7 +56,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerFOV
         : public GenericMetaPropertyDrawer<F32>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

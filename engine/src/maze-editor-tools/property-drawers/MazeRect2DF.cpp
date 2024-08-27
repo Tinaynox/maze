@@ -184,6 +184,15 @@ namespace Maze
         }
     }
 
+    ////////////////////////////////////////////
+    void PropertyDrawerRect2DF::unselectUI()
+    {
+        m_editBoxX->setSelected(false);
+        m_editBoxY->setSelected(false);
+        m_editBoxW->setSelected(false);
+        m_editBoxH->setSelected(false);
+    }
+
     //////////////////////////////////////////
     EditBox2DPtr PropertyDrawerRect2DF::createF32Edit(
         CString _name,

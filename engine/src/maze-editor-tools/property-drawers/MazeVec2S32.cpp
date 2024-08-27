@@ -189,6 +189,13 @@ namespace Maze
         return editBox;
     }
 
+    ////////////////////////////////////////////
+    void PropertyDrawerVec2S32::unselectUI()
+    {
+        m_editBoxX->setSelected(false);
+        m_editBoxY->setSelected(false);
+    }
+
     //////////////////////////////////////////
     void PropertyDrawerVec2S32::notifyTextInput(EditBox2D* _editBox)
     {

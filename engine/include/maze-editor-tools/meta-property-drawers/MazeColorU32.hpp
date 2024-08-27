@@ -57,7 +57,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerColorU32
         : public GenericMetaPropertyDrawer<ColorU32>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

@@ -55,7 +55,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerVec2F32
         : public GenericMetaPropertyDrawer<Vec2F>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -92,6 +91,9 @@ namespace Maze
         virtual void buildUI(
             Transform2DPtr const& _parent,
             CString _label) MAZE_OVERRIDE;
+
+        ////////////////////////////////////////////
+        virtual void unselectUI() MAZE_OVERRIDE;
 
     protected:
         PropertyDrawerVec2F32Ptr m_drawer;

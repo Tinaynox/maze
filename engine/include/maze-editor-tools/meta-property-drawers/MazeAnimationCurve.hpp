@@ -57,7 +57,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerAnimationCurve
         : public GenericMetaPropertyDrawer<AnimationCurve>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

@@ -55,7 +55,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerSliderF32
         : public GenericMetaPropertyDrawer<F32>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

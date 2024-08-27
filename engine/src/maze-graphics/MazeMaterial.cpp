@@ -642,16 +642,19 @@ namespace Maze
     //////////////////////////////////////////
     void Material::toDataBlock(DataBlock& _dataBlock) const
     {
-        for (ShaderUniformVariantPtr const& uniformVariant : m_uniforms)
+        for (Size i = 0, in = m_uniforms.size(); i < in; ++i)
         {
-            uniformVariant->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HCS("uniform")));
+            ShaderUniformVariantPtr const& uniformVariant = m_uniforms[i];
+            if (uniformVariant)
+                uniformVariant->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HCS("uniform")));
         }
 
         for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
         {
             for (RenderPassPtr const& renderPass : m_passes[passType])
             {
-                renderPass->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HCS("renderPass")));
+                if (renderPass)
+                    renderPass->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HCS("renderPass")));
             }
         }
     }

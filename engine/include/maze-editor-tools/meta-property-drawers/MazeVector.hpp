@@ -62,7 +62,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerVector
         : public MetaPropertyDrawer
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

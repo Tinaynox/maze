@@ -56,7 +56,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerRect2DF
         : public GenericMetaPropertyDrawer<Rect2DF>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -93,6 +92,9 @@ namespace Maze
         virtual void buildUI(
             Transform2DPtr const& _parent,
             CString _label) MAZE_OVERRIDE;
+
+        ////////////////////////////////////////////
+        virtual void unselectUI() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         EditBox2DPtr createF32Edit(

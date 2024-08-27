@@ -63,7 +63,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_PARTICLES_EDITOR_TOOLS_API MetaPropertyDrawerParticleSystem3DEmissionModule
         : public MetaPropertyDrawerParticleSystem3DModule<ParticleSystem3DMainModule::EmissionModule>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

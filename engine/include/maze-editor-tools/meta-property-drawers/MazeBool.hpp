@@ -56,7 +56,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerBool
         : public GenericMetaPropertyDrawer<bool>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

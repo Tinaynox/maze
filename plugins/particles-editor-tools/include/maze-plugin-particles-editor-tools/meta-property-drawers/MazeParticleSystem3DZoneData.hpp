@@ -61,7 +61,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_PARTICLES_EDITOR_TOOLS_API MetaPropertyDrawerParticleSystem3DZoneData
         : public MetaPropertyDrawerParticleSystem3DModule<ParticleSystem3DZoneData>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

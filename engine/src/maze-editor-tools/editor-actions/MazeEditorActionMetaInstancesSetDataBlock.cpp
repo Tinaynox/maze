@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionMetaInstancesSetDataBlock.hpp"
+#include "maze-editor-tools/events/MazeEditorActionEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -113,7 +114,11 @@ namespace Maze
     void EditorActionMetaInstancesSetDataBlock::revertImpl()
     {
         for (Size i = 0, in = m_metaInstances.size(); i != in; ++i)
+        {
+            EventManager::GetInstancePtr()->broadcastEventImmediate<EditorActionMetaInstancePropertyWillBeReverted>(
+                m_metaInstances[i], m_metaProperty);
             m_metaProperty->setDataBlock(m_metaInstances[i], m_prevValues[i]);
+        }
     }
 
 

@@ -60,7 +60,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_PARTICLES_EDITOR_TOOLS_API MetaPropertyDrawerParticleSystem3DSizeOverLifetimeModule
         : public MetaPropertyDrawerParticleSystem3DModule<ParticleSystem3DMainModule::SizeOverLifetimeModule>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

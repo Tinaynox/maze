@@ -55,6 +55,10 @@
 #include "maze-editor-tools/meta-property-drawers/MazeS32.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeEnumClass.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeBool.hpp"
+#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
+#include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionActionsGroup.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionCustom.hpp"
 
 
 //////////////////////////////////////////
@@ -332,12 +336,32 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialsRenderPassDrawer::setShader(ShaderPtr const& _shader)
     {
-        for (MaterialPtr const& material : m_materials)
+        if (EditorActionManager::GetInstancePtr())
         {
-            RenderPassPtr const& renderPass = material->getRenderPass(m_renderPassType, m_renderPassIndex);
-            if (renderPass)
+            EditorActionActionsGroupPtr group = EditorActionActionsGroup::Create();
+
+            for (MaterialPtr const& material : m_materials)
             {
-                renderPass->setShader(_shader);
+                RenderPassPtr renderPass = material->getRenderPass(m_renderPassType, m_renderPassIndex);
+                if (renderPass)
+                {
+                    group->addAction(
+                        EditorActionCustom::Create(
+                            [renderPass, newShader = (ShaderPtr)_shader]() { renderPass->setShader(newShader); },
+                            [renderPass, oldShader = renderPass->getShader()]() { renderPass->setShader(oldShader); }));
+                }
+            }
+
+            if (group->getActionsCount() > 0)
+                EditorActionManager::GetInstancePtr()->applyAction(group);
+        }
+        else
+        {
+            for (MaterialPtr const& material : m_materials)
+            {
+                RenderPassPtr const& renderPass = material->getRenderPass(m_renderPassType, m_renderPassIndex);
+                if (renderPass)
+                    renderPass->setShader(_shader);
             }
         }
     }

@@ -124,6 +124,12 @@ namespace Maze
             Set<MaterialPtr> const& _materials,
             ShaderUniformVariant const& _value);
 
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void CustomAction(
+            std::function<void()> const& _applyFunction,
+            std::function<void()> const& _revertFunction);
+
     } // namespace EditorActionHelper
     //////////////////////////////////////////
 

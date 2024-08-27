@@ -158,6 +158,12 @@ namespace Maze
     }
 
     ////////////////////////////////////////////
+    void PropertyDrawerEnumClass::unselectUI()
+    {
+        m_dropdown->setSelected(false);
+    }
+
+    ////////////////////////////////////////////
     bool PropertyDrawerEnumClass::toDataBlock(DataBlock& _dataBlock) const
     {
         return TryValueToDataBlock<String>(getValue(), _dataBlock);

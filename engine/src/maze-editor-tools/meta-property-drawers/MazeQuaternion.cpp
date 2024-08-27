@@ -102,6 +102,12 @@ namespace Maze
         m_drawer->buildUI(_parent, _label);
     }
 
+    ////////////////////////////////////////////
+    void MetaPropertyDrawerQuaternion::unselectUI()
+    {
+        m_drawer->unselectUI();
+    }
+
     //////////////////////////////////////////
     void MetaPropertyDrawerQuaternion::processDataToUI()
     {

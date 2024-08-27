@@ -72,6 +72,9 @@ namespace Maze
             Transform2DPtr const& _parent,
             CString _label = nullptr) MAZE_ABSTRACT;
 
+        ////////////////////////////////////////////
+        virtual void unselectUI() {};
+
 
         ////////////////////////////////////////////
         virtual bool toDataBlock(DataBlock& _value) const MAZE_ABSTRACT;

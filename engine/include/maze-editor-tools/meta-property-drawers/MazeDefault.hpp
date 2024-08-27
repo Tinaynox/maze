@@ -55,7 +55,6 @@ namespace Maze
     template <typename TProperty, typename TPropertyDrawer>
     class MetaPropertyDrawerDefault
         : public GenericMetaPropertyDrawer<TProperty>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -131,6 +130,12 @@ namespace Maze
             CString _label) MAZE_OVERRIDE
         {
             m_drawer->buildUI(_parent, _label);
+        }
+
+        ////////////////////////////////////////////
+        virtual void unselectUI() MAZE_OVERRIDE
+        {
+            m_drawer->unselectUI();
         }
 
     protected:

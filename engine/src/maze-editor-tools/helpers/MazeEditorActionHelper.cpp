@@ -77,6 +77,7 @@
 #include "maze-editor-tools/editor-actions/MazeEditorActionSelectEntities.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionSelectObjects.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionMetaInstancesSetString.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionCustom.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 
 
@@ -271,6 +272,18 @@ namespace Maze
                 for (MaterialPtr const& material : _materials)
                     material->setUniform(_value);
             }
+        }
+
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void CustomAction(
+            std::function<void()> const& _applyFunction,
+            std::function<void()> const& _revertFunction)
+        {
+            EditorActionManager::GetInstancePtr()->applyAction(
+                EditorActionCustom::Create(
+                    _applyFunction,
+                    _revertFunction));
         }
 
     } // namespace EditorActionHelper

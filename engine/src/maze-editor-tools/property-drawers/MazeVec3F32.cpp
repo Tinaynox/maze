@@ -150,6 +150,14 @@ namespace Maze
         }
     }
 
+    ////////////////////////////////////////////
+    void PropertyDrawerVec3F32::unselectUI()
+    {
+        m_editBoxX->setSelected(false);
+        m_editBoxY->setSelected(false);
+        m_editBoxZ->setSelected(false);
+    }
+
     //////////////////////////////////////////
     EditBox2DPtr PropertyDrawerVec3F32::createF32Edit(
         CString _name,

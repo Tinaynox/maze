@@ -554,6 +554,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline bool operator==(ConstMetaInstance const& _other) const
+        {
+            return m_metaClass == _other.m_metaClass && m_object == _other.m_object;
+        }
+
+        //////////////////////////////////////////
+        inline bool operator!=(ConstMetaInstance const& _other) const
+        {
+            return !this->operator==(_other);
+        }
+
+        //////////////////////////////////////////
         template <typename TClass>
         inline const TClass* reinterpretObjectCast() const
         {

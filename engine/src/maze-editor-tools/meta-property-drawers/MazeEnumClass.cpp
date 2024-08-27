@@ -109,6 +109,12 @@ namespace Maze
         m_drawer->buildUI(_parent, _label);
     }
 
+    ////////////////////////////////////////////
+    void MetaPropertyDrawerEnumClass::unselectUI()
+    {
+        m_drawer->unselectUI();
+    }
+
     //////////////////////////////////////////
     void MetaPropertyDrawerEnumClass::processDataToUI()
     {

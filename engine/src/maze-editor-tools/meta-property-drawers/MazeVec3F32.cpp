@@ -41,6 +41,7 @@
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
 #include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
+#include "maze-editor-tools/events/MazeEditorActionEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -99,6 +100,12 @@ namespace Maze
         CString _label)
     {
         m_drawer->buildUI(_parent, _label);
+    }
+
+    ////////////////////////////////////////////
+    void MetaPropertyDrawerVec3F32::unselectUI()
+    {
+        m_drawer->unselectUI();
     }
 
     //////////////////////////////////////////

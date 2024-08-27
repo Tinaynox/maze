@@ -47,6 +47,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(MetaPropertyDrawerVec3F32);
     MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(Event);
 
 
     //////////////////////////////////////////
@@ -55,7 +56,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerVec3F32
         : public GenericMetaPropertyDrawer<Vec3F>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -92,6 +92,9 @@ namespace Maze
         virtual void buildUI(
             Transform2DPtr const& _parent,
             CString _label) MAZE_OVERRIDE;
+
+        ////////////////////////////////////////////
+        virtual void unselectUI() MAZE_OVERRIDE;
 
     protected:
         PropertyDrawerVec3F32Ptr m_drawer;

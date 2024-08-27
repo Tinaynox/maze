@@ -25,74 +25,54 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazePropertyDrawerFOV_hpp_))
-#define _MazePropertyDrawerFOV_hpp_
+#if (!defined(_MazeEditorActionEvents_hpp_))
+#define _MazeEditorActionEvents_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/system/MazeTimer.hpp"
-#include "maze-core/reflection/MazeMetaClass.hpp"
-#include "maze-core/settings/MazeSettings.hpp"
-#include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
-#include "maze-editor-tools/property-drawers/MazeSliderRadians.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(PropertyDrawerFOV);
-    MAZE_USING_SHARED_PTR(EditBox2D);
-    MAZE_USING_SHARED_PTR(Slider2D);
-
-
-    //////////////////////////////////////////
-    // Class PropertyDrawerFOV
+    // Class EditoActionMetaInstancePropertyWillBeChanged
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API PropertyDrawerFOV
-        : public PropertyDrawerSliderRadians
+    class MAZE_EDITOR_TOOLS_API EditorActionMetaInstancePropertyWillBeReverted
+        : public GenericEvent<EditorActionMetaInstancePropertyWillBeReverted>
     {
     public:
-
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(PropertyDrawerFOV, PropertyDrawerSliderRadians);
-
-        //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(PropertyDrawerFOV);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorActionMetaInstancePropertyWillBeReverted, Event);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~PropertyDrawerFOV();
+        inline EditorActionMetaInstancePropertyWillBeReverted(
+            MetaInstance _changedMetaInstance = MetaInstance(),
+            MetaProperty const* _changedMetaProperty = nullptr)
+            : m_changedMetaInstance(_changedMetaInstance)
+            , m_changedMetaProperty(_changedMetaProperty)
+        {}
 
         //////////////////////////////////////////
-        static PropertyDrawerFOVPtr Create(String const& _label);
-
-
-        //////////////////////////////////////////
-        virtual void buildUI(
-            Transform2DPtr const& _parent,
-            CString _label = nullptr) MAZE_OVERRIDE;
-
-    protected:
+        inline MetaInstance const& getChangedMetaInstance() const { return m_changedMetaInstance; }
 
         //////////////////////////////////////////
-        PropertyDrawerFOV();
-
-        //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        inline MetaProperty const* getChangedMetaProperty() const { return m_changedMetaProperty; }
 
 
+    private:
+        MetaInstance m_changedMetaInstance;
+        MetaProperty const* m_changedMetaProperty;
     };
-
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazePropertyDrawerFOV_hpp_
+#endif // _MazeEditorActionEvents_hpp_
 //////////////////////////////////////////

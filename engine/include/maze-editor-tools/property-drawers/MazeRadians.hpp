@@ -84,6 +84,9 @@ namespace Maze
             Transform2DPtr const& _parent,
             CString _label = nullptr) MAZE_OVERRIDE;
 
+        ////////////////////////////////////////////
+        virtual void unselectUI() MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////

@@ -29,6 +29,7 @@
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
+#include "maze-editor-tools/events/MazeEditorActionEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -55,12 +56,16 @@ namespace Maze
     //////////////////////////////////////////
     MetaPropertyDrawer::~MetaPropertyDrawer()
     {
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->unsubscribeEvent<EditorActionMetaInstancePropertyWillBeReverted>(this);
     }
 
     //////////////////////////////////////////
     bool MetaPropertyDrawer::init(MetaProperty* _metaProperty)
     {
         m_metaProperty = _metaProperty;
+
+        EventManager::GetInstancePtr()->subscribeEvent<EditorActionMetaInstancePropertyWillBeReverted>(this, &MetaPropertyDrawer::notifyEvent);
 
         return true;
     }
@@ -72,6 +77,24 @@ namespace Maze
         m_metaInstances = _metaInstances;
 
         processMetaInstancesChanged();
+    }
+
+    //////////////////////////////////////////
+    void MetaPropertyDrawer::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+        if (_eventUID == ClassInfo<EditorActionMetaInstancePropertyWillBeReverted>::UID())
+        {
+            EditorActionMetaInstancePropertyWillBeReverted* evt = _event->castRaw<EditorActionMetaInstancePropertyWillBeReverted>();
+            if (m_metaProperty != evt->getChangedMetaProperty())
+                return;
+
+            for (MetaInstance metaInstance : m_metaInstances)
+                if (metaInstance == evt->getChangedMetaInstance())
+                {
+                    unselectUI();
+                    break;
+                }
+        }
     }
 
 

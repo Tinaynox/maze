@@ -151,6 +151,14 @@ namespace Maze
         }
     }
 
+    ////////////////////////////////////////////
+    void PropertyDrawerQuaternion::unselectUI()
+    {
+        m_editBoxX->setSelected(false);
+        m_editBoxY->setSelected(false);
+        m_editBoxZ->setSelected(false);
+    }
+
     //////////////////////////////////////////
     EditBox2DPtr PropertyDrawerQuaternion::createF32Edit(
         CString _name,

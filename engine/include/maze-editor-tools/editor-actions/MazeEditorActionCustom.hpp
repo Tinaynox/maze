@@ -25,83 +25,71 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeMetaPropertyDrawerRadians_hpp_))
-#define _MazeMetaPropertyDrawerRadians_hpp_
+#if (!defined(_MazeEditorActionCustom_hpp_))
+#define _MazeEditorActionCustom_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/system/MazeTimer.hpp"
-#include "maze-core/reflection/MazeMetaClass.hpp"
-#include "maze-core/settings/MazeSettings.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
-#include "maze-editor-tools/property-drawers/MazeRadians.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorAction.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(MetaPropertyDrawerRadians);
-    MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(EditorActionCustom);
+    MAZE_USING_SHARED_PTR(Object);
 
 
     //////////////////////////////////////////
-    // Class MetaPropertyDrawerRadians
+    // Class EditorActionCustom
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerRadians
-        : public GenericMetaPropertyDrawer<F32>
+    class MAZE_EDITOR_TOOLS_API EditorActionCustom
+        : public EditorAction
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(MetaPropertyDrawerRadians, MetaPropertyDrawer);
-
-        //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(MetaPropertyDrawerRadians);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorActionCustom, EditorAction);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~MetaPropertyDrawerRadians();
+        virtual ~EditorActionCustom();
 
         //////////////////////////////////////////
-        static MetaPropertyDrawerRadiansPtr Create(MetaProperty* _metaProperty);
+        static EditorActionCustomPtr Create(
+            std::function<void()> const& _applyFunction,
+            std::function<void()> const& _revertFunction);
 
-
-        //////////////////////////////////////////
-        virtual void processDataToUI() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processDataFromUI() MAZE_OVERRIDE;
 
     protected:
 
         //////////////////////////////////////////
-        MetaPropertyDrawerRadians();
+        EditorActionCustom();
 
         //////////////////////////////////////////
-        virtual bool init(MetaProperty* _metaProperty) MAZE_OVERRIDE;
+        bool init(
+            std::function<void()> const& _applyFunction,
+            std::function<void()> const& _revertFunction);
 
-        //////////////////////////////////////////
-        virtual void buildUI(
-            Transform2DPtr const& _parent,
-            CString _label) MAZE_OVERRIDE;
 
+        ////////////////////////////////////
+        virtual void applyImpl() MAZE_OVERRIDE;
+
+        ////////////////////////////////////
+        virtual void revertImpl() MAZE_OVERRIDE;
 
     protected:
-        PropertyDrawerRadiansPtr m_drawer;
-
-        bool m_processingDataToUI = false;
+        std::function<void()> m_applyFunction;
+        std::function<void()> m_revertFunction;
     };
-
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeMetaPropertyDrawerRadians_hpp_
+#endif // _MazeEditorActionCustom_hpp_
 //////////////////////////////////////////

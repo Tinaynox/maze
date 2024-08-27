@@ -93,7 +93,7 @@ namespace Maze
     ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D* _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTexture2D)
-        , m_texture(_value)
+        , m_texture(_value ? _value->cast<Texture2D>() : nullptr)
     {
     }
 
@@ -101,7 +101,7 @@ namespace Maze
     ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Texture2DPtr const& _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTexture2D)
-        , m_texture(_value.get())
+        , m_texture(_value)
     {
     
     }
@@ -120,7 +120,7 @@ namespace Maze
     ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, TextureCube* _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTextureCube)
-        , m_texture(_value)
+        , m_texture(_value ? _value->cast<TextureCube>() : nullptr)
     {
     }
 
@@ -128,7 +128,7 @@ namespace Maze
     ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, TextureCubePtr const& _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTextureCube)
-        , m_texture(_value.get())
+        , m_texture(_value)
     {
 
     }

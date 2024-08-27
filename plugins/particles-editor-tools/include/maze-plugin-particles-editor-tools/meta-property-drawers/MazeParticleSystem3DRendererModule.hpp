@@ -57,7 +57,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_PARTICLES_EDITOR_TOOLS_API MetaPropertyDrawerParticleSystem3DRendererModule
         : public MetaPropertyDrawerParticleSystem3DModule<ParticleSystem3DRendererModule>
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

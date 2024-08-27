@@ -144,6 +144,13 @@ namespace Maze
         }
     }
 
+    ////////////////////////////////////////////
+    void PropertyDrawerVec2U32::unselectUI()
+    {
+        m_editBoxX->setSelected(false);
+        m_editBoxY->setSelected(false);
+    }
+
     //////////////////////////////////////////
     EditBox2DPtr PropertyDrawerVec2U32::createS32Edit(
         CString _name,
