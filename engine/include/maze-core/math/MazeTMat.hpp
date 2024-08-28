@@ -184,6 +184,15 @@ namespace Maze
         inline void setRow(Size _row, Vec3<ValueType> const& _v);
 
         //////////////////////////////////////////
+        inline Vec3<ValueType> getRight() const;
+
+        //////////////////////////////////////////
+        inline Vec3<ValueType> getUp() const;
+
+        //////////////////////////////////////////
+        inline Vec3<ValueType> getForward() const;
+
+        //////////////////////////////////////////
         inline ValueType* operator[](Size _row) const;
 
         //////////////////////////////////////////

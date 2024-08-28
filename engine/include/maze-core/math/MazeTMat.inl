@@ -313,6 +313,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline Vec3<TMat::ValueType> TMat::getRight() const { return getRow(0); }
+
+    //////////////////////////////////////////
+    inline Vec3<TMat::ValueType> TMat::getUp() const { return getRow(1); }
+
+    //////////////////////////////////////////
+    inline Vec3<TMat::ValueType> TMat::getForward() const { return getRow(2); }
+
+    //////////////////////////////////////////
     inline Vec4<TMat::ValueType> TMat::getColumn(Size _column) const
     {
         return Vec4<ValueType>(

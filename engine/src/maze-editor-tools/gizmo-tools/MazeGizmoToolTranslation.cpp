@@ -66,20 +66,16 @@ namespace Maze
 
         Vec3F const& cameraWorldPosition = camera->getTransform()->getWorldPosition();
 
-        Vec3F right = { mat[0][0], mat[0][1], mat[0][2] };
-        Vec3F up = { mat[1][0], mat[1][1], mat[1][2] };
-        Vec3F forward = { mat[2][0], mat[2][1], mat[2][2] };
-        Vec3F pos = { mat[3][0], mat[3][1], mat[3][2] };
-
-        // Vec3F affineScale = mat.getAffineScaleSignless();
-        Vec3F affineScale = entityTransform->getWorldScale();
+        Vec3F right = mat.getRight().normalizedCopy();
+        Vec3F up = mat.getUp().normalizedCopy();
+        Vec3F forward = mat.getForward().normalizedCopy();
+        Vec3F pos = mat.getTranslation();
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
         F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;
-        TMat transform = mat.transform(
-            TMat::CreateScale(scale / affineScale));
-        TMat basisTransform = transform;
-        basisTransform.setTranslation(Vec3F::c_zero);
+
+        TMat basisTransform = TMat::CreateBasis(right, up, forward);
+        TMat transform = basisTransform * TMat::CreateTranslation(pos);
 
         GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::TransparentTop;
 
@@ -92,18 +88,18 @@ namespace Maze
             GizmosHelper::SetColor(_color);
 
             GizmosHelper::DrawCylinder(
-                _axis * length * 0.5f,
+                scale * _axis * length * 0.5f,
                 _axis,
-                GizmoToolConfig::c_transformGizmoToolArrowLineRadius,
-                length,
+                scale * GizmoToolConfig::c_transformGizmoToolArrowLineRadius,
+                scale * length,
                 _color,
                 0.0f,
                 renderMode);
             GizmosHelper::DrawCone(
-                _axis * length,
+                scale * _axis * length,
                 _axis,
-                GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
-                GizmoToolConfig::c_transformGizmoToolArrowConeHeight,
+                scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
+                scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight,
                 _color,
                 0.0f,
                 renderMode);
@@ -114,10 +110,10 @@ namespace Maze
         auto checkAxis = [&](
             Vec3F const& _axis)
         {
-            /*
+#if 0
             GizmosHelper::DrawCylinder(
-                transform.transformAffine(_axis * length * 0.5f),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
+                transform.transform(scale * _axis * length * 0.5f),
+                basisTransform.transform(_axis).normalizedCopy(),
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
                 scale * length,
                 ColorF128::c_cyan,
@@ -125,20 +121,20 @@ namespace Maze
                 renderMode);
 
             GizmosHelper::DrawCone(
-                transform.transformAffine(_axis * length),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
+                transform.transform(scale * _axis * length),
+                basisTransform.transform(_axis).normalizedCopy(),
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius * 4.0f,
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight * 2.0f,
                 ColorF128::c_cyan,
                 0.0f,
                 renderMode);
-            */
+#endif
 
             F32 dist = 0.0;
             if (Math::RaycastCylinder(
                 ray.getPoint(),
                 ray.getDirection(),
-                transform.transform(_axis * length * 0.5f),
+                transform.transform(scale * _axis * length * 0.5f),
                 basisTransform.transform(_axis).normalizedCopy(),
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
                 scale * length,
@@ -147,7 +143,7 @@ namespace Maze
             if (Math::RaycastCone(
                 ray.getPoint(),
                 ray.getDirection(),
-                transform.transform(_axis * length),
+                transform.transform(scale * _axis * length),
                 basisTransform.transform(_axis).normalizedCopy(),
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius * 4.0f,
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight * 2.0f,
