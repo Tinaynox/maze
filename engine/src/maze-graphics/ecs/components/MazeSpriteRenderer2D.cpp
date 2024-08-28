@@ -506,6 +506,7 @@ namespace Maze
     //////////////////////////////////////////
     void SpriteRenderer2D::notifySpriteDataChanged(Sprite* _sprite)
     {
+        enableFlag(SpriteRenderer2D::Flags::MaterialDirty);
         enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
         enableFlag(SpriteRenderer2D::Flags::UV0Dirty);
     }
