@@ -70,6 +70,7 @@
 #include "maze-editor-tools/meta-property-drawers/MazeColorGradient.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeAnimationCurve.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeDefault.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionCustom.hpp"
 #include "maze-editor-tools/inspectors/entities/MazeComponentEditorDefault.hpp"
 #include "maze-editor-tools/inspectors/entities/MazeComponentEditorTransform3D.hpp"
 #include "maze-editor-tools/inspectors/entities/MazeComponentEditorCamera3D.hpp"
@@ -217,7 +218,19 @@ namespace Maze
 
         addComponentContextMenuOption<Transform3D>(
             "Reset Transform",
-            [](Entity* _entity, Transform3D* _component) { _component->resetTransform(); });
+            [](Entity* _entity, Transform3D* _component)
+            {
+                if (EditorActionManager::GetInstancePtr())
+                {
+                    Transform3DPtr component = _component->cast<Transform3D>();
+                    EditorActionManager::GetInstancePtr()->applyAction(
+                        EditorActionCustom::Create(
+                            [component]() { component->resetTransform(); },
+                            [component, oldValue = component->getLocalTransform()]() { component->setLocalTransform(oldValue); }));
+                }
+                else
+                    _component->resetTransform();
+            });
 
         addComponentContextMenuOption<Transform3D>(
             "Copy Position",
@@ -229,7 +242,9 @@ namespace Maze
             "Paste Position",
             [](Entity* _entity, Transform3D* _component)
             {
-                _component->setLocalPosition(Vec3F::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
+                EditorActionHelper::Translate(
+                    _entity->getSharedPtr(),
+                    Vec3F::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
             });
         addComponentContextMenuOption<Transform3D>(
             "Copy Rotation",
@@ -241,7 +256,9 @@ namespace Maze
             "Paste Rotation",
             [](Entity* _entity, Transform3D* _component)
             {
-                _component->setLocalRotation(Quaternion::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
+                EditorActionHelper::Rotate(
+                    _entity->getSharedPtr(),
+                    Quaternion::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
             });
         addComponentContextMenuOption<Transform3D>(
             "Copy Scale",
@@ -253,7 +270,9 @@ namespace Maze
             "Paste Scale",
             [](Entity* _entity, Transform3D* _component)
             {
-                _component->setLocalScale(Vec3F::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
+                EditorActionHelper::Scale(
+                    _entity->getSharedPtr(),
+                    Vec3F::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
             });
         addComponentContextMenuOption<Transform3D>(
             "Copy Transform",
@@ -265,7 +284,18 @@ namespace Maze
             "Paste Transform",
             [](Entity* _entity, Transform3D* _component)
             {
-                _component->setLocalTransform(TMat::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
+                TMat newTransform = TMat::FromString(SystemManager::GetInstancePtr()->getClipboardAsString());
+                if (EditorActionManager::GetInstancePtr())
+                {
+                    Transform3DPtr component = _component->cast<Transform3D>();
+                    
+                    EditorActionManager::GetInstancePtr()->applyAction(
+                        EditorActionCustom::Create(
+                            [component, newTransform]() { component->setLocalTransform(newTransform); },
+                            [component, oldValue = component->getLocalTransform()]() { component->setLocalTransform(oldValue); }));
+                }
+                else
+                    _component->setLocalTransform(newTransform);
             });
 
         return true;
