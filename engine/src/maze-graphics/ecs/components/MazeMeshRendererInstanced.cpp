@@ -181,7 +181,7 @@ namespace Maze
     //////////////////////////////////////////
     void MeshRendererInstanced::processEntityRemoved()
     {
-        setRenderMesh(RenderMeshPtr());
+        // setRenderMesh(RenderMeshPtr());
     }
 
     //////////////////////////////////////////

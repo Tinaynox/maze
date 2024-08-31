@@ -595,7 +595,7 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3D::processEntityRemoved()
     {
-        m_rendererModule.setRenderMesh(RenderMeshPtr());
+        // m_rendererModule.setRenderMesh(RenderMeshPtr());
     }
 
     //////////////////////////////////////////

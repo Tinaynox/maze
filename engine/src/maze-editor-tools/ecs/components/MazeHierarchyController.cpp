@@ -62,8 +62,10 @@
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionEntityRemove.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
@@ -559,7 +561,11 @@ namespace Maze
                         EntityPtr entity = entityWeak.lock();
                         if (entity)
                         {
-                            entity->removeFromEcsWorld();
+                            if (EditorActionManager::GetInstancePtr())
+                                EditorActionManager::GetInstancePtr()->applyAction(
+                                    EditorActionEntityRemove::Create(entity));
+                            else
+                                entity->removeFromEcsWorld();
                         }
                     });
 

@@ -201,7 +201,7 @@ namespace Maze
     //////////////////////////////////////////
     void MeshRenderer::processEntityRemoved()
     {
-        m_renderMeshRef.setRenderMesh(nullptr);
+        //m_renderMeshRef.setRenderMesh(nullptr);
     }
     
 

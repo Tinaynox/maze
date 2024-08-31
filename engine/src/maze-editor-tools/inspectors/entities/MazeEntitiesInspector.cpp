@@ -48,6 +48,8 @@
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionActionsGroup.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionCustom.hpp"
 
 
 //////////////////////////////////////////
@@ -256,8 +258,26 @@ namespace Maze
                 editor->eventRemoveComponentPressed.subscribe(
                     [this](ClassUID _uid)
                     {
-                        for (EntityPtr const& entity : m_entities)
-                            entity->removeComponent(_uid);
+                        if (EditorActionManager::GetInstancePtr())
+                        {
+                            EditorActionActionsGroupPtr group = EditorActionActionsGroup::Create();
+
+                            for (EntityPtr const& entity : m_entities)
+                            {
+                                ComponentPtr component = entity->getComponentByUID(_uid);
+
+                                group->addAction(
+                                    EditorActionCustom::Create(
+                                        [entity, component]() { entity->removeComponent(component); },
+                                        [entity, component]() { entity->addComponent(component); }));
+                            }
+
+                            if (group->getActionsCount() > 0)
+                                EditorActionManager::GetInstancePtr()->applyAction(group);
+                        }
+                        else
+                            for (EntityPtr const& entity : m_entities)
+                                entity->removeComponent(_uid);
                     });
 
                 m_componentEditors[componentMetaClass->getClassUID()] = editor;
@@ -272,8 +292,29 @@ namespace Maze
     {
         bool value = m_entitiesEnabledToggleButton->getChecked();
 
-        for (Set<EntityPtr>::iterator it = m_entities.begin(); it != m_entities.end(); ++it)
-            (*it)->setActiveSelf(value);
+
+        if (EditorActionManager::GetInstancePtr())
+        {
+            EditorActionActionsGroupPtr group = EditorActionActionsGroup::Create();
+
+            for (Set<EntityPtr>::iterator it = m_entities.begin(); it != m_entities.end(); ++it)
+            {
+                EntityPtr entity = (*it);
+                
+                group->addAction(
+                    EditorActionCustom::Create(
+                        [entity, value]() { entity->setActiveSelf(value); },
+                        [entity, oldValue = entity->getActiveSelf()]() { entity->setActiveSelf(oldValue); }));
+            }
+
+            if (group->getActionsCount() > 0)
+                EditorActionManager::GetInstancePtr()->applyAction(group);
+        }
+        else
+        {
+            for (Set<EntityPtr>::iterator it = m_entities.begin(); it != m_entities.end(); ++it)
+                (*it)->setActiveSelf(value);
+        }
     }
 
     //////////////////////////////////////////
@@ -309,7 +350,17 @@ namespace Maze
                                 {
                                     ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponentByIndex(uid);
                                     if (component)
-                                        entity->addComponent(component);
+                                    {
+                                        if (EditorActionManager::GetInstancePtr())
+                                        {
+                                            EditorActionManager::GetInstancePtr()->applyAction(
+                                                EditorActionCustom::Create(
+                                                    [entity, component]() { entity->addComponent(component); },
+                                                    [entity, component]() { entity->removeComponent(component); }));
+                                        }
+                                        else
+                                            entity->addComponent(component);
+                                    }
                                 }
                             }
                         },

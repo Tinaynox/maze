@@ -25,90 +25,88 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazePropertyDrawerString_hpp_))
-#define _MazePropertyDrawerString_hpp_
+#if (!defined(_MazeEditorActionEntityRemove_hpp_))
+#define _MazeEditorActionEntityRemove_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/system/MazeTimer.hpp"
-#include "maze-core/reflection/MazeMetaClass.hpp"
-#include "maze-core/settings/MazeSettings.hpp"
-#include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorAction.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(PropertyDrawerString);
-    MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(EditorActionEntityRemove);
 
 
     //////////////////////////////////////////
-    // Class PropertyDrawerString
+    // Class EditorActionEntityRemove
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API PropertyDrawerString
-        : public GenericPropertyDrawer<String>
-        , public MultiDelegateCallbackReceiver
+    class MAZE_EDITOR_TOOLS_API EditorActionEntityRemove
+        : public EditorAction
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(PropertyDrawerString, PropertyDrawer);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorActionEntityRemove, EditorAction);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(PropertyDrawerString);
+        struct EntityData
+        {
+            EntityPtr entity;
+            Transform2DPtr parentTransform2D;
+            Transform3DPtr parentTransform3D;
+        };
 
     public:
 
         //////////////////////////////////////////
-        virtual ~PropertyDrawerString();
+        virtual ~EditorActionEntityRemove();
 
         //////////////////////////////////////////
-        static PropertyDrawerStringPtr Create(String const& _label);
-
-
-        //////////////////////////////////////////
-        virtual void setValue(String const& _value) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual String getValue() const MAZE_OVERRIDE;
+        static EditorActionEntityRemovePtr Create(
+            EntityPtr const& _entity);
 
 
         //////////////////////////////////////////
-        virtual void buildUI(
-            Transform2DPtr const& _parent,
-            CString _label = nullptr) MAZE_OVERRIDE;
-
-        ////////////////////////////////////////////
-        virtual void unselectUI() MAZE_OVERRIDE;
+        inline EntityPtr const& getEntity() const { return m_entity; }
 
     protected:
 
         //////////////////////////////////////////
-        PropertyDrawerString();
+        EditorActionEntityRemove();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        bool init(
+            EntityPtr const& _entity);
 
 
-        //////////////////////////////////////////
-        void notifyTextInput(EditBox2D* _editBox);
+        ////////////////////////////////////
+        virtual void applyImpl() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        void notifySelectedChanged(EditBox2D* _editBox, bool _selected);
+        ////////////////////////////////////
+        virtual void revertImpl() MAZE_OVERRIDE;
 
     protected:
-        EditBox2DPtr m_editBox;
+        EntityPtr m_entity;
+        EcsWorldPtr m_world;
+        EcsSceneId m_sceneId;
+
+        Vector<EntityData> m_entityData;
+        //Transform2DPtr m_parentTransform2D;
+        //Transform3DPtr m_parentTransform3D;
+
     };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazePropertyDrawerString_hpp_
+#endif // _MazeEditorActionEntityRemove_hpp_
 //////////////////////////////////////////
