@@ -48,6 +48,8 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionEntityAdd.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
@@ -57,16 +59,24 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(Transform3D);
+    
+
+    //////////////////////////////////////////
     namespace EditorHelper
     {
         //////////////////////////////////////////
         bool IsValidSceneMode();
 
         //////////////////////////////////////////
-        EntityPtr CreateNewPrefab2D();
+        EntityPtr CreateNewPrefab2D(
+            Transform2DPtr const& _parent = nullptr,
+            bool _select = true);
 
         //////////////////////////////////////////
-        EntityPtr CreateNewPrefab3D();
+        EntityPtr CreateNewPrefab3D(
+            Transform3DPtr const& _parent = nullptr,
+            bool _select = true);
 
         //////////////////////////////////////////
         EntityPtr CreateEntity(CString _entityName);
@@ -78,13 +88,22 @@ namespace Maze
         EntityPtr CreateEntity3D(CString _entityName);
 
         //////////////////////////////////////////
-        EntityPtr CreateBuiltinMesh(BuiltinRenderMeshType _meshType);
+        EntityPtr CreateBuiltinMesh(
+            BuiltinRenderMeshType _meshType,
+            Transform3DPtr const& _parent = nullptr,
+            bool _select = true);
 
         //////////////////////////////////////////
-        EntityPtr CreateDirectionalLight(CString _entityName);
+        EntityPtr CreateDirectionalLight(
+            CString _entityName,
+            Transform3DPtr const& _parent = nullptr,
+            bool _select = true);
 
         //////////////////////////////////////////
-        EntityPtr CreateNewParticleSystem3D(CString _entityName);
+        EntityPtr CreateNewParticleSystem3D(
+            CString _entityName,
+            Transform3DPtr const& _parent = nullptr,
+            bool _select = true);
 
         //////////////////////////////////////////
         bool SaveValidate();

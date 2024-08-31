@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/editor-actions/MazeEditorActionEntityRemove.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionEntityAdd.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
@@ -35,34 +35,34 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class EditorActionEntityRemove
+    // Class EditorActionEntityAdd
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditorActionEntityRemove, EditorAction);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditorActionEntityAdd, EditorAction);
  
     //////////////////////////////////////////
-    EditorActionEntityRemove::EditorActionEntityRemove()
+    EditorActionEntityAdd::EditorActionEntityAdd()
     {
 
     }
      
     //////////////////////////////////////////
-    EditorActionEntityRemove::~EditorActionEntityRemove()
+    EditorActionEntityAdd::~EditorActionEntityAdd()
     {
 
     }
 
     //////////////////////////////////////////
-    EditorActionEntityRemovePtr EditorActionEntityRemove::Create(
+    EditorActionEntityAddPtr EditorActionEntityAdd::Create(
         EntityPtr const& _entity)
     {
-        EditorActionEntityRemovePtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorActionEntityRemove, object, init(_entity));
+        EditorActionEntityAddPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorActionEntityAdd, object, init(_entity));
         return object;
     }
 
     //////////////////////////////////////////
-    bool EditorActionEntityRemove::init(
+    bool EditorActionEntityAdd::init(
         EntityPtr const& _entity)
     {
         if (!_entity || !_entity->getEcsWorld())
@@ -71,6 +71,7 @@ namespace Maze
         m_entity = _entity;
         m_world = _entity->getEcsWorld()->getSharedPtr();
         m_sceneId = m_entity->getEcsScene() ? m_entity->getEcsScene()->getId() : EcsSceneId();
+
 
         if (Transform3DPtr transform3D = m_entity->getComponent<Transform3D>())
         {
@@ -107,17 +108,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditorActionEntityRemove::applyImpl()
+    void EditorActionEntityAdd::applyImpl()
     {
-        for (EntityData const& entityData : m_entityData)
-        {
-            m_world->removeEntity(entityData.entity);
-        }
-    }
+        if (m_entity->getEcsWorld())
+            return;
 
-    //////////////////////////////////////////
-    void EditorActionEntityRemove::revertImpl()
-    {
         EcsScenePtr const& scene = SceneManager::GetInstancePtr()->getScene(m_sceneId);
 
         for (EntityData const& entityData : m_entityData)
@@ -131,6 +126,13 @@ namespace Maze
             if (entityData.parentTransform3D)
                 entityData.entity->getComponent<Transform3D>()->setParent(entityData.parentTransform3D);
         }
+    }
+
+    //////////////////////////////////////////
+    void EditorActionEntityAdd::revertImpl()
+    {
+        for (EntityData const& entityData : m_entityData)
+            m_world->removeEntity(entityData.entity);
     }
 
 

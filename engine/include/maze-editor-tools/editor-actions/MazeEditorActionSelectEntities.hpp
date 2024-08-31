@@ -65,6 +65,11 @@ namespace Maze
             Vector<EntityPtr> const& _entities,
             bool _clearSelectionList = true);
 
+        //////////////////////////////////////////
+        static EditorActionSelectEntitiesPtr Create(
+            bool _select,
+            EntityPtr const& _entity,
+            bool _clearSelectionList = true);
 
     protected:
 

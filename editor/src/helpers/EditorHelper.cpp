@@ -81,6 +81,9 @@
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionActionsGroup.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionSelectEntities.hpp"
+#include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
@@ -103,18 +106,57 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        EntityPtr CreateNewPrefab2D()
+        void ProcessEditorActionsForCreatedEntity(
+            EntityPtr const& _gameObject,
+            bool _select)
+        {
+            if (EditorActionManager::GetInstancePtr())
+            {
+                EditorActionActionsGroupPtr group = EditorActionActionsGroup::Create();
+
+                group->addAction(EditorActionEntityAdd::Create(_gameObject));
+                if (_select)
+                    group->addAction(EditorActionSelectEntities::Create(
+                        true,
+                        _gameObject));
+
+                EditorActionManager::GetInstancePtr()->applyAction(group);
+            }
+            else
+            {
+                if (_select)
+                    SelectionManager::GetInstancePtr()->selectObject(_gameObject);
+            }
+        }
+
+
+        //////////////////////////////////////////
+        EntityPtr CreateNewPrefab2D(
+            Transform2DPtr const& _parent,
+            bool _select)
         {
             EntityPtr gameObject = EditorManager::GetInstancePtr()->createNewPrefab();
-            gameObject->ensureComponent<Transform2D>();
+            Transform2DPtr const& transform2D = gameObject->ensureComponent<Transform2D>();
+            if (transform2D)
+                transform2D->setParent(_parent);
+
+            ProcessEditorActionsForCreatedEntity(gameObject, _select);
+
             return gameObject;
         }
 
         //////////////////////////////////////////
-        EntityPtr CreateNewPrefab3D()
+        EntityPtr CreateNewPrefab3D(
+            Transform3DPtr const& _parent,
+            bool _select)
         {
             EntityPtr gameObject = EditorManager::GetInstancePtr()->createNewPrefab();
-            gameObject->ensureComponent<Transform3D>();
+            Transform3DPtr const& transform3D = gameObject->ensureComponent<Transform3D>();
+            if (transform3D)
+                transform3D->setParent(_parent);
+
+            ProcessEditorActionsForCreatedEntity(gameObject, _select);
+
             return gameObject;
         }
 
@@ -151,7 +193,6 @@ namespace Maze
                 }
                 case EditorSceneMode::Prefab:
                 {
-
                     EntityPtr const& prefabEntity = EditorPrefabManager::GetInstancePtr()->getPrefabEntity();
                     MAZE_ERROR_RETURN_VALUE_IF(!prefabEntity, EntityPtr(), "Prefab entity is null!");
                     Transform2DPtr prefabTransform = prefabEntity->getComponent<Transform2D>();
@@ -205,7 +246,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        EntityPtr CreateBuiltinMesh(BuiltinRenderMeshType _meshType)
+        EntityPtr CreateBuiltinMesh(
+            BuiltinRenderMeshType _meshType,
+            Transform3DPtr const& _parent,
+            bool _select)
         {
             EntityPtr gameObject = CreateEntity3D(_meshType.toCString());
             if (!gameObject)
@@ -215,11 +259,19 @@ namespace Maze
             meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getBuiltinRenderMesh(_meshType));
             meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Specular));
 
+            if (_parent)
+                gameObject->ensureComponent<Transform3D>()->setParent(_parent);
+
+            ProcessEditorActionsForCreatedEntity(gameObject, _select);
+
             return gameObject;
         }
 
         //////////////////////////////////////////
-        EntityPtr CreateDirectionalLight(CString _entityName)
+        EntityPtr CreateDirectionalLight(
+            CString _entityName,
+            Transform3DPtr const& _parent,
+            bool _select)
         {
             EntityPtr gameObject = CreateEntity3D(_entityName);
             if (!gameObject)
@@ -232,11 +284,19 @@ namespace Maze
 
             light3D->getTransform()->setLocalY(5.0f);
 
+            if (_parent)
+                light3D->getTransform()->setParent(_parent);
+
+            ProcessEditorActionsForCreatedEntity(gameObject, _select);
+
             return gameObject;
         }
 
         //////////////////////////////////////////
-        EntityPtr CreateNewParticleSystem3D(CString _entityName)
+        EntityPtr CreateNewParticleSystem3D(
+            CString _entityName,
+            Transform3DPtr const& _parent,
+            bool _select)
         {
             EntityPtr gameObject = CreateEntity3D(_entityName);
             if (!gameObject)
@@ -249,6 +309,11 @@ namespace Maze
             particleSystem->getMainModule().getSpeed().setConstant(5.0f);
             particleSystem->setMaterial(ParticlesManager::GetInstancePtr()->getDefaultParticleMaterial());
             particleSystem->getMainModule().getEmission().emissionPerSecond.setConstant(30.0f);
+
+            if (_parent)
+                particleSystem->getTransform()->setParent(_parent);
+
+            ProcessEditorActionsForCreatedEntity(gameObject, _select);
 
             return gameObject;
         }

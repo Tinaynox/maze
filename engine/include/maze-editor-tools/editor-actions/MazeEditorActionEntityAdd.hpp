@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeEditorActionEntityRemove_hpp_))
-#define _MazeEditorActionEntityRemove_hpp_
+#if (!defined(_MazeEditorActionEntityAdd_hpp_))
+#define _MazeEditorActionEntityAdd_hpp_
 
 
 //////////////////////////////////////////
@@ -41,20 +41,20 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorActionEntityRemove);
+    MAZE_USING_SHARED_PTR(EditorActionEntityAdd);
 
 
     //////////////////////////////////////////
-    // Class EditorActionEntityRemove
+    // Class EditorActionEntityAdd
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API EditorActionEntityRemove
+    class MAZE_EDITOR_TOOLS_API EditorActionEntityAdd
         : public EditorAction
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorActionEntityRemove, EditorAction);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorActionEntityAdd, EditorAction);
 
         //////////////////////////////////////////
         struct EntityData
@@ -67,10 +67,10 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~EditorActionEntityRemove();
+        virtual ~EditorActionEntityAdd();
 
         //////////////////////////////////////////
-        static EditorActionEntityRemovePtr Create(
+        static EditorActionEntityAddPtr Create(
             EntityPtr const& _entity);
 
 
@@ -80,7 +80,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        EditorActionEntityRemove();
+        EditorActionEntityAdd();
 
         //////////////////////////////////////////
         bool init(
@@ -106,5 +106,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeEditorActionEntityRemove_hpp_
+#endif // _MazeEditorActionEntityAdd_hpp_
 //////////////////////////////////////////

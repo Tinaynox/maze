@@ -83,6 +83,7 @@
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
@@ -100,6 +101,7 @@
 #include "maze-editor-tools/texture-picker/MazeSceneTexturePicker.hpp"
 #include "maze-editor-tools/render-mesh-picker/MazeSceneRenderMeshPicker.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionSelectEntities.hpp"
 #include "helpers/EditorHelper.hpp"
 #include "helpers/EditorAssetHelper.hpp"
 #include "helpers/EditorProjectHelper.hpp"
@@ -279,7 +281,6 @@ namespace Maze
                     [meshType](String const& _text)
                     {
                         EntityPtr child = EditorHelper::CreateBuiltinMesh(meshType);
-                        SelectionManager::GetInstancePtr()->selectObject(child);
                     },
                     EditorHelper::IsValidSceneMode);
             }
@@ -288,7 +289,6 @@ namespace Maze
                 [](String const& _text)
                 {
                     EntityPtr child = EditorHelper::CreateNewParticleSystem3D("Particle System");
-                    SelectionManager::GetInstancePtr()->selectObject(child);
                 },
                 EditorHelper::IsValidSceneMode);
                         
@@ -306,8 +306,9 @@ namespace Maze
                             "Add Child/3D/Light/Directional",
                             [_entity, transform3D](String const& _text)
                             {
-                                EntityPtr child = EditorHelper::CreateDirectionalLight("Directional Light");
-                                child->ensureComponent<Transform3D>()->setParent(transform3D->getSharedPtr());
+                                EntityPtr child = EditorHelper::CreateDirectionalLight(
+                                    "Directional Light",
+                                    transform3D->cast<Transform3D>());
                             });
 
                         for (BuiltinRenderMeshType meshType = BuiltinRenderMeshType(1); meshType != BuiltinRenderMeshType::MAX; ++meshType)
@@ -316,18 +317,18 @@ namespace Maze
                                 "Add Child/3D/Mesh/" + meshType.toString(),
                                 [_entity, transform3D, meshType](String const& _text)
                                 {
-                                    EntityPtr child = EditorHelper::CreateBuiltinMesh(meshType);
-                                    child->ensureComponent<Transform3D>()->setParent(transform3D->getSharedPtr());
-                                    SelectionManager::GetInstancePtr()->selectObject(child);
+                                    EntityPtr child = EditorHelper::CreateBuiltinMesh(
+                                        meshType,
+                                        transform3D->cast<Transform3D>());
                                 });
                         }
                         _menuListTree->addItem(
                             "Add Child/3D/FX/Particle System",
                             [_entity, transform3D](String const& _text)
                             {
-                                EntityPtr child = EditorHelper::CreateNewParticleSystem3D("Particle System");
-                                child->ensureComponent<Transform3D>()->setParent(transform3D->getSharedPtr());
-                                SelectionManager::GetInstancePtr()->selectObject(child);
+                                EntityPtr child = EditorHelper::CreateNewParticleSystem3D(
+                                    "Particle System",
+                                    transform3D->cast<Transform3D>());
                             });
                     }
                     
@@ -341,7 +342,7 @@ namespace Maze
                         "Add Child/3D/Light/Directional",
                         [](String const& _text)
                         {
-                            EditorHelper::CreateDirectionalLight("Directional Light");
+                            EntityPtr child = EditorHelper::CreateDirectionalLight("Directional Light");
                         });
 
                     for (BuiltinRenderMeshType meshType = BuiltinRenderMeshType(1); meshType != BuiltinRenderMeshType::MAX; ++meshType)
@@ -351,7 +352,6 @@ namespace Maze
                             [meshType](String const& _text)
                             {
                                 EntityPtr child = EditorHelper::CreateBuiltinMesh(meshType);
-                                SelectionManager::GetInstancePtr()->selectObject(child);
                             });
                     }
                     
@@ -360,7 +360,6 @@ namespace Maze
                         [](String const& _text)
                         {
                             EntityPtr child = EditorHelper::CreateNewParticleSystem3D("Particle System");
-                            SelectionManager::GetInstancePtr()->selectObject(child);
                         });
                 });
         }

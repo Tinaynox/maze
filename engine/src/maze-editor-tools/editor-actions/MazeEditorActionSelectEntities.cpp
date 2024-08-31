@@ -62,6 +62,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    EditorActionSelectEntitiesPtr EditorActionSelectEntities::Create(
+        bool _select,
+        EntityPtr const& _entity,
+        bool _clearSelectionList)
+    {
+        EditorActionSelectEntitiesPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(
+            EditorActionSelectEntities,
+            object,
+            init(_select, Vector<EntityPtr>{_entity}, _clearSelectionList));
+        return object;
+    }
+
+    //////////////////////////////////////////
     bool EditorActionSelectEntities::init(
         bool _select,
         Vector<EntityPtr> const& _entities,
