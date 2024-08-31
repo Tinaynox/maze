@@ -27,6 +27,7 @@
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolScale.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -94,8 +95,8 @@ namespace Maze
             F32 len = length;
             if (m_usingAxis >= 0)
             {
-                // if (getWorldAxis(m_usingAxis) == _axis)
-                //     len += m_deltaLength / scale;
+                //if (getWorldAxis(m_usingAxis) == _axis)
+                //    len += m_deltaLength / scale;
             }
 
             GizmosHelper::DrawCylinder(
@@ -248,10 +249,12 @@ namespace Maze
 
         if (m_usingAxis >= 0)
         {
+            Vec3F axis;
             Vec3F norm;
             if (m_usingAxis == 3)
             {
                 norm = -camera->getTransform()->getWorldForwardDirection();
+                axis = camera->getTransform()->getWorldRightDirection();
             }
             else
             {
@@ -269,54 +272,48 @@ namespace Maze
                         norm = crossAxis;
                     }
                 }
+
+                axis = basisTransform.transform(getWorldAxis(m_usingAxis)).normalizedCopy();
             }
 
-            F32 dist;
-            if (Math::RaycastPlane(ray.getPoint(), ray.getDirection(), pos, norm, dist))
+
+            Ray cursorRay = camera->convertViewportCoordsToRay(_cursorPos);
+
+            if (m_useRequest)
             {
-                Vec3F point = ray.getPoint(dist);
+                m_useRequest = false;
+                m_startScale = entityTransform->getLocalScale();
 
-                Vec3F axis;
-
-                if (m_usingAxis < 3)
-                {
-                    axis = basisTransform.transform(getWorldAxis(m_usingAxis)).normalizedCopy();
-                    point = Math::ClosestPointOnLine(pos, pos + axis, point);
-                    
-                }
-                else
-                {
-                    axis = camera->getTransform()->getWorldRightDirection();
-                }
-
-                if (m_useRequest)
-                {
-                    m_useRequest = false;
-                    m_startScale = entityTransform->getLocalScale();
-                    m_startTransform = mat;
-                    m_startPoint = point;
-                }
-                else
-                {
-                    
-                    Vec3F delta = point - m_startPoint;
-
-                    if (m_usingAxis == 3)
-                    {
-                        m_deltaLength = 
-                            delta.dotProduct(camera->getTransform()->getWorldRightDirection()) +
-                            delta.dotProduct(camera->getTransform()->getWorldUpDirection());
-                    }
-                    else
-                        m_deltaLength = delta.dotProduct(axis);
-
-                    Vec3F parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldScale()
-                                                                           : Vec3F::c_one;
-                    Vec3F newWorldScale = m_deltaLength * getWorldAxis(m_usingAxis) + parentWorldScale * m_startScale;
-                    Vec3F newLocalScale = newWorldScale / parentWorldScale;
-                    entityTransform->setLocalScale(newLocalScale);
-                }
+                m_startPosition = pos;
+                m_startPoint = Math::ClosestPointOnLineBToLineA(cursorRay, Ray(m_startPosition, axis));
             }
+            else
+            {
+                Vec3F endPoint = Math::ClosestPointOnLineBToLineA(cursorRay, Ray(m_startPosition, axis));
+
+                Vec3F delta = endPoint - m_startPoint;
+
+#if 0
+                GizmosHelper::DrawSphere(m_startPoint, 0.1f, ColorF128::c_red, 0.1f);
+                GizmosHelper::DrawSphere(endPoint, 0.1f, ColorF128::c_green, 0.1f);
+#endif
+
+                if (m_usingAxis == 3)
+                {
+                    m_deltaLength =
+                        delta.dotProduct(camera->getTransform()->getWorldRightDirection()) +
+                        delta.dotProduct(camera->getTransform()->getWorldUpDirection());
+                }
+                else
+                    m_deltaLength = delta.dotProduct(axis);
+
+                Vec3F parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldScale()
+                                                                      : Vec3F::c_one;
+                Vec3F newWorldScale = m_deltaLength * getWorldAxis(m_usingAxis) + parentWorldScale * m_startScale;
+                Vec3F newLocalScale = newWorldScale / parentWorldScale;
+                EditorActionHelper::Scale(entity, newLocalScale);
+            }
+
         }
         else
         {

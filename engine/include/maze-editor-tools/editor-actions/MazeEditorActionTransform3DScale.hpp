@@ -25,81 +25,79 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeGizmoToolScale_hpp_))
-#define _MazeGizmoToolScale_hpp_
+#if (!defined(_MazeEditorActionTransform3DScale_hpp_))
+#define _MazeEditorActionTransform3DScale_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/utils/MazeObservableValue.hpp"
-#include "maze-core/system/MazeTimer.hpp"
-#include "maze-core/reflection/MazeMetaClass.hpp"
-#include "maze-core/settings/MazeSettings.hpp"
-#include "maze-core/math/MazeMat4.hpp"
-#include "maze-editor-tools/gizmo-tools/MazeGizmoTool.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorAction.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(GizmoToolScale);
+    MAZE_USING_SHARED_PTR(EditorActionTransform3DScale);
 
 
     //////////////////////////////////////////
-    // Class GizmoToolScale
+    // Class EditorActionTransform3DScale
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API GizmoToolScale
-        : public GizmoTool
+    class MAZE_EDITOR_TOOLS_API EditorActionTransform3DScale
+        : public EditorAction
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~GizmoToolScale() = default;
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorActionTransform3DScale, EditorAction);
+
+    public:
 
         //////////////////////////////////////////
-        static GizmoToolScalePtr Create();
+        virtual ~EditorActionTransform3DScale();
 
         //////////////////////////////////////////
-        virtual void manipulate(Set<EntityPtr> const& _entities, Vec2F const& _cursorPos) MAZE_OVERRIDE;
+        static EditorActionTransform3DScalePtr Create(
+            EntityPtr const& _entity,
+            Vec3F const& _newScale);
+
 
         //////////////////////////////////////////
-        virtual void processCursorPress(Vec2F const& _cursorPos) MAZE_OVERRIDE;
+        inline EntityPtr const& getEntity() const { return m_entity; }
 
         //////////////////////////////////////////
-        virtual void processCursorRelease() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual bool isUsing() MAZE_OVERRIDE { return m_usingAxis >= 0; }
+        void merge(Vec3F const& _newScale);
 
     protected:
 
         //////////////////////////////////////////
-        GizmoToolScale() = default;
+        EditorActionTransform3DScale();
 
         //////////////////////////////////////////
-        Vec3F getWorldAxis(S32 _axis);
+        bool init(
+            EntityPtr const& _entity,
+            Vec3F const& _newScale);
+
+
+        ////////////////////////////////////
+        virtual void applyImpl() MAZE_OVERRIDE;
+
+        ////////////////////////////////////
+        virtual void revertImpl() MAZE_OVERRIDE;
 
     protected:
-        S32 m_selectedAxis = -1;
-        S32 m_usingAxis = -1;
+        EntityPtr m_entity;
+        Vec3F m_prevScale = Vec3F::c_zero;
+        Vec3F m_newScale = Vec3F::c_zero;
 
-        bool m_useRequest = false;
-        Vec3F m_startScale = Vec3F::c_zero;
-        Vec3F m_startPoint = Vec3F::c_zero;
-
-        Vec3F m_startPosition = Vec3F::c_zero;
-
-        F32 m_deltaLength = 0.0f;
     };
-
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeGizmoToolScale_hpp_
+#endif // _MazeEditorActionTransform3DScale_hpp_
 //////////////////////////////////////////

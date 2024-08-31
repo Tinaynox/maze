@@ -90,6 +90,7 @@ namespace Maze
         bool m_useRequest = false;
         Vec3F m_startPosition = Vec3F::c_zero;
         Vec3F m_startPoint = Vec3F::c_zero;
+        Vec3F m_grabPoint = Vec3F::c_zero;
     };
 
 

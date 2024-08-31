@@ -27,6 +27,7 @@
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolTranslation.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -51,6 +52,10 @@ namespace Maze
     {
         Camera3DPtr const& camera = GizmosManager::GetInstancePtr()->getCamera();
         if (!camera)
+            return;
+
+        CanvasPtr const& canvas = GizmosManager::GetInstancePtr()->getCanvas();
+        if (!canvas)
             return;
 
         if (_entities.empty())
@@ -139,7 +144,10 @@ namespace Maze
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
                 scale * length,
                 dist))
+            {
+                m_grabPoint = ray.getPoint() + dist * ray.getDirection();
                 return true;
+            }
             if (Math::RaycastCone(
                 ray.getPoint(),
                 ray.getDirection(),
@@ -148,7 +156,10 @@ namespace Maze
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius * 4.0f,
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight * 2.0f,
                 dist))
+            {
+                m_grabPoint = ray.getPoint() + dist * ray.getDirection();
                 return true;
+            }
             return false;
         };
 
@@ -214,27 +225,29 @@ namespace Maze
                 }
             }
 
-            F32 dist;
-            if (Math::RaycastPlane(ray.getPoint(), ray.getDirection(), pos, norm, dist))
+            Ray cursorRay = camera->convertViewportCoordsToRay(_cursorPos);
+
+            if (m_useRequest)
             {
-                Vec3F point = ray.getPoint(dist);
-                point = Math::ClosestPointOnLine(pos, pos + axis, point);
+                m_useRequest = false;
+                m_startPosition = pos;
+                m_startPoint = Math::ClosestPointOnLineBToLineA(cursorRay, Ray(m_startPosition, axis));
+            }
+            else
+            {
+                Vec3F endPoint = Math::ClosestPointOnLineBToLineA(cursorRay, Ray(m_startPosition, axis));
 
-                if (m_useRequest)
-                {
-                    m_useRequest = false;
-                    m_startPosition = pos;
-                    m_startPoint = point;
-                }
-                else
-                {
-                    Vec3F delta = point - m_startPoint;
-                    Vec3F newWorldPosition = m_startPosition + delta;
+                Vec3F delta = endPoint - m_startPoint;
+                Vec3F newWorldPosition = m_startPosition + delta;
+                
+#if 0
+                GizmosHelper::DrawSphere(m_startPoint, 0.1f, ColorF128::c_red, 0.1f);
+                GizmosHelper::DrawSphere(endPoint, 0.1f, ColorF128::c_green, 0.1f);
+#endif
 
-                    TMat parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
-                                                                           : TMat::c_identity;
-                    entityTransform->setLocalPosition(parentWorldScale.inversed().transform(newWorldPosition));
-                }
+                TMat parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
+                                                                     : TMat::c_identity;
+                EditorActionHelper::Translate(entity, parentWorldScale.inversed().transform(newWorldPosition));
             }
         }
         else

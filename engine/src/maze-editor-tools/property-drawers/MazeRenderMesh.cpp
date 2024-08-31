@@ -213,12 +213,12 @@ namespace Maze
     {
         PropertyDrawerRenderMeshWPtr weakPtr = cast<PropertyDrawerRenderMesh>();
         RenderMeshPickerManager::GetInstancePtr()->openRenderMeshPicker(
-            [weakPtr](RenderMeshPtr const& _material)
+            [weakPtr](RenderMeshPtr const& _renderMesh)
             {
                 PropertyDrawerRenderMeshPtr ptr = weakPtr.lock();
                 if (ptr)
                 {
-                    ptr->setValue(_material);
+                    ptr->setValue(_renderMesh);
                     ptr->eventUIData();
                 }
             },

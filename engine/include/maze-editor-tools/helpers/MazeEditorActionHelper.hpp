@@ -45,6 +45,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(Object);    
+    MAZE_USING_SHARED_PTR(Transform3D);
 
 
     //////////////////////////////////////////
@@ -129,6 +130,22 @@ namespace Maze
         MAZE_EDITOR_TOOLS_API void CustomAction(
             std::function<void()> const& _applyFunction,
             std::function<void()> const& _revertFunction);
+
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void Translate(
+            EntityPtr const& _entity,
+            Vec3F const& _newPosition);
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void Rotate(
+            EntityPtr const& _entity,
+            Quaternion const& _newRotation);
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void Scale(
+            EntityPtr const& _entity,
+            Vec3F const& _newScale);
 
     } // namespace EditorActionHelper
     //////////////////////////////////////////

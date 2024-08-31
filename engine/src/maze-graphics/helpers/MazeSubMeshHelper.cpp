@@ -175,8 +175,8 @@ namespace Maze
                 tangentRes /= F32(rt.size());
                 bitangentRes /= F32(rb.size());
 
-                tangentRes = Math::Ortogonalize(_normals[i], tangentRes);
-                bitangentRes = Math::Ortogonalize(_normals[i], bitangentRes);
+                tangentRes = Math::Orthogonalize(_normals[i], tangentRes);
+                bitangentRes = Math::Orthogonalize(_normals[i], bitangentRes);
 
                 _outTangents[i] = tangentRes;
                 _outBitangents[i] = bitangentRes;

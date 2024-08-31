@@ -78,6 +78,9 @@
 #include "maze-editor-tools/editor-actions/MazeEditorActionSelectObjects.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionMetaInstancesSetString.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionCustom.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionTransform3DTranslate.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionTransform3DRotate.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionTransform3DScale.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 
 
@@ -284,6 +287,126 @@ namespace Maze
                 EditorActionCustom::Create(
                     _applyFunction,
                     _revertFunction));
+        }
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void Translate(
+            EntityPtr const& _entity,
+            Vec3F const& _newPosition)
+        {
+            if (!_entity)
+                return;
+
+            Transform3D* transform = _entity->getComponentRaw<Transform3D>();
+            if (!transform)
+                return;
+
+            if (transform->getLocalPosition() == _newPosition)
+                return;
+
+            if (EditorActionManager::GetInstancePtr())
+            {
+                bool merged = false;
+                if (EditorActionTransform3DTranslatePtr lastAction = EditorActionManager::GetInstancePtr()->castLastEditorAction<EditorActionTransform3DTranslate>())
+                {
+                    if (EditorAction::GetCurrentTimestamp() - lastAction->getTimestamp() <= 1 &&
+                        lastAction->getEntity() == _entity)
+                    {
+                        merged = true;
+                        lastAction->merge(_newPosition);
+                    }
+                }
+
+                if (!merged)
+                {
+                    EditorActionManager::GetInstancePtr()->applyAction(
+                        EditorActionTransform3DTranslate::Create(_entity, _newPosition));
+                }
+            }
+            else
+            {
+                transform->setLocalPosition(_newPosition);
+            }
+        }
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void Rotate(
+            EntityPtr const& _entity,
+            Quaternion const& _newRotation)
+        {
+            if (!_entity)
+                return;
+
+            Transform3D* transform = _entity->getComponentRaw<Transform3D>();
+            if (!transform)
+                return;
+
+            if (transform->getLocalRotation() == _newRotation)
+                return;
+
+            if (EditorActionManager::GetInstancePtr())
+            {
+                bool merged = false;
+                if (EditorActionTransform3DRotatePtr lastAction = EditorActionManager::GetInstancePtr()->castLastEditorAction<EditorActionTransform3DRotate>())
+                {
+                    if (EditorAction::GetCurrentTimestamp() - lastAction->getTimestamp() <= 1 &&
+                        lastAction->getEntity() == _entity)
+                    {
+                        merged = true;
+                        lastAction->merge(_newRotation);
+                    }
+                }
+
+                if (!merged)
+                {
+                    EditorActionManager::GetInstancePtr()->applyAction(
+                        EditorActionTransform3DRotate::Create(_entity, _newRotation));
+                }
+            }
+            else
+            {
+                transform->setLocalRotation(_newRotation);
+            }
+        }
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void Scale(
+            EntityPtr const& _entity,
+            Vec3F const& _newScale)
+        {
+            if (!_entity)
+                return;
+
+            Transform3D* transform = _entity->getComponentRaw<Transform3D>();
+            if (!transform)
+                return;
+
+            if (transform->getLocalScale() == _newScale)
+                return;
+
+            if (EditorActionManager::GetInstancePtr())
+            {
+                bool merged = false;
+                if (EditorActionTransform3DScalePtr lastAction = EditorActionManager::GetInstancePtr()->castLastEditorAction<EditorActionTransform3DScale>())
+                {
+                    if (EditorAction::GetCurrentTimestamp() - lastAction->getTimestamp() <= 1 &&
+                        lastAction->getEntity() == _entity)
+                    {
+                        merged = true;
+                        lastAction->merge(_newScale);
+                    }
+                }
+
+                if (!merged)
+                {
+                    EditorActionManager::GetInstancePtr()->applyAction(
+                        EditorActionTransform3DScale::Create(_entity, _newScale));
+                }
+            }
+            else
+            {
+                transform->setLocalScale(_newScale);
+            }
         }
 
     } // namespace EditorActionHelper

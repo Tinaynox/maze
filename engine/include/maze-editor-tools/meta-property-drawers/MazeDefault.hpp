@@ -37,6 +37,9 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
+#include "maze-core/helpers/MazeMetaClassHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
+#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
 
 
 //////////////////////////////////////////
@@ -100,8 +103,18 @@ namespace Maze
         {
             TProperty value = m_drawer->getValue();
 
+#if 1
+            if (MetaClassHelper::IsValueEqual(value, m_metaProperty, m_metaInstances))
+                return;
+
+            if (m_useEditorActions && EditorActionManager::GetInstancePtr())
+                EditorActionHelper::SetValue(value, m_metaProperty, m_metaInstances);
+            else
+                MetaClassHelper::SetValue(value, m_metaProperty, m_metaInstances);
+#else
             for (MetaInstance const& metaInstance : this->m_metaInstances)
                 this->m_metaProperty->setValue(metaInstance, &value);
+#endif
         }
 
     protected:

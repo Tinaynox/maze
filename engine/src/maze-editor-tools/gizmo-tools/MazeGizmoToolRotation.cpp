@@ -27,6 +27,7 @@
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolRotation.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -91,7 +92,6 @@ namespace Maze
         {
             GizmosHelper::SetColor(_color);
 
-            /*
             GizmosHelper::DrawCylinder(
                 _axis * length * 0.5f,
                 _axis,
@@ -100,7 +100,7 @@ namespace Maze
                 _color,
                 0.0f,
                 renderMode);
-            */
+
             GizmosHelper::DrawWireCircle(
                 Vec3F::c_zero,
                 _axis,
@@ -203,10 +203,10 @@ namespace Maze
                     Vec3F point = ray.getPoint(dist);
 
                     Vec3F cross = (-norm).crossProduct(axis);
-                    point = Math::ClosestPointOnLine(
+                    point = Math::ProjectionPointOnLine(
+                        point,
                         raycastPos,
-                        raycastPos + cross,
-                        point);
+                        raycastPos + cross);
 
                     Vec3F delta = (point - raycastPos);
                     F32 d = delta.dotProduct(cross);
@@ -256,7 +256,8 @@ namespace Maze
                         Quaternion newLocalRotation = Quaternion(
                             parentWorldTransform.inversed().transform(m_startVector).normalizedCopy(),
                             parentWorldTransform.inversed().transform(vector).normalizedCopy());
-                        entityTransform->setLocalRotation(newLocalRotation * m_startRotation);
+
+                        EditorActionHelper::Rotate(entity, newLocalRotation* m_startRotation);
                     }
                 }
             }

@@ -390,18 +390,28 @@ namespace Maze
 
         Size vectorSize = (Size)Math::Max(m_vectorSizeDrawer->getValue(), 0);
 
-        for (MetaInstance const& metaInstance : m_metaInstances)
-            m_metaProperty->setVectorSize(metaInstance, vectorSize);
-
         ensureItemDrawers(vectorSize);
 
         m_values.resize(m_itemDrawers.size());
         for (Size i = 0, in = m_itemDrawers.size(); i < in; ++i)
             m_itemDrawers[i]->toDataBlock(m_values[i]);
 
+
         ValueToDataBlock(m_values, m_elements);
-        for (MetaInstance const& metaInstance : m_metaInstances)
-            m_metaProperty->setDataBlock(metaInstance, m_elements);
+
+        if (m_useEditorActions && EditorActionManager::GetInstancePtr())
+        {
+            EditorActionManager::GetInstancePtr()->applyAction(
+                EditorActionMetaInstancesSetDataBlock::Create(
+                    m_metaProperty,
+                    Vector<MetaInstance>(m_metaInstances.begin(), m_metaInstances.end()),
+                    m_elements));
+        }
+        else
+        {
+            for (MetaInstance const& metaInstance : m_metaInstances)
+                m_metaProperty->setDataBlock(metaInstance, m_elements);
+        }
     }
 
     //////////////////////////////////////////

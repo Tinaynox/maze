@@ -101,10 +101,51 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API inline Vec3F ProjectionPointOnVector(Vec3F const& _a, Vec3F const& _b)
+        MAZE_CORE_API inline Vec3F ProjectionPointOnVector(Vec3F const& _point, Vec3F const& _vector)
         {
-            Vec3F bn = _b / _b.length();
-            return bn * _a.dotProduct(bn);
+            Vec3F vectorNormalized = _vector.normalizedCopy();
+            return vectorNormalized * _point.dotProduct(vectorNormalized);
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API inline Vec3F ProjectionPointOnLine(
+            Vec3F const& _point,
+            Vec3F const& _lineA,
+            Vec3F const& _lineB)
+        {
+            Vec3F c = _point - _lineA;
+            Vec3F v = _lineB - _lineA;
+
+            v.normalize();
+            F32 t = v.dotProduct(c);
+
+            v *= t;
+
+            return (_lineA + v);
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API inline Vec3F ProjectionPointOnSegment(
+            Vec3F const& _point,
+            Vec3F const& _segmentPointA,
+            Vec3F const& _segmentPointB)
+        {
+            Vec3F c = _point - _segmentPointA;
+            Vec3F v = _segmentPointB - _segmentPointA;
+            F32 d = v.length();
+            if (d > 1e-08f)
+                v /= d;
+            F32 t = v.dotProduct(c);
+
+            if (t < 0.0f)
+                return _segmentPointA;
+
+            if (t > d)
+                return _segmentPointB;
+
+            v *= t;
+
+            return (_segmentPointA + v);
         }
 
         //////////////////////////////////////////
@@ -116,6 +157,30 @@ namespace Maze
             Vec3F v = _point - _planeOrigin;
             F32 dist = v.dotProduct(_planeNormal);
             return _point - dist * _planeNormal;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API inline Vec3F ClosestPointOnLineBToLineA(
+            Ray const& _rayA,
+            Ray const& _rayB)
+        {
+            Vec3F ba = _rayA.getPoint() - _rayB.getPoint();
+            F32 dirADotDirB = _rayA.getDirection().dotProduct(_rayB.getDirection());
+            F32 baDotADir = ba.dotProduct(_rayA.getDirection());
+            F32 baDotBDir = ba.dotProduct(_rayB.getDirection());
+
+            F32 denom = 1.0f - dirADotDirB * dirADotDirB;
+
+            if (denom == 0.0f)
+            {
+                // Lines are parallel
+                return _rayB.getPoint() - baDotBDir * _rayB.getDirection();
+            }
+            else
+            {
+                F32 tb = (dirADotDirB * baDotADir - baDotBDir) / denom;
+                return _rayB.getPoint() - tb * _rayB.getDirection();
+            }
         }
 
         //////////////////////////////////////////
@@ -206,50 +271,11 @@ namespace Maze
             return (fabs(ab - ac - cb) <= _epsilon);
         }
 
-        //////////////////////////////////////////
-        MAZE_CORE_API inline Vec3F ClosestPointOnLine(
-            Vec3F const& _lineA,
-            Vec3F const& _lineB,
-            Vec3F const& _point)
-        {
-            Vec3F c = _point - _lineA;
-            Vec3F v = _lineB - _lineA;
-            
-            v.normalize();
-            F32 t = v.dotProduct(c);
-
-            v *= t;
-
-            return (_lineA + v);
-        }
 
         //////////////////////////////////////////
-        MAZE_CORE_API inline Vec3F ClosestPointOnSegment(
-            Vec3F const& _segmentPointA,
-            Vec3F const& _segmentPointB,
-            Vec3F const& _point)
+        MAZE_CORE_API inline Vec3F Orthogonalize(Vec3F const& _v1, Vec3F const& _v2)
         {
-            Vec3F c = _point - _segmentPointA;
-            Vec3F v = _segmentPointB - _segmentPointA;
-            F32 d = v.length();
-            v.normalize();
-            F32 t = v.dotProduct(c);
- 
-            if (t < 0.0f)
-                return _segmentPointA;
-
-            if (t > d)
-                return _segmentPointB;
- 
-            v *= t;
-
-            return (_segmentPointA + v);
-        }
-
-        //////////////////////////////////////////
-        MAZE_CORE_API inline Vec3F Ortogonalize(Vec3F const& _v1, Vec3F const& _v2)
-        {
-            Vec3F v2ProjV1 = ClosestPointOnSegment(_v1, -_v1, _v2);
+            Vec3F v2ProjV1 = ProjectionPointOnSegment(_v2, _v1, -_v1);
             Vec3F res = _v2 - v2ProjV1;
             res.normalize();
             return res;
