@@ -42,7 +42,7 @@
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
-#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
 
 
 //////////////////////////////////////////
@@ -158,7 +158,7 @@ namespace Maze
     {
         ColorF128 color = m_colorEdit->getColor();
 
-        if (m_useEditorActions && EditorActionManager::GetInstancePtr())
+        if (m_useEditorActions && EditorToolsActionManager::GetInstancePtr())
         {
             ShaderUniformVariant variant(RenderSystem::GetCurrentInstancePtr(), color);
             variant.setName(m_shaderUniformName);

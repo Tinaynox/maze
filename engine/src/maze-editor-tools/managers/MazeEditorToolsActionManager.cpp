@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorAction.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 
@@ -34,41 +34,41 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class EditorActionManager
+    // Class EditorToolsActionManager
     //
     //////////////////////////////////////////
-    EditorActionManager* EditorActionManager::s_instance = nullptr;
+    EditorToolsActionManager* EditorToolsActionManager::s_instance = nullptr;
 
     //////////////////////////////////////////
-    EditorActionManager::EditorActionManager()
+    EditorToolsActionManager::EditorToolsActionManager()
     {
         s_instance = this;
     }
 
     //////////////////////////////////////////
-    EditorActionManager::~EditorActionManager()
+    EditorToolsActionManager::~EditorToolsActionManager()
     {
         if (InputManager::GetInstancePtr())
             InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
     }
 
     //////////////////////////////////////////
-    void EditorActionManager::Initialize(EditorActionManagerPtr& _graphicsManager)
+    void EditorToolsActionManager::Initialize(EditorToolsActionManagerPtr& _graphicsManager)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorActionManager, _graphicsManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorToolsActionManager, _graphicsManager, init());
     }
 
     //////////////////////////////////////////
-    bool EditorActionManager::init()
+    bool EditorToolsActionManager::init()
     {
         if (InputManager::GetInstancePtr())
-            InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &EditorActionManager::notifyKeyboard);
+            InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &EditorToolsActionManager::notifyKeyboard);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void EditorActionManager::setCurrentHistoryIndex(S32 _index)
+    void EditorToolsActionManager::setCurrentHistoryIndex(S32 _index)
     {
         if (m_currentHistoryIndex == _index)
             return;
@@ -100,11 +100,11 @@ namespace Maze
         // Security check
         m_historyIndexSetting = false;
 
-        Debug::Log("%d/%d", m_currentHistoryIndex, (S32)m_history.size());
+        Debug::Log("%d/%d", m_currentHistoryIndex + 1, (S32)m_history.size());
     }
 
     //////////////////////////////////////////
-    void EditorActionManager::applyAction(EditorActionPtr const& _action)
+    void EditorToolsActionManager::applyAction(EditorActionPtr const& _action)
     {
         if (!_action)
             return;
@@ -126,7 +126,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditorActionManager::undoAction()
+    void EditorToolsActionManager::undoAction()
     {
         if (m_history.empty())
             return;
@@ -138,7 +138,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditorActionManager::redoAction()
+    void EditorToolsActionManager::redoAction()
     {
         if (!m_history.size())
             return;
@@ -150,14 +150,14 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    void EditorActionManager::clearHistory()
+    void EditorToolsActionManager::clearHistory()
     {
         m_history.clear();
         m_currentHistoryIndex = -1;
     }
 
     ////////////////////////////////////
-    EditorActionPtr const& EditorActionManager::getLastEditorAction() const
+    EditorActionPtr const& EditorToolsActionManager::getLastEditorAction() const
     {
         static EditorActionPtr nullPointer;
 
@@ -168,7 +168,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditorActionManager::notifyKeyboard(InputEventKeyboardData const& _data)
+    void EditorToolsActionManager::notifyKeyboard(InputEventKeyboardData const& _data)
     {
         switch (_data.type)
         {

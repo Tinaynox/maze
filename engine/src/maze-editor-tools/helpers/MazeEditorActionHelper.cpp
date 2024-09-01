@@ -96,9 +96,9 @@ namespace Maze
             MetaProperty* _metaProperty,
             Set<MetaInstance> const& _metaInstances)
         {
-            if (EditorActionManager::GetInstancePtr())
+            if (EditorToolsActionManager::GetInstancePtr())
             {
-                EditorActionManager::GetInstancePtr()->applyAction(
+                EditorToolsActionManager::GetInstancePtr()->applyAction(
                     EditorActionMetaInstancesSetString::Create(
                         _metaProperty,
                         Vector<MetaInstance>(_metaInstances.begin(), _metaInstances.end()),
@@ -115,9 +115,9 @@ namespace Maze
             Vector<EntityPtr> const& _entities,
             bool _clearSelectionList)
         {
-            if (EditorActionManager::GetInstancePtr())
+            if (EditorToolsActionManager::GetInstancePtr())
             {
-                EditorActionManager::GetInstancePtr()->applyAction(
+                EditorToolsActionManager::GetInstancePtr()->applyAction(
                     EditorActionSelectEntities::Create(
                         true,
                         _entities,
@@ -142,9 +142,9 @@ namespace Maze
         MAZE_EDITOR_TOOLS_API void UnselectEntities(
             Vector<EntityPtr> const& _entities)
         {
-            if (EditorActionManager::GetInstancePtr())
+            if (EditorToolsActionManager::GetInstancePtr())
             {
-                EditorActionManager::GetInstancePtr()->applyAction(
+                EditorToolsActionManager::GetInstancePtr()->applyAction(
                     EditorActionSelectEntities::Create(
                         false,
                         _entities));
@@ -168,9 +168,9 @@ namespace Maze
             Vector<ObjectPtr> const& _entities,
             bool _clearSelectionList)
         {
-            if (EditorActionManager::GetInstancePtr())
+            if (EditorToolsActionManager::GetInstancePtr())
             {
-                EditorActionManager::GetInstancePtr()->applyAction(
+                EditorToolsActionManager::GetInstancePtr()->applyAction(
                     EditorActionSelectObjects::Create(
                         true,
                         _entities,
@@ -195,9 +195,9 @@ namespace Maze
         MAZE_EDITOR_TOOLS_API void UnselectObjects(
             Vector<ObjectPtr> const& _entities)
         {
-            if (EditorActionManager::GetInstancePtr())
+            if (EditorToolsActionManager::GetInstancePtr())
             {
-                EditorActionManager::GetInstancePtr()->applyAction(
+                EditorToolsActionManager::GetInstancePtr()->applyAction(
                     EditorActionSelectObjects::Create(
                         false,
                         _entities));
@@ -239,7 +239,7 @@ namespace Maze
             Set<MaterialPtr> const& _materials,
             ShaderUniformVariant const& _value)
         {
-            if (EditorActionManager::GetInstancePtr())
+            if (EditorToolsActionManager::GetInstancePtr())
             {
                 if (AreMaterialsUniformEqual(_materials, _value))
                     return;
@@ -250,7 +250,7 @@ namespace Maze
                 Vector<MaterialPtr> materials(_materials.begin(), _materials.end());
 
                 bool merged = false;
-                if (EditorActionMaterialSetUniformPtr lastAction = EditorActionManager::GetInstancePtr()->castLastEditorAction<EditorActionMaterialSetUniform>())
+                if (EditorActionMaterialSetUniformPtr lastAction = EditorToolsActionManager::GetInstancePtr()->castLastEditorAction<EditorActionMaterialSetUniform>())
                 {
                     if (EditorAction::GetCurrentTimestamp() - lastAction->getTimestamp() <= 1 &&
                         lastAction->getMaterials() == materials &&
@@ -263,7 +263,7 @@ namespace Maze
 
                 if (!merged)
                 {
-                    EditorActionManager::GetInstancePtr()->applyAction(
+                    EditorToolsActionManager::GetInstancePtr()->applyAction(
                         EditorActionMaterialSetUniform::Create(
                             materials,
                             _value.getName(),
@@ -283,7 +283,7 @@ namespace Maze
             std::function<void()> const& _applyFunction,
             std::function<void()> const& _revertFunction)
         {
-            EditorActionManager::GetInstancePtr()->applyAction(
+            EditorToolsActionManager::GetInstancePtr()->applyAction(
                 EditorActionCustom::Create(
                     _applyFunction,
                     _revertFunction));
@@ -304,10 +304,10 @@ namespace Maze
             if (transform->getLocalPosition() == _newPosition)
                 return;
 
-            if (EditorActionManager::GetInstancePtr())
+            if (EditorToolsActionManager::GetInstancePtr())
             {
                 bool merged = false;
-                if (EditorActionTransform3DTranslatePtr lastAction = EditorActionManager::GetInstancePtr()->castLastEditorAction<EditorActionTransform3DTranslate>())
+                if (EditorActionTransform3DTranslatePtr lastAction = EditorToolsActionManager::GetInstancePtr()->castLastEditorAction<EditorActionTransform3DTranslate>())
                 {
                     if (EditorAction::GetCurrentTimestamp() - lastAction->getTimestamp() <= 1 &&
                         lastAction->getEntity() == _entity)
@@ -319,7 +319,7 @@ namespace Maze
 
                 if (!merged)
                 {
-                    EditorActionManager::GetInstancePtr()->applyAction(
+                    EditorToolsActionManager::GetInstancePtr()->applyAction(
                         EditorActionTransform3DTranslate::Create(_entity, _newPosition));
                 }
             }
@@ -344,10 +344,10 @@ namespace Maze
             if (transform->getLocalRotation() == _newRotation)
                 return;
 
-            if (EditorActionManager::GetInstancePtr())
+            if (EditorToolsActionManager::GetInstancePtr())
             {
                 bool merged = false;
-                if (EditorActionTransform3DRotatePtr lastAction = EditorActionManager::GetInstancePtr()->castLastEditorAction<EditorActionTransform3DRotate>())
+                if (EditorActionTransform3DRotatePtr lastAction = EditorToolsActionManager::GetInstancePtr()->castLastEditorAction<EditorActionTransform3DRotate>())
                 {
                     if (EditorAction::GetCurrentTimestamp() - lastAction->getTimestamp() <= 1 &&
                         lastAction->getEntity() == _entity)
@@ -359,7 +359,7 @@ namespace Maze
 
                 if (!merged)
                 {
-                    EditorActionManager::GetInstancePtr()->applyAction(
+                    EditorToolsActionManager::GetInstancePtr()->applyAction(
                         EditorActionTransform3DRotate::Create(_entity, _newRotation));
                 }
             }
@@ -384,10 +384,10 @@ namespace Maze
             if (transform->getLocalScale() == _newScale)
                 return;
 
-            if (EditorActionManager::GetInstancePtr())
+            if (EditorToolsActionManager::GetInstancePtr())
             {
                 bool merged = false;
-                if (EditorActionTransform3DScalePtr lastAction = EditorActionManager::GetInstancePtr()->castLastEditorAction<EditorActionTransform3DScale>())
+                if (EditorActionTransform3DScalePtr lastAction = EditorToolsActionManager::GetInstancePtr()->castLastEditorAction<EditorActionTransform3DScale>())
                 {
                     if (EditorAction::GetCurrentTimestamp() - lastAction->getTimestamp() <= 1 &&
                         lastAction->getEntity() == _entity)
@@ -399,7 +399,7 @@ namespace Maze
 
                 if (!merged)
                 {
-                    EditorActionManager::GetInstancePtr()->applyAction(
+                    EditorToolsActionManager::GetInstancePtr()->applyAction(
                         EditorActionTransform3DScale::Create(_entity, _newScale));
                 }
             }
@@ -416,9 +416,9 @@ namespace Maze
         {
             Transform3DPtr component = _entity->getComponent<Transform3D>();
 
-            if (EditorActionManager::GetInstancePtr())
+            if (EditorToolsActionManager::GetInstancePtr())
             {
-                EditorActionManager::GetInstancePtr()->applyAction(
+                EditorToolsActionManager::GetInstancePtr()->applyAction(
                     EditorActionCustom::Create(
                         [component, newValue = _newTransform]() { component->setLocalTransform(newValue); },
                         [component, oldValue = component->getLocalTransform()]() { component->setLocalTransform(oldValue); }));

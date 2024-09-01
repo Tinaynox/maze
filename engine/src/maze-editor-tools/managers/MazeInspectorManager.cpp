@@ -220,10 +220,10 @@ namespace Maze
             "Reset Transform",
             [](Entity* _entity, Transform3D* _component)
             {
-                if (EditorActionManager::GetInstancePtr())
+                if (EditorToolsActionManager::GetInstancePtr())
                 {
                     Transform3DPtr component = _component->cast<Transform3D>();
-                    EditorActionManager::GetInstancePtr()->applyAction(
+                    EditorToolsActionManager::GetInstancePtr()->applyAction(
                         EditorActionCustom::Create(
                             [component]() { component->resetTransform(); },
                             [component, oldValue = component->getLocalTransform()]() { component->setLocalTransform(oldValue); }));
@@ -237,10 +237,10 @@ namespace Maze
             [](Entity* _entity, Transform3D* _component)
             {
                 TMat newValue = TMat::CreateTranslation(_component->getLocalPosition());
-                if (EditorActionManager::GetInstancePtr())
+                if (EditorToolsActionManager::GetInstancePtr())
                 {
                     Transform3DPtr component = _component->cast<Transform3D>();
-                    EditorActionManager::GetInstancePtr()->applyAction(
+                    EditorToolsActionManager::GetInstancePtr()->applyAction(
                         EditorActionCustom::Create(
                             [component]() { component->resetTransform(); },
                             [component, oldValue = component->getLocalTransform()]() { component->setLocalTransform(oldValue); }));

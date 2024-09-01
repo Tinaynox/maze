@@ -39,7 +39,7 @@
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
-#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
@@ -106,7 +106,7 @@ namespace Maze
     {
         SettingsManager::GetInstancePtr()->registerSettings<EditorToolsSettings>();
 
-        EditorActionManager::Initialize(m_editorActionManager);
+        EditorToolsActionManager::Initialize(m_editorActionManager);
         if (!m_editorActionManager)
             return false;
 

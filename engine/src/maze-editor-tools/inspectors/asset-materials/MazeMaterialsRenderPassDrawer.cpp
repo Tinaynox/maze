@@ -55,7 +55,7 @@
 #include "maze-editor-tools/meta-property-drawers/MazeS32.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeEnumClass.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeBool.hpp"
-#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionActionsGroup.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionCustom.hpp"
@@ -336,7 +336,7 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialsRenderPassDrawer::setShader(ShaderPtr const& _shader)
     {
-        if (EditorActionManager::GetInstancePtr())
+        if (EditorToolsActionManager::GetInstancePtr())
         {
             EditorActionActionsGroupPtr group = EditorActionActionsGroup::Create();
 
@@ -353,7 +353,7 @@ namespace Maze
             }
 
             if (group->getActionsCount() > 0)
-                EditorActionManager::GetInstancePtr()->applyAction(group);
+                EditorToolsActionManager::GetInstancePtr()->applyAction(group);
         }
         else
         {

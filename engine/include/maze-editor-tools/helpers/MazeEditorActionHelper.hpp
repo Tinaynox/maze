@@ -34,7 +34,7 @@
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-graphics/MazeShaderUniformVariant.hpp"
-#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionMetaInstancesSetDataBlock.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionMaterialSetUniform.hpp"
 
@@ -58,12 +58,12 @@ namespace Maze
             MetaProperty* _metaProperty,
             Set<MetaInstance> const& _metaInstances)
         {
-            if (EditorActionManager::GetInstancePtr())
+            if (EditorToolsActionManager::GetInstancePtr())
             {
                 DataBlock dataBlock;
                 ValueToDataBlock(_value, dataBlock);
 
-                EditorActionManager::GetInstancePtr()->applyAction(
+                EditorToolsActionManager::GetInstancePtr()->applyAction(
                     EditorActionMetaInstancesSetDataBlock::Create(
                         _metaProperty,
                         Vector<MetaInstance>(_metaInstances.begin(), _metaInstances.end()),

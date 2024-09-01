@@ -110,7 +110,7 @@ namespace Maze
             EntityPtr const& _gameObject,
             bool _select)
         {
-            if (EditorActionManager::GetInstancePtr())
+            if (EditorToolsActionManager::GetInstancePtr())
             {
                 EditorActionActionsGroupPtr group = EditorActionActionsGroup::Create();
 
@@ -120,7 +120,7 @@ namespace Maze
                         true,
                         _gameObject));
 
-                EditorActionManager::GetInstancePtr()->applyAction(group);
+                EditorToolsActionManager::GetInstancePtr()->applyAction(group);
             }
             else
             {

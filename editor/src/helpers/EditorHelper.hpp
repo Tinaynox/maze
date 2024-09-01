@@ -48,7 +48,7 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
-#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionEntityAdd.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"

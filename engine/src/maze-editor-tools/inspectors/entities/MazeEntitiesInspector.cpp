@@ -258,7 +258,7 @@ namespace Maze
                 editor->eventRemoveComponentPressed.subscribe(
                     [this](ClassUID _uid)
                     {
-                        if (EditorActionManager::GetInstancePtr())
+                        if (EditorToolsActionManager::GetInstancePtr())
                         {
                             EditorActionActionsGroupPtr group = EditorActionActionsGroup::Create();
 
@@ -273,7 +273,7 @@ namespace Maze
                             }
 
                             if (group->getActionsCount() > 0)
-                                EditorActionManager::GetInstancePtr()->applyAction(group);
+                                EditorToolsActionManager::GetInstancePtr()->applyAction(group);
                         }
                         else
                             for (EntityPtr const& entity : m_entities)
@@ -293,13 +293,15 @@ namespace Maze
         bool value = m_entitiesEnabledToggleButton->getChecked();
 
 
-        if (EditorActionManager::GetInstancePtr())
+        if (EditorToolsActionManager::GetInstancePtr())
         {
             EditorActionActionsGroupPtr group = EditorActionActionsGroup::Create();
 
             for (Set<EntityPtr>::iterator it = m_entities.begin(); it != m_entities.end(); ++it)
             {
                 EntityPtr entity = (*it);
+                if (entity->getActiveSelf() == value)
+                    continue;
                 
                 group->addAction(
                     EditorActionCustom::Create(
@@ -308,7 +310,7 @@ namespace Maze
             }
 
             if (group->getActionsCount() > 0)
-                EditorActionManager::GetInstancePtr()->applyAction(group);
+                EditorToolsActionManager::GetInstancePtr()->applyAction(group);
         }
         else
         {
@@ -351,9 +353,9 @@ namespace Maze
                                     ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponentByIndex(uid);
                                     if (component)
                                     {
-                                        if (EditorActionManager::GetInstancePtr())
+                                        if (EditorToolsActionManager::GetInstancePtr())
                                         {
-                                            EditorActionManager::GetInstancePtr()->applyAction(
+                                            EditorToolsActionManager::GetInstancePtr()->applyAction(
                                                 EditorActionCustom::Create(
                                                     [entity, component]() { entity->addComponent(component); },
                                                     [entity, component]() { entity->removeComponent(component); }));

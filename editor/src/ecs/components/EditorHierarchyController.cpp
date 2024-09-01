@@ -558,8 +558,8 @@ namespace Maze
                         EntityPtr entity = entityWeak.lock();
                         if (entity)
                         {
-                            if (EditorActionManager::GetInstancePtr())
-                                EditorActionManager::GetInstancePtr()->applyAction(
+                            if (EditorToolsActionManager::GetInstancePtr())
+                                EditorToolsActionManager::GetInstancePtr()->applyAction(
                                     EditorActionEntityRemove::Create(entity));
                             else
                                 entity->removeFromEcsWorld();
@@ -593,8 +593,8 @@ namespace Maze
                                 entityCopy->ensureComponent<Transform3D>()->setParent(
                                     entity->ensureComponent<Transform3D>()->getParent());
 
-                                if (EditorActionManager::GetInstancePtr())
-                                    EditorActionManager::GetInstancePtr()->applyAction(
+                                if (EditorToolsActionManager::GetInstancePtr())
+                                    EditorToolsActionManager::GetInstancePtr()->applyAction(
                                         EditorActionEntityAdd::Create(entity));
                             }
                         });
@@ -608,8 +608,8 @@ namespace Maze
 
                             newEntityTransform->setParent(transform3D->cast<Transform3D>());
 
-                            if (EditorActionManager::GetInstancePtr())
-                                EditorActionManager::GetInstancePtr()->applyAction(
+                            if (EditorToolsActionManager::GetInstancePtr())
+                                EditorToolsActionManager::GetInstancePtr()->applyAction(
                                     EditorActionEntityAdd::Create(newEntity));
                         });
                     }
@@ -627,8 +627,8 @@ namespace Maze
 
                                 newEntityTransform->setParent(transform2D->cast<Transform2D>());
 
-                                if (EditorActionManager::GetInstancePtr())
-                                    EditorActionManager::GetInstancePtr()->applyAction(
+                                if (EditorToolsActionManager::GetInstancePtr())
+                                    EditorToolsActionManager::GetInstancePtr()->applyAction(
                                         EditorActionEntityAdd::Create(newEntity));
                             });
                         }
@@ -648,8 +648,8 @@ namespace Maze
                         EntityPtr newEntity = ecsScene->createEntity("Entity");
                         newEntity->ensureComponent<Transform3D>();
 
-                        if (EditorActionManager::GetInstancePtr())
-                            EditorActionManager::GetInstancePtr()->applyAction(
+                        if (EditorToolsActionManager::GetInstancePtr())
+                            EditorToolsActionManager::GetInstancePtr()->applyAction(
                                 EditorActionEntityAdd::Create(newEntity));
                     });
 
@@ -660,8 +660,8 @@ namespace Maze
                         EntityPtr newEntity = ecsScene->createEntity("Entity");
                         newEntity->ensureComponent<Transform2D>();
 
-                        if (EditorActionManager::GetInstancePtr())
-                            EditorActionManager::GetInstancePtr()->applyAction(
+                        if (EditorToolsActionManager::GetInstancePtr())
+                            EditorToolsActionManager::GetInstancePtr()->applyAction(
                                 EditorActionEntityAdd::Create(newEntity));
                     });
 

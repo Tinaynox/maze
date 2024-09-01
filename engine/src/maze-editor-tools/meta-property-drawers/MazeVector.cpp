@@ -399,9 +399,9 @@ namespace Maze
 
         ValueToDataBlock(m_values, m_elements);
 
-        if (m_useEditorActions && EditorActionManager::GetInstancePtr())
+        if (m_useEditorActions && EditorToolsActionManager::GetInstancePtr())
         {
-            EditorActionManager::GetInstancePtr()->applyAction(
+            EditorToolsActionManager::GetInstancePtr()->applyAction(
                 EditorActionMetaInstancesSetDataBlock::Create(
                     m_metaProperty,
                     Vector<MetaInstance>(m_metaInstances.begin(), m_metaInstances.end()),

@@ -42,7 +42,7 @@
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
-#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
 
 
 //////////////////////////////////////////
@@ -231,7 +231,7 @@ namespace Maze
         value.x = StringHelper::StringToF32Safe(m_editBoxX->getText());
         value.y = StringHelper::StringToF32Safe(m_editBoxY->getText());
 
-        if (m_useEditorActions && EditorActionManager::GetInstancePtr())
+        if (m_useEditorActions && EditorToolsActionManager::GetInstancePtr())
         {
             ShaderUniformVariant variant(RenderSystem::GetCurrentInstancePtr(), value);
             variant.setName(m_shaderUniformName);

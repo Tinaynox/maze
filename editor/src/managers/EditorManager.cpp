@@ -84,6 +84,7 @@
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "Editor.hpp"
+#include "managers/EditorActionManager.hpp"
 #include "managers/EditorAssetsManager.hpp"
 #include "managers/EditorProjectManager.hpp"
 #include "managers/EditorGizmosManager.hpp"
@@ -158,6 +159,10 @@ namespace Maze
 
         EditorUpdateManager::Initialize(m_editorUpdateManager);
         if (!m_editorUpdateManager)
+            return false;
+
+        EditorActionManager::Initialize(m_editorActionManager);
+        if (!m_editorActionManager)
             return false;
 
         return true;

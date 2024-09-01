@@ -41,7 +41,7 @@
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
-#include "maze-editor-tools/managers/MazeEditorActionManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
 
 
 //////////////////////////////////////////
@@ -134,7 +134,7 @@ namespace Maze
             return;
 
 
-        if (m_useEditorActions && EditorActionManager::GetInstancePtr())
+        if (m_useEditorActions && EditorToolsActionManager::GetInstancePtr())
             EditorActionHelper::SetValue(q, m_metaProperty, m_metaInstances);
         else
             MetaClassHelper::SetValue(q, m_metaProperty, m_metaInstances);

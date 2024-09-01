@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeEditorActionManager_hpp_))
-#define _MazeEditorActionManager_hpp_
+#if (!defined(_MazeEditorToolsActionManager_hpp_))
+#define _MazeEditorToolsActionManager_hpp_
 
 
 //////////////////////////////////////////
@@ -43,31 +43,31 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorActionManager);
+    MAZE_USING_SHARED_PTR(EditorToolsActionManager);
     MAZE_USING_SHARED_PTR(EditorAction);
 
 
     //////////////////////////////////////////
-    // Class EditorActionManager
+    // Class EditorToolsActionManager
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API EditorActionManager
+    class MAZE_EDITOR_TOOLS_API EditorToolsActionManager
         : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~EditorActionManager();
+        virtual ~EditorToolsActionManager();
 
         //////////////////////////////////////////
-        static void Initialize(EditorActionManagerPtr& _manager);
+        static void Initialize(EditorToolsActionManagerPtr& _manager);
 
 
         //////////////////////////////////////////
-        static inline EditorActionManager* GetInstancePtr() { return s_instance; }
+        static inline EditorToolsActionManager* GetInstancePtr() { return s_instance; }
 
         //////////////////////////////////////////
-        static inline EditorActionManager& GetInstance() { return *s_instance; }
+        static inline EditorToolsActionManager& GetInstance() { return *s_instance; }
 
 
         //////////////////////////////////////////
@@ -102,7 +102,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        EditorActionManager();
+        EditorToolsActionManager();
 
         //////////////////////////////////////////
         virtual bool init();
@@ -111,7 +111,7 @@ namespace Maze
         void notifyKeyboard(InputEventKeyboardData const& _data);
 
     protected:
-        static EditorActionManager* s_instance;
+        static EditorToolsActionManager* s_instance;
 
     private:
 
@@ -127,5 +127,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeEditorActionManager_hpp_
+#endif // _MazeEditorToolsActionManager_hpp_
 //////////////////////////////////////////
