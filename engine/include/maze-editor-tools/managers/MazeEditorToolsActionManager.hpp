@@ -36,6 +36,7 @@
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/utils/MazeObservableValue.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 
 
@@ -99,6 +100,13 @@ namespace Maze
             return nullptr;
         }
 
+
+        //////////////////////////////////////////
+        inline U32 getLastChangeTimestamp() const { return m_lastChangeTimestamp.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<U32 const&>& getLastChangeTimestampChangedEvent() { return m_lastChangeTimestamp.eventValueChanged; }
+
     protected:
 
         //////////////////////////////////////////
@@ -121,6 +129,8 @@ namespace Maze
         Size m_historyMaxCapacity = 100;
 
         bool m_historyIndexSetting = false;
+
+        ObservableValue<U32> m_lastChangeTimestamp = 0u;
     };
 
 } // namespace Maze

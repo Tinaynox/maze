@@ -80,6 +80,8 @@
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorAction.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
 #include "Editor.hpp"
@@ -103,6 +105,9 @@ namespace Maze
     //////////////////////////////////////////
     EditorPrefabManager::~EditorPrefabManager()
     {
+        if (EditorToolsActionManager::GetInstancePtr())
+            EditorToolsActionManager::GetInstancePtr()->getLastChangeTimestampChangedEvent().unsubscribe(this);
+
         s_instance = nullptr;
     }
 
@@ -115,6 +120,10 @@ namespace Maze
     //////////////////////////////////////////
     bool EditorPrefabManager::init()
     {
+        EditorToolsActionManager::GetInstancePtr()->getLastChangeTimestampChangedEvent().subscribe(
+            this, &EditorPrefabManager::notifyLastChangeTimestampChanged);
+        m_prefabAssetFileSaveTimestamp.eventValueChanged.subscribe(
+            this, &EditorPrefabManager::notifyPrefabAssetFileSaveTimestampChanged);
         
         return true;
     }
@@ -139,6 +148,8 @@ namespace Maze
         m_prefabAssetFile = _value;
 
         updatePrefabAssetFile();
+
+        m_prefabAssetFileSaveTimestamp = EditorAction::GetCurrentTimestamp();
 
         eventPrefabAssetFileChanged(m_prefabAssetFile);
     }
@@ -174,6 +185,29 @@ namespace Maze
 
         EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(
             m_prefabEntity, m_prefabAssetFile->getFullPath());
+
+        m_prefabAssetFileSaveTimestamp = EditorAction::GetCurrentTimestamp();
+    }
+
+    //////////////////////////////////////////
+    void EditorPrefabManager::updatePrefabAssetFileSaveEnabled()
+    {
+        U32 lastChangeTimestamp = EditorToolsActionManager::GetInstancePtr()->getLastChangeTimestamp();
+        U32 prefabAssetFileSaveTimestamp = m_prefabAssetFileSaveTimestamp.getValue();
+
+        m_prefabAssetFileSaveEnabled = (prefabAssetFileSaveTimestamp < lastChangeTimestamp);
+    }
+
+    //////////////////////////////////////////
+    void EditorPrefabManager::notifyLastChangeTimestampChanged(U32 const& _value)
+    {
+        updatePrefabAssetFileSaveEnabled();
+    }
+
+    //////////////////////////////////////////
+    void EditorPrefabManager::notifyPrefabAssetFileSaveTimestampChanged(U32 const& _value)
+    {
+        updatePrefabAssetFileSaveEnabled();
     }
 
 } // namespace Maze

@@ -34,6 +34,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/utils/MazeObservableValue.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -102,6 +103,16 @@ namespace Maze
         //////////////////////////////////////////
         void updatePrefabAssetFile();
 
+
+        //////////////////////////////////////////
+        inline bool getPrefabAssetFileSaveEnabled() const { return m_prefabAssetFileSaveEnabled.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<bool const&>& getPrefabAssetFileSaveEnabledChangedEvent() { return m_prefabAssetFileSaveEnabled.eventValueChanged; }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<U32 const&>& getPrefabAssetFileSaveTimestampChangedEvent() { return m_prefabAssetFileSaveTimestamp.eventValueChanged; }
+
     public:
 
         //////////////////////////////////////////
@@ -116,11 +127,24 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
+
+        //////////////////////////////////////////
+        void updatePrefabAssetFileSaveEnabled();
+
+        //////////////////////////////////////////
+        void notifyLastChangeTimestampChanged(U32 const& _value);
+
+        //////////////////////////////////////////
+        void notifyPrefabAssetFileSaveTimestampChanged(U32 const& _value);
+
     protected:
         static EditorPrefabManager* s_instance;
 
         EntityPtr m_prefabEntity;
         AssetFilePtr m_prefabAssetFile;
+
+        ObservableValue<bool> m_prefabAssetFileSaveEnabled = false;
+        ObservableValue<U32> m_prefabAssetFileSaveTimestamp = 0u;
     };
 
 

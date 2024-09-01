@@ -648,6 +648,7 @@ namespace Maze
             clickButton->setFocusedColor(ColorU32{ 213, 231, 248 });
             clickButton->setSelectedColor(ColorU32{ 200, 220, 240 });
             clickButton->setPressedColor(ColorU32{ 213, 231, 248 });
+            clickButton->setDisabledColor(ColorU32{ 120, 120, 120 });
 
             Transform2DPtr const& transform = clickButton->getTransform();
             transform->setParent(_parent);

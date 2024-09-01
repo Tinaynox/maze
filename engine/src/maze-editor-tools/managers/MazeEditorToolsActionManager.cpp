@@ -50,6 +50,8 @@ namespace Maze
     {
         if (InputManager::GetInstancePtr())
             InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
+
+        s_instance = nullptr;
     }
 
     //////////////////////////////////////////
@@ -101,6 +103,8 @@ namespace Maze
         m_historyIndexSetting = false;
 
         Debug::Log("%d/%d", m_currentHistoryIndex + 1, (S32)m_history.size());
+
+        m_lastChangeTimestamp = EditorAction::GetCurrentTimestamp();
     }
 
     //////////////////////////////////////////

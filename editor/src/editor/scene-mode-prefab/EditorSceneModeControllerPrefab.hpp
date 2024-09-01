@@ -118,6 +118,13 @@ namespace Maze
         //////////////////////////////////////////
         void notifyDebugGridEnabledChanged(bool const& _value);
 
+
+        //////////////////////////////////////////
+        void updateSaveButtonEnabled();
+
+        //////////////////////////////////////////
+        void notifyPrefabAssetFileSaveEnabledChanged(bool const& _value);
+
     protected:
         Transform2DPtr m_canvasNode;
         Transform3DPtr m_mainNode;
@@ -131,6 +138,8 @@ namespace Maze
         SpriteRenderer2DPtr m_topBarBackground;
         HorizontalLayout2DPtr m_topBarLeftLayout;
         HorizontalLayout2DPtr m_topBarRightLayout;
+
+        ClickButton2DPtr m_saveButton;
     };
 
 

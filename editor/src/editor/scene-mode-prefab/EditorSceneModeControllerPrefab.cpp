@@ -106,6 +106,9 @@ namespace Maze
     //////////////////////////////////////////
     EditorSceneModeControllerPrefab::~EditorSceneModeControllerPrefab()
     {
+        if (EditorPrefabManager::GetInstancePtr())
+            EditorPrefabManager::GetInstancePtr()->getPrefabAssetFileSaveEnabledChangedEvent().unsubscribe(this);
+
         if (SettingsManager::GetInstancePtr())
         {
             EditorSceneSettings* editorSceneSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>();
@@ -250,7 +253,7 @@ namespace Maze
         if (!playtestModeEnabled)
         {
             {
-                ClickButton2DPtr saveButton = UIHelper::CreateDefaultClickButton(
+                m_saveButton = UIHelper::CreateDefaultClickButton(
                     "Save",
                     EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
                     Vec2F32(42.0f, 18.0f),
@@ -259,11 +262,12 @@ namespace Maze
                     scene.get(),
                     Vec2F32(1.0f, 1.0f),
                     Vec2F32(1.0f, 1.0f));
-                saveButton->eventClick.subscribe(
+                m_saveButton->eventClick.subscribe(
                     [](Button2D* _button, CursorInputEvent const& _event)
                     {
                         EditorPrefabManager::GetInstancePtr()->saveAssetFile();
                     });
+                updateSaveButtonEnabled();
             }
         }
 
@@ -281,6 +285,9 @@ namespace Maze
             {
                 EditorManager::GetInstancePtr()->clearMode();
             });
+
+        EditorPrefabManager::GetInstancePtr()->getPrefabAssetFileSaveEnabledChangedEvent().subscribe(
+            this, &EditorSceneModeControllerPrefab::notifyPrefabAssetFileSaveEnabledChanged);
 
         return true;
     }
@@ -363,6 +370,19 @@ namespace Maze
     void EditorSceneModeControllerPrefab::notifyDebugGridEnabledChanged(bool const& _value)
     {
         updateDebugGrid();
+    }
+
+    //////////////////////////////////////////
+    void EditorSceneModeControllerPrefab::updateSaveButtonEnabled()
+    {
+        if (m_saveButton)
+            m_saveButton->setEnabled(EditorPrefabManager::GetInstancePtr()->getPrefabAssetFileSaveEnabled());
+    }
+
+    //////////////////////////////////////////
+    void EditorSceneModeControllerPrefab::notifyPrefabAssetFileSaveEnabledChanged(bool const& _value)
+    {
+        updateSaveButtonEnabled();
     }
 
 } // namespace Maze
