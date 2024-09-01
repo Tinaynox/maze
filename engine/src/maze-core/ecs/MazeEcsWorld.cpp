@@ -411,6 +411,13 @@ namespace Maze
         if (!_system)
             return;
 
+        if (!std::includes(
+            m_tags.begin(),
+            m_tags.end(),
+            _system->getTags().begin(),
+            _system->getTags().end()))
+            return;
+
         ClassUID eventUID = _system->getEventUID();
         Vector<ComponentSystemEventHandlerPtr>& eventHandlers = m_eventHandlers[eventUID];
         

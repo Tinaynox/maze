@@ -489,13 +489,14 @@ namespace Maze
         static MetaProperty* GetParentProperty();
 
     protected:
-        Vec3F m_localPosition;
-        Quaternion m_localRotation;
-        Vec3F m_localScale;
+        // #TODO: Rework and optimize
+        Vec3F m_localPosition = Vec3F::c_zero;
+        Quaternion m_localRotation = Quaternion::c_identity;
+        Vec3F m_localScale = Vec3F::c_one;
 
-        S32 m_flags;
-        TMat m_localTransform;
-        TMat m_worldTransform;
+        S32 m_flags = 0;
+        TMat m_localTransform = TMat::c_identity;
+        TMat m_worldTransform = TMat::c_identity;
 
         Transform3DPtr m_parent;
         Vector<Transform3D*> m_children;

@@ -45,6 +45,9 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    static const S32 c_materialDataBlockVersion = 1;
+
 
     //////////////////////////////////////////
     // Class Material
@@ -642,6 +645,8 @@ namespace Maze
     //////////////////////////////////////////
     void Material::toDataBlock(DataBlock& _dataBlock) const
     {
+        _dataBlock.setS32(MAZE_HCS("_version"), c_materialDataBlockVersion);
+
         for (Size i = 0, in = m_uniforms.size(); i < in; ++i)
         {
             ShaderUniformVariantPtr const& uniformVariant = m_uniforms[i];

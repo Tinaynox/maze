@@ -647,22 +647,22 @@ namespace Maze
 
     protected:
 
-        Vec2F m_localPosition;
+        Vec2F m_localPosition = Vec2F::c_zero;
         Rotation2D m_localRotation;
-        Vec2F m_localScale;
-        Vec2F m_pivot;
-        Vec2F m_size;
-        Vec2F m_anchor;
+        Vec2F m_localScale = Vec2F::c_one;
+        Vec2F m_pivot = Vec2F(0.5f, 0.5f);
+        Vec2F m_size = Vec2F(100.0f, 100.0f);
+        Vec2F m_anchor = Vec2F(0.5f, 0.5f);
 
-        S32 m_flags;
-        TMat m_localTransform;
-        TMat m_worldTransform;
+        S32 m_flags = 0;
+        TMat m_localTransform = TMat::c_identity;
+        TMat m_worldTransform = TMat::c_identity;
 
         Transform2DPtr m_parent;
         Vector<Transform2D*> m_children;
 
-        S32 m_z;
-        U32 m_orderOfArrival;
+        S32 m_z = 0;
+        U32 m_orderOfArrival = 0u;
     };
 
 

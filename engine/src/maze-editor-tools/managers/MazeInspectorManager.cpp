@@ -233,6 +233,23 @@ namespace Maze
             });
 
         addComponentContextMenuOption<Transform3D>(
+            "Reset Rotation and Scale",
+            [](Entity* _entity, Transform3D* _component)
+            {
+                TMat newValue = TMat::CreateTranslation(_component->getLocalPosition());
+                if (EditorActionManager::GetInstancePtr())
+                {
+                    Transform3DPtr component = _component->cast<Transform3D>();
+                    EditorActionManager::GetInstancePtr()->applyAction(
+                        EditorActionCustom::Create(
+                            [component]() { component->resetTransform(); },
+                            [component, oldValue = component->getLocalTransform()]() { component->setLocalTransform(oldValue); }));
+                }
+                else
+                    _component->resetTransform();
+            });
+
+        addComponentContextMenuOption<Transform3D>(
             "Copy Position",
             [](Entity* _entity, Transform3D* _component)
             {
@@ -284,18 +301,9 @@ namespace Maze
             "Paste Transform",
             [](Entity* _entity, Transform3D* _component)
             {
-                TMat newTransform = TMat::FromString(SystemManager::GetInstancePtr()->getClipboardAsString());
-                if (EditorActionManager::GetInstancePtr())
-                {
-                    Transform3DPtr component = _component->cast<Transform3D>();
-                    
-                    EditorActionManager::GetInstancePtr()->applyAction(
-                        EditorActionCustom::Create(
-                            [component, newTransform]() { component->setLocalTransform(newTransform); },
-                            [component, oldValue = component->getLocalTransform()]() { component->setLocalTransform(oldValue); }));
-                }
-                else
-                    _component->setLocalTransform(newTransform);
+                EditorActionHelper::Transform(
+                    _entity->getSharedPtr(),
+                    TMat::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
             });
 
         return true;

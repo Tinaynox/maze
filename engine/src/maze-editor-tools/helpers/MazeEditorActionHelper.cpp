@@ -409,6 +409,24 @@ namespace Maze
             }
         }
 
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void Transform(
+            EntityPtr const& _entity,
+            TMat const& _newTransform)
+        {
+            Transform3DPtr component = _entity->getComponent<Transform3D>();
+
+            if (EditorActionManager::GetInstancePtr())
+            {
+                EditorActionManager::GetInstancePtr()->applyAction(
+                    EditorActionCustom::Create(
+                        [component, newValue = _newTransform]() { component->setLocalTransform(newValue); },
+                        [component, oldValue = component->getLocalTransform()]() { component->setLocalTransform(oldValue); }));
+            }
+            else
+                component->setLocalTransform(_newTransform);
+        }
+
     } // namespace EditorActionHelper
     //////////////////////////////////////////
     

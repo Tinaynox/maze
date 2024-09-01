@@ -58,16 +58,6 @@ namespace Maze
 
     //////////////////////////////////////////
     Transform2D::Transform2D()
-        : m_localPosition(Vec2F::c_zero)
-        , m_localScale(Vec2F::c_one)
-        , m_pivot(Vec2F(0.5f, 0.5f))
-        , m_size(Vec2F(100.0f, 100.0f))
-        , m_anchor(Vec2F(0.5f, 0.5f))
-        , m_flags(0)
-        , m_localTransform(TMat::c_identity)
-        , m_worldTransform(TMat::c_identity)
-        , m_z(0)
-        , m_orderOfArrival(0)
     {
     }
 

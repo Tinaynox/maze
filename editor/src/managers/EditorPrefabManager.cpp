@@ -104,8 +104,6 @@ namespace Maze
     EditorPrefabManager::~EditorPrefabManager()
     {
         s_instance = nullptr;
-
-        
     }
 
     //////////////////////////////////////////

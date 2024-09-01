@@ -147,6 +147,11 @@ namespace Maze
             EntityPtr const& _entity,
             Vec3F const& _newScale);
 
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void Transform(
+            EntityPtr const& _entity,
+            TMat const& _newTransform);
+
     } // namespace EditorActionHelper
     //////////////////////////////////////////
 

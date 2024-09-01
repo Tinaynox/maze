@@ -49,12 +49,6 @@ namespace Maze
 
     //////////////////////////////////////////
     Transform3D::Transform3D()
-        : m_localPosition(Vec3F::c_zero)
-        , m_localRotation(Quaternion::c_identity)
-        , m_localScale(Vec3F::c_one)
-        , m_flags(0)
-        , m_localTransform(TMat::c_identity)
-        , m_worldTransform(TMat::c_identity)
     {
     }
 
