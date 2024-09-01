@@ -117,6 +117,8 @@ namespace Maze
     //////////////////////////////////////////
     EditorManager::~EditorManager()
     {
+        m_editorActionManager.reset();
+
         s_instance = nullptr;        
     }
 

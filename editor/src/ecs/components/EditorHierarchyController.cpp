@@ -70,6 +70,8 @@
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "scenes/ScenePlaytest.hpp"
+#include "scenes/SceneWorkspace.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
 #include "managers/EditorEntityManager.hpp"
@@ -818,7 +820,9 @@ namespace Maze
         else
         if (m_hierarchyMode == EditorHierarchyMode::Prefab)
         {
-            if (!_entity->getEcsScene() || _entity->getEcsScene()->getClassUID() != ClassInfo<SceneWorkspace>::UID())
+            if (!_entity->getEcsScene() ||
+                (_entity->getEcsScene()->getClassUID() != ClassInfo<SceneWorkspace>::UID() &&
+                _entity->getEcsScene()->getClassUID() != ClassInfo<ScenePlaytest>::UID()))
                 return;
         }
 
