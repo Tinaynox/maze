@@ -49,9 +49,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool DynLibManagerAndroid::init()
+    bool DynLibManagerAndroid::init(DataBlock const& _config)
     {
-        if (!DynLibManager::init())
+        if (!DynLibManager::init(_config))
             return false;
         
         return true;

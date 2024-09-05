@@ -79,7 +79,9 @@ namespace Maze
         virtual ~EventManager();
 
         //////////////////////////////////////////
-        static void Initialize(EventManagerPtr& _eventManager);
+        static void Initialize(
+            EventManagerPtr& _eventManager,
+            DataBlock const& _config = DataBlock::c_empty);
 
         
         //////////////////////////////////////////
@@ -171,7 +173,7 @@ namespace Maze
         EventManager();
 
         //////////////////////////////////////////
-        virtual bool init();
+        virtual bool init(DataBlock const& _config);
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;

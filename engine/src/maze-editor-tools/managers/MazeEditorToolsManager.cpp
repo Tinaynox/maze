@@ -96,13 +96,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditorToolsManager::Initialize(EditorToolsManagerPtr& _manager)
+    void EditorToolsManager::Initialize(
+        EditorToolsManagerPtr& _manager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorToolsManager, _manager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorToolsManager, _manager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool EditorToolsManager::init()
+    bool EditorToolsManager::init(DataBlock const& _config)
     {
         SettingsManager::GetInstancePtr()->registerSettings<EditorToolsSettings>();
 

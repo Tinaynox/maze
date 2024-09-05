@@ -75,7 +75,9 @@ namespace Maze
         virtual ~SceneManager();
 
         //////////////////////////////////////////
-        static void Initialize(SceneManagerPtr& _sceneManager);
+        static void Initialize(
+            SceneManagerPtr& _sceneManager,
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -211,7 +213,7 @@ namespace Maze
         SceneManager();
 
         //////////////////////////////////////////
-        virtual bool init();
+        virtual bool init(DataBlock const& _config);
 
 
         //////////////////////////////////////////

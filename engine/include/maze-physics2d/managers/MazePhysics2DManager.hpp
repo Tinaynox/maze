@@ -61,7 +61,7 @@ namespace Maze
         //////////////////////////////////////////
         static void Initialize(
             Physics2DManagerPtr& _physics2DManager,
-            PhysicsWorld2DConfig const& _defaultWorldConfig);
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -88,7 +88,7 @@ namespace Maze
         Physics2DManager();
 
         //////////////////////////////////////////
-        bool init(PhysicsWorld2DConfig const& _defaultWorldConfig);
+        bool init(DataBlock const& _config);
 
     protected:
         static Physics2DManager* s_instance;

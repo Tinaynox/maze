@@ -76,7 +76,9 @@ namespace Maze
         virtual ~TaskManager();
 
         //////////////////////////////////////////
-        static void Initialize(TaskManagerPtr& _eventManager);
+        static void Initialize(
+            TaskManagerPtr& _eventManager,
+            DataBlock const& _config = DataBlock::c_empty);
 
         
         //////////////////////////////////////////
@@ -139,7 +141,7 @@ namespace Maze
         TaskManager();
 
         //////////////////////////////////////////
-        virtual bool init();
+        virtual bool init(DataBlock const& _config);
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;

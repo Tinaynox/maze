@@ -105,7 +105,9 @@ namespace Maze
         virtual ~UIManager();
 
         //////////////////////////////////////////
-        static void Initialize(UIManagerPtr& _uiManager);
+        static void Initialize(
+            UIManagerPtr& _uiManager,
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -130,7 +132,7 @@ namespace Maze
         UIManager();
 
         //////////////////////////////////////////
-        bool init();
+        bool init(DataBlock const& _config);
 
         
         //////////////////////////////////////////

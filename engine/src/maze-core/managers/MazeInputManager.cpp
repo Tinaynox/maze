@@ -60,13 +60,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void InputManager::Initialize(InputManagerPtr& _inputManager)
+    void InputManager::Initialize(
+        InputManagerPtr& _inputManager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_OS_OBJECT_SHARED_PTR(InputManager, _inputManager, init());
+        MAZE_CREATE_AND_INIT_OS_OBJECT_SHARED_PTR(InputManager, _inputManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool InputManager::init()
+    bool InputManager::init(DataBlock const& _config)
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 

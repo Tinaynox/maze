@@ -94,11 +94,6 @@ namespace Maze
         //////////////////////////////////////////
         inline EngineConfig const& getConfig() const { return m_config; }
 
-        //////////////////////////////////////////
-        inline PhysicsWorld2DConfig const& getPhysicsWorld2DConfig() const { return m_physicsWorld2DConfig; }
-
-        //////////////////////////////////////////
-        inline void setPhysicsWorld2DConfig(PhysicsWorld2DConfig const& _config) { m_physicsWorld2DConfig = _config; }
 
         //////////////////////////////////////////
         inline SystemManagerPtr const& getSystemManager() const { return m_systemManager; }
@@ -206,9 +201,7 @@ namespace Maze
         EngineConfig m_config;
 
         bool m_running;
-
-        PhysicsWorld2DConfig m_physicsWorld2DConfig;
-        
+                
         SystemManagerPtr m_systemManager;
         TaskManagerPtr m_taskManager;
         EventManagerPtr m_eventManager;

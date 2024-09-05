@@ -63,13 +63,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SettingsManager::Initialize(SettingsManagerPtr& _updateManager, String const& _projectName)
+    void SettingsManager::Initialize(
+        SettingsManagerPtr& _updateManager,
+        String const& _projectName,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SettingsManager, _updateManager, init(_projectName));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SettingsManager, _updateManager, init(_projectName, _config));
     }
 
     //////////////////////////////////////////
-    bool SettingsManager::init(String const& _projectName)
+    bool SettingsManager::init(
+        String const& _projectName,
+        DataBlock const& _config)
     {
         m_projectName = _projectName;
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)

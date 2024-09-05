@@ -30,6 +30,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/assets/MazeAssetRegularFile.hpp"
@@ -73,7 +74,12 @@ namespace Maze
 
     //////////////////////////////////////////
     bool AssetManager::init(DataBlock const& _config)
-    {    
+    {
+        AssetUnitManager::Initialize(
+            m_assetUnitManager,
+            _config.getDataBlock(MAZE_HCS("assetUnitConfig"), DataBlock::c_empty));
+        if (!m_assetUnitManager)
+            return false;
 
         return true;
     }

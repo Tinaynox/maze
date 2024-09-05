@@ -82,13 +82,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GraphicsManager::Initialize(GraphicsManagerPtr& _graphicsManager)
+    void GraphicsManager::Initialize(
+        GraphicsManagerPtr& _graphicsManager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(GraphicsManager, _graphicsManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(GraphicsManager, _graphicsManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool GraphicsManager::init()
+    bool GraphicsManager::init(DataBlock const& _config)
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 

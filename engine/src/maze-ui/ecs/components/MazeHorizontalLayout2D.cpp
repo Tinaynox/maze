@@ -243,6 +243,17 @@ namespace Maze
     {
         _horizontalLayout2D->dirty();
     }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(HorizontalLayout2DChildRemoved,
+        {},
+        {},
+        EcsChildRemovedEvent const& _event,
+        Entity* _entity,
+        HorizontalLayout2D* _horizontalLayout2D)
+    {
+        _horizontalLayout2D->dirty();
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

@@ -48,9 +48,9 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    bool WindowManagerOSX::init()
+    bool WindowManagerOSX::init(DataBlock const& _config)
     {
-        if (!WindowManagerUnix::init())
+        if (!WindowManagerUnix::init(_config))
             return false;
         
         updateDisplaysList();

@@ -78,9 +78,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool InputManagerEmscripten::init()
+    bool InputManagerEmscripten::init(DataBlock const& _config)
     {
-        if (!InputManager::init())
+        if (!InputManager::init(_config))
             return false;
 
         emscripten_set_click_callback(nullptr, nullptr, 1, OnMouseEvent);

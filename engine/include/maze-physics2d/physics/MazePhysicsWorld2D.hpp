@@ -51,21 +51,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Struct PhysicsWorld2DConfig
-    //
-    //////////////////////////////////////////
-    struct MAZE_PHYSICS2D_API PhysicsWorld2DConfig
-    {
-        F32 unitsPerMeter = 0.1f;
-        S32 worldMaxSteps = 10;
-        F32 worldStep = 1.0f / 50.0f;
-        S32 velocityIterations = 12;
-        S32 positionIterations = 16;
-        Vec2F gravityUnits = Vec2F(0.0f, -3.8f);
-    };
-
-
-    //////////////////////////////////////////
     // Struct PhysicsWorld2DDefaultBodies
     //
     //////////////////////////////////////////
@@ -98,7 +83,8 @@ namespace Maze
         virtual ~PhysicsWorld2D();
 
         //////////////////////////////////////////
-        static PhysicsWorld2DPtr Create(PhysicsWorld2DConfig const& _config = PhysicsWorld2DConfig());
+        static PhysicsWorld2DPtr Create(
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -188,7 +174,7 @@ namespace Maze
         PhysicsWorld2D();
 
         //////////////////////////////////////////
-        bool init(PhysicsWorld2DConfig const& _config);
+        bool init(DataBlock const& _config);
 
         //////////////////////////////////////////
         void createWorld();

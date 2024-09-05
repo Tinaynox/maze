@@ -48,9 +48,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool WindowManagerLinux::init()
+    bool WindowManagerLinux::init(DataBlock const& _config)
     {
-        if (!WindowManagerUnix::init())
+        if (!WindowManagerUnix::init(_config))
             return false;
 
 

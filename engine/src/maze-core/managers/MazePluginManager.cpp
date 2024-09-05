@@ -102,13 +102,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PluginManager::Initialize(PluginManagerPtr& _pluginManager)
+    void PluginManager::Initialize(
+        PluginManagerPtr& _pluginManager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PluginManager, _pluginManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PluginManager, _pluginManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool PluginManager::init()
+    bool PluginManager::init(DataBlock const& _config)
     {
     
 

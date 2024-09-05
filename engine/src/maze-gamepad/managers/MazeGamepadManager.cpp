@@ -76,13 +76,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GamepadManager::Initialize(GamepadManagerPtr& _gamepadManager)
+    void GamepadManager::Initialize(
+        GamepadManagerPtr& _gamepadManager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(GamepadManager, _gamepadManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(GamepadManager, _gamepadManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool GamepadManager::init()
+    bool GamepadManager::init(DataBlock const& _config)
     {
         DeviceCategory deviceCategory = SystemManager::GetInstancePtr()->getDeviceCategory();
         if (deviceCategory == DeviceCategory::Phone ||

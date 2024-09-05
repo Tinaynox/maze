@@ -45,9 +45,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool DynLibManagerEmscripten::init()
+    bool DynLibManagerEmscripten::init(DataBlock const& _config)
     {
-        if (!DynLibManager::init())
+        if (!DynLibManager::init(_config))
             return false;
 
         return true;

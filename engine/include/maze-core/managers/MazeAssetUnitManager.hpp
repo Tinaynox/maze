@@ -25,61 +25,56 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeWindowManagerEmscripten_hpp_))
-#define _MazeWindowManagerEmscripten_hpp_
+#if (!defined(_MazeAssetUnitManager_hpp_))
+#define _MazeAssetUnitManager_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/managers/unix/MazeWindowManagerUnix.hpp"
+#include "maze-core/MazeCoreHeader.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(WindowEmscripten);
-    
-    
+    MAZE_USING_SHARED_PTR(AssetUnitManager);
+    MAZE_USING_SHARED_PTR(AssetFile);
+
+
     //////////////////////////////////////////
-    // Class WindowManagerEmscripten
+    // Class AssetUnitManager
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API WindowManagerEmscripten
-        : public WindowManagerUnix
+    class MAZE_CORE_API AssetUnitManager
+        : public SharedObject<AssetUnitManager>
     {
-    private:
-
-        //////////////////////////////////////////
-        friend class WindowManager;
-
     public:
 
         //////////////////////////////////////////
-        virtual ~WindowManagerEmscripten();
+        virtual ~AssetUnitManager();
 
         //////////////////////////////////////////
-        virtual void updateDisplaysList() MAZE_OVERRIDE;
-        
-        
-        //////////////////////////////////////////
-        WindowEmscriptenPtr const& getWindow() const { return m_window; }
+        static void Initialize(AssetUnitManagerPtr& _AssetUnitManager, DataBlock const& _config = DataBlock::c_empty);
+
         
     protected:
 
         //////////////////////////////////////////
-        WindowManagerEmscripten();
+        AssetUnitManager();
 
         //////////////////////////////////////////
-        virtual bool init(DataBlock const& _config) MAZE_OVERRIDE;
-        
-        //////////////////////////////////////////
-        virtual bool processWindowCanBeCreated(WindowParamsPtr const& _params) MAZE_OVERRIDE;
-        
-        //////////////////////////////////////////
-        virtual bool processWindowCreated(WindowPtr const& _window) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _config);
+
+
+    protected:
+        static AssetUnitManager* s_instance;
         
     protected:
-        WindowEmscriptenPtr m_window;
     };
 
 
@@ -87,5 +82,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeWindowManagerEmscripten_hpp_
+#endif // _MazeAssetUnitManager_hpp_
 //////////////////////////////////////////

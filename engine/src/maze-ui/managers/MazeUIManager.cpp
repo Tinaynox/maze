@@ -128,13 +128,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UIManager::Initialize(UIManagerPtr& _uiManager)
+    void UIManager::Initialize(
+        UIManagerPtr& _uiManager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(UIManager, _uiManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(UIManager, _uiManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool UIManager::init()
+    bool UIManager::init(DataBlock const& _config)
     {
         FontManager::Initialize(m_fontManager);
         if (!m_fontManager)

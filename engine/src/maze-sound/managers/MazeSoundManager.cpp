@@ -61,13 +61,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SoundManager::Initialize(SoundManagerPtr& _soundManager)
+    void SoundManager::Initialize(
+        SoundManagerPtr& _soundManager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SoundManager, _soundManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SoundManager, _soundManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool SoundManager::init()
+    bool SoundManager::init(DataBlock const& _config)
     {
         registerSoundLoader(
             MAZE_HASHED_CSTRING("wav"),

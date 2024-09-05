@@ -48,9 +48,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool DynLibManagerWin::init()
+    bool DynLibManagerWin::init(DataBlock const& _config)
     {
-        if (!DynLibManager::init())
+        if (!DynLibManager::init(_config))
             return false;
 
         return true;

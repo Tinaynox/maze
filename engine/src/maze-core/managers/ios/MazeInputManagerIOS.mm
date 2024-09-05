@@ -48,9 +48,9 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    bool InputManagerIOS::init()
+    bool InputManagerIOS::init(DataBlock const& _config)
     {
-        if (!InputManager::init())
+        if (!InputManager::init(_config))
             return false;
        
         

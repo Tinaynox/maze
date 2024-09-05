@@ -92,9 +92,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool WindowManagerWin::init()
+    bool WindowManagerWin::init(DataBlock const& _config)
     {
-        if (!WindowManager::init())
+        if (!WindowManager::init(_config))
             return false;
 
         UpdateManager::GetInstancePtr()->addUpdatable(this);

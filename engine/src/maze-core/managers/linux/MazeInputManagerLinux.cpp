@@ -45,9 +45,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool InputManagerLinux::init()
+    bool InputManagerLinux::init(DataBlock const& _config)
     {
-        if (!InputManager::init())
+        if (!InputManager::init(_config))
             return false;
 
         return true;

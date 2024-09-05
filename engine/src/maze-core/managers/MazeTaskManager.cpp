@@ -55,13 +55,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void TaskManager::Initialize(TaskManagerPtr& _eventManager)
+    void TaskManager::Initialize(
+        TaskManagerPtr& _eventManager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(TaskManager, _eventManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(TaskManager, _eventManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool TaskManager::init()
+    bool TaskManager::init(DataBlock const& _config)
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 

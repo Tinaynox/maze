@@ -64,13 +64,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ParticlesManager::Initialize(ParticlesManagerPtr& _uiManager)
+    void ParticlesManager::Initialize(
+        ParticlesManagerPtr& _uiManager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ParticlesManager, _uiManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ParticlesManager, _uiManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool ParticlesManager::init()
+    bool ParticlesManager::init(DataBlock const& _config)
     {
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ParticleSystem3D>("FX");
         

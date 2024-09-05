@@ -109,7 +109,9 @@ namespace Maze
         virtual ~InputManager();
 
         //////////////////////////////////////////
-        static void Initialize(InputManagerPtr& _inputManager);
+        static void Initialize(
+            InputManagerPtr& _inputManager,
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -158,7 +160,7 @@ namespace Maze
         InputManager();
 
         //////////////////////////////////////////
-        virtual bool init();
+        virtual bool init(DataBlock const& _config);
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;

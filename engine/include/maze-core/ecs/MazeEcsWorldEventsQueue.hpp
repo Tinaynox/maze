@@ -64,7 +64,8 @@ namespace Maze
         RemovingFromSampleEntity,
         ComponentsChanged,
         ActiveChanged,
-        UsualEvent
+        Broadcast,
+        Unicast
     };
 
 
@@ -95,6 +96,12 @@ namespace Maze
 
         //////////////////////////////////////////
         bool removeEntity(EntityPtr const& _entity);
+
+        //////////////////////////////////////////
+        bool addBroadcastEvent(EventPtr const& _event);
+
+        //////////////////////////////////////////
+        bool addUnicastEvent(EntityId _eid, EventPtr const& _event);
 
         //////////////////////////////////////////
         void processEntityAddedToSample(
@@ -148,7 +155,10 @@ namespace Maze
         void invokeActiveChangedEvent();
 
         //////////////////////////////////////////
-        void invokeUsualEventEvent();
+        void invokeBroadcastEvent();
+
+        //////////////////////////////////////////
+        void invokeUnicastEvent();
 
     private:
         EcsWorld* m_world = nullptr;
@@ -163,7 +173,8 @@ namespace Maze
         // Queue<Pair<ComponentSystemEventHandlerPtr, EntityId>> m_removingFromSampleEntities;
         Queue<EntityId> m_componentsChangedEntities;
         Queue<EntityId> m_activeChangedEntities;
-        Queue<EventPtr> m_usualEvents;
+        Queue<EventPtr> m_broadcastEvents;
+        Queue<std::pair<EntityId, EventPtr>> m_unicastEvents;
 
         bool m_processingEvents = false;
     };

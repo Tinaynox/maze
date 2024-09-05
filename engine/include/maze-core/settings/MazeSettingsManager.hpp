@@ -61,7 +61,10 @@ namespace Maze
         virtual ~SettingsManager();
 
         //////////////////////////////////////////
-        static void Initialize(SettingsManagerPtr& _settingsManager, String const& _projectName);
+        static void Initialize(
+            SettingsManagerPtr& _settingsManager,
+            String const& _projectName,
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -142,7 +145,9 @@ namespace Maze
         SettingsManager();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _projectName);
+        virtual bool init(
+            String const& _projectName,
+            DataBlock const& _config);
 
         //////////////////////////////////////////
         Pair<MetaClass* const, SettingsPtr>* getSettings(String const& _settingsClassName);

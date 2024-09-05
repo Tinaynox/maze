@@ -247,35 +247,52 @@ namespace Maze
     //////////////////////////////////////////
     bool Engine::initMainManagers()
     {
-        TaskManager::Initialize(m_taskManager);
+        TaskManager::Initialize(
+            m_taskManager,
+            m_config.params.getDataBlock(MAZE_HCS("taskConfig"), DataBlock::c_empty));
         if (!m_taskManager)
             return false;
 
-        SettingsManager::Initialize(m_settingsManager, m_config.projectName);
+        SettingsManager::Initialize(
+            m_settingsManager,
+            m_config.projectName,
+            m_config.params.getDataBlock(MAZE_HCS("settingsConfig"), DataBlock::c_empty));
         if (!m_settingsManager)
             return false;
 
-        EventManager::Initialize(m_eventManager);
+        EventManager::Initialize(
+            m_eventManager,
+            m_config.params.getDataBlock(MAZE_HCS("eventConfig"), DataBlock::c_empty));
         if (!m_eventManager)
             return false;
 
-        InputManager::Initialize(m_inputManager);
+        InputManager::Initialize(
+            m_inputManager,
+            m_config.params.getDataBlock(MAZE_HCS("inputConfig"), DataBlock::c_empty));
         if (!m_inputManager)
             return false;
 
-        WindowManager::Initialize(m_windowManager);
+        WindowManager::Initialize(
+            m_windowManager,
+            m_config.params.getDataBlock(MAZE_HCS("windowConfig"), DataBlock::c_empty));
         if (!m_windowManager)
             return false;
 
-        DynLibManager::Initialize(m_dynLibManager);
+        DynLibManager::Initialize(
+            m_dynLibManager,
+            m_config.params.getDataBlock(MAZE_HCS("dynLibConfig"), DataBlock::c_empty));
         if (!m_dynLibManager)
             return false;
 
-        PluginManager::Initialize(m_pluginManager);
+        PluginManager::Initialize(
+            m_pluginManager,
+            m_config.params.getDataBlock(MAZE_HCS("pluginConfig"), DataBlock::c_empty));
         if (!m_pluginManager)
             return false;
 
-        SceneManager::Initialize(m_sceneManager);
+        SceneManager::Initialize(
+            m_sceneManager,
+            m_config.params.getDataBlock(MAZE_HCS("sceneConfig"), DataBlock::c_empty));
         if (!m_sceneManager)
             return false;
 
@@ -291,33 +308,47 @@ namespace Maze
         if (!m_entityManager)
             return false;
 
-        GraphicsManager::Initialize(m_graphicsManager);
+        GraphicsManager::Initialize(
+            m_graphicsManager,
+            m_config.params.getDataBlock(MAZE_HCS("graphicsConfig"), DataBlock::c_empty));
         if (!m_graphicsManager)
             return false;
 
-        GamepadManager::Initialize(m_gamepadManager);
+        GamepadManager::Initialize(
+            m_gamepadManager,
+            m_config.params.getDataBlock(MAZE_HCS("gamepadConfig"), DataBlock::c_empty));
         if (!m_gamepadManager)
             return false;
 
-        Physics2DManager::Initialize(m_physics2DManager, m_physicsWorld2DConfig);
+        Physics2DManager::Initialize(
+            m_physics2DManager,
+            m_config.params.getDataBlock(MAZE_HCS("physics2DConfig"), DataBlock::c_empty));
         if (!m_physics2DManager)
             return false;
 
-        UIManager::Initialize(m_uiManager);
+        UIManager::Initialize(
+            m_uiManager,
+            m_config.params.getDataBlock(MAZE_HCS("uiConfig"), DataBlock::c_empty));
         if (!m_uiManager)
             return false;
 
-        SoundManager::Initialize(m_soundManager);
+        SoundManager::Initialize(
+            m_soundManager,
+            m_config.params.getDataBlock(MAZE_HCS("soundConfig"), DataBlock::c_empty));
         if (!m_soundManager)
             return false;
 
 #if !(MAZE_PRODUCTION)
-        EditorToolsManager::Initialize(m_editorToolsManager);
+        EditorToolsManager::Initialize(
+            m_editorToolsManager,
+            m_config.params.getDataBlock(MAZE_HCS("editorToolsConfig"), DataBlock::c_empty));
         if (!m_editorToolsManager)
             return false;
 #endif
 
-        ParticlesManager::Initialize(m_particlesManager);
+        ParticlesManager::Initialize(
+            m_particlesManager,
+            m_config.params.getDataBlock(MAZE_HCS("particlesConfig"), DataBlock::c_empty));
         if (!m_particlesManager)
             return false;
         

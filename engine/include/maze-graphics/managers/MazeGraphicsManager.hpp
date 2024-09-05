@@ -64,7 +64,9 @@ namespace Maze
         virtual ~GraphicsManager();
 
         //////////////////////////////////////////
-        static void Initialize(GraphicsManagerPtr& _graphicsManager);
+        static void Initialize(
+            GraphicsManagerPtr& _graphicsManager,
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -125,7 +127,7 @@ namespace Maze
         GraphicsManager();
 
         //////////////////////////////////////////
-        virtual bool init();
+        virtual bool init(DataBlock const& _config);
 
         ////////////////////////////////////////// 
         virtual void update(F32 _dt) MAZE_OVERRIDE;

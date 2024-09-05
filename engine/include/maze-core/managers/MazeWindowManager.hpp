@@ -68,7 +68,9 @@ namespace Maze
         virtual ~WindowManager();
 
         //////////////////////////////////////////
-        static void Initialize(WindowManagerPtr& _windowManager);
+        static void Initialize(
+            WindowManagerPtr& _windowManager,
+            DataBlock const& _config);
 
         //////////////////////////////////////////
         DisplayPtr const& getPrimaryDisplay() const;
@@ -114,7 +116,7 @@ namespace Maze
         WindowManager();
 
         //////////////////////////////////////////
-        virtual bool init();
+        virtual bool init(DataBlock const& _config);
 
 
     protected:

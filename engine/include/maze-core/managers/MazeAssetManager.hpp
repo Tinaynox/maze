@@ -44,6 +44,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(AssetManager);
+    MAZE_USING_SHARED_PTR(AssetUnitManager);
     MAZE_USING_SHARED_PTR(AssetFile);
 
 
@@ -294,6 +295,8 @@ namespace Maze
         static AssetManager* s_instance;
         
     protected:
+        AssetUnitManagerPtr m_assetUnitManager;
+
         Set<Path> m_assetDirectoryPathes;
 
         UnorderedMap<Path, AssetFilePtr> m_assetFilesByFileName;

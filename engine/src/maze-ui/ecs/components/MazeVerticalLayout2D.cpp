@@ -236,6 +236,17 @@ namespace Maze
     {
         _verticalLayout2D->dirty();
     }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(VerticalLayout2DChildRemoved,
+        {},
+        {},
+        EcsChildRemovedEvent const& _event,
+        Entity* _entity,
+        VerticalLayout2D* _verticalLayout2D)
+    {
+        _verticalLayout2D->dirty();
+    }
     
     
 } // namespace Maze

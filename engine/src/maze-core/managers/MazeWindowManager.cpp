@@ -55,13 +55,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void WindowManager::Initialize(WindowManagerPtr& _windowManager)
+    void WindowManager::Initialize(
+        WindowManagerPtr& _windowManager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_OS_OBJECT_SHARED_PTR(WindowManager, _windowManager, init());
+        MAZE_CREATE_AND_INIT_OS_OBJECT_SHARED_PTR(WindowManager, _windowManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool WindowManager::init()
+    bool WindowManager::init(DataBlock const& _config)
     {
 
         return true;

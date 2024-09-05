@@ -50,8 +50,9 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(EcsWorld);
+    MAZE_USING_SHARED_PTR(Entity);
+    MAZE_USING_SHARED_PTR(Event);
     MAZE_USING_SHARED_PTR(ComponentEntityLinker);
     MAZE_USING_SHARED_PTR(IEntitiesSample);
     MAZE_USING_SHARED_PTR(EcsWorldEventsQueue);
@@ -242,6 +243,20 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <typename TEventType>
+        inline Vector<ComponentSystemEventHandlerPtr> const& getSystems()
+        {
+            static Vector<ComponentSystemEventHandlerPtr> nullValue;
+
+            ClassUID eventUID = ClassInfo<typename std::remove_const<TEventType>::type>::UID();
+            auto it = m_eventHandlers.find(eventUID);
+            if (it == m_eventHandlers.end())
+                return nullValue;
+            return it->second;
+        }
+
+
+        //////////////////////////////////////////
         template <typename TEvent>
         inline void broadcastEventImmediate(TEvent* _event)
         {
@@ -264,18 +279,24 @@ namespace Maze
             broadcastEventImmediate(&evt);
         }
 
-        //////////////////////////////////////////
-        template <typename TEventType>
-        inline Vector<ComponentSystemEventHandlerPtr> const& getSystems()
-        {
-            static Vector<ComponentSystemEventHandlerPtr> nullValue;
 
-            ClassUID eventUID = ClassInfo<typename std::remove_const<TEventType>::type>::UID();
-            auto it = m_eventHandlers.find(eventUID);
-            if (it == m_eventHandlers.end())
-                return nullValue;
-            return it->second;
+        //////////////////////////////////////////
+        void broadcastEvent(EventPtr const& _event);
+
+        //////////////////////////////////////////
+        template <typename TEvent, typename ...TArgs>
+        inline void broadcastEvent(TArgs... _args)
+        {
+            // #TODO: Rework to unique?
+            SharedPtr<TEvent> evt = std::make_shared<TEvent>(_args...);
+            MAZE_DEBUG_ERROR_BP_IF(
+                evt->getClassUID() != ClassInfo<TEvent>::UID(),
+                "Event %s has wrong metadata!",
+                ClassInfo<TEvent>::Name());
+            broadcastEvent(evt);
         }
+
+
 
         //////////////////////////////////////////
         template <typename TEvent>
@@ -303,6 +324,20 @@ namespace Maze
             TEvent evt(_args...);
             sendEventImmediate(_entityId, &evt);
         }
+
+
+        //////////////////////////////////////////
+        void sendEvent(EntityId _entityId, EventPtr const& _event);
+
+        //////////////////////////////////////////
+        template <typename TEvent, typename ...TArgs>
+        inline void sendEvent(EntityId _entityId, TArgs... _args)
+        {
+            // #TODO: Rework to unique?
+            SharedPtr<TEvent> evt = std::make_shared<TEvent>(_args...);
+            sendEvent(_entityId, evt);
+        }
+
 
         //////////////////////////////////////////
         void processEntityForSamples(Entity* _entity);

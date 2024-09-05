@@ -545,5 +545,17 @@ namespace Maze
         m_entities[index].entity.reset();
     }
 
+    //////////////////////////////////////////
+    void EcsWorld::broadcastEvent(EventPtr const& _event)
+    {
+        m_eventHolders.current()->addBroadcastEvent(_event);
+    }
+
+    //////////////////////////////////////////
+    void EcsWorld::sendEvent(EntityId _entityId, EventPtr const& _event)
+    {
+        m_eventHolders.current()->addUnicastEvent(_entityId, _event);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

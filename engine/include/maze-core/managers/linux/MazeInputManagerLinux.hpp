@@ -59,7 +59,7 @@ namespace Maze
         InputManagerLinux();
 
         //////////////////////////////////////////
-        virtual bool init() MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _config) MAZE_OVERRIDE;
     };
 
 

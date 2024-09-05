@@ -66,7 +66,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PhysicsWorld2DPtr PhysicsWorld2D::Create(PhysicsWorld2DConfig const& _config)
+    PhysicsWorld2DPtr PhysicsWorld2D::Create(DataBlock const& _config)
     {
         PhysicsWorld2DPtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(PhysicsWorld2D, object, init(_config));
@@ -74,17 +74,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool PhysicsWorld2D::init(PhysicsWorld2DConfig const& _config)
+    bool PhysicsWorld2D::init(DataBlock const& _config)
     {
-        m_unitsPerMeter = _config.unitsPerMeter;
-        m_worldMaxSteps = _config.worldMaxSteps;
-        m_worldStep = _config.worldStep;
-        m_velocityIterations = _config.velocityIterations;
-        m_positionIterations = _config.positionIterations;
+        m_unitsPerMeter = _config.getF32(MAZE_HCS("unitsPerMeter"), 0.1f);
+        m_worldMaxSteps = _config.getS32(MAZE_HCS("worldMaxSteps"), 10);
+        m_worldStep = _config.getF32(MAZE_HCS("worldStep"), 1.0f / 50.0f);
+        m_velocityIterations = _config.getS32(MAZE_HCS("velocityIterations"), 12);
+        m_positionIterations = _config.getS32(MAZE_HCS("positionIterations"), 16);
 
         createWorld();
 
-        setGravity(_config.gravityUnits);
+        setGravity(_config.getVec2F(MAZE_HCS("gravityUnits"), Vec2F(0.0f, -3.8f)));
 
         return true;
     }

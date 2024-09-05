@@ -61,7 +61,7 @@ namespace Maze
         InputManagerWin();
 
         //////////////////////////////////////////
-        virtual bool init() MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _config) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual bool getKeyState(KeyCode const& _keyCode) MAZE_OVERRIDE;

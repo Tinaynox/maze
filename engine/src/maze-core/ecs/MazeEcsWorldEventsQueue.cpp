@@ -114,9 +114,14 @@ namespace Maze
                     invokeActiveChangedEvent();
                     break;
                 }
-                case EcsWorldEventType::UsualEvent:
+                case EcsWorldEventType::Broadcast:
                 {
-                    invokeUsualEventEvent();
+                    invokeBroadcastEvent();
+                    break;
+                }
+                case EcsWorldEventType::Unicast:
+                {
+                    invokeUnicastEvent();
                     break;
                 }
                 default:
@@ -129,7 +134,7 @@ namespace Maze
         MAZE_DEBUG_ASSERT(m_removingEntities.empty());
         MAZE_DEBUG_ASSERT(m_componentsChangedEntities.empty());
         MAZE_DEBUG_ASSERT(m_activeChangedEntities.empty());
-        MAZE_DEBUG_ASSERT(m_usualEvents.empty());
+        MAZE_DEBUG_ASSERT(m_broadcastEvents.empty());
 
         m_processingEvents = false;
     }
@@ -177,6 +182,22 @@ namespace Maze
         m_removingEntities.push(_entity->getId());
         m_eventTypes.push(EcsWorldEventType::RemovingEntity);
 
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool EcsWorldEventsQueue::addBroadcastEvent(EventPtr const& _event)
+    {
+        m_broadcastEvents.push(_event);
+        m_eventTypes.push(EcsWorldEventType::Broadcast);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool EcsWorldEventsQueue::addUnicastEvent(EntityId _eid, EventPtr const& _event)
+    {
+        m_unicastEvents.push(std::make_pair(_eid, _event));
+        m_eventTypes.push(EcsWorldEventType::Unicast);
         return true;
     }
 
@@ -380,14 +401,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EcsWorldEventsQueue::invokeUsualEventEvent()
+    void EcsWorldEventsQueue::invokeBroadcastEvent()
     {
-        MAZE_PROFILE_EVENT("EcsWorldEventsQueue::invokeUsualEventEvent");
+        MAZE_PROFILE_EVENT("EcsWorldEventsQueue::invokeBroadcastEvent");
 
-        EventPtr evt = m_usualEvents.front();
-        m_usualEvents.pop();
+        EventPtr evt = m_broadcastEvents.front();
+        m_broadcastEvents.pop();
 
-        MAZE_NOT_IMPLEMENTED
+        m_world->broadcastEventImmediate(evt.get());
+    }
+
+    //////////////////////////////////////////
+    void EcsWorldEventsQueue::invokeUnicastEvent()
+    {
+        MAZE_PROFILE_EVENT("EcsWorldEventsQueue::invokeUnicastEvent");
+
+        std::pair<EntityId, EventPtr> evt = m_unicastEvents.front();
+        m_unicastEvents.pop();
+
+        m_world->sendEventImmediate(evt.first, evt.second.get());
     }
 
     //////////////////////////////////////////
@@ -400,7 +432,7 @@ namespace Maze
         while (!m_removingEntities.empty()) { m_removingEntities.pop(); }
         while (!m_componentsChangedEntities.empty()) { m_componentsChangedEntities.pop(); }
         while (!m_activeChangedEntities.empty()) { m_activeChangedEntities.pop(); }
-        while (!m_usualEvents.empty()) { m_usualEvents.pop(); }
+        while (!m_broadcastEvents.empty()) { m_broadcastEvents.pop(); }
     }
 
 

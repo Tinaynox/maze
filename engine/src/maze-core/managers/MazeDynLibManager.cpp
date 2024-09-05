@@ -63,13 +63,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void DynLibManager::Initialize(DynLibManagerPtr& inputManager)
+    void DynLibManager::Initialize(
+        DynLibManagerPtr& inputManager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_OS_OBJECT_SHARED_PTR(DynLibManager, inputManager, init());
+        MAZE_CREATE_AND_INIT_OS_OBJECT_SHARED_PTR(DynLibManager, inputManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool DynLibManager::init()
+    bool DynLibManager::init(DataBlock const& _config)
     {
     
 

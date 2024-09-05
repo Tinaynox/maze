@@ -61,7 +61,9 @@ namespace Maze
         virtual ~DynLibManager();
 
         //////////////////////////////////////////
-        static void Initialize(DynLibManagerPtr& _inputManager);
+        static void Initialize(
+            DynLibManagerPtr& _inputManager,
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -87,7 +89,7 @@ namespace Maze
         DynLibManager();
 
         //////////////////////////////////////////
-        virtual bool init();
+        virtual bool init(DataBlock const& _config);
 
     
     protected:

@@ -70,7 +70,9 @@ namespace Maze
         virtual ~PluginManager();
 
         //////////////////////////////////////////
-        static void Initialize(PluginManagerPtr& _inputManager);
+        static void Initialize(
+            PluginManagerPtr& _inputManager,
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -108,7 +110,7 @@ namespace Maze
         PluginManager();
 
         //////////////////////////////////////////
-        virtual bool init();
+        virtual bool init(DataBlock const& _config);
 
     
     protected:

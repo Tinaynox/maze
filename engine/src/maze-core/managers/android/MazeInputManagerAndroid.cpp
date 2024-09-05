@@ -49,9 +49,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool InputManagerAndroid::init()
+    bool InputManagerAndroid::init(DataBlock const& _config)
     {
-        if (!InputManager::init())
+        if (!InputManager::init(_config))
             return false;
 
         return true;

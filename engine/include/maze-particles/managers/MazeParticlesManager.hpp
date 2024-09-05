@@ -56,7 +56,9 @@ namespace Maze
         virtual ~ParticlesManager();
 
         //////////////////////////////////////////
-        static void Initialize(ParticlesManagerPtr& _particlesManager);
+        static void Initialize(
+            ParticlesManagerPtr& _particlesManager,
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -85,7 +87,7 @@ namespace Maze
         ParticlesManager();
 
         //////////////////////////////////////////
-        bool init();
+        bool init(DataBlock const& _config);
 
 
     protected:

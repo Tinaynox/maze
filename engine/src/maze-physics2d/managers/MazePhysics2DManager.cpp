@@ -64,15 +64,15 @@ namespace Maze
     //////////////////////////////////////////
     void Physics2DManager::Initialize(
         Physics2DManagerPtr& _physics2DManager,
-        PhysicsWorld2DConfig const& _defaultWorldConfig)
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(Physics2DManager, _physics2DManager, init(_defaultWorldConfig));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(Physics2DManager, _physics2DManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool Physics2DManager::init(PhysicsWorld2DConfig const& _defaultWorldConfig)
+    bool Physics2DManager::init(DataBlock const& _config)
     {
-        m_world = PhysicsWorld2D::Create(_defaultWorldConfig);
+        m_world = PhysicsWorld2D::Create(_config);
 
         PhysicsMaterial2DManager::Initialize(m_physicsMaterial2DManager);
         if (!m_physicsMaterial2DManager)

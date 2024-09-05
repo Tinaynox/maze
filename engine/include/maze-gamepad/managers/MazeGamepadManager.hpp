@@ -73,7 +73,9 @@ namespace Maze
         virtual ~GamepadManager();
 
         //////////////////////////////////////////
-        static void Initialize(GamepadManagerPtr& _gamepadManager);
+        static void Initialize(
+            GamepadManagerPtr& _gamepadManager,
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -179,7 +181,7 @@ namespace Maze
         GamepadManager();
 
         //////////////////////////////////////////
-        bool init();
+        bool init(DataBlock const& _config);
 
     protected:
         static GamepadManager* s_instance;

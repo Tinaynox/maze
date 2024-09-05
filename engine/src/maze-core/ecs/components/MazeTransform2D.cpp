@@ -331,11 +331,17 @@ namespace Maze
             return;
 
         if (m_parent)
+        {
             m_parent->m_children.erase(
                 std::find(
                     m_parent->m_children.begin(),
                     m_parent->m_children.end(),
                     this));
+
+            if (m_parent->getEntityRaw() && m_parent->getEntityRaw()->getEcsWorld())
+                m_parent->getEntityRaw()->getEcsWorld()->sendEvent<EcsChildRemovedEvent>(
+                    m_parent->getEntityId(), getEntityId());
+        }
 
         MAZE_DEBUG_ERROR_IF(
             getEntityRaw() && getEntityRaw()->getEcsWorld() && _parent && _parent->getEntityRaw() && _parent->getEntityRaw()->getEcsWorld() &&

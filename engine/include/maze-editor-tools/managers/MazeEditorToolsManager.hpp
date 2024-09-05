@@ -78,7 +78,9 @@ namespace Maze
         virtual ~EditorToolsManager();
 
         //////////////////////////////////////////
-        static void Initialize(EditorToolsManagerPtr& _manager);
+        static void Initialize(
+            EditorToolsManagerPtr& _manager,
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -134,7 +136,7 @@ namespace Maze
         EditorToolsManager();
 
         //////////////////////////////////////////
-        bool init();
+        bool init(DataBlock const& _config);
 
         //////////////////////////////////////////
         void notifyPauseChanged(bool const& _value);

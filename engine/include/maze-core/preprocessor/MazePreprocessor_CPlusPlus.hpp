@@ -100,6 +100,10 @@
                                                             using __DClass##WPtr            = Maze::WeakPtr<class __DClass>; \
                                                             using __DClass##ConstWPtr       = Maze::WeakPtr<class __DClass const>;
 
+//////////////////////////////////////////
+#define MAZE_USING_UNIQUE_PTR(__DClass)                     using __DClass##UPtr            = Maze::UniquePtr<class __DClass>; \
+                                                            using __DClass##ConstUPtr       = Maze::UniquePtr<class __DClass const>;
+
 
 //////////////////////////////////////////
 // OS functions

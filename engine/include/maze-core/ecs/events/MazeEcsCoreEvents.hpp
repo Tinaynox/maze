@@ -288,6 +288,34 @@ namespace Maze
         EcsSceneState m_state = EcsSceneState::None;
     };
 
+
+    //////////////////////////////////////////
+    // Class EcsChildRemovedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API EcsChildRemovedEvent
+        : public GenericEvent<EcsChildRemovedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EcsChildRemovedEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline EcsChildRemovedEvent(
+            EntityId _childEid = c_invalidEntityId)
+            : m_childEid(_childEid)
+        {}
+
+        //////////////////////////////////////////
+        inline EntityId getChildEid() const { return m_childEid; }
+
+
+    private:
+        EntityId m_childEid = c_invalidEntityId;
+    };
+
 } // namespace Maze
 //////////////////////////////////////////
 

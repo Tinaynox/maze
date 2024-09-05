@@ -57,13 +57,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneManager::Initialize(SceneManagerPtr& _eventManager)
+    void SceneManager::Initialize(
+        SceneManagerPtr& _eventManager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneManager, _eventManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneManager, _eventManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool SceneManager::init()
+    bool SceneManager::init(DataBlock const& _config)
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 

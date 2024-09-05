@@ -114,7 +114,9 @@ namespace Maze
         virtual ~SoundManager();
 
         //////////////////////////////////////////
-        static void Initialize(SoundManagerPtr& _soundManager);
+        static void Initialize(
+            SoundManagerPtr& _soundManager,
+            DataBlock const& _config = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
@@ -221,7 +223,7 @@ namespace Maze
         SoundManager();
 
         //////////////////////////////////////////
-        bool init();
+        bool init(DataBlock const& _config);
 
     protected:
         static SoundManager* s_instance;

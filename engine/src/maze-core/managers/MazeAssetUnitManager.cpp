@@ -25,30 +25,40 @@
 
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
-#include "maze-core/managers/linux/MazeDynLibManagerLinux.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
+
     //////////////////////////////////////////
-    // Class DynLibManagerLinux
+    // Class AssetUnitManager
     //
     //////////////////////////////////////////
-    DynLibManagerLinux::DynLibManagerLinux()
+    AssetUnitManager* AssetUnitManager::s_instance = nullptr;
+
+    //////////////////////////////////////////
+    AssetUnitManager::AssetUnitManager()
     {
+        s_instance = this;
     }
 
     //////////////////////////////////////////
-    DynLibManagerLinux::~DynLibManagerLinux()
+    AssetUnitManager::~AssetUnitManager()
     {
+        s_instance = nullptr;
     }
 
     //////////////////////////////////////////
-    bool DynLibManagerLinux::init(DataBlock const& _config)
+    void AssetUnitManager::Initialize(AssetUnitManagerPtr& _assetManager, DataBlock const& _config)
     {
-        if (!DynLibManager::init(_config))
-            return false;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(AssetUnitManager, _assetManager, init(_config));
+    }
+
+    //////////////////////////////////////////
+    bool AssetUnitManager::init(DataBlock const& _config)
+    {    
 
         return true;
     }

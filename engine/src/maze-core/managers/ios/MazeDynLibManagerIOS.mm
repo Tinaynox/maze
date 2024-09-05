@@ -48,9 +48,9 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    bool DynLibManagerIOS::init()
+    bool DynLibManagerIOS::init(DataBlock const& _config)
     {
-        if (!DynLibManager::init())
+        if (!DynLibManager::init(_config))
             return false;
        
         
