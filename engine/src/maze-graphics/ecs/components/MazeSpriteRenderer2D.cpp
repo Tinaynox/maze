@@ -142,8 +142,9 @@ namespace Maze
             m_spriteRef.getSprite()->eventDataChanged.subscribe(this, &SpriteRenderer2D::notifySpriteDataChanged);
         }
 
-        enableFlag(SpriteRenderer2D::Flags::MaterialDirty);
         enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
+        enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
+        enableFlag(SpriteRenderer2D::Flags::MaterialDirty);
         enableFlag(SpriteRenderer2D::Flags::UV0Dirty);
     }
 
@@ -213,6 +214,9 @@ namespace Maze
         m_renderMode = _renderMode;
 
         enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
+        enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
+        enableFlag(SpriteRenderer2D::Flags::MaterialDirty);
+        enableFlag(SpriteRenderer2D::Flags::UV0Dirty);
     }
 
     //////////////////////////////////////////
@@ -506,8 +510,9 @@ namespace Maze
     //////////////////////////////////////////
     void SpriteRenderer2D::notifySpriteDataChanged(Sprite* _sprite)
     {
-        enableFlag(SpriteRenderer2D::Flags::MaterialDirty);
         enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
+        enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
+        enableFlag(SpriteRenderer2D::Flags::MaterialDirty);
         enableFlag(SpriteRenderer2D::Flags::UV0Dirty);
     }
 
