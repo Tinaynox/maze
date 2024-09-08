@@ -127,6 +127,22 @@ namespace Maze
             return RangeRandomMT(_low, _high);
         }
 
+
+        //////////////////////////////////////////
+        inline U32 RangeRandomMT(U32 _from, U32 _to)
+        {
+            std::uniform_int_distribution<U32> dist(_from, _to - 1);
+            return dist(g_mt19937);
+        }
+
+        //////////////////////////////////////////
+        template <>
+        inline U32 RangeRandom(U32 const& _low, U32 const& _high)
+        {
+            return RangeRandomMT(_low, _high);
+        }
+
+
         //////////////////////////////////////////
         inline U32 CustomRand(U32 _seed)
         {

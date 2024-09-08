@@ -617,7 +617,16 @@ namespace Maze
         DataBlock const& getDataBlock(HashedCString _name, DataBlock const& _defValue) const;
 
         //////////////////////////////////////////
-        Vector<String> getDataBlockAsVectorString(HashedCString _name);
+        Vector<String> getDataBlockAsVectorString(HashedCString _name) const;
+
+        //////////////////////////////////////////
+        void setDataBlockAsVectorString(HashedCString _name, Vector<String> const& _value);
+
+        //////////////////////////////////////////
+        Set<String> getDataBlockAsSetString(HashedCString _name) const;
+
+        //////////////////////////////////////////
+        void setDataBlockAsSetString(HashedCString _name, Set<String> const& _value);
 
 
         //////////////////////////////////////////

@@ -46,7 +46,7 @@
 #include "maze-core/data/MazeHashedString.hpp"
 #include "maze-core/MazeObject.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
-#include <tinyxml2.h>
+#include "maze-core/assets/MazeAssetUnitId.hpp"
 
 
 //////////////////////////////////////////
@@ -55,10 +55,6 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(AssetUnit);   
     MAZE_USING_SHARED_PTR(AssetFile);
-
-
-    //////////////////////////////////////////
-    using AssetUnitId = U32;
 
 
     //////////////////////////////////////////

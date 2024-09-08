@@ -46,7 +46,8 @@
 #include "maze-core/data/MazeHashedString.hpp"
 #include "maze-core/MazeObject.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
-#include <tinyxml2.h>
+#include "maze-core/assets/MazeAssetFileId.hpp"
+#include <tinyxml2/tinyxml2.h>
 
 
 //////////////////////////////////////////
@@ -76,6 +77,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void setAssetFileId(AssetFileId _id);
+
+        //////////////////////////////////////////
+        inline AssetFileId getAssetFileId() const { return m_assetFileId; }
+
+
+        //////////////////////////////////////////
         virtual Path const& getFullPath() const MAZE_ABSTRACT;
         
         //////////////////////////////////////////
@@ -96,6 +104,14 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual UnorderedMap<Path, AssetFilePtr> const* getChildrenAssets() const;
+
+
+        //////////////////////////////////////////
+        virtual void saveInfoToMetaData(DataBlock& _metaData) const;
+
+        //////////////////////////////////////////
+        virtual void loadInfoFromMetaData(DataBlock const& _metaData);
+
 
         //////////////////////////////////////////
         virtual bool updateChildrenAssets(
@@ -184,6 +200,9 @@ namespace Maze
             return false;
         }
 
+    public:
+        MultiDelegate<AssetFileId, AssetFileId> eventAssetFileIdChanged;
+
     protected:
 
         //////////////////////////////////////////
@@ -194,6 +213,7 @@ namespace Maze
 
     
     protected:
+        AssetFileId m_assetFileId = 0u;
         Set<String> m_tags;
     };
 

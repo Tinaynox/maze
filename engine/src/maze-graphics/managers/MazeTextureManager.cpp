@@ -162,7 +162,7 @@ namespace Maze
             return false;
 
         DataBlock metaData;
-        if (AssetManager::GetInstancePtr()->getMetaData(_assetFile, metaData))
+        if (AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData))
         {
             if (metaData.isParamExists(MAZE_HCS("magFilter")))
                 texture2D->setMagFilter(
@@ -200,7 +200,7 @@ namespace Maze
             return false;
 
         DataBlock metaData;
-        AssetManager::GetInstancePtr()->getMetaData(_assetFile, metaData);
+        AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData);
         
         metaData.setString(MAZE_HCS("magFilter"), texture2D->getMagFilter().toString());
         metaData.setString(MAZE_HCS("minFilter"), texture2D->getMinFilter().toString());
@@ -408,7 +408,7 @@ namespace Maze
         Timer timer;
 
         DataBlock metaData;
-        AssetManager::GetInstancePtr()->getMetaData(_assetFile, metaData);
+        AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData);
 
         if (metaData.isEmpty() || !metaData.isParamExists(MAZE_HCS("ext")))
         {
@@ -512,7 +512,7 @@ namespace Maze
         textureCube->setName(_assetFile->getFileName());
 
         DataBlock metaData;
-        if (AssetManager::GetInstancePtr()->getMetaData(_assetFile, metaData))
+        if (AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData))
         {
             if (metaData.isParamExists(MAZE_HCS("magFilter")))
                 textureCube->setMagFilter(

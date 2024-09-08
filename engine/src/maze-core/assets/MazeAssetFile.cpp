@@ -58,9 +58,34 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void AssetFile::setAssetFileId(AssetFileId _id)
+    {
+        AssetFileId prevAssetFileId = m_assetFileId;
+        m_assetFileId = _id;
+        eventAssetFileIdChanged(prevAssetFileId, m_assetFileId);
+    }
+
+    //////////////////////////////////////////
     UnorderedMap<Path, AssetFilePtr> const* AssetFile::getChildrenAssets() const
     {
         return nullptr;
+    }
+
+    //////////////////////////////////////////
+    void AssetFile::saveInfoToMetaData(DataBlock& _metaData) const
+    {
+        _metaData.setU32(MAZE_HCS("afid"), getAssetFileId());
+        _metaData.setDataBlockAsSetString(MAZE_HCS("tags"), m_tags);
+    }
+
+    //////////////////////////////////////////
+    void AssetFile::loadInfoFromMetaData(DataBlock const& _metaData)
+    {
+        setTags(_metaData.getDataBlockAsSetString(MAZE_HCS("tags")));
+
+        AssetFileId afid = _metaData.getU32(MAZE_HCS("afid"), c_invalidAssetFileId);
+        if (afid != c_invalidAssetFileId)
+            setAssetFileId(afid);
     }
 
     //////////////////////////////////////////

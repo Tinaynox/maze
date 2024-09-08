@@ -119,7 +119,7 @@ namespace Maze
         if (textureLibraryData && textureLibraryData->assetFile)
         {
             DataBlock metaData;
-            AssetManager::GetInstancePtr()->getMetaData(textureLibraryData->assetFile, metaData);
+            AssetManager::GetInstancePtr()->loadMetaData(textureLibraryData->assetFile, metaData);
             DataBlock* sliceBorder = metaData.getDataBlock(MAZE_HCS("sliceBorder"));
             if (sliceBorder)
             {

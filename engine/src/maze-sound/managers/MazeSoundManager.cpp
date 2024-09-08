@@ -222,7 +222,7 @@ namespace Maze
         Timer timer;
 
         DataBlock metaData;
-        AssetManager::GetInstancePtr()->getMetaData(_assetFile, metaData);
+        AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData);
 
         if (metaData.isEmpty() || !metaData.isParamExists(MAZE_HCS("ext")))
         {

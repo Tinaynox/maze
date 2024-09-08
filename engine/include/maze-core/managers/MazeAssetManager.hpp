@@ -36,6 +36,7 @@
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
+#include "maze-core/assets/MazeAssetFileId.hpp"
 #include <tinyxml2/tinyxml2.h>
 
 
@@ -58,6 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_CORE_API AssetManager
         : public SharedObject<AssetManager>
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -219,10 +221,16 @@ namespace Maze
         AssetFilePtr getMetaDataFile(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
-        bool getMetaData(AssetFilePtr const& _assetFile, DataBlock& _metaData);
+        bool loadMetaData(AssetFilePtr const& _assetFile, DataBlock& _metaData);
 
         //////////////////////////////////////////
         void saveMetaData(AssetFilePtr const& _assetFile, DataBlock const& _metaData);
+
+        //////////////////////////////////////////
+        void updateAndSaveMetaData(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
+        void loadAndUpdateFileMetaData(AssetFilePtr const& _file);
 
 
         //////////////////////////////////////////
@@ -249,6 +257,10 @@ namespace Maze
 
         //////////////////////////////////////////
         inline Set<Path> const& getAssetDirectoryPathes() const { return m_assetDirectoryPathes; }
+
+
+        //////////////////////////////////////////
+        AssetFileId generateAssetFileId() const;
 
     public:
         MultiDelegate<Path const&> eventAssetsDirectoryPathAdded;
@@ -278,9 +290,6 @@ namespace Maze
         //////////////////////////////////////////
         void processRemoveFile(AssetFilePtr const& _file);
 
-        //////////////////////////////////////////
-        void updateFileInfo(AssetFilePtr const& _file);
-
 
         //////////////////////////////////////////
         bool addAssetsDirectory(Path const& _path, bool _recursive = true);
@@ -291,6 +300,10 @@ namespace Maze
         //////////////////////////////////////////
         Set<Path> collectRootAssetDirectoryPathes();
 
+
+        //////////////////////////////////////////
+        void notifyAssetFileIdChanged(AssetFileId _prevAssetFileId, AssetFileId _newAssetFileId);
+
     protected:
         static AssetManager* s_instance;
         
@@ -299,6 +312,7 @@ namespace Maze
 
         Set<Path> m_assetDirectoryPathes;
 
+        UnorderedMap<AssetFileId, AssetFilePtr> m_assetFilesById;
         UnorderedMap<Path, AssetFilePtr> m_assetFilesByFileName;
         UnorderedMap<Path, AssetFilePtr> m_assetFilesByFullPath;
         Map<AssetFilePtr, UnixTime> m_assetFilesUpdateTimeUTC;

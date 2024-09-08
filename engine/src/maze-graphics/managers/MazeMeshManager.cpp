@@ -194,7 +194,7 @@ namespace Maze
 
         DataBlock metaData;
         if (AssetManager::GetInstancePtr())
-            AssetManager::GetInstancePtr()->getMetaData(_assetFile, metaData);
+            AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData);
 
         MeshLoaderProperties loaderProps;
         if (metaData.isParamExists(MAZE_HCS("scale")))

@@ -59,9 +59,11 @@ namespace Maze
     //////////////////////////////////////////
     AssetManager::~AssetManager()
     {
+        m_assetFilesById.clear();
         m_assetFilesByFileName.clear();
-
         m_assetFilesByFullPath.clear();
+
+        m_assetDirectoryPathes.clear();
 
         s_instance = nullptr;
     }
@@ -129,7 +131,8 @@ namespace Maze
 
         for (AssetFilePtr const& addFile : addedFiles)
         {
-            updateFileInfo(addFile);
+            if (addFile->getExtension() != Path("mzmeta"))
+                loadAndUpdateFileMetaData(addFile);
             eventAssetFileAdded(addFile);
         }
 
@@ -179,7 +182,8 @@ namespace Maze
 
         for (AssetFilePtr const& addFile : addedFiles)
         {
-            updateFileInfo(addFile);
+            if (addFile->getExtension() != Path("mzmeta"))
+                loadAndUpdateFileMetaData(addFile);
             eventAssetFileAdded(addFile);
         }
 
@@ -219,7 +223,8 @@ namespace Maze
             info += "\t";
             if (assetFileByFileNameData.second->getClassUID() == ClassInfo<AssetDirectory>::UID())
                 info += "[DIR] ";
-            info += assetFileByFileNameData.first + "\n";
+            info += assetFileByFileNameData.first;
+            info += " (Id:" + StringHelper::ToString(assetFileByFileNameData.second->getAssetFileId()) + ")\n";
         }
         
         return info;
@@ -307,33 +312,29 @@ namespace Maze
     //////////////////////////////////////////
     void AssetManager::processAddFile(AssetFilePtr const& _file)
     {
+        if (_file->getAssetFileId() > 0u)
+            m_assetFilesById[_file->getAssetFileId()] = _file;
+
         m_assetFilesByFileName[_file->getFileName()] = _file;
         m_assetFilesByFullPath[_file->getFullPath()] = _file;
 
         m_assetFilesUpdateTimeUTC[_file] = _file->getFileStats().getLastChangeTimeUTC();
+
+        _file->eventAssetFileIdChanged.subscribe(this, &AssetManager::notifyAssetFileIdChanged);
     }
 
     //////////////////////////////////////////
     void AssetManager::processRemoveFile(AssetFilePtr const& _file)
     {
+        if (_file->getAssetFileId() > 0u)
+            m_assetFilesById.erase(_file->getAssetFileId());
+
         m_assetFilesByFileName.erase(_file->getFileName());
         m_assetFilesByFullPath.erase(_file->getFullPath());
 
         m_assetFilesUpdateTimeUTC.erase(_file);
-    }
 
-    //////////////////////////////////////////
-    void AssetManager::updateFileInfo(AssetFilePtr const& _file)
-    {
-        if (_file->getExtension() == Path("mzmeta"))
-            return;
-
-        DataBlock metaData;
-        getMetaData(_file, metaData);
-        Vector<String> tagsVector = metaData.getDataBlockAsVectorString(MAZE_HCS("tags"));
-        Set<String> tags(tagsVector.begin(), tagsVector.end());
-        
-        _file->setTags(tags);
+        _file->eventAssetFileIdChanged.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -459,7 +460,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetManager::getMetaData(AssetFilePtr const& _assetFile, DataBlock& _metaData)
+    bool AssetManager::loadMetaData(AssetFilePtr const& _assetFile, DataBlock& _metaData)
     {
         _metaData.clear();
 
@@ -481,6 +482,25 @@ namespace Maze
     {
         Path assetFullPath = getMetaDataFullPath(_assetFile);
         _metaData.saveTextFile(assetFullPath);
+    }
+
+    //////////////////////////////////////////
+    void AssetManager::updateAndSaveMetaData(AssetFilePtr const& _assetFile)
+    {
+        DataBlock metaData;
+        loadMetaData(_assetFile, metaData);
+        _assetFile->saveInfoToMetaData(metaData);
+        saveMetaData(_assetFile, metaData);
+    }
+
+    //////////////////////////////////////////
+    void AssetManager::loadAndUpdateFileMetaData(AssetFilePtr const& _assetFile)
+    {
+        DataBlock metaData;
+        if (!loadMetaData(_assetFile, metaData))
+            return;
+
+        _assetFile->loadInfoFromMetaData(metaData);
     }
 
     //////////////////////////////////////////
@@ -517,6 +537,31 @@ namespace Maze
         }
 
         return result;
+    }
+
+    //////////////////////////////////////////
+    AssetFileId AssetManager::generateAssetFileId() const
+    {
+        AssetFileId afid;
+
+        do
+        {
+            afid = Random::RangeRandom(1u, U32_MAX);
+        }
+        while (m_assetFilesById.find(afid) != m_assetFilesById.end());
+
+        return afid;
+    }
+
+    //////////////////////////////////////////
+    void AssetManager::notifyAssetFileIdChanged(AssetFileId _prevAssetFileId, AssetFileId _newAssetFileId)
+    {
+        auto it = m_assetFilesById.find(_prevAssetFileId);
+        if (it != m_assetFilesById.end())
+        {
+            m_assetFilesById[_newAssetFileId] = it->second;
+            m_assetFilesById.erase(it);
+        }
     }
 
 

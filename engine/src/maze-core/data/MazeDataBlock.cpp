@@ -920,7 +920,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vector<String> DataBlock::getDataBlockAsVectorString(HashedCString _name)
+    Vector<String> DataBlock::getDataBlockAsVectorString(HashedCString _name) const
     {
         DataBlock const* dataBlock = getDataBlock(_name);
         if (!dataBlock)
@@ -936,6 +936,45 @@ namespace Maze
         }
 
         return std::move(result);
+    }
+
+    //////////////////////////////////////////
+    void DataBlock::setDataBlockAsVectorString(HashedCString _name, Vector<String> const& _value)
+    {
+        DataBlock& childList = this->operator[](_name);
+        childList.clearData();
+
+        for (String const& text : _value)
+            childList.addString(MAZE_HCS("i"), text);
+    }
+
+    //////////////////////////////////////////
+    Set<String> DataBlock::getDataBlockAsSetString(HashedCString _name) const
+    {
+        DataBlock const* dataBlock = getDataBlock(_name);
+        if (!dataBlock)
+            return Set<String>();
+
+        Set<String> result;
+
+        for (ParamIndex i = 0, in = (ParamIndex)dataBlock->getParamsCount(); i < in; ++i)
+        {
+            Param const& param = dataBlock->getParam(i);
+            if (param.type == U32(DataBlockParamType::ParamString))
+                result.insert(getParamValueCString(param.value));
+        }
+
+        return std::move(result);
+    }
+
+    //////////////////////////////////////////
+    void DataBlock::setDataBlockAsSetString(HashedCString _name, Set<String> const& _value)
+    {
+        DataBlock& childList = this->operator[](_name);
+        childList.clearData();
+
+        for (String const& text : _value)
+            childList.addString(MAZE_HCS("i"), text);
     }
 
     //////////////////////////////////////////
