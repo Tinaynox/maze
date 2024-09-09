@@ -302,7 +302,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyAssetFileIdChanged(AssetFileId _prevAssetFileId, AssetFileId _newAssetFileId);
+        void notifyAssetFileIdChanged(AssetFile* _assetFile, AssetFileId _prevAssetFileId, AssetFileId _newAssetFileId);
 
     protected:
         static AssetManager* s_instance;

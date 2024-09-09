@@ -62,7 +62,7 @@ namespace Maze
     {
         AssetFileId prevAssetFileId = m_assetFileId;
         m_assetFileId = _id;
-        eventAssetFileIdChanged(prevAssetFileId, m_assetFileId);
+        eventAssetFileIdChanged(this, prevAssetFileId, m_assetFileId);
     }
 
     //////////////////////////////////////////
@@ -75,7 +75,11 @@ namespace Maze
     void AssetFile::saveInfoToMetaData(DataBlock& _metaData) const
     {
         _metaData.setU32(MAZE_HCS("afid"), getAssetFileId());
-        _metaData.setDataBlockAsSetString(MAZE_HCS("tags"), m_tags);
+
+        if (m_tags.empty())
+            _metaData.removeDataBlock(MAZE_HCS("tags"));
+        else
+            _metaData.setDataBlockAsSetString(MAZE_HCS("tags"), m_tags);
     }
 
     //////////////////////////////////////////

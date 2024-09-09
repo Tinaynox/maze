@@ -554,14 +554,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetManager::notifyAssetFileIdChanged(AssetFileId _prevAssetFileId, AssetFileId _newAssetFileId)
+    void AssetManager::notifyAssetFileIdChanged(AssetFile* _assetFile, AssetFileId _prevAssetFileId, AssetFileId _newAssetFileId)
     {
         auto it = m_assetFilesById.find(_prevAssetFileId);
         if (it != m_assetFilesById.end())
         {
-            m_assetFilesById[_newAssetFileId] = it->second;
+            MAZE_ERROR_IF(
+                _assetFile != it->second.get(),
+                "Two asset files have same AssetFileId! First=%s, Second=%s",
+                it->second->getFullPath().toUTF8().c_str(),
+                _assetFile->getFullPath().toUTF8().c_str());
             m_assetFilesById.erase(it);
         }
+        
+        m_assetFilesById[_newAssetFileId] = _assetFile->getSharedPtr();
     }
 
 

@@ -180,7 +180,9 @@ namespace Maze
     //////////////////////////////////////////
     void EditorWorkspaceManager::notifyMainRenderWindowResized(RenderTarget* _renderTarget)
     {
-        m_workspaceRenderBuffer->setSize(calculateWorkspaceRenderBuffer());
+        Vec2U size = calculateWorkspaceRenderBuffer();
+        if (size != Vec2U::c_zero)
+            m_workspaceRenderBuffer->setSize(size);
     }
 
 } // namespace Maze

@@ -201,7 +201,7 @@ namespace Maze
         }
 
     public:
-        MultiDelegate<AssetFileId, AssetFileId> eventAssetFileIdChanged;
+        MultiDelegate<AssetFile*, AssetFileId, AssetFileId> eventAssetFileIdChanged;
 
     protected:
 

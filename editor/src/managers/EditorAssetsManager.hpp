@@ -97,6 +97,17 @@ namespace Maze
         //////////////////////////////////////////
         void registerAssetFileCallbacks();
 
+
+        //////////////////////////////////////////
+        void notifyCoreEditorResourcesLoaded();
+
+
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
+        //////////////////////////////////////////
+        void fixAssetFile(AssetFilePtr const& _assetFile);
+
     protected:
         static EditorAssetsManager* s_instance;
     };

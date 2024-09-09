@@ -102,11 +102,6 @@ namespace Maze
     //////////////////////////////////////////
     EditorProjectManager::~EditorProjectManager()
     {
-        if (EventManager::GetInstancePtr())
-        {
-            EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectOpenedEvent>(this);
-            EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectWillBeClosedEvent>(this);
-        }
 
         s_instance = nullptr;
     }
@@ -120,8 +115,7 @@ namespace Maze
     //////////////////////////////////////////
     bool EditorProjectManager::init()
     {
-        EventManager::GetInstancePtr()->subscribeEvent<EditorProjectOpenedEvent>(this, &EditorProjectManager::notifyEvent);
-        EventManager::GetInstancePtr()->subscribeEvent<EditorProjectWillBeClosedEvent>(this, &EditorProjectManager::notifyEvent);
+        
         
         return true;
     }
@@ -129,23 +123,6 @@ namespace Maze
     //////////////////////////////////////////
     void EditorProjectManager::notifyEvent(ClassUID _eventUID, Event* _event)
     {
-        if (_eventUID == ClassInfo<EditorProjectOpenedEvent>::UID())
-        {
-            Path assetsPath = EditorHelper::GetProjectAssetsFolder();
-            Path packagesPath = EditorHelper::GetProjectPackagesFolder();
-
-            FileHelper::CreateDirectoryRecursive(assetsPath);
-            FileHelper::CreateDirectoryRecursive(packagesPath);
-
-            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(assetsPath);
-            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(packagesPath);
-        }
-        else
-        if (_eventUID == ClassInfo<EditorProjectWillBeClosedEvent>::UID())
-        {
-            AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(EditorHelper::GetProjectAssetsFolder());
-            AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(EditorHelper::GetProjectPackagesFolder());
-        }
     }
 
 

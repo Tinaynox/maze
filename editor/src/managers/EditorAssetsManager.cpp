@@ -39,6 +39,7 @@
 #include "maze-core/ecs/components/MazeSinMovement3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
+#include "maze-core/assets/MazeAssetDirectory.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -85,8 +86,10 @@
 #include "maze-editor-tools/inspectors/asset-materials/MazeMaterialsInspector.hpp"
 #include "maze-editor-tools/inspectors/asset-materials/MazeTexture2DsInspector.hpp"
 #include "Editor.hpp"
+#include "events/EditorEvents.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "helpers/EditorAssetHelper.hpp"
+#include "helpers/EditorProjectHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -107,6 +110,12 @@ namespace Maze
     //////////////////////////////////////////
     EditorAssetsManager::~EditorAssetsManager()
     {
+        if (EventManager::GetInstancePtr())
+        {
+            EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectOpenedEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectWillBeClosedEvent>(this);
+        }
+
         if (Editor::GetInstancePtr())
         {
             if (Editor::GetInstancePtr()->getMainRenderWindow())
@@ -116,6 +125,8 @@ namespace Maze
                     Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->eventWindowFocusChanged.unsubscribe(this);
                 }
             }
+
+            Editor::GetInstancePtr()->eventCoreEditorResourcesLoaded.unsubscribe(this);
         }
 
         s_instance = nullptr;
@@ -130,12 +141,17 @@ namespace Maze
     //////////////////////////////////////////
     bool EditorAssetsManager::init()
     {
+        EventManager::GetInstancePtr()->subscribeEvent<EditorProjectOpenedEvent>(this, &EditorAssetsManager::notifyEvent);
+        EventManager::GetInstancePtr()->subscribeEvent<EditorProjectWillBeClosedEvent>(this, &EditorAssetsManager::notifyEvent);
+
         Editor::GetInstancePtr()->eventMainRenderWindowCreated.subscribe(
             [this]()
             {
                 Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->eventWindowFocusChanged.subscribe(
                     this, &EditorAssetsManager::notifyWindowFocusChanged);
             });
+
+        Editor::GetInstancePtr()->eventCoreEditorResourcesLoaded.subscribe(this, &EditorAssetsManager::notifyCoreEditorResourcesLoaded);
 
         EventManager::GetInstancePtr()->subscribeEvent<EditorToolsMaterialChangedEvent>(
             [](EditorToolsMaterialChangedEvent* _event)
@@ -229,6 +245,56 @@ namespace Maze
                     [_controller, _fullPath](String const& _text) { EditorAssetHelper::Duplicate(_controller, _fullPath); });
             }
         });
+    }
+
+    //////////////////////////////////////////
+    void EditorAssetsManager::notifyCoreEditorResourcesLoaded()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    void EditorAssetsManager::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+        if (_eventUID == ClassInfo<EditorProjectOpenedEvent>::UID())
+        {
+            Path assetsPath = EditorHelper::GetProjectAssetsFolder();
+            Path packagesPath = EditorHelper::GetProjectPackagesFolder();
+
+            FileHelper::CreateDirectoryRecursive(assetsPath);
+            FileHelper::CreateDirectoryRecursive(packagesPath);
+
+            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(assetsPath);
+            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(packagesPath);
+
+
+            for (AssetFilePtr const& assetFile : AssetManager::GetInstancePtr()->getAssetFilesInFolder(assetsPath))
+                fixAssetFile(assetFile);
+            for (AssetFilePtr const& assetFile : AssetManager::GetInstancePtr()->getAssetFilesInFolder(packagesPath))
+                fixAssetFile(assetFile);
+        }
+        else
+        if (_eventUID == ClassInfo<EditorProjectWillBeClosedEvent>::UID())
+        {
+            AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(EditorHelper::GetProjectAssetsFolder());
+            AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(EditorHelper::GetProjectPackagesFolder());
+        }
+    }
+
+    //////////////////////////////////////////
+    void EditorAssetsManager::fixAssetFile(AssetFilePtr const& _assetFile)
+    {
+        if (_assetFile->getExtension() == "mzmeta")
+            return;
+
+        if (_assetFile->getMetaClass()->isInheritedFrom<AssetDirectory>())
+            return;
+
+        if (_assetFile->getAssetFileId() == c_invalidAssetFileId)
+        {
+            _assetFile->setAssetFileId(AssetManager::GetInstancePtr()->generateAssetFileId());
+            AssetManager::GetInstancePtr()->updateAndSaveMetaData(_assetFile);
+        }
     }
 
 } // namespace Maze
