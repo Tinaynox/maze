@@ -47,6 +47,7 @@
 #include "maze-core/MazeObject.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-core/assets/MazeAssetFileId.hpp"
+#include "maze-core/assets/MazeAssetUnitId.hpp"
 #include <tinyxml2/tinyxml2.h>
 
 
@@ -54,7 +55,8 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetFile);   
+    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(AssetUnit);
 
 
     //////////////////////////////////////////
@@ -110,7 +112,20 @@ namespace Maze
         virtual void saveInfoToMetaData(DataBlock& _metaData) const;
 
         //////////////////////////////////////////
+        virtual void saveInfoToMetaData();
+
+        //////////////////////////////////////////
         virtual void loadInfoFromMetaData(DataBlock const& _metaData);
+
+        //////////////////////////////////////////
+        virtual bool loadInfoFromMetaData();
+
+
+        //////////////////////////////////////////
+        void updateAssetUnitsFromMetaData(DataBlock const& _metaData);
+
+        //////////////////////////////////////////
+        void updateAssetUnitsFromMetaData();
 
 
         //////////////////////////////////////////
@@ -215,6 +230,8 @@ namespace Maze
     protected:
         AssetFileId m_assetFileId = 0u;
         Set<String> m_tags;
+
+        Vector<AssetUnitPtr> m_assetUnits;
     };
 
 

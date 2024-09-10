@@ -63,5 +63,27 @@ namespace Maze
         return true;
     }
 
+    //////////////////////////////////////////
+    AssetUnitPtr AssetUnitManager::createAssetUnit(AssetFilePtr const& _assetFile, DataBlock const& _data)
+    {
+        auto it = m_assetUnitProcessors.find(HashedString(_data.getName()));
+        if (it != m_assetUnitProcessors.end())
+            return it->second(_assetFile, _data);        
+
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
+    void AssetUnitManager::registerAssetUnitProcessor(HashedString const& _name, AssetUnitProcessor const& _processor)
+    {
+        m_assetUnitProcessors[_name] = _processor;
+    }
+
+    //////////////////////////////////////////
+    void AssetUnitManager::clearAssetUnitProcessor(HashedString const& _name)
+    {
+        m_assetUnitProcessors.erase(_name);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

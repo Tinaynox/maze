@@ -496,11 +496,7 @@ namespace Maze
     //////////////////////////////////////////
     void AssetManager::loadAndUpdateFileMetaData(AssetFilePtr const& _assetFile)
     {
-        DataBlock metaData;
-        if (!loadMetaData(_assetFile, metaData))
-            return;
-
-        _assetFile->loadInfoFromMetaData(metaData);
+        _assetFile->loadInfoFromMetaData();
     }
 
     //////////////////////////////////////////

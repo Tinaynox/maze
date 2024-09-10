@@ -44,6 +44,11 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(AssetUnitManager);
     MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(AssetUnit);
+
+
+    //////////////////////////////////////////
+    using AssetUnitProcessor = std::function<AssetUnitPtr(AssetFilePtr const&, DataBlock const&)>;
 
 
     //////////////////////////////////////////
@@ -61,7 +66,24 @@ namespace Maze
         //////////////////////////////////////////
         static void Initialize(AssetUnitManagerPtr& _AssetUnitManager, DataBlock const& _config = DataBlock::c_empty);
 
+
+        //////////////////////////////////////////
+        AssetUnitPtr createAssetUnit(AssetFilePtr const& _assetFile, DataBlock const& _data);
+
+
+        //////////////////////////////////////////
+        void registerAssetUnitProcessor(HashedString const& _name, AssetUnitProcessor const& _processor);
+
+        //////////////////////////////////////////
+        void clearAssetUnitProcessor(HashedString const& _name);
+
         
+        //////////////////////////////////////////
+        static inline AssetUnitManager* GetInstancePtr() { return s_instance; }
+
+        //////////////////////////////////////////
+        static inline AssetUnitManager& GetInstance() { return *s_instance; }
+
     protected:
 
         //////////////////////////////////////////
@@ -75,6 +97,7 @@ namespace Maze
         static AssetUnitManager* s_instance;
         
     protected:
+        UnorderedMap<HashedString, AssetUnitProcessor> m_assetUnitProcessors;
     };
 
 

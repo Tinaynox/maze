@@ -26,6 +26,8 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 
 
 //////////////////////////////////////////
@@ -83,6 +85,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void AssetFile::saveInfoToMetaData()
+    {
+        DataBlock metaData;
+        saveInfoToMetaData(metaData);
+        AssetManager::GetInstancePtr()->saveMetaData(cast<AssetFile>(), metaData);
+    }
+
+    //////////////////////////////////////////
     void AssetFile::loadInfoFromMetaData(DataBlock const& _metaData)
     {
         setTags(_metaData.getDataBlockAsSetString(MAZE_HCS("tags")));
@@ -90,6 +100,19 @@ namespace Maze
         AssetFileId afid = _metaData.getU32(MAZE_HCS("afid"), c_invalidAssetFileId);
         if (afid != c_invalidAssetFileId)
             setAssetFileId(afid);
+
+        updateAssetUnitsFromMetaData(_metaData);
+    }
+
+    //////////////////////////////////////////
+    bool AssetFile::loadInfoFromMetaData()
+    {
+        DataBlock metaData;
+        if (!AssetManager::GetInstancePtr()->loadMetaData(cast<AssetFile>(), metaData))
+            return false;
+
+        loadInfoFromMetaData(metaData);
+        return true;
     }
 
     //////////////////////////////////////////
@@ -182,6 +205,37 @@ namespace Maze
         readHeaderToByteBuffer(byteBuffer, _size);
 
         return byteBuffer;
+    }
+
+    //////////////////////////////////////////
+    void AssetFile::updateAssetUnitsFromMetaData(DataBlock const& _metaData)
+    {
+        m_assetUnits.clear();
+
+        if (DataBlock const* assetUnits = _metaData.getDataBlock(MAZE_HCS("assetUnits")))
+        {
+            for (DataBlock const* assetUnitBlock : *assetUnits)
+            {
+                if (assetUnitBlock->isComment())
+                    continue;
+
+                AssetUnitPtr assetUnit = AssetUnitManager::GetInstancePtr()->createAssetUnit(cast<AssetFile>(), *assetUnitBlock);
+                if (!assetUnit)
+                    continue;
+
+                m_assetUnits.push_back(assetUnit);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void AssetFile::updateAssetUnitsFromMetaData()
+    {
+        DataBlock metaData;
+        if (!AssetManager::GetInstancePtr()->loadMetaData(cast<AssetFile>(), metaData))
+            return;
+
+        updateAssetUnitsFromMetaData(metaData);
     }
 
 } // namespace Maze
