@@ -58,6 +58,17 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    enum class MAZE_CORE_API AssetUnitLoadingState
+    {
+        None,
+        Loading,
+        Loaded,
+        Error,
+        Unloading,
+    };
+
+
+    //////////////////////////////////////////
     // Class AssetUnit
     //
     //////////////////////////////////////////
@@ -77,16 +88,41 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline AssetFilePtr const& getFile() const { return m_file; }
-
-        //////////////////////////////////////////
-        inline void setFile(AssetFilePtr const& _file) { m_file = _file; }
-
-        //////////////////////////////////////////
         inline AssetUnitId getAssetUnitId() const { return m_auid; }
 
         //////////////////////////////////////////
         inline void setAssetUnitId(AssetUnitId _auid) { m_auid = _auid; }
+
+
+        //////////////////////////////////////////
+        inline AssetUnitLoadingState getLoadingState() const { return m_loadingState; }
+
+        //////////////////////////////////////////
+        inline bool isLoaded() const { return m_loadingState == AssetUnitLoadingState::Loaded; }
+
+        //////////////////////////////////////////
+        inline bool isLoading() const { return m_loadingState == AssetUnitLoadingState::Loading; }
+
+        //////////////////////////////////////////
+        inline bool isUnloading() const { return m_loadingState == AssetUnitLoadingState::Unloading; }
+
+
+        //////////////////////////////////////////
+        inline AssetFilePtr const& getAssetFile() const { return m_assetFile.lock(); }
+
+
+        //////////////////////////////////////////
+        void load();
+
+        //////////////////////////////////////////
+        void loadNow();
+
+
+        //////////////////////////////////////////
+        void unload();
+
+        //////////////////////////////////////////
+        void unloadNow();
 
     protected:
 
@@ -94,12 +130,23 @@ namespace Maze
         AssetUnit();
 
         //////////////////////////////////////////
-        virtual bool init();
+        virtual bool init(
+            AssetFilePtr const& _assetFile,
+            DataBlock const& _data);
 
+
+        //////////////////////////////////////////
+        virtual bool loadNowImpl() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual bool unloadNowImpl() MAZE_ABSTRACT;
     
     protected:
-        AssetFilePtr m_file;
         AssetUnitId m_auid = 0u;
+        AssetUnitLoadingState m_loadingState = AssetUnitLoadingState::None;
+
+        AssetFileWPtr m_assetFile;
+        DataBlock m_data;
     };
 
 

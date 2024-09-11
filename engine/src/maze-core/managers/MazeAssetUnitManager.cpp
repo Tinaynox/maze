@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
+#include "maze-core/assets/MazeAssetUnit.hpp"
 
 
 //////////////////////////////////////////
@@ -66,23 +67,55 @@ namespace Maze
     //////////////////////////////////////////
     AssetUnitPtr AssetUnitManager::createAssetUnit(AssetFilePtr const& _assetFile, DataBlock const& _data)
     {
-        auto it = m_assetUnitProcessors.find(HashedString(_data.getName()));
+        HashedString assetUnitType(_data.getName());
+
+        auto it = m_assetUnitProcessors.find(assetUnitType);
         if (it != m_assetUnitProcessors.end())
             return it->second(_assetFile, _data);        
+
+        MAZE_ERROR("Unsupported asset unit type - '%s'!", assetUnitType.c_str());
 
         return nullptr;
     }
 
     //////////////////////////////////////////
-    void AssetUnitManager::registerAssetUnitProcessor(HashedString const& _name, AssetUnitProcessor const& _processor)
+    void AssetUnitManager::registerAssetUnitProcessor(HashedCString _name, AssetUnitProcessor const& _processor)
     {
         m_assetUnitProcessors[_name] = _processor;
     }
 
     //////////////////////////////////////////
-    void AssetUnitManager::clearAssetUnitProcessor(HashedString const& _name)
+    void AssetUnitManager::clearAssetUnitProcessor(HashedCString _name)
     {
         m_assetUnitProcessors.erase(_name);
+    }
+
+    //////////////////////////////////////////
+    AssetUnitId AssetUnitManager::generateAssetUnitId() const
+    {
+        AssetUnitId afid;
+
+        do
+        {
+            afid = Random::RangeRandom(1u, U32_MAX);
+        }
+        while (m_assetUnitsById.find(afid) != m_assetUnitsById.end());
+
+        return afid;
+    }
+
+    //////////////////////////////////////////
+    void AssetUnitManager::addAssetUnit(AssetUnitPtr const& _assetFile)
+    {
+        MAZE_ERROR_RETURN_IF(_assetFile->getAssetUnitId() == c_invalidAssetUnitId, "AssetUnitId is invalid!");
+
+        m_assetUnitsById[_assetFile->getAssetUnitId()] = _assetFile;
+    }
+
+    //////////////////////////////////////////
+    void AssetUnitManager::removeAssetUnit(AssetUnitId _assetFileId)
+    {
+        m_assetUnitsById.erase(_assetFileId);
     }
 
 } // namespace Maze

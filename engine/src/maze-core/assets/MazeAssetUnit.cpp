@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/assets/MazeAssetUnit.hpp"
+#include "maze-core/managers/MazeTaskManager.hpp"
 
 
 //////////////////////////////////////////
@@ -49,14 +50,96 @@ namespace Maze
     {
     }
     
-
     //////////////////////////////////////////
-    bool AssetUnit::init()
+    bool AssetUnit::init(
+        AssetFilePtr const& _assetFile,
+        DataBlock const& _data)
     {
+        m_assetFile = _assetFile;
+        m_data = _data;
+
+        m_auid = m_data.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
             
         return true;
     }
 
+    //////////////////////////////////////////
+    void AssetUnit::load()
+    {
+        if (isLoaded() || isLoading())
+            return;
+
+        m_loadingState = AssetUnitLoadingState::Loading;
+
+#if (1)
+        // #TODO: async load test
+        TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
+            10,
+            [weakPtr = (AssetUnitWPtr)cast<AssetUnit>()]()
+            {
+                AssetUnitPtr assetUnit = weakPtr.lock();
+                if (!assetUnit)
+                    return;
+
+                assetUnit->loadNow();
+            });
+#else
+        assetUnit->loadNow();
+#endif
+    }
+
+    //////////////////////////////////////////
+    void AssetUnit::loadNow()
+    {
+        if (isLoaded())
+            return;
+
+        if (isUnloading())
+        {
+            m_loadingState = AssetUnitLoadingState::None;
+            return;
+        }
+
+        if (loadNowImpl())
+            m_loadingState = AssetUnitLoadingState::Loaded;
+        else
+            m_loadingState = AssetUnitLoadingState::Error;
+    }
+
+    //////////////////////////////////////////
+    void AssetUnit::unload()
+    {
+        if (!isLoaded() || isUnloading())
+            return;
+
+        m_loadingState = AssetUnitLoadingState::Unloading;
+
+#if (1)
+        // #TODO: async load test
+        TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
+            10,
+            [weakPtr = (AssetUnitWPtr)cast<AssetUnit>()]()
+        {
+            AssetUnitPtr assetUnit = weakPtr.lock();
+            if (!assetUnit)
+                return;
+
+            assetUnit->unloadNow();
+        });
+#else
+        assetUnit->unloadNow();
+#endif
+    }
+
+    //////////////////////////////////////////
+    void AssetUnit::unloadNow()
+    {
+        if (!isLoaded())
+            return;
+
+        if (unloadNowImpl())
+            m_loadingState = AssetUnitLoadingState::None;
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

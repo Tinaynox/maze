@@ -28,6 +28,7 @@
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
+#include "maze-core/assets/MazeAssetUnit.hpp"
 
 
 //////////////////////////////////////////
@@ -49,6 +50,7 @@ namespace Maze
     //////////////////////////////////////////
     AssetFile::~AssetFile()
     {
+        removeAssetUnits();
     }
     
 
@@ -210,7 +212,7 @@ namespace Maze
     //////////////////////////////////////////
     void AssetFile::updateAssetUnitsFromMetaData(DataBlock const& _metaData)
     {
-        m_assetUnits.clear();
+        removeAssetUnits();
 
         if (DataBlock const* assetUnits = _metaData.getDataBlock(MAZE_HCS("assetUnits")))
         {
@@ -222,6 +224,10 @@ namespace Maze
                 AssetUnitPtr assetUnit = AssetUnitManager::GetInstancePtr()->createAssetUnit(cast<AssetFile>(), *assetUnitBlock);
                 if (!assetUnit)
                     continue;
+
+                if (assetUnit->getAssetUnitId() == c_invalidAssetUnitId)
+                    assetUnit->setAssetUnitId(AssetUnitManager::GetInstancePtr()->generateAssetUnitId());
+                AssetUnitManager::GetInstancePtr()->addAssetUnit(assetUnit);
 
                 m_assetUnits.push_back(assetUnit);
             }
@@ -236,6 +242,20 @@ namespace Maze
             return;
 
         updateAssetUnitsFromMetaData(metaData);
+    }
+
+    //////////////////////////////////////////
+    void AssetFile::removeAssetUnits()
+    {
+        while (!m_assetUnits.empty())
+        {
+            AssetUnitPtr assetUnit = m_assetUnits.back();
+            m_assetUnits.pop_back();
+
+            assetUnit->unloadNow();
+            AssetUnitManager::GetInstancePtr()->removeAssetUnit(
+                assetUnit->getAssetUnitId());
+        }
     }
 
 } // namespace Maze

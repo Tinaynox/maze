@@ -25,92 +25,76 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeAssetUnitManager_hpp_))
-#define _MazeAssetUnitManager_hpp_
+#if (!defined(_MazeAssetUnitTexture2D_hpp_))
+#define _MazeAssetUnitTexture2D_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/utils/MazeSharedObject.hpp"
-#include "maze-core/containers/MazeStringKeyMap.hpp"
-#include "maze-core/data/MazeDataBlock.hpp"
-#include "maze-core/containers/MazeStringKeyMap.hpp"
-#include "maze-core/assets/MazeAssetUnitId.hpp"
+#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-core/assets/MazeAssetUnit.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetUnitManager);
+    MAZE_USING_SHARED_PTR(AssetUnitTexture2D);   
     MAZE_USING_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(AssetUnit);
+    MAZE_USING_SHARED_PTR(Texture2D);
 
 
     //////////////////////////////////////////
-    using AssetUnitProcessor = std::function<AssetUnitPtr(AssetFilePtr const&, DataBlock const&)>;
-
-
-    //////////////////////////////////////////
-    // Class AssetUnitManager
+    // Class AssetUnitTexture2D
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API AssetUnitManager
-        : public SharedObject<AssetUnitManager>
+    class MAZE_CORE_API AssetUnitTexture2D
+        : public AssetUnit
     {
+    public:
+        
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitTexture2D, AssetUnit);
+        
     public:
 
         //////////////////////////////////////////
-        virtual ~AssetUnitManager();
+        virtual ~AssetUnitTexture2D();
 
         //////////////////////////////////////////
-        static void Initialize(AssetUnitManagerPtr& _AssetUnitManager, DataBlock const& _config = DataBlock::c_empty);
-
-
-        //////////////////////////////////////////
-        AssetUnitPtr createAssetUnit(AssetFilePtr const& _assetFile, DataBlock const& _data);
+        static AssetUnitTexture2DPtr Create(
+            AssetFilePtr const& _assetFile,
+            DataBlock const& _data);
 
 
         //////////////////////////////////////////
-        void registerAssetUnitProcessor(HashedCString _name, AssetUnitProcessor const& _processor);
+        inline Texture2DPtr const& getTexture() const { return m_texture; }
 
         //////////////////////////////////////////
-        void clearAssetUnitProcessor(HashedCString _name);
-
-
-        //////////////////////////////////////////
-        AssetUnitId generateAssetUnitId() const;
-
-        //////////////////////////////////////////
-        void addAssetUnit(AssetUnitPtr const& _assetFile);
-
-        //////////////////////////////////////////
-        void removeAssetUnit(AssetUnitId _assetFileId);
-
-        
-        //////////////////////////////////////////
-        static inline AssetUnitManager* GetInstancePtr() { return s_instance; }
-
-        //////////////////////////////////////////
-        static inline AssetUnitManager& GetInstance() { return *s_instance; }
+        Texture2DPtr const& loadTexture();
 
     protected:
 
         //////////////////////////////////////////
-        AssetUnitManager();
+        AssetUnitTexture2D();
 
         //////////////////////////////////////////
-        virtual bool init(DataBlock const& _config);
+        virtual bool init(
+            AssetFilePtr const& _assetFile,
+            DataBlock const& _data) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual bool loadNowImpl() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual bool unloadNowImpl() MAZE_OVERRIDE;
+    
 
 
+        //////////////////////////////////////////
+        void initTexture();
+
     protected:
-        static AssetUnitManager* s_instance;
-        
-    protected:
-        StringKeyMap<AssetUnitProcessor> m_assetUnitProcessors;
-        UnorderedMap<AssetUnitId, AssetUnitPtr> m_assetUnitsById;
+        Texture2DPtr m_texture;
     };
 
 
@@ -118,5 +102,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeAssetUnitManager_hpp_
+#endif // _MazeAssetUnitTexture2D_hpp_
 //////////////////////////////////////////

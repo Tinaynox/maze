@@ -28,6 +28,7 @@
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
@@ -38,6 +39,7 @@
 #include "maze-graphics/MazeTextureCube.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/loaders/texture/MazeLoaderBMP.hpp"
+#include "maze-graphics/assets/MazeAssetUnitTexture2D.hpp"
 
 
 //////////////////////////////////////////
@@ -95,6 +97,17 @@ namespace Maze
                 (LoadTextureByteBufferFunction)&LoadBMP,
                 (IsTextureAssetFileFunction)&IsBMPFile,
                 (IsTextureByteBufferFunction)&IsBMPFile));
+
+
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
+                MAZE_HCS("texture2d"),
+                [](AssetFilePtr const& _file, DataBlock const& _data)
+                {
+                    return AssetUnitTexture2D::Create(_file, _data);
+                });
+        }
 
         return true;
     }

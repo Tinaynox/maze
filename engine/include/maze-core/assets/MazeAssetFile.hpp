@@ -226,6 +226,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init();
 
+
+        //////////////////////////////////////////
+        void removeAssetUnits();
     
     protected:
         AssetFileId m_assetFileId = 0u;
