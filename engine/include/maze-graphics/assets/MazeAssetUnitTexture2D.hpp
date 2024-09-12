@@ -72,6 +72,10 @@ namespace Maze
         //////////////////////////////////////////
         Texture2DPtr const& loadTexture();
 
+
+        //////////////////////////////////////////
+        void initTexture();
+
     protected:
 
         //////////////////////////////////////////
@@ -88,11 +92,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool unloadNowImpl() MAZE_OVERRIDE;
     
-
-
-        //////////////////////////////////////////
-        void initTexture();
-
     protected:
         Texture2DPtr m_texture;
     };

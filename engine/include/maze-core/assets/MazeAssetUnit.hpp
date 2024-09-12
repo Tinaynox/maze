@@ -108,7 +108,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline AssetFilePtr const& getAssetFile() const { return m_assetFile.lock(); }
+        inline AssetFilePtr getAssetFile() const { return m_assetFile.lock(); }
 
 
         //////////////////////////////////////////

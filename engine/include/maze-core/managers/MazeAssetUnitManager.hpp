@@ -89,12 +89,20 @@ namespace Maze
         //////////////////////////////////////////
         void removeAssetUnit(AssetUnitId _assetFileId);
 
+        //////////////////////////////////////////
+        AssetUnitPtr const& getAssetUnit(AssetUnitId _assetFileId) const;
+
         
         //////////////////////////////////////////
         static inline AssetUnitManager* GetInstancePtr() { return s_instance; }
 
         //////////////////////////////////////////
         static inline AssetUnitManager& GetInstance() { return *s_instance; }
+
+
+    public:
+        MultiDelegate<AssetUnitPtr> eventAssetUnitAdded;
+        MultiDelegate<AssetUnitId, AssetUnitPtr> eventAssetUnitWillBeRemoved;
 
     protected:
 

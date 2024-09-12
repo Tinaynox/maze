@@ -78,6 +78,9 @@ namespace Maze
     //////////////////////////////////////////
     RenderSystem* RenderSystem::GetCurrentInstancePtr()
     {
+        if (!GraphicsManager::GetInstancePtr())
+            return nullptr;
+
         return GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
     }
 

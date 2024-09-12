@@ -253,8 +253,10 @@ namespace Maze
             m_assetUnits.pop_back();
 
             assetUnit->unloadNow();
-            AssetUnitManager::GetInstancePtr()->removeAssetUnit(
-                assetUnit->getAssetUnitId());
+
+            if (AssetUnitManager::GetInstancePtr())
+                AssetUnitManager::GetInstancePtr()->removeAssetUnit(
+                    assetUnit->getAssetUnitId());
         }
     }
 

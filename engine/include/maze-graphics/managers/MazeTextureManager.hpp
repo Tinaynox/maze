@@ -118,13 +118,21 @@ namespace Maze
         //////////////////////////////////////////
         Texture2DLibraryData(
             Texture2DPtr const& _texture = nullptr,
-            AssetFilePtr const& _assetFile = nullptr)
+            std::function<void(bool)> _requestLoadCb = nullptr,
+            std::function<void(bool)> _requestUnloadCb = nullptr,
+            std::function<void(bool)> _requestReloadCb = nullptr)
             : texture(_texture)
-            , assetFile(_assetFile)
+            , requestLoadCb(_requestLoadCb)
+            , requestUnloadCb(_requestUnloadCb)
+            , requestReloadCb(_requestReloadCb)
         {}
 
         Texture2DPtr texture;
-        AssetFilePtr assetFile;
+        std::function<void(bool)> requestLoadCb;
+        std::function<void(bool)> requestUnloadCb;
+        std::function<void(bool)> requestReloadCb;
+
+        AssetFilePtr assetFile; // #TODO: Obsolete. Rework through AssetUnitId
     };
 
 
@@ -137,13 +145,21 @@ namespace Maze
         //////////////////////////////////////////
         TextureCubeLibraryData(
             TextureCubePtr const& _texture = nullptr,
-            AssetFilePtr const& _assetFile = nullptr)
+            std::function<void(bool)> _requestLoadCb = nullptr,
+            std::function<void(bool)> _requestUnloadCb = nullptr,
+            std::function<void(bool)> _requestReloadCb = nullptr)
             : texture(_texture)
-            , assetFile(_assetFile)
+            , requestLoadCb(_requestLoadCb)
+            , requestUnloadCb(_requestUnloadCb)
+            , requestReloadCb(_requestReloadCb)
         {}
 
         TextureCubePtr texture;
-        AssetFilePtr assetFile;
+        std::function<void(bool)> requestLoadCb;
+        std::function<void(bool)> requestUnloadCb;
+        std::function<void(bool)> requestReloadCb;
+
+        AssetFilePtr assetFile; // #TODO: Obsolete. Rework through AssetUnitId
     };
 
 
@@ -234,7 +250,11 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Texture2DLibraryData* addTextureToLibrary(Texture2DPtr const& _texture);
+        Texture2DLibraryData* addTextureToLibrary(
+            Texture2DPtr const& _texture,
+            std::function<void(bool)> _requestLoadCb = nullptr,
+            std::function<void(bool)> _requestUnloadCb = nullptr,
+            std::function<void(bool)> _requestReloadCb = nullptr);
 
         //////////////////////////////////////////
         void removeTexture2DFromLibrary(HashedCString _textureName);
@@ -286,7 +306,11 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        TextureCubeLibraryData* addTextureToLibrary(TextureCubePtr const& _texture);
+        TextureCubeLibraryData* addTextureToLibrary(
+            TextureCubePtr const& _texture,
+            std::function<void(bool)> _requestLoadCb = nullptr,
+            std::function<void(bool)> _requestUnloadCb = nullptr,
+            std::function<void(bool)> _requestReloadCb = nullptr);
 
         //////////////////////////////////////////
         void removeTextureCubeFromLibrary(HashedCString _textureName);

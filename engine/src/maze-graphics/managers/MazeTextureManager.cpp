@@ -79,7 +79,13 @@ namespace Maze
     //////////////////////////////////////////
     TextureManagerPtr const& TextureManager::GetCurrentInstancePtr()
     {
-        return RenderSystem::GetCurrentInstancePtr()->getTextureManager();
+        static TextureManagerPtr nullPointer;
+
+        RenderSystem* renderSystem = RenderSystem::GetCurrentInstancePtr();
+        if (!renderSystem)
+            return nullPointer;
+
+        return renderSystem->getTextureManager();
     }
 
     //////////////////////////////////////////
@@ -106,6 +112,13 @@ namespace Maze
                 [](AssetFilePtr const& _file, DataBlock const& _data)
                 {
                     return AssetUnitTexture2D::Create(_file, _data);
+                });
+
+            AssetUnitManager::GetInstancePtr()->eventAssetUnitAdded.subscribe(
+                [](AssetUnitPtr const& _assetUnit)
+                {
+                    if (_assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
+                        _assetUnit->castRaw<AssetUnitTexture2D>()->initTexture();
                 });
         }
 
@@ -134,7 +147,12 @@ namespace Maze
 
         Texture2DLibraryData const* libraryData = getTexture2DLibraryData(_textureName);
         if (libraryData)
+        {
+            if (libraryData->requestLoadCb)
+                libraryData->requestLoadCb(false);
+
             return libraryData->texture;
+        }
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_textureName);
         if (!assetFile)
@@ -150,7 +168,12 @@ namespace Maze
 
         Texture2DLibraryData const* libraryData = getTexture2DLibraryData(_assetFile->getFileName());
         if (libraryData)
+        {
+            if (libraryData->requestLoadCb)
+                libraryData->requestLoadCb(false);
+
             return libraryData->texture;
+        }
 
         Texture2DPtr texture2D = Texture2D::Create(_assetFile, m_renderSystemRaw);
         texture2D->setName(_assetFile->getFileName());
@@ -373,11 +396,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Texture2DLibraryData* TextureManager::addTextureToLibrary(Texture2DPtr const& _texture)
+    Texture2DLibraryData* TextureManager::addTextureToLibrary(
+        Texture2DPtr const& _texture,
+        std::function<void(bool)> _requestLoadCb,
+        std::function<void(bool)> _requestUnloadCb,
+        std::function<void(bool)> _requestReloadCb)
     {
         auto it2 = m_textures2DLibrary.insert(
             _texture->getName(),
-            { _texture, nullptr });
+            { _texture, _requestLoadCb, _requestUnloadCb, _requestReloadCb });
 
         return it2;
     }
@@ -564,11 +591,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    TextureCubeLibraryData* TextureManager::addTextureToLibrary(TextureCubePtr const& _texture)
+    TextureCubeLibraryData* TextureManager::addTextureToLibrary(
+        TextureCubePtr const& _texture,
+        std::function<void(bool)> _requestLoadCb,
+        std::function<void(bool)> _requestUnloadCb,
+        std::function<void(bool)> _requestReloadCb)
     {
         auto it2 = m_texturesCubeLibrary.insert(
             _texture->getName(),
-            { _texture, nullptr });
+            { _texture, _requestLoadCb, _requestUnloadCb, _requestReloadCb });
 
         return it2;
     }

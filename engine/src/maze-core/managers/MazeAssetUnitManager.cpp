@@ -110,12 +110,30 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(_assetFile->getAssetUnitId() == c_invalidAssetUnitId, "AssetUnitId is invalid!");
 
         m_assetUnitsById[_assetFile->getAssetUnitId()] = _assetFile;
+        eventAssetUnitAdded(_assetFile);
     }
 
     //////////////////////////////////////////
     void AssetUnitManager::removeAssetUnit(AssetUnitId _assetFileId)
     {
-        m_assetUnitsById.erase(_assetFileId);
+        auto it = m_assetUnitsById.find(_assetFileId);
+        if (it != m_assetUnitsById.end())
+        {
+            eventAssetUnitWillBeRemoved(_assetFileId, it->second);
+            m_assetUnitsById.erase(it);
+        }
+    }
+
+    //////////////////////////////////////////
+    AssetUnitPtr const& AssetUnitManager::getAssetUnit(AssetUnitId _assetFileId) const
+    {
+        static AssetUnitPtr nullPointer;
+
+        auto it = m_assetUnitsById.find(_assetFileId);
+        if (it != m_assetUnitsById.end())
+            return it->second;
+
+        return nullPointer;
     }
 
 } // namespace Maze

@@ -74,7 +74,7 @@ namespace Maze
 #if (1)
         // #TODO: async load test
         TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
-            10,
+            100,
             [weakPtr = (AssetUnitWPtr)cast<AssetUnit>()]()
             {
                 AssetUnitPtr assetUnit = weakPtr.lock();

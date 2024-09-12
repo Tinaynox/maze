@@ -28,6 +28,7 @@
 #include "maze-graphics/assets/MazeAssetUnitTexture2D.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
 
 
 //////////////////////////////////////////
@@ -99,7 +100,6 @@ namespace Maze
             return false;
 
         m_texture->loadFromAssetFile(assetFile);
-        TextureManager::GetCurrentInstancePtr()->addTextureToLibrary(m_texture);
 
         return true;
     }
@@ -109,7 +109,8 @@ namespace Maze
     {
         if (m_texture)
         {
-            TextureManager::GetCurrentInstancePtr()->removeTexture2DFromLibrary(m_texture->getName().asHashedCString());
+            if (TextureManager::GetCurrentInstancePtr())
+                TextureManager::GetCurrentInstancePtr()->removeTexture2DFromLibrary(m_texture->getName().asHashedCString());
             m_texture.reset();
         }
 
@@ -122,8 +123,38 @@ namespace Maze
         if (m_texture)
             return;
 
+        AssetFilePtr assetFile = getAssetFile();
+        if (!assetFile)
+            return;
+
         m_texture = Texture2D::Create();
         m_texture->loadTexture(PixelSheet2D(Vec2S(1)));
+        m_texture->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
+
+        if (TextureManager::GetCurrentInstancePtr())
+            TextureManager::GetCurrentInstancePtr()->addTextureToLibrary(
+                m_texture,
+                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _immediate)
+                {
+                    // Load
+                    if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                        _immediate ? assetUnit->loadNow() : assetUnit->load();
+                },
+                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _immediate)
+                {
+                    // Unload
+                    if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                        _immediate ? assetUnit->unloadNow() : assetUnit->unload();
+                },
+                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _immediate)
+                {
+                    // Reload
+                    if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                    {
+                        assetUnit->unloadNow();
+                        _immediate ? assetUnit->loadNow() : assetUnit->load();
+                    }
+                });
     }
 
 
