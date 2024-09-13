@@ -2,4 +2,4 @@ minFilter:String = LinearMipmapLinear
 magFilter:String = Linear
 wrapS:String = Repeat
 wrapT:String = Repeat
-anisotropy:F32 = 16.0
+anisotropyLevel:F32 = 16.0

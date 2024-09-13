@@ -132,29 +132,46 @@ namespace Maze
         m_texture->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
 
         if (TextureManager::GetCurrentInstancePtr())
-            TextureManager::GetCurrentInstancePtr()->addTextureToLibrary(
-                m_texture,
+        {
+            TextureLibraryDataCallbacks callbacks;
+
+            callbacks.requestLoad = 
                 [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _immediate)
                 {
-                    // Load
                     if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
                         _immediate ? assetUnit->loadNow() : assetUnit->load();
-                },
-                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _immediate)
+                };
+
+            callbacks.requestUnload =
+                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()] (bool _immediate)
                 {
-                    // Unload
                     if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
                         _immediate ? assetUnit->unloadNow() : assetUnit->unload();
-                },
+                };
+
+            callbacks.requestReload =
                 [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _immediate)
                 {
-                    // Reload
                     if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
                     {
                         assetUnit->unloadNow();
                         _immediate ? assetUnit->loadNow() : assetUnit->load();
                     }
-                });
+                };
+            callbacks.hasAnyOfTags = 
+                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](Set<String> const& _tags)
+                {
+                    if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                        if (AssetFilePtr assetFile = assetUnit->getAssetFile())
+                            return assetFile->hasAnyOfTags(_tags);
+
+                    return false;
+                };
+
+            TextureManager::GetCurrentInstancePtr()->addTextureToLibrary(
+                m_texture,
+                callbacks);
+        }
     }
 
 

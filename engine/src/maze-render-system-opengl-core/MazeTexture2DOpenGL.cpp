@@ -795,7 +795,7 @@ namespace Maze
     void Texture2DOpenGL::notifyContextOpenGLContextWillBeDestroyed(ContextOpenGL* _contextOpenGL)
     {
         Texture2DLibraryData const* libraryData = m_renderSystem->getTextureManager()->getTexture2DLibraryData(getName().asHashedCString());
-        if (!libraryData || !libraryData->assetFile)
+        if (!libraryData || !libraryData->callbacks.requestReload)
         {
             if (m_internalPixelFormat == PixelFormat::RGBA_U8)
                 m_cachedPixelSheet = readAsPixelSheet();
@@ -880,10 +880,10 @@ namespace Maze
             generateGLObjects();
 
         Texture2DLibraryData const* libraryData = m_renderSystem->getTextureManager()->getTexture2DLibraryData(getName().asHashedCString());
-        if (libraryData && libraryData->assetFile)
+        if (libraryData && libraryData->callbacks.requestReload)
         {
             Debug::log << "Texture2DOpenGL<" << getName() << ">: reloading from asset file..." << endl;
-            loadFromAssetFile(libraryData->assetFile);
+            libraryData->callbacks.requestReload(true);
             Debug::log << "Texture2DOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
         }
         else

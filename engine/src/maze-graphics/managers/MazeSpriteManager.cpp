@@ -116,6 +116,8 @@ namespace Maze
         SpritePtr sprite = Sprite::Create(texture2D);
 
         Texture2DLibraryData const* textureLibraryData = m_renderSystemRaw->getTextureManager()->getTexture2DLibraryData(texture2D->getName().asHashedCString());
+        // #TODO: NOT IMPLEMENTED
+        /*
         if (textureLibraryData && textureLibraryData->assetFile)
         {
             DataBlock metaData;
@@ -130,6 +132,7 @@ namespace Maze
                 sprite->setSliceBorder(left, bottom, right, top);
             }
         }
+        */
 
         SpriteLibraryData* data = addSpriteToLibrary(sprite);
         if (data)
@@ -170,7 +173,7 @@ namespace Maze
             if (it->second.sprite && it->second.sprite->getTexture())
             {
                 Texture2DLibraryData const* textureLibraryData = m_renderSystemRaw->getTextureManager()->getTexture2DLibraryData(it->second.sprite->getTexture()->getName().asHashedCString());
-                unload = textureLibraryData && textureLibraryData->assetFile && textureLibraryData->assetFile->hasAnyOfTags(_tags);
+                unload = textureLibraryData && textureLibraryData->callbacks.hasAnyOfTags && textureLibraryData->callbacks.hasAnyOfTags(_tags);
             }
 
             if (unload)

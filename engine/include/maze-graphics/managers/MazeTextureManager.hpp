@@ -110,6 +110,19 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct TextureLibraryData
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API TextureLibraryDataCallbacks
+    {
+        std::function<void(bool)> requestLoad;
+        std::function<void(bool)> requestUnload;
+        std::function<void(bool)> requestReload;
+        std::function<bool(Set<String> const&)> hasAnyOfTags;
+    };
+
+
+    //////////////////////////////////////////
     // Struct Texture2DLibraryData
     //
     //////////////////////////////////////////
@@ -118,21 +131,13 @@ namespace Maze
         //////////////////////////////////////////
         Texture2DLibraryData(
             Texture2DPtr const& _texture = nullptr,
-            std::function<void(bool)> _requestLoadCb = nullptr,
-            std::function<void(bool)> _requestUnloadCb = nullptr,
-            std::function<void(bool)> _requestReloadCb = nullptr)
+            TextureLibraryDataCallbacks const& _callbacks = TextureLibraryDataCallbacks())
             : texture(_texture)
-            , requestLoadCb(_requestLoadCb)
-            , requestUnloadCb(_requestUnloadCb)
-            , requestReloadCb(_requestReloadCb)
+            , callbacks(_callbacks)
         {}
 
         Texture2DPtr texture;
-        std::function<void(bool)> requestLoadCb;
-        std::function<void(bool)> requestUnloadCb;
-        std::function<void(bool)> requestReloadCb;
-
-        AssetFilePtr assetFile; // #TODO: Obsolete. Rework through AssetUnitId
+        TextureLibraryDataCallbacks callbacks;
     };
 
 
@@ -145,21 +150,13 @@ namespace Maze
         //////////////////////////////////////////
         TextureCubeLibraryData(
             TextureCubePtr const& _texture = nullptr,
-            std::function<void(bool)> _requestLoadCb = nullptr,
-            std::function<void(bool)> _requestUnloadCb = nullptr,
-            std::function<void(bool)> _requestReloadCb = nullptr)
+            TextureLibraryDataCallbacks const& _callbacks = TextureLibraryDataCallbacks())
             : texture(_texture)
-            , requestLoadCb(_requestLoadCb)
-            , requestUnloadCb(_requestUnloadCb)
-            , requestReloadCb(_requestReloadCb)
+            , callbacks(_callbacks)
         {}
 
         TextureCubePtr texture;
-        std::function<void(bool)> requestLoadCb;
-        std::function<void(bool)> requestUnloadCb;
-        std::function<void(bool)> requestReloadCb;
-
-        AssetFilePtr assetFile; // #TODO: Obsolete. Rework through AssetUnitId
+        TextureLibraryDataCallbacks callbacks;
     };
 
 
@@ -211,7 +208,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void loadTextureMetaData(Texture2DPtr const& _texture, DataBlock const& _metaData);
+
+        //////////////////////////////////////////
         bool loadTextureMetaData(AssetFilePtr const& _assetFile, Texture2DPtr const& _texture);
+
+        //////////////////////////////////////////
+        void saveTextureMetaData(Texture2DPtr const& _texture, DataBlock& _metaData);
 
         //////////////////////////////////////////
         bool saveTextureMetaData(AssetFilePtr const& _assetFile);
@@ -252,9 +255,7 @@ namespace Maze
         //////////////////////////////////////////
         Texture2DLibraryData* addTextureToLibrary(
             Texture2DPtr const& _texture,
-            std::function<void(bool)> _requestLoadCb = nullptr,
-            std::function<void(bool)> _requestUnloadCb = nullptr,
-            std::function<void(bool)> _requestReloadCb = nullptr);
+            TextureLibraryDataCallbacks const& _callbacks = TextureLibraryDataCallbacks());
 
         //////////////////////////////////////////
         void removeTexture2DFromLibrary(HashedCString _textureName);
@@ -308,9 +309,7 @@ namespace Maze
         //////////////////////////////////////////
         TextureCubeLibraryData* addTextureToLibrary(
             TextureCubePtr const& _texture,
-            std::function<void(bool)> _requestLoadCb = nullptr,
-            std::function<void(bool)> _requestUnloadCb = nullptr,
-            std::function<void(bool)> _requestReloadCb = nullptr);
+            TextureLibraryDataCallbacks const& _callbacks = TextureLibraryDataCallbacks());
 
         //////////////////////////////////////////
         void removeTextureCubeFromLibrary(HashedCString _textureName);

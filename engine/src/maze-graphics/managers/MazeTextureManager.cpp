@@ -148,8 +148,8 @@ namespace Maze
         Texture2DLibraryData const* libraryData = getTexture2DLibraryData(_textureName);
         if (libraryData)
         {
-            if (libraryData->requestLoadCb)
-                libraryData->requestLoadCb(false);
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(false);
 
             return libraryData->texture;
         }
@@ -169,8 +169,8 @@ namespace Maze
         Texture2DLibraryData const* libraryData = getTexture2DLibraryData(_assetFile->getFileName());
         if (libraryData)
         {
-            if (libraryData->requestLoadCb)
-                libraryData->requestLoadCb(false);
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(false);
 
             return libraryData->texture;
         }
@@ -183,11 +183,58 @@ namespace Maze
         Texture2DLibraryData* data = addTextureToLibrary(texture2D);
         if (data)
         {
-            data->assetFile = _assetFile;
+            data->callbacks.requestReload =
+                [
+                    assetFileWeak = (AssetFileWPtr)_assetFile,
+                    texture2DWeak = (Texture2DWPtr)texture2D
+                ](bool _immediate)
+                {
+                    AssetFilePtr assetFile = assetFileWeak.lock();
+                    Texture2DPtr texture = texture2DWeak.lock();
+                    if (assetFile && texture)
+                        texture->loadFromAssetFile(assetFile);
+                };
+            data->callbacks.hasAnyOfTags =
+                [assetFileWeak = (AssetFileWPtr)_assetFile](Set<String> const& _tags)
+                {
+                    if (AssetFilePtr assetFile = assetFileWeak.lock())
+                        return assetFile->hasAnyOfTags(_tags);
+
+                    return false;
+                };
+
             return data->texture;
         }
 
         return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    void TextureManager::loadTextureMetaData(Texture2DPtr const& _texture, DataBlock const& _metaData)
+    {
+        if (_metaData.isParamExists(MAZE_HCS("magFilter")))
+            _texture->setMagFilter(
+                TextureFilter::FromString(
+                    _metaData.getString(MAZE_HCS("magFilter"))));
+
+        if (_metaData.isParamExists(MAZE_HCS("minFilter")))
+            _texture->setMinFilter(
+                TextureFilter::FromString(
+                    _metaData.getString(MAZE_HCS("minFilter"))));
+
+        if (_metaData.isParamExists(MAZE_HCS("wrapS")))
+            _texture->setWrapS(
+                TextureWrap::FromString(
+                    _metaData.getString(MAZE_HCS("wrapS"))));
+
+        if (_metaData.isParamExists(MAZE_HCS("wrapT")))
+            _texture->setWrapT(
+                TextureWrap::FromString(
+                    _metaData.getString(MAZE_HCS("wrapT"))));
+
+        if (_metaData.isParamExists(MAZE_HCS("anisotropyLevel")))
+            _texture->setAnisotropyLevel(
+                _metaData.getF32(MAZE_HCS("anisotropyLevel")));
     }
 
     //////////////////////////////////////////
@@ -199,33 +246,19 @@ namespace Maze
 
         DataBlock metaData;
         if (AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData))
-        {
-            if (metaData.isParamExists(MAZE_HCS("magFilter")))
-                texture2D->setMagFilter(
-                    TextureFilter::FromString(
-                        metaData.getString(MAZE_HCS("magFilter"))));
-            
-            if (metaData.isParamExists(MAZE_HCS("minFilter")))
-                texture2D->setMinFilter(
-                    TextureFilter::FromString(
-                        metaData.getString(MAZE_HCS("minFilter"))));
-            
-            if (metaData.isParamExists(MAZE_HCS("wrapS")))
-                texture2D->setWrapS(
-                    TextureWrap::FromString(
-                        metaData.getString(MAZE_HCS("wrapS"))));
-            
-            if (metaData.isParamExists(MAZE_HCS("wrapT")))
-                texture2D->setWrapT(
-                    TextureWrap::FromString(
-                        metaData.getString(MAZE_HCS("wrapT"))));
-            
-            if (metaData.isParamExists(MAZE_HCS("anisotropy")))
-                texture2D->setAnisotropyLevel(
-                    metaData.getF32(MAZE_HCS("anisotropy")));
-        }
+            loadTextureMetaData(_texture, metaData);
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void TextureManager::saveTextureMetaData(Texture2DPtr const& _texture, DataBlock& _metaData)
+    {
+        _metaData.setString(MAZE_HCS("magFilter"), _texture->getMagFilter().toString());
+        _metaData.setString(MAZE_HCS("minFilter"), _texture->getMinFilter().toString());
+        _metaData.setString(MAZE_HCS("wrapS"), _texture->getWrapS().toString());
+        _metaData.setString(MAZE_HCS("wrapT"), _texture->getWrapT().toString());
+        _metaData.setF32(MAZE_HCS("anisotropyLevel"), _texture->getAnisotropyLevel());
     }
 
     //////////////////////////////////////////
@@ -237,13 +270,7 @@ namespace Maze
 
         DataBlock metaData;
         AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData);
-        
-        metaData.setString(MAZE_HCS("magFilter"), texture2D->getMagFilter().toString());
-        metaData.setString(MAZE_HCS("minFilter"), texture2D->getMinFilter().toString());
-        metaData.setString(MAZE_HCS("wrapS"), texture2D->getWrapS().toString());
-        metaData.setString(MAZE_HCS("wrapT"), texture2D->getWrapT().toString());
-        metaData.setF32(MAZE_HCS("anisotropy"), texture2D->getAnisotropyLevel());
-
+        saveTextureMetaData(texture2D, metaData);
         AssetManager::GetInstancePtr()->saveMetaData(_assetFile, metaData);
 
         return true;
@@ -398,13 +425,11 @@ namespace Maze
     //////////////////////////////////////////
     Texture2DLibraryData* TextureManager::addTextureToLibrary(
         Texture2DPtr const& _texture,
-        std::function<void(bool)> _requestLoadCb,
-        std::function<void(bool)> _requestUnloadCb,
-        std::function<void(bool)> _requestReloadCb)
+        TextureLibraryDataCallbacks const& _callbacks)
     {
         auto it2 = m_textures2DLibrary.insert(
             _texture->getName(),
-            { _texture, _requestLoadCb, _requestUnloadCb, _requestReloadCb });
+            { _texture, _callbacks });
 
         return it2;
     }
@@ -530,7 +555,12 @@ namespace Maze
 
         TextureCubeLibraryData const* libraryData = getTextureCubeLibraryData(_textureName);
         if (libraryData)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(false);
+
             return libraryData->texture;
+        }
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_textureName);
         if (!assetFile)
@@ -546,7 +576,12 @@ namespace Maze
 
         TextureCubeLibraryData const* libraryData = getTextureCubeLibraryData(_assetFile->getFileName());
         if (libraryData)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(false);
+
             return libraryData->texture;
+        }
 
         TextureCubePtr textureCube = TextureCube::Create(_assetFile, m_renderSystemRaw);
         textureCube->setName(_assetFile->getFileName());
@@ -583,7 +618,26 @@ namespace Maze
         TextureCubeLibraryData* data = addTextureToLibrary(textureCube);
         if (data)
         {
-            data->assetFile = _assetFile;
+            data->callbacks.requestReload =
+                [
+                    assetFileWeak = (AssetFileWPtr)_assetFile,
+                    textureCubeWeak = (TextureCubeWPtr)textureCube
+                ](bool _immediate)
+                {
+                    AssetFilePtr assetFile = assetFileWeak.lock();
+                    TextureCubePtr texture = textureCubeWeak.lock();
+                    if (assetFile && texture)
+                        texture->loadFromAssetFile(assetFile);
+                };
+            data->callbacks.hasAnyOfTags =
+                [assetFileWeak = (AssetFileWPtr)_assetFile](Set<String> const& _tags)
+                {
+                    if (AssetFilePtr assetFile = assetFileWeak.lock())
+                        return assetFile->hasAnyOfTags(_tags);
+
+                    return false;
+                };
+
             return data->texture;
         }
 
@@ -593,13 +647,11 @@ namespace Maze
     //////////////////////////////////////////
     TextureCubeLibraryData* TextureManager::addTextureToLibrary(
         TextureCubePtr const& _texture,
-        std::function<void(bool)> _requestLoadCb,
-        std::function<void(bool)> _requestUnloadCb,
-        std::function<void(bool)> _requestReloadCb)
+        TextureLibraryDataCallbacks const& _callbacks)
     {
         auto it2 = m_texturesCubeLibrary.insert(
             _texture->getName(),
-            { _texture, _requestLoadCb, _requestUnloadCb, _requestReloadCb });
+            { _texture, _callbacks });
 
         return it2;
     }
@@ -640,8 +692,8 @@ namespace Maze
     {
         for (auto const& textureData : m_textures2DLibrary)
         {
-            if (textureData.second.assetFile)
-                textureData.second.texture->loadFromAssetFile(textureData.second.assetFile);
+            if (textureData.second.callbacks.requestReload)
+                textureData.second.callbacks.requestReload(true);
         }
     }
 
@@ -657,7 +709,7 @@ namespace Maze
             StringKeyMap<Texture2DLibraryData>::iterator end = m_textures2DLibrary.end();
             for (; it != end; )
             {
-                if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+                if (it->second.callbacks.hasAnyOfTags && it->second.callbacks.hasAnyOfTags(_tags))
                 {
                     if (_unloadedTextures2D)
                         _unloadedTextures2D->push_back(it->second.texture);
@@ -676,7 +728,7 @@ namespace Maze
             StringKeyMap<TextureCubeLibraryData>::iterator end = m_texturesCubeLibrary.end();
             for (; it != end; )
             {
-                if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+                if (it->second.callbacks.hasAnyOfTags && it->second.callbacks.hasAnyOfTags(_tags))
                 {
                     it = m_texturesCubeLibrary.erase(it);
                     end = m_texturesCubeLibrary.end();

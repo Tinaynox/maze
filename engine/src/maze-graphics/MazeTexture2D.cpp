@@ -42,7 +42,8 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(TextureFilter, magFilter, TextureFilter::Linear, getMagFilter, setMagFilter),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(TextureFilter, minFilter, TextureFilter::Linear, getMinFilter, setMinFilter),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(TextureWrap, wrapS, TextureWrap::ClampToEdge, getWrapS, setWrapS),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(TextureWrap, wrapT, TextureWrap::ClampToEdge, getWrapT, setWrapT));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(TextureWrap, wrapT, TextureWrap::ClampToEdge, getWrapT, setWrapT),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, anisotropyLevel, 0.0f, getAnisotropyLevel, setAnisotropyLevel));
 
 
     //////////////////////////////////////////
@@ -211,10 +212,8 @@ namespace Maze
         MAZE_PROFILE_EVENT("Texture2D::reload");
 
         Texture2DLibraryData const* libraryData = m_renderSystem->getTextureManager()->getTexture2DLibraryData(getName().asHashedCString());
-        if (libraryData && libraryData->assetFile)
-        {
-            loadFromAssetFile(libraryData->assetFile);
-        }
+        if (libraryData && libraryData->callbacks.requestReload)
+            libraryData->callbacks.requestReload(true);
     }
 
     //////////////////////////////////////////
