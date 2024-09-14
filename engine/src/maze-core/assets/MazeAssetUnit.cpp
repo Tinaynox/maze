@@ -73,9 +73,11 @@ namespace Maze
 
 #if (1)
         // #TODO: async load test
-        TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
-            100,
-            [weakPtr = (AssetUnitWPtr)cast<AssetUnit>()]()
+        if (TaskManager::GetInstancePtr())
+        {
+            TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
+                100,
+                [weakPtr = (AssetUnitWPtr)cast<AssetUnit>()]()
             {
                 AssetUnitPtr assetUnit = weakPtr.lock();
                 if (!assetUnit)
@@ -83,8 +85,11 @@ namespace Maze
 
                 assetUnit->loadNow();
             });
+        }
+        else
+            loadNow();
 #else
-        assetUnit->loadNow();
+        loadNow();
 #endif
     }
 
@@ -116,18 +121,23 @@ namespace Maze
 
 #if (1)
         // #TODO: async load test
-        TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
-            10,
-            [weakPtr = (AssetUnitWPtr)cast<AssetUnit>()]()
+        if (TaskManager::GetInstancePtr())
         {
-            AssetUnitPtr assetUnit = weakPtr.lock();
-            if (!assetUnit)
-                return;
+            TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
+                10,
+                [weakPtr = (AssetUnitWPtr)cast<AssetUnit>()]()
+            {
+                AssetUnitPtr assetUnit = weakPtr.lock();
+                if (!assetUnit)
+                    return;
 
-            assetUnit->unloadNow();
-        });
+                assetUnit->unloadNow();
+            });
+        }
+        else
+            unloadNow();
 #else
-        assetUnit->unloadNow();
+        unloadNow();
 #endif
     }
 

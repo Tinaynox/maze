@@ -1,0 +1,19 @@
+assetUnits
+{
+  texture2d{}
+  sprite
+  {
+    colorPosition:Vec2F = 0, 0
+    colorSize:Vec2F = 64, 64
+    colorOffset:Vec2F = 0, 0
+    nativeSize:Vec2F = 64, 64
+    
+    sliceBorder
+    {
+        left:F32 = 20.0
+        bottom:F32 = 17.0
+        right:F32 = 20.0
+        top:F32 = 17.0
+    }
+  }
+}

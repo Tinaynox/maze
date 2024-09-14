@@ -92,6 +92,10 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool unloadNowImpl() MAZE_OVERRIDE;
     
+
+        //////////////////////////////////////////
+        void applySpriteMetaData();
+
     protected:
         SpritePtr m_sprite;
     };

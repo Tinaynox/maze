@@ -106,20 +106,14 @@ namespace Maze
             return false;
 
         m_sprite->set(
-            assetUnitTexture2D->initTexture(),
-            m_data.getVec2F(MAZE_HCS("colorPosition"), Vec2S::c_zero),
-            m_data.getVec2F(MAZE_HCS("colorSize"), Vec2S::c_zero),
-            m_data.getVec2F(MAZE_HCS("colorOffset"), Vec2S::c_zero),
-            m_data.getVec2F(MAZE_HCS("nativeSize"), Vec2S::c_zero));
+            assetUnitTexture2D->loadTexture(true),
+            m_sprite->getColorPosition(),
+            m_sprite->getColorSize(),
+            m_sprite->getColorOffset(),
+            m_sprite->getNativeSize());
 
-        if (DataBlock* sliceBorder = m_data.getDataBlock(MAZE_HCS("sliceBorder")))
-        {
-            F32 left = sliceBorder->getF32(MAZE_HCS("left"), 0.0f);
-            F32 bottom = sliceBorder->getF32(MAZE_HCS("bottom"), 0.0f);
-            F32 right = sliceBorder->getF32(MAZE_HCS("right"), 0.0f);
-            F32 top = sliceBorder->getF32(MAZE_HCS("top"), 0.0f);
-            m_sprite->setSliceBorder(left, bottom, right, top);
-        }
+
+        applySpriteMetaData();
 
         return true;
     }
@@ -150,6 +144,8 @@ namespace Maze
         m_sprite = Sprite::Create();
         
         m_sprite->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
+
+        applySpriteMetaData();
 
         if (SpriteManager::GetCurrentInstance())
         {
@@ -194,6 +190,26 @@ namespace Maze
         }
 
         return m_sprite;
+    }
+
+    //////////////////////////////////////////
+    void AssetUnitSprite::applySpriteMetaData()
+    {
+        m_sprite->set(
+            m_sprite->getTexture(),
+            m_data.getVec2F(MAZE_HCS("colorPosition"), Vec2S::c_zero),
+            m_data.getVec2F(MAZE_HCS("colorSize"), Vec2S::c_zero),
+            m_data.getVec2F(MAZE_HCS("colorOffset"), Vec2S::c_zero),
+            m_data.getVec2F(MAZE_HCS("nativeSize"), Vec2S::c_zero));
+
+        if (DataBlock* sliceBorder = m_data.getDataBlock(MAZE_HCS("sliceBorder")))
+        {
+            F32 left = sliceBorder->getF32(MAZE_HCS("left"), 0.0f);
+            F32 bottom = sliceBorder->getF32(MAZE_HCS("bottom"), 0.0f);
+            F32 right = sliceBorder->getF32(MAZE_HCS("right"), 0.0f);
+            F32 top = sliceBorder->getF32(MAZE_HCS("top"), 0.0f);
+            m_sprite->setSliceBorder(left, bottom, right, top);
+        }
     }
 
 

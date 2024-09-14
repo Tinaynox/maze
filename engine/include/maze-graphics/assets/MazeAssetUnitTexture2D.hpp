@@ -70,7 +70,7 @@ namespace Maze
         inline Texture2DPtr const& getTexture() const { return m_texture; }
 
         //////////////////////////////////////////
-        Texture2DPtr const& loadTexture();
+        Texture2DPtr const& loadTexture(bool _syncLoad = false);
 
 
         //////////////////////////////////////////

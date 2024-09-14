@@ -78,12 +78,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Texture2DPtr const& AssetUnitTexture2D::loadTexture()
+    Texture2DPtr const& AssetUnitTexture2D::loadTexture(bool _syncLoad)
     {
         if (!isLoaded())
         {
             initTexture();
-            load();
+            _syncLoad ? loadNow() : load();
         }
 
         return m_texture;

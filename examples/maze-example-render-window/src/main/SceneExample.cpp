@@ -156,12 +156,14 @@ bool SceneExample::init()
     
 
     Maze::SpritePtr sprite = spriteManager->getSprite("Panel00.png");
+    /*
     if (sprite)
         sprite->setSliceBorder(
             40.0f,
             34.0f,
             40.0f,
             34.0f);
+    */
 
 
     ////////////////////////////////////////////
@@ -195,6 +197,7 @@ bool SceneExample::init()
             transform->setSize(50, 50);
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
+            spriteRenderer->setRenderMode(Maze::SpriteRenderMode::Sliced);
             spriteRenderer->setSprite(sprite);
             spriteRenderer->setMaterial(material);
         }
@@ -208,6 +211,7 @@ bool SceneExample::init()
             transform->setLocalScale(Maze::Vec2F32(-1.0f, 1.0f));
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
+            spriteRenderer->setRenderMode(Maze::SpriteRenderMode::Sliced);
             spriteRenderer->setSprite(sprite);
             spriteRenderer->setMaterial(Maze::Material::Create("UI00.mzmaterial"));
         }
@@ -220,6 +224,7 @@ bool SceneExample::init()
             transform->setPivot(Maze::Vec2F32(0.0f, 1.0f));
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
+            spriteRenderer->setRenderMode(Maze::SpriteRenderMode::Sliced);
             spriteRenderer->setSprite(sprite);
             spriteRenderer->setMaterial(Maze::Material::Create("UI00.mzmaterial"));
         }
@@ -233,6 +238,7 @@ bool SceneExample::init()
             transform->setLocalScale(Maze::Vec2F32(-1.0f, 1.0f));
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
+            spriteRenderer->setRenderMode(Maze::SpriteRenderMode::Sliced);
             spriteRenderer->setSprite(sprite);
             spriteRenderer->setMaterial(Maze::Material::Create("UI00.mzmaterial"));
         }

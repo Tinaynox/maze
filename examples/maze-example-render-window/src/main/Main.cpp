@@ -56,6 +56,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-core/services/MazeLogService.hpp"
@@ -115,18 +116,20 @@ public:
         dynLibManager.reset();
         windowManager.reset();
         inputManager.reset();
+        taskManager.reset();
         systemManager.reset();
     }
     
 public:
     SystemManagerPtr        systemManager;
-    InputManagerPtr        inputManager;
+    TaskManagerPtr          taskManager;
+    InputManagerPtr         inputManager;
     WindowManagerPtr        windowManager;
     DynLibManagerPtr        dynLibManager;
     PluginManagerPtr        pluginManager;
-    GraphicsManagerPtr    graphicsManager;
-    SceneManagerPtr        sceneManager;
-    AssetManagerPtr        assetManager;
+    GraphicsManagerPtr      graphicsManager;
+    SceneManagerPtr         sceneManager;
+    AssetManagerPtr         assetManager;
     EntityManagerPtr        entityManager;
 
     ColorU32 renderWindow00ClearColor;
@@ -170,6 +173,7 @@ void OnInit()
 
     UpdateManager::GetInstancePtr()->eventUpdate.subscribe(OnUpdate);
 
+    TaskManager::Initialize(g_main->taskManager);
     InputManager::Initialize(g_main->inputManager);
     WindowManager::Initialize(g_main->windowManager);
     DynLibManager::Initialize(g_main->dynLibManager);
