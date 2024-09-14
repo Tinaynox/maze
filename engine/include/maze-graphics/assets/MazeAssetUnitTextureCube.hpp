@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeAssetUnitTexture2D_hpp_))
-#define _MazeAssetUnitTexture2D_hpp_
+#if (!defined(_MazeAssetUnitTextureCube_hpp_))
+#define _MazeAssetUnitTextureCube_hpp_
 
 
 //////////////////////////////////////////
@@ -38,48 +38,48 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetUnitTexture2D);   
+    MAZE_USING_SHARED_PTR(AssetUnitTextureCube);   
     MAZE_USING_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(Texture2D);
+    MAZE_USING_SHARED_PTR(TextureCube);
 
 
     //////////////////////////////////////////
-    // Class AssetUnitTexture2D
+    // Class AssetUnitTextureCube
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API AssetUnitTexture2D
+    class MAZE_CORE_API AssetUnitTextureCube
         : public AssetUnit
     {
     public:
         
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitTexture2D, AssetUnit);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitTextureCube, AssetUnit);
         
     public:
 
         //////////////////////////////////////////
-        virtual ~AssetUnitTexture2D();
+        virtual ~AssetUnitTextureCube();
 
         //////////////////////////////////////////
-        static AssetUnitTexture2DPtr Create(
+        static AssetUnitTextureCubePtr Create(
             AssetFilePtr const& _assetFile,
             DataBlock const& _data);
 
 
         //////////////////////////////////////////
-        inline Texture2DPtr const& getTexture() const { return m_texture; }
+        inline TextureCubePtr const& getTexture() const { return m_texture; }
 
         //////////////////////////////////////////
-        Texture2DPtr const& loadTexture();
+        TextureCubePtr const& loadTexture();
 
 
         //////////////////////////////////////////
-        Texture2DPtr const& initTexture();
+        TextureCubePtr const& initTexture();
 
     protected:
 
         //////////////////////////////////////////
-        AssetUnitTexture2D();
+        AssetUnitTextureCube();
 
         //////////////////////////////////////////
         virtual bool init(
@@ -93,7 +93,7 @@ namespace Maze
         virtual bool unloadNowImpl() MAZE_OVERRIDE;
     
     protected:
-        Texture2DPtr m_texture;
+        TextureCubePtr m_texture;
     };
 
 
@@ -101,5 +101,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeAssetUnitTexture2D_hpp_
+#endif // _MazeAssetUnitTextureCube_hpp_
 //////////////////////////////////////////

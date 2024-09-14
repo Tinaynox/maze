@@ -25,11 +25,12 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/assets/MazeAssetUnitTexture2D.hpp"
-#include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/managers/MazeTextureManager.hpp"
-#include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/assets/MazeAssetUnitSprite.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-graphics/MazeSprite.hpp"
+#include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/assets/MazeAssetUnitTexture2D.hpp"
 
 
 //////////////////////////////////////////
@@ -37,37 +38,37 @@ namespace Maze
 {
 
     //////////////////////////////////////////
-    // Class AssetUnitTexture2D
+    // Class AssetUnitSprite
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AssetUnitTexture2D, AssetUnit);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AssetUnitSprite, AssetUnit);
     
     //////////////////////////////////////////
-    AssetUnitTexture2D::AssetUnitTexture2D()
+    AssetUnitSprite::AssetUnitSprite()
     {
 
     }
 
     //////////////////////////////////////////
-    AssetUnitTexture2D::~AssetUnitTexture2D()
+    AssetUnitSprite::~AssetUnitSprite()
     {
     }
 
     //////////////////////////////////////////
-    AssetUnitTexture2DPtr AssetUnitTexture2D::Create(
+    AssetUnitSpritePtr AssetUnitSprite::Create(
         AssetFilePtr const& _assetFile,
         DataBlock const& _data)
     {
-        AssetUnitTexture2DPtr object;
+        AssetUnitSpritePtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(
-            AssetUnitTexture2D,
+            AssetUnitSprite,
             object,
             init(_assetFile, _data));
         return object;
     }
 
     //////////////////////////////////////////
-    bool AssetUnitTexture2D::init(
+    bool AssetUnitSprite::init(
         AssetFilePtr const& _assetFile,
         DataBlock const& _data)
     {
@@ -78,108 +79,121 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Texture2DPtr const& AssetUnitTexture2D::loadTexture()
+    SpritePtr const& AssetUnitSprite::loadSprite()
     {
         if (!isLoaded())
         {
-            initTexture();
+            initSprite();
             load();
         }
 
-        return m_texture;
+        return m_sprite;
     }
 
     //////////////////////////////////////////
-    bool AssetUnitTexture2D::loadNowImpl()
+    bool AssetUnitSprite::loadNowImpl()
     {
         AssetFilePtr assetFile = m_assetFile.lock();
         if (!assetFile)
             return false;
 
-        initTexture();
-        if (!m_texture)
+        initSprite();
+        if (!m_sprite)
             return false;
 
-        TextureManagerPtr const& textureManager = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager();
+        AssetUnitTexture2DPtr assetUnitTexture2D = assetFile->getAssetUnit<AssetUnitTexture2D>();
+        if (!assetUnitTexture2D)
+            return false;
 
-        Maze::Vector<Maze::PixelSheet2D> pixelSheets = textureManager->loadPixelSheets2D(assetFile);
+        m_sprite->set(
+            assetUnitTexture2D->initTexture(),
+            m_data.getVec2F(MAZE_HCS("colorPosition"), Vec2S::c_zero),
+            m_data.getVec2F(MAZE_HCS("colorSize"), Vec2S::c_zero),
+            m_data.getVec2F(MAZE_HCS("colorOffset"), Vec2S::c_zero),
+            m_data.getVec2F(MAZE_HCS("nativeSize"), Vec2S::c_zero));
 
-        m_texture->loadTexture(pixelSheets);
-        textureManager->loadTextureMetaData(m_texture, m_data);
-
-        return true;
-    }
-
-    //////////////////////////////////////////
-    bool AssetUnitTexture2D::unloadNowImpl()
-    {
-        if (m_texture)
+        if (DataBlock* sliceBorder = m_data.getDataBlock(MAZE_HCS("sliceBorder")))
         {
-            if (TextureManager::GetCurrentInstancePtr())
-                TextureManager::GetCurrentInstancePtr()->removeTexture2DFromLibrary(m_texture->getName().asHashedCString());
-            m_texture.reset();
+            F32 left = sliceBorder->getF32(MAZE_HCS("left"), 0.0f);
+            F32 bottom = sliceBorder->getF32(MAZE_HCS("bottom"), 0.0f);
+            F32 right = sliceBorder->getF32(MAZE_HCS("right"), 0.0f);
+            F32 top = sliceBorder->getF32(MAZE_HCS("top"), 0.0f);
+            m_sprite->setSliceBorder(left, bottom, right, top);
         }
 
         return true;
     }
 
     //////////////////////////////////////////
-    Texture2DPtr const& AssetUnitTexture2D::initTexture()
+    bool AssetUnitSprite::unloadNowImpl()
     {
-        if (m_texture)
-            return m_texture;
+        if (m_sprite)
+        {
+            if (SpriteManager::GetCurrentInstance())
+                SpriteManager::GetCurrentInstance()->removeSpriteFromLibrary(m_sprite->getName());
+            m_sprite.reset();
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    SpritePtr const& AssetUnitSprite::initSprite()
+    {
+        if (m_sprite)
+            return m_sprite;
 
         AssetFilePtr assetFile = getAssetFile();
         if (!assetFile)
-            return m_texture;
+            return m_sprite;
 
-        m_texture = Texture2D::Create();
-        m_texture->loadTexture(PixelSheet2D(Vec2S(1)));
-        m_texture->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
+        m_sprite = Sprite::Create();
+        
+        m_sprite->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
 
-        if (TextureManager::GetCurrentInstancePtr())
+        if (SpriteManager::GetCurrentInstance())
         {
-            TextureLibraryDataCallbacks callbacks;
+            SpriteLibraryDataCallbacks callbacks;
 
             callbacks.requestLoad = 
-                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _immediate)
+                [weakPtr = (AssetUnitSpriteWPtr)cast<AssetUnitSprite>()](bool _immediate)
                 {
-                    if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                    if (AssetUnitSpritePtr assetUnit = weakPtr.lock())
                         _immediate ? assetUnit->loadNow() : assetUnit->load();
                 };
 
             callbacks.requestUnload =
-                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()] (bool _immediate)
+                [weakPtr = (AssetUnitSpriteWPtr)cast<AssetUnitSprite>()] (bool _immediate)
                 {
-                    if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                    if (AssetUnitSpritePtr assetUnit = weakPtr.lock())
                         _immediate ? assetUnit->unloadNow() : assetUnit->unload();
                 };
 
             callbacks.requestReload =
-                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _immediate)
+                [weakPtr = (AssetUnitSpriteWPtr)cast<AssetUnitSprite>()](bool _immediate)
                 {
-                    if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                    if (AssetUnitSpritePtr assetUnit = weakPtr.lock())
                     {
                         assetUnit->unloadNow();
                         _immediate ? assetUnit->loadNow() : assetUnit->load();
                     }
                 };
             callbacks.hasAnyOfTags = 
-                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](Set<String> const& _tags)
+                [weakPtr = (AssetUnitSpriteWPtr)cast<AssetUnitSprite>()](Set<String> const& _tags)
                 {
-                    if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                    if (AssetUnitSpritePtr assetUnit = weakPtr.lock())
                         if (AssetFilePtr assetFile = assetUnit->getAssetFile())
                             return assetFile->hasAnyOfTags(_tags);
 
                     return false;
                 };
 
-            TextureManager::GetCurrentInstancePtr()->addTextureToLibrary(
-                m_texture,
+            SpriteManager::GetCurrentInstance()->addSpriteToLibrary(
+                m_sprite,
                 callbacks);
         }
 
-        return m_texture;
+        return m_sprite;
     }
 
 

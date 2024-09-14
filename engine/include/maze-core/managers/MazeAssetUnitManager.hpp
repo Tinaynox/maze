@@ -101,7 +101,7 @@ namespace Maze
 
 
     public:
-        MultiDelegate<AssetUnitPtr> eventAssetUnitAdded;
+        MultiDelegate<AssetUnitPtr const&> eventAssetUnitAdded;
         MultiDelegate<AssetUnitId, AssetUnitPtr> eventAssetUnitWillBeRemoved;
 
     protected:

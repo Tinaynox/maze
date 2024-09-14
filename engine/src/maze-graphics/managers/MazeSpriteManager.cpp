@@ -28,6 +28,7 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
@@ -35,6 +36,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/MazeSprite.hpp"
+#include "maze-graphics/assets/MazeAssetUnitSprite.hpp"
 
 
 //////////////////////////////////////////
@@ -80,6 +82,24 @@ namespace Maze
         m_renderSystem = _renderSystem;
         m_renderSystemRaw = _renderSystem.get();
 
+
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
+                MAZE_HCS("sprite"),
+                [](AssetFilePtr const& _file, DataBlock const& _data)
+            {
+                return AssetUnitSprite::Create(_file, _data);
+            });
+
+            AssetUnitManager::GetInstancePtr()->eventAssetUnitAdded.subscribe(
+                [](AssetUnitPtr const& _assetUnit)
+                {
+                    if (_assetUnit->getClassUID() == ClassInfo<AssetUnitSprite>::UID())
+                        _assetUnit->castRaw<AssetUnitSprite>()->initSprite();
+                });
+        }
+
         return true;
     }
 
@@ -105,7 +125,12 @@ namespace Maze
 
         SpriteLibraryData const* libraryData = getSpriteLibraryData(_imageName);
         if (libraryData)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(false);
+
             return libraryData->sprite;
+        }
         
         TextureManagerPtr const& textureManager = m_renderSystemRaw->getTextureManager();
 
@@ -115,24 +140,13 @@ namespace Maze
 
         SpritePtr sprite = Sprite::Create(texture2D);
 
-        Texture2DLibraryData const* textureLibraryData = m_renderSystemRaw->getTextureManager()->getTexture2DLibraryData(texture2D->getName().asHashedCString());
-        // #TODO: NOT IMPLEMENTED
-        /*
-        if (textureLibraryData && textureLibraryData->assetFile)
+        AssetFilePtr assetFile = AssetManager::GetInstancePtr()->getAssetFile(texture2D->getName().asHashedCString());
+        if (assetFile)
         {
             DataBlock metaData;
-            AssetManager::GetInstancePtr()->loadMetaData(textureLibraryData->assetFile, metaData);
-            DataBlock* sliceBorder = metaData.getDataBlock(MAZE_HCS("sliceBorder"));
-            if (sliceBorder)
-            {
-                F32 left = sliceBorder->getF32(MAZE_HCS("left"), 0.0f);
-                F32 bottom = sliceBorder->getF32(MAZE_HCS("bottom"), 0.0f);
-                F32 right = sliceBorder->getF32(MAZE_HCS("right"), 0.0f);
-                F32 top = sliceBorder->getF32(MAZE_HCS("top"), 0.0f);
-                sprite->setSliceBorder(left, bottom, right, top);
-            }
+            AssetManager::GetInstancePtr()->loadMetaData(assetFile, metaData);
+            loadSpriteMetaData(sprite, metaData);
         }
-        */
 
         SpriteLibraryData* data = addSpriteToLibrary(sprite);
         if (data)
@@ -142,13 +156,35 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SpriteLibraryData* SpriteManager::addSpriteToLibrary(SpritePtr const& _sprite)
+    void SpriteManager::loadSpriteMetaData(SpritePtr const& _sprite, DataBlock const& _metaData)
+    {
+        _sprite->set(
+            _sprite->getTexture(),
+            _metaData.getVec2F(MAZE_HCS("colorPosition"), Vec2S::c_zero),
+            _metaData.getVec2F(MAZE_HCS("colorSize"), Vec2S::c_zero),
+            _metaData.getVec2F(MAZE_HCS("colorOffset"), Vec2S::c_zero),
+            _metaData.getVec2F(MAZE_HCS("nativeSize"), Vec2S::c_zero));
+
+        if (DataBlock const* sliceBorder = _metaData.getDataBlock(MAZE_HCS("sliceBorder")))
+        {
+            F32 left = sliceBorder->getF32(MAZE_HCS("left"), 0.0f);
+            F32 bottom = sliceBorder->getF32(MAZE_HCS("bottom"), 0.0f);
+            F32 right = sliceBorder->getF32(MAZE_HCS("right"), 0.0f);
+            F32 top = sliceBorder->getF32(MAZE_HCS("top"), 0.0f);
+            _sprite->setSliceBorder(left, bottom, right, top);
+        }
+    }
+
+    //////////////////////////////////////////
+    SpriteLibraryData* SpriteManager::addSpriteToLibrary(
+        SpritePtr const& _sprite,
+        SpriteLibraryDataCallbacks const& _callbacks)
     {
         MAZE_ERROR_IF(_sprite->getName().empty(), "Sprite with no name!");
 
         auto it2 = m_spritesLibrary.insert(
             _sprite->getName(),
-            _sprite);
+            { _sprite, _callbacks });
 
         return it2;
     }

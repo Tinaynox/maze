@@ -40,6 +40,7 @@
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/loaders/texture/MazeLoaderBMP.hpp"
 #include "maze-graphics/assets/MazeAssetUnitTexture2D.hpp"
+#include "maze-graphics/assets/MazeAssetUnitTextureCube.hpp"
 
 
 //////////////////////////////////////////
@@ -113,12 +114,21 @@ namespace Maze
                 {
                     return AssetUnitTexture2D::Create(_file, _data);
                 });
+            AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
+                MAZE_HCS("textureCube"),
+                [](AssetFilePtr const& _file, DataBlock const& _data)
+                {
+                    return AssetUnitTextureCube::Create(_file, _data);
+                });
 
             AssetUnitManager::GetInstancePtr()->eventAssetUnitAdded.subscribe(
                 [](AssetUnitPtr const& _assetUnit)
                 {
                     if (_assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
                         _assetUnit->castRaw<AssetUnitTexture2D>()->initTexture();
+                    else
+                    if (_assetUnit->getClassUID() == ClassInfo<AssetUnitTextureCube>::UID())
+                        _assetUnit->castRaw<AssetUnitTextureCube>()->initTexture();
                 });
         }
 
@@ -240,8 +250,7 @@ namespace Maze
     //////////////////////////////////////////
     bool TextureManager::loadTextureMetaData(AssetFilePtr const& _assetFile, Texture2DPtr const& _texture)
     {
-        Texture2DPtr const& texture2D = _texture;
-        if (!texture2D)
+        if (!_texture)
             return false;
 
         DataBlock metaData;
@@ -262,7 +271,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool TextureManager::saveTextureMetaData(AssetFilePtr const& _assetFile)
+    bool TextureManager::saveTexture2DMetaData(AssetFilePtr const& _assetFile)
     {
         Texture2DPtr const& texture2D = getTexture2D(_assetFile);
         if (!texture2D)
@@ -549,6 +558,58 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void TextureManager::loadTextureMetaData(TextureCubePtr const& _texture, DataBlock const& _metaData)
+    {
+        if (_metaData.isParamExists(MAZE_HCS("magFilter")))
+            _texture->setMagFilter(
+                TextureFilter::FromString(
+                    _metaData.getString(MAZE_HCS("magFilter"))));
+
+        if (_metaData.isParamExists(MAZE_HCS("minFilter")))
+            _texture->setMinFilter(
+                TextureFilter::FromString(
+                    _metaData.getString(MAZE_HCS("minFilter"))));
+
+        if (_metaData.isParamExists(MAZE_HCS("wrapS")))
+            _texture->setWrapS(
+                TextureWrap::FromString(
+                    _metaData.getString(MAZE_HCS("wrapS"))));
+
+        if (_metaData.isParamExists(MAZE_HCS("wrapT")))
+            _texture->setWrapT(
+                TextureWrap::FromString(
+                    _metaData.getString(MAZE_HCS("wrapT"))));
+
+        if (_metaData.isParamExists(MAZE_HCS("wrapR")))
+            _texture->setWrapR(
+                TextureWrap::FromString(
+                    _metaData.getString(MAZE_HCS("wrapR"))));
+    }
+
+    //////////////////////////////////////////
+    bool TextureManager::loadTextureMetaData(AssetFilePtr const& _assetFile, TextureCubePtr const& _texture)
+    {
+        if (!_texture)
+            return false;
+
+        DataBlock metaData;
+        if (AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData))
+            loadTextureMetaData(_texture, metaData);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void TextureManager::saveTextureMetaData(TextureCubePtr const& _texture, DataBlock& _metaData)
+    {
+        _metaData.setString(MAZE_HCS("magFilter"), _texture->getMagFilter().toString());
+        _metaData.setString(MAZE_HCS("minFilter"), _texture->getMinFilter().toString());
+        _metaData.setString(MAZE_HCS("wrapS"), _texture->getWrapS().toString());
+        _metaData.setString(MAZE_HCS("wrapT"), _texture->getWrapT().toString());
+        _metaData.setString(MAZE_HCS("wrapR"), _texture->getWrapR().toString());
+    }
+
+    //////////////////////////////////////////
     TextureCubePtr const& TextureManager::getTextureCube(String const& _textureName)
     {
         static TextureCubePtr const nullPointer;
@@ -588,32 +649,7 @@ namespace Maze
 
         DataBlock metaData;
         if (AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData))
-        {
-            if (metaData.isParamExists(MAZE_HCS("magFilter")))
-                textureCube->setMagFilter(
-                    TextureFilter::FromString(
-                        metaData.getString(MAZE_HCS("magFilter"))));
-
-            if (metaData.isParamExists(MAZE_HCS("minFilter")))
-                textureCube->setMinFilter(
-                    TextureFilter::FromString(
-                        metaData.getString(MAZE_HCS("minFilter"))));
-
-            if (metaData.isParamExists(MAZE_HCS("wrapS")))
-                textureCube->setWrapS(
-                    TextureWrap::FromString(
-                        metaData.getString(MAZE_HCS("wrapS"))));
-
-            if (metaData.isParamExists(MAZE_HCS("wrapT")))
-                textureCube->setWrapT(
-                    TextureWrap::FromString(
-                        metaData.getString(MAZE_HCS("wrapT"))));
-
-            if (metaData.isParamExists(MAZE_HCS("wrapR")))
-                textureCube->setWrapR(
-                    TextureWrap::FromString(
-                        metaData.getString(MAZE_HCS("wrapR"))));
-        }
+            loadTextureMetaData(_assetFile, textureCube);
 
         TextureCubeLibraryData* data = addTextureToLibrary(textureCube);
         if (data)

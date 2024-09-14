@@ -38,7 +38,12 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(TextureCube, Texture);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(TextureCube, Texture,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(TextureFilter, magFilter, TextureFilter::Linear, getMagFilter, setMagFilter),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(TextureFilter, minFilter, TextureFilter::Linear, getMinFilter, setMinFilter),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(TextureWrap, wrapS, TextureWrap::ClampToEdge, getWrapS, setWrapS),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(TextureWrap, wrapT, TextureWrap::ClampToEdge, getWrapT, setWrapT),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(TextureWrap, wrapR, TextureWrap::ClampToEdge, getWrapR, setWrapR));
 
 
     //////////////////////////////////////////

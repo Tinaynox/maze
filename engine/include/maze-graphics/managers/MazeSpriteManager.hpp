@@ -62,6 +62,19 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct SpriteLibraryDataCallbacks
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API SpriteLibraryDataCallbacks
+    {
+        std::function<void(bool)> requestLoad;
+        std::function<void(bool)> requestUnload;
+        std::function<void(bool)> requestReload;
+        std::function<bool(Set<String> const&)> hasAnyOfTags;
+    };
+
+
+    //////////////////////////////////////////
     // Struct SpriteLibraryData
     //
     //////////////////////////////////////////
@@ -69,11 +82,14 @@ namespace Maze
     {
         //////////////////////////////////////////
         SpriteLibraryData(
-            SpritePtr const& _sprite = nullptr)
+            SpritePtr const& _sprite = nullptr,
+            SpriteLibraryDataCallbacks const& _callbacks = SpriteLibraryDataCallbacks())
             : sprite(_sprite)
+            , callbacks(_callbacks)
         {}
 
         SpritePtr sprite;
+        SpriteLibraryDataCallbacks callbacks;
     };
 
 
@@ -127,7 +143,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        SpriteLibraryData* addSpriteToLibrary(SpritePtr const& _sprite);
+        void loadSpriteMetaData(SpritePtr const& _sprite, DataBlock const& _metaData);
+
+
+        //////////////////////////////////////////
+        SpriteLibraryData* addSpriteToLibrary(
+            SpritePtr const& _sprite,
+            SpriteLibraryDataCallbacks const& _callbacks = SpriteLibraryDataCallbacks());
 
         //////////////////////////////////////////
         void removeSpriteFromLibrary(HashedCString _spriteName);

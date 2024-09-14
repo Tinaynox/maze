@@ -105,31 +105,32 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetUnitManager::addAssetUnit(AssetUnitPtr const& _assetFile)
+    void AssetUnitManager::addAssetUnit(AssetUnitPtr const& _assetUnit)
     {
-        MAZE_ERROR_RETURN_IF(_assetFile->getAssetUnitId() == c_invalidAssetUnitId, "AssetUnitId is invalid!");
+        MAZE_ERROR_RETURN_IF(!_assetUnit, "AssetFile is null!");
+        MAZE_ERROR_RETURN_IF(_assetUnit->getAssetUnitId() == c_invalidAssetUnitId, "AssetUnitId is invalid!");
 
-        m_assetUnitsById[_assetFile->getAssetUnitId()] = _assetFile;
-        eventAssetUnitAdded(_assetFile);
+        m_assetUnitsById[_assetUnit->getAssetUnitId()] = _assetUnit;
+        eventAssetUnitAdded(_assetUnit);
     }
 
     //////////////////////////////////////////
-    void AssetUnitManager::removeAssetUnit(AssetUnitId _assetFileId)
+    void AssetUnitManager::removeAssetUnit(AssetUnitId _assetUnitId)
     {
-        auto it = m_assetUnitsById.find(_assetFileId);
+        auto it = m_assetUnitsById.find(_assetUnitId);
         if (it != m_assetUnitsById.end())
         {
-            eventAssetUnitWillBeRemoved(_assetFileId, it->second);
+            eventAssetUnitWillBeRemoved(_assetUnitId, it->second);
             m_assetUnitsById.erase(it);
         }
     }
 
     //////////////////////////////////////////
-    AssetUnitPtr const& AssetUnitManager::getAssetUnit(AssetUnitId _assetFileId) const
+    AssetUnitPtr const& AssetUnitManager::getAssetUnit(AssetUnitId _assetUnitId) const
     {
         static AssetUnitPtr nullPointer;
 
-        auto it = m_assetUnitsById.find(_assetFileId);
+        auto it = m_assetUnitsById.find(_assetUnitId);
         if (it != m_assetUnitsById.end())
             return it->second;
 

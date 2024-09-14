@@ -48,6 +48,7 @@
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-core/assets/MazeAssetFileId.hpp"
 #include "maze-core/assets/MazeAssetUnitId.hpp"
+#include "maze-core/assets/MazeAssetUnit.hpp"
 #include <tinyxml2/tinyxml2.h>
 
 
@@ -126,6 +127,17 @@ namespace Maze
 
         //////////////////////////////////////////
         void updateAssetUnitsFromMetaData();
+
+        //////////////////////////////////////////
+        template <typename TAssetUnit>
+        inline SharedPtr<TAssetUnit> getAssetUnit() const
+        {
+            for (AssetUnitPtr const& assetUnit : m_assetUnits)
+                if (assetUnit->getClassUID() == ClassInfo<TAssetUnit>::UID())
+                    return assetUnit->cast<TAssetUnit>();
+
+            return nullptr;
+        }
 
 
         //////////////////////////////////////////

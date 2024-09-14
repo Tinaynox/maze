@@ -25,10 +25,9 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/assets/MazeAssetUnitTexture2D.hpp"
-#include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/assets/MazeAssetUnitTextureCube.hpp"
+#include "maze-graphics/MazeTextureCube.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
-#include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 
 
@@ -37,37 +36,37 @@ namespace Maze
 {
 
     //////////////////////////////////////////
-    // Class AssetUnitTexture2D
+    // Class AssetUnitTextureCube
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AssetUnitTexture2D, AssetUnit);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AssetUnitTextureCube, AssetUnit);
     
     //////////////////////////////////////////
-    AssetUnitTexture2D::AssetUnitTexture2D()
+    AssetUnitTextureCube::AssetUnitTextureCube()
     {
 
     }
 
     //////////////////////////////////////////
-    AssetUnitTexture2D::~AssetUnitTexture2D()
+    AssetUnitTextureCube::~AssetUnitTextureCube()
     {
     }
 
     //////////////////////////////////////////
-    AssetUnitTexture2DPtr AssetUnitTexture2D::Create(
+    AssetUnitTextureCubePtr AssetUnitTextureCube::Create(
         AssetFilePtr const& _assetFile,
         DataBlock const& _data)
     {
-        AssetUnitTexture2DPtr object;
+        AssetUnitTextureCubePtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(
-            AssetUnitTexture2D,
+            AssetUnitTextureCube,
             object,
             init(_assetFile, _data));
         return object;
     }
 
     //////////////////////////////////////////
-    bool AssetUnitTexture2D::init(
+    bool AssetUnitTextureCube::init(
         AssetFilePtr const& _assetFile,
         DataBlock const& _data)
     {
@@ -78,7 +77,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Texture2DPtr const& AssetUnitTexture2D::loadTexture()
+    TextureCubePtr const& AssetUnitTextureCube::loadTexture()
     {
         if (!isLoaded())
         {
@@ -90,7 +89,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetUnitTexture2D::loadNowImpl()
+    bool AssetUnitTextureCube::loadNowImpl()
     {
         AssetFilePtr assetFile = m_assetFile.lock();
         if (!assetFile)
@@ -100,23 +99,18 @@ namespace Maze
         if (!m_texture)
             return false;
 
-        TextureManagerPtr const& textureManager = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager();
-
-        Maze::Vector<Maze::PixelSheet2D> pixelSheets = textureManager->loadPixelSheets2D(assetFile);
-
-        m_texture->loadTexture(pixelSheets);
-        textureManager->loadTextureMetaData(m_texture, m_data);
+        m_texture->loadFromAssetFile(assetFile);
 
         return true;
     }
 
     //////////////////////////////////////////
-    bool AssetUnitTexture2D::unloadNowImpl()
+    bool AssetUnitTextureCube::unloadNowImpl()
     {
         if (m_texture)
         {
             if (TextureManager::GetCurrentInstancePtr())
-                TextureManager::GetCurrentInstancePtr()->removeTexture2DFromLibrary(m_texture->getName().asHashedCString());
+                TextureManager::GetCurrentInstancePtr()->removeTextureCubeFromLibrary(m_texture->getName().asHashedCString());
             m_texture.reset();
         }
 
@@ -124,7 +118,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Texture2DPtr const& AssetUnitTexture2D::initTexture()
+    TextureCubePtr const& AssetUnitTextureCube::initTexture()
     {
         if (m_texture)
             return m_texture;
@@ -133,8 +127,17 @@ namespace Maze
         if (!assetFile)
             return m_texture;
 
-        m_texture = Texture2D::Create();
-        m_texture->loadTexture(PixelSheet2D(Vec2S(1)));
+        m_texture = TextureCube::Create();
+        PixelSheet2D pixelSheet[6] =
+            {
+                PixelSheet2D(Vec2S(1)),
+                PixelSheet2D(Vec2S(1)),
+                PixelSheet2D(Vec2S(1)),
+                PixelSheet2D(Vec2S(1)),
+                PixelSheet2D(Vec2S(1)),
+                PixelSheet2D(Vec2S(1))
+            };
+        m_texture->loadTexture(pixelSheet);
         m_texture->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
 
         if (TextureManager::GetCurrentInstancePtr())
@@ -142,32 +145,32 @@ namespace Maze
             TextureLibraryDataCallbacks callbacks;
 
             callbacks.requestLoad = 
-                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _immediate)
+                [weakPtr = (AssetUnitTextureCubeWPtr)cast<AssetUnitTextureCube>()](bool _immediate)
                 {
-                    if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                    if (AssetUnitTextureCubePtr assetUnit = weakPtr.lock())
                         _immediate ? assetUnit->loadNow() : assetUnit->load();
                 };
 
             callbacks.requestUnload =
-                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()] (bool _immediate)
+                [weakPtr = (AssetUnitTextureCubeWPtr)cast<AssetUnitTextureCube>()] (bool _immediate)
                 {
-                    if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                    if (AssetUnitTextureCubePtr assetUnit = weakPtr.lock())
                         _immediate ? assetUnit->unloadNow() : assetUnit->unload();
                 };
 
             callbacks.requestReload =
-                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _immediate)
+                [weakPtr = (AssetUnitTextureCubeWPtr)cast<AssetUnitTextureCube>()](bool _immediate)
                 {
-                    if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                    if (AssetUnitTextureCubePtr assetUnit = weakPtr.lock())
                     {
                         assetUnit->unloadNow();
                         _immediate ? assetUnit->loadNow() : assetUnit->load();
                     }
                 };
             callbacks.hasAnyOfTags = 
-                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](Set<String> const& _tags)
+                [weakPtr = (AssetUnitTextureCubeWPtr)cast<AssetUnitTextureCube>()](Set<String> const& _tags)
                 {
-                    if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                    if (AssetUnitTextureCubePtr assetUnit = weakPtr.lock())
                         if (AssetFilePtr assetFile = assetUnit->getAssetFile())
                             return assetFile->hasAnyOfTags(_tags);
 

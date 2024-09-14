@@ -119,16 +119,32 @@ namespace Maze
         virtual bool setMagFilter(TextureFilter _value) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
+        inline TextureFilter getMagFilter() const { return m_magFilter; }
+
+        //////////////////////////////////////////
         virtual bool setMinFilter(TextureFilter _value) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        inline TextureFilter getMinFilter() const { return m_minFilter; }
 
         //////////////////////////////////////////
         virtual bool setWrapS(TextureWrap _value) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
+        inline TextureWrap getWrapS() const { return m_wrapS; }
+
+        //////////////////////////////////////////
         virtual bool setWrapT(TextureWrap _value) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
+        inline TextureWrap getWrapT() const { return m_wrapT; }
+
+        //////////////////////////////////////////
         virtual bool setWrapR(TextureWrap _value) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        inline TextureWrap getWrapR() const { return m_wrapR; }
+
 
 
         //////////////////////////////////////////
