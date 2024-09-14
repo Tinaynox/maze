@@ -119,7 +119,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SpritePtr const& SpriteManager::getSprite(HashedCString _imageName)
+    SpritePtr const& SpriteManager::getOrLoadSprite(
+        HashedCString _imageName,
+        bool _syncLoad)
     {
         static SpritePtr const nullPointer;
 
@@ -127,14 +129,14 @@ namespace Maze
         if (libraryData)
         {
             if (libraryData->callbacks.requestLoad)
-                libraryData->callbacks.requestLoad(false);
+                libraryData->callbacks.requestLoad(_syncLoad);
 
             return libraryData->sprite;
         }
         
         TextureManagerPtr const& textureManager = m_renderSystemRaw->getTextureManager();
 
-        Texture2DPtr texture2D = textureManager->getTexture2D(_imageName);
+        Texture2DPtr texture2D = textureManager->getOrLoadTexture2D(_imageName);
         if (!texture2D)
             return nullPointer;
 

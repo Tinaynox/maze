@@ -160,7 +160,7 @@ namespace Maze
     //////////////////////////////////////////
     void MeshRendererInstanced::setRenderMesh(String const& _renderMeshName)
     {
-        setRenderMesh(m_renderSystem->getRenderMeshManager()->getRenderMesh(_renderMeshName));
+        setRenderMesh(m_renderSystem->getRenderMeshManager()->getOrLoadRenderMesh(_renderMeshName));
     }
 
     //////////////////////////////////////////

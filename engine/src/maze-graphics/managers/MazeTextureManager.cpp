@@ -151,7 +151,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Texture2DPtr const& TextureManager::getTexture2D(HashedCString _textureName)
+    Texture2DPtr const& TextureManager::getOrLoadTexture2D(
+        HashedCString _textureName,
+        bool _syncLoad)
     {
         static Texture2DPtr const nullPointer;
 
@@ -159,7 +161,7 @@ namespace Maze
         if (libraryData)
         {
             if (libraryData->callbacks.requestLoad)
-                libraryData->callbacks.requestLoad(false);
+                libraryData->callbacks.requestLoad(_syncLoad);
 
             return libraryData->texture;
         }
@@ -168,11 +170,13 @@ namespace Maze
         if (!assetFile)
             return nullPointer;
 
-        return getTexture2D(assetFile);
+        return getOrLoadTexture2D(assetFile);
     }
 
     //////////////////////////////////////////
-    Texture2DPtr const& TextureManager::getTexture2D(AssetFilePtr const& _assetFile)
+    Texture2DPtr const& TextureManager::getOrLoadTexture2D(
+        AssetFilePtr const& _assetFile,
+        bool _syncLoad)
     {
         static Texture2DPtr const nullPointer;
 
@@ -180,7 +184,7 @@ namespace Maze
         if (libraryData)
         {
             if (libraryData->callbacks.requestLoad)
-                libraryData->callbacks.requestLoad(false);
+                libraryData->callbacks.requestLoad(_syncLoad);
 
             return libraryData->texture;
         }
@@ -273,7 +277,7 @@ namespace Maze
     //////////////////////////////////////////
     bool TextureManager::saveTexture2DMetaData(AssetFilePtr const& _assetFile)
     {
-        Texture2DPtr const& texture2D = getTexture2D(_assetFile);
+        Texture2DPtr const& texture2D = getOrLoadTexture2D(_assetFile);
         if (!texture2D)
             return false;
 
@@ -610,7 +614,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    TextureCubePtr const& TextureManager::getTextureCube(String const& _textureName)
+    TextureCubePtr const& TextureManager::getOrLoadTextureCube(
+        String const& _textureName,
+        bool _syncLoad)
     {
         static TextureCubePtr const nullPointer;
 
@@ -618,7 +624,7 @@ namespace Maze
         if (libraryData)
         {
             if (libraryData->callbacks.requestLoad)
-                libraryData->callbacks.requestLoad(false);
+                libraryData->callbacks.requestLoad(_syncLoad);
 
             return libraryData->texture;
         }
@@ -627,11 +633,13 @@ namespace Maze
         if (!assetFile)
             return nullPointer;
 
-        return getTextureCube(assetFile);
+        return getOrLoadTextureCube(assetFile);
     }
 
     //////////////////////////////////////////
-    TextureCubePtr const& TextureManager::getTextureCube(AssetFilePtr const& _assetFile)
+    TextureCubePtr const& TextureManager::getOrLoadTextureCube(
+        AssetFilePtr const& _assetFile,
+        bool _syncLoad)
     {
         static TextureCubePtr const nullPointer;
 
@@ -639,7 +647,7 @@ namespace Maze
         if (libraryData)
         {
             if (libraryData->callbacks.requestLoad)
-                libraryData->callbacks.requestLoad(false);
+                libraryData->callbacks.requestLoad(_syncLoad);
 
             return libraryData->texture;
         }
@@ -710,7 +718,7 @@ namespace Maze
                 Set<String>(textureExtensions.begin(), textureExtensions.end()));
             for (AssetFilePtr const& assetFile : assetFiles)
             {
-                getTexture2D(assetFile);
+                getOrLoadTexture2D(assetFile);
             }
         }
 
@@ -718,7 +726,7 @@ namespace Maze
             Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(Set<Path>{ "mzcubemap" });
             for (AssetFilePtr const& assetFile : assetFiles)
             {
-                getTextureCube(assetFile);
+                getOrLoadTextureCube(assetFile);
             }
         }
     }

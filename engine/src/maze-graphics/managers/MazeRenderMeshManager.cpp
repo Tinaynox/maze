@@ -30,6 +30,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
@@ -38,6 +39,7 @@
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/managers/MazeMeshManager.hpp"
+#include "maze-graphics/assets/MazeAssetUnitRenderMesh.hpp"
 
 
 //////////////////////////////////////////
@@ -85,6 +87,22 @@ namespace Maze
         m_renderSystemRaw->eventSystemInited.subscribe(this, &RenderMeshManager::notifyRenderSystemInited);
 
         
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
+                MAZE_HCS("renderMesh"),
+                [](AssetFilePtr const& _file, DataBlock const& _data)
+            {
+                return AssetUnitRenderMesh::Create(_file, _data);
+            });
+
+            AssetUnitManager::GetInstancePtr()->eventAssetUnitAdded.subscribe(
+                [](AssetUnitPtr const& _assetUnit)
+            {
+                if (_assetUnit->getClassUID() == ClassInfo<AssetUnitRenderMesh>::UID())
+                    _assetUnit->castRaw<AssetUnitRenderMesh>()->initRenderMesh();
+            });
+        }
 
         return true;
     }
@@ -197,7 +215,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    RenderMeshPtr const& RenderMeshManager::getRenderMesh(HashedCString _renderMeshName)
+    RenderMeshPtr const& RenderMeshManager::getOrLoadRenderMesh(
+        HashedCString _renderMeshName,
+        bool _syncLoad)
     {
         static RenderMeshPtr const nullPointer;
 
@@ -206,32 +226,35 @@ namespace Maze
 
         RenderMeshLibraryData const* libraryData = getRenderMeshLibraryData(_renderMeshName);
         if (libraryData != nullptr)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(_syncLoad);
+
             return libraryData->renderMesh;
+        }
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_renderMeshName);
         if (!assetFile)
             return nullPointer;
 
-        RenderMeshPtr renderMesh = RenderMesh::Create(assetFile);
-        renderMesh->setName(_renderMeshName.str);
-        RenderMeshLibraryData* data = addRenderMeshToLibrary(renderMesh);
-        if (data)
-        {
-            data->assetFile = assetFile;
-            return data->renderMesh;
-        }
-
-        return nullPointer;
+        return getOrLoadRenderMesh(assetFile);
     }
 
     //////////////////////////////////////////
-    RenderMeshPtr const& RenderMeshManager::getRenderMesh(AssetFilePtr const& _assetFile)
+    RenderMeshPtr const& RenderMeshManager::getOrLoadRenderMesh(
+        AssetFilePtr const& _assetFile,
+        bool _syncLoad)
     {
         static RenderMeshPtr const nullPointer;
 
         StringKeyMap<RenderMeshLibraryData>::const_iterator it = m_renderMeshesLibrary.find(_assetFile->getFileName());
         if (it != m_renderMeshesLibrary.end())
+        {
+            if (it->second.callbacks.requestLoad)
+                it->second.callbacks.requestLoad(_syncLoad);
+
             return it->second.renderMesh;
+        }
 
         RenderMeshPtr renderMesh = RenderMesh::Create(_assetFile);
         renderMesh->setName(_assetFile->getFileName());
@@ -239,7 +262,26 @@ namespace Maze
 
         if (data)
         {
-            data->assetFile = _assetFile;
+            data->callbacks.requestReload =
+                [
+                    assetFileWeak = (AssetFileWPtr)_assetFile,
+                    renderMeshWeak = (RenderMeshWPtr)renderMesh
+                ](bool _immediate)
+                {
+                    AssetFilePtr assetFile = assetFileWeak.lock();
+                    RenderMeshPtr renderMesh = renderMeshWeak.lock();
+                    if (assetFile && renderMesh)
+                        renderMesh->loadFromAssetFile(assetFile);
+                };
+            data->callbacks.hasAnyOfTags =
+                [assetFileWeak = (AssetFileWPtr)_assetFile](Set<String> const& _tags)
+                {
+                    if (AssetFilePtr assetFile = assetFileWeak.lock())
+                        return assetFile->hasAnyOfTags(_tags);
+
+                    return false;
+                };
+
             return data->renderMesh;
         }
 
@@ -262,11 +304,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    RenderMeshLibraryData* RenderMeshManager::addRenderMeshToLibrary(RenderMeshPtr const& _renderMesh)
+    RenderMeshLibraryData* RenderMeshManager::addRenderMeshToLibrary(
+        RenderMeshPtr const& _renderMesh,
+        RenderMeshLibraryDataCallbacks const& _callbacks)
     {
         auto it2 = m_renderMeshesLibrary.insert(
             _renderMesh->getName(),
-            _renderMesh);
+            { _renderMesh, _callbacks });
         return it2;
     }
 
@@ -327,7 +371,7 @@ namespace Maze
         StringKeyMap<RenderMeshLibraryData>::iterator end = m_renderMeshesLibrary.end();
         for (; it != end; )
         {
-            if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+            if (it->second.callbacks.hasAnyOfTags && it->second.callbacks.hasAnyOfTags(_tags))
             {
                 it = m_renderMeshesLibrary.erase(it);
                 end = m_renderMeshesLibrary.end();

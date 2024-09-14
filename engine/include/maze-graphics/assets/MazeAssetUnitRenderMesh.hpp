@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeAssetUnitSprite_hpp_))
-#define _MazeAssetUnitSprite_hpp_
+#if (!defined(_MazeAssetUnitRenderMesh_hpp_))
+#define _MazeAssetUnitRenderMesh_hpp_
 
 
 //////////////////////////////////////////
@@ -38,48 +38,48 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetUnitSprite);   
+    MAZE_USING_SHARED_PTR(AssetUnitRenderMesh);   
     MAZE_USING_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(Sprite);
+    MAZE_USING_SHARED_PTR(RenderMesh);
 
 
     //////////////////////////////////////////
-    // Class AssetUnitSprite
+    // Class AssetUnitRenderMesh
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API AssetUnitSprite
+    class MAZE_CORE_API AssetUnitRenderMesh
         : public AssetUnit
     {
     public:
         
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitSprite, AssetUnit);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitRenderMesh, AssetUnit);
         
     public:
 
         //////////////////////////////////////////
-        virtual ~AssetUnitSprite();
+        virtual ~AssetUnitRenderMesh();
 
         //////////////////////////////////////////
-        static AssetUnitSpritePtr Create(
+        static AssetUnitRenderMeshPtr Create(
             AssetFilePtr const& _assetFile,
             DataBlock const& _data);
 
 
         //////////////////////////////////////////
-        inline SpritePtr const& getSprite() const { return m_sprite; }
+        inline RenderMeshPtr const& getRenderMesh() const { return m_renderMesh; }
 
         //////////////////////////////////////////
-        SpritePtr const& loadSprite(bool _syncLoad = false);
+        RenderMeshPtr const& loadRenderMesh(bool _syncLoad = false);
 
 
         //////////////////////////////////////////
-        SpritePtr const& initSprite();
+        RenderMeshPtr const& initRenderMesh();
 
     protected:
 
         //////////////////////////////////////////
-        AssetUnitSprite();
+        AssetUnitRenderMesh();
 
         //////////////////////////////////////////
         virtual bool init(
@@ -92,12 +92,8 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool unloadNowImpl() MAZE_OVERRIDE;
     
-
-        //////////////////////////////////////////
-        void applySpriteMetaData();
-
     protected:
-        SpritePtr m_sprite;
+        RenderMeshPtr m_renderMesh;
     };
 
 
@@ -105,5 +101,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeAssetUnitSprite_hpp_
+#endif // _MazeAssetUnitRenderMesh_hpp_
 //////////////////////////////////////////

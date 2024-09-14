@@ -70,7 +70,7 @@ namespace Maze
         inline TextureCubePtr const& getTexture() const { return m_texture; }
 
         //////////////////////////////////////////
-        TextureCubePtr const& loadTexture();
+        TextureCubePtr const& loadTexture(bool _syncLoad = false);
 
 
         //////////////////////////////////////////

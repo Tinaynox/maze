@@ -126,13 +126,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        SpritePtr const& getSprite(HashedCString _imageName);
+        SpritePtr const& getOrLoadSprite(HashedCString _imageName, bool _syncLoad = true);
 
         //////////////////////////////////////////
-        inline SpritePtr const& getSprite(String const& _imageName) { return getSprite(MAZE_HASHED_CSTRING(_imageName.c_str())); }
+        inline SpritePtr const& getOrLoadSprite(String const& _imageName, bool _syncLoad = true) { return getOrLoadSprite(MAZE_HASHED_CSTRING(_imageName.c_str()), _syncLoad); }
 
         //////////////////////////////////////////
-        inline SpritePtr const& getSprite(CString _imageName) { return getSprite(MAZE_HASHED_CSTRING(_imageName)); }
+        inline SpritePtr const& getOrLoadSprite(CString _imageName, bool _syncLoad = true) { return getOrLoadSprite(MAZE_HASHED_CSTRING(_imageName), _syncLoad); }
 
 
         //////////////////////////////////////////

@@ -45,6 +45,7 @@
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
@@ -127,6 +128,7 @@ bool SceneExample::init()
 
 
     Maze::SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
+    Maze::RenderMeshManagerPtr const& renderMeshManager = renderSystem->getRenderMeshManager();
 
     Maze::EntityManager* entityManager = Maze::EntityManager::GetInstancePtr();
     Maze::EcsWorldPtr const& world = entityManager->getDefaultWorld();
@@ -155,7 +157,7 @@ bool SceneExample::init()
     }
     
 
-    Maze::SpritePtr sprite = spriteManager->getSprite("Panel00.png");
+    Maze::SpritePtr sprite = spriteManager->getOrLoadSprite("Panel00.png");
     /*
     if (sprite)
         sprite->setSliceBorder(
@@ -269,7 +271,7 @@ bool SceneExample::init()
     lightEntity->ensureComponent<Maze::Name>("Light");
 
     // SMG
-    Maze::RenderMeshPtr smgRenderMesh = Maze::RenderMesh::Create("SMG.obj");
+    Maze::RenderMeshPtr smgRenderMesh = renderMeshManager->getOrLoadRenderMesh("SMG.obj");
     Maze::MaterialPtr smgMaterial = Maze::Material::Create("Test00.mzmaterial");
     {
         Maze::EntityPtr meshRendererEntity = createEntity();

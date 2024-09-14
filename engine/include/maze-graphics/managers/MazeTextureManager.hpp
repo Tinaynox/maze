@@ -194,16 +194,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Texture2DPtr const& getTexture2D(HashedCString _assetFileName);
+        Texture2DPtr const& getOrLoadTexture2D(HashedCString _assetFileName, bool _syncLoad = true);
 
         //////////////////////////////////////////
-        inline Texture2DPtr const& getTexture2D(String const& _assetFileName) { return getTexture2D(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+        inline Texture2DPtr const& getOrLoadTexture2D(String const& _assetFileName, bool _syncLoad = true) { return getOrLoadTexture2D(MAZE_HASHED_CSTRING(_assetFileName.c_str()), _syncLoad); }
 
         //////////////////////////////////////////
-        inline Texture2DPtr const& getTexture2D(CString _assetFileName) { return getTexture2D(MAZE_HASHED_CSTRING(_assetFileName)); }
+        inline Texture2DPtr const& getOrLoadTexture2D(CString _assetFileName, bool _syncLoad = true) { return getOrLoadTexture2D(MAZE_HASHED_CSTRING(_assetFileName), _syncLoad); }
 
         //////////////////////////////////////////
-        Texture2DPtr const& getTexture2D(AssetFilePtr const& _assetFile);
+        Texture2DPtr const& getOrLoadTexture2D(AssetFilePtr const& _assetFile, bool _syncLoad = true);
 
 
 
@@ -304,10 +304,11 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        TextureCubePtr const& getTextureCube(String const& _assetFileName);
+        TextureCubePtr const& getOrLoadTextureCube(String const& _assetFileName, bool _syncLoad = true);
 
         //////////////////////////////////////////
-        TextureCubePtr const& getTextureCube(AssetFilePtr const& _assetFile);
+        TextureCubePtr const& getOrLoadTextureCube(AssetFilePtr const& _assetFile, bool _syncLoad = true);
+
 
         //////////////////////////////////////////
         TextureCubePtr const& getWhiteCubeTexture() const { return getBuiltinTextureCube(BuiltinTextureCubeType::White); }

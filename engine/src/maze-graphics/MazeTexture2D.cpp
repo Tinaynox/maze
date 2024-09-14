@@ -240,7 +240,7 @@ namespace Maze
         }
         else
         {
-            _value = textureManager->getTexture2D(MAZE_HASHED_CSTRING(_data));
+            _value = textureManager->getOrLoadTexture2D(MAZE_HASHED_CSTRING(_data));
         }
     }
 

@@ -237,7 +237,8 @@ namespace Maze
         if (_string.empty())
             return nullptr;
 
-        return GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getRenderMeshManager()->getRenderMesh(_string);
+        return GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getRenderMeshManager()->getOrLoadRenderMesh(
+            _string);
     }
 
     //////////////////////////////////////////
@@ -269,7 +270,8 @@ namespace Maze
     //////////////////////////////////////////
     void RenderMeshAssetRef::setString(CString _data, Size _count)
     {
-        RenderMeshPtr const& material = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getRenderMesh(_data);
+        RenderMeshPtr const& material = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getOrLoadRenderMesh(
+            _data);
         setRenderMesh(material);
     }
 
@@ -280,7 +282,8 @@ namespace Maze
         ValueFromDataBlock(name, _dataBlock);
         if (name != nullptr)
         {
-            RenderMeshPtr const& material = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getRenderMesh(name);
+            RenderMeshPtr const& material = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getOrLoadRenderMesh(
+                name);
             setRenderMesh(material);
         }
         else

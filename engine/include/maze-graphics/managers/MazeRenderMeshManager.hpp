@@ -68,6 +68,19 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct RenderMeshLibraryDataCallbacks
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API RenderMeshLibraryDataCallbacks
+    {
+        std::function<void(bool)> requestLoad;
+        std::function<void(bool)> requestUnload;
+        std::function<void(bool)> requestReload;
+        std::function<bool(Set<String> const&)> hasAnyOfTags;
+    };
+
+
+    //////////////////////////////////////////
     // Struct RenderMeshLibraryData
     //
     //////////////////////////////////////////
@@ -76,13 +89,13 @@ namespace Maze
         //////////////////////////////////////////
         RenderMeshLibraryData(
             RenderMeshPtr const& _renderMesh = nullptr,
-            AssetFilePtr const& _assetFile = nullptr)
+            RenderMeshLibraryDataCallbacks const& _callbacks = RenderMeshLibraryDataCallbacks())
             : renderMesh(_renderMesh)
-            , assetFile(_assetFile)
+            , callbacks(_callbacks)
         {}
 
         RenderMeshPtr renderMesh;
-        AssetFilePtr assetFile;
+        RenderMeshLibraryDataCallbacks callbacks;
     };
 
 
@@ -142,16 +155,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        RenderMeshPtr const& getRenderMesh(HashedCString _assetFileName);
+        RenderMeshPtr const& getOrLoadRenderMesh(HashedCString _assetFileName, bool _syncLoad = true);
 
         //////////////////////////////////////////
-        inline RenderMeshPtr const& getRenderMesh(String const& _assetFileName) { return getRenderMesh(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+        inline RenderMeshPtr const& getOrLoadRenderMesh(String const& _assetFileName, bool _syncLoad = true) { return getOrLoadRenderMesh(MAZE_HASHED_CSTRING(_assetFileName.c_str()), _syncLoad); }
 
         //////////////////////////////////////////
-        inline RenderMeshPtr const& getRenderMesh(CString _assetFileName) { return getRenderMesh(MAZE_HASHED_CSTRING(_assetFileName)); }
+        inline RenderMeshPtr const& getOrLoadRenderMesh(CString _assetFileName, bool _syncLoad = true) { return getOrLoadRenderMesh(MAZE_HASHED_CSTRING(_assetFileName), _syncLoad); }
 
         //////////////////////////////////////////
-        RenderMeshPtr const& getRenderMesh(AssetFilePtr const& _assetFile);
+        RenderMeshPtr const& getOrLoadRenderMesh(AssetFilePtr const& _assetFile, bool _syncLoad = true);
 
         //////////////////////////////////////////
         HashedCString getRenderMeshName(RenderMesh const* _renderMesh);
@@ -160,7 +173,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        RenderMeshLibraryData* addRenderMeshToLibrary(RenderMeshPtr const& _renderMesh);
+        RenderMeshLibraryData* addRenderMeshToLibrary(
+            RenderMeshPtr const& _renderMesh,
+            RenderMeshLibraryDataCallbacks const& _callbacks = RenderMeshLibraryDataCallbacks());
 
         //////////////////////////////////////////
         void removeRenderMeshFromLibrary(HashedCString _renderMeshName);

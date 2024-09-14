@@ -287,7 +287,7 @@ namespace Maze
         }
         else
         {
-            _value = spriteManager->getSprite(MAZE_HASHED_CSTRING(_data));
+            _value = spriteManager->getOrLoadSprite(MAZE_HASHED_CSTRING(_data));
         }
     }
 
@@ -343,7 +343,7 @@ namespace Maze
     //////////////////////////////////////////
     void SpriteAssetRef::setString(CString _data, Size _count)
     {
-        SpritePtr const& sprite = RenderSystem::GetCurrentInstancePtr()->getSpriteManager()->getSprite(_data);
+        SpritePtr const& sprite = RenderSystem::GetCurrentInstancePtr()->getSpriteManager()->getOrLoadSprite(_data);
         setSprite(sprite);
     }
 

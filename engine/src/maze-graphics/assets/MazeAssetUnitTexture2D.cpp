@@ -142,26 +142,26 @@ namespace Maze
             TextureLibraryDataCallbacks callbacks;
 
             callbacks.requestLoad = 
-                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _immediate)
+                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _syncLoad)
                 {
                     if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
-                        _immediate ? assetUnit->loadNow() : assetUnit->load();
+                        _syncLoad ? assetUnit->loadNow() : assetUnit->load();
                 };
 
             callbacks.requestUnload =
-                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()] (bool _immediate)
+                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()] (bool _syncLoad)
                 {
                     if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
-                        _immediate ? assetUnit->unloadNow() : assetUnit->unload();
+                        _syncLoad ? assetUnit->unloadNow() : assetUnit->unload();
                 };
 
             callbacks.requestReload =
-                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _immediate)
+                [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>()](bool _syncLoad)
                 {
                     if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
                     {
                         assetUnit->unloadNow();
-                        _immediate ? assetUnit->loadNow() : assetUnit->load();
+                        _syncLoad ? assetUnit->loadNow() : assetUnit->load();
                     }
                 };
             callbacks.hasAnyOfTags = 

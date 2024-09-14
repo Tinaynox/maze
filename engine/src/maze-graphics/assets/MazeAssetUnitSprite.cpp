@@ -79,12 +79,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SpritePtr const& AssetUnitSprite::loadSprite()
+    SpritePtr const& AssetUnitSprite::loadSprite(bool _syncLoad)
     {
         if (!isLoaded())
         {
             initSprite();
-            load();
+            _syncLoad ? loadNow() : load();
         }
 
         return m_sprite;
@@ -152,26 +152,26 @@ namespace Maze
             SpriteLibraryDataCallbacks callbacks;
 
             callbacks.requestLoad = 
-                [weakPtr = (AssetUnitSpriteWPtr)cast<AssetUnitSprite>()](bool _immediate)
+                [weakPtr = (AssetUnitSpriteWPtr)cast<AssetUnitSprite>()](bool _syncLoad)
                 {
                     if (AssetUnitSpritePtr assetUnit = weakPtr.lock())
-                        _immediate ? assetUnit->loadNow() : assetUnit->load();
+                        _syncLoad ? assetUnit->loadNow() : assetUnit->load();
                 };
 
             callbacks.requestUnload =
-                [weakPtr = (AssetUnitSpriteWPtr)cast<AssetUnitSprite>()] (bool _immediate)
+                [weakPtr = (AssetUnitSpriteWPtr)cast<AssetUnitSprite>()] (bool _syncLoad)
                 {
                     if (AssetUnitSpritePtr assetUnit = weakPtr.lock())
-                        _immediate ? assetUnit->unloadNow() : assetUnit->unload();
+                        _syncLoad ? assetUnit->unloadNow() : assetUnit->unload();
                 };
 
             callbacks.requestReload =
-                [weakPtr = (AssetUnitSpriteWPtr)cast<AssetUnitSprite>()](bool _immediate)
+                [weakPtr = (AssetUnitSpriteWPtr)cast<AssetUnitSprite>()](bool _syncLoad)
                 {
                     if (AssetUnitSpritePtr assetUnit = weakPtr.lock())
                     {
                         assetUnit->unloadNow();
-                        _immediate ? assetUnit->loadNow() : assetUnit->load();
+                        _syncLoad ? assetUnit->loadNow() : assetUnit->load();
                     }
                 };
             callbacks.hasAnyOfTags = 

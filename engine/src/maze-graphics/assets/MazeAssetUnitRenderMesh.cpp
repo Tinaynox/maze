@@ -25,9 +25,10 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/assets/MazeAssetUnitTextureCube.hpp"
-#include "maze-graphics/MazeTextureCube.hpp"
-#include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/assets/MazeAssetUnitRenderMesh.hpp"
+#include "maze-graphics/MazeRenderMesh.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 
 
@@ -36,37 +37,37 @@ namespace Maze
 {
 
     //////////////////////////////////////////
-    // Class AssetUnitTextureCube
+    // Class AssetUnitRenderMesh
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AssetUnitTextureCube, AssetUnit);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AssetUnitRenderMesh, AssetUnit);
     
     //////////////////////////////////////////
-    AssetUnitTextureCube::AssetUnitTextureCube()
+    AssetUnitRenderMesh::AssetUnitRenderMesh()
     {
 
     }
 
     //////////////////////////////////////////
-    AssetUnitTextureCube::~AssetUnitTextureCube()
+    AssetUnitRenderMesh::~AssetUnitRenderMesh()
     {
     }
 
     //////////////////////////////////////////
-    AssetUnitTextureCubePtr AssetUnitTextureCube::Create(
+    AssetUnitRenderMeshPtr AssetUnitRenderMesh::Create(
         AssetFilePtr const& _assetFile,
         DataBlock const& _data)
     {
-        AssetUnitTextureCubePtr object;
+        AssetUnitRenderMeshPtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(
-            AssetUnitTextureCube,
+            AssetUnitRenderMesh,
             object,
             init(_assetFile, _data));
         return object;
     }
 
     //////////////////////////////////////////
-    bool AssetUnitTextureCube::init(
+    bool AssetUnitRenderMesh::init(
         AssetFilePtr const& _assetFile,
         DataBlock const& _data)
     {
@@ -77,112 +78,101 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    TextureCubePtr const& AssetUnitTextureCube::loadTexture(bool _syncLoad)
+    RenderMeshPtr const& AssetUnitRenderMesh::loadRenderMesh(bool _syncLoad)
     {
         if (!isLoaded())
         {
-            initTexture();
+            initRenderMesh();
             _syncLoad ? loadNow() : load();
         }
 
-        return m_texture;
+        return m_renderMesh;
     }
 
     //////////////////////////////////////////
-    bool AssetUnitTextureCube::loadNowImpl()
+    bool AssetUnitRenderMesh::loadNowImpl()
     {
         AssetFilePtr assetFile = m_assetFile.lock();
         if (!assetFile)
             return false;
 
-        initTexture();
-        if (!m_texture)
+        initRenderMesh();
+        if (!m_renderMesh)
             return false;
 
-        m_texture->loadFromAssetFile(assetFile);
-
+        m_renderMesh->loadFromAssetFile(assetFile);
         return true;
     }
 
     //////////////////////////////////////////
-    bool AssetUnitTextureCube::unloadNowImpl()
+    bool AssetUnitRenderMesh::unloadNowImpl()
     {
-        if (m_texture)
+        if (m_renderMesh)
         {
-            if (TextureManager::GetCurrentInstancePtr())
-                TextureManager::GetCurrentInstancePtr()->removeTextureCubeFromLibrary(m_texture->getName().asHashedCString());
-            m_texture.reset();
+            if (RenderMeshManager::GetCurrentInstancePtr())
+                RenderMeshManager::GetCurrentInstancePtr()->removeRenderMeshFromLibrary(m_renderMesh->getName());
+            m_renderMesh.reset();
         }
 
         return true;
     }
 
     //////////////////////////////////////////
-    TextureCubePtr const& AssetUnitTextureCube::initTexture()
+    RenderMeshPtr const& AssetUnitRenderMesh::initRenderMesh()
     {
-        if (m_texture)
-            return m_texture;
+        if (m_renderMesh)
+            return m_renderMesh;
 
         AssetFilePtr assetFile = getAssetFile();
         if (!assetFile)
-            return m_texture;
+            return m_renderMesh;
 
-        m_texture = TextureCube::Create();
-        PixelSheet2D pixelSheet[6] =
-            {
-                PixelSheet2D(Vec2S(1)),
-                PixelSheet2D(Vec2S(1)),
-                PixelSheet2D(Vec2S(1)),
-                PixelSheet2D(Vec2S(1)),
-                PixelSheet2D(Vec2S(1)),
-                PixelSheet2D(Vec2S(1))
-            };
-        m_texture->loadTexture(pixelSheet);
-        m_texture->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
+        m_renderMesh = RenderMesh::Create();
+        m_renderMesh->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
 
-        if (TextureManager::GetCurrentInstancePtr())
+        if (RenderMeshManager::GetCurrentInstancePtr())
         {
-            TextureLibraryDataCallbacks callbacks;
+            RenderMeshLibraryDataCallbacks callbacks;
 
             callbacks.requestLoad = 
-                [weakPtr = (AssetUnitTextureCubeWPtr)cast<AssetUnitTextureCube>()](bool _syncLoad)
+                [weakPtr = (AssetUnitRenderMeshWPtr)cast<AssetUnitRenderMesh>()](bool _syncLoad)
                 {
-                    if (AssetUnitTextureCubePtr assetUnit = weakPtr.lock())
+                    if (AssetUnitRenderMeshPtr assetUnit = weakPtr.lock())
                         _syncLoad ? assetUnit->loadNow() : assetUnit->load();
                 };
 
             callbacks.requestUnload =
-                [weakPtr = (AssetUnitTextureCubeWPtr)cast<AssetUnitTextureCube>()] (bool _syncLoad)
+                [weakPtr = (AssetUnitRenderMeshWPtr)cast<AssetUnitRenderMesh>()] (bool _syncLoad)
                 {
-                    if (AssetUnitTextureCubePtr assetUnit = weakPtr.lock())
+                    if (AssetUnitRenderMeshPtr assetUnit = weakPtr.lock())
                         _syncLoad ? assetUnit->unloadNow() : assetUnit->unload();
                 };
 
             callbacks.requestReload =
-                [weakPtr = (AssetUnitTextureCubeWPtr)cast<AssetUnitTextureCube>()](bool _syncLoad)
+                [weakPtr = (AssetUnitRenderMeshWPtr)cast<AssetUnitRenderMesh>()](bool _syncLoad)
                 {
-                    if (AssetUnitTextureCubePtr assetUnit = weakPtr.lock())
+                    if (AssetUnitRenderMeshPtr assetUnit = weakPtr.lock())
                     {
                         assetUnit->unloadNow();
                         _syncLoad ? assetUnit->loadNow() : assetUnit->load();
                     }
                 };
             callbacks.hasAnyOfTags = 
-                [weakPtr = (AssetUnitTextureCubeWPtr)cast<AssetUnitTextureCube>()](Set<String> const& _tags)
+                [weakPtr = (AssetUnitRenderMeshWPtr)cast<AssetUnitRenderMesh>()](Set<String> const& _tags)
                 {
-                    if (AssetUnitTextureCubePtr assetUnit = weakPtr.lock())
+                    if (AssetUnitRenderMeshPtr assetUnit = weakPtr.lock())
                         if (AssetFilePtr assetFile = assetUnit->getAssetFile())
                             return assetFile->hasAnyOfTags(_tags);
 
                     return false;
                 };
 
-            TextureManager::GetCurrentInstancePtr()->addTextureToLibrary(
-                m_texture,
+            RenderMeshManager::GetCurrentInstancePtr()->addRenderMeshToLibrary(
+                m_renderMesh,
                 callbacks);
         }
 
-        return m_texture;
+        return m_renderMesh;
     }
 
 
