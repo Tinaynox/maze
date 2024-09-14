@@ -70,7 +70,7 @@ namespace Maze
         //////////////////////////////////////////
         static void Initialize(
             WindowManagerPtr& _windowManager,
-            DataBlock const& _config);
+            DataBlock const& _config = DataBlock::c_empty);
 
         //////////////////////////////////////////
         DisplayPtr const& getPrimaryDisplay() const;

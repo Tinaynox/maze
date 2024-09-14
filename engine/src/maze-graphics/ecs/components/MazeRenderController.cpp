@@ -66,11 +66,11 @@ namespace Maze
     //////////////////////////////////////////
     RenderController::~RenderController()
     {
-        for (Camera3D* camera : m_cameras3D)
+        for (Camera3DPtr const& camera : m_cameras3D)
             camera->eventRenderTargetChanged.unsubscribe(this);
         m_cameras3D.clear();
 
-        for (Canvas* canvas : m_canvases)
+        for (CanvasPtr const& canvas : m_canvases)
             canvas->eventRenderTargetChanged.unsubscribe(this);
         m_canvases.clear();
         
@@ -150,7 +150,7 @@ namespace Maze
     void RenderController::processCanvasEntityAdded(Entity* _entity, Canvas* _canvas)
     {
         m_renderTargetsDirty = true;
-        m_canvases.insert(_canvas);
+        m_canvases.insert(_canvas->cast<Canvas>());
         _canvas->eventRenderTargetChanged.subscribe(this, &RenderController::processCanvasRenderTargetChanged);
     }
 
@@ -159,7 +159,7 @@ namespace Maze
     {
         m_renderTargetsDirty = true;
         _canvas->eventRenderTargetChanged.unsubscribe(this);
-        m_canvases.erase(_canvas);
+        m_canvases.erase(_canvas->cast<Canvas>());
     }
 
     //////////////////////////////////////////
@@ -172,7 +172,7 @@ namespace Maze
     void RenderController::processCameraEntityAdded(Entity* _entity, Camera3D* _camera3D)
     {
         m_renderTargetsDirty = true;
-        m_cameras3D.insert(_camera3D);
+        m_cameras3D.insert(_camera3D->cast<Camera3D>());
         _camera3D->eventRenderTargetChanged.subscribe(this, &RenderController::processCameraRenderTargetChanged);
     }
 
@@ -181,7 +181,7 @@ namespace Maze
     {
         m_renderTargetsDirty = true;
         _camera3D->eventRenderTargetChanged.unsubscribe(this);
-        m_cameras3D.erase(_camera3D);
+        m_cameras3D.erase(_camera3D->cast<Camera3D>());
     }
 
     //////////////////////////////////////////

@@ -1,3 +1,10 @@
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:Vec4F = 1.0, 1.0, 1.0, 1.0
+}
+
 GLSL
 {
   shader:String = "UnlitColor00.mzglsl"

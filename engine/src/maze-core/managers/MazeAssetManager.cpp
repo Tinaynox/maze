@@ -59,8 +59,13 @@ namespace Maze
     //////////////////////////////////////////
     AssetManager::~AssetManager()
     {
+        while (!m_assetFilesByFileName.empty())
+        {
+            AssetFilePtr assetFile = m_assetFilesByFileName.begin()->second;
+            processRemoveFile(assetFile);
+        }
+
         m_assetFilesById.clear();
-        m_assetFilesByFileName.clear();
         m_assetFilesByFullPath.clear();
 
         m_assetDirectoryPathes.clear();

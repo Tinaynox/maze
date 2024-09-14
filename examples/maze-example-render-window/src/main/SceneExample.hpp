@@ -91,9 +91,9 @@ protected:
 
     Maze::F32 m_timer;
 
-    Maze::Mat4F32 m_modelMatrix;
-    Maze::Mat4F32 m_modelMatrix2;
-    Maze::Mat4F32 m_modelMatrix3;
+    Maze::TMat m_modelMatrix;
+    Maze::TMat m_modelMatrix2;
+    Maze::TMat m_modelMatrix3;
 
     Maze::Transform3DPtr m_cameraTransform3D;
 

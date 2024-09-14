@@ -134,17 +134,39 @@
 
 
 //////////////////////////////////////////
+#ifndef MAZE_COLOR_STREAM
+#define MAZE_COLOR_STREAM (0)
+#endif
+#ifndef MAZE_UV0_STREAM
+#define MAZE_UV0_STREAM (0)
+#endif
+#ifndef MAZE_UV1_STREAM
+#define MAZE_UV1_STREAM (0)
+#endif
+
+
+//////////////////////////////////////////
+vec4 GetPackedNormal(
+    sampler2D normalMap,
+    vec2 uv)
+{
+    vec4 packedNormal = MAZE_GET_TEXEL2D(normalMap, uv);
+    
+#if defined(NORMAL_MAP_INV_Y) && (NORMAL_MAP_INV_Y)
+    packedNormal.y = 1.0 - packedNormal.y;
+#endif
+
+    return packedNormal;
+}  
+
+//////////////////////////////////////////
 vec3 SampleNormalTS(
     sampler2D normalMap,
     vec2 uv,
     float normalScale)
 {
 #if defined(NORMAL_MAP) && (NORMAL_MAP)
-    vec4 packedNormal = MAZE_GET_TEXEL2D(normalMap, uv);
-    
-#if defined(NORMAL_MAP_INV_Y) && (NORMAL_MAP_INV_Y)
-    packedNormal.y = 1.0 - packedNormal.y;
-#endif
+    vec4 packedNormal = GetPackedNormal(normalMap, uv);
     
     vec3 normal;
     normal.xyz = packedNormal.rgb * 2.0 - 1.0;

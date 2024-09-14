@@ -9,7 +9,7 @@ renderPass
 {
   passType:String = "Default"
   renderQueueIndex:S32 = 3000
-  shader:String = "Unlit00.mzshader"
+  shader:String = "UnlitStream00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "SrcAlpha"
   blendDestFactor:String = "OneMinusSrcAlpha"
