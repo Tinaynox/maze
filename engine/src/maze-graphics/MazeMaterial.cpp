@@ -750,7 +750,7 @@ namespace Maze
         }
         else
         {
-            _value = materialManager->getMaterial(MAZE_HCS(_data));
+            _value = materialManager->getOrLoadMaterial(MAZE_HCS(_data));
         }
     }
 
@@ -809,7 +809,7 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialAssetRef::setString(CString _data, Size _count)
     {
-        MaterialPtr const& material = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getMaterial(_data);
+        MaterialPtr const& material = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getOrLoadMaterial(_data);
         setMaterial(material);
     }
 
@@ -820,7 +820,7 @@ namespace Maze
         ValueFromDataBlock(name, _dataBlock);
         if (name != nullptr)
         {
-            MaterialPtr const& material = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getMaterial(name);
+            MaterialPtr const& material = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getOrLoadMaterial(name);
             setMaterial(material);
         }
         else

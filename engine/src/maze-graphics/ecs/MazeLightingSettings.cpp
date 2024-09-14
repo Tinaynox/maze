@@ -74,7 +74,7 @@ namespace Maze
     //////////////////////////////////////////
     void LightingSettings::setSkyBoxMaterial(String const& _id)
     {
-        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getMaterial(_id);
+        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(_id);
         setSkyBoxMaterial(material);
     }
 

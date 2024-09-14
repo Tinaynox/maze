@@ -135,7 +135,7 @@ namespace Maze
     //////////////////////////////////////////
     void WaterRenderer3D::setMaterial(String const& _materialName)
     {
-        MaterialPtr const& material = m_renderSystem->getMaterialManager()->getMaterial(_materialName);
+        MaterialPtr const& material = m_renderSystem->getMaterialManager()->getOrLoadMaterial(_materialName);
         setMaterial(material);
     }
 

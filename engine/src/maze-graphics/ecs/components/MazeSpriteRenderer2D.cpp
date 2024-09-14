@@ -171,7 +171,7 @@ namespace Maze
     //////////////////////////////////////////
     void SpriteRenderer2D::setMaterial(CString _materialName)
     {
-        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getMaterial(_materialName);
+        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(_materialName);
         setMaterial(material);
     }
 
@@ -190,7 +190,7 @@ namespace Maze
     //////////////////////////////////////////
     void SpriteRenderer2D::setMaterialCopy(CString _materialName)
     {
-        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getMaterial(_materialName);
+        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(_materialName);
         setMaterialCopy(material);
     }
 

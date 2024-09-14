@@ -79,6 +79,19 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct MaterialLibraryDataCallbacks
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API MaterialLibraryDataCallbacks
+    {
+        std::function<void(bool)> requestLoad;
+        std::function<void(bool)> requestUnload;
+        std::function<void(bool)> requestReload;
+        std::function<bool(Set<String> const&)> hasAnyOfTags;
+    };
+
+
+    //////////////////////////////////////////
     // Struct MaterialLibraryData
     //
     //////////////////////////////////////////
@@ -87,13 +100,13 @@ namespace Maze
         //////////////////////////////////////////
         MaterialLibraryData(
             MaterialPtr const& _material = nullptr,
-            AssetFilePtr const& _assetFile = nullptr)
+            MaterialLibraryDataCallbacks const& _callbacks = MaterialLibraryDataCallbacks())
             : material(_material)
-            , assetFile(_assetFile)
+            , callbacks(_callbacks)
         {}
 
         MaterialPtr material;
-        AssetFilePtr assetFile;
+        MaterialLibraryDataCallbacks callbacks;
     };
 
 
@@ -130,16 +143,18 @@ namespace Maze
         MaterialLibraryData const* getMaterialLibraryData(CString _assetFileName) { return getMaterialLibraryData(MAZE_HASHED_CSTRING(_assetFileName)); }
 
         //////////////////////////////////////////
-        MaterialPtr const& getMaterial(HashedCString _assetFileName);
+        MaterialPtr const& getOrLoadMaterial(
+            HashedCString _assetFileName,
+            bool _syncLoad = true);
 
         //////////////////////////////////////////
-        inline MaterialPtr const& getMaterial(String const& _assetFileName) { return getMaterial(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+        inline MaterialPtr const& getOrLoadMaterial(String const& _assetFileName, bool _syncLoad = true) { return getOrLoadMaterial(MAZE_HASHED_CSTRING(_assetFileName.c_str()), _syncLoad); }
 
         //////////////////////////////////////////
-        inline MaterialPtr const& getMaterial(CString _assetFileName) { return getMaterial(MAZE_HASHED_CSTRING(_assetFileName)); }
+        inline MaterialPtr const& getOrLoadMaterial(CString _assetFileName, bool _syncLoad = true) { return getOrLoadMaterial(MAZE_HASHED_CSTRING(_assetFileName), _syncLoad); }
 
         //////////////////////////////////////////
-        MaterialPtr const& getMaterial(AssetFilePtr const& _assetFile);
+        MaterialPtr const& getOrLoadMaterial(AssetFilePtr const& _assetFile, bool _syncLoad = true);
 
         //////////////////////////////////////////
         HashedCString getMaterialName(Material const* _material);
@@ -173,7 +188,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MaterialLibraryData* addMaterialToLibrary(MaterialPtr const& _material);
+        MaterialLibraryData* addMaterialToLibrary(
+            MaterialPtr const& _material,
+            MaterialLibraryDataCallbacks const& _callbacks = MaterialLibraryDataCallbacks());
 
         //////////////////////////////////////////
         void removeMaterialFromLibrary(HashedCString _materialName);

@@ -237,7 +237,7 @@ namespace Maze
         if (!assetFile)
             return nullPointer;
 
-        return getOrLoadRenderMesh(assetFile);
+        return getOrLoadRenderMesh(assetFile, _syncLoad);
     }
 
     //////////////////////////////////////////

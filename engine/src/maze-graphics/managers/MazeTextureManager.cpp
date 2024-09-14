@@ -170,7 +170,7 @@ namespace Maze
         if (!assetFile)
             return nullPointer;
 
-        return getOrLoadTexture2D(assetFile);
+        return getOrLoadTexture2D(assetFile, _syncLoad);
     }
 
     //////////////////////////////////////////
@@ -633,7 +633,7 @@ namespace Maze
         if (!assetFile)
             return nullPointer;
 
-        return getOrLoadTextureCube(assetFile);
+        return getOrLoadTextureCube(assetFile, _syncLoad);
     }
 
     //////////////////////////////////////////

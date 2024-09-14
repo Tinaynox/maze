@@ -154,7 +154,7 @@ namespace Maze
                 _spriteName,
                 _size,
                 _position,
-                _materialName   ? MaterialManager::GetCurrentInstance()->getMaterial(MAZE_HASHED_CSTRING(_materialName))
+                _materialName   ? MaterialManager::GetCurrentInstance()->getOrLoadMaterial(MAZE_HASHED_CSTRING(_materialName))
                                 : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial(),
                 _parent,
                 _ecsScene,

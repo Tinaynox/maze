@@ -155,7 +155,7 @@ namespace Maze
     //////////////////////////////////////////
     void LineRenderer3D::setMaterial(String const& _materialName)
     {
-        MaterialPtr const& material = m_renderSystem->getMaterialManager()->getMaterial(_materialName);
+        MaterialPtr const& material = m_renderSystem->getMaterialManager()->getOrLoadMaterial(_materialName);
         MAZE_ERROR_IF(!material, "Undefined material: %s", _materialName.c_str());
         setMaterial(material);
     }
