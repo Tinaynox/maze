@@ -160,7 +160,7 @@ namespace Maze
         Vec2S m_size;
         S32 m_samples = 0;
 
-        PixelFormat::Enum m_internalPixelFormat;
+        PixelFormat::Enum m_internalPixelFormat = PixelFormat::None;
 
         AssetFilePtr m_assetFile;
     };

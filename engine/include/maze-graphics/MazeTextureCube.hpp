@@ -181,7 +181,7 @@ namespace Maze
         TextureWrap m_wrapT = TextureWrap::ClampToEdge;
         TextureWrap m_wrapR = TextureWrap::ClampToEdge;
 
-        PixelFormat::Enum m_internalPixelFormat;
+        PixelFormat::Enum m_internalPixelFormat = PixelFormat::None;
 
         AssetFilePtr m_assetFile;
     };

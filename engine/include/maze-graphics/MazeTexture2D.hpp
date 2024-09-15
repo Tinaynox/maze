@@ -252,7 +252,7 @@ namespace Maze
         TextureWrap m_wrapT;
         F32 m_anisotropyLevel = 0.0f;
 
-        PixelFormat::Enum m_internalPixelFormat;
+        PixelFormat::Enum m_internalPixelFormat = PixelFormat::None;
     };
 
 
