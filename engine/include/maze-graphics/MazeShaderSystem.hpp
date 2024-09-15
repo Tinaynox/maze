@@ -75,6 +75,19 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct ShaderLibraryDataCallbacks
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API ShaderLibraryDataCallbacks
+    {
+        std::function<void(bool)> requestLoad;
+        std::function<void(bool)> requestUnload;
+        std::function<void(bool)> requestReload;
+        std::function<bool(Set<String> const&)> hasAnyOfTags;
+    };
+
+
+    //////////////////////////////////////////
     // Struct ShaderLibraryData
     //
     //////////////////////////////////////////
@@ -83,13 +96,13 @@ namespace Maze
         //////////////////////////////////////////
         ShaderLibraryData(
             ShaderPtr const& _shader = nullptr,
-            AssetFilePtr const& _assetFile = nullptr)
+            ShaderLibraryDataCallbacks const& _callbacks = ShaderLibraryDataCallbacks())
             : shader(_shader)
-            , assetFile(_assetFile)
+            , callbacks(_callbacks)
         {}
 
         ShaderPtr shader;
-        AssetFilePtr assetFile;
+        ShaderLibraryDataCallbacks callbacks;
     };
 
 
@@ -104,6 +117,10 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual ~ShaderSystem();
+
+
+        //////////////////////////////////////////
+        static ShaderSystemPtr const& GetCurrentInstancePtr();
 
 
         //////////////////////////////////////////
@@ -127,11 +144,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        virtual ShaderPtr createShader() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
         virtual ShaderPtr createShader(AssetFilePtr const& _shaderFile) MAZE_ABSTRACT;
 
 
         //////////////////////////////////////////
         inline StringKeyMap<ShaderLibraryData> const& getShadersLibrary() const { return m_shadersLibrary; }
+
+        //////////////////////////////////////////
+        ShaderLibraryData const* getShaderLibraryData(HashedCString _shaderName);
 
         //////////////////////////////////////////
         ShaderPtr const& getShaderFromLibrary(HashedCString _shaderName);
@@ -144,13 +167,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ShaderPtr const& getShader(HashedCString _shaderName);
+        ShaderPtr const& getOrLoadShader(HashedCString _shaderName, bool _syncLoad = true);
 
         //////////////////////////////////////////
-        inline ShaderPtr const& getShader(String const& _shaderName) { return getShader(MAZE_HASHED_CSTRING(_shaderName.c_str())); }
+        inline ShaderPtr const& getOrLoadShader(String const& _shaderName, bool _syncLoad = true) { return getOrLoadShader(MAZE_HASHED_CSTRING(_shaderName.c_str()), _syncLoad); }
 
         //////////////////////////////////////////
-        inline ShaderPtr const& getShader(CString _shaderName) { return getShader(MAZE_HASHED_CSTRING(_shaderName)); }
+        inline ShaderPtr const& getOrLoadShader(CString _shaderName, bool _syncLoad = true) { return getOrLoadShader(MAZE_HASHED_CSTRING(_shaderName), _syncLoad); }
+
+        //////////////////////////////////////////
+        ShaderPtr const& getOrLoadShader(AssetFilePtr const& _shaderName, bool _syncLoad = true);
 
 
         //////////////////////////////////////////
@@ -167,7 +193,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ShaderLibraryData* addShaderToLibrary(ShaderPtr const& _shader);
+        ShaderLibraryData* addShaderToLibrary(
+            ShaderPtr const& _shader,
+            ShaderLibraryDataCallbacks const& _callbacks = ShaderLibraryDataCallbacks());
 
         //////////////////////////////////////////
         bool removeShaderFromLibrary(ShaderPtr const& _shader);

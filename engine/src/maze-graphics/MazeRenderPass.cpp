@@ -136,7 +136,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderPass::setShader(Path const& _shaderResourceName)
     {
-        ShaderPtr const& shader = m_renderSystem->getShaderSystem()->getShader(_shaderResourceName);
+        ShaderPtr const& shader = m_renderSystem->getShaderSystem()->getOrLoadShader(_shaderResourceName);
         setShader(shader);
     }
 

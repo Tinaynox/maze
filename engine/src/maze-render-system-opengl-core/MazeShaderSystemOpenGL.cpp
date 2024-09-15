@@ -224,6 +224,14 @@ namespace Maze
     {
         return m_renderSystemRaw->castRaw<RenderSystemOpenGL>();
     }
+    
+    //////////////////////////////////////////
+    ShaderPtr ShaderSystemOpenGL::createShader()
+    {
+        return ShaderOpenGL::Create(
+            getRenderSystem(),
+            getRenderSystemOpenGL()->ensureCurrentContext());
+    }
 
     //////////////////////////////////////////
     ShaderPtr ShaderSystemOpenGL::createShader(AssetFilePtr const& _shaderFile)

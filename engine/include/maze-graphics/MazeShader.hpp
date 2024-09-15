@@ -82,6 +82,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        static ShaderPtr Create(RenderSystemPtr const& _renderSystem = nullptr);
+
+        //////////////////////////////////////////
         static ShaderPtr CreateFromFile(RenderSystemPtr const& _renderSystem, AssetFilePtr const& _shaderFile);
 
 
@@ -348,7 +351,7 @@ namespace Maze
     protected:
         String m_name;
 
-        AssetFilePtr m_assetFile; // #TODO: Remove
+        AssetFilePtr m_assetFile; // #TODO: Remove!!
 
         UnorderedMap<U32, ShaderUniformPtr> m_uniformsCache;
 

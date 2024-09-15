@@ -121,6 +121,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ShaderPtr ShaderOpenGL::Create(
+        RenderSystemPtr const& _renderSystem,
+        ContextOpenGL* _contextOpenGL)
+    {
+        ShaderOpenGLPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ShaderOpenGL, object, init(_renderSystem, _contextOpenGL));
+        return object;
+    }
+
+    //////////////////////////////////////////
     ShaderPtr ShaderOpenGL::CreateFromFile(
         RenderSystemPtr const& _renderSystem,
         ContextOpenGL* _contextOpenGL,
@@ -154,8 +164,7 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderOpenGL::init(
         RenderSystemPtr const& _renderSystem,
-        ContextOpenGL* _contextOpenGL,
-        AssetFilePtr const& _shaderFile)
+        ContextOpenGL* _contextOpenGL)
     {
         if (!Shader::init(_renderSystem))
             return false;
@@ -167,6 +176,18 @@ namespace Maze
             return false;
 
         setContextOpenGL(_contextOpenGL);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool ShaderOpenGL::init(
+        RenderSystemPtr const& _renderSystem,
+        ContextOpenGL* _contextOpenGL,
+        AssetFilePtr const& _shaderFile)
+    {
+        if (!init(_renderSystem, _contextOpenGL))
+            return false;
 
         if (!loadFromAssetFile(_shaderFile))
             return false;
@@ -181,16 +202,8 @@ namespace Maze
         String const& _shaderSource,
         CString _shaderName)
     {
-        if (!Shader::init(_renderSystem))
+        if (!init(_renderSystem, _contextOpenGL))
             return false;
-
-        if (!_contextOpenGL)
-            return false;
-
-        if (!_contextOpenGL->isValid())
-            return false;
-
-        setContextOpenGL(_contextOpenGL);
 
         if (_shaderName)
             setName(_shaderName);

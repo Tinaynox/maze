@@ -46,6 +46,7 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
@@ -129,6 +130,7 @@ bool SceneExample::init()
 
     Maze::SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
     Maze::RenderMeshManagerPtr const& renderMeshManager = renderSystem->getRenderMeshManager();
+    Maze::MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
     Maze::EntityManager* entityManager = Maze::EntityManager::GetInstancePtr();
     Maze::EcsWorldPtr const& world = entityManager->getDefaultWorld();
@@ -158,15 +160,6 @@ bool SceneExample::init()
     
 
     Maze::SpritePtr sprite = spriteManager->getOrLoadSprite("Panel00.png");
-    /*
-    if (sprite)
-        sprite->setSliceBorder(
-            40.0f,
-            34.0f,
-            40.0f,
-            34.0f);
-    */
-
 
     ////////////////////////////////////////////
     // 2D
@@ -189,7 +182,7 @@ bool SceneExample::init()
         }
 
     
-        Maze::MaterialPtr material = Maze::Material::Create("UI00.mzmaterial");        
+        Maze::MaterialPtr material = materialManager->getOrLoadMaterial("UI00.mzmaterial");
         {
             Maze::EntityPtr spriteRendererEntity = createEntity();
             Maze::Transform2DPtr transform = spriteRendererEntity->createComponent<Maze::Transform2D>();
@@ -215,7 +208,7 @@ bool SceneExample::init()
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setRenderMode(Maze::SpriteRenderMode::Sliced);
             spriteRenderer->setSprite(sprite);
-            spriteRenderer->setMaterial(Maze::Material::Create("UI00.mzmaterial"));
+            spriteRenderer->setMaterial(materialManager->getOrLoadMaterial("UI00.mzmaterial"));
         }
         {
             Maze::EntityPtr spriteRendererEntity = createEntity();
@@ -228,7 +221,7 @@ bool SceneExample::init()
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setRenderMode(Maze::SpriteRenderMode::Sliced);
             spriteRenderer->setSprite(sprite);
-            spriteRenderer->setMaterial(Maze::Material::Create("UI00.mzmaterial"));
+            spriteRenderer->setMaterial(materialManager->getOrLoadMaterial("UI00.mzmaterial"));
         }
         {
             Maze::EntityPtr spriteRendererEntity = createEntity();
@@ -242,7 +235,7 @@ bool SceneExample::init()
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setRenderMode(Maze::SpriteRenderMode::Sliced);
             spriteRenderer->setSprite(sprite);
-            spriteRenderer->setMaterial(Maze::Material::Create("UI00.mzmaterial"));
+            spriteRenderer->setMaterial(materialManager->getOrLoadMaterial("UI00.mzmaterial"));
         }
     }
     
@@ -259,7 +252,7 @@ bool SceneExample::init()
     axesMeshRendererEntity->createComponent<Maze::Transform3D>();
     m_axesMeshRenderer = axesMeshRendererEntity->createComponent<Maze::MeshRenderer>();
     m_axesMeshRenderer->setRenderMesh(Maze::RenderMesh::Create(Maze::MeshHelper::CreateCoordinateAxes()));
-    m_axesMeshRenderer->setMaterial(Maze::Material::Create("Axes00.mzmaterial"));
+    m_axesMeshRenderer->setMaterial(materialManager->getOrLoadMaterial("Axes00.mzmaterial"));
     world->addEntity(axesMeshRendererEntity);
 
     // Main Light
@@ -272,7 +265,7 @@ bool SceneExample::init()
 
     // SMG
     Maze::RenderMeshPtr smgRenderMesh = renderMeshManager->getOrLoadRenderMesh("SMG.obj");
-    Maze::MaterialPtr smgMaterial = Maze::Material::Create("Test00.mzmaterial");
+    Maze::MaterialPtr smgMaterial = materialManager->getOrLoadMaterial("Test00.mzmaterial");
     {
         Maze::EntityPtr meshRendererEntity = createEntity();
         meshRendererEntity->createComponent<Maze::Transform3D>();

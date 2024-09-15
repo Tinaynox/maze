@@ -25,78 +25,81 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeShaderSystemOpenGL_hpp_))
-#define _MazeShaderSystemOpenGL_hpp_
+#if (!defined(_MazeAssetUnitMaterial_hpp_))
+#define _MazeAssetUnitMaterial_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-render-system-opengl-core/MazeRenderSystemOpenGLCoreHeader.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-core/assets/MazeAssetUnit.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ShaderSystemOpenGL);
-    MAZE_USING_SHARED_PTR(RenderSystemOpenGL);
-    MAZE_USING_SHARED_PTR(ContextOpenGL);
+    MAZE_USING_SHARED_PTR(AssetUnitMaterial);   
+    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(Material);
 
 
     //////////////////////////////////////////
-    // Class ShaderSystemOpenGL
+    // Class AssetUnitMaterial
     //
     //////////////////////////////////////////
-    class MAZE_RENDER_SYSTEM_OPENGL_CORE_API ShaderSystemOpenGL
-        : public ShaderSystem
-        , public MultiDelegateCallbackReceiver
+    class MAZE_CORE_API AssetUnitMaterial
+        : public AssetUnit
     {
+    public:
+        
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitMaterial, AssetUnit);
+        
     public:
 
         //////////////////////////////////////////
-        virtual ~ShaderSystemOpenGL();
+        virtual ~AssetUnitMaterial();
 
         //////////////////////////////////////////
-        static void Initialize(ShaderSystemPtr& _object, RenderSystemPtr const& _renderSystem);
+        static AssetUnitMaterialPtr Create(
+            AssetFilePtr const& _assetFile,
+            DataBlock const& _data);
+
 
         //////////////////////////////////////////
-        virtual ShaderPtr createShader() MAZE_OVERRIDE;
+        inline MaterialPtr const& getMaterial() const { return m_material; }
 
         //////////////////////////////////////////
-        virtual ShaderPtr createShader(AssetFilePtr const& _shaderFile) MAZE_OVERRIDE;
+        MaterialPtr const& loadMaterial(bool _syncLoad = false);
+
 
         //////////////////////////////////////////
-        inline MZGLint getGLSLVersion() const { return m_glslVersion; }
-
-        //////////////////////////////////////////
-        virtual ShaderPtr const& createBuiltinShader(BuiltinShaderType _shaderType) MAZE_OVERRIDE;
+        MaterialPtr const& initMaterial();
 
     protected:
 
         //////////////////////////////////////////
-        ShaderSystemOpenGL();
+        AssetUnitMaterial();
 
         //////////////////////////////////////////
-        virtual bool init(RenderSystemPtr const& _renderSystem) MAZE_OVERRIDE;
+        virtual bool init(
+            AssetFilePtr const& _assetFile,
+            DataBlock const& _data) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        RenderSystemOpenGL* getRenderSystemOpenGL();
+        virtual bool loadNowImpl() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void notifyGLContextWillBeDestroyed(ContextOpenGL* _contextOpenGL);
-
-        //////////////////////////////////////////
-        void notifyGLContextSetup(ContextOpenGL* _contextOpenGL);
+        virtual bool unloadNowImpl() MAZE_OVERRIDE;
     
     protected:
-        MZGLint m_glslVersion;
-
-        ContextOpenGLPtr m_contextOpenGL;
+        MaterialPtr m_material;
     };
+
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeShaderSystemOpenGL_hpp_
+#endif // _MazeAssetUnitMaterial_hpp_
 //////////////////////////////////////////

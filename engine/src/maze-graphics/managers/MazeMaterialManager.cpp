@@ -28,6 +28,7 @@
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
@@ -39,6 +40,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/assets/MazeAssetUnitMaterial.hpp"
 
 
 //////////////////////////////////////////
@@ -90,6 +92,24 @@ namespace Maze
         m_renderSystemRaw->eventSystemInited.subscribe(this, &MaterialManager::notifyRenderSystemInited);
         if (m_renderSystemRaw->getSystemInited())
             notifyRenderSystemInited();
+
+
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
+                MAZE_HCS("material"),
+                [](AssetFilePtr const& _file, DataBlock const& _data)
+            {
+                return AssetUnitMaterial::Create(_file, _data);
+            });
+
+            AssetUnitManager::GetInstancePtr()->eventAssetUnitAdded.subscribe(
+                [](AssetUnitPtr const& _assetUnit)
+            {
+                if (_assetUnit->getClassUID() == ClassInfo<AssetUnitMaterial>::UID())
+                    _assetUnit->castRaw<AssetUnitMaterial>()->initMaterial();
+            });
+        }
 
         return true;
     }

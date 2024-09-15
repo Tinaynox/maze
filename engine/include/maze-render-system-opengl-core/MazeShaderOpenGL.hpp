@@ -83,6 +83,11 @@ namespace Maze
         virtual ~ShaderOpenGL();
 
         //////////////////////////////////////////
+        static ShaderPtr Create(
+            RenderSystemPtr const& _renderSystem,
+            ContextOpenGL* _contextOpenGL);
+
+        //////////////////////////////////////////
         static ShaderPtr CreateFromFile(
             RenderSystemPtr const& _renderSystem,
             ContextOpenGL* _contextOpenGL,
@@ -141,6 +146,11 @@ namespace Maze
         //////////////////////////////////////////
         using Shader::init;
         
+        //////////////////////////////////////////
+        virtual bool init(
+            RenderSystemPtr const& _renderSystem,
+            ContextOpenGL* _contextOpenGL);
+
         //////////////////////////////////////////
         virtual bool init(
             RenderSystemPtr const& _renderSystem,

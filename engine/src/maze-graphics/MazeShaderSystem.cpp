@@ -27,8 +27,12 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeShader.hpp"
+#include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-graphics/assets/MazeAssetUnitShader.hpp"
 
 
 //////////////////////////////////////////
@@ -60,11 +64,43 @@ namespace Maze
         m_renderSystem = _renderSystem;
         m_renderSystemRaw = _renderSystem.get();
 
+
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
+                MAZE_HCS("shader"),
+                [](AssetFilePtr const& _file, DataBlock const& _data)
+                {
+                    return AssetUnitShader::Create(_file, _data);
+                });
+
+            AssetUnitManager::GetInstancePtr()->eventAssetUnitAdded.subscribe(
+                [](AssetUnitPtr const& _assetUnit)
+                {
+                    if (_assetUnit->getClassUID() == ClassInfo<AssetUnitShader>::UID())
+                        _assetUnit->castRaw<AssetUnitShader>()->initShader();
+                });
+        }
+
         return true;
     }
 
     //////////////////////////////////////////
-    ShaderLibraryData* ShaderSystem::addShaderToLibrary(ShaderPtr const& _shader)
+    ShaderSystemPtr const& ShaderSystem::GetCurrentInstancePtr()
+    {
+        static ShaderSystemPtr nullPointer;
+
+        RenderSystem* renderSystem = RenderSystem::GetCurrentInstancePtr();
+        if (!renderSystem)
+            return nullPointer;
+
+        return renderSystem->getShaderSystem();
+    }
+
+    //////////////////////////////////////////
+    ShaderLibraryData* ShaderSystem::addShaderToLibrary(
+        ShaderPtr const& _shader,
+        ShaderLibraryDataCallbacks const& _callbacks)
     {
         if (!_shader)
             return nullptr;
@@ -86,7 +122,7 @@ namespace Maze
         
         return m_shadersLibrary.insert(
             name,
-            { _shader, nullptr });
+            { _shader, _callbacks });
     }
 
     //////////////////////////////////////////
@@ -129,24 +165,40 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderPtr const& ShaderSystem::getShaderFromLibrary(HashedCString _shaderName)
+    ShaderLibraryData const* ShaderSystem::getShaderLibraryData(HashedCString _shaderName)
     {
-        static ShaderPtr nullShader;
-        StringKeyMap<ShaderLibraryData>::iterator it = m_shadersLibrary.find(_shaderName);
-        if (m_shadersLibrary.end() == it)
-            return nullShader;
-
-        return (*it).second.shader;
+        StringKeyMap<ShaderLibraryData>::const_iterator it = m_shadersLibrary.find(_shaderName);
+        if (it != m_shadersLibrary.end())
+            return &it->second;
+        return nullptr;
     }
 
     //////////////////////////////////////////
-    ShaderPtr const& ShaderSystem::getShader(HashedCString _shaderName)
+    ShaderPtr const& ShaderSystem::getShaderFromLibrary(HashedCString _shaderName)
+    {
+        static ShaderPtr nullShader;
+        ShaderLibraryData const* shaderLibraryData = getShaderLibraryData(_shaderName);
+        if (!shaderLibraryData)
+            return nullShader;
+
+        return shaderLibraryData->shader;
+    }
+
+    //////////////////////////////////////////
+    ShaderPtr const& ShaderSystem::getOrLoadShader(
+        HashedCString _shaderName,
+        bool _syncLoad)
     {
         static ShaderPtr nullShader;
 
-        ShaderPtr const& result = getShaderFromLibrary(_shaderName);
-        if (result)
-            return result;
+        ShaderLibraryData const* shaderLibraryData = getShaderLibraryData(_shaderName);
+        if (shaderLibraryData)
+        {
+            if (shaderLibraryData->callbacks.requestLoad)
+                shaderLibraryData->callbacks.requestLoad(_syncLoad);
+
+            return shaderLibraryData->shader;
+        }
 
         AssetManager* assetManager = AssetManager::GetInstancePtr();
         AssetFilePtr const& assetFile = assetManager->getAssetFileByFileName(_shaderName);
@@ -155,11 +207,30 @@ namespace Maze
             ShaderPtr shader = Shader::CreateFromFile(getRenderSystem(), assetFile);
             if (shader)
             {
-                ShaderLibraryData* libraryData = addShaderToLibrary(shader);
-                if (libraryData)
+                ShaderLibraryData* data = addShaderToLibrary(shader);
+                if (data)
                 {
-                    libraryData->assetFile = assetFile;
-                    return libraryData->shader;
+                    data->callbacks.requestReload =
+                        [
+                            assetFileWeak = (AssetFileWPtr)assetFile,
+                            shaderWeak = (ShaderWPtr)shader
+                        ](bool _immediate)
+                        {
+                            AssetFilePtr assetFile = assetFileWeak.lock();
+                            ShaderPtr shader = shaderWeak.lock();
+                            if (assetFile && shader)
+                                shader->loadFromAssetFile(assetFile);
+                        };
+                    data->callbacks.hasAnyOfTags =
+                        [assetFileWeak = (AssetFileWPtr)assetFile](Set<String> const& _tags)
+                        {
+                            if (AssetFilePtr assetFile = assetFileWeak.lock())
+                                return assetFile->hasAnyOfTags(_tags);
+
+                            return false;
+                        };
+
+                    return data->shader;
                 }
             }
         }
@@ -187,19 +258,7 @@ namespace Maze
             if (file->getExtension() != "mzshader")
                 continue;
 
-            if (getShaderFromLibrary(file->getFileName()))
-                continue;
-
-            ShaderPtr shader = Shader::CreateFromFile(getRenderSystem(), file);
-            if (shader)
-            {
-                ShaderLibraryData* libraryData = addShaderToLibrary(shader);
-                if (libraryData)
-                {
-                    libraryData->assetFile = file;
-                }
-            }
-
+            getOrLoadShader(file->getFileName());
         }
     }
 

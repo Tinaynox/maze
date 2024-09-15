@@ -81,6 +81,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ShaderPtr Shader::Create(RenderSystemPtr const& _renderSystem)
+    {
+        ShaderSystemPtr const& shaderSystem = _renderSystem ? _renderSystem->getShaderSystem() : ShaderSystem::GetCurrentInstancePtr();
+        if (shaderSystem)
+            return shaderSystem->createShader();
+        
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
     ShaderPtr Shader::CreateFromFile(RenderSystemPtr const& _renderSystem, AssetFilePtr const& _shaderFile)
     {
         ShaderSystemPtr const& shaderSystem = _renderSystem->getShaderSystem();
@@ -828,7 +838,7 @@ namespace Maze
         if (_count == 0)
             _count = strlen(_shaderName);
 
-        _value = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getShaderSystem()->getShader(_shaderName);
+        _value = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getShaderSystem()->getOrLoadShader(_shaderName);
         if (!_value)
         {
             if (_shaderName && strcmp(_shaderName, "") != 0)
@@ -894,7 +904,7 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderAssetRef::setString(CString _data, Size _count)
     {
-        ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->getShader(_data);
+        ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->getOrLoadShader(_data);
         setShader(shader);
     }
 
