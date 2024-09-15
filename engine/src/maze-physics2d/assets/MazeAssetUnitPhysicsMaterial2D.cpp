@@ -24,13 +24,12 @@
 
 
 //////////////////////////////////////////
-#include "MazeUIHeader.hpp"
-#include "maze-ui/assets/MazeAssetUnitTrueTypeFont.hpp"
-#include "maze-ui/fonts/MazeTrueTypeFont.hpp"
-#include "maze-ui/managers/MazeTrueTypeFontManager.hpp"
+#include "MazePhysics2DHeader.hpp"
+#include "maze-physics2d/assets/MazeAssetUnitPhysicsMaterial2D.hpp"
+#include "maze-physics2d/physics/MazePhysicsMaterial2D.hpp"
+#include "maze-physics2d/managers/MazePhysicsMaterial2DManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
-
 
 
 //////////////////////////////////////////
@@ -38,37 +37,37 @@ namespace Maze
 {
 
     //////////////////////////////////////////
-    // Class AssetUnitTrueTypeFont
+    // Class AssetUnitPhysicsMaterial2D
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AssetUnitTrueTypeFont, AssetUnit);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AssetUnitPhysicsMaterial2D, AssetUnit);
     
     //////////////////////////////////////////
-    AssetUnitTrueTypeFont::AssetUnitTrueTypeFont()
+    AssetUnitPhysicsMaterial2D::AssetUnitPhysicsMaterial2D()
     {
 
     }
 
     //////////////////////////////////////////
-    AssetUnitTrueTypeFont::~AssetUnitTrueTypeFont()
+    AssetUnitPhysicsMaterial2D::~AssetUnitPhysicsMaterial2D()
     {
     }
 
     //////////////////////////////////////////
-    AssetUnitTrueTypeFontPtr AssetUnitTrueTypeFont::Create(
+    AssetUnitPhysicsMaterial2DPtr AssetUnitPhysicsMaterial2D::Create(
         AssetFilePtr const& _assetFile,
         DataBlock const& _data)
     {
-        AssetUnitTrueTypeFontPtr object;
+        AssetUnitPhysicsMaterial2DPtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(
-            AssetUnitTrueTypeFont,
+            AssetUnitPhysicsMaterial2D,
             object,
             init(_assetFile, _data));
         return object;
     }
 
     //////////////////////////////////////////
-    bool AssetUnitTrueTypeFont::init(
+    bool AssetUnitPhysicsMaterial2D::init(
         AssetFilePtr const& _assetFile,
         DataBlock const& _data)
     {
@@ -79,105 +78,101 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    TrueTypeFontPtr const& AssetUnitTrueTypeFont::loadTrueTypeFont(bool _syncLoad)
+    PhysicsMaterial2DPtr const& AssetUnitPhysicsMaterial2D::loadPhysicsMaterial2D(bool _syncLoad)
     {
         if (!isLoaded())
         {
-            initTrueTypeFont();
+            initPhysicsMaterial2D();
             _syncLoad ? loadNow() : load();
         }
 
-        return m_trueTypeFont;
+        return m_physicsMaterial2D;
     }
 
     //////////////////////////////////////////
-    bool AssetUnitTrueTypeFont::loadNowImpl()
+    bool AssetUnitPhysicsMaterial2D::loadNowImpl()
     {
         AssetFilePtr assetFile = m_assetFile.lock();
         if (!assetFile)
             return false;
 
-        initTrueTypeFont();
-        if (!m_trueTypeFont)
+        initPhysicsMaterial2D();
+        if (!m_physicsMaterial2D)
             return false;
 
-        // #TODO:
-
+        m_physicsMaterial2D->loadFromAssetFile(assetFile);
         return true;
     }
 
     //////////////////////////////////////////
-    bool AssetUnitTrueTypeFont::unloadNowImpl()
+    bool AssetUnitPhysicsMaterial2D::unloadNowImpl()
     {
-        if (m_trueTypeFont)
+        if (m_physicsMaterial2D)
         {
-            if (TrueTypeFontManager::GetInstancePtr())
-                TrueTypeFontManager::GetInstancePtr()->removeTrueTypeFontFromLibrary(m_trueTypeFont->getName());
-            m_trueTypeFont.reset();
+            if (PhysicsMaterial2DManager::GetInstancePtr())
+                PhysicsMaterial2DManager::GetInstancePtr()->removeMaterialFromLibrary(m_physicsMaterial2D->getName());
+            m_physicsMaterial2D.reset();
         }
 
         return true;
     }
 
     //////////////////////////////////////////
-    TrueTypeFontPtr const& AssetUnitTrueTypeFont::initTrueTypeFont()
+    PhysicsMaterial2DPtr const& AssetUnitPhysicsMaterial2D::initPhysicsMaterial2D()
     {
-        if (m_trueTypeFont)
-            return m_trueTypeFont;
+        if (m_physicsMaterial2D)
+            return m_physicsMaterial2D;
 
         AssetFilePtr assetFile = getAssetFile();
         if (!assetFile)
-            return m_trueTypeFont;
+            return m_physicsMaterial2D;
 
-        m_trueTypeFont = TrueTypeFont::Create(assetFile); // #TODO: rework
-        if (!m_trueTypeFont)
-            return m_trueTypeFont;
+        m_physicsMaterial2D = PhysicsMaterial2D::Create();
+        m_physicsMaterial2D->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
 
-        m_trueTypeFont->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
-
-        if (TrueTypeFontManager::GetInstancePtr())
+        if (PhysicsMaterial2DManager::GetInstancePtr())
         {
-            TrueTypeFontLibraryDataCallbacks callbacks;
+            PhysicsMaterial2DLibraryDataCallbacks callbacks;
 
             callbacks.requestLoad = 
-                [weakPtr = (AssetUnitTrueTypeFontWPtr)cast<AssetUnitTrueTypeFont>()](bool _syncLoad)
+                [weakPtr = (AssetUnitPhysicsMaterial2DWPtr)cast<AssetUnitPhysicsMaterial2D>()](bool _syncLoad)
                 {
-                    if (AssetUnitTrueTypeFontPtr assetUnit = weakPtr.lock())
+                    if (AssetUnitPhysicsMaterial2DPtr assetUnit = weakPtr.lock())
                         _syncLoad ? assetUnit->loadNow() : assetUnit->load();
                 };
 
             callbacks.requestUnload =
-                [weakPtr = (AssetUnitTrueTypeFontWPtr)cast<AssetUnitTrueTypeFont>()] (bool _syncLoad)
+                [weakPtr = (AssetUnitPhysicsMaterial2DWPtr)cast<AssetUnitPhysicsMaterial2D>()] (bool _syncLoad)
                 {
-                    if (AssetUnitTrueTypeFontPtr assetUnit = weakPtr.lock())
+                    if (AssetUnitPhysicsMaterial2DPtr assetUnit = weakPtr.lock())
                         _syncLoad ? assetUnit->unloadNow() : assetUnit->unload();
                 };
 
             callbacks.requestReload =
-                [weakPtr = (AssetUnitTrueTypeFontWPtr)cast<AssetUnitTrueTypeFont>()](bool _syncLoad)
+                [weakPtr = (AssetUnitPhysicsMaterial2DWPtr)cast<AssetUnitPhysicsMaterial2D>()](bool _syncLoad)
                 {
-                    if (AssetUnitTrueTypeFontPtr assetUnit = weakPtr.lock())
+                    if (AssetUnitPhysicsMaterial2DPtr assetUnit = weakPtr.lock())
                     {
                         assetUnit->unloadNow();
                         _syncLoad ? assetUnit->loadNow() : assetUnit->load();
                     }
                 };
             callbacks.hasAnyOfTags = 
-                [weakPtr = (AssetUnitTrueTypeFontWPtr)cast<AssetUnitTrueTypeFont>()](Set<String> const& _tags)
+                [weakPtr = (AssetUnitPhysicsMaterial2DWPtr)cast<AssetUnitPhysicsMaterial2D>()](Set<String> const& _tags)
                 {
-                    if (AssetUnitTrueTypeFontPtr assetUnit = weakPtr.lock())
+                    if (AssetUnitPhysicsMaterial2DPtr assetUnit = weakPtr.lock())
                         if (AssetFilePtr assetFile = assetUnit->getAssetFile())
                             return assetFile->hasAnyOfTags(_tags);
 
                     return false;
                 };
 
-            TrueTypeFontManager::GetInstancePtr()->addTrueTypeFontToLibrary(
-                m_trueTypeFont,
+            PhysicsMaterial2DManager::GetInstancePtr()->addMaterialToLibrary(
+                m_physicsMaterial2D,
                 callbacks);
         }
 
-        return m_trueTypeFont;
+        return m_physicsMaterial2D;
     }
 
 

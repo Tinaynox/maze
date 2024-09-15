@@ -48,6 +48,19 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct PhysicsMaterial2DLibraryDataCallbacks
+    //
+    //////////////////////////////////////////
+    struct MAZE_PHYSICS2D_API PhysicsMaterial2DLibraryDataCallbacks
+    {
+        std::function<void(bool)> requestLoad;
+        std::function<void(bool)> requestUnload;
+        std::function<void(bool)> requestReload;
+        std::function<bool(Set<String> const&)> hasAnyOfTags;
+    };
+
+
+    //////////////////////////////////////////
     // Struct PhysicsMaterial2DLibraryData
     //
     //////////////////////////////////////////
@@ -56,13 +69,13 @@ namespace Maze
         //////////////////////////////////////////
         PhysicsMaterial2DLibraryData(
             PhysicsMaterial2DPtr const& _physicsMaterial2D = nullptr,
-            AssetFilePtr const& _assetFile = nullptr)
+            PhysicsMaterial2DLibraryDataCallbacks const& _callbacks = PhysicsMaterial2DLibraryDataCallbacks())
             : physicsMaterial2D(_physicsMaterial2D)
-            , assetFile(_assetFile)
+            , callbacks(_callbacks)
         {}
 
         PhysicsMaterial2DPtr physicsMaterial2D;
-        AssetFilePtr assetFile;
+        PhysicsMaterial2DLibraryDataCallbacks callbacks;
     };
 
 
@@ -103,16 +116,18 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        PhysicsMaterial2DPtr const& getMaterial(HashedCString _materialName);
+        PhysicsMaterial2DPtr const& getOrLoadMaterial(
+            HashedCString _materialName,
+            bool _syncLoad = true);
 
         //////////////////////////////////////////
-        inline PhysicsMaterial2DPtr const& getMaterial(String const& _materialName) { return getMaterial(MAZE_HASHED_CSTRING(_materialName.c_str())); }
+        inline PhysicsMaterial2DPtr const& getOrLoadMaterial(String const& _materialName, bool _syncLoad = true) { return getOrLoadMaterial(MAZE_HASHED_CSTRING(_materialName.c_str()), _syncLoad); }
 
         //////////////////////////////////////////
-        inline PhysicsMaterial2DPtr const& getMaterial(CString _materialName) { return getMaterial(MAZE_HASHED_CSTRING(_materialName)); }
+        inline PhysicsMaterial2DPtr const& getOrLoadMaterial(CString _materialName, bool _syncLoad = true) { return getOrLoadMaterial(MAZE_HASHED_CSTRING(_materialName), _syncLoad); }
 
         //////////////////////////////////////////
-        PhysicsMaterial2DPtr const& getMaterial(AssetFilePtr const& _assetFile);
+        PhysicsMaterial2DPtr const& getOrLoadMaterial(AssetFilePtr const& _assetFile, bool _syncLoad = true);
 
         //////////////////////////////////////////
         String const& getMaterialName(PhysicsMaterial2D const* _material);
@@ -120,8 +135,8 @@ namespace Maze
 
         //////////////////////////////////////////
         PhysicsMaterial2DLibraryData* addMaterialToLibrary(
-            HashedCString _physicsMaterial2DName,
-            PhysicsMaterial2DPtr const& _physicsMaterial2D);
+            PhysicsMaterial2DPtr const& _physicsMaterial2D,
+            PhysicsMaterial2DLibraryDataCallbacks const& _callbacks = PhysicsMaterial2DLibraryDataCallbacks());
 
         //////////////////////////////////////////
         void removeMaterialFromLibrary(HashedCString _physicsMaterial2DName);

@@ -237,7 +237,7 @@ namespace Maze
         }
         else
         {
-            _value = PhysicsMaterial2DManager::GetInstancePtr()->getMaterial(MAZE_HASHED_CSTRING(_data));
+            _value = PhysicsMaterial2DManager::GetInstancePtr()->getOrLoadMaterial(MAZE_HASHED_CSTRING(_data));
         }
     }
 
@@ -280,7 +280,7 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsMaterial2DAssetRef::setString(CString _data, Size _count)
     {
-        PhysicsMaterial2DPtr const& material = PhysicsMaterial2DManager::GetInstancePtr()->getMaterial(_data);
+        PhysicsMaterial2DPtr const& material = PhysicsMaterial2DManager::GetInstancePtr()->getOrLoadMaterial(_data);
         setMaterial(material);
     }
 

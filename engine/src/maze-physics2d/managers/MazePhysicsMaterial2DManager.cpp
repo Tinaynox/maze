@@ -30,11 +30,13 @@
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
 #include "maze-physics2d/physics/MazePhysicsMaterial2D.hpp"
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/physics/MazePhysicsMaterial2D.hpp"
+#include "maze-physics2d/assets/MazeAssetUnitPhysicsMaterial2D.hpp"
 
 
 //////////////////////////////////////////
@@ -69,6 +71,36 @@ namespace Maze
     {
         m_defaultMaterial = PhysicsMaterial2D::Create(0.25f, 0.35f);
 
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
+                MAZE_HCS("physicsMaterial2d"),
+                [](AssetFilePtr const& _file, DataBlock const& _data)
+                {
+                    return AssetUnitPhysicsMaterial2D::Create(_file, _data);
+                });
+
+            AssetUnitManager::GetInstancePtr()->eventAssetUnitAdded.subscribe(
+                [](AssetUnitPtr const& _assetUnit)
+                {
+                    if (_assetUnit->getClassUID() == ClassInfo<AssetUnitPhysicsMaterial2D>::UID())
+                        _assetUnit->castRaw<AssetUnitPhysicsMaterial2D>()->initPhysicsMaterial2D();
+                });
+        }
+
+        if (AssetManager::GetInstancePtr())
+        {
+            AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(
+                [](AssetFilePtr const& _assetFile, HashedString const& _extension)
+                {
+                    if (_extension == MAZE_HCS("mzphysicsMaterial2D"))
+                    {
+                        if (!_assetFile->getAssetUnit<AssetUnitPhysicsMaterial2D>())
+                            _assetFile->addAssetUnit(AssetUnitPhysicsMaterial2D::Create(_assetFile));
+                    }
+                });
+        }
+
         return true;
     }
 
@@ -82,11 +114,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PhysicsMaterial2DPtr const& PhysicsMaterial2DManager::getMaterial(HashedCString _materialName)
+    PhysicsMaterial2DPtr const& PhysicsMaterial2DManager::getOrLoadMaterial(
+        HashedCString _materialName,
+        bool _syncLoad)
     {
         PhysicsMaterial2DLibraryData const* libraryData = getPhysicsMaterial2DLibraryData(_materialName);
         if (libraryData)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(_syncLoad);
+
             return libraryData->physicsMaterial2D;
+        }
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_materialName);
         if (!assetFile)
@@ -95,30 +134,51 @@ namespace Maze
             return m_defaultMaterial;
         }
 
-        PhysicsMaterial2DPtr material = PhysicsMaterial2D::Create(assetFile);
-        auto it2 = m_materialsLibrary.insert(
-            _materialName,
-            material);
-        return it2->physicsMaterial2D;
+        return getOrLoadMaterial(assetFile, _syncLoad);
     }
 
     //////////////////////////////////////////
-    PhysicsMaterial2DPtr const& PhysicsMaterial2DManager::getMaterial(AssetFilePtr const& _assetFile)
+    PhysicsMaterial2DPtr const& PhysicsMaterial2DManager::getOrLoadMaterial(
+        AssetFilePtr const& _assetFile,
+        bool _syncLoad)
     {
         static PhysicsMaterial2DPtr const nullPointer;
 
         PhysicsMaterial2DLibraryData const* libraryData = getPhysicsMaterial2DLibraryData(_assetFile->getFileName());
         if (libraryData)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(_syncLoad);
+
             return libraryData->physicsMaterial2D;
+        }
 
         PhysicsMaterial2DPtr material = PhysicsMaterial2D::Create(_assetFile);
-        PhysicsMaterial2DLibraryData* data = addMaterialToLibrary(
-            HashedCString(_assetFile->getFileName().toUTF8().c_str()),
-            material);
+        material->setName(_assetFile->getFileName().toUTF8());
+        PhysicsMaterial2DLibraryData* data = addMaterialToLibrary(material);
 
         if (data)
         {
-            data->assetFile = _assetFile;
+            data->callbacks.requestReload =
+                [
+                    assetFileWeak = (AssetFileWPtr)_assetFile,
+                    materialWeak = (PhysicsMaterial2DWPtr)material
+                ](bool _immediate)
+                {
+                    AssetFilePtr assetFile = assetFileWeak.lock();
+                    PhysicsMaterial2DPtr material = materialWeak.lock();
+                    if (assetFile && material)
+                        material->loadFromAssetFile(assetFile);
+                };
+            data->callbacks.hasAnyOfTags =
+                [assetFileWeak = (AssetFileWPtr)_assetFile](Set<String> const& _tags)
+                {
+                    if (AssetFilePtr assetFile = assetFileWeak.lock())
+                        return assetFile->hasAnyOfTags(_tags);
+
+                    return false;
+                };
+
             return data->physicsMaterial2D;
         }
 
@@ -141,12 +201,12 @@ namespace Maze
 
     //////////////////////////////////////////
     PhysicsMaterial2DLibraryData* PhysicsMaterial2DManager::addMaterialToLibrary(
-        HashedCString _physicsMaterial2DName,
-        PhysicsMaterial2DPtr const& _physicsMaterial2D)
+        PhysicsMaterial2DPtr const& _physicsMaterial2D,
+        PhysicsMaterial2DLibraryDataCallbacks const& _callbacks)
     {
         auto it2 = m_materialsLibrary.insert(
-            _physicsMaterial2DName,
-            { _physicsMaterial2D, nullptr });
+            _physicsMaterial2D->getName(),
+            { _physicsMaterial2D, _callbacks });
         return it2;
     }
 
@@ -163,7 +223,7 @@ namespace Maze
         StringKeyMap<PhysicsMaterial2DLibraryData>::iterator end = m_materialsLibrary.end();
         for (; it != end; )
         {
-            if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+            if (it->second.callbacks.hasAnyOfTags && it->second.callbacks.hasAnyOfTags(_tags))
             {
                 it = m_materialsLibrary.erase(it);
                 end = m_materialsLibrary.end();
