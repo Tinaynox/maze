@@ -101,6 +101,10 @@ namespace Maze
 
         m_texture->loadFromAssetFile(assetFile);
 
+        TextureManagerPtr const& textureManager = TextureManager::GetCurrentInstancePtr();
+        if (textureManager)
+            textureManager->loadTextureMetaData(m_texture, m_data);
+
         return true;
     }
 

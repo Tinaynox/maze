@@ -1,6 +1,6 @@
-Skybox00Right.png
-Skybox00Left.png
-Skybox00Top.png
-Skybox00Bottom.png
-Skybox00Front.png
-Skybox00Back.png
+right:String = Skybox00Right.png
+left:String = Skybox00Left.png
+top:String = Skybox00Top.png
+bottom:String = Skybox00Bottom.png
+front:String = Skybox00Front.png
+back:String = Skybox00Back.png

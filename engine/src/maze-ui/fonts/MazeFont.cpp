@@ -201,7 +201,7 @@ namespace Maze
 
                 if (symbolStr && spriteStr)
                 {
-                    SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getSprite(spriteStr);
+                    SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getOrLoadSprite(spriteStr);
                     if (sprite)
                     {
                         U32 symbol = 0;
@@ -321,7 +321,7 @@ namespace Maze
                     U32 symbol = subBlock->getU32(MAZE_HCS("symbol"));
                     CString spriteStr = subBlock->getCString(MAZE_HCS("sprite"));
 
-                    SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getSprite(spriteStr);
+                    SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getOrLoadSprite(spriteStr);
                     if (sprite)
                     {
                         FontGlyphStorageData glyphsData;

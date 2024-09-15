@@ -197,7 +197,7 @@ namespace Maze
         canvasScaler->updateCanvasScale();
 
 
-        MaterialPtr const& postFXMaterial = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("PostFX00.mzmaterial");
+        MaterialPtr const& postFXMaterial = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getOrLoadMaterial("PostFX00.mzmaterial");
         m_renderColorSprite = SpriteHelper::CreateSprite(
             Sprite::Create(m_renderBuffer->getColorTexture2D()),
             m_canvas->getTransform()->getSize(),
@@ -271,7 +271,7 @@ namespace Maze
         m_terrainMesh->setCellsCount({ 50, 50 });
         m_terrainMesh->setSize({ 20, 20 });
         m_terrainMesh->setHeight(2.25f);
-        m_terrainMesh->setHeightMap(renderSystem->getTextureManager()->getTexture2D("Heightmap02.png"));
+        m_terrainMesh->setHeightMap(renderSystem->getTextureManager()->getOrLoadTexture2D("Heightmap02.png"));
         MeshRendererPtr terrainMeshRenderer = terrainEntity->ensureComponent<MeshRenderer>();
         terrainMeshRenderer->setMaterial("Terrain00.mzmaterial");
 
@@ -624,7 +624,7 @@ namespace Maze
         //ps->getMainModule().getSize().setConstant(0.5f);
         ps->getMainModule().getRotationOverLifetime().enabled = true;
 
-        MaterialPtr material = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("Fireball00.mzmaterial");
+        MaterialPtr material = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getOrLoadMaterial("Fireball00.mzmaterial");
 
         ps->getRendererModule().getTextureSheetAnimation().enabled = true;
         ps->getRendererModule().getTextureSheetAnimation().tiles = Vec2S32(7, 7);
@@ -891,7 +891,7 @@ namespace Maze
 
         m_waterRenderer->getEntityRaw()->setActiveSelf(exampleSettings->getWaterEnabled());
 
-        MaterialPtr const& waterMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Water00.mzmaterial");
+        MaterialPtr const& waterMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Water00.mzmaterial");
         if (exampleSettings->getExampleWaterRenderMode() == ExampleWaterRenderMode::Default)
         {
             m_waterRenderer->setMaterial(waterMaterial);

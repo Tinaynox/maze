@@ -147,8 +147,8 @@ namespace Maze
         TextureManager::GetCurrentInstancePtr()->eventTextureLoaderAdded.subscribe(
             this, &PreviewController::notifyTextureLoaderAdded);
 
-        Vector<String> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
-        for (String const& textureExtension : textureExtensions)
+        Vector<HashedString> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
+        for (HashedString const& textureExtension : textureExtensions)
             registerPreviewInspectorByExtension<Texture2DPreviewInspector>(MAZE_HCS(textureExtension.c_str()));
 
         registerPreviewInspectorByExtension<RenderMeshPreviewInspector>(MAZE_HCS("obj"));

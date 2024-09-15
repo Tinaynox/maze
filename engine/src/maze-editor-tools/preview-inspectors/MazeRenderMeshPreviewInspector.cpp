@@ -246,7 +246,7 @@ namespace Maze
 
         for (AssetFilePtr const& assetFile : _assetFiles)
         {
-            RenderMeshPtr const& renderMesh = renderMeshManager->getRenderMesh(assetFile);
+            RenderMeshPtr const& renderMesh = renderMeshManager->getOrLoadRenderMesh(assetFile);
             if (renderMesh)
                 renderMeshes.insert(renderMesh);
         }

@@ -80,7 +80,12 @@ namespace Maze
     //////////////////////////////////////////
     MaterialManagerPtr const& MaterialManager::GetCurrentInstance()
     {
-        return RenderSystem::GetCurrentInstancePtr()->getMaterialManager();
+        static MaterialManagerPtr nullPointer;
+        RenderSystem* renderSystem = RenderSystem::GetCurrentInstancePtr();
+        if (!renderSystem)
+            return nullPointer;
+
+        return renderSystem->getMaterialManager();
     }
 
     //////////////////////////////////////////

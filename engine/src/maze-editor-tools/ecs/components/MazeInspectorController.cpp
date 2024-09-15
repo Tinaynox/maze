@@ -136,8 +136,8 @@ namespace Maze
         TextureManager::GetCurrentInstancePtr()->eventTextureLoaderAdded.subscribe(
             this, &InspectorController::notifyTextureLoaderAdded);
 
-        Vector<String> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
-        for (String const& textureExtension : textureExtensions)
+        Vector<HashedString> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
+        for (HashedString const& textureExtension : textureExtensions)
             registerInspectorByExtension<Texture2DsInspector>(MAZE_HCS(textureExtension.c_str()));
 
         AssetManager::GetInstancePtr()->eventAssetFileRemoved.subscribe(this, &InspectorController::notifyAssetFileRemoved);

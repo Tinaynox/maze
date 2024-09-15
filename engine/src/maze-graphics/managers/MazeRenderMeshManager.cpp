@@ -75,7 +75,12 @@ namespace Maze
     //////////////////////////////////////////
     RenderMeshManagerPtr const& RenderMeshManager::GetCurrentInstancePtr()
     {
-        return RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager();
+        static RenderMeshManagerPtr nullPointer;
+        RenderSystem* renderSystem = RenderSystem::GetCurrentInstancePtr();
+        if (!renderSystem)
+            return nullPointer;
+
+        return renderSystem->getRenderMeshManager();
     }
 
     //////////////////////////////////////////

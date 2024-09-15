@@ -115,23 +115,26 @@ namespace Maze
 
         m_assetFile = _assetFile;
 
-        String assetFileString;
-        _assetFile->readToString(assetFileString);
+        DataBlock dataBlock;
+        ByteBufferPtr byteBuffer = m_assetFile->readAsByteBuffer();
+        dataBlock.loadFromByteBuffer(*byteBuffer.get());
 
-        StringHelper::RemoveSymbols(assetFileString, "\r");
-
-        Vector<String> lines;
-        StringHelper::SplitWords(assetFileString, lines, '\n');
-
-        MAZE_ERROR_RETURN_IF(lines.size() < 6, "Invalid cubemap file syntax:\n%s", assetFileString.c_str());
+        MAZE_ERROR_RETURN_IF(
+            !dataBlock.isParamExists(MAZE_HCS("right")) ||
+            !dataBlock.isParamExists(MAZE_HCS("left")) ||
+            !dataBlock.isParamExists(MAZE_HCS("top")) ||
+            !dataBlock.isParamExists(MAZE_HCS("bottom")) ||
+            !dataBlock.isParamExists(MAZE_HCS("front")) ||
+            !dataBlock.isParamExists(MAZE_HCS("back")),
+            "Invalid cubemap file '%s' syntax!", m_assetFile->getFileName().toUTF8().c_str());
 
         loadTexture(
-            lines[0],
-            lines[1],
-            lines[2],
-            lines[3],
-            lines[4],
-            lines[5]);
+            dataBlock.getString(MAZE_HCS("right")),
+            dataBlock.getString(MAZE_HCS("left")),
+            dataBlock.getString(MAZE_HCS("top")),
+            dataBlock.getString(MAZE_HCS("bottom")),
+            dataBlock.getString(MAZE_HCS("front")),
+            dataBlock.getString(MAZE_HCS("back")));
     }
 
     //////////////////////////////////////////

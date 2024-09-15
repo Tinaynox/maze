@@ -225,7 +225,7 @@ namespace Maze
 
         for (AssetFilePtr const& assetFile : _assetFiles)
         {
-            MaterialPtr const& material = materialManager->getMaterial(assetFile);
+            MaterialPtr const& material = materialManager->getOrLoadMaterial(assetFile);
             if (material)
                 materials.insert(material);
         }

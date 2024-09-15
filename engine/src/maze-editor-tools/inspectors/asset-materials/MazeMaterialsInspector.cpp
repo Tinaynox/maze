@@ -188,7 +188,7 @@ namespace Maze
 
         for (AssetFilePtr const& assetFile : _assetFiles)
         {
-            MaterialPtr const& material = materialManager->getMaterial(assetFile);
+            MaterialPtr const& material = materialManager->getOrLoadMaterial(assetFile);
             if (material)
                 materials.insert(material);
         }
@@ -457,7 +457,7 @@ namespace Maze
                 button->eventClick.subscribe(
                     [assetFileName, assetFileFullPath](Button2D* _button, CursorInputEvent const& _event)
                     {
-                        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getMaterial(assetFileName);
+                        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(assetFileName);
                         if (material)
                             material->saveToFile(assetFileFullPath);
                     });

@@ -190,7 +190,7 @@ namespace Maze
 
         for (AssetFilePtr const& assetFile : _assetFiles)
         {
-            Texture2DPtr const& texture = textureManager->getTexture2D(assetFile);
+            Texture2DPtr const& texture = textureManager->getOrLoadTexture2D(assetFile);
             if (texture)
                 textures.insert(texture);
         }

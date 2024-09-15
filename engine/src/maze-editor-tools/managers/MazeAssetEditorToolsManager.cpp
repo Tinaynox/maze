@@ -63,7 +63,7 @@ namespace Maze
 
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         TextureManagerPtr const& textureManager = renderSystem->getTextureManager();
-        Texture2DPtr const& texture = textureManager->getTexture2D(_assetFile);
+        Texture2DPtr const& texture = textureManager->getOrLoadTexture2D(_assetFile);
         if (texture)
         {
             result = Sprite::Create(texture);
@@ -148,8 +148,8 @@ namespace Maze
     //////////////////////////////////////////
     void AssetEditorToolsManager::registerIconCallbacks()
     {
-        Vector<String> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
-        for (String const& textureExtension : textureExtensions)
+        Vector<HashedString> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
+        for (HashedString const& textureExtension : textureExtensions)
             registerIconCallbackForAssetFileExtension(textureExtension, TextureFileIconCallback);
         registerIconCallbackForAssetFileExtension("mztexture", TextureFileIconCallback);
 

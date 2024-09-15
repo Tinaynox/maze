@@ -212,7 +212,7 @@ namespace Maze
         m_canvasUI->setSortOrder(100);
 
 
-        MaterialPtr postFXMaterial = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("PostFX00.mzmaterial");
+        MaterialPtr postFXMaterial = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getOrLoadMaterial("PostFX00.mzmaterial");
         m_renderColorSprite = SpriteHelper::CreateSprite(
             Sprite::Create(m_renderBuffer->getColorTexture2D()),
             m_canvas->getTransform()->getSize(),

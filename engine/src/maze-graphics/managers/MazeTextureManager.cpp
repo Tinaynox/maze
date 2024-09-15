@@ -141,7 +141,13 @@ namespace Maze
                 {
                     if (!_assetFile->getAssetUnit<AssetUnitTexture2D>())
                         _assetFile->addAssetUnit(AssetUnitTexture2D::Create(_assetFile));
-                }                
+                }
+                else
+                if (_extension == MAZE_HCS("mzcubemap"))
+                {
+                    if (!_assetFile->getAssetUnit<AssetUnitTextureCube>())
+                        _assetFile->addAssetUnit(AssetUnitTextureCube::Create(_assetFile));
+                }
             });
         }
 
