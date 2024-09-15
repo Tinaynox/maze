@@ -47,7 +47,7 @@ namespace Maze
     // Class AssetUnitRenderMesh
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API AssetUnitRenderMesh
+    class MAZE_GRAPHICS_API AssetUnitRenderMesh
         : public AssetUnit
     {
     public:

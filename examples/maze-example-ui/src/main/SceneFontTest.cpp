@@ -193,7 +193,7 @@ namespace Maze
             this);
 
 
-        FontManager::GetInstancePtr()->setDefaultFont(FontManager::GetInstancePtr()->getFont("Default00.mzfont"));
+        FontManager::GetInstancePtr()->setDefaultFont(FontManager::GetInstancePtr()->getOrLoadFont("Default00.mzfont"));
 
         {
             SpriteRenderer2DPtr textSquare = SpriteHelper::CreateSprite(

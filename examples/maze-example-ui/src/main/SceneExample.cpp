@@ -583,6 +583,7 @@ namespace Maze
             this)->getEntityRaw()->ensureComponent<CanvasGroup>()->setLocalAlpha(0.2f);
         */        
 
+        /*
         EditorToolsUIHelper::CreateDefaultColorGradientEdit(
             ColorGradient(
                 0.0f,
@@ -595,6 +596,7 @@ namespace Maze
             this,
             Vec2F(0.5f, 0.5f),
             Vec2F(0.5f, 0.5f));
+        */
 
         /*
         ColorEdit2DPtr colorEdit = EditorToolsUIHelper::CreateDefaultColorEdit(

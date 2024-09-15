@@ -144,7 +144,7 @@ namespace Maze
         CString font = element->Attribute("font");
         CString assetMaterial = element->Attribute("assetMaterial");
 
-        setFont(font ? FontManager::GetInstancePtr()->getFont(font) : FontPtr());
+        setFont(font ? FontManager::GetInstancePtr()->getOrLoadFont(font) : FontPtr());
         setAssetMaterial(assetMaterial ? MaterialManager::GetCurrentInstance()->getOrLoadMaterial(assetMaterial) : MaterialPtr());
 
         return true;
@@ -156,7 +156,7 @@ namespace Maze
         CString font = _dataBlock.getCString(MAZE_HCS("font"));
         CString assetMaterial = _dataBlock.getCString(MAZE_HCS("assetMaterial"));
 
-        setFont(font ? FontManager::GetInstancePtr()->getFont(font) : FontPtr());
+        setFont(font ? FontManager::GetInstancePtr()->getOrLoadFont(font) : FontPtr());
         setAssetMaterial(assetMaterial ? MaterialManager::GetCurrentInstance()->getOrLoadMaterial(assetMaterial) : MaterialPtr());
 
         return true;

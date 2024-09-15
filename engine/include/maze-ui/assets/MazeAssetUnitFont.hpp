@@ -25,12 +25,12 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeAssetUnitTextureCube_hpp_))
-#define _MazeAssetUnitTextureCube_hpp_
+#if (!defined(_MazeAssetUnitFont_hpp_))
+#define _MazeAssetUnitFont_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/assets/MazeAssetUnit.hpp"
 
 
@@ -38,48 +38,48 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetUnitTextureCube);   
+    MAZE_USING_SHARED_PTR(AssetUnitFont);   
     MAZE_USING_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(TextureCube);
+    MAZE_USING_SHARED_PTR(Font);
 
 
     //////////////////////////////////////////
-    // Class AssetUnitTextureCube
+    // Class AssetUnitFont
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API AssetUnitTextureCube
+    class MAZE_UI_API AssetUnitFont
         : public AssetUnit
     {
     public:
         
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitTextureCube, AssetUnit);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitFont, AssetUnit);
         
     public:
 
         //////////////////////////////////////////
-        virtual ~AssetUnitTextureCube();
+        virtual ~AssetUnitFont();
 
         //////////////////////////////////////////
-        static AssetUnitTextureCubePtr Create(
+        static AssetUnitFontPtr Create(
             AssetFilePtr const& _assetFile,
             DataBlock const& _data = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
-        inline TextureCubePtr const& getTexture() const { return m_texture; }
+        inline FontPtr const& getFont() const { return m_font; }
 
         //////////////////////////////////////////
-        TextureCubePtr const& loadTexture(bool _syncLoad = false);
+        FontPtr const& loadFont(bool _syncLoad = false);
 
 
         //////////////////////////////////////////
-        TextureCubePtr const& initTexture();
+        FontPtr const& initFont();
 
     protected:
 
         //////////////////////////////////////////
-        AssetUnitTextureCube();
+        AssetUnitFont();
 
         //////////////////////////////////////////
         virtual bool init(
@@ -93,7 +93,7 @@ namespace Maze
         virtual bool unloadNowImpl() MAZE_OVERRIDE;
     
     protected:
-        TextureCubePtr m_texture;
+        FontPtr m_font;
     };
 
 
@@ -101,5 +101,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeAssetUnitTextureCube_hpp_
+#endif // _MazeAssetUnitFont_hpp_
 //////////////////////////////////////////

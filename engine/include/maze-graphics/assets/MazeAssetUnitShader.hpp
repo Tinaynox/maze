@@ -47,7 +47,7 @@ namespace Maze
     // Class AssetUnitShader
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API AssetUnitShader
+    class MAZE_GRAPHICS_API AssetUnitShader
         : public AssetUnit
     {
     public:

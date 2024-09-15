@@ -47,7 +47,7 @@ namespace Maze
     // Class AssetUnitSprite
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API AssetUnitSprite
+    class MAZE_GRAPHICS_API AssetUnitSprite
         : public AssetUnit
     {
     public:

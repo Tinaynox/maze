@@ -52,6 +52,19 @@ namespace Maze
     
 
     //////////////////////////////////////////
+    // Struct FontLibraryDataCallbacks
+    //
+    //////////////////////////////////////////
+    struct MAZE_UI_API FontLibraryDataCallbacks
+    {
+        std::function<void(bool)> requestLoad;
+        std::function<void(bool)> requestUnload;
+        std::function<void(bool)> requestReload;
+        std::function<bool(Set<String> const&)> hasAnyOfTags;
+    };
+
+
+    //////////////////////////////////////////
     // Struct FontLibraryData
     //
     //////////////////////////////////////////
@@ -60,13 +73,13 @@ namespace Maze
         //////////////////////////////////////////
         FontLibraryData(
             FontPtr const& _font = nullptr,
-            AssetFilePtr const& _assetFile = nullptr)
+            FontLibraryDataCallbacks const& _callbacks = FontLibraryDataCallbacks())
             : font(_font)
-            , assetFile(_assetFile)
+            , callbacks(_callbacks)
         {}
 
         FontPtr font;
-        AssetFilePtr assetFile;
+        FontLibraryDataCallbacks callbacks;
     };
 
 
@@ -104,17 +117,21 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        FontPtr const& getFont(HashedCString _assetFileName);
+        FontPtr const& getOrLoadFont(
+            HashedCString _assetFileName,
+            bool _syncLoad = true);
 
         //////////////////////////////////////////
-        inline FontPtr const& getFont(String const& _assetFileName) { return getFont(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+        inline FontPtr const& getOrLoadFont(String const& _assetFileName) { return getOrLoadFont(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
 
         //////////////////////////////////////////
-        inline FontPtr const& getFont(CString _assetFileName) { return getFont(MAZE_HASHED_CSTRING(_assetFileName)); }
+        inline FontPtr const& getOrLoadFont(CString _assetFileName) { return getOrLoadFont(MAZE_HASHED_CSTRING(_assetFileName)); }
 
 
         //////////////////////////////////////////
-        FontLibraryData* addFontToLibrary(FontPtr const& _font);
+        FontLibraryData* addFontToLibrary(
+            FontPtr const& _font,
+            FontLibraryDataCallbacks const& _callbacks = FontLibraryDataCallbacks());
 
         //////////////////////////////////////////
         void removeFontFromLibrary(HashedCString _fontName);

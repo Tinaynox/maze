@@ -27,6 +27,7 @@
 #include "MazeUIHeader.hpp"
 #include "maze-ui/managers/MazeFontManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -37,6 +38,7 @@
 #include "maze-ui/managers/MazeTrueTypeFontManager.hpp"
 #include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-ui/fonts/MazeFont.hpp"
+#include "maze-ui/assets/MazeAssetUnitFont.hpp"
 
 
 //////////////////////////////////////////
@@ -77,6 +79,37 @@ namespace Maze
         if (!m_fontMaterialManager)
             return false;
         
+
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
+                MAZE_HCS("material"),
+                [](AssetFilePtr const& _file, DataBlock const& _data)
+            {
+                return AssetUnitFont::Create(_file, _data);
+            });
+
+            AssetUnitManager::GetInstancePtr()->eventAssetUnitAdded.subscribe(
+                [](AssetUnitPtr const& _assetUnit)
+            {
+                if (_assetUnit->getClassUID() == ClassInfo<AssetUnitFont>::UID())
+                    _assetUnit->castRaw<AssetUnitFont>()->initFont();
+            });
+        }
+
+        if (AssetManager::GetInstancePtr())
+        {
+            AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(
+                [](AssetFilePtr const& _assetFile, HashedString const& _extension)
+            {
+                if (_extension == MAZE_HCS("mzfont"))
+                {
+                    if (!_assetFile->getAssetUnit<AssetUnitFont>())
+                        _assetFile->addAssetUnit(AssetUnitFont::Create(_assetFile));
+                }
+            });
+        }
+
         return true;
     }
 
@@ -90,13 +123,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FontPtr const& FontManager::getFont(HashedCString _font)
+    FontPtr const& FontManager::getOrLoadFont(
+        HashedCString _font,
+        bool _syncLoad)
     {
         static FontPtr const nullPointer;
 
         FontLibraryData const* libraryData = getFontLibraryData(_font);
         if (libraryData)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(_syncLoad);
+
             return libraryData->font;
+        }
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_font);
         if (!assetFile)
@@ -110,7 +150,26 @@ namespace Maze
         FontLibraryData* data = addFontToLibrary(font);
         if (data)
         {
-            data->assetFile = assetFile;
+            data->callbacks.requestReload =
+                [
+                    assetFileWeak = (AssetFileWPtr)assetFile,
+                    fontWeak = (FontWPtr)font
+                ](bool _immediate)
+                {
+                    AssetFilePtr assetFile = assetFileWeak.lock();
+                    FontPtr font = fontWeak.lock();
+                    if (assetFile && font)
+                        font->loadFromAssetFile(assetFile);
+                };
+            data->callbacks.hasAnyOfTags =
+                [assetFileWeak = (AssetFileWPtr)assetFile](Set<String> const& _tags)
+                {
+                    if (AssetFilePtr assetFile = assetFileWeak.lock())
+                        return assetFile->hasAnyOfTags(_tags);
+
+                    return false;
+                };
+
             return data->font;
         }
 
@@ -118,11 +177,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FontLibraryData* FontManager::addFontToLibrary(FontPtr const& _font)
+    FontLibraryData* FontManager::addFontToLibrary(
+        FontPtr const& _font,
+        FontLibraryDataCallbacks const& _callbacks)
     {
         auto it2 = m_fontsLibrary.insert(
             _font->getName(),
-            _font);
+            { _font, _callbacks });
         return it2;
     }
 
@@ -153,7 +214,7 @@ namespace Maze
         StringKeyMap<FontLibraryData>::iterator end = m_fontsLibrary.end();
         for (; it != end; )
         {
-            if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+            if (it->second.callbacks.hasAnyOfTags && it->second.callbacks.hasAnyOfTags(_tags))
             {
                 it = m_fontsLibrary.erase(it);
                 end = m_fontsLibrary.end();

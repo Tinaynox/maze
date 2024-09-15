@@ -607,7 +607,7 @@ namespace Maze
         }
         else
         {
-            _value = fontManager->getFont(MAZE_HCS(_data));
+            _value = fontManager->getOrLoadFont(MAZE_HCS(_data));
         }
     }
 

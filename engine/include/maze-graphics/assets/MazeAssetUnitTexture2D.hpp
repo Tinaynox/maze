@@ -47,7 +47,7 @@ namespace Maze
     // Class AssetUnitTexture2D
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API AssetUnitTexture2D
+    class MAZE_GRAPHICS_API AssetUnitTexture2D
         : public AssetUnit
     {
     public:

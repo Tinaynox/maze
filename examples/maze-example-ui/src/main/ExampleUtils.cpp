@@ -95,8 +95,8 @@ namespace Maze
     void LoadFirstExampleScene(SceneManager* _sceneManager)
     {
         Example::GetInstancePtr()->loadCoreGameAssets();
-        if (!_sceneManager->getScene<SceneExample>())
-            _sceneManager->loadScene<SceneExample>();
+        if (!_sceneManager->getScene<SceneFontTest>())
+            _sceneManager->loadScene<SceneFontTest>();
     }
     
     //////////////////////////////////////////
