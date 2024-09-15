@@ -49,6 +49,7 @@
 #include "maze-core/assets/MazeAssetFileId.hpp"
 #include "maze-core/assets/MazeAssetUnitId.hpp"
 #include "maze-core/assets/MazeAssetUnit.hpp"
+#include "maze-core/events/MazeEvent.hpp"
 #include <tinyxml2/tinyxml2.h>
 
 
@@ -138,6 +139,9 @@ namespace Maze
 
             return nullptr;
         }
+
+        //////////////////////////////////////////
+        void addAssetUnit(AssetUnitPtr const& _assetUnit);
 
 
         //////////////////////////////////////////

@@ -136,9 +136,11 @@ namespace Maze
 
         for (AssetFilePtr const& addFile : addedFiles)
         {
-            if (addFile->getExtension() != Path("mzmeta"))
+            HashedString extension = HashedString(addFile->getExtension().toUTF8());
+
+            if (extension != MAZE_HCS("mzmeta"))
                 loadAndUpdateFileMetaData(addFile);
-            eventAssetFileAdded(addFile);
+            eventAssetFileAdded(addFile, extension);
         }
 
         for (AssetFilePtr const& removeFile : removedFiles)
@@ -187,9 +189,11 @@ namespace Maze
 
         for (AssetFilePtr const& addFile : addedFiles)
         {
-            if (addFile->getExtension() != Path("mzmeta"))
+            HashedString extension = HashedString(addFile->getExtension().toUTF8());
+
+            if (extension != MAZE_HCS("mzmeta"))
                 loadAndUpdateFileMetaData(addFile);
-            eventAssetFileAdded(addFile);
+            eventAssetFileAdded(addFile, extension);
         }
 
         for (AssetFilePtr const& removeFile : removedFiles)

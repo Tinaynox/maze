@@ -31,6 +31,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-graphics/assets/MazeAssetUnitShader.hpp"
 
@@ -79,6 +80,19 @@ namespace Maze
                 {
                     if (_assetUnit->getClassUID() == ClassInfo<AssetUnitShader>::UID())
                         _assetUnit->castRaw<AssetUnitShader>()->initShader();
+                });
+        }
+
+        if (AssetManager::GetInstancePtr())
+        {
+            AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(
+                [](AssetFilePtr const& _assetFile, HashedString const& _extension)
+                {
+                    if (_extension == MAZE_HCS("mzshader"))
+                    {
+                        if (!_assetFile->getAssetUnit<AssetUnitShader>())
+                            _assetFile->addAssetUnit(AssetUnitShader::Create(_assetFile));
+                    }
                 });
         }
 

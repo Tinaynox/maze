@@ -264,7 +264,7 @@ bool SceneExample::init()
     lightEntity->ensureComponent<Maze::Name>("Light");
 
     // SMG
-    Maze::RenderMeshPtr smgRenderMesh = renderMeshManager->getOrLoadRenderMesh("SMG.obj");
+    Maze::RenderMeshPtr smgRenderMesh = renderMeshManager->getOrLoadRenderMesh("SMG.obj", false);
     Maze::MaterialPtr smgMaterial = materialManager->getOrLoadMaterial("Test00.mzmaterial");
     {
         Maze::EntityPtr meshRendererEntity = createEntity();

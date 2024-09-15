@@ -28,13 +28,13 @@
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/assets/MazeAssetUnit.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-
     //////////////////////////////////////////
     // Class AssetFile
     //
@@ -225,13 +225,19 @@ namespace Maze
                 if (!assetUnit)
                     continue;
 
-                if (assetUnit->getAssetUnitId() == c_invalidAssetUnitId)
-                    assetUnit->setAssetUnitId(AssetUnitManager::GetInstancePtr()->generateAssetUnitId());
-                AssetUnitManager::GetInstancePtr()->addAssetUnit(assetUnit);
-
-                m_assetUnits.push_back(assetUnit);
+                addAssetUnit(assetUnit);
             }
         }
+    }
+
+    //////////////////////////////////////////
+    void AssetFile::addAssetUnit(AssetUnitPtr const& _assetUnit)
+    {
+        if (_assetUnit->getAssetUnitId() == c_invalidAssetUnitId)
+            _assetUnit->setAssetUnitId(AssetUnitManager::GetInstancePtr()->generateAssetUnitId());
+        AssetUnitManager::GetInstancePtr()->addAssetUnit(_assetUnit);
+
+        m_assetUnits.push_back(_assetUnit);
     }
 
     //////////////////////////////////////////

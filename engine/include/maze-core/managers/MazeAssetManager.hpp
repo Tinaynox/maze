@@ -265,7 +265,7 @@ namespace Maze
     public:
         MultiDelegate<Path const&> eventAssetsDirectoryPathAdded;
         MultiDelegate<Path const&> eventAssetsDirectoryPathRemoved;
-        MultiDelegate<AssetFilePtr const&> eventAssetFileAdded;
+        MultiDelegate<AssetFilePtr const&, HashedString const&> eventAssetFileAdded;
         MultiDelegate<AssetFilePtr const&> eventAssetFileRemoved;
         MultiDelegate<AssetFilePtr const&, Path const&> eventAssetFileMoved;
 

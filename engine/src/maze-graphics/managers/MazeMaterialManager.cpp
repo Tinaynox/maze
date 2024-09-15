@@ -111,6 +111,19 @@ namespace Maze
             });
         }
 
+        if (AssetManager::GetInstancePtr())
+        {
+            AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(
+                [](AssetFilePtr const& _assetFile, HashedString const& _extension)
+                {
+                    if (_extension == MAZE_HCS("mzmaterial"))
+                    {
+                        if (!_assetFile->getAssetUnit<AssetUnitMaterial>())
+                            _assetFile->addAssetUnit(AssetUnitMaterial::Create(_assetFile));
+                    }
+                });
+        }
+
         return true;
     }
 

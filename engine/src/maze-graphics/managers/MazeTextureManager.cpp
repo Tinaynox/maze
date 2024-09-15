@@ -132,6 +132,19 @@ namespace Maze
                 });
         }
 
+        if (AssetManager::GetInstancePtr())
+        {
+            AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(
+                [](AssetFilePtr const& _assetFile, HashedString const& _extension)
+            {
+                if (TextureManager::GetCurrentInstancePtr()->hasTextureLoader(_extension))
+                {
+                    if (!_assetFile->getAssetUnit<AssetUnitTexture2D>())
+                        _assetFile->addAssetUnit(AssetUnitTexture2D::Create(_assetFile));
+                }                
+            });
+        }
+
         return true;
     }
 
@@ -711,8 +724,8 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("TextureManager::loadAllAssetTextures");
         {
-            Vector<String> textureExtensions = getTextureLoaderExtensions();
-            textureExtensions.push_back("mztexture");
+            Vector<HashedString> textureExtensions = getTextureLoaderExtensions();
+            textureExtensions.push_back(MAZE_HS("mztexture"));
 
             Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
                 Set<String>(textureExtensions.begin(), textureExtensions.end()));
@@ -786,11 +799,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vector<String> TextureManager::getTextureLoaderExtensions()
+    Vector<HashedString> TextureManager::getTextureLoaderExtensions()
     {
-        Vector<String> result;
-        for (auto const& textureLoaderData : m_textureLoaders)
-            result.push_back(textureLoaderData.first);
+        Vector<HashedString> result;
+        for (StringKeyMap<TextureLoaderData>::iterator it = m_textureLoaders.begin(),
+                                                       end = m_textureLoaders.end();
+                                                       it != end;
+                                                       ++it)
+            result.push_back(HashedString(it.key()));
         
         return result;
     }

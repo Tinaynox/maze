@@ -166,7 +166,7 @@ namespace Maze
         void notifySelectionManagerSelectionChanged();
 
         //////////////////////////////////////////
-        void notifyAssetFileAdded(AssetFilePtr const& _file);
+        void notifyAssetFileAdded(AssetFilePtr const& _file, HashedString const& _extension);
 
         //////////////////////////////////////////
         void notifyAssetFileRemoved(AssetFilePtr const& _file);

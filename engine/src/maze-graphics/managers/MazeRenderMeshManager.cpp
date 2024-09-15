@@ -104,6 +104,19 @@ namespace Maze
             });
         }
 
+        if (AssetManager::GetInstancePtr())
+        {
+            AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(
+                [](AssetFilePtr const& _assetFile, HashedString const& _extension)
+                {
+                    if (MeshManager::GetInstancePtr()->hasMeshLoader(_extension))
+                    {
+                        if (!_assetFile->getAssetUnit<AssetUnitRenderMesh>())
+                            _assetFile->addAssetUnit(AssetUnitRenderMesh::Create(_assetFile));
+                    }
+                });
+        }
+
         return true;
     }
 
@@ -344,7 +357,7 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("RenderMeshManager::loadAllAssetRenderMeshes");
 
-        Vector<String> loaderExtensions = MeshManager::GetInstancePtr()->getMeshLoaderExtensions();
+        Vector<HashedString> loaderExtensions = MeshManager::GetInstancePtr()->getMeshLoaderExtensions();
 
         Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
             Set<String>(loaderExtensions.begin(), loaderExtensions.end()));

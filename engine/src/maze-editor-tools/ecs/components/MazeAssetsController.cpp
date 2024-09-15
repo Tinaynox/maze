@@ -597,7 +597,7 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void AssetsController::notifyAssetFileAdded(AssetFilePtr const& _file)
+    void AssetsController::notifyAssetFileAdded(AssetFilePtr const& _file, HashedString const& _extension)
     {
         m_assetsTreeDirty = true;
         m_selectedAssetsFolder = true;

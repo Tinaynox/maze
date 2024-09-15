@@ -180,7 +180,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        Vector<String> getMeshLoaderExtensions();
+        Vector<HashedString> getMeshLoaderExtensions();
+
+        //////////////////////////////////////////
+        inline bool hasMeshLoader(HashedCString _extension)
+        {
+            return m_meshLoaders.find(_extension) != m_meshLoaders.end();
+        }
 
 
         //////////////////////////////////////////

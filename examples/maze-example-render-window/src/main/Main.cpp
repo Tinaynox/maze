@@ -48,6 +48,7 @@
 #include "maze-core/helpers/MazeWindowHelper.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeWindowManager.hpp"
@@ -117,11 +118,13 @@ public:
         windowManager.reset();
         inputManager.reset();
         taskManager.reset();
+        eventManager.reset();
         systemManager.reset();
     }
     
 public:
     SystemManagerPtr        systemManager;
+    EventManagerPtr         eventManager;
     TaskManagerPtr          taskManager;
     InputManagerPtr         inputManager;
     WindowManagerPtr        windowManager;
@@ -173,6 +176,7 @@ void OnInit()
 
     UpdateManager::GetInstancePtr()->eventUpdate.subscribe(OnUpdate);
 
+    EventManager::Initialize(g_main->eventManager);
     TaskManager::Initialize(g_main->taskManager);
     InputManager::Initialize(g_main->inputManager);
     WindowManager::Initialize(g_main->windowManager);

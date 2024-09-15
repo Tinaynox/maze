@@ -360,7 +360,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        Vector<String> getTextureLoaderExtensions();
+        Vector<HashedString> getTextureLoaderExtensions();
+
+        //////////////////////////////////////////
+        inline bool hasTextureLoader(HashedCString _extension)
+        {
+            return m_textureLoaders.find(_extension) != m_textureLoaders.end();
+        }
 
 
         //////////////////////////////////////////

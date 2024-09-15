@@ -168,11 +168,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vector<String> MeshManager::getMeshLoaderExtensions()
+    Vector<HashedString> MeshManager::getMeshLoaderExtensions()
     {
-        Vector<String> result;
-        for (auto const& renderMeshLoaderData : m_meshLoaders)
-            result.push_back(renderMeshLoaderData.first);
+        Vector<HashedString> result;
+        for (StringKeyMap<MeshLoaderData>::iterator it = m_meshLoaders.begin(),
+                                                    end = m_meshLoaders.end();
+                                                    it != end;
+                                                    ++it)
+            result.push_back(HashedString(it.key()));
 
         return result;
     }

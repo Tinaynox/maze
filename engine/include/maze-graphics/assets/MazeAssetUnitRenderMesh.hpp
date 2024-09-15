@@ -63,7 +63,7 @@ namespace Maze
         //////////////////////////////////////////
         static AssetUnitRenderMeshPtr Create(
             AssetFilePtr const& _assetFile,
-            DataBlock const& _data);
+            DataBlock const& _data = DataBlock::c_empty);
 
 
         //////////////////////////////////////////

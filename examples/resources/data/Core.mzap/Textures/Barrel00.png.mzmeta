@@ -1,4 +1,4 @@
 assetUnits
 {
-  renderMesh{}
+  texture2d{}
 }
