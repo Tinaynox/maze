@@ -190,7 +190,7 @@ namespace Maze
         m_square0->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
         FontManager::GetInstancePtr()->setDefaultFont(FontManager::GetInstancePtr()->getOrLoadFont("Editor00.mzfont"));
-        FontMaterialPtr fontMaterial = FontMaterialManager::GetInstancePtr()->getFontMaterial("Editor00.mzfontmaterial");
+        FontMaterialPtr fontMaterial = FontMaterialManager::GetInstancePtr()->getOrLoadFontMaterial("Editor00.mzfontmaterial");
         FontMaterialManager::GetInstancePtr()->setDefaultFontMaterial(fontMaterial);
 
         m_text0 = UIHelper::CreateText(

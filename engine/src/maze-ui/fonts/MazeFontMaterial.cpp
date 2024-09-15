@@ -205,7 +205,7 @@ namespace Maze
         }
         else
         {
-            _value = fontManager->getFontMaterial(MAZE_HASHED_CSTRING(_data));
+            _value = fontManager->getOrLoadFontMaterial(MAZE_HASHED_CSTRING(_data));
         }
     }
 
@@ -362,7 +362,7 @@ namespace Maze
     //////////////////////////////////////////
     void FontMaterialAssetRef::setString(CString _data, Size _count)
     {
-        FontMaterialPtr const& fontMaterial = FontMaterialManager::GetInstancePtr()->getFontMaterial(_data);
+        FontMaterialPtr const& fontMaterial = FontMaterialManager::GetInstancePtr()->getOrLoadFontMaterial(_data);
         setFontMaterial(fontMaterial);
     }
 

@@ -26,6 +26,8 @@
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
 #include "maze-ui/managers/MazeFontMaterialManager.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -35,6 +37,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-ui/fonts/MazeFontMaterial.hpp"
+#include "maze-ui/assets/MazeAssetUnitFontMaterial.hpp"
 
 
 //////////////////////////////////////////
@@ -67,6 +70,35 @@ namespace Maze
     //////////////////////////////////////////
     bool FontMaterialManager::init()
     {
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
+                MAZE_HCS("fontMaterial"),
+                [](AssetFilePtr const& _file, DataBlock const& _data)
+                {
+                    return AssetUnitFontMaterial::Create(_file, _data);
+                });
+
+            AssetUnitManager::GetInstancePtr()->eventAssetUnitAdded.subscribe(
+                [](AssetUnitPtr const& _assetUnit)
+                {
+                    if (_assetUnit->getClassUID() == ClassInfo<AssetUnitFontMaterial>::UID())
+                        _assetUnit->castRaw<AssetUnitFontMaterial>()->initFontMaterial();
+                });
+        }
+
+        if (AssetManager::GetInstancePtr())
+        {
+            AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(
+                [](AssetFilePtr const& _assetFile, HashedString const& _extension)
+                {
+                    if (_extension == MAZE_HCS("mzfontmaterial"))
+                    {
+                        if (!_assetFile->getAssetUnit<AssetUnitFontMaterial>())
+                            _assetFile->addAssetUnit(AssetUnitFontMaterial::Create(_assetFile));
+                    }
+                });
+        }
         
         return true;
     }
@@ -81,27 +113,53 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FontMaterialPtr const& FontMaterialManager::getFontMaterial(HashedCString _trueTypeFont)
+    FontMaterialPtr const& FontMaterialManager::getOrLoadFontMaterial(
+        HashedCString _trueTypeFont,
+        bool _syncLoad)
     {
         static FontMaterialPtr const nullPointer;
 
         FontMaterialLibraryData const* libraryData = getFontMaterialLibraryData(_trueTypeFont);
         if (libraryData)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(_syncLoad);
+
             return libraryData->fontMaterial;
+        }
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_trueTypeFont);
         if (!assetFile)
             return nullPointer;
 
-        FontMaterialPtr font = FontMaterial::Create(assetFile);
-        if (!font)
+        FontMaterialPtr fontMaterial = FontMaterial::Create(assetFile);
+        if (!fontMaterial)
             return nullPointer;
 
-        font->setName(_trueTypeFont.str);
-        FontMaterialLibraryData* data = addFontMaterialToLibrary(font);
+        fontMaterial->setName(_trueTypeFont.str);
+        FontMaterialLibraryData* data = addFontMaterialToLibrary(fontMaterial);
         if (data)
         {
-            data->assetFile = assetFile;
+            data->callbacks.requestReload =
+                [
+                    assetFileWeak = (AssetFileWPtr)assetFile,
+                    fontMaterialWeak = (FontMaterialWPtr)fontMaterial
+                ](bool _immediate)
+                {
+                    AssetFilePtr assetFile = assetFileWeak.lock();
+                    FontMaterialPtr fontMaterial = fontMaterialWeak.lock();
+                    if (assetFile && fontMaterial)
+                        fontMaterial->loadFromAssetFile(assetFile);
+                };
+            data->callbacks.hasAnyOfTags =
+                [assetFileWeak = (AssetFileWPtr)assetFile](Set<String> const& _tags)
+                {
+                    if (AssetFilePtr assetFile = assetFileWeak.lock())
+                        return assetFile->hasAnyOfTags(_tags);
+
+                    return false;
+                };
+
             return data->fontMaterial;
         }
 
@@ -109,11 +167,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FontMaterialLibraryData* FontMaterialManager::addFontMaterialToLibrary(FontMaterialPtr const& _trueTypeFont)
+    FontMaterialLibraryData* FontMaterialManager::addFontMaterialToLibrary(
+        FontMaterialPtr const& _trueTypeFont,
+        FontMaterialLibraryDataCallbacks const& _callbacks)
     {
         auto it2 = m_fontMaterialsLibrary.insert(
             _trueTypeFont->getName(),
-            _trueTypeFont);
+            { _trueTypeFont, _callbacks });
         return it2;
     }
 
@@ -144,7 +204,7 @@ namespace Maze
         StringKeyMap<FontMaterialLibraryData>::iterator end = m_fontMaterialsLibrary.end();
         for (; it != end; )
         {
-            if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+            if (it->second.callbacks.hasAnyOfTags && it->second.callbacks.hasAnyOfTags(_tags))
             {
                 it = m_fontMaterialsLibrary.erase(it);
                 end = m_fontMaterialsLibrary.end();

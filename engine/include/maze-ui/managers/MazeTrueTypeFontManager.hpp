@@ -56,6 +56,19 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct TrueTypeFontLibraryDataCallbacks
+    //
+    //////////////////////////////////////////
+    struct MAZE_UI_API TrueTypeFontLibraryDataCallbacks
+    {
+        std::function<void(bool)> requestLoad;
+        std::function<void(bool)> requestUnload;
+        std::function<void(bool)> requestReload;
+        std::function<bool(Set<String> const&)> hasAnyOfTags;
+    };
+
+
+    //////////////////////////////////////////
     // Struct TrueTypeFontLibraryData
     //
     //////////////////////////////////////////
@@ -64,13 +77,13 @@ namespace Maze
         //////////////////////////////////////////
         TrueTypeFontLibraryData(
             TrueTypeFontPtr const& _trueTypeFont = nullptr,
-            AssetFilePtr const& _assetFile = nullptr)
+            TrueTypeFontLibraryDataCallbacks const& _callbacks = TrueTypeFontLibraryDataCallbacks())
             : trueTypeFont(_trueTypeFont)
-            , assetFile(_assetFile)
+            , callbacks(_callbacks)
         {}
 
         TrueTypeFontPtr trueTypeFont;
-        AssetFilePtr assetFile;
+        TrueTypeFontLibraryDataCallbacks callbacks;
     };
 
 
@@ -136,17 +149,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        TrueTypeFontPtr const& getTrueTypeFont(HashedCString _assetFileName);
+        TrueTypeFontPtr const& getOrLoadTrueTypeFont(HashedCString _assetFileName, bool _syncLoad = true);
 
         //////////////////////////////////////////
-        inline TrueTypeFontPtr const& getTrueTypeFont(String const& _assetFileName) { return getTrueTypeFont(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+        inline TrueTypeFontPtr const& getOrLoadTrueTypeFont(String const& _assetFileName, bool _syncLoad = true) { return getOrLoadTrueTypeFont(MAZE_HASHED_CSTRING(_assetFileName.c_str()), _syncLoad); }
 
         //////////////////////////////////////////
-        inline TrueTypeFontPtr const& getTrueTypeFont(CString _assetFileName) { return getTrueTypeFont(MAZE_HASHED_CSTRING(_assetFileName)); }
+        inline TrueTypeFontPtr const& getOrLoadTrueTypeFont(CString _assetFileName, bool _syncLoad = true) { return getOrLoadTrueTypeFont(MAZE_HASHED_CSTRING(_assetFileName), _syncLoad); }
 
 
         //////////////////////////////////////////
-        TrueTypeFontLibraryData* addTrueTypeFontToLibrary(TrueTypeFontPtr const& _trueTypeFont);
+        TrueTypeFontLibraryData* addTrueTypeFontToLibrary(
+            TrueTypeFontPtr const& _trueTypeFont,
+            TrueTypeFontLibraryDataCallbacks const& _callbacks = TrueTypeFontLibraryDataCallbacks());
 
         //////////////////////////////////////////
         void removeTrueTypeFontFromLibrary(HashedCString _fontName);

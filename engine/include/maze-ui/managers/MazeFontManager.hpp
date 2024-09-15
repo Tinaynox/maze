@@ -122,10 +122,10 @@ namespace Maze
             bool _syncLoad = true);
 
         //////////////////////////////////////////
-        inline FontPtr const& getOrLoadFont(String const& _assetFileName) { return getOrLoadFont(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+        inline FontPtr const& getOrLoadFont(String const& _assetFileName, bool _syncLoad = true) { return getOrLoadFont(MAZE_HASHED_CSTRING(_assetFileName.c_str()), _syncLoad); }
 
         //////////////////////////////////////////
-        inline FontPtr const& getOrLoadFont(CString _assetFileName) { return getOrLoadFont(MAZE_HASHED_CSTRING(_assetFileName)); }
+        inline FontPtr const& getOrLoadFont(CString _assetFileName, bool _syncLoad = true) { return getOrLoadFont(MAZE_HASHED_CSTRING(_assetFileName), _syncLoad); }
 
 
         //////////////////////////////////////////

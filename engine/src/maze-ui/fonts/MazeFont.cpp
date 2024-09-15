@@ -139,7 +139,7 @@ namespace Maze
                 if (fileStr)
                 {
                     m_defaultGlyphsData.type = FontGlyphStorageType::TrueTypeFont;
-                    m_defaultGlyphsData.setTrueTypeFont(TrueTypeFontManager::GetInstancePtr()->getTrueTypeFont(fileStr));
+                    m_defaultGlyphsData.setTrueTypeFont(TrueTypeFontManager::GetInstancePtr()->getOrLoadTrueTypeFont(fileStr));
                 }
             }
             else
@@ -148,7 +148,7 @@ namespace Maze
                 CString fileStr = childElement->Attribute("file");
                 if (fileStr)
                 {
-                    const TrueTypeFontPtr& trueTypeFont = TrueTypeFontManager::GetInstancePtr()->getTrueTypeFont(fileStr);
+                    const TrueTypeFontPtr& trueTypeFont = TrueTypeFontManager::GetInstancePtr()->getOrLoadTrueTypeFont(fileStr);
                     if (trueTypeFont)
                     {
 
@@ -280,7 +280,7 @@ namespace Maze
                 if (fileStr)
                 {
                     m_defaultGlyphsData.type = FontGlyphStorageType::TrueTypeFont;
-                    m_defaultGlyphsData.setTrueTypeFont(TrueTypeFontManager::GetInstancePtr()->getTrueTypeFont(fileStr));
+                    m_defaultGlyphsData.setTrueTypeFont(TrueTypeFontManager::GetInstancePtr()->getOrLoadTrueTypeFont(fileStr));
                 }
             }
             else
@@ -289,7 +289,7 @@ namespace Maze
                 CString fileStr = subBlock->getCString(MAZE_HCS("file"));
                 if (fileStr)
                 {
-                    const TrueTypeFontPtr& trueTypeFont = TrueTypeFontManager::GetInstancePtr()->getTrueTypeFont(fileStr);
+                    const TrueTypeFontPtr& trueTypeFont = TrueTypeFontManager::GetInstancePtr()->getOrLoadTrueTypeFont(fileStr);
                     if (trueTypeFont)
                     {
                         for (DataBlock::DataBlockIndex j = 0; j < subBlock->getDataBlocksCount(); ++j)

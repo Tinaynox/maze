@@ -49,6 +49,19 @@ namespace Maze
     
 
     //////////////////////////////////////////
+    // Struct FontMaterialLibraryDataCallbacks
+    //
+    //////////////////////////////////////////
+    struct MAZE_UI_API FontMaterialLibraryDataCallbacks
+    {
+        std::function<void(bool)> requestLoad;
+        std::function<void(bool)> requestUnload;
+        std::function<void(bool)> requestReload;
+        std::function<bool(Set<String> const&)> hasAnyOfTags;
+    };
+
+
+    //////////////////////////////////////////
     // Struct FontMaterialLibraryData
     //
     //////////////////////////////////////////
@@ -57,13 +70,13 @@ namespace Maze
         //////////////////////////////////////////
         FontMaterialLibraryData(
             FontMaterialPtr const& _fontMaterial = nullptr,
-            AssetFilePtr const& _assetFile = nullptr)
+            FontMaterialLibraryDataCallbacks const& _callbacks = FontMaterialLibraryDataCallbacks())
             : fontMaterial(_fontMaterial)
-            , assetFile(_assetFile)
+            , callbacks(_callbacks)
         {}
 
         FontMaterialPtr fontMaterial;
-        AssetFilePtr assetFile;
+        FontMaterialLibraryDataCallbacks callbacks;
     };
 
 
@@ -101,17 +114,21 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        FontMaterialPtr const& getFontMaterial(HashedCString _assetFileName);
+        FontMaterialPtr const& getOrLoadFontMaterial(
+            HashedCString _assetFileName,
+            bool _syncLoad = true);
 
         //////////////////////////////////////////
-        inline FontMaterialPtr const& getFontMaterial(String const& _assetFileName) { return getFontMaterial(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+        inline FontMaterialPtr const& getOrLoadFontMaterial(String const& _assetFileName, bool _syncLoad = true) { return getOrLoadFontMaterial(MAZE_HASHED_CSTRING(_assetFileName.c_str()), _syncLoad); }
 
         //////////////////////////////////////////
-        inline FontMaterialPtr const& getFontMaterial(CString _assetFileName) { return getFontMaterial(MAZE_HASHED_CSTRING(_assetFileName)); }
+        inline FontMaterialPtr const& getOrLoadFontMaterial(CString _assetFileName, bool _syncLoad = true) { return getOrLoadFontMaterial(MAZE_HASHED_CSTRING(_assetFileName), _syncLoad); }
 
 
         //////////////////////////////////////////
-        FontMaterialLibraryData* addFontMaterialToLibrary(FontMaterialPtr const& _trueTypeFont);
+        FontMaterialLibraryData* addFontMaterialToLibrary(
+            FontMaterialPtr const& _trueTypeFont,
+            FontMaterialLibraryDataCallbacks const& _callbacks = FontMaterialLibraryDataCallbacks());
 
         //////////////////////////////////////////
         void removeFontMaterialFromLibrary(HashedCString _fontMaterialName);

@@ -224,7 +224,7 @@ namespace Maze
                 square->getTransform(),
                 this);
 
-            FontMaterialPtr fontMaterial = FontMaterialManager::GetInstancePtr()->getFontMaterial("Default00.mzfontmaterial");
+            FontMaterialPtr fontMaterial = FontMaterialManager::GetInstancePtr()->getOrLoadFontMaterial("Default00.mzfontmaterial");
             FontMaterialManager::GetInstancePtr()->setDefaultFontMaterial(fontMaterial);
 
             m_text = UIHelper::CreateText(

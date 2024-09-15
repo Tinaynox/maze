@@ -156,10 +156,10 @@ namespace Maze
     bool EditorToolsStyles::loadFromDataBlock(DataBlock const& _dataBlock)
     {
         m_defaultFontMaterialName = _dataBlock.getString(MAZE_HCS("defaultFontMaterial"));
-        m_defaultFontMaterial = FontMaterialManager::GetInstancePtr()->getFontMaterial(m_defaultFontMaterialName);
+        m_defaultFontMaterial = FontMaterialManager::GetInstancePtr()->getOrLoadFontMaterial(m_defaultFontMaterialName);
 
         m_defaultBoldFontMaterialName = _dataBlock.getString(MAZE_HCS("defaultBoldFontMaterial"));
-        m_defaultBoldFontMaterial = FontMaterialManager::GetInstancePtr()->getFontMaterial(m_defaultBoldFontMaterialName);
+        m_defaultBoldFontMaterial = FontMaterialManager::GetInstancePtr()->getOrLoadFontMaterial(m_defaultBoldFontMaterialName);
 
         return true;
     }
