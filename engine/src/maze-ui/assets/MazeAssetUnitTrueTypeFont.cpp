@@ -101,7 +101,7 @@ namespace Maze
         if (!m_trueTypeFont)
             return false;
 
-        // #TODO:
+        m_trueTypeFont->loadFromAssetFile(assetFile);
 
         return true;
     }
@@ -129,7 +129,7 @@ namespace Maze
         if (!assetFile)
             return m_trueTypeFont;
 
-        m_trueTypeFont = TrueTypeFont::Create(assetFile); // #TODO: rework
+        m_trueTypeFont = TrueTypeFont::Create();
         if (!m_trueTypeFont)
             return m_trueTypeFont;
 

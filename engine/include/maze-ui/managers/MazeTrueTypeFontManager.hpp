@@ -49,8 +49,7 @@ namespace Maze
     
 
     //////////////////////////////////////////
-    using LoadTrueTypeFontAssetFileFunction = bool(*)(AssetFilePtr const& _file, TrueTypeFontPtr& _font);
-    using LoadTrueTypeFontByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData, TrueTypeFontPtr& _font);
+    using CreateTrueTypeFontFunction = TrueTypeFontPtr(*)();
     using IsTrueTypeFontAssetFileFunction = bool(*)(AssetFilePtr const& _file);
     using IsTrueTypeFontByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData);
 
@@ -98,18 +97,15 @@ namespace Maze
 
         //////////////////////////////////////////
         TrueTypeFontLoaderData(
-            LoadTrueTypeFontAssetFileFunction _loadTrueTypeFontAssetFileFunc,
-            LoadTrueTypeFontByteBufferFunction _loadTrueTypeFontByteBufferFunc,
+            CreateTrueTypeFontFunction createTrueTypeFontFunc,
             IsTrueTypeFontAssetFileFunction _isTrueTypeFontAssetFileFunc,
             IsTrueTypeFontByteBufferFunction _isTrueTypeFontByteBufferFunc)
-            : loadTrueTypeFontAssetFileFunc(_loadTrueTypeFontAssetFileFunc)
-            , loadTrueTypeFontByteBufferFunc(_loadTrueTypeFontByteBufferFunc)
+            : createTrueTypeFontFunc(createTrueTypeFontFunc)
             , isTrueTypeFontAssetFileFunc(_isTrueTypeFontAssetFileFunc)
             , isTrueTypeFontByteBufferFunc(_isTrueTypeFontByteBufferFunc)
         {}
 
-        LoadTrueTypeFontAssetFileFunction loadTrueTypeFontAssetFileFunc = nullptr;
-        LoadTrueTypeFontByteBufferFunction loadTrueTypeFontByteBufferFunc = nullptr;
+        CreateTrueTypeFontFunction createTrueTypeFontFunc = nullptr;
         IsTrueTypeFontAssetFileFunction isTrueTypeFontAssetFileFunc = nullptr;
         IsTrueTypeFontByteBufferFunction isTrueTypeFontByteBufferFunc = nullptr;
     };
@@ -174,8 +170,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        TrueTypeFontPtr createTrueTypeFont(
-            AssetFilePtr const& _assetFile);
+        bool isTrueTypeFontSupported();
+
+        //////////////////////////////////////////
+        TrueTypeFontPtr createTrueTypeFont();
 
 
         //////////////////////////////////////////

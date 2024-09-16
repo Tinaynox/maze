@@ -39,10 +39,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_TTF_API bool LoadTTF(AssetFilePtr const& _file, TrueTypeFontPtr& _font);
-
-    //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_TTF_API bool LoadTTF(ByteBufferPtr const& _fileData, TrueTypeFontPtr& _font);
+    MAZE_PLUGIN_LOADER_TTF_API TrueTypeFontPtr CreateTrueTypeFont();
 
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_TTF_API bool IsTTFFile(AssetFilePtr const& _file);

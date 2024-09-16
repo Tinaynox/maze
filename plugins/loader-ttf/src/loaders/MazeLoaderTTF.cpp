@@ -33,21 +33,9 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_TTF_API bool LoadTTF(AssetFilePtr const& _file, TrueTypeFontPtr& _font)
+    MAZE_PLUGIN_LOADER_TTF_API TrueTypeFontPtr CreateTrueTypeFont()
     {
-        MAZE_PROFILE_EVENT("LoadTTF (AssetFilePtr)");
-
-        _font = TrueTypeFontFreetype::Create(_file);
-        return _font != nullptr;
-    }
-
-    //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_TTF_API bool LoadTTF(ByteBufferPtr const& _fileData, TrueTypeFontPtr& _font)
-    {
-        MAZE_PROFILE_EVENT("LoadTTF (ByteBufferPtr)");
-
-        _font = TrueTypeFontFreetype::Create(*_fileData.get());
-        return _font != nullptr;
+        return TrueTypeFontFreetype::Create();
     }
 
     //////////////////////////////////////////

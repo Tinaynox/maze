@@ -83,7 +83,10 @@ namespace Maze
                 [](AssetUnitPtr const& _assetUnit)
                 {
                     if (_assetUnit->getClassUID() == ClassInfo<AssetUnitTrueTypeFont>::UID())
-                        _assetUnit->castRaw<AssetUnitTrueTypeFont>()->initTrueTypeFont();
+                    {
+                        if (TrueTypeFontManager::GetInstancePtr() && TrueTypeFontManager::GetInstancePtr()->isTrueTypeFontSupported())
+                            _assetUnit->castRaw<AssetUnitTrueTypeFont>()->initTrueTypeFont();
+                    }
                 });
         }
 
@@ -132,10 +135,11 @@ namespace Maze
         if (!assetFile)
             return nullPointer;
 
-        TrueTypeFontPtr font = createTrueTypeFont(assetFile);
+        TrueTypeFontPtr font = createTrueTypeFont();
         if (!font)
             return nullPointer;
 
+        font->loadFromAssetFile(assetFile);
         font->setName(_trueTypeFont.str);
 
         TrueTypeFontLibraryData* data = addTrueTypeFontToLibrary(font);
@@ -185,14 +189,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    TrueTypeFontPtr TrueTypeFontManager::createTrueTypeFont(
-        AssetFilePtr const& _assetFile)
+    bool TrueTypeFontManager::isTrueTypeFontSupported()
     {
-        MAZE_WARNING_RETURN_VALUE_IF(!m_trueTypeFontLoader.loadTrueTypeFontAssetFileFunc, nullptr, "There is no TTF loader. Loading is not possible.");
+        return m_trueTypeFontLoader.createTrueTypeFontFunc != nullptr;
+    }
 
-        TrueTypeFontPtr font;
-        m_trueTypeFontLoader.loadTrueTypeFontAssetFileFunc(_assetFile, font);
-        return font;
+    //////////////////////////////////////////
+    TrueTypeFontPtr TrueTypeFontManager::createTrueTypeFont()
+    {
+        MAZE_WARNING_RETURN_VALUE_IF(!isTrueTypeFontSupported(), nullptr, "There is no TTF loader. Loading is not possible.");
+        return m_trueTypeFontLoader.createTrueTypeFontFunc();
     }
 
     //////////////////////////////////////////

@@ -142,7 +142,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static TrueTypeFontPtr Create(
-            AssetFilePtr const& _assetFile);
+            AssetFilePtr const& _assetFile = nullptr);
 
         //////////////////////////////////////////
         virtual ~TrueTypeFont();

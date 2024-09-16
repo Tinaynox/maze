@@ -51,7 +51,14 @@ namespace Maze
     TrueTypeFontPtr TrueTypeFont::Create(
         AssetFilePtr const& _assetFile)
     {
-        return TrueTypeFontManager::GetInstancePtr()->createTrueTypeFont(_assetFile);
+        TrueTypeFontPtr font = TrueTypeFontManager::GetInstancePtr()->createTrueTypeFont();
+        if (!font)
+            return nullptr;
+
+        if (_assetFile)
+            font->loadFromAssetFile(_assetFile);
+
+        return font;
     }
 
     //////////////////////////////////////////

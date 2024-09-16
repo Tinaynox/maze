@@ -114,8 +114,7 @@ namespace Maze
     {
         TrueTypeFontManager::GetInstancePtr()->setTrueTypeFontLoader(
             TrueTypeFontLoaderData(
-                (LoadTrueTypeFontAssetFileFunction)&LoadTTF,
-                (LoadTrueTypeFontByteBufferFunction)&LoadTTF,
+                (CreateTrueTypeFontFunction)&CreateTrueTypeFont,
                 (IsTrueTypeFontAssetFileFunction)&IsTTFFile,
                 (IsTrueTypeFontByteBufferFunction)&IsTTFFile));
     }
