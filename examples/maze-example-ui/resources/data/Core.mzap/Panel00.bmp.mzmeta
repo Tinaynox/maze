@@ -1,8 +1,16 @@
-sliceBorder
+rescaleDisabled:Bool = true
+
+assetUnits
 {
-    left:F32 = 40
-    bottom:F32 = 40
-    right:F32 = 40
-    top:F32 = 40
+  texture2d{}
+  sprite
+  {
+    sliceBorder
+    {
+        left:F32 = 40
+        bottom:F32 = 40
+        right:F32 = 40
+        top:F32 = 40
+    }
+  }
 }
-rescale_disabled:Bool = true

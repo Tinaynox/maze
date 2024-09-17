@@ -37,7 +37,7 @@ class ResourcePackageScaler:
         self.src_parameters = data_block.DataBlock.load_text_file(src_info_file_path)
 
         self.rescale_enabled = True
-        if self.src_parameters.get_param_value('rescale_disabled', False):
+        if self.src_parameters.get_param_value('rescaleDisabled', False):
             self.rescale_enabled = False
 
         def it_file_function(full_path, file_name):
@@ -78,7 +78,7 @@ class ResourcePackageScaler:
                 if is_texture:
                     rescale_enabled = self.rescale_enabled
 
-                    if parameters.get_param_value('rescale_disabled', False):
+                    if parameters.get_param_value('rescaleDisabled', False):
                         rescale_enabled = False
 
                     if os.path.exists(info_file_path):
