@@ -233,7 +233,7 @@ namespace Maze
     //////////////////////////////////////////
     void AssetFile::addAssetUnit(AssetUnitPtr const& _assetUnit)
     {
-        if (_assetUnit->getAssetUnitId() == c_invalidAssetUnitId)
+        if (_assetUnit->getAssetUnitId() == c_invalidAssetUnitId && AssetUnitManager::GetInstancePtr()->getGenerateIdsForNewAssetUnits())
             _assetUnit->setAssetUnitId(AssetUnitManager::GetInstancePtr()->generateAssetUnitId());
         AssetUnitManager::GetInstancePtr()->addAssetUnit(_assetUnit);
 

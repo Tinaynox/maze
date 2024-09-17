@@ -78,6 +78,8 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
     Maze::EngineConfig engineConfig;
     engineConfig.commandLineArguments = commandLineArguments;
     engineConfig.projectName = "Maze Editor";
+    engineConfig.params[MAZE_HCS("assetConfig")].setBool(MAZE_HCS("generateIdsForNewAssetFiles"), true);
+    engineConfig.params[MAZE_HCS("assetConfig")][MAZE_HCS("assetUnitConfig")].setBool(MAZE_HCS("generateIdsForNewAssetUnits"), true);
 
     {
         Maze::EditorPtr editor = Maze::Editor::Create(engineConfig);

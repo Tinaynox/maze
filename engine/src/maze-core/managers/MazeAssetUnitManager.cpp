@@ -60,6 +60,8 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetUnitManager::init(DataBlock const& _config)
     {    
+        m_generateIdsForNewAssetUnits =
+            _config.getBool(MAZE_HCS("generateIdsForNewAssetUnits"), m_generateIdsForNewAssetUnits);
 
         return true;
     }

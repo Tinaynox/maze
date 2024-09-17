@@ -100,6 +100,9 @@ namespace Maze
         static inline AssetUnitManager& GetInstance() { return *s_instance; }
 
 
+        //////////////////////////////////////////
+        inline bool getGenerateIdsForNewAssetUnits() const { return m_generateIdsForNewAssetUnits; }
+
     public:
         MultiDelegate<AssetUnitPtr const&> eventAssetUnitAdded;
         MultiDelegate<AssetUnitId, AssetUnitPtr> eventAssetUnitWillBeRemoved;
@@ -119,6 +122,8 @@ namespace Maze
     protected:
         StringKeyMap<AssetUnitProcessor> m_assetUnitProcessors;
         UnorderedMap<AssetUnitId, AssetUnitPtr> m_assetUnitsById;
+
+        bool m_generateIdsForNewAssetUnits = false;
     };
 
 

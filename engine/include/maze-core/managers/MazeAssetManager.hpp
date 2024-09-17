@@ -262,6 +262,10 @@ namespace Maze
         //////////////////////////////////////////
         AssetFileId generateAssetFileId() const;
 
+
+        //////////////////////////////////////////
+        inline bool getGenerateIdsForNewAssetFiles() const { return m_generateIdsForNewAssetFiles; }
+
     public:
         MultiDelegate<Path const&> eventAssetsDirectoryPathAdded;
         MultiDelegate<Path const&> eventAssetsDirectoryPathRemoved;
@@ -318,6 +322,9 @@ namespace Maze
         Map<AssetFilePtr, UnixTime> m_assetFilesUpdateTimeUTC;
 
         StringKeyMap<FileChildrenProcessor> m_fileChildrenProcessors;
+
+
+        bool m_generateIdsForNewAssetFiles = false;
     };
 
 

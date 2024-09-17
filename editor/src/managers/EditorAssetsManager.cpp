@@ -291,7 +291,7 @@ namespace Maze
         if (_assetFile->getMetaClass()->isInheritedFrom<AssetDirectory>())
             return;
 
-        if (_assetFile->getAssetFileId() == c_invalidAssetFileId)
+        if (_assetFile->getAssetFileId() == c_invalidAssetFileId && AssetManager::GetInstancePtr()->getGenerateIdsForNewAssetFiles())
         {
             _assetFile->setAssetFileId(AssetManager::GetInstancePtr()->generateAssetFileId());
             AssetManager::GetInstancePtr()->updateAndSaveMetaData(_assetFile);

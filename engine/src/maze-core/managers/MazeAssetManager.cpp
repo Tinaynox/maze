@@ -82,6 +82,9 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetManager::init(DataBlock const& _config)
     {
+        m_generateIdsForNewAssetFiles =
+            _config.getBool(MAZE_HCS("generateIdsForNewAssetFiles"), m_generateIdsForNewAssetFiles);
+
         AssetUnitManager::Initialize(
             m_assetUnitManager,
             _config.getDataBlock(MAZE_HCS("assetUnitConfig"), DataBlock::c_empty));
