@@ -123,7 +123,7 @@ namespace Maze
             AssetManager::GetInstancePtr()->updateAssets();
 
             AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(newMaterialFullPath);
-            if (assetFile && MaterialManager::GetCurrentInstance()->getMaterial(assetFile))
+            if (assetFile && MaterialManager::GetCurrentInstance()->getOrLoadMaterial(assetFile))
             {
                 SelectionManager::GetInstancePtr()->selectObject(assetFile);
                 _controller->setAssetFileRename(assetFile, true);

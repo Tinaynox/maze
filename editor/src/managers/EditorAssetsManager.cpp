@@ -159,7 +159,7 @@ namespace Maze
                 AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_event->getMaterialName());
                 if (assetFile)
                 {
-                    MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getMaterial(_event->getMaterialName());
+                    MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(_event->getMaterialName());
                     if (material)
                         material->saveToFile(assetFile->getFullPath());
                 }
@@ -171,7 +171,7 @@ namespace Maze
                 AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_event->getTextureName());
                 if (assetFile)
                 {
-                    Texture2DPtr const& texture = TextureManager::GetCurrentInstancePtr()->getTexture2D(_event->getTextureName());
+                    Texture2DPtr const& texture = TextureManager::GetCurrentInstancePtr()->getOrLoadTexture2D(_event->getTextureName());
                     if (texture)
                     {
                         // #TODO: Rework
