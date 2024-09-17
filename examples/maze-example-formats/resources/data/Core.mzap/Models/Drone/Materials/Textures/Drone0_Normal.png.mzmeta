@@ -1,2 +1,8 @@
-minFilter:String = LinearMipmapLinear
-magFilter:String = Linear
+assetUnits
+{
+  texture2d
+  {
+    minFilter:String = LinearMipmapLinear
+    magFilter:String = Linear
+  }
+}

@@ -1,5 +1,12 @@
-minFilter:String = LinearMipmapLinear
-magFilter:String = Linear
-wrapS:String = Repeat
-wrapT:String = Repeat
-anisotropyLevel:F32 = 16.0
+assetUnits
+{
+  texture2d
+  {
+    minFilter:String = LinearMipmapLinear
+    magFilter:String = Linear
+    wrapS:String = Repeat
+    wrapT:String = Repeat
+    anisotropyLevel:F32 = 16.0
+  }
+}
+

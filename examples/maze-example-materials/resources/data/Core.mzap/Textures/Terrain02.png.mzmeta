@@ -1,4 +1,10 @@
-minFilter:String = Linear
-magFilter:String = Linear
-wrapS:String = Repeat
-wrapT:String = Repeat
+assetUnits
+{
+  texture2d
+  {
+    minFilter:String = Linear
+    magFilter:String = Linear
+    wrapS:String = Repeat
+    wrapT:String = Repeat
+  }
+}
