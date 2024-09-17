@@ -223,9 +223,13 @@ namespace Maze
 
         setContextOpenGL(_shader->m_context);
 
-        if (m_assetFile)
+        AssetFilePtr assetFile;
+        if (AssetManager::GetInstancePtr())
+            assetFile = AssetManager::GetInstancePtr()->getAssetFile(_shader->getName());
+
+        if (assetFile)
         {
-            if (!loadFromAssetFile(m_assetFile))
+            if (!loadFromAssetFile(assetFile))
                 return false;
         }
         else
@@ -415,11 +419,7 @@ namespace Maze
         if (!compileGLShader(vertexShaderId, MAZE_GL_VERTEX_SHADER, completeVertexShader.c_str()))
         {
             Debug::LogError("Vertex shader compilation error!");
-            
-            if (m_assetFile)
-            {
-                Debug::LogError("File: %s", m_assetFile->getFileName().toUTF8().c_str());
-            }
+            Debug::LogError("Shader: %s", getName().c_str());
 
             Vector<String> words;
             StringHelper::SplitWords(completeVertexShader, words, '\n');
@@ -457,10 +457,7 @@ namespace Maze
         if (!compileGLShader(fragmentShaderId, MAZE_GL_FRAGMENT_SHADER, completeFragmentShader.c_str())) 
         {
              Debug::LogError("Fragment shader compilation error!");
-            if (m_assetFile)
-            {
-                Debug::LogError("File: %s", m_assetFile->getFileName().toUTF8().c_str());
-            }
+             Debug::LogError("Shader: %s", getName().c_str());
 
             Vector<String> words;
             StringHelper::SplitWords(completeFragmentShader, words, '\n');
@@ -516,14 +513,7 @@ namespace Maze
             String log = logForOpenGLProgram(m_programId);
             
             {
-                if (m_assetFile)
-                {
-                    Debug::LogError("File: %s", m_assetFile->getFileName().toUTF8().c_str());
-                }
-                else
-                {
-                    Debug::LogError("Vertex Shader:");
-                }
+                Debug::LogError("Vertex Shader (%s):", getName().c_str());
                 
                 Vector<String> words;
                 StringHelper::SplitWords(completeVertexShader, words, '\n');
@@ -531,10 +521,7 @@ namespace Maze
                     Debug::LogError("[%d]%s", i, words[i].c_str());
             }
             {
-                if (m_assetFile)
-                    Debug::LogError("File: %s", m_assetFile->getFileName().toUTF8().c_str());
-                else
-                    Debug::LogError("Fragment Shader:");
+                Debug::LogError("Fragment Shader (%s):", getName().c_str());
                 
                 Vector<String> words;
                 StringHelper::SplitWords(completeFragmentShader, words, '\n');
@@ -882,10 +869,12 @@ namespace Maze
     {
         if (m_programId == 0)
         {
-            if (m_assetFile)
+            ShaderLibraryData const* libraryData = m_renderSystemRaw->getShaderSystem()->getShaderLibraryData(
+                HashedCString(getName().c_str()));
+            if (libraryData && libraryData->callbacks.requestReload)
             {
-                Debug::log << "ShaderOpenGL<" << getName() << ">: reloading from asset file..." << endl;
-                loadFromAssetFile(m_assetFile);
+                Debug::log << "ShaderOpenGL<" << getName() << ">: reloading..." << endl;
+                libraryData->callbacks.requestReload(true);
                 applyCachedUniformVariants();
                 Debug::log << "ShaderOpenGL<" << getName() << ">: reloaded with id=" << m_programId << "." << endl;
             }
@@ -900,26 +889,6 @@ namespace Maze
                 Debug::log << "ShaderOpenGL<" << getName() << ">: reloaded with id=" << m_programId << "." << endl;
             }
         }
-
-        //for (auto& uniformCache : m_uniformsCache)
-        //{
-        //    ShaderUniformPtr const& uniform = uniformCache.second;
-
-        //    if (!uniform)
-        //        continue;
-
-        //    MZGLint uniformLocation = 0;
-        //    MAZE_GL_CALL(uniformLocation = mzglGetUniformLocation(m_programId, uniform->getName().c_str()));
-        //    uniform->castRaw<ShaderUniformOpenGL>()->setLocation(uniformLocation);
-
-        //    if (uniform->getType() == ShaderUniformType::UniformTexture2D ||
-        //        uniform->getType() == ShaderUniformType::UniformTextureCube)
-        //    {
-        //        uniform->castRaw<ShaderUniformOpenGL>()->setTextureIndex(-1);
-        //    }
-        //}
-
-        //assignUniformTextureIndexes();
     }
 
     //////////////////////////////////////////

@@ -150,14 +150,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Path const& RenderPass::getShaderAssetFileName() const
+    String const& RenderPass::getShaderName() const
     {
-        static Path nullValue;
+        static String nullValue;
 
         if (!m_shaderRef.getShader())
             return nullValue;
 
-        return m_shaderRef.getShader()->getAssetFileName();
+        return m_shaderRef.getShader()->getName();
 
     }
 

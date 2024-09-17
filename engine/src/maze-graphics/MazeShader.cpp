@@ -49,8 +49,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(Shader,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, name, String(), getName, setName),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(AssetFilePtr, assetFile, AssetFilePtr(), getAssetFile, setAssetFile));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, name, String(), getName, setName));
 
     //////////////////////////////////////////
     Shader* Shader::s_instancesList = nullptr;
@@ -482,18 +481,6 @@ namespace Maze
         uniform->upload(_matrices, _count);
     }
 
-    //////////////////////////////////////////
-    Path const& Shader::getAssetFileName()
-    {
-        static Path nullValue;
-
-        if (!m_assetFile)
-            return nullValue;
-
-        return m_assetFile->getFileName();
-    }
-
-
 
     //////////////////////////////////////////
     bool Shader::loadFromAssetFile(AssetFilePtr const& _assetFile)
@@ -503,7 +490,6 @@ namespace Maze
         if (!_assetFile)
             return false;
 
-        m_assetFile = _assetFile;
         setName(_assetFile->getFileName());
 
         ByteBufferPtr assetFileHeader = _assetFile->readHeaderAsByteBuffer(6);
@@ -709,7 +695,7 @@ namespace Maze
         }
         else
         {
-            MAZE_ERROR("%s: Invalid shader file syntax!", m_assetFile->getFileName().toUTF8().c_str());
+            MAZE_ERROR("%s: Invalid shader file syntax!", m_name.c_str());
         }
 
 
@@ -745,10 +731,10 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::reload()
     {
-        if (m_assetFile)
-        {
-            loadFromAssetFile(m_assetFile);
-        }
+        ShaderLibraryData const* libraryData = m_renderSystemRaw->getShaderSystem()->getShaderLibraryData(
+            HashedCString(getName().c_str()));
+        if (libraryData && libraryData->callbacks.requestReload)
+            libraryData->callbacks.requestReload(true);
     }
 
     //////////////////////////////////////////
@@ -820,10 +806,7 @@ namespace Maze
     //////////////////////////////////////////
     String Shader::toString() const
     {
-        if (getAssetFile())
-            return getAssetFile()->getFileName();
-        else
-            return getName();
+        return getName();
     }
 
     //////////////////////////////////////////
@@ -898,7 +881,7 @@ namespace Maze
         if (!m_shader)
             return String();
 
-        return m_shader->getAssetFile() ? static_cast<String>(m_shader->getAssetFileName()) : m_shader->getName();
+        return m_shader->toString();
     }
 
     //////////////////////////////////////////

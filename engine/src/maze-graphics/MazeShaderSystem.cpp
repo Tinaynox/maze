@@ -305,12 +305,18 @@ namespace Maze
     {
         for (AssetFilePtr const& file : _files)
         {
+            AssetUnitShaderPtr assetUnitShader = file->getAssetUnit<AssetUnitShader>();
+            if (!assetUnitShader)
+                continue;
+
+            Shader* shader = assetUnitShader->getShader().get();
+
             StringKeyMap<ShaderLibraryData>::iterator it = std::find_if(
                 m_shadersLibrary.begin(),
                 m_shadersLibrary.end(),
-                [file](Pair<String, ShaderLibraryData> const& _a) -> bool
+                [file, shader](Pair<String, ShaderLibraryData> const& _a) -> bool
                 {
-                    if (_a.second.shader->getShaderFile() == file)
+                    if (_a.second.shader.get() == shader)
                         return true;
 
                     return false;

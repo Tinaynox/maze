@@ -178,9 +178,6 @@ namespace Maze
         void setUniform(HashedCString _uniformName, TMat* _matrices, Size _count, bool _warningIfNotExists = false);
 
 
-        //////////////////////////////////////////
-        AssetFilePtr const& getShaderFile() const { return m_assetFile; }
-
 
         //////////////////////////////////////////
         virtual CString getLanguage() const MAZE_ABSTRACT;
@@ -197,14 +194,6 @@ namespace Maze
 
         //////////////////////////////////////////
         RenderSystem* getRenderSystemRaw() const { return m_renderSystemRaw; }
-
-
-        //////////////////////////////////////////
-        inline AssetFilePtr const& getAssetFile() const { return m_assetFile; }
-
-        //////////////////////////////////////////
-        Path const& getAssetFileName();
-
 
 
         //////////////////////////////////////////
@@ -338,8 +327,6 @@ namespace Maze
         //////////////////////////////////////////
         void clearUniformsCache();
 
-        //////////////////////////////////////////
-        void setAssetFile(AssetFilePtr const& _assetFile) { m_assetFile = _assetFile; }
 
         //////////////////////////////////////////
         bool processLoadShader(
@@ -350,8 +337,6 @@ namespace Maze
 
     protected:
         String m_name;
-
-        AssetFilePtr m_assetFile; // #TODO: Remove!!
 
         UnorderedMap<U32, ShaderUniformPtr> m_uniformsCache;
 
