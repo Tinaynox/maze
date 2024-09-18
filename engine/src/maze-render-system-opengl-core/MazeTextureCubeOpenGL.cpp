@@ -190,6 +190,12 @@ namespace Maze
             return false;
         }
 
+        if (!m_context || !m_context->isValid())
+        {
+            m_internalPixelFormat = PixelFormat::None;
+            return false;
+        }
+
         m_internalPixelFormat = _internalPixelFormat;
 
         

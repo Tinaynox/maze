@@ -109,9 +109,7 @@ namespace Maze
     {
         if (m_material)
         {
-            if (MaterialManager::GetCurrentInstance())
-                MaterialManager::GetCurrentInstance()->removeMaterialFromLibrary(m_material->getName());
-            m_material.reset();
+            
         }
 
         return true;

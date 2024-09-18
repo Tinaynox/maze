@@ -111,9 +111,7 @@ namespace Maze
     {
         if (m_trueTypeFont)
         {
-            if (TrueTypeFontManager::GetInstancePtr())
-                TrueTypeFontManager::GetInstancePtr()->removeTrueTypeFontFromLibrary(m_trueTypeFont->getName());
-            m_trueTypeFont.reset();
+            
         }
 
         return true;

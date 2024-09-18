@@ -200,23 +200,19 @@ namespace Maze
     //////////////////////////////////////////
     void FontMaterialManager::unloadAssetFontMaterials(Set<String> const& _tags)
     {
-        StringKeyMap<FontMaterialLibraryData>::iterator it = m_fontMaterialsLibrary.begin();
-        StringKeyMap<FontMaterialLibraryData>::iterator end = m_fontMaterialsLibrary.end();
-        for (; it != end; )
-        {
-            if (it->second.callbacks.hasAnyOfTags && it->second.callbacks.hasAnyOfTags(_tags))
-            {
-                it = m_fontMaterialsLibrary.erase(it);
-                end = m_fontMaterialsLibrary.end();
+        Vector<std::function<void(bool)>> unloadCallbacks;
 
-                if (it->second.callbacks.requestUnload)
-                    it->second.callbacks.requestUnload(true);
-            }
-            else
+        m_fontMaterialsLibrary.iterate(
+            [&](HashedCString _name, FontMaterialLibraryData const& _data)
             {
-                ++it;
-            }
-        }
+                if (_data.callbacks.hasAnyOfTags && _data.callbacks.hasAnyOfTags(_tags) && _data.callbacks.requestUnload)
+                    unloadCallbacks.push_back(_data.callbacks.requestUnload);
+
+                return true;
+            });
+
+        for (std::function<void(bool)> const& unloadCallback : unloadCallbacks)
+            unloadCallback(true);
     }
 
 

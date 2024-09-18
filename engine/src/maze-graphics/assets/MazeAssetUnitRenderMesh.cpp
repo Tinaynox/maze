@@ -109,9 +109,7 @@ namespace Maze
     {
         if (m_renderMesh)
         {
-            if (RenderMeshManager::GetCurrentInstancePtr())
-                RenderMeshManager::GetCurrentInstancePtr()->removeRenderMeshFromLibrary(m_renderMesh->getName());
-            m_renderMesh.reset();
+            m_renderMesh->clear();
         }
 
         return true;

@@ -110,9 +110,7 @@ namespace Maze
     {
         if (m_fontMaterial)
         {
-            if (FontMaterialManager::GetInstancePtr())
-                FontMaterialManager::GetInstancePtr()->removeFontMaterialFromLibrary(m_fontMaterial->getName());
-            m_fontMaterial.reset();
+            
         }
 
         return true;

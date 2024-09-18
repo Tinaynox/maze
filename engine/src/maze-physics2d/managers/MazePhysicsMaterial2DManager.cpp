@@ -219,23 +219,19 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsMaterial2DManager::unloadAssetPhysicsMaterial2Ds(Set<String> const& _tags)
     {
-        StringKeyMap<PhysicsMaterial2DLibraryData>::iterator it = m_materialsLibrary.begin();
-        StringKeyMap<PhysicsMaterial2DLibraryData>::iterator end = m_materialsLibrary.end();
-        for (; it != end; )
-        {
-            if (it->second.callbacks.hasAnyOfTags && it->second.callbacks.hasAnyOfTags(_tags))
-            {
-                it = m_materialsLibrary.erase(it);
-                end = m_materialsLibrary.end();
+        Vector<std::function<void(bool)>> unloadCallbacks;
 
-                if (it->second.callbacks.requestUnload)
-                    it->second.callbacks.requestUnload(true);
-            }
-            else
+        m_materialsLibrary.iterate(
+            [&](HashedCString _name, PhysicsMaterial2DLibraryData const& _data)
             {
-                ++it;
-            }
-        }
+                if (_data.callbacks.hasAnyOfTags && _data.callbacks.hasAnyOfTags(_tags) && _data.callbacks.requestUnload)
+                    unloadCallbacks.push_back(_data.callbacks.requestUnload);
+
+                return true;
+            });
+
+        for (std::function<void(bool)> const& unloadCallback : unloadCallbacks)
+            unloadCallback(true);
     }
     
 } // namespace Maze

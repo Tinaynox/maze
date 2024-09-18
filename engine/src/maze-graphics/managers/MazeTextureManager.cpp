@@ -768,46 +768,41 @@ namespace Maze
         MAZE_PROFILE_EVENT("TextureManager::unloadAssetTextures");
 
         {
-            StringKeyMap<Texture2DLibraryData>::iterator it = m_textures2DLibrary.begin();
-            StringKeyMap<Texture2DLibraryData>::iterator end = m_textures2DLibrary.end();
-            for (; it != end; )
-            {
-                if (it->second.callbacks.hasAnyOfTags && it->second.callbacks.hasAnyOfTags(_tags))
-                {
-                    if (_unloadedTextures2D)
-                        _unloadedTextures2D->push_back(it->second.texture);
+            Vector<std::function<void(bool)>> unloadCallbacks;
 
-                    it = m_textures2DLibrary.erase(it);
-                    end = m_textures2DLibrary.end();
-
-                    if (it->second.callbacks.requestUnload)
-                        it->second.callbacks.requestUnload(true);
-                }
-                else
+            m_textures2DLibrary.iterate(
+                [&](HashedCString _name, Texture2DLibraryData const& _data)
                 {
-                    ++it;
-                }
-            }
+                    if (_data.callbacks.hasAnyOfTags && _data.callbacks.hasAnyOfTags(_tags) && _data.callbacks.requestUnload)
+                    {
+                        if (_unloadedTextures2D)
+                            _unloadedTextures2D->push_back(_data.texture);
+
+                        unloadCallbacks.push_back(_data.callbacks.requestUnload);
+                    }
+
+                    return true;
+                });
+
+            for (std::function<void(bool)> const& unloadCallback : unloadCallbacks)
+                unloadCallback(true);
         }
         {
-            StringKeyMap<TextureCubeLibraryData>::iterator it = m_texturesCubeLibrary.begin();
-            StringKeyMap<TextureCubeLibraryData>::iterator end = m_texturesCubeLibrary.end();
-            for (; it != end; )
-            {
-                if (it->second.callbacks.hasAnyOfTags && it->second.callbacks.hasAnyOfTags(_tags))
-                {
-                    it = m_texturesCubeLibrary.erase(it);
-                    end = m_texturesCubeLibrary.end();
+            Vector<std::function<void(bool)>> unloadCallbacks;
 
-                    if (it->second.callbacks.requestUnload)
-                        it->second.callbacks.requestUnload(true);
-                }
-                else
+            m_texturesCubeLibrary.iterate(
+                [&](HashedCString _name, TextureCubeLibraryData const& _data)
                 {
-                    ++it;
-                }
-            }
+                    if (_data.callbacks.hasAnyOfTags && _data.callbacks.hasAnyOfTags(_tags) && _data.callbacks.requestUnload)
+                        unloadCallbacks.push_back(_data.callbacks.requestUnload);
+
+                    return true;
+                });
+
+            for (std::function<void(bool)> const& unloadCallback : unloadCallbacks)
+                unloadCallback(true);
         }
+
     }
 
     //////////////////////////////////////////

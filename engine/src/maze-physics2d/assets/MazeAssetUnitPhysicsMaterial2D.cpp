@@ -109,9 +109,7 @@ namespace Maze
     {
         if (m_physicsMaterial2D)
         {
-            if (PhysicsMaterial2DManager::GetInstancePtr())
-                PhysicsMaterial2DManager::GetInstancePtr()->removeMaterialFromLibrary(m_physicsMaterial2D->getName());
-            m_physicsMaterial2D.reset();
+            
         }
 
         return true;

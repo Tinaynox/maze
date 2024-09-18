@@ -113,9 +113,16 @@ namespace Maze
     {
         if (m_texture)
         {
-            if (TextureManager::GetCurrentInstancePtr())
-                TextureManager::GetCurrentInstancePtr()->removeTextureCubeFromLibrary(m_texture->getName().asHashedCString());
-            m_texture.reset();
+            PixelSheet2D pixelSheet[6] =
+            {
+                PixelSheet2D(Vec2S(1), ColorU32::c_green),
+                PixelSheet2D(Vec2S(1), ColorU32::c_green),
+                PixelSheet2D(Vec2S(1), ColorU32::c_green),
+                PixelSheet2D(Vec2S(1), ColorU32::c_green),
+                PixelSheet2D(Vec2S(1), ColorU32::c_green),
+                PixelSheet2D(Vec2S(1), ColorU32::c_green)
+            };
+            m_texture->loadTexture(pixelSheet);
         }
 
         return true;

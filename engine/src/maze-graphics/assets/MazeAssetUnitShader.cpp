@@ -109,9 +109,7 @@ namespace Maze
     {
         if (m_shader)
         {
-            if (ShaderSystem::GetCurrentInstancePtr())
-                ShaderSystem::GetCurrentInstancePtr()->removeShaderFromLibrary(m_shader);
-            m_shader.reset();
+            
         }
 
         return true;

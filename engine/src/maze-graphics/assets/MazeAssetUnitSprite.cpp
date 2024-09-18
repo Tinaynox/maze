@@ -123,9 +123,7 @@ namespace Maze
     {
         if (m_sprite)
         {
-            if (SpriteManager::GetCurrentInstance())
-                SpriteManager::GetCurrentInstance()->removeSpriteFromLibrary(m_sprite->getName());
-            m_sprite.reset();
+            m_sprite->set(nullptr);
         }
 
         return true;

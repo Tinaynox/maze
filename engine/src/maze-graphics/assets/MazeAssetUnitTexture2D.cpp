@@ -115,9 +115,7 @@ namespace Maze
     {
         if (m_texture)
         {
-            if (TextureManager::GetCurrentInstancePtr())
-                TextureManager::GetCurrentInstancePtr()->removeTexture2DFromLibrary(m_texture->getName().asHashedCString());
-            m_texture.reset();
+            m_texture->loadTexture(PixelSheet2D(Vec2S(1), ColorU32::c_green));
         }
 
         return true;
