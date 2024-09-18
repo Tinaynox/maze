@@ -123,7 +123,7 @@ namespace Maze
         StringKeyMap<AssetUnitProcessor> m_assetUnitProcessors;
         UnorderedMap<AssetUnitId, AssetUnitPtr> m_assetUnitsById;
 
-        bool m_generateIdsForNewAssetUnits = false;
+        bool m_generateIdsForNewAssetUnits = true;
     };
 
 
