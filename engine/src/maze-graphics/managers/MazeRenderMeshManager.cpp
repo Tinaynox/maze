@@ -393,6 +393,9 @@ namespace Maze
             {
                 it = m_renderMeshesLibrary.erase(it);
                 end = m_renderMeshesLibrary.end();
+
+                if (it->second.callbacks.requestUnload)
+                    it->second.callbacks.requestUnload(true);
             }
             else
             {

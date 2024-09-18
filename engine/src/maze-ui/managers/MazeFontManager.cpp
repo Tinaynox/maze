@@ -218,6 +218,9 @@ namespace Maze
             {
                 it = m_fontsLibrary.erase(it);
                 end = m_fontsLibrary.end();
+
+                if (it->second.callbacks.requestUnload)
+                    it->second.callbacks.requestUnload(true);
             }
             else
             {

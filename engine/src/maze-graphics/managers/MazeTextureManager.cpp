@@ -779,6 +779,9 @@ namespace Maze
 
                     it = m_textures2DLibrary.erase(it);
                     end = m_textures2DLibrary.end();
+
+                    if (it->second.callbacks.requestUnload)
+                        it->second.callbacks.requestUnload(true);
                 }
                 else
                 {
@@ -795,6 +798,9 @@ namespace Maze
                 {
                     it = m_texturesCubeLibrary.erase(it);
                     end = m_texturesCubeLibrary.end();
+
+                    if (it->second.callbacks.requestUnload)
+                        it->second.callbacks.requestUnload(true);
                 }
                 else
                 {

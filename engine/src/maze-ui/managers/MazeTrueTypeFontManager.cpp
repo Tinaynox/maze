@@ -212,6 +212,9 @@ namespace Maze
             {
                 it = m_trueTypeFontsLibrary.erase(it);
                 end = m_trueTypeFontsLibrary.end();
+
+                if (it->second.callbacks.requestUnload)
+                    it->second.callbacks.requestUnload(true);
             }
             else
             {

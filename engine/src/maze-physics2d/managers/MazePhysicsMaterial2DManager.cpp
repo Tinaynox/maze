@@ -227,6 +227,9 @@ namespace Maze
             {
                 it = m_materialsLibrary.erase(it);
                 end = m_materialsLibrary.end();
+
+                if (it->second.callbacks.requestUnload)
+                    it->second.callbacks.requestUnload(true);
             }
             else
             {
