@@ -166,9 +166,13 @@ namespace Maze
                     return false;
                 };
 
+            DataBlock info;
+            info.setU32(MAZE_HCS("auid"), getAssetUnitId());
+
             FontMaterialManager::GetInstancePtr()->addFontMaterialToLibrary(
                 m_fontMaterial,
-                callbacks);
+                callbacks,
+                info);
         }
 
         return m_fontMaterial;

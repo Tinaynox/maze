@@ -165,9 +165,13 @@ namespace Maze
                     return false;
                 };
 
+            DataBlock info;
+            info.setU32(MAZE_HCS("auid"), getAssetUnitId());
+
             RenderMeshManager::GetCurrentInstancePtr()->addRenderMeshToLibrary(
                 m_renderMesh,
-                callbacks);
+                callbacks,
+                info);
         }
 
         return m_renderMesh;

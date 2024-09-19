@@ -165,9 +165,13 @@ namespace Maze
                     return false;
                 };
 
+            DataBlock info;
+            info.setU32(MAZE_HCS("auid"), getAssetUnitId());
+
             PhysicsMaterial2DManager::GetInstancePtr()->addMaterialToLibrary(
                 m_physicsMaterial2D,
-                callbacks);
+                callbacks,
+                info);
         }
 
         return m_physicsMaterial2D;

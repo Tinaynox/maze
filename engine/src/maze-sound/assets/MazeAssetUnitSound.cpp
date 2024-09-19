@@ -164,9 +164,13 @@ namespace Maze
                     return false;
                 };
 
+            DataBlock info;
+            info.setU32(MAZE_HCS("auid"), getAssetUnitId());
+
             SoundManager::GetInstancePtr()->addSoundToLibrary(
                 m_sound,
-                callbacks);
+                callbacks,
+                info);
         }
 
         return m_sound;

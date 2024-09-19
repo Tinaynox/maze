@@ -182,9 +182,13 @@ namespace Maze
                     return false;
                 };
 
+            DataBlock info;
+            info.setU32(MAZE_HCS("auid"), getAssetUnitId());
+
             SpriteManager::GetCurrentInstance()->addSpriteToLibrary(
                 m_sprite,
-                callbacks);
+                callbacks,
+                info);
         }
 
         return m_sprite;

@@ -170,9 +170,13 @@ namespace Maze
                     return false;
                 };
 
+            DataBlock info;
+            info.setU32(MAZE_HCS("auid"), getAssetUnitId());
+
             TrueTypeFontManager::GetInstancePtr()->addTrueTypeFontToLibrary(
                 m_trueTypeFont,
-                callbacks);
+                callbacks,
+                info);
         }
 
         return m_trueTypeFont;

@@ -188,9 +188,13 @@ namespace Maze
                     return false;
                 };
 
+            DataBlock info;
+            info.setU32(MAZE_HCS("auid"), getAssetUnitId());
+
             TextureManager::GetCurrentInstancePtr()->addTextureToLibrary(
                 m_texture,
-                callbacks);
+                callbacks,
+                info);
         }
 
         return m_texture;

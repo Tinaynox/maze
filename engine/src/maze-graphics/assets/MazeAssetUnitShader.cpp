@@ -165,9 +165,13 @@ namespace Maze
                     return false;
                 };
 
+            DataBlock info;
+            info.setU32(MAZE_HCS("auid"), getAssetUnitId());
+
             ShaderSystem::GetCurrentInstancePtr()->addShaderToLibrary(
                 m_shader,
-                callbacks);
+                callbacks,
+                info);
         }
 
         return m_shader;
