@@ -55,10 +55,16 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitSound, AssetUnit);
         
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE static HashedCString GetDataBlockId() { return MAZE_HCS("sound"); }
+
     public:
 
         //////////////////////////////////////////
         virtual ~AssetUnitSound();
+
+        //////////////////////////////////////////
+        virtual HashedCString getDataBlockId() const MAZE_OVERRIDE { return GetDataBlockId(); }
 
         //////////////////////////////////////////
         static AssetUnitSoundPtr Create(

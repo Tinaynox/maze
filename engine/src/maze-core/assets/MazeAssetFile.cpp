@@ -84,6 +84,17 @@ namespace Maze
             _metaData.removeDataBlock(MAZE_HCS("tags"));
         else
             _metaData.setDataBlockAsSetString(MAZE_HCS("tags"), m_tags);
+
+        if (!m_assetUnits.empty())
+        {
+            DataBlock& assetUnitsBlock = _metaData[MAZE_HCS("assetUnits")];
+
+            // assetUnitsBlock.clear();
+        }
+        else
+        {
+            _metaData.removeDataBlock(MAZE_HCS("assetUnits"));
+        }
     }
 
     //////////////////////////////////////////

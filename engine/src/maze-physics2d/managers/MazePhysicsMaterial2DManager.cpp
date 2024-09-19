@@ -74,7 +74,7 @@ namespace Maze
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
-                MAZE_HCS("physicsMaterial2d"),
+                AssetUnitPhysicsMaterial2D::GetDataBlockId(),
                 [](AssetFilePtr const& _file, DataBlock const& _data)
                 {
                     return AssetUnitPhysicsMaterial2D::Create(_file, _data);

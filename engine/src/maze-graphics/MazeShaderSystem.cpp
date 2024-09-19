@@ -69,7 +69,7 @@ namespace Maze
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
-                MAZE_HCS("shader"),
+                AssetUnitShader::GetDataBlockId(),
                 [](AssetFilePtr const& _file, DataBlock const& _data)
                 {
                     return AssetUnitShader::Create(_file, _data);

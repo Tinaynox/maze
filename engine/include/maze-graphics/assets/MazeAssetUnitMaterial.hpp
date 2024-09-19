@@ -55,10 +55,16 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitMaterial, AssetUnit);
         
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE static HashedCString GetDataBlockId() { return MAZE_HCS("material"); }
+
     public:
 
         //////////////////////////////////////////
         virtual ~AssetUnitMaterial();
+
+        //////////////////////////////////////////
+        virtual HashedCString getDataBlockId() const MAZE_OVERRIDE { return GetDataBlockId(); }
 
         //////////////////////////////////////////
         static AssetUnitMaterialPtr Create(

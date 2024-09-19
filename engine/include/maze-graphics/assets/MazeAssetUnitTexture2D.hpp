@@ -55,10 +55,16 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitTexture2D, AssetUnit);
         
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE static HashedCString GetDataBlockId() { return MAZE_HCS("texture2d"); }
+
     public:
 
         //////////////////////////////////////////
         virtual ~AssetUnitTexture2D();
+
+        //////////////////////////////////////////
+        virtual HashedCString getDataBlockId() const MAZE_OVERRIDE { return GetDataBlockId(); }
 
         //////////////////////////////////////////
         static AssetUnitTexture2DPtr Create(

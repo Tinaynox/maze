@@ -109,13 +109,13 @@ namespace Maze
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
-                MAZE_HCS("texture2d"),
+                AssetUnitTexture2D::GetDataBlockId(),
                 [](AssetFilePtr const& _file, DataBlock const& _data)
                 {
                     return AssetUnitTexture2D::Create(_file, _data);
                 });
             AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
-                MAZE_HCS("textureCube"),
+                AssetUnitTextureCube::GetDataBlockId(),
                 [](AssetFilePtr const& _file, DataBlock const& _data)
                 {
                     return AssetUnitTextureCube::Create(_file, _data);

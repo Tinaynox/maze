@@ -102,7 +102,7 @@ namespace Maze
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
-                MAZE_HCS("material"),
+                AssetUnitMaterial::GetDataBlockId(),
                 [](AssetFilePtr const& _file, DataBlock const& _data)
             {
                 return AssetUnitMaterial::Create(_file, _data);

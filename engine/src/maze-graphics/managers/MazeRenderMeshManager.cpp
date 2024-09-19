@@ -95,7 +95,7 @@ namespace Maze
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
-                MAZE_HCS("renderMesh"),
+                AssetUnitRenderMesh::GetDataBlockId(),
                 [](AssetFilePtr const& _file, DataBlock const& _data)
             {
                 return AssetUnitRenderMesh::Create(_file, _data);

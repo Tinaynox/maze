@@ -86,6 +86,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual ~AssetUnit();
 
+        //////////////////////////////////////////
+        virtual HashedCString getDataBlockId() const MAZE_ABSTRACT;
+
 
         //////////////////////////////////////////
         inline AssetUnitId getAssetUnitId() const { return m_auid; }
