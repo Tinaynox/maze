@@ -457,11 +457,12 @@ namespace Maze
     //////////////////////////////////////////
     Texture2DLibraryData* TextureManager::addTextureToLibrary(
         Texture2DPtr const& _texture,
-        TextureLibraryDataCallbacks const& _callbacks)
+        TextureLibraryDataCallbacks const& _callbacks,
+        DataBlock const& _info)
     {
         auto it2 = m_textures2DLibrary.insert(
             _texture->getName(),
-            { _texture, _callbacks });
+            { _texture, _callbacks, _info });
 
         return it2;
     }
@@ -710,11 +711,12 @@ namespace Maze
     //////////////////////////////////////////
     TextureCubeLibraryData* TextureManager::addTextureToLibrary(
         TextureCubePtr const& _texture,
-        TextureLibraryDataCallbacks const& _callbacks)
+        TextureLibraryDataCallbacks const& _callbacks,
+        DataBlock const& _info)
     {
         auto it2 = m_texturesCubeLibrary.insert(
             _texture->getName(),
-            { _texture, _callbacks });
+            { _texture, _callbacks, _info });
 
         return it2;
     }

@@ -30,9 +30,11 @@
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-sound/MazeSound.hpp"
 #include "maze-sound/loaders/MazeLoaderWAV.hpp"
+#include "maze-sound/assets/MazeAssetUnitSound.hpp"
 #include "maze-core/system/MazeTimer.hpp"
 
 
@@ -78,6 +80,38 @@ namespace Maze
                 (LoadSoundByteBufferFunction)&LoadWAV,
                 (IsSoundAssetFileFunction)&IsWAVFile,
                 (IsSoundByteBufferFunction)&IsWAVFile));
+
+
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
+                MAZE_HCS("sound"),
+                [](AssetFilePtr const& _file, DataBlock const& _data)
+                {
+                    return AssetUnitSound::Create(_file, _data);
+                });
+            
+
+            AssetUnitManager::GetInstancePtr()->eventAssetUnitAdded.subscribe(
+                [](AssetUnitPtr const& _assetUnit)
+                {
+                    if (_assetUnit->getClassUID() == ClassInfo<AssetUnitSound>::UID())
+                        _assetUnit->castRaw<AssetUnitSound>()->initSound();
+                });
+        }
+
+        if (AssetManager::GetInstancePtr())
+        {
+            AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(
+                [](AssetFilePtr const& _assetFile, HashedString const& _extension)
+            {
+                if (SoundManager::GetInstancePtr()->hasSoundLoader(_extension))
+                {
+                    if (!_assetFile->getAssetUnit<AssetUnitSound>())
+                        _assetFile->addAssetUnit(AssetUnitSound::Create(_assetFile));
+                }
+            });
+        }
 
         return true;
     }
@@ -141,7 +175,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SoundPtr const& SoundManager::getSound(HashedCString _assetFileName)
+    SoundPtr const& SoundManager::getOrLoadSound(
+        HashedCString _assetFileName,
+        bool _syncLoad)
     {
         static SoundPtr const nullPointer;
 
@@ -150,23 +186,35 @@ namespace Maze
 
         SoundLibraryData const* libraryData = getSoundLibraryData(_assetFileName);
         if (libraryData)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(_syncLoad);
+
             return libraryData->sound;
+        }
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_assetFileName);
         if (!assetFile)
             return nullPointer;
 
-        return getSound(assetFile);
+        return getOrLoadSound(assetFile);
     }
 
     //////////////////////////////////////////
-    SoundPtr const& SoundManager::getSound(AssetFilePtr const& _assetFile)
+    SoundPtr const& SoundManager::getOrLoadSound(
+        AssetFilePtr const& _assetFile,
+        bool _syncLoad)
     {
         static SoundPtr const nullPointer;
         
         SoundLibraryData const* libraryData = getSoundLibraryData(_assetFile->getFileName());
         if (libraryData)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(_syncLoad);
+
             return libraryData->sound;
+        }
 
         MAZE_WARNING_RETURN_VALUE_IF(!m_defaultSoundSystem, nullPointer, "SoundSystem is not available!");
 
@@ -179,7 +227,26 @@ namespace Maze
         SoundLibraryData* data = addSoundToLibrary(sound);
         if (data)
         {
-            data->assetFile = _assetFile;
+            data->callbacks.requestReload =
+                [
+                    assetFileWeak = (AssetFileWPtr)_assetFile,
+                    materialWeak = (SoundWPtr)sound
+                ](bool _immediate)
+                {
+                    AssetFilePtr assetFile = assetFileWeak.lock();
+                    SoundPtr sound = materialWeak.lock();
+                    if (assetFile && sound)
+                        sound->loadFromAssetFile(assetFile);
+                };
+            data->callbacks.hasAnyOfTags =
+                [assetFileWeak = (AssetFileWPtr)_assetFile](Set<String> const& _tags)
+                {
+                    if (AssetFilePtr assetFile = assetFileWeak.lock())
+                        return assetFile->hasAnyOfTags(_tags);
+
+                    return false;
+                };
+
             return data->sound;
         }
 
@@ -187,11 +254,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SoundLibraryData* SoundManager::addSoundToLibrary(SoundPtr const& _sound)
+    SoundLibraryData* SoundManager::addSoundToLibrary(
+        SoundPtr const& _sound,
+        SoundLibraryDataCallbacks const& _callbacks,
+        DataBlock const& _info)
     {
         auto it2 = m_soundsLibrary.insert(            
             _sound->getName(),
-            _sound);
+            { _sound, _callbacks, _info });
 
         return it2;
     }
@@ -270,7 +340,7 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("SoundManager::loadAssetSounds");
 
-        Vector<String> extensions = getSoundLoaderExtensions();
+        Vector<HashedString> extensions = getSoundLoaderExtensions();
         Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
             Set<String>(extensions.begin(), extensions.end()),
             [&](AssetFilePtr const& _assetFile)
@@ -281,7 +351,7 @@ namespace Maze
         for (AssetFilePtr const& assetFile : assetFiles)
         {
             String fileName = assetFile->getFileName();
-            getSound(fileName);
+            getOrLoadSound(fileName);
         }
     }
 
@@ -290,28 +360,30 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("SoundManager::unloadAssetSounds");
 
-        StringKeyMap<SoundLibraryData>::iterator it = m_soundsLibrary.begin();
-        StringKeyMap<SoundLibraryData>::iterator end = m_soundsLibrary.end();
-        for (; it != end; )
-        {
-            if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+        Vector<std::function<void(bool)>> unloadCallbacks;
+
+        m_soundsLibrary.iterate(
+            [&](HashedCString _name, SoundLibraryData const& _data)
             {
-                it = m_soundsLibrary.erase(it);
-                end = m_soundsLibrary.end();
-            }
-            else
-            {
-                ++it;
-            }
-        }
+                if (_data.callbacks.hasAnyOfTags && _data.callbacks.hasAnyOfTags(_tags) && _data.callbacks.requestUnload)
+                    unloadCallbacks.push_back(_data.callbacks.requestUnload);
+
+                return true;
+            });
+
+        for (std::function<void(bool)> const& unloadCallback : unloadCallbacks)
+            unloadCallback(true);
     }
 
     //////////////////////////////////////////
-    Vector<String> SoundManager::getSoundLoaderExtensions()
+    Vector<HashedString> SoundManager::getSoundLoaderExtensions()
     {
-        Vector<String> result;
-        for (auto const& soundLoaderData : m_soundLoaders)
-            result.push_back(soundLoaderData.first);
+        Vector<HashedString> result;
+        for (StringKeyMap<SoundLoaderData>::iterator it = m_soundLoaders.begin(),
+                                                     end = m_soundLoaders.end();
+                                                     it != end;
+                                                     ++it)
+                                                     result.push_back(HashedString(it.key()));
 
         return result;
     }
@@ -320,7 +392,8 @@ namespace Maze
     void SoundManager::reloadAllAssetSounds()
     {
         for (auto const& soundData : m_soundsLibrary)
-            soundData.second.sound->loadFromAssetFile(soundData.second.assetFile);
+            if (soundData.second.callbacks.requestReload)
+                soundData.second.callbacks.requestReload(true);
     }
     
 } // namespace Maze

@@ -73,13 +73,16 @@ namespace Maze
         //////////////////////////////////////////
         FontLibraryData(
             FontPtr const& _font = nullptr,
-            FontLibraryDataCallbacks const& _callbacks = FontLibraryDataCallbacks())
+            FontLibraryDataCallbacks const& _callbacks = FontLibraryDataCallbacks(),
+            DataBlock const& _data = DataBlock::c_empty)
             : font(_font)
             , callbacks(_callbacks)
+            , data(_data)
         {}
 
         FontPtr font;
         FontLibraryDataCallbacks callbacks;
+        DataBlock data;
     };
 
 
@@ -131,7 +134,8 @@ namespace Maze
         //////////////////////////////////////////
         FontLibraryData* addFontToLibrary(
             FontPtr const& _font,
-            FontLibraryDataCallbacks const& _callbacks = FontLibraryDataCallbacks());
+            FontLibraryDataCallbacks const& _callbacks = FontLibraryDataCallbacks(),
+            DataBlock const& _info = DataBlock::c_empty);
 
         //////////////////////////////////////////
         void removeFontFromLibrary(HashedCString _fontName);

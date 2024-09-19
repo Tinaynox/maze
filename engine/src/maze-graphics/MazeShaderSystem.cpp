@@ -114,7 +114,8 @@ namespace Maze
     //////////////////////////////////////////
     ShaderLibraryData* ShaderSystem::addShaderToLibrary(
         ShaderPtr const& _shader,
-        ShaderLibraryDataCallbacks const& _callbacks)
+        ShaderLibraryDataCallbacks const& _callbacks,
+        DataBlock const& _info)
     {
         if (!_shader)
             return nullptr;
@@ -136,7 +137,7 @@ namespace Maze
         
         return m_shadersLibrary.insert(
             name,
-            { _shader, _callbacks });
+            { _shader, _callbacks, _info });
     }
 
     //////////////////////////////////////////

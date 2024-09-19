@@ -324,11 +324,12 @@ namespace Maze
     //////////////////////////////////////////
     RenderMeshLibraryData* RenderMeshManager::addRenderMeshToLibrary(
         RenderMeshPtr const& _renderMesh,
-        RenderMeshLibraryDataCallbacks const& _callbacks)
+        RenderMeshLibraryDataCallbacks const& _callbacks,
+        DataBlock const& _info)
     {
         auto it2 = m_renderMeshesLibrary.insert(
             _renderMesh->getName(),
-            { _renderMesh, _callbacks });
+            { _renderMesh, _callbacks, _info });
         return it2;
     }
 

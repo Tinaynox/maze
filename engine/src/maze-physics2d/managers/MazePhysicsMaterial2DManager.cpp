@@ -202,11 +202,12 @@ namespace Maze
     //////////////////////////////////////////
     PhysicsMaterial2DLibraryData* PhysicsMaterial2DManager::addMaterialToLibrary(
         PhysicsMaterial2DPtr const& _physicsMaterial2D,
-        PhysicsMaterial2DLibraryDataCallbacks const& _callbacks)
+        PhysicsMaterial2DLibraryDataCallbacks const& _callbacks,
+        DataBlock const& _info)
     {
         auto it2 = m_materialsLibrary.insert(
             _physicsMaterial2D->getName(),
-            { _physicsMaterial2D, _callbacks });
+            { _physicsMaterial2D, _callbacks, _info });
         return it2;
     }
 

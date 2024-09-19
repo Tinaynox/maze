@@ -70,7 +70,7 @@ namespace Maze
         F32 _volume)
         : m_volume(_volume)
     {
-        SoundPtr const& sound = SoundManager::GetInstancePtr()->getSound(_soundName);
+        SoundPtr const& sound = SoundManager::GetInstancePtr()->getOrLoadSound(_soundName);
         addSound(sound);
     }
 
@@ -81,10 +81,10 @@ namespace Maze
         F32 _volume)
         : m_volume(_volume)
     {
-        SoundPtr const& sound00 = SoundManager::GetInstancePtr()->getSound(_soundName00);
+        SoundPtr const& sound00 = SoundManager::GetInstancePtr()->getOrLoadSound(_soundName00);
         addSound(sound00);
 
-        SoundPtr const& sound01 = SoundManager::GetInstancePtr()->getSound(_soundName01);
+        SoundPtr const& sound01 = SoundManager::GetInstancePtr()->getOrLoadSound(_soundName01);
         addSound(sound01);
     }
 
@@ -102,7 +102,7 @@ namespace Maze
         sounds.resize(_value.size());
         for (Size i = 0, in = _value.size(); i != in; ++i)
         {
-            sounds[i] = SoundManager::GetInstancePtr()->getSound(_value[i]);
+            sounds[i] = SoundManager::GetInstancePtr()->getOrLoadSound(_value[i]);
         }
         setSounds(sounds);
     }

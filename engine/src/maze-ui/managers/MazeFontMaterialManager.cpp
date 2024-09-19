@@ -169,11 +169,12 @@ namespace Maze
     //////////////////////////////////////////
     FontMaterialLibraryData* FontMaterialManager::addFontMaterialToLibrary(
         FontMaterialPtr const& _trueTypeFont,
-        FontMaterialLibraryDataCallbacks const& _callbacks)
+        FontMaterialLibraryDataCallbacks const& _callbacks,
+        DataBlock const& _info)
     {
         auto it2 = m_fontMaterialsLibrary.insert(
             _trueTypeFont->getName(),
-            { _trueTypeFont, _callbacks });
+            { _trueTypeFont, _callbacks, _info });
         return it2;
     }
 

@@ -83,13 +83,16 @@ namespace Maze
         //////////////////////////////////////////
         SpriteLibraryData(
             SpritePtr const& _sprite = nullptr,
-            SpriteLibraryDataCallbacks const& _callbacks = SpriteLibraryDataCallbacks())
+            SpriteLibraryDataCallbacks const& _callbacks = SpriteLibraryDataCallbacks(),
+            DataBlock const& _data = DataBlock::c_empty)
             : sprite(_sprite)
             , callbacks(_callbacks)
+            , data(_data)
         {}
 
         SpritePtr sprite;
         SpriteLibraryDataCallbacks callbacks;
+        DataBlock data;
     };
 
 
@@ -149,7 +152,8 @@ namespace Maze
         //////////////////////////////////////////
         SpriteLibraryData* addSpriteToLibrary(
             SpritePtr const& _sprite,
-            SpriteLibraryDataCallbacks const& _callbacks = SpriteLibraryDataCallbacks());
+            SpriteLibraryDataCallbacks const& _callbacks = SpriteLibraryDataCallbacks(),
+            DataBlock const& _info = DataBlock::c_empty);
 
         //////////////////////////////////////////
         void removeSpriteFromLibrary(HashedCString _spriteName);

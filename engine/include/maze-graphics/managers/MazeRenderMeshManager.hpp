@@ -89,13 +89,16 @@ namespace Maze
         //////////////////////////////////////////
         RenderMeshLibraryData(
             RenderMeshPtr const& _renderMesh = nullptr,
-            RenderMeshLibraryDataCallbacks const& _callbacks = RenderMeshLibraryDataCallbacks())
+            RenderMeshLibraryDataCallbacks const& _callbacks = RenderMeshLibraryDataCallbacks(),
+            DataBlock const& _data = DataBlock::c_empty)
             : renderMesh(_renderMesh)
             , callbacks(_callbacks)
+            , data(_data)
         {}
 
         RenderMeshPtr renderMesh;
         RenderMeshLibraryDataCallbacks callbacks;
+        DataBlock data;
     };
 
 
@@ -175,7 +178,8 @@ namespace Maze
         //////////////////////////////////////////
         RenderMeshLibraryData* addRenderMeshToLibrary(
             RenderMeshPtr const& _renderMesh,
-            RenderMeshLibraryDataCallbacks const& _callbacks = RenderMeshLibraryDataCallbacks());
+            RenderMeshLibraryDataCallbacks const& _callbacks = RenderMeshLibraryDataCallbacks(),
+            DataBlock const& _info = DataBlock::c_empty);
 
         //////////////////////////////////////////
         void removeRenderMeshFromLibrary(HashedCString _renderMeshName);

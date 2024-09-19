@@ -96,13 +96,16 @@ namespace Maze
         //////////////////////////////////////////
         ShaderLibraryData(
             ShaderPtr const& _shader = nullptr,
-            ShaderLibraryDataCallbacks const& _callbacks = ShaderLibraryDataCallbacks())
+            ShaderLibraryDataCallbacks const& _callbacks = ShaderLibraryDataCallbacks(),
+            DataBlock const& _data = DataBlock::c_empty)
             : shader(_shader)
             , callbacks(_callbacks)
+            , data(_data)
         {}
 
         ShaderPtr shader;
         ShaderLibraryDataCallbacks callbacks;
+        DataBlock data;
     };
 
 
@@ -195,7 +198,8 @@ namespace Maze
         //////////////////////////////////////////
         ShaderLibraryData* addShaderToLibrary(
             ShaderPtr const& _shader,
-            ShaderLibraryDataCallbacks const& _callbacks = ShaderLibraryDataCallbacks());
+            ShaderLibraryDataCallbacks const& _callbacks = ShaderLibraryDataCallbacks(),
+            DataBlock const& _info = DataBlock::c_empty);
 
         //////////////////////////////////////////
         bool removeShaderFromLibrary(ShaderPtr const& _shader);

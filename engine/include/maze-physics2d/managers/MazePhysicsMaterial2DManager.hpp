@@ -69,13 +69,16 @@ namespace Maze
         //////////////////////////////////////////
         PhysicsMaterial2DLibraryData(
             PhysicsMaterial2DPtr const& _physicsMaterial2D = nullptr,
-            PhysicsMaterial2DLibraryDataCallbacks const& _callbacks = PhysicsMaterial2DLibraryDataCallbacks())
+            PhysicsMaterial2DLibraryDataCallbacks const& _callbacks = PhysicsMaterial2DLibraryDataCallbacks(),
+            DataBlock const& _data = DataBlock::c_empty)
             : physicsMaterial2D(_physicsMaterial2D)
             , callbacks(_callbacks)
+            , data(_data)
         {}
 
         PhysicsMaterial2DPtr physicsMaterial2D;
         PhysicsMaterial2DLibraryDataCallbacks callbacks;
+        DataBlock data;
     };
 
 
@@ -136,7 +139,8 @@ namespace Maze
         //////////////////////////////////////////
         PhysicsMaterial2DLibraryData* addMaterialToLibrary(
             PhysicsMaterial2DPtr const& _physicsMaterial2D,
-            PhysicsMaterial2DLibraryDataCallbacks const& _callbacks = PhysicsMaterial2DLibraryDataCallbacks());
+            PhysicsMaterial2DLibraryDataCallbacks const& _callbacks = PhysicsMaterial2DLibraryDataCallbacks(),
+            DataBlock const& _info = DataBlock::c_empty);
 
         //////////////////////////////////////////
         void removeMaterialFromLibrary(HashedCString _physicsMaterial2DName);

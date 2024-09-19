@@ -174,11 +174,12 @@ namespace Maze
     //////////////////////////////////////////
     TrueTypeFontLibraryData* TrueTypeFontManager::addTrueTypeFontToLibrary(
         TrueTypeFontPtr const& _trueTypeFont,
-        TrueTypeFontLibraryDataCallbacks const& _callbacks)
+        TrueTypeFontLibraryDataCallbacks const& _callbacks,
+        DataBlock const& _info)
     {
         auto it2 = m_trueTypeFontsLibrary.insert(
             _trueTypeFont->getName(),
-            { _trueTypeFont, _callbacks });
+            { _trueTypeFont, _callbacks, _info });
         return it2;
     }
 

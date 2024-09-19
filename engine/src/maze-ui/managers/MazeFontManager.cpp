@@ -179,11 +179,12 @@ namespace Maze
     //////////////////////////////////////////
     FontLibraryData* FontManager::addFontToLibrary(
         FontPtr const& _font,
-        FontLibraryDataCallbacks const& _callbacks)
+        FontLibraryDataCallbacks const& _callbacks,
+        DataBlock const& _info)
     {
         auto it2 = m_fontsLibrary.insert(
             _font->getName(),
-            { _font, _callbacks });
+            { _font, _callbacks, _info });
         return it2;
     }
 

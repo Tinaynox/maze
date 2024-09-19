@@ -180,13 +180,14 @@ namespace Maze
     //////////////////////////////////////////
     SpriteLibraryData* SpriteManager::addSpriteToLibrary(
         SpritePtr const& _sprite,
-        SpriteLibraryDataCallbacks const& _callbacks)
+        SpriteLibraryDataCallbacks const& _callbacks,
+        DataBlock const& _info)
     {
         MAZE_ERROR_IF(_sprite->getName().empty(), "Sprite with no name!");
 
         auto it2 = m_spritesLibrary.insert(
             _sprite->getName(),
-            { _sprite, _callbacks });
+            { _sprite, _callbacks, _info });
 
         return it2;
     }

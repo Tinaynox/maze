@@ -76,13 +76,16 @@ namespace Maze
         //////////////////////////////////////////
         TrueTypeFontLibraryData(
             TrueTypeFontPtr const& _trueTypeFont = nullptr,
-            TrueTypeFontLibraryDataCallbacks const& _callbacks = TrueTypeFontLibraryDataCallbacks())
+            TrueTypeFontLibraryDataCallbacks const& _callbacks = TrueTypeFontLibraryDataCallbacks(),
+            DataBlock const& _data = DataBlock::c_empty)
             : trueTypeFont(_trueTypeFont)
             , callbacks(_callbacks)
+            , data(_data)
         {}
 
         TrueTypeFontPtr trueTypeFont;
         TrueTypeFontLibraryDataCallbacks callbacks;
+        DataBlock data;
     };
 
 
@@ -157,7 +160,8 @@ namespace Maze
         //////////////////////////////////////////
         TrueTypeFontLibraryData* addTrueTypeFontToLibrary(
             TrueTypeFontPtr const& _trueTypeFont,
-            TrueTypeFontLibraryDataCallbacks const& _callbacks = TrueTypeFontLibraryDataCallbacks());
+            TrueTypeFontLibraryDataCallbacks const& _callbacks = TrueTypeFontLibraryDataCallbacks(),
+            DataBlock const& _info = DataBlock::c_empty);
 
         //////////////////////////////////////////
         void removeTrueTypeFontFromLibrary(HashedCString _fontName);

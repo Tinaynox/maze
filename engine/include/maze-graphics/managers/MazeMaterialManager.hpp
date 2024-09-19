@@ -100,13 +100,16 @@ namespace Maze
         //////////////////////////////////////////
         MaterialLibraryData(
             MaterialPtr const& _material = nullptr,
-            MaterialLibraryDataCallbacks const& _callbacks = MaterialLibraryDataCallbacks())
+            MaterialLibraryDataCallbacks const& _callbacks = MaterialLibraryDataCallbacks(),
+            DataBlock const& _data = DataBlock::c_empty)
             : material(_material)
             , callbacks(_callbacks)
+            , data(_data)
         {}
 
         MaterialPtr material;
         MaterialLibraryDataCallbacks callbacks;
+        DataBlock data;
     };
 
 
@@ -190,7 +193,8 @@ namespace Maze
         //////////////////////////////////////////
         MaterialLibraryData* addMaterialToLibrary(
             MaterialPtr const& _material,
-            MaterialLibraryDataCallbacks const& _callbacks = MaterialLibraryDataCallbacks());
+            MaterialLibraryDataCallbacks const& _callbacks = MaterialLibraryDataCallbacks(),
+            DataBlock const& _info = DataBlock::c_empty);
 
         //////////////////////////////////////////
         void removeMaterialFromLibrary(HashedCString _materialName);

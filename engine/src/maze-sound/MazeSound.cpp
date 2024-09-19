@@ -159,8 +159,8 @@ namespace Maze
     void Sound::reload()
     {
         SoundLibraryData const* libraryData = SoundManager::GetInstancePtr()->getSoundLibraryData(m_name.asHashedCString());
-        if (libraryData && libraryData->assetFile)
-            loadFromAssetFile(libraryData->assetFile);
+        if (libraryData && libraryData->callbacks.requestReload)
+            libraryData->callbacks.requestReload(true);
     }
 
     //////////////////////////////////////////
@@ -184,7 +184,7 @@ namespace Maze
         }
         else
         {
-            _value = SoundManager::GetInstancePtr()->getSound(_data);
+            _value = SoundManager::GetInstancePtr()->getOrLoadSound(_data);
         }
     }
 

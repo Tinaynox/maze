@@ -84,6 +84,19 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct SoundLibraryDataCallbacks
+    //
+    //////////////////////////////////////////
+    struct MAZE_SOUND_API SoundLibraryDataCallbacks
+    {
+        std::function<void(bool)> requestLoad;
+        std::function<void(bool)> requestUnload;
+        std::function<void(bool)> requestReload;
+        std::function<bool(Set<String> const&)> hasAnyOfTags;
+    };
+
+
+    //////////////////////////////////////////
     // Struct SoundLibraryData
     //
     //////////////////////////////////////////
@@ -92,13 +105,16 @@ namespace Maze
         //////////////////////////////////////////
         SoundLibraryData(
             SoundPtr const& _sound = nullptr,
-            AssetFilePtr const& _assetFile = nullptr)
+            SoundLibraryDataCallbacks const& _callbacks = SoundLibraryDataCallbacks(),
+            DataBlock const& _data = DataBlock::c_empty)
             : sound(_sound)
-            , assetFile(_assetFile)
+            , callbacks(_callbacks)
+            , data(_data)
         {}
 
         SoundPtr sound;
-        AssetFilePtr assetFile;
+        SoundLibraryDataCallbacks callbacks;
+        DataBlock data;
     };
 
 
@@ -148,16 +164,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        SoundPtr const& getSound(HashedCString _assetFileName);
+        SoundPtr const& getOrLoadSound(HashedCString _assetFileName, bool _syncLoad = true);
 
         //////////////////////////////////////////
-        inline SoundPtr const& getSound(String const& _assetFileName) { return getSound(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+        inline SoundPtr const& getOrLoadSound(String const& _assetFileName, bool _syncLoad = true) { return getOrLoadSound(MAZE_HASHED_CSTRING(_assetFileName.c_str()), _syncLoad); }
 
         //////////////////////////////////////////
-        inline SoundPtr const& getSound(CString _assetFileName) { return getSound(MAZE_HASHED_CSTRING(_assetFileName)); }
+        inline SoundPtr const& getOrLoadSound(CString _assetFileName, bool _syncLoad = true) { return getOrLoadSound(MAZE_HASHED_CSTRING(_assetFileName), _syncLoad); }
 
         //////////////////////////////////////////
-        SoundPtr const& getSound(AssetFilePtr const& _assetFile);
+        SoundPtr const& getOrLoadSound(
+            AssetFilePtr const& _assetFile,
+            bool _syncLoad = true);
+
 
         //////////////////////////////////////////
         String const& getSoundName(Sound const* _sound);
@@ -203,7 +222,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        Vector<String> getSoundLoaderExtensions();
+        Vector<HashedString> getSoundLoaderExtensions();
+
+        //////////////////////////////////////////
+        inline bool hasSoundLoader(HashedCString _extension)
+        {
+            return m_soundLoaders.find(_extension) != m_soundLoaders.end();
+        }
 
         //////////////////////////////////////////
         void reloadAllAssetSounds();
@@ -215,7 +240,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        SoundLibraryData* addSoundToLibrary(SoundPtr const& _sound);
+        SoundLibraryData* addSoundToLibrary(
+            SoundPtr const& _sound,
+            SoundLibraryDataCallbacks const& _callbacks = SoundLibraryDataCallbacks(),
+            DataBlock const& _info = DataBlock::c_empty);
 
     protected:
 

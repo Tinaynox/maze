@@ -582,11 +582,12 @@ namespace Maze
     //////////////////////////////////////////
     MaterialLibraryData* MaterialManager::addMaterialToLibrary(
         MaterialPtr const& _material,
-        MaterialLibraryDataCallbacks const& _callbacks)
+        MaterialLibraryDataCallbacks const& _callbacks,
+        DataBlock const& _info)
     {
         auto it2 = m_materialsLibrary.insert(
             _material->getName(),
-            { _material, _callbacks });
+            { _material, _callbacks, _info });
         return it2;
     }
 
@@ -624,18 +625,6 @@ namespace Maze
         for (AssetFilePtr const& assetFile : assetFiles)
         {
             getOrLoadMaterial(assetFile);
-            /*
-            if (m_materialsLibrary.find(assetFile->getFileName()) != m_materialsLibrary.end())
-                continue;
-
-            MaterialPtr material = Material::Create(assetFile);
-            material->setName(assetFile->getFileName());
-            MaterialLibraryData* libraryData = addMaterialToLibrary(material);
-            if (libraryData)
-            {
-                libraryData->assetFile = assetFile;
-            }
-            */
         }
     }
 

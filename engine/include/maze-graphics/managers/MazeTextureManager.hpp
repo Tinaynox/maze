@@ -131,13 +131,16 @@ namespace Maze
         //////////////////////////////////////////
         Texture2DLibraryData(
             Texture2DPtr const& _texture = nullptr,
-            TextureLibraryDataCallbacks const& _callbacks = TextureLibraryDataCallbacks())
+            TextureLibraryDataCallbacks const& _callbacks = TextureLibraryDataCallbacks(),
+            DataBlock const& _data = DataBlock::c_empty)
             : texture(_texture)
             , callbacks(_callbacks)
+            , data(_data)
         {}
 
         Texture2DPtr texture;
         TextureLibraryDataCallbacks callbacks;
+        DataBlock data;
     };
 
 
@@ -150,13 +153,16 @@ namespace Maze
         //////////////////////////////////////////
         TextureCubeLibraryData(
             TextureCubePtr const& _texture = nullptr,
-            TextureLibraryDataCallbacks const& _callbacks = TextureLibraryDataCallbacks())
+            TextureLibraryDataCallbacks const& _callbacks = TextureLibraryDataCallbacks(),
+            DataBlock const& _data = DataBlock::c_empty)
             : texture(_texture)
             , callbacks(_callbacks)
+            , data(_data)
         {}
 
         TextureCubePtr texture;
         TextureLibraryDataCallbacks callbacks;
+        DataBlock data;
     };
 
 
@@ -255,7 +261,8 @@ namespace Maze
         //////////////////////////////////////////
         Texture2DLibraryData* addTextureToLibrary(
             Texture2DPtr const& _texture,
-            TextureLibraryDataCallbacks const& _callbacks = TextureLibraryDataCallbacks());
+            TextureLibraryDataCallbacks const& _callbacks = TextureLibraryDataCallbacks(),
+            DataBlock const& _info = DataBlock::c_empty);
 
         //////////////////////////////////////////
         void removeTexture2DFromLibrary(HashedCString _textureName);
@@ -320,7 +327,8 @@ namespace Maze
         //////////////////////////////////////////
         TextureCubeLibraryData* addTextureToLibrary(
             TextureCubePtr const& _texture,
-            TextureLibraryDataCallbacks const& _callbacks = TextureLibraryDataCallbacks());
+            TextureLibraryDataCallbacks const& _callbacks = TextureLibraryDataCallbacks(),
+            DataBlock const& _info = DataBlock::c_empty);
 
         //////////////////////////////////////////
         void removeTextureCubeFromLibrary(HashedCString _textureName);
