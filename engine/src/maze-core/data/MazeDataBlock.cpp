@@ -566,7 +566,7 @@ namespace Maze
     //////////////////////////////////////////
     DataBlock::ParamIndex DataBlock::findParamIndex(SharedStringId _nameId) const
     {
-        if (m_paramsCount == 0 || _nameId < 0)
+        if (m_paramsCount == 0 || _nameId == 0)
             return -1;
 
         return FindParamIndex(_nameId, getParamsPtr(), getParamsEndPtr());
@@ -758,7 +758,7 @@ namespace Maze
     //////////////////////////////////////////
     String const& DataBlock::getString(ParamIndex _index) const
     {
-        String const nullValue;
+        static String const nullValue;
         return getString(_index, nullValue);
     }
 
@@ -766,13 +766,13 @@ namespace Maze
     String const& DataBlock::getString(HashedCString _name, String const& _defaultValue) const
     {
         SharedStringId nameId = getSharedStringId(_name);
-        return nameId < 0 ? _defaultValue : getStringByNameId(nameId, _defaultValue);
+        return nameId == 0 ? _defaultValue : getStringByNameId(nameId, _defaultValue);
     }
 
     //////////////////////////////////////////
     String const& DataBlock::getString(HashedCString _name) const
     {
-        String const nullValue;
+        static String const nullValue;
         return getString(_name, nullValue);
     }
 

@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/assets/MazeAssetUnit.hpp"
 
 
@@ -49,6 +50,12 @@ namespace Maze
     AssetUnitManager::~AssetUnitManager()
     {
         s_instance = nullptr;
+
+        if (EventManager::GetInstancePtr())
+        {
+            EventManager::GetInstancePtr()->unsubscribeEvent<AssetUnitIdChangedEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<AssetUnitNameChangedEvent>(this);
+        }
     }
 
     //////////////////////////////////////////
@@ -62,6 +69,12 @@ namespace Maze
     {    
         m_generateIdsForNewAssetUnits =
             _config.getBool(MAZE_HCS("generateIdsForNewAssetUnits"), m_generateIdsForNewAssetUnits);
+
+        if (EventManager::GetInstancePtr())
+        {
+            EventManager::GetInstancePtr()->subscribeEvent<AssetUnitIdChangedEvent>(this, &AssetUnitManager::notifyEvent);
+            EventManager::GetInstancePtr()->subscribeEvent<AssetUnitNameChangedEvent>(this, &AssetUnitManager::notifyEvent);
+        }
 
         return true;
     }
@@ -113,6 +126,10 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(_assetUnit->getAssetUnitId() == c_invalidAssetUnitId, "AssetUnitId is invalid!");
 
         m_assetUnitsById[_assetUnit->getAssetUnitId()] = _assetUnit;
+
+        if (!_assetUnit->getName().empty())
+            m_assetUnitsByName[_assetUnit->getName()] = _assetUnit;
+
         eventAssetUnitAdded(_assetUnit);
     }
 
@@ -122,8 +139,11 @@ namespace Maze
         auto it = m_assetUnitsById.find(_assetUnitId);
         if (it != m_assetUnitsById.end())
         {
+            HashedString name = it->second->getName();
+
             eventAssetUnitWillBeRemoved(_assetUnitId, it->second);
             m_assetUnitsById.erase(it);
+            m_assetUnitsByName.erase(name);
         }
     }
 
@@ -137,6 +157,41 @@ namespace Maze
             return it->second;
 
         return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    void AssetUnitManager::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+        if (_eventUID == ClassInfo<AssetUnitIdChangedEvent>::UID())
+        {
+            AssetUnitIdChangedEvent* evt = _event->castRaw<AssetUnitIdChangedEvent>();
+            auto it = m_assetUnitsById.find(evt->getPrevAssetUnitId());
+            if (it != m_assetUnitsById.end())
+            {
+                AssetUnitPtr assetUnit = std::move(it->second);
+                
+                m_assetUnitsById.erase(it);
+
+                if (evt->getNewAssetUnitId() != c_invalidAssetUnitId)
+                {
+                    m_assetUnitsById.emplace(
+                        std::piecewise_construct,
+                        std::forward_as_tuple(evt->getNewAssetUnitId()),
+                        std::forward_as_tuple(std::move(assetUnit)));
+                }
+                else
+                {
+                    MAZE_NOT_IMPLEMENTED
+                }
+            }
+        }
+        else
+        if (_eventUID == ClassInfo<AssetUnitNameChangedEvent>::UID())
+        {
+            AssetUnitNameChangedEvent* evt = _event->castRaw<AssetUnitNameChangedEvent>();
+
+            MAZE_NOT_IMPLEMENTED
+        }
     }
 
 } // namespace Maze

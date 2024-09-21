@@ -129,7 +129,7 @@ namespace Maze
 
         AssetFileId afid = _metaData.getU32(MAZE_HCS("afid"), c_invalidAssetFileId);
         if (afid != c_invalidAssetFileId)
-            setAssetFileId(afid);
+            setAssetFileId(afid);           
 
         updateAssetUnitsFromMetaData(_metaData);
     }

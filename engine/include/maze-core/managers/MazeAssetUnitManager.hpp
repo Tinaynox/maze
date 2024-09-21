@@ -47,6 +47,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(AssetUnitManager);
     MAZE_USING_SHARED_PTR(AssetFile);
     MAZE_USING_SHARED_PTR(AssetUnit);
+    MAZE_USING_SHARED_PTR(Event);
 
 
     //////////////////////////////////////////
@@ -59,6 +60,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_CORE_API AssetUnitManager
         : public SharedObject<AssetUnitManager>
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -116,12 +118,17 @@ namespace Maze
         virtual bool init(DataBlock const& _config);
 
 
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
     protected:
         static AssetUnitManager* s_instance;
         
     protected:
         StringKeyMap<AssetUnitProcessor> m_assetUnitProcessors;
+
         UnorderedMap<AssetUnitId, AssetUnitPtr> m_assetUnitsById;
+        StringKeyMap<AssetUnitPtr> m_assetUnitsByName;
 
         bool m_generateIdsForNewAssetUnits = true;
     };

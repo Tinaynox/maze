@@ -27,11 +27,17 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/assets/MazeAssetUnit.hpp"
 #include "maze-core/managers/MazeTaskManager.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AssetUnitIdChangedEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AssetUnitNameChangedEvent, Event);
+
 
     //////////////////////////////////////////
     // Class AssetUnit
@@ -59,14 +65,47 @@ namespace Maze
         m_data = _data;
 
         m_auid = m_data.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
+        m_name = HashedString(m_data.getString(MAZE_HCS("name"), _assetFile->getFileName()));
             
         return true;
     }
 
     //////////////////////////////////////////
+    void AssetUnit::setAssetUnitId(AssetUnitId _auid)
+    {
+        if (m_auid == _auid)
+            return;
+
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->broadcastEvent<AssetUnitIdChangedEvent>(this, m_auid, _auid);
+        
+        m_auid = _auid;
+    }
+
+    //////////////////////////////////////////
+    void AssetUnit::setName(HashedString const& _name)
+    {
+        if (m_name == _name)
+            return;
+
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->broadcastEvent<AssetUnitNameChangedEvent>(this, m_name, _name);
+
+        m_name = _name;
+    }
+
+    //////////////////////////////////////////
     void AssetUnit::updateDataFromAssetUnit(DataBlock& _metaData) const
     {
-        _metaData.setU32(MAZE_HCS("auid"), m_auid);
+        if (m_auid != c_invalidAssetUnitId)
+            _metaData.setU32(MAZE_HCS("auid"), m_auid);
+        else
+            _metaData.removeParam(MAZE_HCS("auid")); 
+
+        if (!m_name.empty())
+            _metaData.setString(MAZE_HCS("name"), m_name);
+        else
+            _metaData.removeParam(MAZE_HCS("name")); 
     }
 
     //////////////////////////////////////////

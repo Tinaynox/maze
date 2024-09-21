@@ -44,6 +44,7 @@
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
+#include "maze-core/events/MazeEvent.hpp"
 #include "maze-core/MazeObject.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-core/assets/MazeAssetUnitId.hpp"
@@ -65,6 +66,84 @@ namespace Maze
         Loaded,
         Error,
         Unloading,
+    };
+
+
+    //////////////////////////////////////////
+    // Class AssetUnitIdChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API AssetUnitIdChangedEvent
+        : public GenericEvent<AssetUnitIdChangedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitIdChangedEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        AssetUnitIdChangedEvent(
+            AssetUnit* _assetUnit = nullptr,
+            AssetUnitId _prevAssetUnitId = c_invalidAssetUnitId,
+            AssetUnitId _newAssetUnitId = c_invalidAssetUnitId)
+            : m_assetUnit(_assetUnit)
+            , m_prevAssetUnitId(_prevAssetUnitId)
+            , m_newAssetUnitId(_newAssetUnitId)
+        {}
+
+        //////////////////////////////////////////
+        inline AssetUnit* getAssetUnit() const { return m_assetUnit; }
+
+        //////////////////////////////////////////
+        inline AssetUnitId getPrevAssetUnitId() const { return m_prevAssetUnitId; }
+
+        //////////////////////////////////////////
+        inline AssetUnitId getNewAssetUnitId() const { return m_newAssetUnitId; }
+
+    private:
+        AssetUnit* m_assetUnit = nullptr;
+        AssetUnitId m_prevAssetUnitId = c_invalidAssetUnitId;
+        AssetUnitId m_newAssetUnitId = c_invalidAssetUnitId;
+    };
+
+
+    //////////////////////////////////////////
+    // Class AssetUnitNameChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API AssetUnitNameChangedEvent
+        : public GenericEvent<AssetUnitNameChangedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitNameChangedEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        AssetUnitNameChangedEvent(
+            AssetUnit* _assetUnit = nullptr,
+            HashedString const& _prevName = HashedString(),
+            HashedString const& _newName = HashedString())
+            : m_assetUnit(_assetUnit)
+            , m_prevName(_prevName)
+            , m_newName(_newName)
+        {}
+
+        //////////////////////////////////////////
+        inline AssetUnit* getAssetUnit() const { return m_assetUnit; }
+
+        //////////////////////////////////////////
+        inline HashedString const& getPrevName() const { return m_prevName; }
+
+        //////////////////////////////////////////
+        inline HashedString const& getNewName() const { return m_newName; }
+
+    private:
+        AssetUnit* m_assetUnit = nullptr;
+        HashedString m_prevName;
+        HashedString m_newName;
     };
 
 
@@ -94,7 +173,14 @@ namespace Maze
         inline AssetUnitId getAssetUnitId() const { return m_auid; }
 
         //////////////////////////////////////////
-        inline void setAssetUnitId(AssetUnitId _auid) { m_auid = _auid; }
+        void setAssetUnitId(AssetUnitId _auid);
+
+
+        //////////////////////////////////////////
+        inline HashedString const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        void setName(HashedString const& _name);
 
 
         //////////////////////////////////////////
@@ -154,6 +240,7 @@ namespace Maze
     
     protected:
         AssetUnitId m_auid = 0u;
+        HashedString m_name;
         AssetUnitLoadingState m_loadingState = AssetUnitLoadingState::None;
 
         AssetFileWPtr m_assetFile;
