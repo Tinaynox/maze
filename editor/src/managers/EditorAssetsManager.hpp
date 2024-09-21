@@ -64,6 +64,7 @@ namespace Maze
     //////////////////////////////////////////
     class EditorAssetsManager
         : public MultiDelegateCallbackReceiver
+        , public Updatable
     {
     public:
 
@@ -80,6 +81,9 @@ namespace Maze
         //////////////////////////////////////////
         static inline EditorAssetsManager& GetInstance() { return *s_instance; }
 
+
+        //////////////////////////////////////////
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
 
     protected:
 
@@ -108,8 +112,16 @@ namespace Maze
         //////////////////////////////////////////
         void fixAssetFile(AssetFilePtr const& _assetFile);
 
+        //////////////////////////////////////////
+        void fixAssetFileNow(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
+        void fixAssetFilesNow();
+
     protected:
         static EditorAssetsManager* s_instance;
+
+        Set<AssetFilePtr> m_assetFilessToFix;
     };
 
 

@@ -243,6 +243,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    AssetFilePtr const& AssetManager::getAssetFile(AssetFileId _id) const
+    {
+        static AssetFilePtr nullPtr;
+
+        UnorderedMap<AssetFileId, AssetFilePtr>::const_iterator it = m_assetFilesById.find(_id);
+        if (it == m_assetFilesById.end())
+            return nullPtr;
+
+        return (*it).second;
+    }
+
+    //////////////////////////////////////////
     AssetFilePtr const& AssetManager::getAssetFileByFileName(Path const& _fileName)
     {
         static AssetFilePtr nullPtr;
@@ -501,7 +513,7 @@ namespace Maze
     {
         DataBlock metaData;
         loadMetaData(_assetFile, metaData);
-        _assetFile->saveInfoToMetaData(metaData);
+        _assetFile->updateDataFromAssetFile(metaData);
         saveMetaData(_assetFile, metaData);
     }
 

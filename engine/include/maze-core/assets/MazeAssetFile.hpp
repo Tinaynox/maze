@@ -62,6 +62,39 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Class AssetFileAssetFileAssetUnitIdGeneratedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API AssetFileAssetFileAssetUnitIdGeneratedEvent
+        : public GenericEvent<AssetFileAssetFileAssetUnitIdGeneratedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetFileAssetFileAssetUnitIdGeneratedEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        AssetFileAssetFileAssetUnitIdGeneratedEvent(
+            AssetFilePtr const& _assetFile = nullptr,
+            AssetUnitId _assetUnitId = c_invalidAssetUnitId)
+            : m_assetFile(_assetFile)
+            , m_assetUnitId(_assetUnitId)
+        {}
+
+        //////////////////////////////////////////
+        inline AssetFilePtr const& getAssetFile() const { return m_assetFile; }
+
+        //////////////////////////////////////////
+        inline AssetUnitId getAssetUnitId() const { return m_assetUnitId; }
+
+    private:
+        AssetFilePtr m_assetFile;
+        AssetUnitId m_assetUnitId = c_invalidAssetUnitId;
+    };
+
+
+    //////////////////////////////////////////
     // Class AssetFile
     //
     //////////////////////////////////////////
@@ -111,7 +144,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void saveInfoToMetaData(DataBlock& _metaData) const;
+        virtual void updateDataFromAssetFile(DataBlock& _metaData) const;
 
         //////////////////////////////////////////
         virtual void saveInfoToMetaData();

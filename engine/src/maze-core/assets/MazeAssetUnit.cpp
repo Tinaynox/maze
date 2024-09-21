@@ -64,6 +64,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void AssetUnit::updateDataFromAssetUnit(DataBlock& _metaData) const
+    {
+        _metaData.setU32(MAZE_HCS("auid"), m_auid);
+    }
+
+    //////////////////////////////////////////
     void AssetUnit::load()
     {
         if (isLoaded() || isLoading())

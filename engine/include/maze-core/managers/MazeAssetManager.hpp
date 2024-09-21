@@ -88,31 +88,34 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        const AssetFilePtr& getAssetFileByFileName(Path const& _fileName);
+        AssetFilePtr const& getAssetFile(AssetFileId _id) const;
 
         //////////////////////////////////////////
-        inline const AssetFilePtr& getAssetFileByFileName(HashedCString _fileName)
+        AssetFilePtr const& getAssetFileByFileName(Path const& _fileName);
+
+        //////////////////////////////////////////
+        inline AssetFilePtr const& getAssetFileByFileName(HashedCString _fileName)
         {
             return getAssetFileByFileName(Path(_fileName.str));
         }
 
         //////////////////////////////////////////
-        const AssetFilePtr& getAssetFileByFullPath(Path const& _fileFullPath);
+        AssetFilePtr const& getAssetFileByFullPath(Path const& _fileFullPath);
 
         //////////////////////////////////////////
-        const AssetFilePtr& getAssetFile(Path const& _string);
+        AssetFilePtr const& getAssetFile(Path const& _string);
 
         //////////////////////////////////////////
-        inline const AssetFilePtr& getAssetFile(HashedCString _string)
+        inline AssetFilePtr const& getAssetFile(HashedCString _string)
         {
             return getAssetFile(Path(_string.str));
         }
 
         //////////////////////////////////////////
-        void deleteAssetFile(const AssetFilePtr& _assetFile);
+        void deleteAssetFile(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
-        void moveAssetFile(const AssetFilePtr& _assetFile, Path const& _newFullPath);
+        void moveAssetFile(AssetFilePtr const& _assetFile, Path const& _newFullPath);
 
 
         //////////////////////////////////////////

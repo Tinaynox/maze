@@ -115,6 +115,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        virtual void updateDataFromAssetUnit(DataBlock& _metaData) const;
+
+
+        //////////////////////////////////////////
+        inline DataBlock const& getData() const { return m_data; }
+
+
+        //////////////////////////////////////////
         void load();
 
         //////////////////////////////////////////

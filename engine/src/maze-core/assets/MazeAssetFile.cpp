@@ -36,6 +36,13 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    // Class AssetFileAssetFileAssetUnitIdGeneratedEvent
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AssetFileAssetFileAssetUnitIdGeneratedEvent, Event);
+
+
+    //////////////////////////////////////////
     // Class AssetFile
     //
     //////////////////////////////////////////
@@ -76,7 +83,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetFile::saveInfoToMetaData(DataBlock& _metaData) const
+    void AssetFile::updateDataFromAssetFile(DataBlock& _metaData) const
     {
         _metaData.setU32(MAZE_HCS("afid"), getAssetFileId());
 
@@ -89,7 +96,17 @@ namespace Maze
         {
             DataBlock& assetUnitsBlock = _metaData[MAZE_HCS("assetUnits")];
 
-            // assetUnitsBlock.clear();
+            assetUnitsBlock.clearData();
+
+            for (AssetUnitPtr const& assetUnit : m_assetUnits)
+            {
+                DataBlock* assetUnitDataBlock = assetUnitsBlock.addDataBlock(assetUnit->getDataBlockId());
+                if (assetUnitDataBlock)
+                {
+                    *assetUnitDataBlock = assetUnit->getData();
+                    assetUnit->updateDataFromAssetUnit(*assetUnitDataBlock);
+                }
+            }
         }
         else
         {
@@ -101,7 +118,7 @@ namespace Maze
     void AssetFile::saveInfoToMetaData()
     {
         DataBlock metaData;
-        saveInfoToMetaData(metaData);
+        updateDataFromAssetFile(metaData);
         AssetManager::GetInstancePtr()->saveMetaData(cast<AssetFile>(), metaData);
     }
 
@@ -245,7 +262,15 @@ namespace Maze
     void AssetFile::addAssetUnit(AssetUnitPtr const& _assetUnit)
     {
         if (_assetUnit->getAssetUnitId() == c_invalidAssetUnitId && AssetUnitManager::GetInstancePtr()->getGenerateIdsForNewAssetUnits())
+        {
             _assetUnit->setAssetUnitId(AssetUnitManager::GetInstancePtr()->generateAssetUnitId());
+
+            if (EventManager::GetInstancePtr())
+                EventManager::GetInstancePtr()->broadcastEventImmediate<AssetFileAssetFileAssetUnitIdGeneratedEvent>(
+                    getSharedPtr(),
+                    _assetUnit->getAssetUnitId());
+        }
+
         AssetUnitManager::GetInstancePtr()->addAssetUnit(_assetUnit);
 
         m_assetUnits.push_back(_assetUnit);

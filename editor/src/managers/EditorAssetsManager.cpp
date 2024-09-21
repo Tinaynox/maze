@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -114,6 +115,7 @@ namespace Maze
         {
             EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectOpenedEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectWillBeClosedEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<AssetFileAssetFileAssetUnitIdGeneratedEvent>(this);
         }
 
         if (Editor::GetInstancePtr())
@@ -141,6 +143,8 @@ namespace Maze
     //////////////////////////////////////////
     bool EditorAssetsManager::init()
     {
+        UpdateManager::GetInstancePtr()->addUpdatable(this);
+
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectOpenedEvent>(this, &EditorAssetsManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectWillBeClosedEvent>(this, &EditorAssetsManager::notifyEvent);
 
@@ -180,9 +184,18 @@ namespace Maze
                 }
             });
 
+        EventManager::GetInstancePtr()->subscribeEvent<AssetFileAssetFileAssetUnitIdGeneratedEvent>(
+            this, &EditorAssetsManager::notifyEvent);
+
         registerAssetFileCallbacks();
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void EditorAssetsManager::update(F32 _dt)
+    {
+        fixAssetFilesNow();
     }
 
     //////////////////////////////////////////
@@ -268,17 +281,31 @@ namespace Maze
             AssetManager::GetInstancePtr()->addAssetsDirectoryPath(assetsPath);
             AssetManager::GetInstancePtr()->addAssetsDirectoryPath(packagesPath);
 
+            if (AssetManager::GetInstancePtr()->getGenerateIdsForNewAssetFiles())
+            {
+                for (AssetFilePtr const& assetFile : AssetManager::GetInstancePtr()->getAssetFilesInFolder(assetsPath))
+                    if (assetFile->getAssetFileId() == c_invalidAssetFileId)
+                        fixAssetFile(assetFile);
+                for (AssetFilePtr const& assetFile : AssetManager::GetInstancePtr()->getAssetFilesInFolder(packagesPath))
+                    if (assetFile->getAssetFileId() == c_invalidAssetFileId)
+                        fixAssetFile(assetFile);
+            }
 
-            for (AssetFilePtr const& assetFile : AssetManager::GetInstancePtr()->getAssetFilesInFolder(assetsPath))
-                fixAssetFile(assetFile);
-            for (AssetFilePtr const& assetFile : AssetManager::GetInstancePtr()->getAssetFilesInFolder(packagesPath))
-                fixAssetFile(assetFile);
+            fixAssetFilesNow();
         }
         else
         if (_eventUID == ClassInfo<EditorProjectWillBeClosedEvent>::UID())
         {
             AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(EditorHelper::GetProjectAssetsFolder());
             AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(EditorHelper::GetProjectPackagesFolder());
+        }
+        else
+        if (_eventUID == ClassInfo<AssetFileAssetFileAssetUnitIdGeneratedEvent>::UID())
+        {
+            AssetFileAssetFileAssetUnitIdGeneratedEvent* evt = _event->castRaw<AssetFileAssetFileAssetUnitIdGeneratedEvent>();
+
+            if (evt->getAssetFile())
+                fixAssetFile(evt->getAssetFile());
         }
     }
 
@@ -291,11 +318,24 @@ namespace Maze
         if (_assetFile->getMetaClass()->isInheritedFrom<AssetDirectory>())
             return;
 
+        m_assetFilessToFix.insert(_assetFile);
+    }
+
+    //////////////////////////////////////////
+    void EditorAssetsManager::fixAssetFileNow(AssetFilePtr const& _assetFile)
+    {
         if (_assetFile->getAssetFileId() == c_invalidAssetFileId && AssetManager::GetInstancePtr()->getGenerateIdsForNewAssetFiles())
-        {
             _assetFile->setAssetFileId(AssetManager::GetInstancePtr()->generateAssetFileId());
-            AssetManager::GetInstancePtr()->updateAndSaveMetaData(_assetFile);
-        }
+        
+        AssetManager::GetInstancePtr()->updateAndSaveMetaData(_assetFile);
+    }
+
+    //////////////////////////////////////////
+    void EditorAssetsManager::fixAssetFilesNow()
+    {
+        for (AssetFilePtr const& assetFile : m_assetFilessToFix)
+            fixAssetFileNow(assetFile);
+        m_assetFilessToFix.clear();
     }
 
 } // namespace Maze
