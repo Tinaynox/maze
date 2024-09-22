@@ -867,6 +867,7 @@ namespace Maze
             return;
         }
 
+        // Save as AUID
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_material->getName());
@@ -875,7 +876,6 @@ namespace Maze
                 MaterialPtr const& assetUnitMaterial = assetUnit->castRaw<AssetUnitMaterial>()->getMaterial();
                 if (assetUnitMaterial == m_material)
                 {
-                    // Save as AUID
                     ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
                     return;
                 }

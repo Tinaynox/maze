@@ -30,7 +30,9 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/MazeMesh.hpp"
+#include "maze-graphics/assets/MazeAssetUnitRenderMesh.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 
@@ -278,19 +280,43 @@ namespace Maze
     //////////////////////////////////////////
     bool RenderMeshAssetRef::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        CString name = nullptr;
-        ValueFromDataBlock(name, _dataBlock);
-        if (name != nullptr)
+        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HCS("value"));
+        if (paramIndex >= 0)
         {
-            RenderMeshPtr const& material = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getOrLoadRenderMesh(
-                name);
-            setRenderMesh(material);
-        }
-        else
-        {
-            setRenderMesh(RenderMeshPtr());
+            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+            switch (paramType)
+            {
+                // by AUID
+                case DataBlockParamType::ParamU32:
+                {
+                    AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitRenderMesh>::UID())
+                    {
+                        setRenderMesh(assetUnit->castRaw<AssetUnitRenderMesh>()->loadRenderMesh(true));
+                        return true;
+                    }
+
+                    break;
+                }
+                // by name
+                case DataBlockParamType::ParamString:
+                {
+                    String const& name = _dataBlock.getString(paramIndex);
+                    RenderMeshPtr const& renderMesh = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getOrLoadRenderMesh(name);
+                    setRenderMesh(renderMesh);
+                    return true;
+                }
+                default:
+                {
+                    MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                    break;
+                }
+            }
         }
 
+        setRenderMesh(RenderMeshPtr());
         return true;
     }
 
@@ -303,8 +329,23 @@ namespace Maze
             return;
         }
 
-        HashedCString name = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getRenderMeshName(m_renderMesh.get());
-        ValueToDataBlock(name.str, _dataBlock);
+        // Save as AUID
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_renderMesh->getName());
+            if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitRenderMesh>::UID())
+            {
+                RenderMeshPtr const& assetUnitRenderMesh = assetUnit->castRaw<AssetUnitRenderMesh>()->getRenderMesh();
+                if (assetUnitRenderMesh == m_renderMesh)
+                {
+                    ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Save as string
+        ValueToDataBlock(m_renderMesh->getName().c_str(), _dataBlock);
     }
     
 
