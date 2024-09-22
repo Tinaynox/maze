@@ -243,8 +243,9 @@ namespace Maze
                     if (!material || !*material)
                         material = &_meshRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial();
 
+                    RenderPassPtr const& firstRenderPass = (*material)->getFirstRenderPass();
 #if (MAZE_DEBUG)
-                    if (!(*material)->getFirstRenderPass()->getShader())
+                    if (!firstRenderPass || !firstRenderPass->getShader())
                     {
                         Debug::LogError("Mesh(EID: %u): Shader is null!", _entity->getId());
                         return;
@@ -254,7 +255,7 @@ namespace Maze
                     _event.getRenderUnits()->emplace_back(
                         RenderUnit
                         {
-                            (*material)->getFirstRenderPass(),
+                            firstRenderPass,
                             vao,
                             _transform3D->getWorldPosition(),
                             1,

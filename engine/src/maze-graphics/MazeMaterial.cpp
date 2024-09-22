@@ -31,6 +31,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeShader.hpp"
+#include "maze-graphics/assets/MazeAssetUnitMaterial.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
@@ -817,18 +818,43 @@ namespace Maze
     //////////////////////////////////////////
     bool MaterialAssetRef::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        CString name = nullptr;
-        ValueFromDataBlock(name, _dataBlock);
-        if (name != nullptr)
+        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HCS("value"));
+        if (paramIndex >= 0)
         {
-            MaterialPtr const& material = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getOrLoadMaterial(name);
-            setMaterial(material);
-        }
-        else
-        {
-            setMaterial(MaterialPtr());
+            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+            switch (paramType)
+            {
+                // by AUID
+                case DataBlockParamType::ParamU32:
+                {
+                    AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitMaterial>::UID())
+                    {
+                        setMaterial(assetUnit->castRaw<AssetUnitMaterial>()->loadMaterial(true));
+                        return true;
+                    }
+
+                    break;
+                }
+                // by name
+                case DataBlockParamType::ParamString:
+                {
+                    String const& name = _dataBlock.getString(paramIndex);
+                    MaterialPtr const& material = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getOrLoadMaterial(name);
+                    setMaterial(material);
+                    return true;
+                }
+                default:
+                {
+                    MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                    break;
+                }
+            }
         }
 
+        setMaterial(MaterialPtr());
         return true;
     }
 
@@ -844,12 +870,19 @@ namespace Maze
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(HashedCString(m_material->getName().c_str()));
-            //if (assetUnit && assetUnit->getClassUID() == ClassInfo<>::UID())
-            //{
-
-            //}
+            if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitMaterial>::UID())
+            {
+                MaterialPtr const& assetUnitMaterial = assetUnit->castRaw<AssetUnitMaterial>()->getMaterial();
+                if (assetUnitMaterial == m_material)
+                {
+                    // Save as AUID
+                    ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
+                    return;
+                }
+            }
         }
 
+        // Save as string
         HashedCString name = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getMaterialName(m_material.get());
         ValueToDataBlock(name.str, _dataBlock);
     }
