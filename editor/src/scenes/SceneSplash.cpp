@@ -89,6 +89,10 @@
 #include "maze-plugin-particles-editor-tools/MazeParticlesEditorToolsPlugin.hpp"
 #include "maze-plugin-physics2d-editor-tools/MazePhysics2DEditorToolsPlugin.hpp"
 #include "maze-plugin-loader-ttf/MazeLoaderTTFPlugin.hpp"
+#include "maze-plugin-loader-dds/MazeLoaderDDSPlugin.hpp"
+#include "maze-plugin-loader-tga/MazeLoaderTGAPlugin.hpp"
+#include "maze-plugin-loader-jpg/MazeLoaderJPGPlugin.hpp"
+#include "maze-plugin-loader-fbx/MazeLoaderFBXPlugin.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "Editor.hpp"
@@ -294,6 +298,16 @@ namespace Maze
             }
             case 11:
             {
+                MAZE_LOAD_PLATFORM_PLUGIN(LoaderDDS);
+                MAZE_LOAD_PLATFORM_PLUGIN(LoaderTGA);
+                MAZE_LOAD_PLATFORM_PLUGIN(LoaderJPG);
+                MAZE_LOAD_PLATFORM_PLUGIN(LoaderFBX);
+
+                setCurrentProgress(0.9f);
+                break;
+            }
+            case 12:
+            {
                 MAZE_LOAD_PLATFORM_PLUGIN(ArchiveAssets);
                 MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView);
                 MAZE_LOAD_PLATFORM_PLUGIN(Console);
@@ -323,7 +337,7 @@ namespace Maze
                 setCurrentProgress(0.95f);
                 break;
             }
-            case 12:
+            case 13:
             {
                 AssetFilePtr const& pluginsDirectory = AssetManager::GetInstancePtr()->getAssetFile(MAZE_HASHED_CSTRING("plugins"));
                 if (pluginsDirectory && pluginsDirectory->getClassUID() == ClassInfo<AssetDirectory>::UID())
@@ -348,7 +362,7 @@ namespace Maze
                 delayToNextStep = 2;
                 break;
             }
-            case 13:
+            case 14:
             {
                 m_progressBarFill->getEntity()->setActiveSelf(false);
 

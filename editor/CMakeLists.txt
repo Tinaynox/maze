@@ -42,6 +42,10 @@ set(EXAMPLE_MAZE_LIBS
     maze-plugin-profiler-view
     maze-plugin-console
     maze-plugin-loader-png
+    maze-plugin-loader-dds
+    maze-plugin-loader-tga
+    maze-plugin-loader-jpg
+    maze-plugin-loader-fbx
     maze-plugin-loader-ttf
     maze-plugin-archive-assets
     maze-plugin-particles-editor-tools
@@ -79,6 +83,10 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../engine/cmake/Utils.cmake")
 add_subdirectory("${MAZE_DIR}/plugins/profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/plugins/profiler-view")
 add_subdirectory("${MAZE_DIR}/plugins/console" "${CMAKE_CURRENT_BINARY_DIR}/plugins/console")
 add_subdirectory("${MAZE_DIR}/plugins/loader-png" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-png")
+add_subdirectory("${MAZE_DIR}/plugins/loader-dds" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-dds")
+add_subdirectory("${MAZE_DIR}/plugins/loader-tga" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-tga")
+add_subdirectory("${MAZE_DIR}/plugins/loader-jpg" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-jpg")
+add_subdirectory("${MAZE_DIR}/plugins/loader-fbx" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-fbx")
 add_subdirectory("${MAZE_DIR}/plugins/loader-ttf" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-ttf")
 add_subdirectory("${MAZE_DIR}/plugins/archive-assets" "${CMAKE_CURRENT_BINARY_DIR}/plugins/archive-assets")
 add_subdirectory("${MAZE_DIR}/plugins/particles-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/plugins/particles-editor-tools")
