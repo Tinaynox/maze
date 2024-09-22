@@ -150,9 +150,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String const& RenderPass::getShaderName() const
+    HashedString const& RenderPass::getShaderName() const
     {
-        static String nullValue;
+        static HashedString nullValue;
 
         if (!m_shaderRef.getShader())
             return nullValue;

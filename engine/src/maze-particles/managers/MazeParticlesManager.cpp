@@ -134,7 +134,7 @@ namespace Maze
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
         ShaderPtr shader = renderPass->getShader()->createCopy();
-        shader->setName("Particle");
+        shader->setName(MAZE_HS("Particle"));
         shader->addLocalFeature("MAZE_COLOR_STREAM", "(1)");
         shader->addLocalFeature("MAZE_UV0_STREAM", "(1)");
         shader->recompile();

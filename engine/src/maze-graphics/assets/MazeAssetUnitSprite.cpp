@@ -141,7 +141,7 @@ namespace Maze
 
         m_sprite = Sprite::Create();
         
-        m_sprite->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
+        m_sprite->setName(HashedString(m_data.getString(MAZE_HCS("name"), assetFile->getFileName().toUTF8())));
 
         applySpriteMetaData();
 

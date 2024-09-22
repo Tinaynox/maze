@@ -126,7 +126,7 @@ namespace Maze
             return m_shader;
 
         m_shader = Shader::Create();
-        m_shader->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
+        m_shader->setName(HashedString(m_data.getString(MAZE_HCS("name"), assetFile->getFileName().toUTF8())));
 
         if (ShaderSystem::GetCurrentInstancePtr())
         {

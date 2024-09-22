@@ -122,7 +122,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderMesh::setName(String const& _name)
+    void RenderMesh::setName(HashedString const& _name)
     {
         m_name = _name;
 
@@ -139,7 +139,7 @@ namespace Maze
         {
             VertexArrayObjectPtr const& vao = m_vertexArrayObjects[i];
             if (vao)
-                vao->setDebugInfo(m_name + "__" + StringHelper::ToString(i));
+                vao->setDebugInfo(m_name.getString() + "__" + StringHelper::ToString(i));
         }
     }
 #endif

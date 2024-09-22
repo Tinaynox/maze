@@ -127,10 +127,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        String const& getName() const { return m_name; }
+        HashedString const& getName() const { return m_name; }
 
         //////////////////////////////////////////
-        void setName(String const& _name)
+        void setName(HashedString const& _name)
         {
             m_name = _name;
             eventDataChanged(this);
@@ -237,7 +237,7 @@ namespace Maze
             Vec2F const& _nativeSize);
     
     protected:
-        String m_name;
+        HashedString m_name;
         Texture2DPtr m_texture;
 
         Vec2F m_colorOffset;

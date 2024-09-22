@@ -236,7 +236,7 @@ namespace Maze
         titleText->setColor(ColorU32::c_black);
         
         m_bodySprite = Sprite::Create(m_renderBuffer->getColorTexture()->cast<Texture2D>());
-        m_bodySprite->setName("PreviewController");
+        m_bodySprite->setName(MAZE_HS("PreviewController"));
         m_bodyBackground = SpriteHelper::CreateSprite(
             // m_bodySprite,
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),

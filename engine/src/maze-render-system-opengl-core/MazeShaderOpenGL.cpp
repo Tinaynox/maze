@@ -206,7 +206,7 @@ namespace Maze
             return false;
 
         if (_shaderName)
-            setName(_shaderName);
+            setName(HashedString(_shaderName));
 
         if (!loadFromSource(_shaderSource))
             return false;

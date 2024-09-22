@@ -126,10 +126,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setName(String const& _name) { m_name = _name; }
+        inline void setName(HashedString const& _name) { m_name = _name; }
 
         //////////////////////////////////////////
-        inline String const& getName() const { return m_name; }
+        inline HashedString const& getName() const { return m_name; }
 
 
     public:
@@ -171,7 +171,7 @@ namespace Maze
         virtual bool init(PhysicsMaterial2DPtr const& _material);
 
     protected:
-        String m_name;
+        HashedString m_name;
         F32 m_density;
         F32 m_friction;
         F32 m_restitution;

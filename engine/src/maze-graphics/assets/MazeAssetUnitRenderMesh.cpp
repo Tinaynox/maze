@@ -126,7 +126,7 @@ namespace Maze
             return m_renderMesh;
 
         m_renderMesh = RenderMesh::Create();
-        m_renderMesh->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
+        m_renderMesh->setName(HashedString(m_data.getString(MAZE_HCS("name"), assetFile->getFileName().toUTF8())));
 
         if (RenderMeshManager::GetCurrentInstancePtr())
         {

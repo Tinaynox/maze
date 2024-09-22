@@ -154,7 +154,7 @@ namespace Maze
         }
 
         PhysicsMaterial2DPtr material = PhysicsMaterial2D::Create(_assetFile);
-        material->setName(_assetFile->getFileName().toUTF8());
+        material->setName(HashedString(_assetFile->getFileName().toUTF8()));
         PhysicsMaterial2DLibraryData* data = addMaterialToLibrary(material);
 
         if (data)

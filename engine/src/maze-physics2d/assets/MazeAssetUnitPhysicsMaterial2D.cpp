@@ -126,7 +126,7 @@ namespace Maze
             return m_physicsMaterial2D;
 
         m_physicsMaterial2D = PhysicsMaterial2D::Create();
-        m_physicsMaterial2D->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
+        m_physicsMaterial2D->setName(HashedString(m_data.getString(MAZE_HCS("name"), assetFile->getFileName().toUTF8())));
 
         if (PhysicsMaterial2DManager::GetInstancePtr())
         {

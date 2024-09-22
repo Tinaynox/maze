@@ -337,7 +337,7 @@ namespace Maze
             return String();
 
         HashedCString name = RenderSystem::GetCurrentInstancePtr()->getSpriteManager()->getSpriteName(m_sprite.get());
-        return !name.empty() ? name.str : m_sprite->getName();
+        return !name.empty() ? String(name.str) : m_sprite->getName().getString();
     }
 
     //////////////////////////////////////////

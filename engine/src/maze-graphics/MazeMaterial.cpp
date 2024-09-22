@@ -883,8 +883,7 @@ namespace Maze
         }
 
         // Save as string
-        HashedCString name = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getMaterialName(m_material.get());
-        ValueToDataBlock(name.str, _dataBlock);
+        ValueToDataBlock(m_material->getName().c_str(), _dataBlock);
     }
 
 } // namespace Maze

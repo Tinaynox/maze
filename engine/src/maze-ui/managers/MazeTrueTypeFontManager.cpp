@@ -140,7 +140,7 @@ namespace Maze
             return nullPointer;
 
         font->loadFromAssetFile(assetFile);
-        font->setName(_trueTypeFont.str);
+        font->setName(HashedString(_trueTypeFont));
 
         TrueTypeFontLibraryData* data = addTrueTypeFontToLibrary(font);
         if (data)

@@ -126,7 +126,7 @@ namespace Maze
         void setShader(Path const& _shaderResourceName);
 
         //////////////////////////////////////////
-        String const& getShaderName() const;
+        HashedString const& getShaderName() const;
 
 
         //////////////////////////////////////////

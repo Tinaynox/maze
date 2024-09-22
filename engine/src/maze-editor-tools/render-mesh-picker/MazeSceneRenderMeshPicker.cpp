@@ -232,7 +232,7 @@ namespace Maze
 
         Vector<RenderMeshPtr> meshes;
         for (RenderMeshPtr const& mesh : RenderMeshManager::GetCurrentInstancePtr()->getRenderMeshesSorted())
-            if (filterText.empty() || mesh->getName().find(filterText) != String::npos)
+            if (filterText.empty() || mesh->getName().getString().find(filterText) != String::npos)
                 meshes.push_back(mesh);
         meshes.insert(meshes.begin(), RenderMeshPtr());
 
@@ -336,7 +336,7 @@ namespace Maze
             data.button->getTransform(),
             data.bodyTransform->getEntityRaw()->getEcsScene());
 
-        String renderMeshName = _material ? _material->getName() : "None";
+        String renderMeshName = _material ? _material->getName().getString() : "None";
         renderMeshName = FileHelper::GetFileNameWithoutExtension(renderMeshName);
 
         data.titleText = EditorToolsUIHelper::CreateText(

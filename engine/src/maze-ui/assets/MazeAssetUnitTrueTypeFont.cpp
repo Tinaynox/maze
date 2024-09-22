@@ -131,7 +131,7 @@ namespace Maze
         if (!m_trueTypeFont)
             return m_trueTypeFont;
 
-        m_trueTypeFont->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
+        m_trueTypeFont->setName(HashedString(m_data.getString(MAZE_HCS("name"), assetFile->getFileName().toUTF8())));
 
         if (TrueTypeFontManager::GetInstancePtr())
         {

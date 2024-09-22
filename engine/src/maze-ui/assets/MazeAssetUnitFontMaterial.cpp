@@ -127,7 +127,7 @@ namespace Maze
             return m_fontMaterial;
 
         m_fontMaterial = FontMaterial::Create();
-        m_fontMaterial->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
+        m_fontMaterial->setName(HashedString(m_data.getString(MAZE_HCS("name"), assetFile->getFileName().toUTF8())));
 
         if (FontMaterialManager::GetInstancePtr())
         {

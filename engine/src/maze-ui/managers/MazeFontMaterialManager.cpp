@@ -136,7 +136,7 @@ namespace Maze
         if (!fontMaterial)
             return nullPointer;
 
-        fontMaterial->setName(_trueTypeFont.str);
+        fontMaterial->setName(HashedString(_trueTypeFont));
         FontMaterialLibraryData* data = addFontMaterialToLibrary(fontMaterial);
         if (data)
         {

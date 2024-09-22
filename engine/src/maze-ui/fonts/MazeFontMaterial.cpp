@@ -107,7 +107,7 @@ namespace Maze
 
         MAZE_ERROR_RETURN_VALUE_IF(!_assetFile, false, "Null asset file!");
 
-        setName(_assetFile->getFileName());
+        setName(HashedString(_assetFile->getFileName().toUTF8()));
 
         ByteBufferPtr assetFileHeader = _assetFile->readHeaderAsByteBuffer(6);
         assetFileHeader->setByte(5, 0);

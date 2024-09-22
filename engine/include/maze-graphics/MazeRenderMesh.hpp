@@ -110,10 +110,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String const& getName() const { return m_name; }
+        inline HashedString const& getName() const { return m_name; }
 
         //////////////////////////////////////////
-        void setName(String const& _name);
+        void setName(HashedString const& _name);
 
 
         //////////////////////////////////////////
@@ -193,7 +193,7 @@ namespace Maze
         bool m_locked = false;
         RenderSystem* m_renderSystem;
 
-        String m_name;
+        HashedString m_name;
 
         Vector<VertexArrayObjectPtr> m_vertexArrayObjects;
     };

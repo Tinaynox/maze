@@ -167,7 +167,7 @@ namespace Maze
         textureHolder->setColor(ColorU32(50, 50, 50));
         
         m_sprite = Sprite::Create();
-        m_sprite->setName("ShaderUniformVariantDrawerTexture2D");
+        m_sprite->setName(MAZE_HS("ShaderUniformVariantDrawerTexture2D"));
 
         m_textureRenderer = SpriteHelper::CreateSprite(
             m_sprite,

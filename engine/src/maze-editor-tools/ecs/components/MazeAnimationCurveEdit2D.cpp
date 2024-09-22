@@ -121,7 +121,7 @@ namespace Maze
         m_curveTexture->setMinFilter(TextureFilter::Linear);
 
         m_curveSprite = Sprite::Create(m_curveTexture);
-        m_curveSprite->setName("AnimationCurveSprite");
+        m_curveSprite->setName(MAZE_HS("AnimationCurveSprite"));
     }
 
     //////////////////////////////////////////

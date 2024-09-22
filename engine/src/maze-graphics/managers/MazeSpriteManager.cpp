@@ -279,7 +279,7 @@ namespace Maze
 
         if (sprite)
         {
-            sprite->setName(_spriteType.toCString());
+            sprite->setName(HashedString(_spriteType.toString()));
             addSpriteToLibrary(sprite);
         }
 

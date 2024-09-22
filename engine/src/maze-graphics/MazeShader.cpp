@@ -49,7 +49,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(Shader,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, name, String(), getName, setName));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(HashedString, name, HashedString(), getName, setName));
 
     //////////////////////////////////////////
     Shader* Shader::s_instancesList = nullptr;
@@ -490,7 +490,7 @@ namespace Maze
         if (!_assetFile)
             return false;
 
-        setName(_assetFile->getFileName());
+        setName(HashedString(_assetFile->getFileName().toUTF8()));
 
         ByteBufferPtr assetFileHeader = _assetFile->readHeaderAsByteBuffer(6);
         assetFileHeader->setByte(5, 0);

@@ -205,7 +205,7 @@ namespace Maze
 
         if (renderMesh)
         {
-            renderMesh->setName(_renderMeshType.toCString());
+            renderMesh->setName(HashedString(_renderMeshType.toString()));
             renderMesh->lock();
             addRenderMeshToLibrary(renderMesh);
         }
@@ -275,7 +275,7 @@ namespace Maze
         }
 
         RenderMeshPtr renderMesh = RenderMesh::Create(_assetFile);
-        renderMesh->setName(_assetFile->getFileName());
+        renderMesh->setName(HashedString(_assetFile->getFileName().toUTF8()));
         RenderMeshLibraryData* data = addRenderMeshToLibrary(renderMesh);
 
         if (data)
@@ -375,7 +375,7 @@ namespace Maze
             RenderMeshPtr renderMesh = RenderMesh::Create(assetFile);
             if (renderMesh)
             {
-                renderMesh->setName(assetFile->getFileName());
+                renderMesh->setName(HashedString(assetFile->getFileName().toUTF8()));
                 addRenderMeshToLibrary(renderMesh);
             }
         }

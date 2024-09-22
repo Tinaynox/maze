@@ -184,10 +184,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String const& getName() const { return m_name; }
+        inline HashedString const& getName() const { return m_name; }
 
         //////////////////////////////////////////
-        inline void setName(String const& _name) { m_name = _name; }
+        inline void setName(HashedString const& _name) { m_name = _name; }
 
         //////////////////////////////////////////
         RenderSystemPtr getRenderSystem() const { return m_renderSystem.lock(); }
@@ -336,7 +336,7 @@ namespace Maze
             Vector<ShaderUniformVariant> const& _uniformsData);
 
     protected:
-        String m_name;
+        HashedString m_name;
 
         UnorderedMap<U32, ShaderUniformPtr> m_uniformsCache;
 

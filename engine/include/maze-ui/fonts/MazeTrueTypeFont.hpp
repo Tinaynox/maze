@@ -149,10 +149,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String const& getName() const { return m_name; }
+        inline HashedString const& getName() const { return m_name; }
 
         //////////////////////////////////////////
-        inline void setName(String const& _value) { m_name = _value; }
+        inline void setName(HashedString const& _value) { m_name = _value; }
 
         //////////////////////////////////////////
         inline String const& getFamily() const { return m_family; }
@@ -226,7 +226,7 @@ namespace Maze
         virtual bool init();
 
     protected:
-        String m_name;
+        HashedString m_name;
         String m_family;
     };
     

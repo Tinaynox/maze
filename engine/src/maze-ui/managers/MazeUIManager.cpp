@@ -1678,7 +1678,7 @@ namespace Maze
             if (m_defaultUISprites[(Size)spriteType])
             {
                 String name = String("DefaultUISprite_") + GetDefaultUISpriteName(spriteType);
-                m_defaultUISprites[(Size)spriteType]->setName(name);
+                m_defaultUISprites[(Size)spriteType]->setName(HashedString(name));
                 m_defaultUISprites[(Size)spriteType]->updateTextureCoords();
             }
         }

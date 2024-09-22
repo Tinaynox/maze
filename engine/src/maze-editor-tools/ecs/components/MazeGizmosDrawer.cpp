@@ -135,7 +135,7 @@ namespace Maze
                 MAZE_ERROR_RETURN_VALUE_IF(!meshData.vao, false, "Failed to created Lines VAO!");
                 meshData.vao->setRenderDrawTopology(RenderDrawTopology::Lines);
                 meshData.renderMesh = _renderTarget->createRenderMeshFromPool(1);
-                meshData.renderMesh->setName("Lines");
+                meshData.renderMesh->setName(MAZE_HS("Lines"));
                 meshData.renderMesh->setVertexArrayObject(meshData.vao);
 
                 meshData.entity = Entity::Create();
@@ -154,7 +154,7 @@ namespace Maze
                 MAZE_ERROR_RETURN_VALUE_IF(!meshData.vao, false, "Failed to created Triangles VAO!");
                 meshData.vao->setRenderDrawTopology(RenderDrawTopology::Triangles);
                 meshData.renderMesh = _renderTarget->createRenderMeshFromPool(1);
-                meshData.renderMesh->setName("Triangles");
+                meshData.renderMesh->setName(MAZE_HS("Triangles"));
                 meshData.renderMesh->setVertexArrayObject(meshData.vao);
 
                 meshData.entity = Entity::Create();

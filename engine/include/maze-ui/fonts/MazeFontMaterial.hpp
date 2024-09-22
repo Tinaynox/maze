@@ -95,10 +95,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String const& getName() const { return m_name; }
+        inline HashedString const& getName() const { return m_name; }
 
         //////////////////////////////////////////
-        inline void setName(String const& _value) { m_name = _value; }
+        inline void setName(HashedString const& _value) { m_name = _value; }
 
 
         //////////////////////////////////////////
@@ -177,7 +177,7 @@ namespace Maze
         void notifyTexturesChanged();
 
     protected:
-        String m_name;
+        HashedString m_name;
 
         FontPtr m_font;
         MaterialPtr m_assetMaterial;
