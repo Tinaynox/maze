@@ -1,0 +1,122 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#pragma once
+#if (!defined(_MazePropertyDrawerSliderRadians_hpp_))
+#define _MazePropertyDrawerSliderRadians_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/system/MazeTimer.hpp"
+#include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/settings/MazeSettings.hpp"
+#include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
+#include "maze-editor-tools/property-drawers/MazePDSliderF32.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(PropertyDrawerSliderRadians);
+    MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(Slider2D);
+
+
+    //////////////////////////////////////////
+    // Class PropertyDrawerSliderRadians
+    //
+    //////////////////////////////////////////
+    class MAZE_EDITOR_TOOLS_API PropertyDrawerSliderRadians
+        : public PropertyDrawerSliderF32
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PropertyDrawerSliderRadians, PropertyDrawerSliderF32);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(PropertyDrawerSliderRadians);
+
+    public:
+
+        //////////////////////////////////////////
+        virtual ~PropertyDrawerSliderRadians();
+
+        //////////////////////////////////////////
+        static PropertyDrawerSliderRadiansPtr Create(String const& _label);
+
+
+        //////////////////////////////////////////
+        virtual void setValue(F32 const& _value) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual F32 getValue() const MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        inline F32 getFromValue() const { return m_fromValue; }
+
+        //////////////////////////////////////////
+        inline void setFromValue(F32 _value) { m_fromValue = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getToValue() const { return m_toValue; }
+
+        //////////////////////////////////////////
+        inline void setToValue(F32 _value) { m_toValue = _value; }
+
+
+        //////////////////////////////////////////
+        virtual void buildUI(
+            Transform2DPtr const& _parent,
+            CString _label = nullptr) MAZE_OVERRIDE;
+
+    protected:
+
+        //////////////////////////////////////////
+        PropertyDrawerSliderRadians();
+
+        //////////////////////////////////////////
+        virtual bool init(String const& _label) MAZE_OVERRIDE;
+
+        
+        //////////////////////////////////////////
+        virtual String prepareValueForEditBox(F32 _sliderValue) MAZE_OVERRIDE;
+
+    protected:
+    };
+
+
+} // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _MazePropertyDrawerSliderRadians_hpp_
+//////////////////////////////////////////

@@ -35,7 +35,7 @@
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeDefault.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMPDDefault.hpp"
 #include "maze-plugin-particles-editor-tools/inspectors/entities/MazeComponentEditorParticleSystem3D.hpp"
 #include "maze-plugin-particles-editor-tools/property-drawers/MazeParticleSystemParameterF32.hpp"
 #include "maze-plugin-particles-editor-tools/property-drawers/MazeParticleSystemParameterColor.hpp"

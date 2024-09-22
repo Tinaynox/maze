@@ -94,6 +94,16 @@ namespace Maze
         //////////////////////////////////////////
         AssetUnitPtr const& getAssetUnit(AssetUnitId _assetFileId) const;
 
+        //////////////////////////////////////////
+        AssetUnitPtr const& getAssetUnit(HashedCString _name) const;
+
+
+        //////////////////////////////////////////
+        HashedString const& getAssetUnitName(AssetUnitId _assetFileId) const;
+
+        //////////////////////////////////////////
+        AssetUnitId getAssetUnitId(HashedCString _name) const;
+
         
         //////////////////////////////////////////
         static inline AssetUnitManager* GetInstancePtr() { return s_instance; }

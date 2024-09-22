@@ -37,7 +37,7 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeDefault.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMPDDefault.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 
 

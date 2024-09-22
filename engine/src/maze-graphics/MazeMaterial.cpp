@@ -33,6 +33,7 @@
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/helpers/MazeXMLHelper.hpp"
 #include "maze-core/helpers/MazeDataBlockHelper.hpp"
@@ -838,6 +839,15 @@ namespace Maze
         {
             _dataBlock.clearData();
             return;
+        }
+
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(HashedCString(m_material->getName().c_str()));
+            //if (assetUnit && assetUnit->getClassUID() == ClassInfo<>::UID())
+            //{
+
+            //}
         }
 
         HashedCString name = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getMaterialName(m_material.get());

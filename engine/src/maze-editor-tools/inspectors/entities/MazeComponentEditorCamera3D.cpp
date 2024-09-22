@@ -28,9 +28,9 @@
 #include "maze-editor-tools/inspectors/entities/MazeComponentEditorCamera3D.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeRadians.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeSliderRadians.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeFOV.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMPDRadians.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMPDSliderRadians.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMPDFOV.hpp"
 
 
 //////////////////////////////////////////

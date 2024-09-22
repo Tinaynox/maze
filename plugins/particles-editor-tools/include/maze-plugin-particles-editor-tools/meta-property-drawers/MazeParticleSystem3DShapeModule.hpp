@@ -37,9 +37,9 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeEnumClass.hpp"
-#include "maze-editor-tools/property-drawers/MazeBool.hpp"
-#include "maze-editor-tools/property-drawers/MazeEnumClass.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMPDEnumClass.hpp"
+#include "maze-editor-tools/property-drawers/MazePDBool.hpp"
+#include "maze-editor-tools/property-drawers/MazePDEnumClass.hpp"
 #include "maze-particles/particle-modules/MazeParticleSystem3DShapeModule.hpp"
 #include "maze-plugin-particles-editor-tools/meta-property-drawers/MazeParticleSystem3DModule.hpp"
 

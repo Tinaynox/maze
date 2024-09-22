@@ -160,6 +160,40 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    AssetUnitPtr const& AssetUnitManager::getAssetUnit(HashedCString _name) const
+    {
+        static AssetUnitPtr nullPointer;
+
+        auto it = m_assetUnitsByName.find(_name);
+        if (it != m_assetUnitsByName.end())
+            return it->second;
+
+        return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    HashedString const& AssetUnitManager::getAssetUnitName(AssetUnitId _assetFileId) const
+    {
+        static HashedString const nullString;
+
+        AssetUnitPtr const& assetUnit = getAssetUnit(_assetFileId);
+        if (!assetUnit)
+            return nullString;
+
+        return assetUnit->getName();
+    }
+
+    //////////////////////////////////////////
+    AssetUnitId AssetUnitManager::getAssetUnitId(HashedCString _name) const
+    {
+        AssetUnitPtr const& assetUnit = getAssetUnit(_name);
+        if (!assetUnit)
+            return c_invalidAssetUnitId;
+
+        return assetUnit->getAssetUnitId();
+    }
+
+    //////////////////////////////////////////
     void AssetUnitManager::notifyEvent(ClassUID _eventUID, Event* _event)
     {
         if (_eventUID == ClassInfo<AssetUnitIdChangedEvent>::UID())

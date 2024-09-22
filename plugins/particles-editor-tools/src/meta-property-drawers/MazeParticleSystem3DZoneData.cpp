@@ -43,8 +43,8 @@
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
-#include "maze-editor-tools/property-drawers/MazeRadians.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeDefault.hpp"
+#include "maze-editor-tools/property-drawers/MazePDRadians.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMPDDefault.hpp"
 #include "maze-plugin-particles-editor-tools/property-drawers/MazeParticleSystemParameterF32.hpp"
 
 
