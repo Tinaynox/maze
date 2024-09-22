@@ -233,7 +233,7 @@ namespace Maze
 
         Vector<MaterialPtr> materials;
         for (MaterialPtr const& material : MaterialManager::GetCurrentInstance()->getMaterialsSorted())
-            if (filterText.empty() || material->getName().find(filterText) != String::npos)
+            if (filterText.empty() || material->getName().getString().find(filterText) != String::npos)
                 materials.push_back(material);
         materials.insert(materials.begin(), MaterialPtr());
 
@@ -378,7 +378,7 @@ namespace Maze
             }
         }
 
-        String materialName = _material ? _material->getName() : "None";
+        String materialName = _material ? _material->getName().getString() : "None";
 
         materialName = EditorToolsHelper::GetNameWithoutExtension(materialName);
 

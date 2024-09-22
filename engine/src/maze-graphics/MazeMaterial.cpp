@@ -56,7 +56,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Material, Object,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, name, String(), getName, setName));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(HashedString, name, HashedString(), getName, setName));
 
     //////////////////////////////////////////
     Material* Material::s_instancesList = nullptr;
@@ -106,9 +106,9 @@ namespace Maze
             if (!material->loadFromAssetFile(_assetFile))
                 return nullptr;
 
-            String name = _assetFile->getFileName();
-            StringHelper::RemoveSubstring(name, ".mzmaterial");
-            material->setName(name);
+            //String name = _assetFile->getFileName();
+            //StringHelper::RemoveSubstring(name, ".mzmaterial");
+            material->setName(HashedString(_assetFile->getFileName()));
             
         }
         
@@ -125,9 +125,9 @@ namespace Maze
             if (!material->loadFromAssetFile(_assetFileName))
                 return nullptr;
 
-            String name = _assetFileName;
-            StringHelper::RemoveSubstring(name, ".mzmaterial");
-            material->setName(name);
+            //String name = _assetFileName;
+            // StringHelper::RemoveSubstring(name, ".mzmaterial");
+            material->setName(HashedString(_assetFileName));
         }
 
         return material;
@@ -805,7 +805,7 @@ namespace Maze
             return String();
 
         HashedCString name = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getMaterialName(m_material.get());
-        return !name.empty() ? name.str : m_material->getName();
+        return !name.empty() ? String(name.str) : m_material->getName();
     }
 
     //////////////////////////////////////////
@@ -869,7 +869,7 @@ namespace Maze
 
         if (AssetUnitManager::GetInstancePtr())
         {
-            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(HashedCString(m_material->getName().c_str()));
+            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_material->getName());
             if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitMaterial>::UID())
             {
                 MaterialPtr const& assetUnitMaterial = assetUnit->castRaw<AssetUnitMaterial>()->getMaterial();

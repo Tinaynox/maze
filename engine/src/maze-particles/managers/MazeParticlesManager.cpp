@@ -127,7 +127,7 @@ namespace Maze
         renderSystem->getTextureManager()->addTextureToLibrary(m_defaultParticleTexture);
 
         m_defaultParticleMaterial = renderSystem->getMaterialManager()->getColorTextureMaterial()->createCopy();
-        m_defaultParticleMaterial->setName("DefaultParticle");
+        m_defaultParticleMaterial->setName(MAZE_HS("DefaultParticle"));
 
         RenderPassPtr const& renderPass = m_defaultParticleMaterial->getFirstRenderPass();
         renderPass->setRenderQueueIndex(3000);

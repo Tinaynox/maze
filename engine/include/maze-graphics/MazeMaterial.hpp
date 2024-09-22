@@ -98,10 +98,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String const& getName() const { return m_name; }
+        inline HashedString const& getName() const { return m_name; }
 
         //////////////////////////////////////////
-        inline void setName(String const& _name) { m_name = _name; }
+        inline void setName(HashedString const& _name) { m_name = _name; }
 
 
         //////////////////////////////////////////
@@ -300,7 +300,7 @@ namespace Maze
     protected:
         RenderSystem* m_renderSystem;
 
-        String m_name;
+        HashedString m_name;
 
         Vector<RenderPassPtr> m_passes[RenderPassType::MAX];
         FastVector<ShaderUniformVariantPtr> m_uniforms;

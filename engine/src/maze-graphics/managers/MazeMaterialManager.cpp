@@ -201,7 +201,7 @@ namespace Maze
         }
 
         MaterialPtr material = Material::Create(_assetFile);
-        material->setName(_assetFile->getFileName());
+        material->setName(HashedString(_assetFile->getFileName().toUTF8()));
 
         MaterialLibraryData* data = addMaterialToLibrary(material);
         if (data)
@@ -551,7 +551,7 @@ namespace Maze
 
         if (material)
         {
-            material->setName(_materialType.toCString());
+            material->setName(HashedString(_materialType.toString()));
             addMaterialToLibrary(material);
         }
 

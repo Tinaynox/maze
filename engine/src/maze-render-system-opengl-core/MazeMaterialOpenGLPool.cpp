@@ -109,9 +109,9 @@ namespace Maze
 
         auto& materialPool = m_materialPools[_contextOpenGL];
 #if (MAZE_DEBUG)
-        _ptr->setName("PoolMaterialOpenGL");
+        _ptr->setName(MAZE_HS("PoolMaterialOpenGL"));
 #else
-        _ptr->setName(String());
+        _ptr->setName(HashedString());
 #endif
         _ptr->clear();
         materialPool.push(_ptr);
