@@ -30,6 +30,7 @@
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
@@ -37,6 +38,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/events/MazeGraphicsEvents.hpp"
+#include "maze-graphics/assets/MazeAssetUnitShader.hpp"
 #include <tinyxml2.h>
 
 
@@ -889,6 +891,77 @@ namespace Maze
     {
         ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->getOrLoadShader(_data);
         setShader(shader);
+    }
+
+    //////////////////////////////////////////
+    bool ShaderAssetRef::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HCS("value"));
+        if (paramIndex >= 0)
+        {
+            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+            switch (paramType)
+            {
+                // by AUID
+                case DataBlockParamType::ParamU32:
+                {
+                    AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitShader>::UID())
+                    {
+                        setShader(assetUnit->castRaw<AssetUnitShader>()->loadShader(true));
+                        return true;
+                    }
+
+                    break;
+                }
+                // by name
+                case DataBlockParamType::ParamString:
+                {
+                    String const& name = _dataBlock.getString(paramIndex);
+                    ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->getOrLoadShader(name);
+                    setShader(shader);
+                    return true;
+                }
+                default:
+                {
+                    MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                    break;
+                }
+            }
+        }
+
+        setShader(ShaderPtr());
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void ShaderAssetRef::toDataBlock(DataBlock& _dataBlock) const
+    {
+        if (!m_shader)
+        {
+            _dataBlock.clearData();
+            return;
+        }
+
+        // Save as AUID
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_shader->getName());
+            if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitShader>::UID())
+            {
+                ShaderPtr const& assetUnitMaterial = assetUnit->castRaw<AssetUnitShader>()->getShader();
+                if (assetUnitMaterial == m_shader)
+                {
+                    ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Save as string
+        ValueToDataBlock(m_shader->getName().c_str(), _dataBlock);
     }
 
 } // namespace Maze

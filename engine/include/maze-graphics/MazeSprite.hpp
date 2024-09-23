@@ -263,6 +263,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API SpriteAssetRef
         : public IStringSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -289,6 +290,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool operator!=(SpriteAssetRef const& _value) const { return m_sprite != _value.getSprite(); }
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
 
     private:
         SpritePtr m_sprite;

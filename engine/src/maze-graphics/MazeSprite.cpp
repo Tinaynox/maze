@@ -31,6 +31,8 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/assets/MazeAssetUnitSprite.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 
 
 //////////////////////////////////////////
@@ -345,6 +347,77 @@ namespace Maze
     {
         SpritePtr const& sprite = RenderSystem::GetCurrentInstancePtr()->getSpriteManager()->getOrLoadSprite(_data);
         setSprite(sprite);
+    }
+
+    //////////////////////////////////////////
+    bool SpriteAssetRef::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HCS("value"));
+        if (paramIndex >= 0)
+        {
+            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+            switch (paramType)
+            {
+                // by AUID
+                case DataBlockParamType::ParamU32:
+                {
+                    AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitSprite>::UID())
+                    {
+                        setSprite(assetUnit->castRaw<AssetUnitSprite>()->loadSprite(true));
+                        return true;
+                    }
+
+                    break;
+                }
+                // by name
+                case DataBlockParamType::ParamString:
+                {
+                    String const& name = _dataBlock.getString(paramIndex);
+                    SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getOrLoadSprite(name);
+                    setSprite(sprite);
+                    return true;
+                }
+                default:
+                {
+                    MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                    break;
+                }
+            }
+        }
+
+        setSprite(SpritePtr());
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void SpriteAssetRef::toDataBlock(DataBlock& _dataBlock) const
+    {
+        if (!m_sprite)
+        {
+            _dataBlock.clearData();
+            return;
+        }
+
+        // Save as AUID
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_sprite->getName());
+            if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitSprite>::UID())
+            {
+                SpritePtr const& assetUnitMaterial = assetUnit->castRaw<AssetUnitSprite>()->getSprite();
+                if (assetUnitMaterial == m_sprite)
+                {
+                    ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Save as string
+        ValueToDataBlock(m_sprite->getName().c_str(), _dataBlock);
     }
 
 
