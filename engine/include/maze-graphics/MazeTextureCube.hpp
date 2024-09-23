@@ -186,6 +186,45 @@ namespace Maze
         AssetFilePtr m_assetFile;
     };
 
+
+    //////////////////////////////////////////
+    // Class TextureCubeAssetRef
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API TextureCubeAssetRef
+        : public IDataBlockSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        TextureCubeAssetRef(TextureCubePtr const& _value = nullptr)
+            : m_textureCube(_value)
+        {}
+
+        //////////////////////////////////////////
+        void setTextureCube(TextureCubePtr const& _value) { m_textureCube = _value; }
+
+        //////////////////////////////////////////
+        inline TextureCubePtr const& getTextureCube() const { return m_textureCube; }
+
+
+        //////////////////////////////////////////
+        inline bool operator==(TextureCubeAssetRef const& _value) const { return m_textureCube == _value.getTextureCube(); }
+
+        //////////////////////////////////////////
+        inline bool operator!=(TextureCubeAssetRef const& _value) const { return m_textureCube != _value.getTextureCube(); }
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+    private:
+        TextureCubePtr m_textureCube;
+    };
+
 } // namespace Maze
 //////////////////////////////////////////
 

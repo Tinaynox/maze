@@ -256,6 +256,44 @@ namespace Maze
     };
 
 
+    //////////////////////////////////////////
+    // Class Texture2DAssetRef
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API Texture2DAssetRef
+        : public IDataBlockSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        Texture2DAssetRef(Texture2DPtr const& _value = nullptr)
+            : m_texture2D(_value)
+        {}
+
+        //////////////////////////////////////////
+        void setTexture2D(Texture2DPtr const& _value) { m_texture2D = _value; }
+
+        //////////////////////////////////////////
+        inline Texture2DPtr const& getTexture2D() const { return m_texture2D; }
+
+
+        //////////////////////////////////////////
+        inline bool operator==(Texture2DAssetRef const& _value) const { return m_texture2D == _value.getTexture2D(); }
+
+        //////////////////////////////////////////
+        inline bool operator!=(Texture2DAssetRef const& _value) const { return m_texture2D != _value.getTexture2D(); }
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+    private:
+        Texture2DPtr m_texture2D;
+    };
+
 } // namespace Maze
 //////////////////////////////////////////
 

@@ -31,7 +31,9 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/loaders/texture/MazeLoaderBMP.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-graphics/assets/MazeAssetUnitTextureCube.hpp"
 
 
 //////////////////////////////////////////
@@ -193,6 +195,81 @@ namespace Maze
         pixelSheets[5] = textureManager->loadPixelSheets2D(_backName);
 
         return loadTexture(pixelSheets, _internalPixelFormat);
+    }
+
+
+    //////////////////////////////////////////
+    // Class TextureCubeAssetRef
+    //
+    //////////////////////////////////////////
+    bool TextureCubeAssetRef::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HCS("value"));
+        if (paramIndex >= 0)
+        {
+            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+            switch (paramType)
+            {
+                // by AUID
+            case DataBlockParamType::ParamU32:
+            {
+                AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTextureCube>::UID())
+                {
+                    setTextureCube(assetUnit->castRaw<AssetUnitTextureCube>()->loadTexture(true));
+                    return true;
+                }
+
+                break;
+            }
+            // by name
+            case DataBlockParamType::ParamString:
+            {
+                String const& name = _dataBlock.getString(paramIndex);
+                TextureCubePtr const& sprite = TextureManager::GetCurrentInstancePtr()->getOrLoadTextureCube(name);
+                setTextureCube(sprite);
+                return true;
+            }
+            default:
+            {
+                MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                break;
+            }
+            }
+        }
+
+        setTextureCube(TextureCubePtr());
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void TextureCubeAssetRef::toDataBlock(DataBlock& _dataBlock) const
+    {
+        if (!m_textureCube)
+        {
+            _dataBlock.clearData();
+            return;
+        }
+
+        // Save as AUID
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_textureCube->getName());
+            if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTextureCube>::UID())
+            {
+                TextureCubePtr const& assetUnitMaterial = assetUnit->castRaw<AssetUnitTextureCube>()->getTexture();
+                if (assetUnitMaterial == m_textureCube)
+                {
+                    ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Save as string
+        ValueToDataBlock(m_textureCube->getName().c_str(), _dataBlock);
     }
 
 } // namespace Maze

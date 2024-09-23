@@ -31,7 +31,9 @@
 #include "maze-graphics/loaders/texture/MazeLoaderBMP.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-graphics/assets/MazeAssetUnitTexture2D.hpp"
 
 
 //////////////////////////////////////////
@@ -281,6 +283,81 @@ namespace Maze
     void Texture2D::setString(CString _data, Size _count)
     {
         MAZE_TODO;
+    }
+
+
+    //////////////////////////////////////////
+    // Class Texture2DAssetRef
+    //
+    //////////////////////////////////////////
+    bool Texture2DAssetRef::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HCS("value"));
+        if (paramIndex >= 0)
+        {
+            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+            switch (paramType)
+            {
+                // by AUID
+            case DataBlockParamType::ParamU32:
+            {
+                AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
+                {
+                    setTexture2D(assetUnit->castRaw<AssetUnitTexture2D>()->loadTexture(true));
+                    return true;
+                }
+
+                break;
+            }
+            // by name
+            case DataBlockParamType::ParamString:
+            {
+                String const& name = _dataBlock.getString(paramIndex);
+                Texture2DPtr const& sprite = TextureManager::GetCurrentInstancePtr()->getOrLoadTexture2D(name);
+                setTexture2D(sprite);
+                return true;
+            }
+            default:
+            {
+                MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                break;
+            }
+            }
+        }
+
+        setTexture2D(Texture2DPtr());
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void Texture2DAssetRef::toDataBlock(DataBlock& _dataBlock) const
+    {
+        if (!m_texture2D)
+        {
+            _dataBlock.clearData();
+            return;
+        }
+
+        // Save as AUID
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_texture2D->getName());
+            if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
+            {
+                Texture2DPtr const& assetUnitMaterial = assetUnit->castRaw<AssetUnitTexture2D>()->getTexture();
+                if (assetUnitMaterial == m_texture2D)
+                {
+                    ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Save as string
+        ValueToDataBlock(m_texture2D->getName().c_str(), _dataBlock);
     }
 
 } // namespace Maze
