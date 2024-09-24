@@ -27,12 +27,14 @@
 #include "MazeUIHeader.hpp"
 #include "maze-ui/fonts/MazeFontMaterial.hpp"
 #include "maze-ui/fonts/MazeFont.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-ui/managers/MazeFontManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-ui/assets/MazeAssetUnitFontMaterial.hpp"
 
 
 //////////////////////////////////////////
@@ -364,6 +366,81 @@ namespace Maze
     {
         FontMaterialPtr const& fontMaterial = FontMaterialManager::GetInstancePtr()->getOrLoadFontMaterial(_data);
         setFontMaterial(fontMaterial);
+    }
+
+
+    //////////////////////////////////////////
+    // Class FontMaterialAssetRef
+    //
+    //////////////////////////////////////////
+    bool FontMaterialAssetRef::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HCS("value"));
+        if (paramIndex >= 0)
+        {
+            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+            switch (paramType)
+            {
+                // by AUID
+                case DataBlockParamType::ParamU32:
+                {
+                    AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitFontMaterial>::UID())
+                    {
+                        setFontMaterial(assetUnit->castRaw<AssetUnitFontMaterial>()->loadFontMaterial(true));
+                        return true;
+                    }
+
+                    break;
+                }
+                // by name
+                case DataBlockParamType::ParamString:
+                {
+                    String const& name = _dataBlock.getString(paramIndex);
+                    FontMaterialPtr const& material = FontMaterialManager::GetInstancePtr()->getOrLoadFontMaterial(name);
+                    setFontMaterial(material);
+                    return true;
+                }
+                default:
+                {
+                    MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                    break;
+                }
+            }
+        }
+
+        setFontMaterial(FontMaterialPtr());
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void FontMaterialAssetRef::toDataBlock(DataBlock& _dataBlock) const
+    {
+        if (!m_fontMaterial)
+        {
+            _dataBlock.clearData();
+            return;
+        }
+
+        // Save as AUID
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_fontMaterial->getName());
+            if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitFontMaterial>::UID())
+            {
+                FontMaterialPtr const& assetUnitFontMaterial = assetUnit->castRaw<AssetUnitFontMaterial>()->getFontMaterial();
+                if (assetUnitFontMaterial == m_fontMaterial)
+                {
+                    ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Save as string
+        ValueToDataBlock(m_fontMaterial->getName().c_str(), _dataBlock);
     }
 
 

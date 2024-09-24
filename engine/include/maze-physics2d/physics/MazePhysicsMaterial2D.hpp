@@ -201,6 +201,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PHYSICS2D_API PhysicsMaterial2DAssetRef
         : public IStringSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -227,6 +228,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool operator!=(PhysicsMaterial2DAssetRef const& _value) const { return m_material != _value.getMaterial(); }
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
 
     private:
         PhysicsMaterial2DPtr m_material;

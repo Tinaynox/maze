@@ -231,6 +231,44 @@ namespace Maze
     };
     
 
+    //////////////////////////////////////////
+    // Class TrueTypeFontAssetRef
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API TrueTypeFontAssetRef
+        : public IDataBlockSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        TrueTypeFontAssetRef(TrueTypeFontPtr const& _value = nullptr)
+            : m_font(_value)
+        {}
+
+        //////////////////////////////////////////
+        void setTrueTypeFont(TrueTypeFontPtr const& _value) { m_font = _value; }
+
+        //////////////////////////////////////////
+        inline TrueTypeFontPtr const& getTrueTypeFont() const { return m_font; }
+
+
+        //////////////////////////////////////////
+        inline bool operator==(TrueTypeFontAssetRef const& _value) const { return m_font == _value.getTrueTypeFont(); }
+
+        //////////////////////////////////////////
+        inline bool operator!=(TrueTypeFontAssetRef const& _value) const { return m_font != _value.getTrueTypeFont(); }
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+    private:
+        TrueTypeFontPtr m_font;
+    };
+
 } // namespace Maze
 //////////////////////////////////////////
 

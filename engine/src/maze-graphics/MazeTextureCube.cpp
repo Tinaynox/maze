@@ -211,32 +211,32 @@ namespace Maze
             switch (paramType)
             {
                 // by AUID
-            case DataBlockParamType::ParamU32:
-            {
-                AssetUnitId auid = _dataBlock.getU32(paramIndex);
-
-                AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
-                if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTextureCube>::UID())
+                case DataBlockParamType::ParamU32:
                 {
-                    setTextureCube(assetUnit->castRaw<AssetUnitTextureCube>()->loadTexture(true));
+                    AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTextureCube>::UID())
+                    {
+                        setTextureCube(assetUnit->castRaw<AssetUnitTextureCube>()->loadTexture(true));
+                        return true;
+                    }
+
+                    break;
+                }
+                // by name
+                case DataBlockParamType::ParamString:
+                {
+                    String const& name = _dataBlock.getString(paramIndex);
+                    TextureCubePtr const& sprite = TextureManager::GetCurrentInstancePtr()->getOrLoadTextureCube(name);
+                    setTextureCube(sprite);
                     return true;
                 }
-
-                break;
-            }
-            // by name
-            case DataBlockParamType::ParamString:
-            {
-                String const& name = _dataBlock.getString(paramIndex);
-                TextureCubePtr const& sprite = TextureManager::GetCurrentInstancePtr()->getOrLoadTextureCube(name);
-                setTextureCube(sprite);
-                return true;
-            }
-            default:
-            {
-                MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
-                break;
-            }
+                default:
+                {
+                    MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                    break;
+                }
             }
         }
 

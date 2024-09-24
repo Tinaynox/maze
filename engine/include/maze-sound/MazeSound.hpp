@@ -206,6 +206,45 @@ namespace Maze
     }
 
 
+    //////////////////////////////////////////
+    // Class SoundAssetRef
+    //
+    //////////////////////////////////////////
+    class MAZE_SOUND_API SoundAssetRef
+        : public IDataBlockSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        SoundAssetRef(SoundPtr const& _value = nullptr)
+            : m_sound(_value)
+        {}
+
+        //////////////////////////////////////////
+        void setSound(SoundPtr const& _value) { m_sound = _value; }
+
+        //////////////////////////////////////////
+        inline SoundPtr const& getSound() const { return m_sound; }
+
+
+        //////////////////////////////////////////
+        inline bool operator==(SoundAssetRef const& _value) const { return m_sound == _value.getSound(); }
+
+        //////////////////////////////////////////
+        inline bool operator!=(SoundAssetRef const& _value) const { return m_sound != _value.getSound(); }
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+    private:
+        SoundPtr m_sound;
+    };
+
+
 } // namespace Maze
 //////////////////////////////////////////
 

@@ -33,10 +33,12 @@
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-physics2d/helpers/MazeBox2DHelper.hpp"
 #include "maze-physics2d/managers/MazePhysicsMaterial2DManager.hpp"
+#include "maze-physics2d/assets/MazeAssetUnitPhysicsMaterial2D.hpp"
 
 
 //////////////////////////////////////////
@@ -282,6 +284,77 @@ namespace Maze
     {
         PhysicsMaterial2DPtr const& material = PhysicsMaterial2DManager::GetInstancePtr()->getOrLoadMaterial(_data);
         setMaterial(material);
+    }
+
+    //////////////////////////////////////////
+    bool PhysicsMaterial2DAssetRef::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HCS("value"));
+        if (paramIndex >= 0)
+        {
+            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+            switch (paramType)
+            {
+                // by AUID
+                case DataBlockParamType::ParamU32:
+                {
+                    AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitPhysicsMaterial2D>::UID())
+                    {
+                        setMaterial(assetUnit->castRaw<AssetUnitPhysicsMaterial2D>()->loadPhysicsMaterial2D(true));
+                        return true;
+                    }
+
+                    break;
+                }
+                // by name
+                case DataBlockParamType::ParamString:
+                {
+                    String const& name = _dataBlock.getString(paramIndex);
+                    PhysicsMaterial2DPtr const& material = PhysicsMaterial2DManager::GetInstancePtr()->getOrLoadMaterial(name);
+                    setMaterial(material);
+                    return true;
+                }
+                default:
+                {
+                    MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                    break;
+                }
+            }
+        }
+
+        setMaterial(PhysicsMaterial2DPtr());
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void PhysicsMaterial2DAssetRef::toDataBlock(DataBlock& _dataBlock) const
+    {
+        if (!m_material)
+        {
+            _dataBlock.clearData();
+            return;
+        }
+
+        // Save as AUID
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_material->getName());
+            if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitPhysicsMaterial2D>::UID())
+            {
+                PhysicsMaterial2DPtr const& assetUnitMaterial = assetUnit->castRaw<AssetUnitPhysicsMaterial2D>()->getPhysicsMaterial2D();
+                if (assetUnitMaterial == m_material)
+                {
+                    ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Save as string
+        ValueToDataBlock(m_material->getName().c_str(), _dataBlock);
     }
 
 } // namespace Maze

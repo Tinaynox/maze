@@ -185,6 +185,45 @@ namespace Maze
     };
     
 
+    //////////////////////////////////////////
+    // Class FontAssetRef
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API FontAssetRef
+        : public IDataBlockSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        FontAssetRef(FontPtr const& _value = nullptr)
+            : m_font(_value)
+        {}
+
+        //////////////////////////////////////////
+        void setFont(FontPtr const& _value) { m_font = _value; }
+
+        //////////////////////////////////////////
+        inline FontPtr const& getFont() const { return m_font; }
+
+
+        //////////////////////////////////////////
+        inline bool operator==(FontAssetRef const& _value) const { return m_font == _value.getFont(); }
+
+        //////////////////////////////////////////
+        inline bool operator!=(FontAssetRef const& _value) const { return m_font != _value.getFont(); }
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+    private:
+        FontPtr m_font;
+    };
+
+
 } // namespace Maze
 //////////////////////////////////////////
 

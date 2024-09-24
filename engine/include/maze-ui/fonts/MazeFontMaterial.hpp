@@ -194,6 +194,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_UI_API FontMaterialAssetRef
         : public IStringSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -220,6 +221,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool operator!=(FontMaterialAssetRef const& _value) const { return m_fontMaterial != _value.getFontMaterial(); }
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
 
     private:
         FontMaterialPtr m_fontMaterial;

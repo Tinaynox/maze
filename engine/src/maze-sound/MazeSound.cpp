@@ -29,8 +29,10 @@
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
+#include "maze-sound/assets/MazeAssetUnitSound.hpp"
 
 
 //////////////////////////////////////////
@@ -221,6 +223,81 @@ namespace Maze
 
             instance = instance->m_instancesListPrev;
         }
+    }
+
+
+    //////////////////////////////////////////
+    // Class SoundAssetRef
+    //
+    //////////////////////////////////////////
+    bool SoundAssetRef::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HCS("value"));
+        if (paramIndex >= 0)
+        {
+            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+            switch (paramType)
+            {
+                // by AUID
+                case DataBlockParamType::ParamU32:
+                {
+                    AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitSound>::UID())
+                    {
+                        setSound(assetUnit->castRaw<AssetUnitSound>()->loadSound(true));
+                        return true;
+                    }
+
+                    break;
+                }
+                // by name
+                case DataBlockParamType::ParamString:
+                {
+                    String const& name = _dataBlock.getString(paramIndex);
+                    SoundPtr const& material = SoundManager::GetInstancePtr()->getOrLoadSound(name);
+                    setSound(material);
+                    return true;
+                }
+                default:
+                {
+                    MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                    break;
+                }
+            }
+        }
+
+        setSound(SoundPtr());
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void SoundAssetRef::toDataBlock(DataBlock& _dataBlock) const
+    {
+        if (!m_sound)
+        {
+            _dataBlock.clearData();
+            return;
+        }
+
+        // Save as AUID
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_sound->getName());
+            if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitSound>::UID())
+            {
+                SoundPtr const& assetUnitSound = assetUnit->castRaw<AssetUnitSound>()->getSound();
+                if (assetUnitSound == m_sound)
+                {
+                    ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Save as string
+        ValueToDataBlock(m_sound->getName().c_str(), _dataBlock);
     }
 
 } // namespace Maze

@@ -26,7 +26,9 @@
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
 #include "maze-ui/fonts/MazeTrueTypeFont.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-ui/managers/MazeTrueTypeFontManager.hpp"
+#include "maze-ui/assets/MazeAssetUnitTrueTypeFont.hpp"
 
 
 //////////////////////////////////////////
@@ -65,6 +67,81 @@ namespace Maze
     bool TrueTypeFont::init()
     {
         return true;
+    }
+
+
+    //////////////////////////////////////////
+    // Class TrueTypeFontAssetRef
+    //
+    //////////////////////////////////////////
+    bool TrueTypeFontAssetRef::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HCS("value"));
+        if (paramIndex >= 0)
+        {
+            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+            switch (paramType)
+            {
+                // by AUID
+            case DataBlockParamType::ParamU32:
+            {
+                AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTrueTypeFont>::UID())
+                {
+                    setTrueTypeFont(assetUnit->castRaw<AssetUnitTrueTypeFont>()->loadTrueTypeFont(true));
+                    return true;
+                }
+
+                break;
+            }
+            // by name
+            case DataBlockParamType::ParamString:
+            {
+                String const& name = _dataBlock.getString(paramIndex);
+                TrueTypeFontPtr const& material = TrueTypeFontManager::GetInstancePtr()->getOrLoadTrueTypeFont(name);
+                setTrueTypeFont(material);
+                return true;
+            }
+            default:
+            {
+                MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                break;
+            }
+            }
+        }
+
+        setTrueTypeFont(TrueTypeFontPtr());
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void TrueTypeFontAssetRef::toDataBlock(DataBlock& _dataBlock) const
+    {
+        if (!m_font)
+        {
+            _dataBlock.clearData();
+            return;
+        }
+
+        // Save as AUID
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_font->getName());
+            if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTrueTypeFont>::UID())
+            {
+                TrueTypeFontPtr const& assetUnitTrueTypeFont = assetUnit->castRaw<AssetUnitTrueTypeFont>()->getTrueTypeFont();
+                if (assetUnitTrueTypeFont == m_font)
+                {
+                    ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Save as string
+        ValueToDataBlock(m_font->getName().c_str(), _dataBlock);
     }
 
 } // namespace Maze
