@@ -211,7 +211,9 @@ namespace Maze
         Texture2DPtr texture2D = Texture2D::Create(_assetFile, m_renderSystemRaw);
         texture2D->setName(_assetFile->getFileName());
 
-        loadTextureMetaData(_assetFile, texture2D);
+        DataBlock metaData;
+        if (AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData))
+            loadTextureMetaData(texture2D, metaData);
 
         Texture2DLibraryData* data = addTextureToLibrary(texture2D);
         if (data)
@@ -269,6 +271,7 @@ namespace Maze
             _texture->setAnisotropyLevel(
                 _metaData.getF32(MAZE_HCS("anisotropyLevel")));
     }
+    /*
 
     //////////////////////////////////////////
     bool TextureManager::loadTextureMetaData(AssetFilePtr const& _assetFile, Texture2DPtr const& _texture)
@@ -282,7 +285,7 @@ namespace Maze
 
         return true;
     }
-
+    */
     //////////////////////////////////////////
     void TextureManager::saveTextureMetaData(Texture2DPtr const& _texture, DataBlock& _metaData)
     {
@@ -292,7 +295,7 @@ namespace Maze
         _metaData.setString(MAZE_HCS("wrapT"), _texture->getWrapT().toString());
         _metaData.setF32(MAZE_HCS("anisotropyLevel"), _texture->getAnisotropyLevel());
     }
-
+    /*
     //////////////////////////////////////////
     bool TextureManager::saveTexture2DMetaData(AssetFilePtr const& _assetFile)
     {
@@ -307,6 +310,7 @@ namespace Maze
 
         return true;
     }
+    */
 
     //////////////////////////////////////////
     Texture2DPtr const& TextureManager::ensureBuiltinTexture2D(BuiltinTexture2DType _texture2DType)
@@ -609,7 +613,7 @@ namespace Maze
                 TextureWrap::FromString(
                     _metaData.getString(MAZE_HCS("wrapR"))));
     }
-
+    /*
     //////////////////////////////////////////
     bool TextureManager::loadTextureMetaData(AssetFilePtr const& _assetFile, TextureCubePtr const& _texture)
     {
@@ -622,7 +626,7 @@ namespace Maze
 
         return true;
     }
-
+    */
     //////////////////////////////////////////
     void TextureManager::saveTextureMetaData(TextureCubePtr const& _texture, DataBlock& _metaData)
     {
@@ -677,7 +681,7 @@ namespace Maze
 
         DataBlock metaData;
         if (AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData))
-            loadTextureMetaData(_assetFile, textureCube);
+            loadTextureMetaData(textureCube, metaData);
 
         TextureCubeLibraryData* data = addTextureToLibrary(textureCube);
         if (data)

@@ -32,6 +32,9 @@
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
+#include "maze-graphics/assets/MazeAssetUnitTexture2D.hpp"
+#include "maze-graphics/assets/MazeAssetUnitTextureCube.hpp"
 
 
 //////////////////////////////////////////
@@ -1021,12 +1024,86 @@ namespace Maze
             default:
             {
                 CString type = _dataBlock.getCString(MAZE_HCS("type"));
-                ShaderUniformType shaderUniformType = ShaderUniformType::FromString(type);
+                ShaderUniformType shaderUniformType = type ? ShaderUniformType::FromString(type) : ShaderUniformType::None;
 
                 switch (shaderUniformType)
                 {
-                    case ShaderUniformType::UniformTexture2D:           setTexture2D(_dataBlock.getString(MAZE_HCS("value"))); break;
-                    case ShaderUniformType::UniformTextureCube:         setTextureCube(_dataBlock.getString(MAZE_HCS("value"))); break;
+                    case ShaderUniformType::UniformTexture2D:
+                    {
+                        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HCS("value"));
+                        if (paramIndex >= 0)
+                        {
+                            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+                            switch (paramType)
+                            {
+                                // by AUID
+                                case DataBlockParamType::ParamU32:
+                                {
+                                    AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
+                                    {
+                                        set(assetUnit->castRaw<AssetUnitTexture2D>()->loadTexture(true));
+                                        return true;
+                                    }
+
+                                    break;
+                                }
+                                // by name
+                                case DataBlockParamType::ParamString:
+                                {
+                                    setTexture2D(_dataBlock.getString(paramIndex));
+                                    return true;
+                                }
+                                default:
+                                {
+                                    MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                                    break;
+                                }
+                            }
+                        }
+                        set(Texture2DPtr());
+                        break;
+                    }
+                    case ShaderUniformType::UniformTextureCube:
+                    {
+                        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HCS("value"));
+                        if (paramIndex >= 0)
+                        {
+                            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+                            switch (paramType)
+                            {
+                                // by AUID
+                                case DataBlockParamType::ParamU32:
+                                {
+                                    AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTextureCube>::UID())
+                                    {
+                                        set(assetUnit->castRaw<AssetUnitTextureCube>()->loadTexture(true));
+                                        return true;
+                                    }
+
+                                    break;
+                                }
+                                // by name
+                                case DataBlockParamType::ParamString:
+                                {
+                                    setTextureCube(_dataBlock.getString(paramIndex));
+                                    return true;
+                                }
+                                default:
+                                {
+                                    MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                                    break;
+                                }
+                            }
+                        }
+                        set(TextureCubePtr());
+                        break;
+                    }
                     case ShaderUniformType::UniformVec4F32:             set(_dataBlock.getVec4F32(MAZE_HCS("value"))); break;
                     case ShaderUniformType::UniformColorF128:           setColor(_dataBlock.getVec4F32(MAZE_HCS("value"))); break;
                     default:
@@ -1053,8 +1130,46 @@ namespace Maze
             case ShaderUniformType::UniformF32:                 _dataBlock.setF32(MAZE_HCS("value"), getF32()); break;
             case ShaderUniformType::UniformF64:                 _dataBlock.setF64(MAZE_HCS("value"), getF64()); break;
             case ShaderUniformType::UniformBool:                _dataBlock.setBool(MAZE_HCS("value"), getBool()); break;
-            case ShaderUniformType::UniformTexture2D:           _dataBlock.setString(MAZE_HCS("value"), toStringValue()); break;
-            case ShaderUniformType::UniformTextureCube:         _dataBlock.setString(MAZE_HCS("value"), toStringValue()); break;
+            case ShaderUniformType::UniformTexture2D:
+            {
+                // Save as AUID
+                if (AssetUnitManager::GetInstancePtr())
+                {
+                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_texture->getName());
+                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
+                    {
+                        Texture2DPtr const& assetUnitTexture = assetUnit->castRaw<AssetUnitTexture2D>()->getTexture();
+                        if (assetUnitTexture == m_texture)
+                        {
+                            _dataBlock.setU32(MAZE_HCS("value"), assetUnit->getAssetUnitId());
+                            break;
+                        }
+                    }
+                }
+
+                _dataBlock.setString(MAZE_HCS("value"), toStringValue());
+                break;
+            }
+            case ShaderUniformType::UniformTextureCube:
+            {
+                // Save as AUID
+                if (AssetUnitManager::GetInstancePtr())
+                {
+                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_texture->getName());
+                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTextureCube>::UID())
+                    {
+                        TextureCubePtr const& assetUnitTexture = assetUnit->castRaw<AssetUnitTextureCube>()->getTexture();
+                        if (assetUnitTexture == m_texture)
+                        {
+                            _dataBlock.setU32(MAZE_HCS("value"), assetUnit->getAssetUnitId());
+                            break;
+                        }
+                    }
+                }
+
+                _dataBlock.setString(MAZE_HCS("value"), toStringValue());
+                break;
+            }
             case ShaderUniformType::UniformVec2S32:             _dataBlock.setVec2S32(MAZE_HCS("value"), getVec2S32()); break;
             case ShaderUniformType::UniformVec3S32:             _dataBlock.setVec3S32(MAZE_HCS("value"), getVec3S32()); break;
             case ShaderUniformType::UniformVec4S32:             _dataBlock.setVec4S32(MAZE_HCS("value"), getVec4S32()); break;

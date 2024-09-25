@@ -1021,7 +1021,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    DataBlock* DataBlock::addDataBlock(HashedCString _name)
+    DataBlock* DataBlock::ensureDataBlock(HashedCString _name)
     {
         DataBlock* blk = getDataBlock(_name);
         if (blk)

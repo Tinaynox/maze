@@ -82,6 +82,10 @@ namespace Maze
         //////////////////////////////////////////
         Texture2DPtr const& initTexture();
 
+
+        //////////////////////////////////////////
+        virtual void updateDataFromAssetUnit(DataBlock& _metaData) const MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////

@@ -217,13 +217,13 @@ namespace Maze
         void loadTextureMetaData(Texture2DPtr const& _texture, DataBlock const& _metaData);
 
         //////////////////////////////////////////
-        bool loadTextureMetaData(AssetFilePtr const& _assetFile, Texture2DPtr const& _texture);
+        // bool loadTextureMetaData(AssetFilePtr const& _assetFile, Texture2DPtr const& _texture);
 
         //////////////////////////////////////////
         void saveTextureMetaData(Texture2DPtr const& _texture, DataBlock& _metaData);
 
         //////////////////////////////////////////
-        bool saveTexture2DMetaData(AssetFilePtr const& _assetFile);
+        // bool saveTexture2DMetaData(AssetFilePtr const& _assetFile);
 
 
         //////////////////////////////////////////
@@ -294,7 +294,7 @@ namespace Maze
         void loadTextureMetaData(TextureCubePtr const& _texture, DataBlock const& _metaData);
 
         //////////////////////////////////////////
-        bool loadTextureMetaData(AssetFilePtr const& _assetFile, TextureCubePtr const& _texture);
+        // bool loadTextureMetaData(AssetFilePtr const& _assetFile, TextureCubePtr const& _texture);
 
         //////////////////////////////////////////
         void saveTextureMetaData(TextureCubePtr const& _texture, DataBlock& _metaData);

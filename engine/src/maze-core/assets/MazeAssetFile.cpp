@@ -100,7 +100,7 @@ namespace Maze
 
             for (AssetUnitPtr const& assetUnit : m_assetUnits)
             {
-                DataBlock* assetUnitDataBlock = assetUnitsBlock.addDataBlock(assetUnit->getDataBlockId());
+                DataBlock* assetUnitDataBlock = assetUnitsBlock.addNewDataBlock(assetUnit->getDataBlockId());
                 if (assetUnitDataBlock)
                 {
                     *assetUnitDataBlock = assetUnit->getData();

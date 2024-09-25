@@ -80,15 +80,15 @@ namespace Maze
 
     public:
         //////////////////////////////////////////
-        EditorToolsTexture2DChangedEvent(String const& _textureName = String())
+        EditorToolsTexture2DChangedEvent(HashedString const& _textureName = HashedString())
             : m_textureName(_textureName)
         {}
 
         //////////////////////////////////////////
-        String const& getTextureName() const { return m_textureName; }
+        HashedString const& getTextureName() const { return m_textureName; }
 
     protected:
-        String m_textureName;
+        HashedString m_textureName;
     };
 
 

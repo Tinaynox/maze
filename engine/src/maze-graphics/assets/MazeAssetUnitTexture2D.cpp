@@ -184,6 +184,15 @@ namespace Maze
         return m_texture;
     }
 
+    //////////////////////////////////////////
+    void AssetUnitTexture2D::updateDataFromAssetUnit(DataBlock& _metaData) const
+    {
+        AssetUnit::updateDataFromAssetUnit(_metaData);
+
+        if (m_texture)
+            TextureManager::GetCurrentInstancePtr()->saveTextureMetaData(m_texture, _metaData);
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

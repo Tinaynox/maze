@@ -285,7 +285,7 @@ namespace Maze
 
         for (auto const& unregisteredSettings : m_unregisteredSettings)
         {
-            dataBlock.addDataBlock(HashedCString(unregisteredSettings.first.c_str()))->copyFrom(&unregisteredSettings.second);
+            dataBlock.ensureDataBlock(HashedCString(unregisteredSettings.first.c_str()))->copyFrom(&unregisteredSettings.second);
         }
 
         if (!dataBlock.saveTextFile(m_settingsFileFullPath))

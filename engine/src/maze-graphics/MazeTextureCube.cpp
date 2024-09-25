@@ -228,8 +228,8 @@ namespace Maze
                 case DataBlockParamType::ParamString:
                 {
                     String const& name = _dataBlock.getString(paramIndex);
-                    TextureCubePtr const& sprite = TextureManager::GetCurrentInstancePtr()->getOrLoadTextureCube(name);
-                    setTextureCube(sprite);
+                    TextureCubePtr const& texture = TextureManager::GetCurrentInstancePtr()->getOrLoadTextureCube(name);
+                    setTextureCube(texture);
                     return true;
                 }
                 default:
@@ -259,8 +259,8 @@ namespace Maze
             AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_textureCube->getName());
             if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTextureCube>::UID())
             {
-                TextureCubePtr const& assetUnitMaterial = assetUnit->castRaw<AssetUnitTextureCube>()->getTexture();
-                if (assetUnitMaterial == m_textureCube)
+                TextureCubePtr const& assetUnitTexture = assetUnit->castRaw<AssetUnitTextureCube>()->getTexture();
+                if (assetUnitTexture == m_textureCube)
                 {
                     ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
                     return;

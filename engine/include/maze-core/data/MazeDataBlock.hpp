@@ -584,7 +584,7 @@ namespace Maze
         inline U16 getDataBlocksCount() const { return m_dataBlocksCount; }
 
         //////////////////////////////////////////
-        DataBlock* addDataBlock(HashedCString _name);
+        DataBlock* ensureDataBlock(HashedCString _name);
 
         //////////////////////////////////////////
         DataBlock* addNewDataBlock(HashedCString _name);

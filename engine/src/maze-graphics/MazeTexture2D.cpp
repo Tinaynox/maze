@@ -299,32 +299,32 @@ namespace Maze
             switch (paramType)
             {
                 // by AUID
-            case DataBlockParamType::ParamU32:
-            {
-                AssetUnitId auid = _dataBlock.getU32(paramIndex);
-
-                AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
-                if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
+                case DataBlockParamType::ParamU32:
                 {
-                    setTexture2D(assetUnit->castRaw<AssetUnitTexture2D>()->loadTexture(true));
+                    AssetUnitId auid = _dataBlock.getU32(paramIndex);
+
+                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
+                    {
+                        setTexture2D(assetUnit->castRaw<AssetUnitTexture2D>()->loadTexture(true));
+                        return true;
+                    }
+
+                    break;
+                }
+                // by name
+                case DataBlockParamType::ParamString:
+                {
+                    String const& name = _dataBlock.getString(paramIndex);
+                    Texture2DPtr const& texture = TextureManager::GetCurrentInstancePtr()->getOrLoadTexture2D(name);
+                    setTexture2D(texture);
                     return true;
                 }
-
-                break;
-            }
-            // by name
-            case DataBlockParamType::ParamString:
-            {
-                String const& name = _dataBlock.getString(paramIndex);
-                Texture2DPtr const& sprite = TextureManager::GetCurrentInstancePtr()->getOrLoadTexture2D(name);
-                setTexture2D(sprite);
-                return true;
-            }
-            default:
-            {
-                MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
-                break;
-            }
+                default:
+                {
+                    MAZE_ERROR("No supported asset ref type: %s!", c_dataBlockParamTypeInfo[(U8)paramType].name.str);
+                    break;
+                }
             }
         }
 
@@ -347,8 +347,8 @@ namespace Maze
             AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_texture2D->getName());
             if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
             {
-                Texture2DPtr const& assetUnitMaterial = assetUnit->castRaw<AssetUnitTexture2D>()->getTexture();
-                if (assetUnitMaterial == m_texture2D)
+                Texture2DPtr const& assetUnitTexture = assetUnit->castRaw<AssetUnitTexture2D>()->getTexture();
+                if (assetUnitTexture == m_texture2D)
                 {
                     ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
                     return;

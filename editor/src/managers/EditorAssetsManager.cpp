@@ -31,6 +31,7 @@
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
@@ -70,6 +71,8 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-graphics/assets/MazeAssetUnitTexture2D.hpp"
+#include "maze-graphics/assets/MazeAssetUnitTextureCube.hpp"
 #include "maze-gamepad/managers/MazeGamepadManager.hpp"
 #include "maze-gamepad/gamepad/MazeGamepad.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
@@ -172,15 +175,12 @@ namespace Maze
         EventManager::GetInstancePtr()->subscribeEvent<EditorToolsTexture2DChangedEvent>(
             [](EditorToolsTexture2DChangedEvent* _event)
             {
-                AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_event->getTextureName());
-                if (assetFile)
+                EditorAssetsManager* manager = EditorAssetsManager::GetInstancePtr();
+                if (manager)
                 {
-                    Texture2DPtr const& texture = TextureManager::GetCurrentInstancePtr()->getOrLoadTexture2D(_event->getTextureName());
-                    if (texture)
-                    {
-                        // #TODO: Rework
-                        TextureManager::GetCurrentInstancePtr()->saveTexture2DMetaData(assetFile);
-                    }
+                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(_event->getTextureName());
+                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
+                        manager->fixAssetFile(assetUnit->castRaw<AssetUnitTexture2D>()->getAssetFile());
                 }
             });
 
