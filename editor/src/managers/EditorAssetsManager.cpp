@@ -220,12 +220,16 @@ namespace Maze
                 [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateFolder(_controller, _fullPath); });
 
             _menuListTree->addItem(
-                "Create/Material",
-                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateMaterial(_controller, _fullPath); });
+                "Create/Scene",
+                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateScene(_controller, _fullPath); });
 
             _menuListTree->addItem(
                 "Create/Prefab/3D",
                 [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreatePrefab3D(_controller, _fullPath); });
+
+            _menuListTree->addItem(
+                "Create/Material",
+                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateMaterial(_controller, _fullPath); });
 
             auto  const& assetDirectoryPathes = AssetManager::GetInstancePtr()->getAssetDirectoryPathes();
             bool isRootAssetDirectory = assetDirectoryPathes.find(_fullPath) != assetDirectoryPathes.end();

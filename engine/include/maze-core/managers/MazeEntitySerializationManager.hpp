@@ -33,6 +33,7 @@
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
 #include <tinyxml2/tinyxml2.h>
@@ -69,11 +70,13 @@ namespace Maze
         //////////////////////////////////////////
         static inline EntitySerializationManager& GetInstance() { return *s_instance; }
 
-        //////////////////////////////////////////
-        // bool savePrefabToDataBlockFileOBSOLETE(EntityPtr const& _entity, Path const& _fileFullPath) const;
+
 
         //////////////////////////////////////////
         bool savePrefabToDataBlockFile(EntityPtr const& _entity, Path const& _fileFullPath) const;
+
+        //////////////////////////////////////////
+        bool saveSceneToDataBlockFile(EcsScenePtr const& _entity, Path const& _fileFullPath) const;
 
 
         //////////////////////////////////////////

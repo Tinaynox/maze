@@ -162,12 +162,21 @@ namespace Maze
         registerIconCallbackForAssetFileExtension("txt", textFileIconCallback);
         registerIconCallbackForAssetFileExtension("mzmeta", textFileIconCallback);
 
+        registerIconCallbackForAssetFileExtension("mzscene",
+            [](AssetFilePtr const& _assetFile)
+            {
+                return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Scene);
+            });
+
         std::function<SpritePtr(AssetFilePtr const&)> meshFileIconCallback =
             [](AssetFilePtr const& _assetFile)
-        {
-            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Mesh);
-        };
+            {
+                return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Mesh);
+            };
+        // #TODO: read from MeshManager
         registerIconCallbackForAssetFileExtension("obj", meshFileIconCallback);
+        registerIconCallbackForAssetFileExtension("fbx", meshFileIconCallback);
+        registerIconCallbackForAssetFileExtension("mzmesh", meshFileIconCallback);
 
 
         registerIconCallbackForAssetFileExtension("mzphysicsMaterial2D",

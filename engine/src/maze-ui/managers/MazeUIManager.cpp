@@ -1529,7 +1529,7 @@ namespace Maze
 
         // Prefab
         {
-            Vec2S sheetPos(4, 3);
+            Vec2S sheetPos(6, 3);
             Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 color0(14, 109, 203);
             ColorU32 color1(97, 174, 254);

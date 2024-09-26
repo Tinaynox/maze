@@ -326,6 +326,29 @@ namespace Maze
         return true;
     }
 
+    //////////////////////////////////////////
+    bool EntitySerializationManager::saveSceneToDataBlockFile(EcsScenePtr const& _entity, Path const& _fileFullPath) const
+    {
+        MAZE_PROFILE_EVENT("EntitySerializationManager::savePrefabToDataBlockFile");
+
+        if (!_entity)
+            return false;
+
+        if (_fileFullPath.empty())
+            return false;
+
+        Path directoryFullPath = FileHelper::GetDirectoryInPath(_fileFullPath);
+        FileHelper::CreateDirectoryRecursive(directoryFullPath);
+
+        DataBlock dataBlock;
+
+        dataBlock.addNewDataBlock(MAZE_HCS("info"));
+
+        dataBlock.saveTextFile(_fileFullPath);
+
+        return true;
+    }
+
 
     //////////////////////////////////////////
     EntityPtr EntitySerializationManager::loadPrefab(

@@ -47,6 +47,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
+#include "maze-graphics/ecs/MazeEcsAssetScene.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
@@ -143,6 +144,33 @@ namespace Maze
             AssetManager::GetInstancePtr()->updateAssets();
 
             entity->removeFromEcsWorld();
+
+            AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(newPrefabFullPath);
+            if (assetFile)
+            {
+                SelectionManager::GetInstancePtr()->selectObject(assetFile);
+                _controller->setAssetFileRename(assetFile, true);
+            }
+        }
+
+        //////////////////////////////////////////
+        void CreateScene(AssetsController* _controller, Path const& _fullPath)
+        {
+            Path dir = FileHelper::GetDirectoryInPath(_fullPath);
+
+            Path newPrefabFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/New Scene.mzscene");
+
+            Path name = FileHelper::GetFileNameWithoutExtension(newPrefabFullPath);
+
+            EcsAssetScenePtr scene = EcsAssetScene::Create(EditorManager::GetInstancePtr()->getSceneMain()->getRenderTarget());
+            // EntityPtr entity = EditorManager::GetInstancePtr()->getSceneMain()->createEntity(name);
+            // EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(entity, newPrefabFullPath);
+
+            EntitySerializationManager::GetInstancePtr()->saveSceneToDataBlockFile(scene, newPrefabFullPath);
+
+            AssetManager::GetInstancePtr()->updateAssets();
+
+            // entity->removeFromEcsWorld();
 
             AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(newPrefabFullPath);
             if (assetFile)
