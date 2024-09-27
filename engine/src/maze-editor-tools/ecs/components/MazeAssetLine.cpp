@@ -321,10 +321,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetLine::setIcon(SpritePtr const& _sprite)
+    void AssetLine::setIcon(
+        SpritePtr const& _sprite,
+        ColorU32 const& _color)
     {
         if (m_iconRenderer)
+        {
             m_iconRenderer->setSprite(_sprite);
+            m_iconRenderer->setColor(_color);
+        }
     }
 
     //////////////////////////////////////////

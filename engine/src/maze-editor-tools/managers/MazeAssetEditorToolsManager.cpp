@@ -57,17 +57,17 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    static SpritePtr TextureFileIconCallback(AssetFilePtr const& _assetFile)
+    static AssetFileEditorIconData TextureFileIconCallback(AssetFilePtr const& _assetFile)
     {
-        SpritePtr result;
+        AssetFileEditorIconData result;
 
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         TextureManagerPtr const& textureManager = renderSystem->getTextureManager();
         Texture2DPtr const& texture = textureManager->getOrLoadTexture2D(_assetFile);
         if (texture)
         {
-            result = Sprite::Create(texture);
-            result->setName(HashedString("TextureFileIcon_" + _assetFile->getFileName().toUTF8()));
+            result.sprite = Sprite::Create(texture);
+            result.sprite->setName(HashedString("TextureFileIcon_" + _assetFile->getFileName().toUTF8()));
         }
 
         return result;
@@ -154,10 +154,15 @@ namespace Maze
         registerIconCallbackForAssetFileExtension("mztexture", TextureFileIconCallback);
 
 
-        std::function<SpritePtr(AssetFilePtr const&)> textFileIconCallback =
+        std::function<AssetFileEditorIconData(AssetFilePtr const&)> textFileIconCallback =
             [](AssetFilePtr const& _assetFile)
         {
-            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TextFile);
+            return
+                AssetFileEditorIconData
+                {
+                    UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TextFile),
+                    ColorU32::c_white
+                };
         };
         registerIconCallbackForAssetFileExtension("txt", textFileIconCallback);
         registerIconCallbackForAssetFileExtension("mzmeta", textFileIconCallback);
@@ -165,13 +170,23 @@ namespace Maze
         registerIconCallbackForAssetFileExtension("mzscene",
             [](AssetFilePtr const& _assetFile)
             {
-                return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Scene);
+                return
+                    AssetFileEditorIconData
+                    {
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Scene),
+                        ColorU32(17, 18, 16)
+                    };
             });
 
-        std::function<SpritePtr(AssetFilePtr const&)> meshFileIconCallback =
+        std::function<AssetFileEditorIconData(AssetFilePtr const&)> meshFileIconCallback =
             [](AssetFilePtr const& _assetFile)
             {
-                return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Mesh);
+                return
+                    AssetFileEditorIconData
+                    {
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Mesh),
+                        ColorU32::c_white
+                    };
             };
         // #TODO: read from MeshManager
         registerIconCallbackForAssetFileExtension("obj", meshFileIconCallback);
@@ -181,32 +196,57 @@ namespace Maze
 
         registerIconCallbackForAssetFileExtension("mzphysicsMaterial2D",
             [](AssetFilePtr const& _assetFile)
-        {
-            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::PhysicsMaterial2D);
-        });
+            {
+                return
+                    AssetFileEditorIconData
+                    {
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::PhysicsMaterial2D),
+                        ColorU32::c_white
+                    };
+            });
 
         registerIconCallbackForAssetFileExtension("mzshader",
             [](AssetFilePtr const& _assetFile)
-        {
-            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Shader);
-        });
+            {
+                return
+                    AssetFileEditorIconData
+                    {
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Shader),
+                        ColorU32::c_white
+                    };
+            });
         registerIconCallbackForAssetFileExtension("mzglsl",
             [](AssetFilePtr const& _assetFile)
-        {
-            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Shader);
-        });
+            {
+                return
+                    AssetFileEditorIconData
+                    {
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Shader),
+                        ColorU32::c_white
+                    };
+            });
 
         registerIconCallbackForAssetFileExtension("mzmaterial",
             [](AssetFilePtr const& _assetFile)
-        {
-            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Material);
-        });
+            {
+                return
+                    AssetFileEditorIconData
+                    {
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Material),
+                        ColorU32::c_white
+                    };
+            });
 
         registerIconCallbackForAssetFileClass<AssetDirectory>(
             []()
-        {
-            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::FolderClosed);
-        });
+            {
+                return
+                    AssetFileEditorIconData
+                    {
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::FolderClosed),
+                        ColorU32::c_white
+                    };
+            });
     }
 
     //////////////////////////////////////////
@@ -236,7 +276,7 @@ namespace Maze
     //////////////////////////////////////////
     void AssetEditorToolsManager::registerIconCallbackForAssetFileExtension(
         String const& _assetFileExtension,
-        std::function<SpritePtr(AssetFilePtr const&)> _callback)
+        std::function<AssetFileEditorIconData(AssetFilePtr const&)> _callback)
     {
         m_iconCallbackPerAssetFileExtension.insert(
             _assetFileExtension,
@@ -246,7 +286,7 @@ namespace Maze
     //////////////////////////////////////////
     void AssetEditorToolsManager::registerIconCallbackForAssetFileClass(
         ClassUID _assetFileClass,
-        std::function<SpritePtr()> _callback)
+        std::function<AssetFileEditorIconData()> _callback)
     {
         m_iconCallbackPerAssetFileClass.emplace(
             std::piecewise_construct,
@@ -255,7 +295,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SpritePtr AssetEditorToolsManager::getIconForAssetFile(AssetFilePtr const& _assetFile)
+    AssetFileEditorIconData AssetEditorToolsManager::getIconForAssetFile(AssetFilePtr const& _assetFile)
     {
         ClassUID assetFileUID = _assetFile->getClassUID();
         String extension = _assetFile->getExtension();
@@ -268,7 +308,12 @@ namespace Maze
         if (it2 != m_iconCallbackPerAssetFileClass.end())
             return it2->second();
 
-        return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::File);
+        return
+            AssetFileEditorIconData
+            {
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::File),
+                ColorU32::c_white
+            };
     }
 
     //////////////////////////////////////////
@@ -279,7 +324,12 @@ namespace Maze
         registerIconCallbackForAssetFileExtension(_extension,
             [](AssetFilePtr const& _assetFile)
         {
-            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Prefab);
+            return
+                AssetFileEditorIconData
+                {
+                    UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Prefab),
+                    ColorU32::c_white
+                };
         });
     }
 

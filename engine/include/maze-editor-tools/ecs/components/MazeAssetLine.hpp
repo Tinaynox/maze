@@ -106,7 +106,9 @@ namespace Maze
         inline ContextMenu2DPtr const& getContextMenu() const { return m_contextMenu; }
 
         //////////////////////////////////////////
-        void setIcon(SpritePtr const& _sprite);
+        void setIcon(
+            SpritePtr const& _sprite,
+            ColorU32 const& _color = ColorU32::c_white);
 
         //////////////////////////////////////////
         void setDropDownVisible(bool _value);

@@ -60,6 +60,17 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct AssetFileEditorIconData
+    //
+    //////////////////////////////////////////
+    struct MAZE_EDITOR_TOOLS_API AssetFileEditorIconData
+    {
+        SpritePtr sprite;
+        ColorU32 color = ColorU32::c_white;
+    };
+
+
+    //////////////////////////////////////////
     // Class AssetEditorToolsManager
     //
     //////////////////////////////////////////
@@ -94,23 +105,23 @@ namespace Maze
         //////////////////////////////////////////
         void registerIconCallbackForAssetFileExtension(
             String const& _assetFileExtension,
-            std::function<SpritePtr(AssetFilePtr const&)> _callback);
+            std::function<AssetFileEditorIconData(AssetFilePtr const&)> _callback);
 
         //////////////////////////////////////////
         void registerIconCallbackForAssetFileClass(
             ClassUID _assetFileClass,
-            std::function<SpritePtr()> _callback);
+            std::function<AssetFileEditorIconData()> _callback);
 
         //////////////////////////////////////////
         template <typename TAssetFile>
         inline void registerIconCallbackForAssetFileClass(
-            std::function<SpritePtr()> _callback)
+            std::function<AssetFileEditorIconData()> _callback)
         {
             registerIconCallbackForAssetFileClass(ClassInfo<TAssetFile>::UID(), _callback);
         }
 
         //////////////////////////////////////////
-        SpritePtr getIconForAssetFile(AssetFilePtr const& _assetFile);
+        AssetFileEditorIconData getIconForAssetFile(AssetFilePtr const& _assetFile);
 
 
         //////////////////////////////////////////
@@ -158,8 +169,8 @@ namespace Maze
     protected:
         static AssetEditorToolsManager* s_instance;
 
-        StringKeyMap<std::function<SpritePtr(AssetFilePtr const&)>> m_iconCallbackPerAssetFileExtension;
-        Map<ClassUID, std::function<SpritePtr()>> m_iconCallbackPerAssetFileClass;
+        StringKeyMap<std::function<AssetFileEditorIconData(AssetFilePtr const&)>> m_iconCallbackPerAssetFileExtension;
+        Map<ClassUID, std::function<AssetFileEditorIconData()>> m_iconCallbackPerAssetFileClass;
 
         Vector<AssetFileContextMenuCallback> m_assetFileContextMenuCallbacks;
 

@@ -546,8 +546,8 @@ namespace Maze
 
             line->getTransform()->setParent(lineParent);
             line->setDropDownVisible(false);
-            line->setIcon(
-                AssetEditorToolsManager::GetInstancePtr()->getIconForAssetFile(assetFile));
+            AssetFileEditorIconData iconData = AssetEditorToolsManager::GetInstancePtr()->getIconForAssetFile(assetFile);
+            line->setIcon(iconData.sprite, iconData.color);
             line->setSelectAssetFileByClick(true);
 
             line->eventLineDoubleClick.subscribe(this, &AssetsController::notifyAssetTreeLineDoubleClick);
