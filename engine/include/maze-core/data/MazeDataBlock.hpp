@@ -548,23 +548,23 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        HashedCString getHashedCString(ParamIndex _index) const;
+        HashedCString getHashedCString(ParamIndex _index, HashedCString const& _defaultValue = HashedCString::c_empty) const;
 
         //////////////////////////////////////////
-        HashedCString getHashedCString(ParamIndex _index, HashedCString const& _defaultValue) const;
-
-        //////////////////////////////////////////
-        HashedString getHashedString(ParamIndex _index, HashedString const& _defaultValue) const;
-
-        //////////////////////////////////////////
-        HashedCString getHashedCString(HashedCString _name, HashedCString const& _defaultValue) const;
-
-        //////////////////////////////////////////
-        HashedCString getHashedCString(HashedCString _name) const;
+        HashedCString getHashedCString(HashedCString _name, HashedCString const& _defaultValue = HashedCString::c_empty) const;
 
         //////////////////////////////////////////
         HashedCString getHashedCStringByNameId(SharedStringId _nameId, HashedCString const& _defaultValue) const;
 
+
+        //////////////////////////////////////////
+        HashedString getHashedString(ParamIndex _index, HashedString const& _defaultValue = HashedString::c_empty) const;
+
+        //////////////////////////////////////////
+        HashedString getHashedString(HashedCString _name, HashedString const& _defaultValue = HashedString::c_empty) const;
+
+        //////////////////////////////////////////
+        HashedString getHashedStringByNameId(SharedStringId _nameId, HashedString const& _defaultValue) const;
         
 
     

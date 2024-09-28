@@ -829,22 +829,9 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    HashedCString DataBlock::getHashedCString(ParamIndex _index) const
-    {
-        static HashedCString const nullValue;
-        return getHashedCString(_index, nullValue);
-    }
-
-    //////////////////////////////////////////
     HashedCString DataBlock::getHashedCString(ParamIndex _index, HashedCString const& _defaultValue) const
     {
         return getParamValue<HashedCString>(_index, _defaultValue);
-    }
-
-    //////////////////////////////////////////
-    HashedString DataBlock::getHashedString(ParamIndex _index, HashedString const& _defaultValue) const
-    {
-        return getParamValue<HashedString>(_index, _defaultValue);
     }
 
     //////////////////////////////////////////
@@ -855,17 +842,31 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    HashedCString DataBlock::getHashedCString(HashedCString _name) const
-    {
-        static HashedCString const nullValue;
-        return getHashedCString(_name, nullValue);
-    }
-
-    //////////////////////////////////////////
     HashedCString DataBlock::getHashedCStringByNameId(SharedStringId _nameId, HashedCString const& _defaultValue) const
     {
         ParamIndex paramIdx = findParamIndex(_nameId);
         return paramIdx < 0 ? _defaultValue : getHashedCString(paramIdx);
+    }
+
+
+    //////////////////////////////////////////
+    HashedString DataBlock::getHashedString(ParamIndex _index, HashedString const& _defaultValue) const
+    {
+        return getParamValue<HashedString>(_index, _defaultValue);
+    }
+
+    //////////////////////////////////////////
+    HashedString DataBlock::getHashedString(HashedCString _name, HashedString const& _defaultValue) const
+    {
+        SharedStringId nameId = getSharedStringId(_name);
+        return nameId == 0 ? _defaultValue : getHashedStringByNameId(nameId, _defaultValue);
+    }
+
+    //////////////////////////////////////////
+    HashedString DataBlock::getHashedStringByNameId(SharedStringId _nameId, HashedString const& _defaultValue) const
+    {
+        ParamIndex paramIdx = findParamIndex(_nameId);
+        return paramIdx < 0 ? _defaultValue : getHashedString(paramIdx);
     }
 
 

@@ -174,11 +174,9 @@ namespace Maze
     //////////////////////////////////////////
     HashedString const& AssetUnitManager::getAssetUnitName(AssetUnitId _assetFileId) const
     {
-        static HashedString const nullString;
-
         AssetUnitPtr const& assetUnit = getAssetUnit(_assetFileId);
         if (!assetUnit)
-            return nullString;
+            return HashedString::c_empty;
 
         return assetUnit->getName();
     }

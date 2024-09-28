@@ -48,6 +48,9 @@ namespace Maze
     //////////////////////////////////////////
     struct MAZE_CORE_API HashedCString
     {
+        //////////////////////////////////////////
+        static HashedCString const c_empty;
+
         CString str = nullptr;
         U32 hash = 0u;
 

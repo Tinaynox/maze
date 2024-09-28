@@ -54,6 +54,10 @@ namespace Maze
     struct MAZE_CORE_API HashedString
     {
     public:
+        //////////////////////////////////////////
+        static HashedString const c_empty;
+
+    public:
 
         //////////////////////////////////////////
         inline HashedString()
