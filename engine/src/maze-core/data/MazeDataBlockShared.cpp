@@ -51,6 +51,9 @@ namespace Maze
 #endif
 
         m_strings.emplace(_name, _id);
+        auto it2 = m_strings.find(_name);
+        m_stringsById[_id] = Pair<U32, String const*>(it2.key().hash, &it2->first);
+
         return true;
     }
 
@@ -63,6 +66,9 @@ namespace Maze
 
         DataBlock::SharedStringId id = DataBlock::SharedStringId(++m_stringsIndexCounter);
         m_strings.emplace(HashedString(_name), id);
+        auto it2 = m_strings.find(_name);
+        m_stringsById[id] = Pair<U32, String const*>(it2.key().hash, &it2->first);
+
         return id;
     }
 
@@ -79,9 +85,9 @@ namespace Maze
     //////////////////////////////////////////
     CString DataBlockShared::getCString(DataBlock::SharedStringId _index) const
     {
-        for (auto it = m_strings.begin(), end = m_strings.end(); it != end; ++it)
-            if (it->second == _index)
-                return it->first.c_str();
+        auto it = m_stringsById.find(_index);
+        if (it != m_stringsById.end())
+            return it->second.second->c_str();
 
         return nullptr;
     }
@@ -91,9 +97,9 @@ namespace Maze
     {
         static String nullValue;
 
-        for (auto it = m_strings.begin(), end = m_strings.end(); it != end; ++it)
-            if (it->second == _index)
-                return it->first;
+        auto it = m_stringsById.find(_index);
+        if (it != m_stringsById.end())
+            return *it->second.second;
 
         return nullValue;
     }
@@ -101,9 +107,9 @@ namespace Maze
     //////////////////////////////////////////
     HashedCString DataBlockShared::getNameHashedCString(DataBlock::SharedStringId _index) const
     {
-        for (auto it = m_strings.begin(), end = m_strings.end(); it != end; ++it)
-            if (it->second == _index)
-                return it.key();
+        auto it = m_stringsById.find(_index);
+        if (it != m_stringsById.end())
+            return HashedCString(it->second.second->c_str(), it->second.first);
 
         return HashedCString();
     }
@@ -112,6 +118,7 @@ namespace Maze
     void DataBlockShared::clear()
     {
         m_strings.clear();
+        m_stringsById.clear();
         m_stringsIndexCounter = 0;
     }
 

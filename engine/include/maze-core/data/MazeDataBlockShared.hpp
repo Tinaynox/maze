@@ -126,6 +126,8 @@ namespace Maze
         BlockMemoryAllocator<sizeof(DataBlock), sizeof(DataBlock) * 32> m_dataBlockAllocator;
 
         StringKeyMap<DataBlock::SharedStringId> m_strings;
+        UnorderedMap<DataBlock::SharedStringId, Pair<U32, String const*>> m_stringsById;
+
         DataBlock::SharedStringId m_stringsIndexCounter = 0;
     };
 
