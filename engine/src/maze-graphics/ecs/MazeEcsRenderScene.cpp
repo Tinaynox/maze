@@ -81,6 +81,18 @@ namespace Maze
         return true;
     }
 
+    //////////////////////////////////////////
+    void EcsRenderScene::serializeSceneCommonInfo(DataBlock& _info)
+    {
+        EcsScene::serializeSceneCommonInfo(_info);
+    }
+
+    //////////////////////////////////////////
+    void EcsRenderScene::deserializeSceneCommonInfo(DataBlock const& _info)
+    {
+        EcsScene::deserializeSceneCommonInfo(_info);
+    }
+
     
 } // namespace Maze
 //////////////////////////////////////////

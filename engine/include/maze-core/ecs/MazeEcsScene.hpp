@@ -100,6 +100,9 @@ namespace Maze
         virtual ~EcsScene();
         
         //////////////////////////////////////////
+        virtual HashedCString getSceneName() const { return getMetaClass()->getName(); }
+
+        //////////////////////////////////////////
         virtual void update(F32 _dt);
 
 
@@ -191,6 +194,14 @@ namespace Maze
 
         //////////////////////////////////////////
         void makeMainScene();
+
+
+
+        //////////////////////////////////////////
+        virtual void serializeSceneCommonInfo(DataBlock& _info) {}
+
+        //////////////////////////////////////////
+        virtual void deserializeSceneCommonInfo(DataBlock const& _info) {}
 
     protected:
 

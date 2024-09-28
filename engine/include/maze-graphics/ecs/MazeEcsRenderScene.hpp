@@ -76,6 +76,13 @@ namespace Maze
         //////////////////////////////////////////
         LightingSettingsPtr const& getLightingSettings() const { return m_lightingSettings; }
 
+
+        //////////////////////////////////////////
+        virtual void serializeSceneCommonInfo(DataBlock& _info) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void deserializeSceneCommonInfo(DataBlock const& _info) MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////

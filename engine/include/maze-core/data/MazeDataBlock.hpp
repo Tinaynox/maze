@@ -519,10 +519,7 @@ namespace Maze
         String const& getString(ParamIndex _index) const;
 
         //////////////////////////////////////////
-        inline String const& getString(ParamIndex _index, String const& _defaultValue) const
-        {
-            return getParamValue(_index, _defaultValue);
-        }
+        String const& getString(ParamIndex _index, String const& _defaultValue) const;
 
         //////////////////////////////////////////
         String const& getString(HashedCString _name, String const& _defaultValue) const;
@@ -547,6 +544,28 @@ namespace Maze
 
         //////////////////////////////////////////
         ParamIndex addNewStringByNameId(SharedStringId _nameId, String const& _value);
+
+
+
+        //////////////////////////////////////////
+        HashedCString getHashedCString(ParamIndex _index) const;
+
+        //////////////////////////////////////////
+        HashedCString getHashedCString(ParamIndex _index, HashedCString const& _defaultValue) const;
+
+        //////////////////////////////////////////
+        HashedString getHashedString(ParamIndex _index, HashedString const& _defaultValue) const;
+
+        //////////////////////////////////////////
+        HashedCString getHashedCString(HashedCString _name, HashedCString const& _defaultValue) const;
+
+        //////////////////////////////////////////
+        HashedCString getHashedCString(HashedCString _name) const;
+
+        //////////////////////////////////////////
+        HashedCString getHashedCStringByNameId(SharedStringId _nameId, HashedCString const& _defaultValue) const;
+
+        
 
     
 
@@ -678,7 +697,7 @@ namespace Maze
         String const& getSharedString(SharedStringId _nameId) const;
 
         //////////////////////////////////////////
-        HashedCString getNameHashedCString(SharedStringId _nameId) const;
+        HashedCString getSharedHashedCString(SharedStringId _nameId) const;
 
     private:
 
@@ -695,12 +714,6 @@ namespace Maze
         //////////////////////////////////////////
         template <class TValue>
         inline TValue getParamValueByName(HashedCString _name, TValue const& _defaultValue = TValue()) const;
-
-        //////////////////////////////////////////
-        inline CString getParamValueCString(ParamValue _value) const;
-
-        //////////////////////////////////////////
-        inline String const& getParamValueString(ParamValue _value) const;
 
 
 

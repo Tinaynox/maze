@@ -342,7 +342,7 @@ namespace Maze
 
         DataBlock dataBlock;
 
-        dataBlock.addNewDataBlock(MAZE_HCS("info"));
+        
 
         dataBlock.saveTextFile(_fileFullPath);
 

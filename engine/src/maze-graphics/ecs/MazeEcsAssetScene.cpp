@@ -68,6 +68,24 @@ namespace Maze
         return true;
     }
 
+    //////////////////////////////////////////
+    void EcsAssetScene::serializeSceneCommonInfo(DataBlock& _info)
+    {
+        EcsRenderScene::serializeSceneCommonInfo(_info);
+
+        _info.setString(MAZE_HCS("name"), m_name);
+    }
+
+    //////////////////////////////////////////
+    void EcsAssetScene::deserializeSceneCommonInfo(DataBlock const& _info)
+    {
+        EcsRenderScene::deserializeSceneCommonInfo(_info);
+
+        HashedCString name = _info.getHashedCString(MAZE_HCS("name"));
+        if (!name.empty())
+            setName(HashedString(name));
+    }
+
     
 } // namespace Maze
 //////////////////////////////////////////

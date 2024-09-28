@@ -140,7 +140,7 @@ namespace Maze
             return _defaultValue;
         }
 
-        return getParamValueCString(value);
+        return getSharedCString((DataBlock::SharedStringId)value);
     }
 
     //////////////////////////////////////////
@@ -154,7 +154,19 @@ namespace Maze
     template <>
     inline HashedCString DataBlock::getParamValue(DataBlock::ParamIndex _index, HashedCString const& _defaultValue) const
     {
-        return HashedCString(getParamValue(_index, _defaultValue.str));
+        Param const& param = getParam(_index);
+        ParamValue const& value = param.value;
+
+        if ((U8)param.type != (U8)TypeOf<CString>::type)
+        {
+            MAZE_ERROR(
+                "Param type mismatch. Inner type: '%s'(%d). Requested type: '%s'(%d)",
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)param.type].name), (S32)param.type,
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)TypeOf<CString>::type].name), (S32)TypeOf<CString>::type);
+            return _defaultValue;
+        }
+
+        return getSharedHashedCString((DataBlock::SharedStringId)value);
     }
 
     //////////////////////////////////////////
@@ -179,7 +191,7 @@ namespace Maze
             return _defaultValue;
         }
 
-        return getParamValueString(value);
+        return getSharedString((DataBlock::SharedStringId)value);
     }
 
     //////////////////////////////////////////
@@ -197,19 +209,7 @@ namespace Maze
         SharedStringId nameId = getSharedStringId(_name);
         return nameId < 0 ? _defaultValue : getParamValueByNameId(nameId, _defaultValue);
     }
-
-    //////////////////////////////////////////
-    inline CString DataBlock::getParamValueCString(ParamValue _value) const
-    {
-        return getSharedCString(_value);
-    }
-
-    //////////////////////////////////////////
-    inline String const& DataBlock::getParamValueString(ParamValue _value) const
-    {
-        return getSharedString(_value);
-    }
-    
+            
     //////////////////////////////////////////
     template <class TValue>
     inline bool DataBlock::setParam(DataBlock::ParamIndex _index, TValue const& _value)

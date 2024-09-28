@@ -69,6 +69,24 @@ namespace Maze
         //////////////////////////////////////////
         virtual ~EcsAssetScene();
 
+
+        //////////////////////////////////////////
+        virtual HashedCString getSceneName() const { return getName(); }
+
+
+        //////////////////////////////////////////
+        inline HashedString const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        inline void setName(HashedString const& _name) { m_name = _name; }
+
+
+        //////////////////////////////////////////
+        virtual void serializeSceneCommonInfo(DataBlock& _info) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void deserializeSceneCommonInfo(DataBlock const& _info) MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////
@@ -83,6 +101,7 @@ namespace Maze
         using EcsRenderScene::init;
 
     protected:
+        HashedString m_name;
     };
 
 

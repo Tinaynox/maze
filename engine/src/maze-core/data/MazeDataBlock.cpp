@@ -253,7 +253,7 @@ namespace Maze
         if (nameId == 0)
             return HashedCString();
 
-        return getNameHashedCString(nameId);
+        return getSharedHashedCString(nameId);
     }
 
     //////////////////////////////////////////
@@ -322,14 +322,14 @@ namespace Maze
         for (ParamIndex i = 0, e = (ParamIndex)_from->getParamsCount(); i < e; ++i, ++paramPtr)
         {
             Param const& param = *paramPtr;
-            SharedStringId paramNameId = addSharedString(_from->getNameHashedCString(param.nameId));
+            SharedStringId paramNameId = addSharedString(_from->getSharedHashedCString(param.nameId));
             
             if (param.type == U32(DataBlockParamType::ParamString))
             {
                 insertParamAt<CString>(
                     (ParamIndex)getParamsCount(),
                     paramNameId,
-                    _from->getParamValueCString(param.value));
+                    _from->getSharedCString((DataBlock::SharedStringId)param.value));
             }
             else
             {
@@ -403,7 +403,7 @@ namespace Maze
 
             if (param0.type == U32(DataBlockParamType::ParamString))
             {
-                if (getParamValueString(param0.value) != _value.getParamValueString(param1.value))
+                if (getSharedString((DataBlock::SharedStringId)param0.value) != _value.getSharedString((DataBlock::SharedStringId)param1.value))
                     return false;
             }
             else
@@ -665,7 +665,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    HashedCString DataBlock::getNameHashedCString(SharedStringId _nameId) const
+    HashedCString DataBlock::getSharedHashedCString(SharedStringId _nameId) const
     {
         return m_shared->getNameHashedCString(_nameId);
     }
@@ -763,6 +763,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    String const& DataBlock::getString(ParamIndex _index, String const& _defaultValue) const
+    {
+        return getParamValue(_index, _defaultValue);
+    }
+
+    //////////////////////////////////////////
     String const& DataBlock::getString(HashedCString _name, String const& _defaultValue) const
     {
         SharedStringId nameId = getSharedStringId(_name);
@@ -820,6 +826,48 @@ namespace Maze
     {
         return addParamByNameId(_nameId, _value);
     }
+
+
+    //////////////////////////////////////////
+    HashedCString DataBlock::getHashedCString(ParamIndex _index) const
+    {
+        static HashedCString const nullValue;
+        return getHashedCString(_index, nullValue);
+    }
+
+    //////////////////////////////////////////
+    HashedCString DataBlock::getHashedCString(ParamIndex _index, HashedCString const& _defaultValue) const
+    {
+        return getParamValue<HashedCString>(_index, _defaultValue);
+    }
+
+    //////////////////////////////////////////
+    HashedString DataBlock::getHashedString(ParamIndex _index, HashedString const& _defaultValue) const
+    {
+        return getParamValue<HashedString>(_index, _defaultValue);
+    }
+
+    //////////////////////////////////////////
+    HashedCString DataBlock::getHashedCString(HashedCString _name, HashedCString const& _defaultValue) const
+    {
+        SharedStringId nameId = getSharedStringId(_name);
+        return nameId == 0 ? _defaultValue : getHashedCStringByNameId(nameId, _defaultValue);
+    }
+
+    //////////////////////////////////////////
+    HashedCString DataBlock::getHashedCString(HashedCString _name) const
+    {
+        static HashedCString const nullValue;
+        return getHashedCString(_name, nullValue);
+    }
+
+    //////////////////////////////////////////
+    HashedCString DataBlock::getHashedCStringByNameId(SharedStringId _nameId, HashedCString const& _defaultValue) const
+    {
+        ParamIndex paramIdx = findParamIndex(_nameId);
+        return paramIdx < 0 ? _defaultValue : getHashedCString(paramIdx);
+    }
+
 
     //////////////////////////////////////////
     bool DataBlock::removeParam(HashedCString _name)
@@ -932,7 +980,7 @@ namespace Maze
         {
             Param const& param = dataBlock->getParam(i);
             if (param.type == U32(DataBlockParamType::ParamString))            
-                result.push_back(getParamValueCString(param.value));
+                result.push_back(getSharedCString((DataBlock::SharedStringId)param.value));
         }
 
         return std::move(result);
@@ -961,7 +1009,7 @@ namespace Maze
         {
             Param const& param = dataBlock->getParam(i);
             if (param.type == U32(DataBlockParamType::ParamString))
-                result.insert(getParamValueCString(param.value));
+                result.insert(getSharedCString((DataBlock::SharedStringId)param.value));
         }
 
         return std::move(result);
