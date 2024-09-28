@@ -37,6 +37,7 @@
 #include "maze-graphics/MazeColorU32.hpp"
 #include "maze-graphics/ecs/MazeLightingSettings.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -53,6 +54,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API LightingSettings
+        : public IDataBlockSerializable
     {
     public:
 
@@ -72,13 +74,35 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline MaterialPtr const& getSkyBoxMaterial() const { return m_skyBoxMaterial; }
+        inline MaterialAssetRef const& getSkyBoxMaterialRef() const { return m_skyBoxMaterialRef; }
 
         //////////////////////////////////////////
-        inline void setSkyBoxMaterial(MaterialPtr const& _value) { m_skyBoxMaterial = _value; }
+        void setSkyBoxMaterialRef(MaterialAssetRef const& _material) { m_skyBoxMaterialRef.setMaterial(_material.getMaterial()); }
+
+        //////////////////////////////////////////
+        inline MaterialPtr const& getSkyBoxMaterial() const { return m_skyBoxMaterialRef.getMaterial(); }
+
+        //////////////////////////////////////////
+        inline void setSkyBoxMaterial(MaterialPtr const& _material) { setSkyBoxMaterialRef(MaterialAssetRef(_material)); }
+
+
 
         //////////////////////////////////////////
         void setSkyBoxMaterial(String const& _id);
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+        {
+            DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+        {
+            DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        }
 
     protected:
 
@@ -89,7 +113,7 @@ namespace Maze
         bool init();
 
     protected:
-        MaterialPtr m_skyBoxMaterial;
+        MaterialAssetRef m_skyBoxMaterialRef;
     };
 
 

@@ -76,7 +76,7 @@ namespace Maze
         bool savePrefabToDataBlockFile(EntityPtr const& _entity, Path const& _fileFullPath) const;
 
         //////////////////////////////////////////
-        bool saveSceneToDataBlockFile(EcsScenePtr const& _entity, Path const& _fileFullPath) const;
+        bool saveSceneToDataBlockFile(EcsScenePtr const& _scene, Path const& _fileFullPath) const;
 
 
         //////////////////////////////////////////

@@ -85,6 +85,12 @@ namespace Maze
     void EcsRenderScene::serializeSceneCommonInfo(DataBlock& _info)
     {
         EcsScene::serializeSceneCommonInfo(_info);
+
+        if (m_lightingSettings)
+        {
+            DataBlock* lightingSettings = _info.ensureDataBlock(MAZE_HCS("lightingSettings"));
+            m_lightingSettings->toDataBlock(*lightingSettings);
+        }
     }
 
     //////////////////////////////////////////

@@ -327,11 +327,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool EntitySerializationManager::saveSceneToDataBlockFile(EcsScenePtr const& _entity, Path const& _fileFullPath) const
+    bool EntitySerializationManager::saveSceneToDataBlockFile(EcsScenePtr const& _scene, Path const& _fileFullPath) const
     {
         MAZE_PROFILE_EVENT("EntitySerializationManager::savePrefabToDataBlockFile");
 
-        if (!_entity)
+        if (!_scene)
             return false;
 
         if (_fileFullPath.empty())
@@ -341,8 +341,7 @@ namespace Maze
         FileHelper::CreateDirectoryRecursive(directoryFullPath);
 
         DataBlock dataBlock;
-
-        
+        _scene->serializeSceneCommonInfo(dataBlock);
 
         dataBlock.saveTextFile(_fileFullPath);
 

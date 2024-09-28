@@ -42,7 +42,8 @@ namespace Maze
     // Class LightingSettings
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS(LightingSettings);
+    MAZE_IMPLEMENT_METACLASS(LightingSettings,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialAssetRef, skyBoxMaterial, MaterialAssetRef(), getSkyBoxMaterialRef, setSkyBoxMaterialRef));
 
     //////////////////////////////////////////
     LightingSettings::LightingSettings()

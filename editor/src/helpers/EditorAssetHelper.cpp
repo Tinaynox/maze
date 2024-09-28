@@ -163,6 +163,7 @@ namespace Maze
             Path name = FileHelper::GetFileNameWithoutExtension(newPrefabFullPath);
 
             EcsAssetScenePtr scene = EcsAssetScene::Create(EditorManager::GetInstancePtr()->getSceneMain()->getRenderTarget());
+            scene->setName(HashedString(name.toUTF8()));
             // EntityPtr entity = EditorManager::GetInstancePtr()->getSceneMain()->createEntity(name);
             // EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(entity, newPrefabFullPath);
 
