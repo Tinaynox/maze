@@ -45,6 +45,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-graphics/ecs/MazeEcsAssetScene.hpp"
 #include "editor/EditorSceneMode.hpp"
 #include "managers/EditorPrefabManager.hpp"
 #include "scenes/SceneMain.hpp"
@@ -64,6 +65,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EditorWorkspaceManager);
     MAZE_USING_SHARED_PTR(EditorPlaytestManager);
     MAZE_USING_SHARED_PTR(EditorUpdateManager);
+    MAZE_USING_SHARED_PTR(EditorSceneManager);
    
 
     //////////////////////////////////////////
@@ -93,6 +95,9 @@ namespace Maze
         //////////////////////////////////////////
         EditorPrefabManagerPtr const& getEditorPrefabManager() const { return m_editorPrefabManager; }
 
+        //////////////////////////////////////////
+        EditorSceneManagerPtr const& getEditorSceneManager() const { return m_editorSceneManager; }
+
 
 
 
@@ -116,6 +121,13 @@ namespace Maze
 
         //////////////////////////////////////////
         EntityPtr createNewPrefab();
+
+
+        //////////////////////////////////////////
+        void openScene(EcsAssetScenePtr const& _scene);
+
+        //////////////////////////////////////////
+        void openScene(AssetFilePtr const& _value);
 
 
         //////////////////////////////////////////
@@ -168,6 +180,8 @@ namespace Maze
         bool init();
 
 
+        //////////////////////////////////////////
+        void resetAssets();
 
     protected:
         static EditorManager* s_instance;
@@ -177,6 +191,7 @@ namespace Maze
         EditorActionManagerPtr m_editorActionManager;
         EditorAssetsManagerPtr m_editorAssetsManager;
         EditorPrefabManagerPtr m_editorPrefabManager;
+        EditorSceneManagerPtr m_editorSceneManager;
         EditorProjectManagerPtr m_editorProjectManager;
         EditorGizmosManagerPtr m_editorGizmosManager;
         EditorEntityManagerPtr m_editorEntityManager;

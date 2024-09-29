@@ -97,12 +97,18 @@ namespace Maze
             EcsWorld* _world = nullptr,
             EcsScene* _scene = nullptr) const;
 
-
         //////////////////////////////////////////
         EntityPtr loadPrefab(
             DataBlock const& _dataBlock,
             EcsWorld* _world = nullptr,
             EcsScene* _scene = nullptr) const;
+
+
+        //////////////////////////////////////////
+        void loadEntitiesToScene(
+            EcsScene* _scene,
+            DataBlock const& _dataBlock,
+            EcsWorld* _world = nullptr) const;
 
 
         //////////////////////////////////////////

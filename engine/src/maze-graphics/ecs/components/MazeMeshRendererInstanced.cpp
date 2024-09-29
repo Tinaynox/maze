@@ -271,6 +271,18 @@ namespace Maze
     {
         _meshRenderer->processEntityRemoved();
     }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererInstancedOnEcsWorldWillBeDestroyed,
+        {},
+        {},
+        EcsWorldWillBeDestroyedEvent const& _event,
+        Entity* _entity,
+        MeshRendererInstanced* _meshRenderer)
+    {
+        // Release render mesh before RenderMeshPool will be destroyed
+        _meshRenderer->setRenderMesh(RenderMeshPtr());
+    }
     
     
 } // namespace Maze

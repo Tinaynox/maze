@@ -57,13 +57,6 @@ namespace Maze
     {
         destroyAllEntities();
 
-        if (EntityManager::GetInstancePtr())
-        {
-            EcsWorld* world = EntityManager::GetInstancePtr()->getDefaultWorldRaw();
-            if (world)
-                world->update(0.0f);
-        }
-
         m_renderTarget.reset();
     }
 

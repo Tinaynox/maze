@@ -355,9 +355,7 @@ namespace Maze
         EcsWorld* _world,
         EcsScene* _scene) const
     {
-        DataBlock dataBlock;
-        ByteBufferPtr byteBuffer = _assetFile->readAsByteBuffer();
-        dataBlock.loadFromByteBuffer(*byteBuffer.get());
+        DataBlock dataBlock = _assetFile->readAsDataBlock();
 
         if (dataBlock.getS32(MAZE_HCS("_version")) > 0)
             return loadPrefab(dataBlock, _world, _scene);
@@ -1081,6 +1079,14 @@ namespace Maze
         return entities[rootIndex];
     }
 
+    //////////////////////////////////////////
+    void EntitySerializationManager::loadEntitiesToScene(
+        EcsScene* _scene,
+        DataBlock const& _dataBlock,
+        EcsWorld* _world) const
+    {
+
+    }
 
     //////////////////////////////////////////
     void EntitySerializationManager::collectAllChildrenEntity(

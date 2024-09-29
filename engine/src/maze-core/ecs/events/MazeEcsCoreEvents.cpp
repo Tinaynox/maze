@@ -43,6 +43,7 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EcsEntityActiveChangedEvent, Event);
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EcsSceneStateChangedEvent, Event);
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EcsChildRemovedEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EcsWorldWillBeDestroyedEvent, Event);
 
     
 } // namespace Maze

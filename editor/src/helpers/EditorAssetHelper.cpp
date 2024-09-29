@@ -221,8 +221,12 @@ namespace Maze
             AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
             MAZE_ERROR_RETURN_IF(!assetFile, "Asset file %s is null!", _fullPath.toUTF8().c_str());
 
-            if (AssetEditorToolsManager::GetInstancePtr()->isPrefabExtension(assetFile->getExtension()))
+            Path extension = assetFile->getExtension();
+            if (AssetEditorToolsManager::GetInstancePtr()->isPrefabExtension(extension))
                 EditorManager::GetInstancePtr()->openPrefab(assetFile);
+            else
+            if (extension == "mzscene")
+                EditorManager::GetInstancePtr()->openScene(assetFile);
         }
     };
 

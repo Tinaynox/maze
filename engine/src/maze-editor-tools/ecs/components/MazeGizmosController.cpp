@@ -161,7 +161,7 @@ namespace Maze
 
         m_samples.clear();
         m_drawer.reset();
-        if (getEntityRaw()->getEcsWorld())
+        if (getEntityRaw() && getEntityRaw()->getEcsWorld())
             getEntityRaw()->getEcsWorld()->update(0.0f);
     }
 

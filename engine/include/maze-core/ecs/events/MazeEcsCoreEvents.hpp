@@ -316,6 +316,19 @@ namespace Maze
         EntityId m_childEid = c_invalidEntityId;
     };
 
+
+    //////////////////////////////////////////
+    // Class EcsWorldWillBeDestroyedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API EcsWorldWillBeDestroyedEvent
+        : public GenericEvent<EcsWorldWillBeDestroyedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EcsWorldWillBeDestroyedEvent, Event);
+    };
+
 } // namespace Maze
 //////////////////////////////////////////
 

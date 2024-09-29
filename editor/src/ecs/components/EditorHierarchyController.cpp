@@ -273,6 +273,7 @@ namespace Maze
             m_world->eventEntityAdded.unsubscribe(this);
             m_world->eventEntityRemoved.unsubscribe(this);
             m_world->eventEntityChanged.unsubscribe(this);
+            m_world->eventOnDestroy.unsubscribe(this);
 
             while (!m_entityLines.empty())
             {
@@ -314,6 +315,7 @@ namespace Maze
             m_world->eventEntityAdded.subscribe(this, &EditorHierarchyController::notifyEntityAdded);
             m_world->eventEntityRemoved.subscribe(this, &EditorHierarchyController::notifyEntityRemoved);
             m_world->eventEntityChanged.subscribe(this, &EditorHierarchyController::notifyEntityChanged);
+            m_world->eventOnDestroy.subscribe(this, &EditorHierarchyController::notifyWorldDestroyed);
 
             if (m_hierarchyMode == EditorHierarchyMode::Scene)
                 for (SceneManager::SceneData const& sceneData : SceneManager::GetInstancePtr()->getScenes())
@@ -842,6 +844,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EditorHierarchyController::notifyWorldDestroyed(EcsWorld* _world)
+    {
+        if (m_world == _world)
+            setEcsWorld(nullptr);
+    }
+
+    //////////////////////////////////////////
     void EditorHierarchyController::notifyHierarchyLineRelease(HierarchyLine* _hierarchyLine)
     {
         removeHierarchyLine(_hierarchyLine);
@@ -909,6 +918,7 @@ namespace Maze
 
         updateMode();
     }
+
 
     
 } // namespace Maze

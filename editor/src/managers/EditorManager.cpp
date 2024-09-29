@@ -92,6 +92,7 @@
 #include "managers/EditorWorkspaceManager.hpp"
 #include "managers/EditorPlaytestManager.hpp"
 #include "managers/EditorUpdateManager.hpp"
+#include "managers/EditorSceneManager.hpp"
 #include "layout/EditorLayout.hpp"
 #include "scenes/SceneWorkspace.hpp"
 #include "scenes/SceneWorkspaceTools.hpp"
@@ -139,6 +140,10 @@ namespace Maze
         if (!m_editorPrefabManager)
             return false;
 
+        EditorSceneManager::Initialize(m_editorSceneManager);
+        if (!m_editorSceneManager)
+            return false;
+
         EditorProjectManager::Initialize(m_editorProjectManager);
         if (!m_editorProjectManager)
             return false;
@@ -182,14 +187,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EditorManager::resetAssets()
+    {
+        m_editorPrefabManager->setPrefabAssetFile(nullptr);
+        m_editorPrefabManager->setPrefabEntity(nullptr);
+
+        m_editorSceneManager->setSceneAssetFile(nullptr);
+        m_editorSceneManager->setScene(nullptr);
+    }
+
+    //////////////////////////////////////////
     void EditorManager::clearMode()
     {
         setSceneMode(EditorSceneMode::None);
         m_editorWorkspaceManager->clearWorkspace();
         m_editorPlaytestManager->clearWorkspace();
 
-        m_editorPrefabManager->setPrefabAssetFile(nullptr);
-        m_editorPrefabManager->setPrefabEntity(nullptr);
+        resetAssets();
 
         setWindowTitle(Editor::GetInstancePtr()->getConfig().projectName);
     }
@@ -199,7 +213,8 @@ namespace Maze
     {
         setSceneMode(EditorSceneMode::Prefab);
         getSceneMain()->destroyAllEntitiesExcept(_value);
-        m_editorPrefabManager->setPrefabAssetFile(nullptr);
+
+        resetAssets();
         m_editorPrefabManager->setPrefabEntity(_value);
 
         setWindowTitle("Editor - New Prefab");
@@ -214,7 +229,10 @@ namespace Maze
         
         setSceneMode(EditorSceneMode::Prefab);
         getSceneMain()->destroyAllEntities();
+
+        resetAssets();
         m_editorPrefabManager->setPrefabAssetFile(_value);
+
 
         setWindowTitle("Editor - %s", _value->getFileName().toUTF8().c_str());
     }
@@ -226,6 +244,33 @@ namespace Maze
         openPrefab(gameObject);
 
         return gameObject;
+    }
+
+    //////////////////////////////////////////
+    void EditorManager::openScene(EcsAssetScenePtr const& _scene)
+    {
+        setSceneMode(EditorSceneMode::Scene);
+
+        resetAssets();
+        m_editorSceneManager->setScene(_scene);
+
+        setWindowTitle("Editor - %s", _scene->getSceneName().str);
+    }
+
+    //////////////////////////////////////////
+    void EditorManager::openScene(AssetFilePtr const& _value)
+    {
+        if (getSceneMode() == EditorSceneMode::Scene &&
+            m_editorSceneManager->getSceneAssetFile() == _value)
+            return;
+
+        setSceneMode(EditorSceneMode::Scene);
+        getSceneMain()->destroyAllEntities();
+
+        resetAssets();
+        m_editorSceneManager->setSceneAssetFile(_value);
+
+        setWindowTitle("Editor - %s", _value->getFileName().toUTF8().c_str());
     }
 
     //////////////////////////////////////////

@@ -200,7 +200,29 @@ namespace Maze
     //////////////////////////////////////////
     EcsWorld::~EcsWorld()
     {
+        broadcastEventImmediate<EcsWorldWillBeDestroyedEvent>();
+
         ComponentSystemHolder::Detach(this);
+
+        Size entitiesLeft = 0u;
+        do
+        {
+            entitiesLeft = 0u;
+
+            for (auto it = m_entities.begin(), end = m_entities.end(); it != end; ++it)
+            {
+                if (it->entity)
+                {
+                    ++entitiesLeft;
+                    removeEntity(it->entity);
+                }
+            }
+
+            m_eventHolders.other()->prepareForDestroy();
+            m_eventHolders.switchContainer();
+            m_eventHolders.other()->prepareForDestroy();
+        }
+        while (entitiesLeft > 0);
 
         m_samples.clear();
         

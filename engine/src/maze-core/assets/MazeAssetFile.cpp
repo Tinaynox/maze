@@ -238,6 +238,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool AssetFile::readToDataBlock(DataBlock& _dataBlock) const
+    {
+        ByteBufferPtr byteBuffer = readAsByteBuffer();
+        if (!byteBuffer)
+            return false;
+
+        return _dataBlock.loadFromByteBuffer(*byteBuffer.get());
+    }
+
+    //////////////////////////////////////////
+    DataBlock AssetFile::readAsDataBlock() const
+    {
+        DataBlock dataBlock;
+        readToDataBlock(dataBlock);
+        return std::move(dataBlock);
+    }
+
+    //////////////////////////////////////////
     void AssetFile::updateAssetUnitsFromMetaData(DataBlock const& _metaData)
     {
         removeAssetUnits();

@@ -243,6 +243,12 @@ namespace Maze
         ByteBufferPtr readHeaderAsByteBuffer(Size _size) const;
 
         //////////////////////////////////////////
+        bool readToDataBlock(DataBlock& _dataBlock) const;
+
+        //////////////////////////////////////////
+        DataBlock readAsDataBlock() const;
+
+        //////////////////////////////////////////
         Path getExtension() const;
 
 

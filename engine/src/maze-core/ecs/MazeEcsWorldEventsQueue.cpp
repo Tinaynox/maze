@@ -69,6 +69,39 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EcsWorldEventsQueue::prepareForDestroy()
+    {
+        MAZE_PROFILE_EVENT("EcsWorldEventsQueue::processEvents");
+
+        m_processingEvents = true;
+
+        while (!m_eventTypes.empty())
+        {
+            EcsWorldEventType eventType = m_eventTypes.front();
+            m_eventTypes.pop();
+
+            switch (eventType)
+            {
+                case EcsWorldEventType::RemovingEntity:
+                {
+                    invokeRemovingEntityEvent();
+                    break;
+                }
+                case EcsWorldEventType::RemovingFromSampleEntity:
+                {
+                    invokeRemovingFromSampleEntityEvent();
+                    break;
+                }
+                break;
+            }
+        }
+
+        m_processingEvents = false;
+
+        clear();
+    }
+
+    //////////////////////////////////////////
     void EcsWorldEventsQueue::processEvents()
     {
         MAZE_PROFILE_EVENT("EcsWorldEventsQueue::processEvents");
@@ -428,6 +461,8 @@ namespace Maze
         MAZE_DEBUG_ASSERT(!m_processingEvents);
 
         while (!m_eventTypes.empty()) { m_eventTypes.pop(); }
+        for (EntityPtr const& entity : m_addingEntities)
+            entity->setEcsWorld(nullptr);
         m_addingEntities.clear();
         while (!m_removingEntities.empty()) { m_removingEntities.pop(); }
         while (!m_componentsChangedEntities.empty()) { m_componentsChangedEntities.pop(); }

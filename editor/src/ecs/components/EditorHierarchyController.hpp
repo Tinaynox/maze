@@ -196,6 +196,10 @@ namespace Maze
         void notifyEntityChanged(EntityPtr const& _entity);
 
         //////////////////////////////////////////
+        void notifyWorldDestroyed(EcsWorld* _world);
+
+
+        //////////////////////////////////////////
         void notifyHierarchyLineRelease(HierarchyLine* _hierarchyLine);
 
 

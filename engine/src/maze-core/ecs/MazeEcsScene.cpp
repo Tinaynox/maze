@@ -57,12 +57,8 @@ namespace Maze
     {
         destroyAllEntities();
 
-        EcsWorld* world = m_world;
-        if (world)
-        {
-            world->update(0.0f);
-            world->eventOnDestroy.unsubscribe(this);
-        }
+        if (m_world)
+            m_world->eventOnDestroy.unsubscribe(this);
     }
 
     //////////////////////////////////////////
