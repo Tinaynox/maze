@@ -200,9 +200,19 @@ namespace Maze
     //////////////////////////////////////////
     EcsWorld::~EcsWorld()
     {
+        m_state = EcsWorldState::PreparingToDestroy;
+        do
+        {
+            m_eventHolders.other()->processEvents();
+            m_eventHolders.switchContainer();
+        }
+        while (m_eventHolders.other()->getAddingEntitiesCount() > 0 || m_eventHolders.current()->getAddingEntitiesCount() > 0);
+        
         broadcastEventImmediate<EcsWorldWillBeDestroyedEvent>();
 
-        ComponentSystemHolder::Detach(this);
+        ComponentSystemHolder::Detach(this);        
+
+        m_state = EcsWorldState::Destroying;
 
         Size entitiesLeft = 0u;
         do
@@ -234,6 +244,7 @@ namespace Maze
         m_eventHolders.other().reset();
         m_eventHolders.current().reset();
 
+        m_state = EcsWorldState::Destroyed;
         eventOnDestroy(this);
     }
 
@@ -270,6 +281,8 @@ namespace Maze
         {
             ComponentSystemHolder::Attach(this);
         }
+
+        m_state = EcsWorldState::Active;
 
         return true;
     }
@@ -372,6 +385,9 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr EcsWorld::createEntity()
     {
+        if (m_state != EcsWorldState::Active)
+            return nullptr;
+
         EntityPtr entity = Entity::Create();
         addEntity(entity);
         return entity;
@@ -380,6 +396,9 @@ namespace Maze
     //////////////////////////////////////////
     bool EcsWorld::addEntity(EntityPtr const& _entity)
     {
+        if (m_state != EcsWorldState::Active)
+            return false;
+
         return m_eventHolders.current()->addEntity(_entity);
     }
 
@@ -570,12 +589,18 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorld::broadcastEvent(EventPtr const& _event)
     {
+        if (m_state != EcsWorldState::Active || m_state != EcsWorldState::PreparingToDestroy)
+            return;
+
         m_eventHolders.current()->addBroadcastEvent(_event);
     }
 
     //////////////////////////////////////////
     void EcsWorld::sendEvent(EntityId _entityId, EventPtr const& _event)
     {
+        if (m_state != EcsWorldState::Active || m_state != EcsWorldState::PreparingToDestroy)
+            return;
+
         m_eventHolders.current()->addUnicastEvent(_entityId, _event);
     }
 

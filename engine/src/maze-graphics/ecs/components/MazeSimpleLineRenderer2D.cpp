@@ -213,6 +213,18 @@ namespace Maze
         _simpleLineRenderer2D->processEntityRemoved();
     }
 
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SimpleLineRenderer2DOnEcsWorldWillBeDestroyed,
+        {},
+        {},
+        EcsWorldWillBeDestroyedEvent const& _event,
+        Entity* _entity,
+        SimpleLineRenderer2D* _lineRenderer)
+    {
+        // Release render mesh before RenderMeshPool will be destroyed
+        _lineRenderer->processEntityRemoved();
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

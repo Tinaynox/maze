@@ -105,8 +105,10 @@ namespace Maze
     //////////////////////////////////////////
     void Physics2DGizmosController::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
     {
+        if (m_renderTarget == _renderTarget)
+            m_renderTarget = nullptr;
+
         m_drawer.reset();
-        getEntityRaw()->getEcsWorld()->update(0.0f);
     }
 
     //////////////////////////////////////////

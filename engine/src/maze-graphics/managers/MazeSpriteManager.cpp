@@ -203,28 +203,19 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("SpriteManager::unloadAssetSprites");
 
-        StringKeyMap<SpriteLibraryData>::iterator it = m_spritesLibrary.begin();
-        StringKeyMap<SpriteLibraryData>::iterator end = m_spritesLibrary.end();
-        for (; it != end; )
-        {
-            bool unload = false;
+        Vector<std::function<void(bool)>> unloadCallbacks;
 
-            if (it->second.sprite && it->second.sprite->getTexture())
+        m_spritesLibrary.iterate(
+            [&](HashedCString _name, SpriteLibraryData const& _data)
             {
-                Texture2DLibraryData const* textureLibraryData = m_renderSystemRaw->getTextureManager()->getTexture2DLibraryData(it->second.sprite->getTexture()->getName().asHashedCString());
-                unload = textureLibraryData && textureLibraryData->callbacks.hasAnyOfTags && textureLibraryData->callbacks.hasAnyOfTags(_tags);
-            }
+                if (_data.callbacks.hasAnyOfTags && _data.callbacks.hasAnyOfTags(_tags) && _data.callbacks.requestUnload)
+                    unloadCallbacks.push_back(_data.callbacks.requestUnload);
 
-            if (unload)
-            {
-                it = m_spritesLibrary.erase(it);
-                end = m_spritesLibrary.end();
-            }
-            else
-            {
-                ++it;
-            }
-        }
+                return true;
+            });
+
+        for (std::function<void(bool)> const& unloadCallback : unloadCallbacks)
+            unloadCallback(true);
     }
 
     //////////////////////////////////////////

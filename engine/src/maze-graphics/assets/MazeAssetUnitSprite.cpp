@@ -200,9 +200,9 @@ namespace Maze
         m_sprite->set(
             m_sprite->getTexture(),
             m_data.getVec2F(MAZE_HCS("colorPosition"), Vec2S::c_zero),
-            m_data.getVec2F(MAZE_HCS("colorSize"), Vec2S::c_zero),
+            m_data.getVec2F(MAZE_HCS("colorSize"), m_sprite->getTexture() ? m_sprite->getTexture()->getSize() : Vec2S::c_zero),
             m_data.getVec2F(MAZE_HCS("colorOffset"), Vec2S::c_zero),
-            m_data.getVec2F(MAZE_HCS("nativeSize"), Vec2S::c_zero));
+            m_data.getVec2F(MAZE_HCS("nativeSize"), m_sprite->getTexture() ? m_sprite->getTexture()->getSize() : Vec2S::c_zero));
 
         if (DataBlock* sliceBorder = m_data.getDataBlock(MAZE_HCS("sliceBorder")))
         {

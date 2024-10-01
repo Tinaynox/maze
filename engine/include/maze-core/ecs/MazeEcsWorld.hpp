@@ -59,6 +59,20 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Enum EcsWorldState
+    //
+    //////////////////////////////////////////
+    enum class MAZE_CORE_API EcsWorldState
+    {
+        None = 0,
+        Active,
+        PreparingToDestroy,
+        Destroying,
+        Destroyed
+    };
+
+
+    //////////////////////////////////////////
     // Class EcsWorld
     //
     //////////////////////////////////////////
@@ -394,6 +408,7 @@ namespace Maze
 
     private:
         bool m_updatingNow = false;
+        EcsWorldState m_state = EcsWorldState::None;
         S32 m_newEntityIdsCount = 0;
         SwitchableContainer<EcsWorldEventsQueuePtr> m_eventHolders;
     };

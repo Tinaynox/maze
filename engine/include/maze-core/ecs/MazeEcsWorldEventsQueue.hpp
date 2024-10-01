@@ -88,6 +88,9 @@ namespace Maze
         inline Size getEventsCount() const { return m_eventTypes.size(); }
 
         //////////////////////////////////////////
+        inline Size getAddingEntitiesCount() const { return m_addingEntities.size(); }
+
+        //////////////////////////////////////////
         void processEvents();
 
         //////////////////////////////////////////

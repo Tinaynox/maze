@@ -499,6 +499,17 @@ namespace Maze
         _trailRenderer3D->processEntityRemoved();
     }
 
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(TrailRenderer3DOnEcsWorldWillBeDestroyed,
+        {},
+        {},
+        EcsWorldWillBeDestroyedEvent const& _event,
+        Entity* _entity,
+        TrailRenderer3D* _trailRenderer)
+    {
+        // Release render mesh before RenderMeshPool will be destroyed
+        _trailRenderer->processEntityRemoved();
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

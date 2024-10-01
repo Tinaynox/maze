@@ -177,6 +177,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline bool operator>(HashedString const& _other) const
+        {
+            return m_string > _other.m_string;
+        }
+
+        //////////////////////////////////////////
         inline Char const& operator [](Size _i) const
         {
             return m_string[_i];

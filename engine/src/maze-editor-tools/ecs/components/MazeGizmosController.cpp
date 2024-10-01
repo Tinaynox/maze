@@ -157,12 +157,13 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosController::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
     {
+        if (_renderTarget)
+            _renderTarget->eventRenderTargetDestroyed.unsubscribe(this);
+
         m_renderTarget = nullptr;
 
         m_samples.clear();
         m_drawer.reset();
-        if (getEntityRaw() && getEntityRaw()->getEcsWorld())
-            getEntityRaw()->getEcsWorld()->update(0.0f);
     }
 
 

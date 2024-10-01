@@ -69,6 +69,7 @@ namespace Maze
         //////////////////////////////////////////
         friend class Entity;
         friend void TrailRenderer3DEntityRemoved(EntityRemovedEvent const&, Entity*, TrailRenderer3D*);
+        friend void TrailRenderer3DOnEcsWorldWillBeDestroyed(EcsWorldWillBeDestroyedEvent const&, Entity*, TrailRenderer3D*);
 
     public:
 

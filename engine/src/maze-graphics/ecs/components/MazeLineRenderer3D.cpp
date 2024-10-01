@@ -419,5 +419,17 @@ namespace Maze
         _lineRenderer3D->processEntityRemoved();
     }
 
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(LineRenderer3DOnEcsWorldWillBeDestroyed,
+        {},
+        {},
+        EcsWorldWillBeDestroyedEvent const& _event,
+        Entity* _entity,
+        LineRenderer3D* _lineRenderer)
+    {
+        // Release render mesh before RenderMeshPool will be destroyed
+        _lineRenderer->processEntityRemoved();
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

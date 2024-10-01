@@ -69,6 +69,7 @@ namespace Maze
         //////////////////////////////////////////
         friend class Entity;
         friend void LineRenderer2DEntityRemoved(EntityRemovedEvent const&, Entity*, LineRenderer2D*);
+        friend void LineRenderer2DOnEcsWorldWillBeDestroyed(EcsWorldWillBeDestroyedEvent const&, Entity*, LineRenderer2D*);
 
     public:
 
