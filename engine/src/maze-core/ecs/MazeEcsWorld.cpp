@@ -208,7 +208,7 @@ namespace Maze
         }
         while (m_eventHolders.other()->getAddingEntitiesCount() > 0 || m_eventHolders.current()->getAddingEntitiesCount() > 0);
         
-        broadcastEventImmediate<EcsWorldWillBeDestroyedEvent>();
+        broadcastEventImmediate<EcsWorldWillBeDestroyedEvent>(EcsEventParams(false, false));
 
         ComponentSystemHolder::Detach(this);        
 

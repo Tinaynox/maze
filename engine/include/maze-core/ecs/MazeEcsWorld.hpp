@@ -272,25 +272,32 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEvent>
-        inline void broadcastEventImmediate(TEvent* _event)
+        inline void broadcastEventImmediate(TEvent* _event, EcsEventParams _params = EcsEventParams())
         {
             ClassUID eventUID = _event->getClassUID();
             Vector<ComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
 
             for (ComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
-                _eventHandler->processEvent(_event);
+                _eventHandler->processEvent(_event, _params);
         }
 
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
-        inline void broadcastEventImmediate(TArgs... _args)
+        inline void broadcastEventImmediate(EcsEventParams _params, TArgs... _args)
         {
             TEvent evt(_args...);
             MAZE_DEBUG_ERROR_BP_IF(
                 evt.getClassUID() != ClassInfo<TEvent>::UID(),
                 "Event %s has wrong metadata!",
                 ClassInfo<TEvent>::Name());
-            broadcastEventImmediate(&evt);
+            broadcastEventImmediate(&evt, _params);
+        }
+
+        //////////////////////////////////////////
+        template <typename TEvent, typename ...TArgs>
+        inline void broadcastEventImmediate(TArgs... _args)
+        {
+            broadcastEventImmediate<TEvent, TArgs...>(EcsEventParams(), _args...);
         }
 
 

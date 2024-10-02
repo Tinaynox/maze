@@ -112,7 +112,7 @@ namespace Maze
     //////////////////////////////////////////
     TrailRenderer3D::~TrailRenderer3D()
     {
-        
+        m_renderMesh.reset();
     }
 
     //////////////////////////////////////////
