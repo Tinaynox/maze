@@ -58,6 +58,11 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EditorSceneModeControllerScene);
+    MAZE_USING_SHARED_PTR(SpriteRenderer2D);
+    MAZE_USING_SHARED_PTR(HorizontalLayout2D);
+    MAZE_USING_SHARED_PTR(ToggleButton2D);
+    MAZE_USING_SHARED_PTR(Sprite);
+    MAZE_USING_SHARED_PTR(Light3D);
 
 
     //////////////////////////////////////////
@@ -66,6 +71,7 @@ namespace Maze
     //////////////////////////////////////////
     class EditorSceneModeControllerScene
         : public EditorSceneModeController
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -76,13 +82,65 @@ namespace Maze
         static EditorSceneModeControllerScenePtr Create();
 
 
+        //////////////////////////////////////////
+        virtual void shutdown() MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////
         EditorSceneModeControllerScene();
 
         //////////////////////////////////////////
-        bool init();    
+        bool init();
+
+
+        //////////////////////////////////////////
+        ToggleButton2DPtr createBarButton(
+            Transform2DPtr const& _parent,
+            SpritePtr const& _sprite,
+            ColorU32 const& _spriteColor);
+
+
+        //////////////////////////////////////////
+        void updateDebugLight();
+
+        //////////////////////////////////////////
+        void updateDebugAxes();
+
+        //////////////////////////////////////////
+        void updateDebugGrid();
+
+        //////////////////////////////////////////
+        void notifyDebugLightEnabledChanged(bool const& _value);
+
+        //////////////////////////////////////////
+        void notifyDebugAxesEnabledChanged(bool const& _value);
+
+        //////////////////////////////////////////
+        void notifyDebugGridEnabledChanged(bool const& _value);
+
+
+        //////////////////////////////////////////
+        void updateSaveButtonEnabled();
+
+        //////////////////////////////////////////
+        void notifyPrefabAssetFileSaveEnabledChanged(bool const& _value);
+
+    protected:
+        Transform2DPtr m_canvasNode;
+        Transform3DPtr m_mainNode;
+
+        Light3DPtr m_debugLight;
+
+        ToggleButton2DPtr m_lightButton;
+        ToggleButton2DPtr m_axesButton;
+        ToggleButton2DPtr m_gridButton;
+
+        SpriteRenderer2DPtr m_topBarBackground;
+        HorizontalLayout2DPtr m_topBarLeftLayout;
+        HorizontalLayout2DPtr m_topBarRightLayout;
+
+        ClickButton2DPtr m_saveButton;
     };
 
 
