@@ -52,16 +52,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EcsAssetScenePtr EcsAssetScene::Create(RenderTargetPtr const& _renderTarget)
+    EcsAssetScenePtr EcsAssetScene::Create(
+        RenderTargetPtr const& _renderTarget,
+        EcsWorld* _world)
     {
         EcsAssetScenePtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EcsAssetScene, object, init(_renderTarget));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EcsAssetScene, object, init(_renderTarget, _world));
         return object;
     }
 
     //////////////////////////////////////////
-    bool EcsAssetScene::init(RenderTargetPtr const& _renderTarget)
+    bool EcsAssetScene::init(
+        RenderTargetPtr const& _renderTarget,
+        EcsWorld* _world)
     {
+        m_world = _world;
+
         if (!EcsRenderScene::init(_renderTarget))
             return false;
 

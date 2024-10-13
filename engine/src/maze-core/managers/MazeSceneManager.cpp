@@ -96,6 +96,36 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool SceneManager::loadScene(
+        EcsScenePtr const& _scene,
+        bool _additive)
+    {
+        for (SceneData const& sceneData : m_scenes)
+        {
+            MAZE_ERROR_RETURN_VALUE_IF(sceneData.scene == _scene, false, "Scene is already loaded!");
+        }
+
+        if (!_additive)
+            destroyNotSystemScenes();
+
+        EcsSceneId sceneId = generateNewEcsSceneId();
+        MAZE_DEBUG_ASSERT(sceneId.getIndex() < (S32)m_scenes.size() && !m_scenes[sceneId.getIndex()].scene);
+        m_scenes[sceneId.getIndex()].id = sceneId;
+        m_scenes[sceneId.getIndex()].scene = _scene;
+        m_scenes[sceneId.getIndex()].name.clear();
+
+        _scene->setId(sceneId);
+        _scene->setState(EcsSceneState::Created);
+
+        if (!m_mainScene && isGoodMainScene(_scene))
+            setMainScene(_scene);
+
+        m_newScenesWereAdded = true;
+
+        return true;
+    }
+
+    //////////////////////////////////////////
     EcsScenePtr const& SceneManager::getScene(EcsSceneId _sceneId)
     {
         static EcsScenePtr const nullPointer;

@@ -98,8 +98,20 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline void destroyNotSystemScenes()
+        {
+            for (Size i = 0; i < m_scenes.size(); ++i)
+            {
+                if (!m_scenes[i].scene || m_scenes[i].scene->getIsSystemScene())
+                    continue;
+
+                destroyScene(m_scenes[i].scene);
+            }
+        }
+
+        //////////////////////////////////////////
         template <class TScene, typename ...TArgs>
-        SharedPtr<TScene> loadScene(
+        inline SharedPtr<TScene> loadScene(
             bool _additive,
             TArgs... _args)
         {
@@ -108,19 +120,9 @@ namespace Maze
             MAZE_PROFILE_EVENT("SceneManager::loadScene");
 
             if (!_additive)
-            {
-                for (Size i = 0; i < m_scenes.size(); ++i)
-                {
-                    if (!m_scenes[i].scene || m_scenes[i].scene->getIsSystemScene())
-                        continue;
-
-                    destroyScene(m_scenes[i].scene);
-                }
-            }
+                destroyNotSystemScenes();
 
             {
-                
-                
                 Debug::log << "Creating Scene '" << ClassInfo<TScene>::Name() << "'..." << endl;
 
                 EcsScenePtr scene = std::static_pointer_cast<EcsScene>(TScene::Create(_args...));
@@ -151,6 +153,12 @@ namespace Maze
         {
             return loadScene<TScene>(true);
         }
+
+        //////////////////////////////////////////
+        bool loadScene(
+            EcsScenePtr const& _scene,
+            bool _additive = false);
+
 
         //////////////////////////////////////////
         EcsScenePtr const& getScene(EcsSceneId _sceneId);

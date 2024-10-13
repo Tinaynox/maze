@@ -134,7 +134,13 @@ namespace Maze
         if (m_scene == _value)
             return;
 
+        if (m_scene)
+            SceneManager::GetInstancePtr()->destroyScene(m_scene);
+
         m_scene = _value;
+
+        if (m_scene)
+            SceneManager::GetInstancePtr()->loadScene(m_scene, true);
 
         eventSceneChanged(m_scene);
     }
@@ -161,7 +167,14 @@ namespace Maze
         {
             DataBlock dataBlock = m_sceneAssetFile->readAsDataBlock();
             
-            EcsAssetScenePtr scene = EcsAssetScene::Create(Editor::GetInstancePtr()->getMainRenderWindow());
+            EcsAssetScenePtr scene = EcsAssetScene::Create(
+                Editor::GetInstancePtr()->getMainRenderWindow(),
+                EditorManager::GetInstancePtr()->getMainEcsWorld());
+
+            scene->setName(
+                HashedString(
+                    FileHelper::GetFileNameWithoutExtension(
+                        m_sceneAssetFile->getFileName()).toUTF8()));
 
             DataBlock* entitiesBlock = dataBlock.getDataBlock(MAZE_HCS("entities"));
 

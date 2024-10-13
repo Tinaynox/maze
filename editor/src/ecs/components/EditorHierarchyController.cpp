@@ -74,6 +74,7 @@
 #include "scenes/SceneWorkspace.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
+#include "managers/EditorSceneManager.hpp"
 #include "managers/EditorEntityManager.hpp"
 
 
@@ -117,6 +118,9 @@ namespace Maze
 
         if (EditorPrefabManager::GetInstancePtr())
             EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.unsubscribe(this);
+
+        if (EditorSceneManager::GetInstancePtr())
+            EditorSceneManager::GetInstancePtr()->eventSceneChanged.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -137,6 +141,7 @@ namespace Maze
         EditorManager::GetInstancePtr()->eventSceneModeChanged.subscribe(this, &EditorHierarchyController::notifyEditorSceneModeChanged);
         EditorManager::GetInstancePtr()->eventPlaytestModeEnabledChanged.subscribe(this, &EditorHierarchyController::notifyPlaytestModeEnabled);
         EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.subscribe(this, &EditorHierarchyController::notifyPrefabEntityChanged);
+        EditorSceneManager::GetInstancePtr()->eventSceneChanged.subscribe(this, &EditorHierarchyController::notifySceneChanged);
 
         return true;
     }
@@ -319,7 +324,7 @@ namespace Maze
 
             if (m_hierarchyMode == EditorHierarchyMode::Scene)
                 for (SceneManager::SceneData const& sceneData : SceneManager::GetInstancePtr()->getScenes())
-                    if (sceneData.scene && sceneData.scene->getState() == EcsSceneState::Active)
+                    if (sceneData.scene && sceneData.scene->getState() != EcsSceneState::Destroy)
                         addEcsScene(sceneData.scene);
         }
     }
@@ -377,7 +382,7 @@ namespace Maze
             return it->second;
 
         HierarchyLinePtr hierarchyLine = createHierarchyLine(HierarchyLineType::Scene);
-        hierarchyLine->setText(_scene->getMetaClass()->getName().str);
+        hierarchyLine->setText(_scene->getSceneName().str);
         hierarchyLine->getTransform()->setParent(m_hierarchyMainLayoutEntity);
         hierarchyLine->setUserData(reinterpret_cast<void*>((Size)(S32)_scene->getId()));
 
@@ -877,6 +882,19 @@ namespace Maze
         if (m_hierarchyMode != EditorHierarchyMode::Prefab && _entity)
         {
             setHierarchyMode(EditorHierarchyMode::Prefab);
+            updateMode();
+        }
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::notifySceneChanged(EcsAssetScenePtr const& _scene)
+    {
+        if (m_hierarchyMode == EditorHierarchyMode::Scene && !_scene)
+            setHierarchyMode(EditorHierarchyMode::None);
+        else
+        if (m_hierarchyMode != EditorHierarchyMode::Scene && _scene)
+        {
+            setHierarchyMode(EditorHierarchyMode::Scene);
             updateMode();
         }
     }

@@ -52,7 +52,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(HierarchyLinePool);
     MAZE_USING_SHARED_PTR(HierarchyLine);
-    MAZE_USING_SHARED_PTR(EcsScene);
+    MAZE_USING_SHARED_PTR(EcsAssetScene);
 
 
     //////////////////////////////////////////
@@ -209,8 +209,12 @@ namespace Maze
         //////////////////////////////////////////
         void notifyPlaytestModeEnabled(bool _value);
 
+
         //////////////////////////////////////////
         void notifyPrefabEntityChanged(EntityPtr const& _entity);
+
+        //////////////////////////////////////////
+        void notifySceneChanged(EcsAssetScenePtr const& _scene);
 
 
         //////////////////////////////////////////

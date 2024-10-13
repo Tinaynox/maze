@@ -64,7 +64,9 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        static EcsAssetScenePtr Create(RenderTargetPtr const& _renderTarget);
+        static EcsAssetScenePtr Create(
+            RenderTargetPtr const& _renderTarget,
+            EcsWorld* _world);
 
         //////////////////////////////////////////
         virtual ~EcsAssetScene();
@@ -93,7 +95,13 @@ namespace Maze
         EcsAssetScene();
         
         //////////////////////////////////////////
-        bool init(RenderTargetPtr const& _renderTarget);
+        bool init(
+            RenderTargetPtr const& _renderTarget,
+            EcsWorld* _world);
+
+
+        //////////////////////////////////////////
+        virtual EcsWorld* assignWorld() MAZE_OVERRIDE { return m_world; }
 
     private:
 
