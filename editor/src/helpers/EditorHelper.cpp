@@ -88,6 +88,7 @@
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
+#include "managers/EditorSceneManager.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "scenes/SceneEditor.hpp"
@@ -168,7 +169,7 @@ namespace Maze
                 case EditorSceneMode::Scene:
                     return EditorToolsHelper::CreateEntity(
                         _entityName,
-                        EditorManager::GetInstancePtr()->getSceneMain().get());
+                        EditorSceneManager::GetInstancePtr()->getScene().get());
 
                 case EditorSceneMode::Prefab:
                     MAZE_ERROR_RETURN_VALUE(EntityPtr(), "Forbidden operation!");
@@ -189,7 +190,7 @@ namespace Maze
                 {
                     return EditorToolsHelper::CreateEntity2D(
                         _entityName,
-                        EditorManager::GetInstancePtr()->getSceneMain().get());
+                        EditorSceneManager::GetInstancePtr()->getScene().get());
                 }
                 case EditorSceneMode::Prefab:
                 {
@@ -221,7 +222,7 @@ namespace Maze
                 {
                     return EditorToolsHelper::CreateEntity3D(
                         _entityName,
-                        EditorManager::GetInstancePtr()->getSceneMain().get());
+                        EditorSceneManager::GetInstancePtr()->getScene().get());
                 }
                 case EditorSceneMode::Prefab:
                 {
