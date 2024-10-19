@@ -73,10 +73,25 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        bool saveEntitiesToDataBlock(Set<Entity*> const&, DataBlock& _dataBlock) const;
+
+        //////////////////////////////////////////
+        bool savePrefabToDataBlock(EntityPtr const& _entity, DataBlock& _dataBlock) const;
+
+        //////////////////////////////////////////
+        bool saveSceneToDataBlock(EcsScenePtr const& _scene, DataBlock& _dataBlock) const;
+
+        //////////////////////////////////////////
         bool savePrefabToDataBlockFile(EntityPtr const& _entity, Path const& _fileFullPath) const;
 
         //////////////////////////////////////////
         bool saveSceneToDataBlockFile(EcsScenePtr const& _scene, Path const& _fileFullPath) const;
+
+        //////////////////////////////////////////
+        bool loadSceneFromDataBlock(EcsScenePtr const& _scene, DataBlock const& _dataBlock) const;
+
+        //////////////////////////////////////////
+        bool loadSceneFromDataBlockFile(EcsScenePtr const& _scene, Path const& _fileFullPath) const;
 
 
         //////////////////////////////////////////
@@ -104,23 +119,23 @@ namespace Maze
             EcsScene* _scene = nullptr) const;
 
 
-        //////////////////////////////////////////
-        void loadEntitiesToScene(
-            EcsScene* _scene,
-            DataBlock const& _dataBlock,
-            EcsWorld* _world = nullptr) const;
-
 
         //////////////////////////////////////////
         void collectAllChildrenEntity(
-            EntityPtr const& _entity,
+            Entity* _entity,
             Vector<EntityPtr>& _entities,
             Vector<PrefabInstance*>& _prefabInstances) const;
 
         //////////////////////////////////////////
+        void collectEntitiesComponentsMap(
+            Set<Entity*> const& _entities,
+            Map<EntityPtr, Vector<ComponentPtr>>& _entityComponents,
+            Vector<PrefabInstance*>& _prefabs) const;
+
+        //////////////////////////////////////////
         void collectEntityComponentsMap(
             EntityPtr const& _entity,
-            Map<EntityPtr, Vector<ComponentPtr>>& _entities,
+            Map<EntityPtr, Vector<ComponentPtr>>& _entityComponents,
             Vector<PrefabInstance*>& _prefabs) const;
 
     protected:
@@ -131,6 +146,21 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
+
+        //////////////////////////////////////////
+        void saveEntitiesToDataBlock(
+            Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
+            Vector<PrefabInstance*> const& _prefabs,
+            Map<void*, S32>& _pointerIndices,
+            Map<String, EntityPtr>& _identityPrefabs,
+            DataBlock& _dataBlock) const;
+
+        void loadEntities(
+            DataBlock const& _dataBlock,
+            EcsWorld* _world,
+            EcsScene* _scene,
+            Map<S32, EntityPtr>& _outEntities,
+            Map<S32, ComponentPtr>& _outComponents) const;
 
     protected:
         static EntitySerializationManager* s_instance;

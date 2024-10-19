@@ -151,7 +151,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Set<Entity*> const getEntities() const { return m_entities; }
+        Set<Entity*> const& getEntities() const { return m_entities; }
 
 
         //////////////////////////////////////////

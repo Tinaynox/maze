@@ -28,6 +28,8 @@
 #include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 #include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
 
 
 //////////////////////////////////////////
@@ -56,6 +58,24 @@ namespace Maze
         {
             _entity->removeComponent<StaticName>();
             _entity->ensureComponent<Name>()->setName(_name);
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API EntityId GetEntityParentId(Entity const* _entity)
+        {
+            EntityId parentId = c_invalidEntityId;
+
+            Transform2D* transform2D = _entity->getComponentRaw<Transform2D>();
+            if (transform2D && transform2D->getParent())
+                parentId = transform2D->getParent()->getEntityId();
+            else
+            {
+                Transform3D* transform3D = _entity->getComponentRaw<Transform3D>();
+                if (transform3D && transform3D->getParent())
+                    parentId = transform3D->getParent()->getEntityId();
+            }
+
+            return parentId;
         }
 
     } // namespace EcsHelper

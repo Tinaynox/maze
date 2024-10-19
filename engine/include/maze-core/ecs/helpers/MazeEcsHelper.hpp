@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
 
 
 
@@ -48,6 +49,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API void SetName(Entity* _entity, String const& _name);
 
+        //////////////////////////////////////////
+        MAZE_CORE_API EntityId GetEntityParentId(Entity const* _entity);
 
     } // namespace EcsHelper
     //////////////////////////////////////////

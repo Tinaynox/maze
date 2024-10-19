@@ -397,23 +397,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    static EntityId GetEntityParentId(EntityPtr const& _entity)
-    {
-        EntityId parentId = c_invalidEntityId;
-
-        Transform2D* transform2D = _entity->getComponentRaw<Transform2D>();
-        if (transform2D && transform2D->getParent())
-            parentId = transform2D->getParent()->getEntityId();
-        else
-        {
-            Transform3D* transform3D = _entity->getComponentRaw<Transform3D>();
-            if (transform3D && transform3D->getParent())
-                parentId = transform3D->getParent()->getEntityId();
-        }
-        return parentId;
-    }
-
-    //////////////////////////////////////////
     HierarchyLinePtr HierarchyController::addEntity(EntityPtr const& _entity)
     {
         MAZE_PROFILE_EVENT("HierarchyController::addEntity");
@@ -431,7 +414,7 @@ namespace Maze
         if (!_entity->getEcsScene())
             return nullptr;
 
-        EntityId parentId = GetEntityParentId(_entity);
+        EntityId parentId = EcsHelper::GetEntityParentId(_entity.get());
 
         HierarchyLinePtr parentLine;
         if (parentId)

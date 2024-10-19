@@ -176,15 +176,9 @@ namespace Maze
                     FileHelper::GetFileNameWithoutExtension(
                         m_sceneAssetFile->getFileName()).toUTF8()));
 
-            DataBlock* entitiesBlock = dataBlock.getDataBlock(MAZE_HCS("entities"));
-
-            if (entitiesBlock)
-            {
-                EntitySerializationManager::GetInstancePtr()->loadEntitiesToScene(
-                    scene.get(),
-                    *entitiesBlock,
-                    EditorManager::GetInstancePtr()->getSceneMain()->getWorld());
-            }
+            EntitySerializationManager::GetInstancePtr()->loadSceneFromDataBlock(
+                scene,
+                dataBlock);
 
             setScene(scene);
         }
