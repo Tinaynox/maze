@@ -79,6 +79,7 @@
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "Editor.hpp"
+#include "managers/EditorManager.hpp"
 #include "layout/EditorLayout.hpp"
 #include "scenes/ScenePlaytest.hpp"
 #include "scenes/ScenePlaytestTools.hpp"
@@ -134,7 +135,9 @@ namespace Maze
     {
         destroyScenes();
 
-        m_scenePlaytest = Editor::GetInstancePtr()->getSceneManager()->loadScene<ScenePlaytest>();
+        if (EditorManager::GetInstancePtr()->getSceneMode() == EditorSceneMode::Prefab)
+            m_scenePlaytest = Editor::GetInstancePtr()->getSceneManager()->loadScene<ScenePlaytest>();
+
         m_scenePlaytestTools = Editor::GetInstancePtr()->getSceneManager()->loadScene<ScenePlaytestTools>();
     }
 

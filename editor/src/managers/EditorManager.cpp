@@ -307,6 +307,7 @@ namespace Maze
         if (_value)
         {
             EditorPrefabManager::GetInstancePtr()->saveAssetFile();
+            EditorSceneManager::GetInstancePtr()->saveAssetFile();
         }
 
         TMat prevCameraTransform = getSceneMainTools()->getCamera3D()->getTransform()->getLocalTransform();
@@ -331,6 +332,8 @@ namespace Maze
 
         if (m_editorPrefabManager->getPrefabAssetFile())
             m_editorPrefabManager->updatePrefabAssetFile();
+        if (m_editorSceneManager->getSceneAssetFile())
+            m_editorSceneManager->updateSceneAssetFile();
 
         getSceneMainTools()->getCamera3D()->getTransform()->setLocalTransform(prevCameraTransform);
         getSceneMainTools()->setCamera3DTargetPosition(cameraTargetPosition);
