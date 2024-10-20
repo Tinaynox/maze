@@ -118,6 +118,9 @@ namespace Maze
         //////////////////////////////////////////
         void notifyEntityChanged(EntityPtr const& _entity);
 
+        //////////////////////////////////////////
+        void notifyWorldDestroy(EcsWorld* _world);
+
 
         //////////////////////////////////////////
         void setEcsWorld(EcsWorld* _world);

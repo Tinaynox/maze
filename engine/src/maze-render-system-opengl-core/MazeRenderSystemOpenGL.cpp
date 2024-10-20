@@ -278,9 +278,7 @@ namespace Maze
         }
 
         if (m_defaultRenderContext && m_defaultRenderContext->makeCurrentContext(true))
-        {
-            return m_currentContext;
-        }
+            return m_defaultRenderContext.get();
 
         MAZE_ERROR("Null context!");
 

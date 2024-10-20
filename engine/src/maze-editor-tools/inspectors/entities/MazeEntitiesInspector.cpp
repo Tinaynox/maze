@@ -385,6 +385,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EntitiesInspector::notifyWorldDestroy(EcsWorld* _world)
+    {
+        if (m_world == _world)
+            setEcsWorld(nullptr);
+    }
+
+    //////////////////////////////////////////
     void EntitiesInspector::setEcsWorld(EcsWorld* _world)
     {
         if (m_world == _world)
@@ -393,6 +400,7 @@ namespace Maze
         if (m_world)
         {
             m_world->eventEntityChanged.unsubscribe(this);
+            m_world->eventOnDestroy.unsubscribe(this);
         }
 
         m_world = _world;
@@ -400,6 +408,7 @@ namespace Maze
         if (m_world)
         {
             m_world->eventEntityChanged.subscribe(this, &EntitiesInspector::notifyEntityChanged);
+            m_world->eventOnDestroy.subscribe(this, &EntitiesInspector::notifyWorldDestroy);
         }
     }
 
