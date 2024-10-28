@@ -56,7 +56,7 @@ namespace Maze
         Thread_std(Delegate<S32> const& _entryPoint)
             : Thread_std()
         {
-            m_entryPoint = std::make_shared<TaskDelegate0>(_entryPoint);
+            m_entryPoint = MakeShared<TaskDelegate0>(_entryPoint);
         }
 
         //////////////////////////////////////////
@@ -64,7 +64,7 @@ namespace Maze
         Thread_std(Delegate<S32> const& _entryPoint, TArg0 _arg0)
             : Thread_std()
         {
-            m_entryPoint = std::make_shared<TaskDelegate1>(_entryPoint, _arg0);
+            m_entryPoint = MakeShared<TaskDelegate1>(_entryPoint, _arg0);
         }
 
         //////////////////////////////////////////
@@ -72,7 +72,7 @@ namespace Maze
         Thread_std(Delegate<S32> const& _entryPoint, TArg0 _arg0, TArg1 _arg1)
             : Thread_std()
         {
-            m_entryPoint = std::make_shared<TaskDelegate2>(_entryPoint, _arg0, _arg1);
+            m_entryPoint = MakeShared<TaskDelegate2>(_entryPoint, _arg0, _arg1);
         }
 
 

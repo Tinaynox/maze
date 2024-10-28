@@ -218,7 +218,7 @@ namespace Maze
         Vec2S const& _stroke,
         Vec2S const& _offset)
     {
-        SystemFontPtr systemFont = std::make_shared<SystemFont>();
+        SystemFontPtr systemFont = MakeShared<SystemFont>();
 
         systemFont->texture = _texture;
         systemFont->texture->setMagFilter(TextureFilter::Linear);

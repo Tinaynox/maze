@@ -86,19 +86,19 @@ namespace Maze
     //////////////////////////////////////////
     ByteBufferPtr ByteBuffer::Create(Size _size)
     {
-        return std::make_shared<ByteBuffer>(_size);
+        return MakeShared<ByteBuffer>(_size);
     }
 
     ///////////////////////////////////
     ByteBufferPtr ByteBuffer::Create(Size _size, U8 _fillSymbol)
     {
-        return std::make_shared<ByteBuffer>(_size, _fillSymbol);
+        return MakeShared<ByteBuffer>(_size, _fillSymbol);
     }
 
     //////////////////////////////////////////
     ByteBufferPtr ByteBuffer::Create(U8 const* _buffer, Size _size)
     {
-        return std::make_shared<ByteBuffer>(_buffer, _size);
+        return MakeShared<ByteBuffer>(_buffer, _size);
     }
 
     //////////////////////////////////////////

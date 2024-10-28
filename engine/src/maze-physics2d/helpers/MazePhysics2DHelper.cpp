@@ -103,7 +103,7 @@ namespace Maze
                     Vec2F const& _point,
                     Vec2F const& _normal) -> bool
                 {
-                    result = std::make_shared<RaycastHit2D>(
+                    result = MakeShared<RaycastHit2D>(
                         _point,
                         _normal,
                         _collider2D,
@@ -174,7 +174,7 @@ namespace Maze
                 Collider2D* collider = static_cast<Collider2D*>((void*)_fixture->GetUserData().pointer);
                 Rigidbody2D* rigidbody = reinterpret_cast<Rigidbody2D*>(body->GetUserData().pointer);
 
-                result = std::make_shared<OverlapHit2D>(
+                result = MakeShared<OverlapHit2D>(
                     collider,
                     rigidbody);
 
@@ -225,7 +225,7 @@ namespace Maze
                 Rigidbody2D* rigidbody = reinterpret_cast<Rigidbody2D*>(body->GetUserData().pointer);
 
                 result.emplace_back(
-                    std::make_shared<OverlapHit2D>(
+                    MakeShared<OverlapHit2D>(
                     collider,
                     rigidbody));
 
@@ -356,7 +356,7 @@ namespace Maze
                 Rigidbody2D* rigidbody = reinterpret_cast<Rigidbody2D*>(body->GetUserData().pointer);
 
                 result.emplace_back(
-                    std::make_shared<OverlapHit2D>(
+                    MakeShared<OverlapHit2D>(
                         collider,
                         rigidbody));
 

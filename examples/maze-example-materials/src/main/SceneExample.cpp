@@ -180,8 +180,8 @@ namespace Maze
         InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &SceneExample::notifyKeyboard);
 
         getLightingSettings()->setSkyBoxMaterial("Skybox00.mzmaterial");
-        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Chessboard00.mzmaterial");
-        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Chessboard00.mzmaterial");
+        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Chessboard00.mzmaterial");
+        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Chessboard00.mzmaterial");
         ExampleHelper::BuildSimpleLevel(
             this,
             m_fpsController->getLevelSize(),
@@ -233,6 +233,22 @@ namespace Maze
         addMeshPreview("TorusKnot.fbx", "BlinnPhongHDR00.mzmaterial", "Emission (HDR)", torusKnotScale);
         addMeshPreviewSpace();
 
+        {
+            EntityPtr objectEntity = addMeshPreview("TorusKnotNM.fbx", "NormalMapping.mzmaterial", "Normal Mapping", torusKnotScale);
+            addMeshPreviewSpace();
+
+            EntityPtr labelEntity = createEntity("Label");
+            SystemTextRenderer3DPtr labelRenderer = labelEntity->ensureComponent<SystemTextRenderer3D>();
+            labelRenderer->getTransform()->setLocalPosition(objectEntity->getComponent<Transform3D>()->getLocalPosition());
+            labelRenderer->getTransform()->translate(Vec3F(0.0f, -2.0f, 7.75f));
+            labelRenderer->getTransform()->setLocalRotationDegrees(40.0f, 0.0f, 0.0f);
+
+            labelRenderer->setText("DAYdiecast\nwas here");
+            labelRenderer->setFontSize(16);
+            labelRenderer->getTransform()->setLocalScaleX(0.7f);
+            labelRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault3DOutlined());
+        }
+
         addMeshPreview("TorusKnot.fbx", "Dissolve00.mzmaterial", "Dissolve", torusKnotScale);
         addMeshPreviewSpace();
 
@@ -251,7 +267,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::addMeshPreview(
+    EntityPtr SceneExample::addMeshPreview(
         String const& _meshName,
         String const& _materialName,
         String const& _text,
@@ -356,6 +372,8 @@ namespace Maze
         }
 
         m_meshData.emplace_back(meshData);
+
+        return objectEntity;
     }
 
     //////////////////////////////////////////

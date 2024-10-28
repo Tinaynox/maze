@@ -41,7 +41,7 @@ target_include_directories(
     PUBLIC "${MAZE_DIR}/third-party/utf8"
     PUBLIC "${MAZE_DIR}/third-party/tinyxml2"
     PUBLIC "${MAZE_DIR}/third-party/jsoncpp/include"
-    PULBIC "${MAZE_DIR}/third-party/fast_float/include")
+    PUBLIC "${MAZE_DIR}/third-party/fast_float/include")
 
 if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
 

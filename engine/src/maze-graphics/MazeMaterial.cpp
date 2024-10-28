@@ -347,7 +347,7 @@ namespace Maze
             if (m_uniforms[i])
                 *m_uniforms[i] = *_material->m_uniforms[i].get();
             else
-                m_uniforms[i] = std::make_shared<ShaderUniformVariant>(*_material->m_uniforms[i].get());
+                m_uniforms[i] = MakeShared<ShaderUniformVariant>(*_material->m_uniforms[i].get());
         }
 
         for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
@@ -547,7 +547,7 @@ namespace Maze
         if (uniform)
             return uniform;
 
-        m_uniforms.push_back(std::make_shared<ShaderUniformVariant>(m_renderSystem, _type, _uniformName));
+        m_uniforms.push_back(MakeShared<ShaderUniformVariant>(m_renderSystem, _type, _uniformName));
 
         return m_uniforms.back();
     }

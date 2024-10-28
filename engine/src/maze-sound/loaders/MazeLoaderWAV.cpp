@@ -309,7 +309,7 @@ namespace Maze
                 offset += bytesRead;
                 if (bytesRead == waveInfo.dataSize)
                 {
-                    _soundData = std::make_shared<SoundData>(                    
+                    _soundData = MakeShared<SoundData>(
                         waveInfo.data,
                         waveInfo.extensible.format.channels,
                         waveInfo.extensible.format.samplesPerSec,

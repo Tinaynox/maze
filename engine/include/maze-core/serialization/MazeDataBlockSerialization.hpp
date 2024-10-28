@@ -465,7 +465,7 @@ namespace Maze
         ValueFromDataBlock(SharedPtr<UValue>& _value, DataBlock const& _data)
     {
         if (!_value)
-            _value = std::make_shared<UValue>();
+            _value = MakeShared<UValue>();
 
         TryValueFromDataBlock<UValue>(*_value.get(), _data);
     }

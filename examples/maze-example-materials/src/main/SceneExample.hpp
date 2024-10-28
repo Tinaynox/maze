@@ -108,7 +108,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void addMeshPreview(
+        EntityPtr addMeshPreview(
             String const& _meshName,
             String const& _materialName,
             String const& _text,

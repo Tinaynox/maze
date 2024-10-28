@@ -111,7 +111,7 @@ namespace Maze
         GPUByteBufferGatewayOpenGL* bufferGateway = MAZE_NEW_WITH_ARGS(GPUByteBufferGatewayOpenGL, vbo);
 
         GPUVertexBufferPtr result =
-            std::make_shared<GPUVertexBuffer>(
+            MakeShared<GPUVertexBuffer>(
                 _vertexDataDescription,
                 bufferGateway,
                 bufferOffset,
@@ -166,7 +166,7 @@ namespace Maze
             GPUByteBufferGatewayOpenGL* bufferGateway = MAZE_NEW_WITH_ARGS(GPUByteBufferGatewayOpenGL, vbo->cast<VertexBufferObjectOpenGL>());
 
             result =
-                std::make_shared<GPUTextureBufferOpenGLEmulatedVBO>(
+                MakeShared<GPUTextureBufferOpenGLEmulatedVBO>(
                     _size,
                     _pixelFormat,
                     bufferGateway,

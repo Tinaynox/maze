@@ -535,7 +535,7 @@ namespace Maze
         ValueFromString(SharedPtr<UValue>& _value, CString _data, Size _count)
     {
         if (!_value)
-            _value = std::make_shared<UValue>();
+            _value = MakeShared<UValue>();
 
         TryValueFromString<UValue>(*_value.get(), _data, _count);
     }

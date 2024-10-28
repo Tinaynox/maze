@@ -309,7 +309,7 @@ namespace Maze
         inline void broadcastEvent(TArgs... _args)
         {
             // #TODO: Rework to unique?
-            SharedPtr<TEvent> evt = std::make_shared<TEvent>(_args...);
+            SharedPtr<TEvent> evt = MakeShared<TEvent>(_args...);
             MAZE_DEBUG_ERROR_BP_IF(
                 evt->getClassUID() != ClassInfo<TEvent>::UID(),
                 "Event %s has wrong metadata!",
@@ -355,7 +355,7 @@ namespace Maze
         inline void sendEvent(EntityId _entityId, TArgs... _args)
         {
             // #TODO: Rework to unique?
-            SharedPtr<TEvent> evt = std::make_shared<TEvent>(_args...);
+            SharedPtr<TEvent> evt = MakeShared<TEvent>(_args...);
             sendEvent(_entityId, evt);
         }
 

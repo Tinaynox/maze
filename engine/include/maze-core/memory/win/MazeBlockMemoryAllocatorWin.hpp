@@ -106,7 +106,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline static SharedPtr<BlockMemoryAllocatorWin> Create() { return std::make_shared<BlockMemoryAllocatorWin>(); }
+        inline static SharedPtr<BlockMemoryAllocatorWin> Create() { return MakeShared<BlockMemoryAllocatorWin>(); }
 
         //////////////////////////////////////////
         void* allocBlock()

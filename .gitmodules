@@ -43,3 +43,6 @@
 [submodule "third-party/openal-soft"]
 	path = third-party/openal-soft
 	url = git@github.com:Tinaynox/openal-soft.git
+[submodule "third-party/mono"]
+	path = third-party/mono
+	url = git@github.com:Tinaynox/mono.git

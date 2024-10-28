@@ -175,7 +175,7 @@ namespace Maze
         }
         else if (StringHelper::IsStartsWith(_data, "json:"))
         {
-            _value = std::make_shared<SoundSet>();
+            _value = MakeShared<SoundSet>();
             _value->setString(_data + 5, _count - 5);
         }
         else

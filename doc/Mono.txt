@@ -1,0 +1,4 @@
+1. third-party\mono\msvc\mono.sln
+2. build-all Win32/x64 Debug/Release
+3. https://www.mono-project.com/download/stable/#download-win
+4. C:\Program Files\Mono\lib\mono\4.5

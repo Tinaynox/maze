@@ -96,7 +96,8 @@ namespace Maze
         EventManager::GetInstancePtr()->unsubscribeEvent<EntityNameChangedEvent>(this);
         EventManager::GetInstancePtr()->unsubscribeEvent<EcsEntityActiveChangedEvent>(this);
 
-        SelectionManager::GetInstancePtr()->eventSelectionChanged.unsubscribe(this);
+        if (SelectionManager::GetInstancePtr())
+            SelectionManager::GetInstancePtr()->eventSelectionChanged.unsubscribe(this);
 
         setEcsWorld(nullptr);
     }

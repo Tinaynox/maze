@@ -1,0 +1,188 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#include "MazeCSharpHeader.hpp"
+#include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
+#include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
+#include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    // Class MonoBehaviour
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(MonoBehaviour, Component,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(DataBlock, classData, DataBlock(), getMonoClassData, setMonoClassData),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(DataBlock, data, DataBlock(), getData, setData));
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MonoBehaviour);
+
+    //////////////////////////////////////////
+    MonoBehaviour::MonoBehaviour()
+    {
+    }
+
+    //////////////////////////////////////////
+    MonoBehaviour::~MonoBehaviour()
+    {
+    }
+
+    //////////////////////////////////////////
+    MonoBehaviourPtr MonoBehaviour::Create()
+    {
+        MonoBehaviourPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(MonoBehaviour, object, init());
+        return object;
+    }
+
+    //////////////////////////////////////////
+    bool MonoBehaviour::init()
+    {
+        
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void MonoBehaviour::destroyMonoInstance()
+    {
+        if (!m_monoInstance.isValid())
+            return;
+
+        MAZE_NOT_IMPLEMENTED;
+    }
+
+    //////////////////////////////////////////
+    void MonoBehaviour::createMonoInstance()
+    {
+        destroyMonoInstance();
+
+        MAZE_ERROR_RETURN_IF(!m_monoClass, "MonoClass is empty!");
+        MAZE_ERROR_RETURN_IF(!m_monoClass->isValid(), "MonoClass is invalid!");
+
+        m_monoInstance = m_monoClass->instantiate();
+    }
+
+    //////////////////////////////////////////
+    void MonoBehaviour::setMonoClass(ScriptClassPtr const& _scriptClass)
+    {
+        if (m_monoClass == _scriptClass)
+            return;
+
+        m_monoClass = _scriptClass;
+
+        m_monoClass->getMethod("OnCreate");
+        m_monoClass->getMethod("OnUpdate", 1);
+
+        createMonoInstance();
+    }
+
+    //////////////////////////////////////////
+    void MonoBehaviour::setMonoClass(HashedCString _scriptClass)
+    {
+        ScriptClassPtr const& scriptClass = MonoEngine::GetMonoBehaviourSubClass(_scriptClass);
+        setMonoClass(scriptClass);
+    }
+
+    //////////////////////////////////////////
+    void MonoBehaviour::setMonoClassData(DataBlock _dataBlock)
+    {
+        Debug::LogError("4");
+    }
+
+    //////////////////////////////////////////
+    DataBlock MonoBehaviour::getMonoClassData() const
+    {
+        DataBlock db;
+        Debug::LogError("3");
+
+        return std::move(db);
+    }
+
+    //////////////////////////////////////////
+    void MonoBehaviour::setData(DataBlock _dataBlock)
+    {
+        Debug::LogError("1");
+    }
+
+    //////////////////////////////////////////
+    DataBlock MonoBehaviour::getData() const
+    {
+        DataBlock db;
+        Debug::LogError("2");
+
+        return std::move(db);
+    }
+
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(MonoBehaviourSystemAppear,
+        {},
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        MonoBehaviour* _monoBehaviour)
+    {
+        ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
+        ScriptInstance& scriptInstance = _monoBehaviour->getMonoInstance();
+
+        if (!scriptClass || !scriptInstance.isValid())
+            return;
+
+        scriptInstance.setProperty("eid", _entity->getId());
+
+        if (scriptClass->getOnCreateMethod())
+            scriptInstance.invokeMethod(
+                scriptClass->getOnCreateMethod());
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(MonoBehaviourSystemUpdate,
+        {},
+        {},
+        UpdateEvent const& _event,
+        Entity* _entity,
+        MonoBehaviour* _monoBehaviour)
+    {
+        ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
+        ScriptInstance& scriptInstance = _monoBehaviour->getMonoInstance();
+
+        if (!scriptClass || !scriptInstance.isValid())
+            return;
+
+        if (scriptClass->getOnUpdateMethod())
+            scriptInstance.invokeMethod(
+                scriptClass->getOnUpdateMethod(),
+                _event.getDt());
+    }
+
+} // namespace Maze
+//////////////////////////////////////////

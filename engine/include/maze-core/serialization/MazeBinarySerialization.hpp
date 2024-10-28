@@ -487,7 +487,7 @@ namespace Maze
         DeserializeValue(SharedPtr<UValue>& _value, U8 const* _data)
     {
         if (!_value)
-            _value = std::make_shared<UValue>();
+            _value = MakeShared<UValue>();
 
         TryDeserializeValue<UValue>(*_value.get(), _data);
     }

@@ -142,10 +142,18 @@ namespace Maze
         class _Ty,
         class _Dx = std::default_delete<_Ty>>
     using UniquePtr = std::unique_ptr<_Ty, _Dx>;
+
+    //////////////////////////////////////////
+    template <class _Ty, typename ...Args>
+    inline UniquePtr<_Ty> MakeUnique(Args&& ..._args) { return std::make_unique<_Ty>(std::forward<Args>(_args)...); }
     
     //////////////////////////////////////////
     template <class _Ty>
     using SharedPtr = std::shared_ptr<_Ty>;
+
+    //////////////////////////////////////////
+    template <class _Ty, typename ...Args>
+    inline SharedPtr<_Ty> MakeShared(Args&& ..._args) { return std::make_shared<_Ty>(std::forward<Args>(_args)...); }
 
     //////////////////////////////////////////
     template <typename>

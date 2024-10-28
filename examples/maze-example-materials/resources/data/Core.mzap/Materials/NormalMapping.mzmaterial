@@ -1,0 +1,86 @@
+uniform
+{
+  name:String = "u_baseMap"
+  type:String = "UniformTexture2D"
+  value:String = "TorusKnotNM_Diffuse.png"
+}
+
+uniform
+{
+  name:String = "u_emissionMap"
+  type:String = "UniformTexture2D"
+  value:String = "TorusKnotNM_Emission.png"
+}
+
+uniform
+{
+  name:String = "u_normalMap"
+  type:String = "UniformTexture2D"
+  value:String = "TorusKnotNM_Normal.png"
+}
+
+uniform
+{
+  name:String = "u_specularMap"
+  type:String = "UniformTexture2D"
+  value:String = "TorusKnotNM_Specular.png"
+}
+
+
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:Vec4F = 1.000000,1.000000,1.000000,1.000000
+}
+
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.235294,0.235294,0.235294,1.000000
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:F32 = 0.075
+}
+
+uniform
+{
+  name:String = "u_normalScale"
+  type:String = "UniformF32"
+  value:F32 = 1.0
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 2.000000,2.000000,2.000000,1.000000
+}
+
+uniform
+{
+  name:String = "u_emissionColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 14.449275,0.453311,0.000000,1.000000
+}
+
+
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 2000
+  shader:String = "NormalMapping.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:Bool = true
+  cullMode:String = "Back"
+}

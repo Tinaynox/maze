@@ -287,7 +287,7 @@ namespace Maze
 
         FontMaterialRenderDataPtr& data = m_renderData[_fontSize];
         if (!data)
-            data = std::make_shared<FontMaterialRenderData>();
+            data = MakeShared<FontMaterialRenderData>();
 
         if (m_assetMaterial)
             data->material = m_assetMaterial->createCopy();
@@ -306,7 +306,7 @@ namespace Maze
     {
         FontMaterialRenderDataPtr& data = m_renderData[_fontSize];
         if (!data)
-            data = std::make_shared<FontMaterialRenderData>();
+            data = MakeShared<FontMaterialRenderData>();
 
         data->textures.clear();
         data->textureIndices.clear();
