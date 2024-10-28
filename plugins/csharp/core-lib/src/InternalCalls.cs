@@ -15,5 +15,8 @@ namespace Maze
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool GetKeyState(int _keyCode);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Translate3D(int _eid, ref Vec3F _delta);
     }
 }

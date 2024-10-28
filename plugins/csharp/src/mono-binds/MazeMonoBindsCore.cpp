@@ -26,6 +26,9 @@
 //////////////////////////////////////////
 #include "MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsCore.hpp"
+#include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/services/MazeLogService.hpp"
@@ -67,12 +70,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void Translate3D(S32 _eid, Vec3F const& _delta)
+    {
+        EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorldRaw()->getEntity(EntityId(_eid));
+        if (entity)
+        {
+            Transform3D* transform = entity->getComponentRaw<Transform3D>();
+            if (transform)
+            {
+                transform->translate(_delta);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsCore()
     {
         MAZE_MONO_BIND_FUNC(MazeLog);
         MAZE_MONO_BIND_FUNC(MazeLogWarning);
         MAZE_MONO_BIND_FUNC(MazeLogError);
         MAZE_MONO_BIND_FUNC(GetKeyState);
+        MAZE_MONO_BIND_FUNC(Translate3D);
     }
 
 } // namespace Maze

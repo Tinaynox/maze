@@ -20,22 +20,26 @@ namespace Sandbox
         {
             if (Input.GetKeyState(KeyCode.Left))
             {
-                Debug.Log($"Left {_dt}!");
+                Vec3F vec = new Vec3F(-5.0f * _dt, 0.0f, 0.0f);
+                InternalCalls.Translate3D(eid, ref vec);
             }
-            else
+
             if (Input.GetKeyState(KeyCode.Right))
             {
-                Debug.Log($"Right {_dt}!");
+                Vec3F vec = new Vec3F(5.0f * _dt, 0.0f, 0.0f);
+                InternalCalls.Translate3D(eid, ref vec);
             }
-            else
+
             if (Input.GetKeyState(KeyCode.Down))
             {
-                Debug.Log($"Down {_dt}!");
+                Vec3F vec = new Vec3F(0.0f, -5.0f * _dt, 0.0f);
+                InternalCalls.Translate3D(eid, ref vec);
             }
-            else
+
             if (Input.GetKeyState(KeyCode.Up))
             {
-                Debug.Log($"Up {_dt}!");
+                Vec3F vec = new Vec3F(0.0f, 5.0f * _dt, 0.0f);
+                InternalCalls.Translate3D(eid, ref vec);
             }
         }
     }
