@@ -56,16 +56,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MonoBehaviourPtr MonoBehaviour::Create()
+    MonoBehaviourPtr MonoBehaviour::Create(HashedCString _scriptClass)
     {
         MonoBehaviourPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(MonoBehaviour, object, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(MonoBehaviour, object, init(_scriptClass));
         return object;
     }
 
     //////////////////////////////////////////
-    bool MonoBehaviour::init()
+    bool MonoBehaviour::init(HashedCString _scriptClass)
     {
+        if (!_scriptClass.empty())
+            setMonoClass(_scriptClass);
         
         return true;
     }

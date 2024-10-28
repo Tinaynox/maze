@@ -269,7 +269,7 @@ namespace Maze
 
 
     protected:
-        Entity* m_entityRaw;
+        Entity* m_entityRaw = nullptr;
     };
 
     //////////////////////////////////////////

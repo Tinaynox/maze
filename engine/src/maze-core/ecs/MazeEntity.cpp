@@ -285,8 +285,6 @@ namespace Maze
 
         if (m_world)
         {
-            // componentRef->processEntityAdded();
-
             m_world->processEntityComponentsChanged(getId());
         }
                 

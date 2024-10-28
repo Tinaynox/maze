@@ -44,8 +44,6 @@ namespace Maze
 
     //////////////////////////////////////////
     Component::Component()
-        : m_entityRaw(nullptr)
-        // , m_flags(0)
     {
     }
 

@@ -215,8 +215,7 @@ namespace Maze
         objectEntity->ensureComponent<Name>("Obj");
 
 
-        MonoBehaviourPtr monoBehaviour = objectEntity->ensureComponent<MonoBehaviour>();
-        monoBehaviour->setMonoClass(MAZE_HCS("Sandbox.Player"));
+        objectEntity->createComponent<MonoBehaviour>(MAZE_HCS("Sandbox.Player"));
 
 
 

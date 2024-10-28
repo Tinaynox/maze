@@ -69,7 +69,7 @@ namespace Maze
         virtual ~MonoBehaviour();
 
         //////////////////////////////////////////
-        static MonoBehaviourPtr Create();
+        static MonoBehaviourPtr Create(HashedCString _scriptClass = HashedCString());
 
 
 
@@ -108,7 +108,7 @@ namespace Maze
         using Component::init;
 
         //////////////////////////////////////////
-        bool init();
+        bool init(HashedCString _scriptClass);
 
 
         //////////////////////////////////////////
