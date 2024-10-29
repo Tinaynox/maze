@@ -104,7 +104,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ComponentPtr ComponentFactory::createComponentByIndex(ComponentIndex _index)
+    ComponentPtr ComponentFactory::createComponentByIndex(ComponentId _index)
     {
         Map<ClassUID, ComponentCreationData>::const_iterator it = m_sceneObjectCreationData.find(_index);
 

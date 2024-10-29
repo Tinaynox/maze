@@ -32,6 +32,7 @@
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
 
 
 //////////////////////////////////////////
@@ -128,7 +129,6 @@ namespace Maze
         ScriptInstance monoBeh = g_monoEngineData.monoBehaviourClass->instantiate();
         monoBeh.invokeMethod("OnCreate");
         monoBeh.invokeMethod("OnUpdate", 1.0f / 60.0f);
-
 
         return true;
     }

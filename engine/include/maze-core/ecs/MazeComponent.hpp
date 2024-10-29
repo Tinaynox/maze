@@ -49,6 +49,20 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    template <typename TComponent>
+    inline ComponentId GetComponentId()
+    {
+        return ClassInfo<TComponent>::UID();
+    }
+
+    //////////////////////////////////////////
+    inline ComponentId GetComponentIdByName(CString _name)
+    {
+        return CalculateClassUID(_name);
+    }
+
+
+    //////////////////////////////////////////
     // Struct EntityCopyData
     //
     //////////////////////////////////////////

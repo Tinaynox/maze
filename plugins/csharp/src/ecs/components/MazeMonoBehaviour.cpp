@@ -90,6 +90,7 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(!m_monoClass->isValid(), "MonoClass is invalid!");
 
         m_monoInstance = m_monoClass->instantiate();
+        m_monoInstance.setProperty("nativeComponentPtr", castRaw<Component>());
     }
 
     //////////////////////////////////////////
@@ -158,8 +159,6 @@ namespace Maze
 
         if (!scriptClass || !scriptInstance.isValid())
             return;
-
-        scriptInstance.setProperty("eid", _entity->getId());
 
         if (scriptClass->getOnCreateMethod())
             scriptInstance.invokeMethod(

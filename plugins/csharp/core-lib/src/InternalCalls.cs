@@ -1,9 +1,11 @@
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Maze
 {
     public class InternalCalls
     {
+#region Log
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void MazeLog(string _text);
 
@@ -12,11 +14,33 @@ namespace Maze
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void MazeLogError(string _text);
+#endregion
 
+#region Input
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool GetKeyState(int _keyCode);
+#endregion
+
+#region Ecs
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static int GetEntityId(IntPtr _nativeComponentPtr);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void Translate3D(int _eid, ref Vec3F _delta);
+        internal extern static int GetComponentId(string _name);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static IntPtr GetComponent(IntPtr _nativeComponentPtr, int _componentId);
+#endregion
+
+#region Transform3D
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Transform3DTranslate(IntPtr _nativeComponentPtr, Vec3F _delta);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Transform3DGetPosition(IntPtr _nativeComponentPtr, out Vec3F _delta);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Transform3DSetPosition(IntPtr _nativeComponentPtr, Vec3F _delta);
+#endregion
     }
 }

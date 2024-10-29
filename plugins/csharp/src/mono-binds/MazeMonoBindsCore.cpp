@@ -29,6 +29,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/services/MazeLogService.hpp"
@@ -70,17 +71,47 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline void Translate3D(S32 _eid, Vec3F const& _delta)
+    inline S32 GetEntityId(Component* _component) { return (S32)_component->getEntityId(); }
+
+    //////////////////////////////////////////
+    inline ComponentId GetComponentIdHelper(MonoString* _name)
     {
-        EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorldRaw()->getEntity(EntityId(_eid));
-        if (entity)
-        {
-            Transform3D* transform = entity->getComponentRaw<Transform3D>();
-            if (transform)
-            {
-                transform->translate(_delta);
-            }
-        }
+        Char* cstr = mono_string_to_utf8(_name);
+        ComponentId id = GetComponentIdByName(cstr);
+        mono_free(cstr);
+
+        return id;
+    }
+
+    //////////////////////////////////////////
+    inline Component* GetComponent(Component* _component, ComponentId _componentId)
+    {
+        if (!_component->getEntityRaw())
+            return nullptr;
+
+        ComponentPtr const& component = _component->getEntityRaw()->getComponentByUID(_componentId);
+        return component.get();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform3DTranslate(Component* _component, Vec3F _delta)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        _component->castRaw<Transform3D>()->translate(_delta);
+    }
+
+    //////////////////////////////////////////
+    inline void Transform3DGetPosition(Component* _component, Vec3F& _outPosition)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        _outPosition = _component->castRaw<Transform3D>()->getLocalPosition();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform3DSetPosition(Component* _component, Vec3F _position)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        _component->castRaw<Transform3D>()->setLocalPosition(_position);
     }
 
     //////////////////////////////////////////
@@ -90,7 +121,12 @@ namespace Maze
         MAZE_MONO_BIND_FUNC(MazeLogWarning);
         MAZE_MONO_BIND_FUNC(MazeLogError);
         MAZE_MONO_BIND_FUNC(GetKeyState);
-        MAZE_MONO_BIND_FUNC(Translate3D);
+        MAZE_MONO_BIND_FUNC(GetEntityId);
+        MAZE_MONO_BIND_FUNC_WITH_NAME(GetComponentIdHelper, GetComponentId);
+        MAZE_MONO_BIND_FUNC(GetComponent);
+        MAZE_MONO_BIND_FUNC(Transform3DTranslate);
+        MAZE_MONO_BIND_FUNC(Transform3DGetPosition);
+        MAZE_MONO_BIND_FUNC(Transform3DSetPosition);
     }
 
 } // namespace Maze

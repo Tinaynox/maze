@@ -118,8 +118,7 @@ namespace Maze
         inline bool setProperty(CString _name, TValue const& _value)
         {
             MonoProperty* prop = getProperty(_name);
-            if (!prop)
-                return false;
+            MAZE_ERROR_RETURN_VALUE_IF(!prop, false, "%s property is not found!", _name);
 
             return setProperty(prop, _value);
         }

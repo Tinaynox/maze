@@ -86,7 +86,7 @@ namespace Maze
         {
             MAZE_ERROR_IF(strcmp(T::GetMetaClass()->getName(), static_cast<CString>(ClassInfo<T>::Name())) != 0, "Class %s should have his own MetaClass! Current MetaClass is %s", ClassInfo<T>::Name(), T::GetMetaClass()->getName());
 
-            ComponentIndex uid = ClassInfo<T>::UID();
+            ComponentId uid = ClassInfo<T>::UID();
 
             ComponentCreationData objectData;
             objectData.name = ClassInfo<T>::Name();
@@ -118,7 +118,7 @@ namespace Maze
         ComponentPtr createComponent(ClassUID _componentUID);
 
         //////////////////////////////////////////
-        ComponentPtr createComponentByIndex(ComponentIndex _index);
+        ComponentPtr createComponentByIndex(ComponentId _index);
 
         //////////////////////////////////////////
         ClassUID getComponentUID(CString _className);

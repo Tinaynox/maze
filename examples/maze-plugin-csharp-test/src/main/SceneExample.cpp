@@ -217,8 +217,6 @@ namespace Maze
 
         objectEntity->createComponent<MonoBehaviour>(MAZE_HCS("Sandbox.Player"));
 
-
-
         return true;
     }
 

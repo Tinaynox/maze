@@ -40,6 +40,9 @@ namespace Maze
     //////////////////////////////////////////
     #define MAZE_MONO_BIND_FUNC(Name) mono_add_internal_call("Maze.InternalCalls::" #Name, Name);
 
+    //////////////////////////////////////////
+    #define MAZE_MONO_BIND_FUNC_WITH_NAME(Func, Name) mono_add_internal_call("Maze.InternalCalls::" #Name, Func);
+
 } // namespace Maze
 //////////////////////////////////////////
 

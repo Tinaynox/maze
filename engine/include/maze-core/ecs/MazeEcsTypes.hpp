@@ -40,7 +40,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    using ComponentIndex = ClassUID;
+    using ComponentId = ClassUID;
     using EntityId = IdWithGeneration<S32, 8>;
     using EntityIds = Set<EntityId>;
 

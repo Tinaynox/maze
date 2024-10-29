@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/hash/MazeHashCRC.hpp"
+#include "maze-core/hash/MazeHashFNV1.hpp"
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/data/MazeHashedCString.hpp"
@@ -43,6 +44,10 @@ namespace Maze
 {
     //////////////////////////////////////////
     using ClassUID = U32;
+
+    //////////////////////////////////////////
+    extern StdMap<ClassUID, StdString> g_classUIDByName;
+    extern UnorderedMap<StdString, ClassUID> g_classNameByUID;
     
 
     //////////////////////////////////////////
@@ -133,6 +138,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    static inline ClassUID CalculateClassUID(StdString const& _name)
+    {
+        ClassUID classUID = Hash::CalculateFNV1(_name.c_str(), _name.size());
+        auto it = g_classUIDByName.find(classUID);
+        if (it != g_classUIDByName.end())
+        {
+            if (_name == it->second)
+                return classUID;
+
+            do
+            {
+                ++classUID;
+            }
+            while (g_classUIDByName.find(classUID) != g_classUIDByName.end());
+        }
+
+        g_classUIDByName[classUID] = _name;
+        g_classNameByUID[_name] = classUID;
+
+        return classUID;
+    }
+
+    //////////////////////////////////////////
     template <typename T>
     class ClassInfo 
     {
@@ -157,26 +185,11 @@ namespace Maze
         //////////////////////////////////////////
         static inline ClassUID UID()
         {
-            static ClassUID classUID = GenerateUID(QualifiedName());
+            static ClassUID classUID = CalculateClassUID(Name().str);
             return classUID;
         }
 
     protected:
-
-        //////////////////////////////////////////
-        static inline ClassUID GenerateUID(Char const* _name)
-        {
-            static StdMap<ClassUID, Char const*> s_registeredClasses;
-
-            ClassUID classUID = Hash::CalculateCRC32(_name, strlen(_name));
-            if (s_registeredClasses.find(classUID) != s_registeredClasses.end())
-            {
-                return GenerateUID((StdString(_name) + '_').c_str());
-            }
-            
-            s_registeredClasses[classUID] = _name;
-            return classUID;
-        }
     };
 
     

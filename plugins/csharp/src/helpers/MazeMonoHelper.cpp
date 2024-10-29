@@ -74,7 +74,16 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params)
         {
-            mono_runtime_invoke(_method, _instance, _params, nullptr);
+            MonoObject* exception = nullptr;
+            mono_runtime_invoke(_method, _instance, _params, &exception);
+
+            if (exception)
+            {
+                MonoString* excStr = mono_object_to_string(exception, nullptr);
+                Char* cstr = mono_string_to_utf8(excStr);
+                MAZE_ERROR("MONO runtime error: %s", cstr);
+                mono_free(cstr);
+            }
         }
 
     } // namespace AssetHelper

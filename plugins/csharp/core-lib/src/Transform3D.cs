@@ -2,12 +2,22 @@ using System;
 
 namespace Maze
 {
-    public class Transform3D : Component
+    public class Transform3D : NativeComponent
     {
-        public Transform3D()
+        public Vec3F position
         {
-            Debug.Log("Transform3D constructor!");
+            get { InternalCalls.Transform3DGetPosition(nativeComponentPtr, out Vec3F pos); return pos; }
+            set { InternalCalls.Transform3DSetPosition(nativeComponentPtr, value); }
         }
 
+        public Transform3D(IntPtr _nativeComponentPtr)
+            : base(_nativeComponentPtr)
+        {  
+        }
+
+        public void Translate(Vec3F _delta)
+        {
+            InternalCalls.Transform3DTranslate(nativeComponentPtr, _delta);
+        }
     }
 }
