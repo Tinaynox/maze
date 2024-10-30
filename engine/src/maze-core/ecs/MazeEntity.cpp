@@ -54,7 +54,6 @@ namespace Maze
     Entity::~Entity()
     {
         setEcsScene(nullptr);
-        m_componentIds.clear();
 
         while (!m_components.empty())
         {
@@ -282,7 +281,6 @@ namespace Maze
             std::forward_as_tuple(_component));
         _component->setEntity(this);
 
-        m_componentIds.insert(_component->getClassUID());
         m_flags |= (U8)Flags::ComponentsMaskDirty;
 
         if (m_world)
@@ -310,7 +308,7 @@ namespace Maze
             return false;
         
         it->second->setEntity(nullptr);
-        m_componentIds.erase(m_componentIds.find(it->second->getClassUID()));
+        
         m_components.erase(it);
         m_flags |= (U8)Flags::ComponentsMaskDirty;
             

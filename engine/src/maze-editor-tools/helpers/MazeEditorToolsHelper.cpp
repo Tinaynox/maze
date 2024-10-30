@@ -95,16 +95,16 @@ namespace Maze
             Set<EntityPtr>::iterator end = _entities.end();
 
             EntityPtr const& firstEntity = *it++;
-            for (auto const& componentId : firstEntity->getComponentIds())
-                result.emplace(componentId);
+            for (auto const& componentData : firstEntity->getComponents())
+                result.emplace(componentData.first);
 
             for (; it != end; ++it)
             {
                 EntityPtr const& entity = *it;
 
-                for (auto const& componentId : entity->getComponentIds())
-                    if (result.count(componentId) == 0)
-                        result.erase(componentId);
+                for (auto const& componentData : entity->getComponents())
+                    if (result.count(componentData.first) == 0)
+                        result.erase(componentData.first);
             }
 
             return result;

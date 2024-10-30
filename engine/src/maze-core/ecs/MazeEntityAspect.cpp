@@ -79,9 +79,12 @@ namespace Maze
                                                            end = getComponentIds().end();
                                                            it != end;
                                                            ++it)
-                {                    if (_entity->getComponentIds().find((*it)) == _entity->getComponentIds().end())
+                {
+                    if (_entity->getComponents().find((*it)) == _entity->getComponents().end())
                         return false;
                 }
+
+                return true;
             }
 
             case EntityAspectType::HaveAnyOfComponents:
@@ -91,7 +94,7 @@ namespace Maze
                                                       it != end;
                                                       ++it)
                 {
-                    if (_entity->getComponentIds().find((*it)) != _entity->getComponentIds().end())
+                    if (_entity->getComponents().find((*it)) != _entity->getComponents().end())
                         return true;
                 }
 
@@ -100,11 +103,16 @@ namespace Maze
 
             case EntityAspectType::ExcludeOfComponents:
             {
-                return !std::includes(
-                    _entity->getComponentIds().begin(),
-                    _entity->getComponentIds().end(),
-                    getComponentIds().begin(),
-                    getComponentIds().end());
+                for (Vector<ComponentId>::const_iterator it = getComponentIds().begin(),
+                                                         end = getComponentIds().end();
+                                                         it != end;
+                                                         ++it)
+                {
+                    if (_entity->getComponents().find((*it)) != _entity->getComponents().end())
+                        return false;
+                }
+
+                return true;
             }
 
             default:

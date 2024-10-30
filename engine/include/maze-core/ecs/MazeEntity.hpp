@@ -339,16 +339,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Set<ComponentId> const& getComponentIds() const { return m_componentIds; }
-
-        //////////////////////////////////////////
         inline S64 getComponentsMask()
         {
             if (m_flags & (U8)Flags::ComponentsMaskDirty)
             {
                 m_componentsMask = 0;
-                for (ComponentId componentId : m_componentIds)
+                for (auto const& componentData : m_components)
                 {
+                    ComponentId componentId = componentData.first;
                     m_componentsMask |= (S64)1 << U32(componentId % 64);
                 }
 
@@ -419,7 +417,6 @@ namespace Maze
         EcsScene* m_scene = nullptr;
         EntityId m_id;
         ComponentsContainer m_components;
-        Set<ComponentId> m_componentIds;
         U8 m_flags = (U8(Flags::ActiveSelf) | U8(Flags::ActiveInHierarchyPrevFrame) | U8(Flags::ComponentsMaskDirty));
 
         S64 m_componentsMask = 0;
