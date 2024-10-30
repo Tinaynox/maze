@@ -185,7 +185,7 @@ namespace Maze
         //////////////////////////////////////////
         static inline ClassUID UID()
         {
-            static ClassUID classUID = CalculateClassUID(Name().str);
+            static ClassUID classUID = CalculateClassUID(QualifiedName().str);
             return classUID;
         }
 
