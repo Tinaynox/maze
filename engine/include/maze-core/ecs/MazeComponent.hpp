@@ -181,6 +181,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        virtual ComponentId getComponentId() const { return getClassUID(); }
+
+        //////////////////////////////////////////
         inline Entity* getEntityRaw() const { return m_entityRaw; }
 
         //////////////////////////////////////////

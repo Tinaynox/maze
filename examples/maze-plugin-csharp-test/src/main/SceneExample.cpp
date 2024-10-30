@@ -212,11 +212,12 @@ namespace Maze
         meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
         
         meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::SpecularDS));
+
         objectEntity->ensureComponent<Name>("Obj");
 
 
         objectEntity->createComponent<MonoBehaviour>(MAZE_HCS("Sandbox.Player"));
-        // objectEntity->createComponent<MonoBehaviour>(MAZE_HCS("Sandbox.Player2"));
+        objectEntity->createComponent<MonoBehaviour>(MAZE_HCS("Sandbox.Player2"));
 
         return true;
     }

@@ -73,6 +73,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        virtual ComponentId getComponentId() const MAZE_OVERRIDE { return m_componentId; }
+
+
+        //////////////////////////////////////////
         void setMonoClass(ScriptClassPtr const& _scriptClass);
 
         //////////////////////////////////////////

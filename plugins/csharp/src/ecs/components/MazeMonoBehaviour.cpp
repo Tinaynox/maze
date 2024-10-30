@@ -29,6 +29,7 @@
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "maze-core/ecs/MazeCustomComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -145,6 +146,69 @@ namespace Maze
 
         return std::move(db);
     }
+
+
+    //////////////////////////////////////////
+    void MonoBehaviourOnCreate(
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        MonoBehaviour* _monoBehaviour)
+    {
+        ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
+        ScriptInstance& scriptInstance = _monoBehaviour->getMonoInstance();
+
+        if (!scriptClass || !scriptInstance.isValid())
+            return;
+
+        if (scriptClass->getOnCreateMethod())
+            scriptInstance.invokeMethod(
+                scriptClass->getOnCreateMethod());
+    }
+
+    //////////////////////////////////////////
+    void MonoBehaviourOnUpdate(
+        UpdateEvent const& _event,
+        Entity* _entity,
+        MonoBehaviour* _monoBehaviour)
+    {
+        ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
+        ScriptInstance& scriptInstance = _monoBehaviour->getMonoInstance();
+
+        if (!scriptClass || !scriptInstance.isValid())
+            return;
+
+        if (scriptClass->getOnUpdateMethod())
+            scriptInstance.invokeMethod(
+                scriptClass->getOnUpdateMethod(),
+                _event.getDt());
+    }
+
+
+    CustomComponentSystemHolder holder0(
+        MAZE_HCS("123"),
+        ClassInfo<EntityAddedToSampleEvent>::UID(),
+        [](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(GetComponentIdByName("Sandbox.Player")); },
+        (ComponentSystemEventHandler::Func)&MonoBehaviourOnCreate);
+
+    CustomComponentSystemHolder holder1(
+        MAZE_HCS("456"),
+        ClassInfo<UpdateEvent>::UID(),
+        [](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(GetComponentIdByName("Sandbox.Player")); },
+        (ComponentSystemEventHandler::Func)&MonoBehaviourOnUpdate);
+
+    CustomComponentSystemHolder holder2(
+        MAZE_HCS("789"),
+        ClassInfo<EntityAddedToSampleEvent>::UID(),
+        [](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(GetComponentIdByName("Sandbox.Player2")); },
+        (ComponentSystemEventHandler::Func)&MonoBehaviourOnCreate);
+
+    CustomComponentSystemHolder holder3(
+        MAZE_HCS("000"),
+        ClassInfo<UpdateEvent>::UID(),
+        [](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(GetComponentIdByName("Sandbox.Player2")); },
+        (ComponentSystemEventHandler::Func)&MonoBehaviourOnUpdate);
+
+
 
 
     /*

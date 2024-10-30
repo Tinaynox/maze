@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeComponentSystemHolder_hpp_))
-#define _MazeComponentSystemHolder_hpp_
+#if (!defined(_MazeCustomComponentSystemHolder_hpp_))
+#define _MazeCustomComponentSystemHolder_hpp_
 
 
 //////////////////////////////////////////
@@ -40,18 +40,18 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class ComponentSystemHolder
+    // Class CustomComponentSystemHolder
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API ComponentSystemHolder
+    class MAZE_CORE_API CustomComponentSystemHolder
     {
     protected:
 
         //////////////////////////////////////////
-        static Set<ComponentSystemHolder*>& GetSystemHolders()
+        static Set<CustomComponentSystemHolder*>& GetSystemHolders()
         {
             //////////////////////////////////////////
-            static Set<ComponentSystemHolder*> s_systemHolders;
+            static Set<CustomComponentSystemHolder*> s_systemHolders;
             return s_systemHolders;
         }
 
@@ -60,59 +60,39 @@ namespace Maze
         //////////////////////////////////////////
         static inline void Attach(EcsWorld* _world)
         {
-            for (ComponentSystemHolder* holder : GetSystemHolders())
+            for (CustomComponentSystemHolder* holder : GetSystemHolders())
                 holder->attach(_world);
         }
 
         //////////////////////////////////////////
         static inline void Detach(EcsWorld* _world)
         {
-            for (ComponentSystemHolder* holder : GetSystemHolders())
+            for (CustomComponentSystemHolder* holder : GetSystemHolders())
                 holder->detach(_world);
         }
 
-        //////////////////////////////////////////
-        using AddSystemFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, Set<HashedString> const&, ComponentSystemOrder const&);
-
 
         //////////////////////////////////////////
-        template<typename TEventType, typename ...TComponents>
-        inline ComponentSystemHolder(
+        inline CustomComponentSystemHolder(
             HashedCString _name,
-            void(*_func)(TEventType&, Entity*, TComponents* ...),
+            ClassUID _eventUID,
+            std::function<IEntitiesSamplePtr(EcsWorld*)> const& _createSampleFunc,
+            ComponentSystemEventHandler::Func _func,
             Set<HashedString> _tags = Set<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
             : m_name(_name)
-            , m_func((ComponentSystemEventHandler::Func)_func)
+            , m_eventUID(_eventUID)
+            , m_createSampleFunc(_createSampleFunc)
+            , m_func(_func)
             , m_tags(_tags)
             , m_order(_order)
         {
-            auto address = &EcsWorld::addSystemEventHandler<TEventType, TComponents...>;
-            m_addSystemFunc = (AddSystemFunc)(address);
-
             GetSystemHolders().insert(this);
         }
 
-        //////////////////////////////////////////
-        template<typename TEventType>
-        inline ComponentSystemHolder(
-            HashedCString _name,
-            void(*_func)(TEventType&),
-            Set<HashedString> _tags = Set<HashedString>(),
-            ComponentSystemOrder const& _order = ComponentSystemOrder())
-            : m_name(_name)
-            , m_func((ComponentSystemEventHandler::Func)_func)
-            , m_tags(_tags)
-            , m_order(_order)
-        {
-            auto address = &EcsWorld::addSystemEventHandlerGlobal<TEventType>;
-            m_addSystemFunc = (AddSystemFunc)(address);
-
-            GetSystemHolders().insert(this);
-        }
 
         //////////////////////////////////////////
-        inline ~ComponentSystemHolder()
+        inline ~CustomComponentSystemHolder()
         {
             GetSystemHolders().erase(this);
         }
@@ -120,7 +100,17 @@ namespace Maze
         //////////////////////////////////////////
         inline void attach(EcsWorld* _world)
         {
-            m_systems[_world] = (_world->*m_addSystemFunc)(m_name, m_func, m_tags, m_order);
+            ComponentSystemEventHandlerPtr system = ComponentSystemEventHandler::Create(
+                _world,
+                m_name,
+                m_eventUID,
+                m_createSampleFunc(_world),
+                m_func,
+                m_tags,
+                m_order);
+
+            _world->addSystemEventHandler(system);
+            m_systems[_world] = system;
         }
 
         //////////////////////////////////////////
@@ -131,24 +121,20 @@ namespace Maze
 
     protected:
         HashedCString m_name;
+        ClassUID m_eventUID = 0;
+        std::function<IEntitiesSamplePtr(EcsWorld*)> m_createSampleFunc;
+        ComponentSystemEventHandler::Func m_func;
         Set<HashedString> m_tags;
-        typename ComponentSystemEventHandler::Func m_func;
         ComponentSystemOrder m_order;
-        AddSystemFunc m_addSystemFunc;
+
         Map<EcsWorld*, WeakPtr<ComponentSystemEventHandler>> m_systems;
     };
 
-
-    //////////////////////////////////////////
-    #define COMPONENT_SYSTEM_EVENT_HANDLER(TName, TTags, TOrder, ...) \
-        void TName(__VA_ARGS__); \
-        static ComponentSystemHolder TName##_holder(MAZE_HCS(#TName), TName, TTags, TOrder); \
-        void TName(__VA_ARGS__)
-        
+    
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeComponentSystemHolder_hpp_
+#endif // _MazeCustomComponentSystemHolder_hpp_
 //////////////////////////////////////////

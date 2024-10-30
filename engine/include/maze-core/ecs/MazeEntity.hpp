@@ -263,14 +263,14 @@ namespace Maze
         //////////////////////////////////////////
         inline bool removeComponent(ComponentPtr const& _component)
         {
-            return removeComponent(_component->getClassUID());
+            return removeComponent(_component->getComponentId());
         }
 
         //////////////////////////////////////////
         template <typename TComponent>
         inline bool removeComponent()
         {
-            return removeComponent(ClassInfo<TComponent>::UID());
+            return removeComponent(GetStaticComponentId<TComponent>());
         }
 
         //////////////////////////////////////////

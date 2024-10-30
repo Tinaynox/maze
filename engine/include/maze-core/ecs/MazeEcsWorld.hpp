@@ -218,6 +218,30 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template<typename TComponent>
+        inline SharedPtr<DynamicIdEntitiesSample<TComponent>> requestDynamicIdSample(ComponentId _dynamicId)
+        {
+            for (Size i = 0, in = m_samples.size(); i < in; ++i)
+            {
+                if (m_samples[i]->getType() != EntitiesSampleType::DynamicId)
+                    continue;
+
+                if (m_samples[i]->getAspect().getComponentIds().size() == 1 && m_samples[i]->getAspect().getComponentIds()[0] == _dynamicId)
+                    return m_samples[i]->cast<DynamicIdEntitiesSample<TComponent>>();
+            }
+
+            SharedPtr<DynamicIdEntitiesSample<TComponent>> sample = DynamicIdEntitiesSample<TComponent>::Create(
+                getSharedPtr(), _dynamicId);
+            m_samples.push_back(sample);
+
+            for (Size i = 0, in = m_entities.size(); i < in; ++i)
+                if (m_entities[i].entity)
+                    sample->processEntity(m_entities[i].entity.get());
+
+            return sample;
+        }
+
+        //////////////////////////////////////////
         template<typename TEventType, typename ...TComponents>
         inline ComponentSystemEventHandlerPtr addSystemEventHandler(
             HashedCString _name,

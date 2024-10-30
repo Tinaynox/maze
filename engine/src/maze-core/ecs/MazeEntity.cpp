@@ -117,7 +117,7 @@ namespace Maze
 
         for (auto const& componentData : _entity->m_components)
         {
-            auto componentIt = m_components.find(componentData.second->getClassUID());
+            auto componentIt = m_components.find(componentData.second->getComponentId());
             if (componentIt != m_components.end())
             {
                 componentIt->second->init(
@@ -267,7 +267,7 @@ namespace Maze
         MAZE_DEBUG_BP_RETURN_VALUE_IF(!_component, nullPointer);
         
 
-        auto componentIt = m_components.find(_component->getClassUID());
+        auto componentIt = m_components.find(_component->getComponentId());
         if (componentIt != m_components.end())
         {
             MAZE_ERROR("Component %s already exists!", componentIt->second->getClassName());
@@ -277,7 +277,7 @@ namespace Maze
         _component->removeFromEntity();
         m_components.emplace(
             std::piecewise_construct,
-            std::forward_as_tuple(_component->getClassUID()),
+            std::forward_as_tuple(_component->getComponentId()),
             std::forward_as_tuple(_component));
         _component->setEntity(this);
 

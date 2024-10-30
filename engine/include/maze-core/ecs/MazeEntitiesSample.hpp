@@ -65,6 +65,7 @@ namespace Maze
     {
         Common,
         GenericInclusive,
+        DynamicId
     };
 
 
@@ -241,13 +242,14 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline SharedPtr<GenericInclusiveEntitiesSample> Create(
-            EcsWorldPtr const& _ecs)
+        static inline SharedPtr<GenericInclusiveEntitiesSample> Create(EcsWorldPtr const& _ecs)
         {
             SharedPtr<GenericInclusiveEntitiesSample> object;
-            EntityAspect aspect = EntityAspect::HaveAllOfComponents<TComponents...>();
 
             object = MAZE_CREATE_SHARED_PTR(GenericInclusiveEntitiesSample);
+
+            EntityAspect aspect = EntityAspect::HaveAllOfComponents<TComponents...>();
+
             if (!object->init(_ecs, aspect))
                 object.reset();
             return object;
@@ -493,6 +495,242 @@ namespace Maze
         UnorderedMap<EntityId, Size> m_entityIndices;
     };
 
+
+    //////////////////////////////////////////
+    // Class DynamicIdEntitiesSample
+    //
+    //////////////////////////////////////////
+    template <typename TComponent>
+    class DynamicIdEntitiesSample
+        : public IEntitiesSample
+    {
+    protected:
+
+        //////////////////////////////////////////
+        using ProcessFunc = std::function<void(Entity*, TComponent* _component)>;
+
+        //////////////////////////////////////////
+        using ProcessFuncRaw = void(*)(Entity*, TComponent* _component);
+
+
+        //////////////////////////////////////////
+        using ProcessEventFunc = std::function<void(Event&, Entity*, TComponent* _component)>;
+
+        //////////////////////////////////////////
+        using ProcessEventFuncRaw = void(*)(Event&, Entity*, TComponent* _component);
+
+        //////////////////////////////////////////
+        struct EntityData
+        {
+            Entity* entity = nullptr;
+            TComponent* component;
+        };
+
+    public:
+
+        //////////////////////////////////////////
+        virtual ~DynamicIdEntitiesSample()
+        {
+
+        }
+
+        //////////////////////////////////////////
+        static inline SharedPtr<DynamicIdEntitiesSample> Create(
+            EcsWorldPtr const& _ecs,
+            ComponentId _id)
+        {
+            SharedPtr<DynamicIdEntitiesSample> object;
+
+
+            object = MAZE_CREATE_SHARED_PTR(DynamicIdEntitiesSample);
+
+            EntityAspect aspect(EntityAspectType::HaveAllOfComponents, { _id });
+
+            if (!object->init(_ecs, aspect))
+                object.reset();
+            return object;
+        }
+
+        //////////////////////////////////////////
+        virtual EntitiesSampleType getType() MAZE_OVERRIDE { return EntitiesSampleType::DynamicId; }
+
+        //////////////////////////////////////////
+        FastVector<EntityData> const& getEntitiesData() const { return m_entitiesData; }
+
+        //////////////////////////////////////////
+        Vector<EntityId> getEntityIds() const
+        {
+            Vector<EntityId> result;
+            for (EntityData entityData : m_entitiesData)
+                result.push_back(entityData.entity->getId());
+
+            return result;
+        }
+
+        //////////////////////////////////////////
+        virtual void clear() MAZE_OVERRIDE
+        {
+            for (EntityData const& entityData : m_entitiesData)
+            {
+                eventEntityWillBeRemoved(entityData.entity);
+                invokeEntityRemoved(entityData);
+            }
+
+            m_entitiesData.clear();
+            m_entityIndices.clear();
+        }
+
+        //////////////////////////////////////////
+        virtual void processEntity(Entity* _entity) MAZE_OVERRIDE
+        {
+            EntityId eid = _entity->getId();
+            typename UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entity->getId());
+
+            bool intersects;
+            if (!_entity->getActiveInHierarchy() || !_entity->getEcsWorld())
+                intersects = false;
+            else
+                intersects = m_aspect.hasIntersection(_entity);
+
+            if (it == m_entityIndices.end() && intersects)
+            {
+                EntityData entityData;
+                entityData.entity = _entity;
+                entityData.component = static_cast<TComponent*>(_entity->getComponentById(m_aspect.getComponentIds()[0]).get());
+
+                Size index = m_entitiesData.size();
+                m_entitiesData.push_back(entityData);
+                m_entityIndices.emplace(
+                    std::piecewise_construct,
+                    std::forward_as_tuple(eid),
+                    std::forward_as_tuple(index));
+                invokeEntityAdded(entityData);
+            }
+            else
+            if (it != m_entityIndices.end() && !intersects)
+            {
+                eventEntityWillBeRemoved(_entity);
+
+                Size index = it->second;
+                EntityData entityData = m_entitiesData[index];
+
+                m_entityIndices.erase(it);
+                m_entitiesData.eraseUnordered(m_entitiesData.begin() + index);
+                if (index < m_entitiesData.size())
+                    m_entityIndices[m_entitiesData[index].entity->getId()] = index;
+
+                invokeEntityRemoved(entityData);
+            }
+        }
+
+        //////////////////////////////////////////
+        void process(ProcessFunc _func)
+        {
+            for (EntityData entityData : m_entitiesData)
+            {
+                _func(entityData.entity, entityData.component);
+            }
+        }
+
+        //////////////////////////////////////////
+        virtual void process(void (*_func)()) MAZE_OVERRIDE
+        {
+            ProcessFuncRaw rawFunc = (ProcessFuncRaw)_func;
+            process((ProcessFunc)(rawFunc));
+        }
+
+
+        //////////////////////////////////////////
+        inline void processEvent(Event* _event, EcsEventParams _params, ProcessEventFunc _func)
+        {
+            for (EntityData entityData : m_entitiesData)
+            {
+                if (entityData.entity->getRemoving() && _params.ignoreRemovingEntity)
+                    continue;
+
+                if (!entityData.entity->getEcsWorld() && _params.ignoreNullWorldEntity)
+                    continue;
+
+                _func(*_event, entityData.entity, entityData.component);
+            }
+        }
+
+        //////////////////////////////////////////
+        virtual void processEvent(Event* _event, EcsEventParams _params, void (*_func)()) MAZE_OVERRIDE
+        {
+            ProcessEventFuncRaw rawFunc = (ProcessEventFuncRaw)_func;
+            processEvent(_event, _params, (ProcessEventFunc)(rawFunc));
+        }
+
+        //////////////////////////////////////////
+        inline void processEvent(EntityId _entityId, Event* _event, EcsEventParams _params, ProcessEventFunc _func)
+        {
+            UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entityId);
+
+            if (it != m_entityIndices.end())
+            {
+                EntityData& entityData = m_entitiesData[it->second];
+
+                if (entityData.entity->getRemoving() && _params.ignoreRemovingEntity)
+                    return;
+
+                if (!entityData.entity->getEcsWorld() && _params.ignoreNullWorldEntity)
+                    return;
+
+                _func(*_event, entityData.entity, entityData.component);
+            }
+        }
+
+        //////////////////////////////////////////
+        virtual void processEvent(EntityId _entityId, Event* _event, EcsEventParams _params, void (*_func)()) MAZE_OVERRIDE
+        {
+            ProcessEventFuncRaw rawFunc = (ProcessEventFuncRaw)_func;
+            processEvent(_entityId, _event, _params, (ProcessEventFunc)(rawFunc));
+        }
+
+    public:
+        MultiDelegate<Entity*, TComponent*> eventEntityWithComponentAdded;
+        MultiDelegate<Entity*, TComponent*> eventEntityWithComponentRemoved;
+
+    protected:
+
+        //////////////////////////////////////////
+        DynamicIdEntitiesSample()
+        {
+
+        }
+
+        //////////////////////////////////////////
+        virtual bool init(
+            EcsWorldPtr const& _ecs,
+            EntityAspect const& _aspect) MAZE_OVERRIDE
+        {
+            if (!IEntitiesSample::init(_ecs, _aspect))
+                return false;
+
+            return true;
+        }
+
+        //////////////////////////////////////////
+        inline void invokeEntityAdded(
+            EntityData const& _entityData)
+        {
+            eventEntityAdded(_entityData.entity);
+            eventEntityWithComponentAdded(_entityData.entity, _entityData.component);
+        }
+
+        //////////////////////////////////////////
+        inline void invokeEntityRemoved(
+            EntityData const& _entityData)
+        {
+            eventEntityRemoved(_entityData.entity);
+            eventEntityWithComponentRemoved(_entityData.entity, _entityData.component);
+        }
+
+    protected:
+        FastVector<EntityData> m_entitiesData;
+        UnorderedMap<EntityId, Size> m_entityIndices;
+    };
 
 } // namespace Maze
 //////////////////////////////////////////

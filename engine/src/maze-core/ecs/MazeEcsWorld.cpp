@@ -30,6 +30,7 @@
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "maze-core/ecs/MazeCustomComponentSystemHolder.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/MazeEcsWorldEventsQueue.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
@@ -210,7 +211,8 @@ namespace Maze
         
         broadcastEventImmediate<EcsWorldWillBeDestroyedEvent>(EcsEventParams(false, false));
 
-        ComponentSystemHolder::Detach(this);        
+        ComponentSystemHolder::Detach(this);
+        CustomComponentSystemHolder::Detach(this);
 
         m_state = EcsWorldState::Destroying;
 
@@ -280,6 +282,7 @@ namespace Maze
         if (_attachSystems)
         {
             ComponentSystemHolder::Attach(this);
+            CustomComponentSystemHolder::Attach(this);
         }
 
         m_state = EcsWorldState::Active;

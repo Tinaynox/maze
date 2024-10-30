@@ -17,7 +17,7 @@ namespace Maze
             // Native component wrappers
             if (typeof(NativeComponent).IsAssignableFrom(typeof(T)))
             {
-                int componentId = InternalCalls.GetComponentId(typeof(T).Name);
+                int componentId = InternalCalls.GetComponentId($"Maze::{typeof(T).Name}");
                 IntPtr componentPtr = InternalCalls.GetComponent(nativeComponentPtr, componentId);
                 if (componentPtr == IntPtr.Zero)
                     return default(T);
