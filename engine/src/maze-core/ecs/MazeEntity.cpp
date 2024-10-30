@@ -47,11 +47,6 @@ namespace Maze
 
     //////////////////////////////////////////
     Entity::Entity()
-        : m_world(nullptr)
-        , m_scene(nullptr)
-        , m_flags(U8(Flags::ActiveSelf) | U8(Flags::ActiveInHierarchyPrevFrame) | U8(Flags::ComponentsMaskDirty))
-        , m_componentsMask(0)
-        , m_transitionFlags(0)
     {
     }
 
@@ -59,7 +54,7 @@ namespace Maze
     Entity::~Entity()
     {
         setEcsScene(nullptr);
-        m_componentUIDs.clear();
+        m_componentIds.clear();
 
         while (!m_components.empty())
         {
@@ -123,10 +118,10 @@ namespace Maze
 
         for (auto const& componentData : _entity->m_components)
         {
-            ComponentPtr& componentRef = m_components[componentData.second->getClassUID()];
-            if (componentRef)
+            auto componentIt = m_components.find(componentData.second->getClassUID());
+            if (componentIt != m_components.end())
             {
-                componentRef->init(
+                componentIt->second->init(
                     componentData.second.get(),
                     _world,
                     _copyData);
@@ -272,15 +267,22 @@ namespace Maze
         static ComponentPtr const nullPointer;
         MAZE_DEBUG_BP_RETURN_VALUE_IF(!_component, nullPointer);
         
-        ComponentPtr& componentRef = m_components[_component->getClassUID()];
-        if (componentRef)
-            return componentRef;
+
+        auto componentIt = m_components.find(_component->getClassUID());
+        if (componentIt != m_components.end())
+        {
+            MAZE_ERROR("Component %s already exists!", componentIt->second->getClassName());
+            return componentIt->second;
+        }
         
         _component->removeFromEntity();
-        componentRef = _component;
-        componentRef->setEntity(this);
+        m_components.emplace(
+            std::piecewise_construct,
+            std::forward_as_tuple(_component->getClassUID()),
+            std::forward_as_tuple(_component));
+        _component->setEntity(this);
 
-        m_componentUIDs.insert(componentRef->getClassUID());
+        m_componentIds.insert(_component->getClassUID());
         m_flags |= (U8)Flags::ComponentsMaskDirty;
 
         if (m_world)
@@ -291,24 +293,24 @@ namespace Maze
 
         if (m_transitionFlags & static_cast<U8>(TransitionFlags::Awakened))
         {
-            componentRef->processEntityAwakened();
+            _component->processEntityAwakened();
         }
 
         if (getEcsScene())
-            componentRef->processSceneSet();
+            _component->processSceneSet();
 
-        return componentRef;
+        return _component;
     }
 
     //////////////////////////////////////////
-    bool Entity::removeComponent(ClassUID _componentUID)
+    bool Entity::removeComponent(ComponentId _componentUID)
     {
         ComponentsContainer::iterator it = m_components.find(_componentUID);
         if (it == m_components.end())
             return false;
         
         it->second->setEntity(nullptr);
-        m_componentUIDs.erase(it->second->getClassUID());
+        m_componentIds.erase(m_componentIds.find(it->second->getClassUID()));
         m_components.erase(it);
         m_flags |= (U8)Flags::ComponentsMaskDirty;
             

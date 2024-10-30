@@ -68,7 +68,7 @@ namespace Maze
         MAZE_DECLARE_MEMORY_ALLOCATION(Entity);
 
         //////////////////////////////////////////
-        using ComponentsContainer = Map<ClassUID, ComponentPtr>;
+        using ComponentsContainer = Map<ComponentId, ComponentPtr>;
 
         //////////////////////////////////////////
         friend class EcsWorld;
@@ -160,9 +160,9 @@ namespace Maze
         inline Size getComponentsCount() const { return m_components.size(); }
 
         //////////////////////////////////////////
-        inline ComponentPtr const& getComponentByUID(ClassUID _uid) const
+        inline ComponentPtr const& getComponentById(ComponentId _id) const
         {
-            ComponentsContainer::const_iterator it = m_components.find(_uid);
+            ComponentsContainer::const_iterator it = m_components.find(_id);
             
             static ComponentPtr const nullPointer;
             if (it == m_components.end())
@@ -177,7 +177,7 @@ namespace Maze
         template <typename TComponent>
         inline SharedPtr<TComponent> getComponent() const
         {
-            auto& component = getComponentByUID(ClassInfo<TComponent>::UID());
+            auto& component = getComponentById(GetStaticComponentId<TComponent>());
                 
             if (!component)
                 return nullptr;
@@ -189,13 +189,36 @@ namespace Maze
         template <typename TComponent>
         inline TComponent* getComponentRaw() const
         {
-            auto& component = getComponentByUID(ClassInfo<TComponent>::UID());
+            auto& component = getComponentById(GetStaticComponentId<TComponent>());
 
             if (!component)
                 return nullptr;
 
             return component->template castRaw<TComponent>();
         }
+
+
+        //////////////////////////////////////////
+        /*
+        template <typename TComponent>
+        inline bool findMultiComponent(std::function<bool(TComponent*)> _pred) const
+        {
+            auto range = m_components.equal_range(GetStaticComponentId<TComponent>());
+
+            bool found = false;
+            for (auto it = range.first; it != range.second; ++it)
+            {
+                if (_pred(it->second->template castRaw<TComponent>()))
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            return found;
+        }
+        */
+
 
         //////////////////////////////////////////
         template <typename TComponent>
@@ -223,7 +246,7 @@ namespace Maze
         template <typename TComponent, typename ...TArgs>
         inline SharedPtr<TComponent> ensureComponent(TArgs... _args)
         {
-            ComponentPtr const& component = getComponentByUID(ClassInfo<TComponent>::UID());
+            ComponentPtr const& component = getComponentById(GetStaticComponentId<TComponent>());
             if (component)
                 return component->template cast<TComponent>();
 
@@ -235,7 +258,7 @@ namespace Maze
         ComponentPtr const& addComponent(ComponentPtr const& component);
 
         //////////////////////////////////////////
-        bool removeComponent(ClassUID _componentUID);
+        bool removeComponent(ComponentId _componentUID);
 
         //////////////////////////////////////////
         inline bool removeComponent(ComponentPtr const& _component)
@@ -253,14 +276,7 @@ namespace Maze
         //////////////////////////////////////////
         template <typename TComponent, typename ...TArgs>
         SharedPtr<TComponent> createComponent(TArgs... _args)
-        {
-            ComponentPtr const& component = getComponentByUID(ClassInfo<TComponent>::UID());
-            if (component)
-            {
-                MAZE_ERROR("Component %s already exists!", ClassInfo<TComponent>::Name());
-                return std::static_pointer_cast<TComponent>(component);
-            }
-            
+        {            
             return addComponent(TComponent::Create(_args...))->template cast<TComponent>();
         }
 
@@ -323,7 +339,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Set<ClassUID> const& getComponentUIDs() const { return m_componentUIDs; }
+        Set<ComponentId> const& getComponentIds() const { return m_componentIds; }
 
         //////////////////////////////////////////
         inline S64 getComponentsMask()
@@ -331,9 +347,9 @@ namespace Maze
             if (m_flags & (U8)Flags::ComponentsMaskDirty)
             {
                 m_componentsMask = 0;
-                for (ClassUID componentUID : m_componentUIDs)
+                for (ComponentId componentId : m_componentIds)
                 {
-                    m_componentsMask |= (S64)1 << U32(componentUID % 64);
+                    m_componentsMask |= (S64)1 << U32(componentId % 64);
                 }
 
                 m_flags &= ~(U8)Flags::ComponentsMaskDirty;
@@ -403,15 +419,13 @@ namespace Maze
         EcsScene* m_scene = nullptr;
         EntityId m_id;
         ComponentsContainer m_components;
-        Set<ClassUID> m_componentUIDs;
-        U8 m_flags;
+        Set<ComponentId> m_componentIds;
+        U8 m_flags = (U8(Flags::ActiveSelf) | U8(Flags::ActiveInHierarchyPrevFrame) | U8(Flags::ComponentsMaskDirty));
 
-        FastVector<Component*> m_updatableComponents;
-
-        S64 m_componentsMask;
+        S64 m_componentsMask = 0;
 
     protected:
-        U8 m_transitionFlags;
+        U8 m_transitionFlags = 0;
     };
 
 

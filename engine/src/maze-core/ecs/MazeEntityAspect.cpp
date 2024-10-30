@@ -42,9 +42,9 @@ namespace Maze
     //
     //////////////////////////////////////////
     EntityAspect::EntityAspect(
-        EntityAspectType _type, Vector<ClassUID> const& _componentUIDs)
+        EntityAspectType _type, Vector<ComponentId> const& _componentIds)
         : m_type(_type)
-        , m_componentUIDs(_componentUIDs)
+        , m_componentIds(_componentIds)
     {
         updateComponentsMask();
     }
@@ -68,30 +68,30 @@ namespace Maze
                 /*
                 // Unstrict order
                 return std::includes(
-                    _entity->getComponentUIDs().begin(),
-                    _entity->getComponentUIDs().end(),
-                    getComponentUIDs().begin(),
-                    getComponentUIDs().end());
+                    _entity->getComponentIds().begin(),
+                    _entity->getComponentIds().end(),
+                    getComponentIds().begin(),
+                    getComponentIds().end());
                 */
 
                 // Strict order
-                for (Vector<ClassUID>::const_iterator it = getComponentUIDs().begin(),
-                                                           end = getComponentUIDs().end();
+                for (Vector<ComponentId>::const_iterator it = getComponentIds().begin(),
+                                                           end = getComponentIds().end();
                                                            it != end;
                                                            ++it)
-                {                    if (_entity->getComponentUIDs().find((*it)) == _entity->getComponentUIDs().end())
+                {                    if (_entity->getComponentIds().find((*it)) == _entity->getComponentIds().end())
                         return false;
                 }
             }
 
             case EntityAspectType::HaveAnyOfComponents:
             {
-                for (Vector<ClassUID>::const_iterator it = getComponentUIDs().begin(),
-                                                      end = getComponentUIDs().end();
+                for (Vector<ComponentId>::const_iterator it = getComponentIds().begin(),
+                                                      end = getComponentIds().end();
                                                       it != end;
                                                       ++it)
                 {
-                    if (_entity->getComponentUIDs().find((*it)) != _entity->getComponentUIDs().end())
+                    if (_entity->getComponentIds().find((*it)) != _entity->getComponentIds().end())
                         return true;
                 }
 
@@ -101,10 +101,10 @@ namespace Maze
             case EntityAspectType::ExcludeOfComponents:
             {
                 return !std::includes(
-                    _entity->getComponentUIDs().begin(),
-                    _entity->getComponentUIDs().end(),
-                    getComponentUIDs().begin(),
-                    getComponentUIDs().end());
+                    _entity->getComponentIds().begin(),
+                    _entity->getComponentIds().end(),
+                    getComponentIds().begin(),
+                    getComponentIds().end());
             }
 
             default:

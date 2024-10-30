@@ -35,6 +35,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include <functional>
@@ -82,7 +83,7 @@ namespace Maze
         virtual void removeEditor();
 
         //////////////////////////////////////////
-        virtual ClassUID getComponentUID() MAZE_ABSTRACT;
+        virtual ComponentId getComponentId() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual MetaClass* getComponentMetaClass() MAZE_ABSTRACT;
@@ -118,7 +119,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        MultiDelegate<ClassUID> eventRemoveComponentPressed;
+        MultiDelegate<ComponentId> eventRemoveComponentPressed;
 
     protected:
 
@@ -183,9 +184,9 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        virtual ClassUID getComponentUID() MAZE_OVERRIDE
+        virtual ComponentId getComponentId() MAZE_OVERRIDE
         {
-            return ClassInfo<TComponent>::UID();
+            return GetStaticComponentId<TComponent>();
         }
 
         //////////////////////////////////////////

@@ -72,7 +72,6 @@ namespace Maze
         static MonoBehaviourPtr Create(HashedCString _scriptClass = HashedCString());
 
 
-
         //////////////////////////////////////////
         void setMonoClass(ScriptClassPtr const& _scriptClass);
 
@@ -99,6 +98,7 @@ namespace Maze
         //////////////////////////////////////////
         ScriptInstance& getMonoInstance() { return m_monoInstance; }
 
+
     protected:
 
         //////////////////////////////////////////
@@ -118,6 +118,7 @@ namespace Maze
         void createMonoInstance();
 
     protected:
+        ComponentId m_componentId = 0u;
         ScriptClassPtr m_monoClass;
         ScriptInstance m_monoInstance;
     };

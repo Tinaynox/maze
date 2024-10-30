@@ -58,7 +58,7 @@ namespace Maze
         ComponentCreationData();
 
         CString name;
-        ClassUID uid;
+        ComponentId id;
         ComponentPtr (ComponentFactory::*createComponentMethod)(void);
         MetaClass* metaClass;
 
@@ -86,18 +86,18 @@ namespace Maze
         {
             MAZE_ERROR_IF(strcmp(T::GetMetaClass()->getName(), static_cast<CString>(ClassInfo<T>::Name())) != 0, "Class %s should have his own MetaClass! Current MetaClass is %s", ClassInfo<T>::Name(), T::GetMetaClass()->getName());
 
-            ComponentId uid = ClassInfo<T>::UID();
+            ComponentId staticId = GetStaticComponentId<T>();
 
             ComponentCreationData objectData;
             objectData.name = ClassInfo<T>::Name();
-            objectData.uid = uid;
+            objectData.id = staticId;
             objectData.createComponentMethod = &ComponentFactory::createComponent<T>;
             objectData.metaClass = T::GetMetaClass();
             objectData.group = _group;
 
             m_sceneObjectCreationData.emplace(
                 std::piecewise_construct,
-                std::forward_as_tuple(uid),
+                std::forward_as_tuple(staticId),
                 std::forward_as_tuple(objectData));
         }
 
@@ -115,25 +115,22 @@ namespace Maze
         inline ComponentPtr createComponent(String const& _className) { return createComponent(_className.c_str()); }
 
         //////////////////////////////////////////
-        ComponentPtr createComponent(ClassUID _componentUID);
+        ComponentPtr createComponent(ComponentId _componentUID);
 
         //////////////////////////////////////////
-        ComponentPtr createComponentByIndex(ComponentId _index);
-
-        //////////////////////////////////////////
-        ClassUID getComponentUID(CString _className);
+        ComponentId getComponentId(CString _className);
         
         //////////////////////////////////////////
-        ClassUID getComponentUID(String const& _className) { return getComponentUID(_className.c_str()); }
+        ComponentId getComponentId(String const& _className) { return getComponentId(_className.c_str()); }
         
         //////////////////////////////////////////
-        CString getComponentName(ClassUID _uid);
+        CString getComponentName(ComponentId _id);
 
         //////////////////////////////////////////
-        MetaClass* getComponentMetaClass(ClassUID _uid);
+        MetaClass* getComponentMetaClass(ComponentId _uid);
 
         //////////////////////////////////////////
-        Map<ClassUID, ComponentCreationData> const& getSceneObjectCreationData() const { return m_sceneObjectCreationData; }
+        Map<ComponentId, ComponentCreationData> const& getSceneObjectCreationData() const { return m_sceneObjectCreationData; }
 
     protected:
 
@@ -145,7 +142,7 @@ namespace Maze
 
 
     protected:
-        Map<ClassUID, ComponentCreationData> m_sceneObjectCreationData;
+        Map<ComponentId, ComponentCreationData> m_sceneObjectCreationData;
     };
 
 

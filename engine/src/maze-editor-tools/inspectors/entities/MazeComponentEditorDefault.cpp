@@ -62,28 +62,33 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ComponentEditorDefaultPtr ComponentEditorDefault::Create(MetaClass* _metaClass)
+    ComponentEditorDefaultPtr ComponentEditorDefault::Create(
+        ComponentId _componentId,
+        MetaClass* _metaClass)
     {
         ComponentEditorDefaultPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentEditorDefault, object, init(_metaClass));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentEditorDefault, object, init(_componentId, _metaClass));
         return object;
     }
 
     //////////////////////////////////////////
-    bool ComponentEditorDefault::init(MetaClass* _metaClass)
+    bool ComponentEditorDefault::init(
+        ComponentId _componentId,
+        MetaClass* _metaClass)
     {
         if (!ComponentEditor::init())
             return false;
 
+        m_componentId = _componentId;
         m_metaClass = _metaClass;
 
         return true;
     }
 
     //////////////////////////////////////////
-    ClassUID ComponentEditorDefault::getComponentUID()
+    ComponentId ComponentEditorDefault::getComponentId()
     {
-        return m_metaClass->getClassUID();
+        return m_componentId;
     }
 
     //////////////////////////////////////////

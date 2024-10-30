@@ -84,9 +84,9 @@ namespace Maze
     {
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API Set<ClassUID> CollectIntersectingComponentUIDs(Set<EntityPtr> const& _entities)
+        MAZE_EDITOR_TOOLS_API Set<ComponentId> CollectIntersectingComponentIds(Set<EntityPtr> const& _entities)
         {
-            Set<ClassUID> result;
+            Set<ComponentId> result;
 
             if (_entities.empty())
                 return result;
@@ -95,16 +95,16 @@ namespace Maze
             Set<EntityPtr>::iterator end = _entities.end();
 
             EntityPtr const& firstEntity = *it++;
-            for (auto const& componentUID : firstEntity->getComponentUIDs())
-                result.emplace(componentUID);
+            for (auto const& componentId : firstEntity->getComponentIds())
+                result.emplace(componentId);
 
             for (; it != end; ++it)
             {
                 EntityPtr const& entity = *it;
 
-                for (auto const& componentUID : entity->getComponentUIDs())
-                    if (result.count(componentUID) == 0)
-                        result.erase(componentUID);
+                for (auto const& componentId : entity->getComponentIds())
+                    if (result.count(componentId) == 0)
+                        result.erase(componentId);
             }
 
             return result;

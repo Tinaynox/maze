@@ -258,7 +258,7 @@ namespace Maze
                 if (componentData.first == ClassInfo<PrefabInstance>::UID())
                     continue;
 
-                ComponentPtr const& identityComponent = identityPrefabEntity->getComponentByUID(componentData.first);
+                ComponentPtr const& identityComponent = identityPrefabEntity->getComponentById(componentData.first);
                 if (identityComponent)
                 {
                     MetaClass const* metaClass = componentData.second->getMetaClass();
@@ -558,11 +558,11 @@ namespace Maze
                             componentIndex = --autoComponentIndexCounter;
 
                         CString componentClassName = componentBlock->getCString(MAZE_HCS("_t"));
-                        ClassUID componentUID = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentUID(componentClassName);
-                        ComponentPtr component = entity->getComponentByUID(componentUID);
+                        ComponentId componentId = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentId(componentClassName);
+                        ComponentPtr component = entity->getComponentById(componentId);
                         if (!component)
                         {
-                            component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentUID);
+                            component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentId);
 
                             if (!component)
                             {
@@ -610,8 +610,8 @@ namespace Maze
 
                                 if (componentClassName && componentPropertyName && componentPropertyValue)
                                 {
-                                    ClassUID componentUID = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentUID(componentClassName);
-                                    ComponentPtr const& component = entity->getComponentByUID(componentUID);
+                                    ComponentId componentId = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentId(componentClassName);
+                                    ComponentPtr const& component = entity->getComponentById(componentId);
                                     MetaProperty* metaProperty = component->getMetaClass()->getProperty(componentPropertyName);
                                     if (metaProperty)
                                     {
@@ -659,11 +659,11 @@ namespace Maze
                                     componentIndex = --autoComponentIndexCounter;
 
                                 CString componentClassName = prefabChildBlock->getCString(MAZE_HCS("_t"));
-                                ClassUID componentUID = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentUID(componentClassName);
-                                ComponentPtr component = entity->getComponentByUID(componentUID);
+                                ComponentId componentId = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentId(componentClassName);
+                                ComponentPtr component = entity->getComponentById(componentId);
                                 if (!component)
                                 {
-                                    component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentUID);
+                                    component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentId);
 
                                     if (!component)
                                     {
@@ -879,11 +879,11 @@ namespace Maze
                             componentIndex = --autoComponentIndexCounter;
 
                         CString componentClassName = componentBlock->getCString(MAZE_HCS("_t"));
-                        ClassUID componentUID = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentUID(componentClassName);
-                        ComponentPtr component = entity->getComponentByUID(componentUID);
+                        ComponentId componentId = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentId(componentClassName);
+                        ComponentPtr component = entity->getComponentById(componentId);
                         if (!component)
                         {
-                            component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentUID);
+                            component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentId);
 
                             if (!component)
                             {
@@ -940,11 +940,11 @@ namespace Maze
                                     componentIndex = --autoComponentIndexCounter;
 
                                 CString componentClassName = prefabChildBlock->getCString(MAZE_HCS("_t"));
-                                ClassUID componentUID = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentUID(componentClassName);
-                                ComponentPtr component = entity->getComponentByUID(componentUID);
+                                ComponentId componentId = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentId(componentClassName);
+                                ComponentPtr component = entity->getComponentById(componentId);
                                 if (!component)
                                 {
-                                    component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentUID);
+                                    component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentId);
 
                                     if (!component)
                                     {
@@ -1001,8 +1001,8 @@ namespace Maze
 
                             if (componentClassName && componentPropertyName)
                             {
-                                ClassUID componentUID = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentUID(componentClassName);
-                                ComponentPtr const& component = entity->getComponentByUID(componentUID);
+                                ComponentId componentId = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentId(componentClassName);
+                                ComponentPtr const& component = entity->getComponentById(componentId);
                                 MetaProperty* metaProperty = component->getMetaClass()->getProperty(componentPropertyName);
                                 if (metaProperty)
                                 {

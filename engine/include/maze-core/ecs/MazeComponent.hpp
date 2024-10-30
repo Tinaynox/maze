@@ -50,7 +50,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename TComponent>
-    inline ComponentId GetComponentId()
+    inline ComponentId GetStaticComponentId()
     {
         return ClassInfo<TComponent>::UID();
     }
@@ -179,7 +179,6 @@ namespace Maze
         {
             return Create(this, _world, _copyData);
         }
-
 
         //////////////////////////////////////////
         inline Entity* getEntityRaw() const { return m_entityRaw; }

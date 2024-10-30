@@ -315,12 +315,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ComponentEditorPtr InspectorManager::createComponentEditor(MetaClass* _metaClass)
+    ComponentEditorPtr InspectorManager::createComponentEditor(
+        ComponentId _componentId,
+        MetaClass* _metaClass)
     {
         auto it = m_componentEditors.find(_metaClass->getClassUID());
         if (it == m_componentEditors.end())
         {
-            return ComponentEditorDefault::Create(_metaClass);
+            return ComponentEditorDefault::Create(_componentId, _metaClass);
         }
         else
         {

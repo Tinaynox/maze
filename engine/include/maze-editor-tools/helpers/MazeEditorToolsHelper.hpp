@@ -61,7 +61,7 @@ namespace Maze
     namespace EditorToolsHelper
     {
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API Set<ClassUID> CollectIntersectingComponentUIDs(Set<EntityPtr> const& _entities);
+        MAZE_EDITOR_TOOLS_API Set<ComponentId> CollectIntersectingComponentIds(Set<EntityPtr> const& _entities);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API Set<MetaClass*> CollectIntersectingComponentMetaClasses(Set<EntityPtr> const& _entities);

@@ -70,7 +70,7 @@ namespace Maze
         //////////////////////////////////////////
         struct GizmosSample
         {
-            ClassUID componentClassUID = 0;
+            ComponentId componentId = 0;
             EntitiesSamplePtr sample;
             ComponentGizmosPtr gizmos;
         };

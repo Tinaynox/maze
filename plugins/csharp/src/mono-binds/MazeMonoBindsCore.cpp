@@ -89,7 +89,7 @@ namespace Maze
         if (!_component->getEntityRaw())
             return nullptr;
 
-        ComponentPtr const& component = _component->getEntityRaw()->getComponentByUID(_componentId);
+        ComponentPtr const& component = _component->getEntityRaw()->getComponentById(_componentId);
         return component.get();
     }
 

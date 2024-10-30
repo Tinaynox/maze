@@ -200,24 +200,24 @@ namespace Maze
         m_contextMenu->setCallbackFunction(
             [this](MenuListTree2DPtr const& _menuListTree)
             {
-                ClassUID componentUID = getComponentUID();
+                ComponentId componentId = getComponentId();
                 _menuListTree->addItem(
                     "Remove Component",
-                    [this, componentUID](String const& _item)
+                    [this, componentId](String const& _item)
                     {
-                        eventRemoveComponentPressed(componentUID);
+                        eventRemoveComponentPressed(componentId);
                     });
 
                 if (SelectionManager::GetInstancePtr()->getSelectedEntities().size() == 1)
                 {
                     _menuListTree->addItem(
                         "Copy as string",
-                        [this, componentUID](String const& _item)
+                        [this, componentId](String const& _item)
                         {
                             Set<EntityPtr> selectedEntites = SelectionManager::GetInstancePtr()->getSelectedEntities();
                             if (selectedEntites.size() == 1)
                             {
-                                ComponentPtr component = (*selectedEntites.begin())->getComponentByUID(componentUID);
+                                ComponentPtr component = (*selectedEntites.begin())->getComponentById(componentId);
                                 if (component)
                                 {
                                     String result;
@@ -255,17 +255,17 @@ namespace Maze
                         });
                 }
 
-                auto const& options = InspectorManager::GetInstancePtr()->getInspectorComponentContextMenuOptions(componentUID);
+                auto const& options = InspectorManager::GetInstancePtr()->getInspectorComponentContextMenuOptions(componentId);
                 for (auto const& optionData : options)
                 {
                     auto optionDataCopy = optionData;
                     _menuListTree->addItem(
                         optionData.first,
-                        [componentUID, optionDataCopy](String const& _item)
+                        [componentId, optionDataCopy](String const& _item)
                         {
                             Set<EntityPtr> selectedEntites = SelectionManager::GetInstancePtr()->getSelectedEntities();
                             for (EntityPtr const& entity : selectedEntites)
-                                optionDataCopy.second(entity.get(), entity->getComponentByUID(componentUID).get());
+                                optionDataCopy.second(entity.get(), entity->getComponentById(componentId).get());
                         });                        
                 }
             });

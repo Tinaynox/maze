@@ -36,6 +36,7 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-editor-tools/inspectors/entities/MazeComponentEditor.hpp"
 
 
@@ -67,10 +68,12 @@ namespace Maze
         virtual ~ComponentEditorDefault();
 
         //////////////////////////////////////////
-        static ComponentEditorDefaultPtr Create(MetaClass* _componentMetaClass);
+        static ComponentEditorDefaultPtr Create(
+            ComponentId _componentId,
+            MetaClass* _componentMetaClass);
 
         //////////////////////////////////////////
-        virtual ClassUID getComponentUID() MAZE_OVERRIDE;
+        virtual ComponentId getComponentId() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual MetaClass* getComponentMetaClass() MAZE_OVERRIDE;
@@ -84,10 +87,13 @@ namespace Maze
         using ComponentEditor::init;
         
         //////////////////////////////////////////
-        virtual bool init(MetaClass* _componentMetaClass);
+        virtual bool init(
+            ComponentId _componentId,
+            MetaClass* _componentMetaClass);
 
 
     protected:
+        ComponentId m_componentId = 0u;
         MetaClass* m_metaClass;
     };
 

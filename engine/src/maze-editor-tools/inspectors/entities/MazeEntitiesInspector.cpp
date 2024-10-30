@@ -200,12 +200,12 @@ namespace Maze
                                                             it != end;
                                                             ++it)
         {
-            ClassUID componentUID = it->first;
+            ClassUID componentId = it->first;
 
             Set<ComponentPtr> components;
             for (EntityPtr const& entity : m_entities)
             {
-                ComponentPtr const& component = entity->getComponentByUID(componentUID);
+                ComponentPtr const& component = entity->getComponentById(componentId);
                 if (component)
                     components.insert(component);
             }
@@ -253,10 +253,12 @@ namespace Maze
         {
             if (m_componentEditors.find(componentMetaClass->getClassUID()) == m_componentEditors.end())
             {
-                ComponentEditorPtr editor = inspectorManager->createComponentEditor(componentMetaClass);
+                ComponentEditorPtr editor = inspectorManager->createComponentEditor(
+                    componentMetaClass->getClassUID(), // #TODO: ComponentId
+                    componentMetaClass);
                 editor->buildEditor(m_parent);
                 editor->eventRemoveComponentPressed.subscribe(
-                    [this](ClassUID _uid)
+                    [this](ComponentId _id)
                     {
                         if (EditorToolsActionManager::GetInstancePtr())
                         {
@@ -264,7 +266,7 @@ namespace Maze
 
                             for (EntityPtr const& entity : m_entities)
                             {
-                                ComponentPtr component = entity->getComponentByUID(_uid);
+                                ComponentPtr component = entity->getComponentById(_id);
 
                                 group->addAction(
                                     EditorActionCustom::Create(
@@ -277,7 +279,7 @@ namespace Maze
                         }
                         else
                             for (EntityPtr const& entity : m_entities)
-                                entity->removeComponent(_uid);
+                                entity->removeComponent(_id);
                     });
 
                 m_componentEditors[componentMetaClass->getClassUID()] = editor;
@@ -344,13 +346,13 @@ namespace Maze
                         itemName,
                         [this, sceneObjectCreationData](String const& _text)
                         {
-                            ClassUID uid = sceneObjectCreationData.second.uid;
+                            ComponentId id = sceneObjectCreationData.second.id;
 
                             for (EntityPtr const& entity : m_entities)
                             {
-                                if (!entity->getComponentByUID(uid))
+                                if (!entity->getComponentById(id))
                                 {
-                                    ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponentByIndex(uid);
+                                    ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(id);
                                     if (component)
                                     {
                                         if (EditorToolsActionManager::GetInstancePtr())

@@ -39,7 +39,7 @@ namespace Maze
     //////////////////////////////////////////
     ComponentCreationData::ComponentCreationData()
         : name(nullptr)
-        , uid(0)
+        , id(0)
         , createComponentMethod(nullptr)
         , metaClass(nullptr)
         , group(nullptr)
@@ -90,59 +90,45 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ComponentPtr ComponentFactory::createComponent(ClassUID _componentUID)
+    ComponentPtr ComponentFactory::createComponent(ComponentId _id)
     {
-        for (Size i = 0; i < m_sceneObjectCreationData.size(); ++i)
-        {
-            for (auto const& sceneObjectCreationData : m_sceneObjectCreationData)
-                if (sceneObjectCreationData.second.uid == _componentUID)
-                    return (this->*sceneObjectCreationData.second.createComponentMethod)();
-        }
+        Map<ComponentId, ComponentCreationData>::const_iterator it = m_sceneObjectCreationData.find(_id);
 
-        MAZE_ERROR("Undefined component: %d", (S32)_componentUID);
-        return ComponentPtr();
-    }
-
-    //////////////////////////////////////////
-    ComponentPtr ComponentFactory::createComponentByIndex(ComponentId _index)
-    {
-        Map<ClassUID, ComponentCreationData>::const_iterator it = m_sceneObjectCreationData.find(_index);
-
-        MAZE_ERROR_RETURN_VALUE_IF(it == m_sceneObjectCreationData.end(), ComponentPtr(), "Undefined component index: %u", _index);
+        MAZE_ERROR_RETURN_VALUE_IF(it == m_sceneObjectCreationData.end(), ComponentPtr(), "Undefined component index: %u", _id);
 
         return (this->*it->second.createComponentMethod)();
     }
 
     //////////////////////////////////////////
-    ClassUID ComponentFactory::getComponentUID(CString _className)
+    ComponentId ComponentFactory::getComponentId(CString _className)
     {
         for (auto const& sceneObjectCreationData : m_sceneObjectCreationData)
             if (strcmp(sceneObjectCreationData.second.name, _className) == 0)
-                return sceneObjectCreationData.second.uid;
+                return sceneObjectCreationData.second.id;
 
         MAZE_ERROR("Undefined component: %s", _className);
         return 0;
     }
                 
     //////////////////////////////////////////
-    CString ComponentFactory::getComponentName(ClassUID _uid)
+    CString ComponentFactory::getComponentName(ComponentId _id)
     {
         for (auto const& sceneObjectCreationData : m_sceneObjectCreationData)
-            if (sceneObjectCreationData.second.uid == _uid)
+            if (sceneObjectCreationData.second.id == _id)
                 return sceneObjectCreationData.second.name;
         
-        MAZE_ERROR("Undefined component with uid=%u", _uid);
+        MAZE_ERROR("Undefined component with uid=%u", _id);
         return nullptr;
     }
 
     //////////////////////////////////////////
-    MetaClass* ComponentFactory::getComponentMetaClass(ClassUID _uid)
+    MetaClass* ComponentFactory::getComponentMetaClass(ComponentId _id)
     {
         for (auto const& sceneObjectCreationData : m_sceneObjectCreationData)
-            if (sceneObjectCreationData.second.uid == _uid)
+            if (sceneObjectCreationData.second.id == _id)
                 return sceneObjectCreationData.second.metaClass;
 
-        MAZE_ERROR("Undefined component with uid=%u", _uid);
+        MAZE_ERROR("Undefined component with uid=%u", _id);
         return nullptr;
     }
 

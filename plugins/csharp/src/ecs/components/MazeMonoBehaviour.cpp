@@ -104,6 +104,8 @@ namespace Maze
         m_monoClass->getMethod("OnCreate");
         m_monoClass->getMethod("OnUpdate", 1);
 
+        m_componentId = GetComponentIdByName(m_monoClass->getFullname().c_str());
+
         createMonoInstance();
     }
 
@@ -145,24 +147,30 @@ namespace Maze
     }
 
 
-
+    /*
     //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(MonoBehaviourSystemAppear,
         {},
         {},
         EntityAddedToSampleEvent const& _event,
         Entity* _entity,
-        MonoBehaviour* _monoBehaviour)
+        MonoBehaviour*)
     {
-        ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
-        ScriptInstance& scriptInstance = _monoBehaviour->getMonoInstance();
+        _entity->findMultiComponent<MonoBehaviour>(
+            [&_event](MonoBehaviour* _monoBehaviour)
+            {
+                ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
+                ScriptInstance& scriptInstance = _monoBehaviour->getMonoInstance();
 
-        if (!scriptClass || !scriptInstance.isValid())
-            return;
+                if (!scriptClass || !scriptInstance.isValid())
+                    return false;
 
-        if (scriptClass->getOnCreateMethod())
-            scriptInstance.invokeMethod(
-                scriptClass->getOnCreateMethod());
+                if (scriptClass->getOnCreateMethod())
+                    scriptInstance.invokeMethod(
+                        scriptClass->getOnCreateMethod());
+
+                return false;
+            });
     }
 
     //////////////////////////////////////////
@@ -171,19 +179,26 @@ namespace Maze
         {},
         UpdateEvent const& _event,
         Entity* _entity,
-        MonoBehaviour* _monoBehaviour)
+        MonoBehaviour*)
     {
-        ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
-        ScriptInstance& scriptInstance = _monoBehaviour->getMonoInstance();
+        _entity->findMultiComponent<MonoBehaviour>(
+            [&_event](MonoBehaviour* _monoBehaviour)
+            {
+                ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
+                ScriptInstance& scriptInstance = _monoBehaviour->getMonoInstance();
 
-        if (!scriptClass || !scriptInstance.isValid())
-            return;
+                if (!scriptClass || !scriptInstance.isValid())
+                    return false;
 
-        if (scriptClass->getOnUpdateMethod())
-            scriptInstance.invokeMethod(
-                scriptClass->getOnUpdateMethod(),
-                _event.getDt());
+                if (scriptClass->getOnUpdateMethod())
+                    scriptInstance.invokeMethod(
+                        scriptClass->getOnUpdateMethod(),
+                        _event.getDt());
+                return false;
+            });
+        
     }
+    */
 
 } // namespace Maze
 //////////////////////////////////////////

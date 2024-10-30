@@ -163,7 +163,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        ComponentEditorPtr createComponentEditor(MetaClass* _metaClass);
+        ComponentEditorPtr createComponentEditor(
+            ComponentId _componentId,
+            MetaClass* _metaClass);
 
         //////////////////////////////////////////
         PropertyDrawerPtr createPropertyDrawer(ClassUID _propertyClassUID, String const& _label);

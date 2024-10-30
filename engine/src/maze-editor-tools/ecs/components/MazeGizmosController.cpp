@@ -117,11 +117,11 @@ namespace Maze
             for (auto const& gizmoPerComponentClass : gizmosPerComponentClass)
             {
                 GizmosSample gizmosSample;
-                gizmosSample.componentClassUID = gizmoPerComponentClass.first;
+                gizmosSample.componentId = gizmoPerComponentClass.first;
                 gizmosSample.sample = getEntityRaw()->getEcsWorld()->requestCommonSample(
                     EntityAspect(
                         EntityAspectType::HaveAllOfComponents,
-                        { gizmosSample.componentClassUID }));
+                        { gizmosSample.componentId }));
                 gizmosSample.gizmos = gizmoPerComponentClass.second;
 
                 m_samples.push_back(gizmosSample);
@@ -144,7 +144,7 @@ namespace Maze
                 if (!entity)
                     continue;
 
-                ComponentPtr const& component = entity->getComponentByUID(gizmosSample.componentClassUID);
+                ComponentPtr const& component = entity->getComponentById(gizmosSample.componentId);
                 gizmosSample.gizmos->drawGizmos(entity, component, m_drawer.get());
 
                 eventDrawGizmosEvent(gizmosSample.gizmos, entity, component, m_drawer.get());

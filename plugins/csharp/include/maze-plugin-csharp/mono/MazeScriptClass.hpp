@@ -113,6 +113,9 @@ namespace Maze
         inline MonoMethod* getOnUpdateMethod() const { return m_onUpdateMethod; }
 
 
+        //////////////////////////////////////////
+        String getFullname() const;
+
     protected:
 
         //////////////////////////////////////////

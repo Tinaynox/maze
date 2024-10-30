@@ -97,7 +97,18 @@ namespace Maze
         m_onUpdateMethod = getMethod("OnUpdate", 1);
     }
 
-    
+    //////////////////////////////////////////
+    String ScriptClass::getFullname() const
+    {
+        if (!m_namespace.empty())
+        {
+            String result;
+            StringHelper::FormatString(result, "%s.%s", m_namespace.c_str(), m_className.c_str());
+            return std::move(result);
+        }
+        else
+            return m_className;
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

@@ -235,6 +235,24 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // MultiSet
+    //
+    //////////////////////////////////////////
+    template <
+        class _Kty,
+        class _Pr = std::less<_Kty>>
+        using MultiSet = std::multiset<_Kty, _Pr, StdMemoryAllocator<_Kty, NedMemoryAllocator>>;
+
+    //////////////////////////////////////////
+    template <typename>
+    struct IsMultiSet : std::false_type {};
+    template <
+        class _Kty,
+        class _Pr>
+        struct IsMultiSet<Maze::MultiSet<_Kty, _Pr>> : std::true_type {};
+
+
+    //////////////////////////////////////////
     // Deque
     //
     //////////////////////////////////////////
