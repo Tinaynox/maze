@@ -111,9 +111,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API Set<MetaClass*> CollectIntersectingComponentMetaClasses(Set<EntityPtr> const& _entities)
+        MAZE_EDITOR_TOOLS_API UnorderedMap<ComponentId, MetaClass*> CollectIntersectingComponentMetaClasses(Set<EntityPtr> const& _entities)
         {
-            Set<MetaClass*> result;
+            UnorderedMap<ComponentId, MetaClass*> result;
 
             if (_entities.empty())
                 return result;
@@ -124,7 +124,10 @@ namespace Maze
             EntityPtr const& firstEntity = *it++;
             for (auto const& componentData : firstEntity->getComponents())
             {
-                result.emplace(componentData.second->getMetaClass());
+                result.emplace(
+                    std::piecewise_construct,
+                    std::forward_as_tuple(componentData.first),
+                    std::forward_as_tuple(componentData.second->getMetaClass()));
             }
 
             for (; it != end; ++it)
@@ -133,8 +136,8 @@ namespace Maze
 
                 for (auto const& componentData : entity->getComponents())
                 {
-                    if (result.count(componentData.second->getMetaClass()) == 0)
-                        result.erase(componentData.second->getMetaClass());
+                    if (result.count(componentData.second->getComponentId()) == 0)
+                        result.erase(componentData.second->getComponentId());
                 }
             }
 

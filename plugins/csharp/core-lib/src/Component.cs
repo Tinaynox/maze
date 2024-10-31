@@ -14,6 +14,9 @@ namespace Maze
 
         public T GetComponent<T>() where T : class
         {
+            // TODO: Remove all string operations here.
+            // We should have some table C# type => C++ componentId
+
             // Native component wrappers
             if (typeof(NativeComponent).IsAssignableFrom(typeof(T)))
             {

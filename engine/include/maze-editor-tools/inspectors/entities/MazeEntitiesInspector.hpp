@@ -36,6 +36,7 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-editor-tools/inspectors/MazeInspector.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include <functional>
@@ -126,7 +127,7 @@ namespace Maze
         void setEcsWorld(EcsWorld* _world);
 
     protected:
-        Map<ClassUID, ComponentEditorPtr> m_componentEditors;
+        Map<ComponentId, ComponentEditorPtr> m_componentEditors;
 
         Set<EntityPtr> m_entities;
 

@@ -195,12 +195,12 @@ namespace Maze
     //////////////////////////////////////////
     void EntitiesInspector::updatePropertyValues()
     {
-        for (Map<ClassUID, ComponentEditorPtr>::iterator    it = m_componentEditors.begin(),
+        for (Map<ComponentId, ComponentEditorPtr>::iterator it = m_componentEditors.begin(),
                                                             end = m_componentEditors.end();
                                                             it != end;
                                                             ++it)
         {
-            ClassUID componentId = it->first;
+            ComponentId componentId = it->first;
 
             Set<ComponentPtr> components;
             for (EntityPtr const& entity : m_entities)
@@ -219,21 +219,15 @@ namespace Maze
     {
         InspectorManager* inspectorManager = InspectorManager::GetInstancePtr();
 
-        Set<MetaClass*> componentMetaClasses = EditorToolsHelper::CollectIntersectingComponentMetaClasses(m_entities);
+        UnorderedMap<ComponentId, MetaClass*> componentMetaClasses = EditorToolsHelper::CollectIntersectingComponentMetaClasses(m_entities);
 
         // Remove unnecessary editors
-        for (Map<ClassUID, ComponentEditorPtr>::iterator    it = m_componentEditors.begin(),
+        for (Map<ComponentId, ComponentEditorPtr>::iterator it = m_componentEditors.begin(),
                                                             end = m_componentEditors.end();
                                                             it != end;
                                                             )
         {
-            if (std::find_if(
-                componentMetaClasses.begin(),
-                componentMetaClasses.end(),
-                [&](MetaClass* _metaClass) -> bool
-                {
-                    return _metaClass->getClassUID() == it->first;
-                }) == componentMetaClasses.end())
+            if (componentMetaClasses.find(it->first) == componentMetaClasses.end())
             {
                 ComponentEditorPtr editor = it->second;
 
@@ -249,13 +243,13 @@ namespace Maze
         }
 
         // Add necessary editors
-        for (MetaClass* componentMetaClass : componentMetaClasses)
+        for (auto componentMetaClassData : componentMetaClasses)
         {
-            if (m_componentEditors.find(componentMetaClass->getClassUID()) == m_componentEditors.end())
+            if (m_componentEditors.find(componentMetaClassData.first) == m_componentEditors.end())
             {
                 ComponentEditorPtr editor = inspectorManager->createComponentEditor(
-                    componentMetaClass->getClassUID(), // #TODO: ComponentId
-                    componentMetaClass);
+                    componentMetaClassData.first,
+                    componentMetaClassData.second);
                 editor->buildEditor(m_parent);
                 editor->eventRemoveComponentPressed.subscribe(
                     [this](ComponentId _id)
@@ -282,7 +276,7 @@ namespace Maze
                                 entity->removeComponent(_id);
                     });
 
-                m_componentEditors[componentMetaClass->getClassUID()] = editor;
+                m_componentEditors[componentMetaClassData.first] = editor;
             }
         }
 

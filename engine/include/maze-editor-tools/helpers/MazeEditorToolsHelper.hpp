@@ -64,7 +64,7 @@ namespace Maze
         MAZE_EDITOR_TOOLS_API Set<ComponentId> CollectIntersectingComponentIds(Set<EntityPtr> const& _entities);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API Set<MetaClass*> CollectIntersectingComponentMetaClasses(Set<EntityPtr> const& _entities);
+        MAZE_EDITOR_TOOLS_API UnorderedMap<ComponentId, MetaClass*> CollectIntersectingComponentMetaClasses(Set<EntityPtr> const& _entities);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API String BuildPropertyName(CString _propertyName, CString _label = nullptr);
