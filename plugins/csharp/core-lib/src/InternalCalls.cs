@@ -33,9 +33,12 @@ namespace Maze
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static IntPtr GetComponent(IntPtr _nativeComponentPtr, int _componentId);
-#endregion
 
-#region Transform3D
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static MonoBehaviour GetMonoBehaviourComponentObject(IntPtr _nativeComponentPtr, int _componentId);
+        #endregion
+
+        #region Transform3D
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void Transform3DTranslate(IntPtr _nativeComponentPtr, Vec3F _delta);
 

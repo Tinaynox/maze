@@ -17,19 +17,20 @@ namespace Maze
             // Native component wrappers
             if (typeof(NativeComponent).IsAssignableFrom(typeof(T)))
             {
-                int componentId = InternalCalls.GetComponentId($"Maze::{typeof(T).Name}");
-                IntPtr componentPtr = InternalCalls.GetComponent(nativeComponentPtr, componentId);
+                int nativeComponentId = InternalCalls.GetComponentId($"Maze::{typeof(T).Name}");
+                IntPtr componentPtr = InternalCalls.GetComponent(nativeComponentPtr, nativeComponentId);
                 if (componentPtr == IntPtr.Zero)
                     return default(T);
 
                 return (T)Activator.CreateInstance(typeof(T), componentPtr);
             }
 
-            T value = default(T);
 
-            Debug.LogError("#TODO2!!!");
+            if (!typeof(MonoBehaviour).IsAssignableFrom(typeof(T)))
+                return default(T);
 
-            return value;
+            int componentId = InternalCalls.GetComponentId($"{typeof(T).Namespace}.{typeof(T).Name}");
+            return (T)(object)InternalCalls.GetMonoBehaviourComponentObject(nativeComponentPtr, componentId);
         }
     }
 }

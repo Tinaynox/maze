@@ -81,6 +81,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline MonoClass* getMonoClass() const { return m_monoClass; }
+
+        //////////////////////////////////////////
+        inline MonoObject* getInstance() const { return m_instance; }
+
+
+        //////////////////////////////////////////
         template <typename TValue>
         inline bool invokeMethod(MonoMethod* _method, TValue const& _value)
         {

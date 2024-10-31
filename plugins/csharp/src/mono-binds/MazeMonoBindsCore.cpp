@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsCore.hpp"
+#include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -99,6 +100,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline MonoObject* GetMonoBehaviourComponentObject(Component* _component, ComponentId _componentId)
+    {
+        if (!_component->getEntityRaw())
+            return nullptr;
+
+        ComponentPtr const& component = _component->getEntityRaw()->getComponentById(_componentId);
+        if (!component)
+            return nullptr;
+
+        MAZE_ERROR_RETURN_VALUE_IF(component->getClassUID() != ClassInfo<MonoBehaviour>::UID(), nullptr, "Component is not MonoBehaviour!");
+        return component->castRaw<MonoBehaviour>()->getMonoInstance().getInstance();
+    }
+
+    //////////////////////////////////////////
     inline void Transform3DTranslate(Component* _component, Vec3F _delta)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
@@ -137,6 +152,7 @@ namespace Maze
         MAZE_MONO_BIND_FUNC(GetEntityId);
         MAZE_MONO_BIND_FUNC_WITH_NAME(GetComponentIdHelper, GetComponentId);
         MAZE_MONO_BIND_FUNC(GetComponent);
+        MAZE_MONO_BIND_FUNC(GetMonoBehaviourComponentObject);
         MAZE_MONO_BIND_FUNC(Transform3DTranslate);
         MAZE_MONO_BIND_FUNC(Transform3DRotate);
         MAZE_MONO_BIND_FUNC(Transform3DGetPosition);
