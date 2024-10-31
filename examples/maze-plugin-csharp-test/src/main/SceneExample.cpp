@@ -217,7 +217,7 @@ namespace Maze
 
 
         objectEntity->createComponent<MonoBehaviour>(MAZE_HCS("Sandbox.Player"));
-        objectEntity->createComponent<MonoBehaviour>(MAZE_HCS("Sandbox.Player2"));
+        objectEntity->createComponent<MonoBehaviour>(MAZE_HCS("Sandbox.TestRotor"));
 
         return true;
     }

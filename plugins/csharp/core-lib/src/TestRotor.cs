@@ -1,10 +1,9 @@
-using System;
 using Maze;
 
 
 namespace Sandbox
 {
-    public class Player2 : MonoBehaviour
+    public class TestRotor : MonoBehaviour
     {
         Transform3D transform;
 
