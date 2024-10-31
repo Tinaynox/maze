@@ -19,9 +19,12 @@ namespace Maze
 #region Input
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool GetKeyState(int _keyCode);
-#endregion
+        #endregion
 
 #region Ecs
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static int GetFrameNumber(IntPtr _nativeComponentPtr);
+
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static int GetEntityId(IntPtr _nativeComponentPtr);
 
@@ -35,6 +38,9 @@ namespace Maze
 #region Transform3D
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void Transform3DTranslate(IntPtr _nativeComponentPtr, Vec3F _delta);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Transform3DRotate(IntPtr _nativeComponentPtr, Vec3F _axis, float _angle);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void Transform3DGetPosition(IntPtr _nativeComponentPtr, out Vec3F _delta);

@@ -34,6 +34,7 @@
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/services/MazeLogService.hpp"
+#include "maze-core/ecs/MazeComponentSystem.hpp"
 
 
 //////////////////////////////////////////
@@ -47,6 +48,12 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params = nullptr);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void ParseMonoEntitySystemAttributes(
+            MonoMethod* _method,
+            Set<HashedString>& _outTags,
+            ComponentSystemOrder& _outOrder);
 
     } // namespace AssetHelper
     //////////////////////////////////////////

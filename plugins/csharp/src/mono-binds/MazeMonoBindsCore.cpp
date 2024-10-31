@@ -64,11 +64,16 @@ namespace Maze
         mono_free(cstr);
     }
 
+
     //////////////////////////////////////////
     inline bool GetKeyState(S32 _keyCode)
     {
         return InputManager::GetInstancePtr()->getKeyState(KeyCode(_keyCode));
     }
+
+
+    //////////////////////////////////////////
+    inline S32 GetFrameNumber(Component* _component) { return _component->getEntityRaw()->getEcsWorld()->getFrameNumber(); }
 
     //////////////////////////////////////////
     inline S32 GetEntityId(Component* _component) { return (S32)_component->getEntityId(); }
@@ -101,6 +106,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void Transform3DRotate(Component* _component, Vec3F _axis, F32 _angle)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        _component->castRaw<Transform3D>()->rotate(_axis, _angle);
+    }
+
+    //////////////////////////////////////////
     inline void Transform3DGetPosition(Component* _component, Vec3F& _outPosition)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
@@ -121,10 +133,12 @@ namespace Maze
         MAZE_MONO_BIND_FUNC(MazeLogWarning);
         MAZE_MONO_BIND_FUNC(MazeLogError);
         MAZE_MONO_BIND_FUNC(GetKeyState);
+        MAZE_MONO_BIND_FUNC(GetFrameNumber);
         MAZE_MONO_BIND_FUNC(GetEntityId);
         MAZE_MONO_BIND_FUNC_WITH_NAME(GetComponentIdHelper, GetComponentId);
         MAZE_MONO_BIND_FUNC(GetComponent);
         MAZE_MONO_BIND_FUNC(Transform3DTranslate);
+        MAZE_MONO_BIND_FUNC(Transform3DRotate);
         MAZE_MONO_BIND_FUNC(Transform3DGetPosition);
         MAZE_MONO_BIND_FUNC(Transform3DSetPosition);
     }

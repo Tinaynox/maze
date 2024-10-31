@@ -7,11 +7,16 @@ namespace Sandbox
     public class Player : MonoBehaviour
     {
         Transform3D transform;
+
+        [EntitySystem]
         public void OnCreate()
         {
             transform = GetComponent<Transform3D>();
         }
 
+        [EntitySystem(
+            new string[] { "default" },
+            new string[] { "Sandbox.Player2::OnUpdate" })]
         public void OnUpdate(float _dt)
         {
             if (Input.GetKeyState(KeyCode.Left))

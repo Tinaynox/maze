@@ -172,6 +172,9 @@ namespace Maze
         inline Set<HashedString> const& getTags() const { return m_tags; }
 
 
+        //////////////////////////////////////////
+        inline S32 getFrameNumber() const { return m_frameNumber; }
+
 
         //////////////////////////////////////////
         Size calculateEntitiesCount();
@@ -442,6 +445,8 @@ namespace Maze
         EcsWorldState m_state = EcsWorldState::None;
         S32 m_newEntityIdsCount = 0;
         SwitchableContainer<EcsWorldEventsQueuePtr> m_eventHolders;
+
+        S32 m_frameNumber = 0;
     };
 
 

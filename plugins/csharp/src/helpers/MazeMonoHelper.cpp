@@ -86,6 +86,70 @@ namespace Maze
             }
         }
 
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void ParseMonoEntitySystemAttributes(
+            MonoMethod* _method,
+            Set<HashedString>& _outTags,
+            ComponentSystemOrder& _outOrder)
+        {
+            _outTags.clear();
+            _outOrder.after.clear();
+            _outOrder.before.clear();
+
+            MonoCustomAttrInfo* attrInfo = mono_custom_attrs_from_method(_method);
+            if (!attrInfo)
+                return;
+
+            for (S32 i = 0; i < attrInfo->num_attrs; ++i)
+            {
+                MonoCustomAttrEntry& entry = attrInfo->attrs[i];
+                MonoClass* attrClass = mono_method_get_class(entry.ctor);
+
+                CString attrClassName = mono_class_get_name(attrClass);
+                CString attrNamespace = mono_class_get_namespace(attrClass);
+                if (strcmp(attrClassName, "EntitySystemAttribute") == 0 && strcmp(attrNamespace, "Maze") == 0)
+                {
+                    MonoObject* attrObj = mono_custom_attrs_get_attr(attrInfo, attrClass);
+                    if (attrObj)
+                    {
+                        MonoClassField* tagsField = mono_class_get_field_from_name(attrClass, "Tags");
+                        MonoClassField* afterField = mono_class_get_field_from_name(attrClass, "After");
+                        MonoClassField* beforeField = mono_class_get_field_from_name(attrClass, "Before");
+
+                        auto parseStringListMonoClassField = [&](MonoClassField* _field)
+                        {
+                            Set<HashedString> result;
+
+                            MonoArray* array;
+                            mono_field_get_value(attrObj, _field, &array);
+
+                            if (!array)
+                                return result;
+
+                            S32 arrayLength = (S32)mono_array_length(array);
+                            for (S32 i = 0; i < arrayLength; i++)
+                            {
+                                MonoString* monoStr = mono_array_get(array, MonoString*, i);
+
+                                Char* cStr = mono_string_to_utf8(monoStr);
+                                result.emplace(cStr);
+                                mono_free(cStr);
+                            }
+
+                            return std::move(result);
+                        };
+
+                        _outTags = parseStringListMonoClassField(tagsField);
+                        _outOrder.after = parseStringListMonoClassField(afterField);
+                        _outOrder.before = parseStringListMonoClassField(beforeField);
+                    }
+
+                }
+            }
+
+            mono_custom_attrs_free(attrInfo);
+        }
+
     } // namespace AssetHelper
     //////////////////////////////////////////
 

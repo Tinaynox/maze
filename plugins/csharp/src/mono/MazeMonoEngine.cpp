@@ -118,16 +118,24 @@ namespace Maze
                     ComponentId componentId = GetComponentIdByName(fullName.c_str());
                     
 
+                    Set<HashedString> systemTags;
+                    ComponentSystemOrder systemOrder;
+
+
                     if (scriptClass->getOnCreateMethod())
                     {
                         HashedString systemName(fullName + "::OnCreate");
+
+                        MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnCreateMethod(), systemTags, systemOrder);
 
                         g_monoEngineData->monoBehaviourData.monoBehaviourSystems.emplace_back(
                             MakeShared<CustomComponentSystemHolder>(
                                 systemName,
                                 ClassInfo<EntityAddedToSampleEvent>::UID(),
                                 [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
-                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnCreate));
+                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnCreate,
+                                systemTags,
+                                systemOrder));
                         Debug::Log("%s registered.", systemName.c_str());
                     }
 
@@ -135,12 +143,16 @@ namespace Maze
                     {
                         HashedString systemName(fullName + "::OnUpdate");
 
+                        MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnUpdateMethod(), systemTags, systemOrder);
+
                         g_monoEngineData->monoBehaviourData.monoBehaviourSystems.emplace_back(
                             MakeShared<CustomComponentSystemHolder>(
                                 systemName,
                                 ClassInfo<UpdateEvent>::UID(),
                                 [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
-                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnUpdate));
+                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnUpdate,
+                                systemTags,
+                                systemOrder));
                         Debug::Log("%s registered.", systemName.c_str());
                     }
                 }

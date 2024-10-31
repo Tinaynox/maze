@@ -19,5 +19,10 @@ namespace Maze
         {
             InternalCalls.Transform3DTranslate(nativeComponentPtr, _delta);
         }
+
+        public void Rotate(Vec3F _axis, float _angle)
+        {
+            InternalCalls.Transform3DRotate(nativeComponentPtr, _axis, _angle);
+        }
     }
 }

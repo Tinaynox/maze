@@ -382,6 +382,7 @@ namespace Maze
                 ++it;
         }
 
+        ++m_frameNumber;
         m_updatingNow = false;
     }
 
