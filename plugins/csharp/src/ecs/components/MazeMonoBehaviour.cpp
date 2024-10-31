@@ -149,7 +149,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    void MonoBehaviourOnCreate(
+    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnCreate(
         EntityAddedToSampleEvent const& _event,
         Entity* _entity,
         MonoBehaviour* _monoBehaviour)
@@ -166,7 +166,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MonoBehaviourOnUpdate(
+    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnUpdate(
         UpdateEvent const& _event,
         Entity* _entity,
         MonoBehaviour* _monoBehaviour)
@@ -183,7 +183,7 @@ namespace Maze
                 _event.getDt());
     }
 
-
+    /*
     CustomComponentSystemHolder holder0(
         MAZE_HCS("123"),
         ClassInfo<EntityAddedToSampleEvent>::UID(),
@@ -207,7 +207,7 @@ namespace Maze
         ClassInfo<UpdateEvent>::UID(),
         [](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(GetComponentIdByName("Sandbox.Player2")); },
         (ComponentSystemEventHandler::Func)&MonoBehaviourOnUpdate);
-
+    */
 
 
 

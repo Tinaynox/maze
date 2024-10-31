@@ -28,9 +28,11 @@
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/ecs/MazeCustomComponentSystemHolder.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsCore.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
+#include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 
@@ -38,6 +40,16 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    struct MAZE_PLUGIN_CSHARP_API MonoBehaviourData
+    {
+        ScriptClassPtr monoBehaviourClass;
+        StringKeyMap<ScriptClassPtr> monoBehaviourSubClasses;
+
+        Vector<SharedPtr<CustomComponentSystemHolder>> monoBehaviourSystems;
+    };
+
+
     //////////////////////////////////////////
     struct MAZE_PLUGIN_CSHARP_API MonoEngineData
     {
@@ -47,13 +59,12 @@ namespace Maze
         MonoAssembly* coreAssembly = nullptr;
         MonoImage* coreAssemblyImage = nullptr;
 
-        ScriptClassPtr monoBehaviourClass;
-        StringKeyMap<ScriptClassPtr> monoBehaviourSubClasses;
+        MonoBehaviourData monoBehaviourData;
     };
 
 
     //////////////////////////////////////////
-    MonoEngineData g_monoEngineData;
+    MonoEngineData* g_monoEngineData = nullptr;
 
 
     //////////////////////////////////////////
@@ -95,9 +106,43 @@ namespace Maze
                     else
                         fullName = typeName;
 
-                    g_monoEngineData.monoBehaviourSubClasses.insert(
+                    if (fullName.back() == 0)
+                        fullName.pop_back();
+
+                    ScriptClassPtr scriptClass = MakeShared<ScriptClass>(fullNamespace, typeName, monoClass);
+
+                    g_monoEngineData->monoBehaviourData.monoBehaviourSubClasses.insert(
                         HashedCString(fullName.c_str()),
-                        MakeShared<ScriptClass>(fullNamespace, typeName, monoClass));
+                        scriptClass);
+
+                    ComponentId componentId = GetComponentIdByName(fullName.c_str());
+                    
+
+                    if (scriptClass->getOnCreateMethod())
+                    {
+                        HashedString systemName(fullName + "::OnCreate");
+
+                        g_monoEngineData->monoBehaviourData.monoBehaviourSystems.emplace_back(
+                            MakeShared<CustomComponentSystemHolder>(
+                                systemName,
+                                ClassInfo<EntityAddedToSampleEvent>::UID(),
+                                [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnCreate));
+                        Debug::Log("%s registered.", systemName.c_str());
+                    }
+
+                    if (scriptClass->getOnUpdateMethod())
+                    {
+                        HashedString systemName(fullName + "::OnUpdate");
+
+                        g_monoEngineData->monoBehaviourData.monoBehaviourSystems.emplace_back(
+                            MakeShared<CustomComponentSystemHolder>(
+                                systemName,
+                                ClassInfo<UpdateEvent>::UID(),
+                                [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnUpdate));
+                        Debug::Log("%s registered.", systemName.c_str());
+                    }
                 }
             }
         }
@@ -113,22 +158,19 @@ namespace Maze
     {
         Debug::Log("MonoEngine - initializing...");
 
+        g_monoEngineData = MAZE_NEW(MonoEngineData);
+
         if (!InitializeMono())
             return false;
 
         BindCppFunctionsCore();
 
-        g_monoEngineData.coreAssembly = LoadMonoAssembly(MAZE_HCS("maze-csharp-core-lib.dll"));
-        g_monoEngineData.coreAssemblyImage = mono_assembly_get_image(g_monoEngineData.coreAssembly);
-        g_monoEngineData.monoBehaviourClass = MakeShared<ScriptClass>("Maze", "MonoBehaviour", g_monoEngineData.coreAssemblyImage);
 
-        LoadAssemblyClasses(g_monoEngineData.coreAssembly);
+        g_monoEngineData->coreAssembly = LoadMonoAssembly(MAZE_HCS("maze-csharp-core-lib.dll"));
+        g_monoEngineData->coreAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
+        g_monoEngineData->monoBehaviourData.monoBehaviourClass = MakeShared<ScriptClass>("Maze", "MonoBehaviour", g_monoEngineData->coreAssemblyImage);
 
-
-        // Tests
-        ScriptInstance monoBeh = g_monoEngineData.monoBehaviourClass->instantiate();
-        monoBeh.invokeMethod("OnCreate");
-        monoBeh.invokeMethod("OnUpdate", 1.0f / 60.0f);
+        LoadAssemblyClasses(g_monoEngineData->coreAssembly);
 
         return true;
     }
@@ -139,6 +181,8 @@ namespace Maze
         Debug::Log("MonoEngine - shutdowning...");
 
         ShutdownMono();
+
+        MAZE_SAFE_DELETE(g_monoEngineData);
 
         return true;
     }
@@ -164,11 +208,11 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!rootDomain, false, "Failed to initialize mono jit!");
 
         // Store the root domain pointer
-        g_monoEngineData.monoDomain = rootDomain;
+        g_monoEngineData->monoDomain = rootDomain;
 
-        g_monoEngineData.appDomain = mono_domain_create_appdomain("MazeCSharpRuntime", nullptr);
+        g_monoEngineData->appDomain = mono_domain_create_appdomain("MazeCSharpRuntime", nullptr);
         MAZE_ERROR_RETURN_VALUE_IF(!rootDomain, false, "Failed to create app domain!");
-        mono_domain_set(g_monoEngineData.appDomain, true);
+        mono_domain_set(g_monoEngineData->appDomain, true);
 
         return true;
     }
@@ -176,9 +220,9 @@ namespace Maze
     //////////////////////////////////////////
     void MonoEngine::ShutdownMono()
     {
-        g_monoEngineData.monoDomain = nullptr;
-        g_monoEngineData.appDomain = nullptr;
-        g_monoEngineData.coreAssembly = nullptr;
+        g_monoEngineData->monoDomain = nullptr;
+        g_monoEngineData->appDomain = nullptr;
+        g_monoEngineData->coreAssembly = nullptr;
     }
     
     //////////////////////////////////////////
@@ -232,25 +276,25 @@ namespace Maze
     //////////////////////////////////////////
     MonoDomain* MonoEngine::GetMonoDomain()
     {
-        return g_monoEngineData.appDomain;
+        return g_monoEngineData->appDomain;
     }
 
     //////////////////////////////////////////
     MonoAssembly* MonoEngine::GetCoreAssembly()
     {
-        return g_monoEngineData.coreAssembly;
+        return g_monoEngineData->coreAssembly;
     }
 
     //////////////////////////////////////////
     MonoImage* MonoEngine::GetCoreAssemblyImage()
     {
-        return g_monoEngineData.coreAssemblyImage;
+        return g_monoEngineData->coreAssemblyImage;
     }
 
     //////////////////////////////////////////
     ScriptClassPtr const& MonoEngine::GetMonoBehaviourClass()
     {
-        return g_monoEngineData.monoBehaviourClass;
+        return g_monoEngineData->monoBehaviourData.monoBehaviourClass;
     }
 
     //////////////////////////////////////////
@@ -258,8 +302,8 @@ namespace Maze
     {
         static ScriptClassPtr const nullPointer;
 
-        auto it = g_monoEngineData.monoBehaviourSubClasses.find(_name);
-        if (it != g_monoEngineData.monoBehaviourSubClasses.end())
+        auto it = g_monoEngineData->monoBehaviourData.monoBehaviourSubClasses.find(_name);
+        if (it != g_monoEngineData->monoBehaviourData.monoBehaviourSubClasses.end())
             return it->second;
         else
             return nullPointer;
@@ -268,7 +312,7 @@ namespace Maze
     //////////////////////////////////////////
     MonoObject* MonoEngine::InstantiateClass(MonoClass* _monoClass)
     {
-        MonoObject* instance = mono_object_new(g_monoEngineData.appDomain, _monoClass);
+        MonoObject* instance = mono_object_new(g_monoEngineData->appDomain, _monoClass);
         mono_runtime_object_init(instance);
 
         return instance;

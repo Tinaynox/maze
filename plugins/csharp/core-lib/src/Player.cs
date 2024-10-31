@@ -7,14 +7,12 @@ namespace Sandbox
     public class Player : MonoBehaviour
     {
         Transform3D transform;
-
-
-        public override void OnCreate()
+        public void OnCreate()
         {
             transform = GetComponent<Transform3D>();
         }
 
-        public override void OnUpdate(float _dt)
+        public void OnUpdate(float _dt)
         {
             if (Input.GetKeyState(KeyCode.Left))
             {

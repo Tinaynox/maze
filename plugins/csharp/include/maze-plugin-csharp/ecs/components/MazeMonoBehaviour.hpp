@@ -34,6 +34,7 @@
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
 
@@ -126,6 +127,19 @@ namespace Maze
         ScriptClassPtr m_monoClass;
         ScriptInstance m_monoInstance;
     };
+
+
+    //////////////////////////////////////////
+    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnCreate(
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        MonoBehaviour* _monoBehaviour);
+
+    //////////////////////////////////////////
+    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnUpdate(
+        UpdateEvent const& _event,
+        Entity* _entity,
+        MonoBehaviour* _monoBehaviour);
 
 } // namespace Maze
 //////////////////////////////////////////

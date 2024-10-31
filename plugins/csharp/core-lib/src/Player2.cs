@@ -8,12 +8,12 @@ namespace Sandbox
     {
         Transform3D transform;
 
-        public override void OnCreate()
+        public void OnCreate()
         {
             transform = GetComponent<Transform3D>();
         }
-
-        public override void OnUpdate(float _dt)
+        
+        public void OnUpdate(float _dt)
         {
             transform.Translate(new Vec3F(0.2f * _dt, 0.2f * _dt, 0.0f));
         }

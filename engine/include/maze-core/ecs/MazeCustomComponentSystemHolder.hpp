@@ -55,11 +55,21 @@ namespace Maze
             return s_systemHolders;
         }
 
+        //////////////////////////////////////////
+        static Set<EcsWorld*>& GetCurrentWorlds()
+        {
+            //////////////////////////////////////////
+            static Set<EcsWorld*> s_worlds;
+            return s_worlds;
+        }
+
     public:
 
         //////////////////////////////////////////
         static inline void Attach(EcsWorld* _world)
         {
+            GetCurrentWorlds().insert(_world);
+
             for (CustomComponentSystemHolder* holder : GetSystemHolders())
                 holder->attach(_world);
         }
@@ -67,6 +77,8 @@ namespace Maze
         //////////////////////////////////////////
         static inline void Detach(EcsWorld* _world)
         {
+            GetCurrentWorlds().erase(_world);
+
             for (CustomComponentSystemHolder* holder : GetSystemHolders())
                 holder->detach(_world);
         }
@@ -88,6 +100,9 @@ namespace Maze
             , m_order(_order)
         {
             GetSystemHolders().insert(this);
+
+            for (EcsWorld* world : GetCurrentWorlds())
+                attach(world);
         }
 
 
@@ -95,6 +110,9 @@ namespace Maze
         inline ~CustomComponentSystemHolder()
         {
             GetSystemHolders().erase(this);
+
+            for (EcsWorld* world : GetCurrentWorlds())
+                detach(world);
         }
         
         //////////////////////////////////////////
