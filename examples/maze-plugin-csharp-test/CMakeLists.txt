@@ -38,6 +38,7 @@ set(EXAMPLE_MAZE_LIBS
     maze-sound
     maze-editor-tools
     maze-plugin-csharp
+    maze-plugin-csharp-editor-tools
     maze-plugin-console)
 
 
@@ -64,6 +65,7 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
 
 ##########################################
 add_subdirectory("${MAZE_DIR}/plugins/csharp" "${CMAKE_CURRENT_BINARY_DIR}/plugins/csharp")
+add_subdirectory("${MAZE_DIR}/plugins/csharp-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/plugins/csharp-editor-tools")
 add_subdirectory("${MAZE_DIR}/plugins/console" "${CMAKE_CURRENT_BINARY_DIR}/plugins/console")
 
 
