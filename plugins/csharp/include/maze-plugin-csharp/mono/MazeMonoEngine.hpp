@@ -58,13 +58,13 @@ namespace Maze
         static bool Shutdown();
 
         //////////////////////////////////////////
-        static MonoAssembly* LoadMonoAssembly(ByteBuffer const& _csharpFile);
+        static MonoAssembly* LoadMonoAssembly(ByteBuffer const& _csharpFile, bool _loadClasses = true);
 
         //////////////////////////////////////////
-        static MonoAssembly* LoadMonoAssembly(AssetFilePtr const& _csharpFile);
+        static MonoAssembly* LoadMonoAssembly(AssetFilePtr const& _csharpFile, bool _loadClasses = true);
 
         //////////////////////////////////////////
-        static MonoAssembly* LoadMonoAssembly(HashedCString _csharpFile);
+        static MonoAssembly* LoadMonoAssembly(HashedCString _csharpFile, bool _loadClasses = true);
 
         //////////////////////////////////////////
         static MonoDomain* GetMonoDomain();

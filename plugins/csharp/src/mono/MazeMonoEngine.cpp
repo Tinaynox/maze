@@ -83,7 +83,7 @@ namespace Maze
             CString typeName = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
 
             MonoClass* monoClass = mono_class_from_name(
-                MonoEngine::GetCoreAssemblyImage(),
+                image,
                 typeNamespace,
                 typeName);
 
@@ -178,7 +178,7 @@ namespace Maze
         BindCppFunctionsCore();
 
 
-        g_monoEngineData->coreAssembly = LoadMonoAssembly(MAZE_HCS("maze-csharp-core-lib.dll"));
+        g_monoEngineData->coreAssembly = LoadMonoAssembly(MAZE_HCS("maze-csharp-core-lib.dll"), false);
         g_monoEngineData->coreAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
         g_monoEngineData->monoBehaviourData.monoBehaviourClass = MakeShared<ScriptClass>("Maze", "MonoBehaviour", g_monoEngineData->coreAssemblyImage);
 
@@ -238,7 +238,7 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    MonoAssembly* MonoEngine::LoadMonoAssembly(ByteBuffer const& _csharpFile)
+    MonoAssembly* MonoEngine::LoadMonoAssembly(ByteBuffer const& _csharpFile, bool _loadClasses)
     {
         // NOTE: We can't use this image for anything other than loading the assembly
         // because this image doesn't have a reference to the assembly
@@ -259,11 +259,15 @@ namespace Maze
         MonoAssembly* assembly = mono_assembly_load_from_full(image, "", &status, 0);
         mono_image_close(image);
 
+
+        if (_loadClasses)
+            LoadAssemblyClasses(assembly);
+
         return assembly;
     }
 
     //////////////////////////////////////////
-    MonoAssembly* MonoEngine::LoadMonoAssembly(AssetFilePtr const& _csharpFile)
+    MonoAssembly* MonoEngine::LoadMonoAssembly(AssetFilePtr const& _csharpFile, bool _loadClasses)
     {
         if (!_csharpFile)
             return nullptr;
@@ -272,17 +276,17 @@ namespace Maze
         if (!byteBuffer)
             return nullptr;
 
-        return LoadMonoAssembly(*byteBuffer.get());
+        return LoadMonoAssembly(*byteBuffer.get(), _loadClasses);
     }
 
     //////////////////////////////////////////
-    MonoAssembly* MonoEngine::LoadMonoAssembly(HashedCString _csharpFile)
+    MonoAssembly* MonoEngine::LoadMonoAssembly(HashedCString _csharpFile, bool _loadClasses)
     {
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_csharpFile);
         if (!assetFile)
             return nullptr;
 
-        return LoadMonoAssembly(assetFile);
+        return LoadMonoAssembly(assetFile, _loadClasses);
     }
 
     //////////////////////////////////////////

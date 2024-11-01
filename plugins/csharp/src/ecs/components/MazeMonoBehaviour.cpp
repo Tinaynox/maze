@@ -114,6 +114,7 @@ namespace Maze
     void MonoBehaviour::setMonoClass(HashedCString _scriptClass)
     {
         ScriptClassPtr const& scriptClass = MonoEngine::GetMonoBehaviourSubClass(_scriptClass);
+        MAZE_ERROR_RETURN_IF(!scriptClass, "MonoBehaviour class is not found: %s!", _scriptClass.str);
         setMonoClass(scriptClass);
     }
 

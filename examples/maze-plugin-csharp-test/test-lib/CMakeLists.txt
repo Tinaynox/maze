@@ -46,6 +46,10 @@ add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
 
 ##########################################
+target_link_libraries(${PROJECT_NAME} PRIVATE maze-csharp-core-lib)
+
+
+##########################################
 set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.5")
 set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "MazeExamples")
 
