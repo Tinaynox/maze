@@ -41,13 +41,17 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    struct MAZE_PLUGIN_CSHARP_API MonoBehaviourData
+    struct MAZE_PLUGIN_CSHARP_API MonoEcsData
     {
         ScriptClassPtr monoBehaviourClass;
         StringKeyMap<ScriptClassPtr> monoBehaviourSubClasses;
         UnorderedMap<ComponentId, ScriptClassPtr> monoBehaviourSubClassesByComponentId;
-
         Vector<SharedPtr<CustomComponentSystemHolder>> monoBehaviourSystems;
+
+        ScriptClassPtr nativeComponentClass;
+        StringKeyMap<ScriptClassPtr> nativeComponentSubClasses;
+
+        UnorderedMap<MonoType*, ComponentId> monoTypePerComponentId;
     };
 
 
@@ -63,7 +67,7 @@ namespace Maze
         MonoAssembly* appAssembly = nullptr;
         MonoImage* appAssemblyImage = nullptr;
 
-        MonoBehaviourData monoBehaviourData;
+        MonoEcsData ecsData;
     };
 
 
@@ -93,40 +97,38 @@ namespace Maze
 
             if (monoClass)
             {
-                bool isMonoBehaviour = mono_class_is_subclass_of(
-                    monoClass,
-                    MonoEngine::GetMonoBehaviourClass()->getMonoClass(),
-                    false);
-
-                if (isMonoBehaviour && monoClass != MonoEngine::GetMonoBehaviourClass()->getMonoClass())
+                String fullName;
+                String fullNamespace;
+                if (typeNamespace && typeNamespace[0])
                 {
-                    String fullName;
-                    String fullNamespace;
-                    if (typeNamespace && typeNamespace[0])
-                    {
-                        fullNamespace = typeNamespace;
-                        StringHelper::FormatString(fullName, "%s.%s", typeNamespace, typeName);
-                    }
-                    else
-                        fullName = typeName;
+                    fullNamespace = typeNamespace;
+                    StringHelper::FormatString(fullName, "%s.%s", typeNamespace, typeName);
+                }
+                else
+                    fullName = typeName;
 
+                // MonoBehaviour subclasses
+                if (mono_class_is_subclass_of(monoClass, MonoEngine::GetMonoBehaviourClass()->getMonoClass(), false) &&
+                    monoClass != MonoEngine::GetMonoBehaviourClass()->getMonoClass())
+                {
                     ScriptClassPtr scriptClass = MakeShared<ScriptClass>(fullNamespace, typeName, monoClass);
 
-                    g_monoEngineData->monoBehaviourData.monoBehaviourSubClasses.insert(
+                    g_monoEngineData->ecsData.monoBehaviourSubClasses.insert(
                         HashedCString(fullName.c_str()),
                         scriptClass);
 
                     ComponentId componentId = GetComponentIdByName(fullName.c_str());
-                    g_monoEngineData->monoBehaviourData.monoBehaviourSubClassesByComponentId.emplace(
+                    g_monoEngineData->ecsData.monoBehaviourSubClassesByComponentId.emplace(
                         componentId,
                         scriptClass);
 
+                    MonoType* monoType = mono_class_get_type(monoClass);
+                    g_monoEngineData->ecsData.monoTypePerComponentId[monoType] = GetComponentIdByName(fullName.c_str());
                     
 
-
+                    // Process entity systems
                     Set<HashedString> systemTags;
                     ComponentSystemOrder systemOrder;
-
 
                     if (scriptClass->getOnCreateMethod())
                     {
@@ -134,7 +136,7 @@ namespace Maze
 
                         MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnCreateMethod(), systemTags, systemOrder);
 
-                        g_monoEngineData->monoBehaviourData.monoBehaviourSystems.emplace_back(
+                        g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                             MakeShared<CustomComponentSystemHolder>(
                                 systemName,
                                 ClassInfo<EntityAddedToSampleEvent>::UID(),
@@ -151,7 +153,7 @@ namespace Maze
 
                         MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnUpdateMethod(), systemTags, systemOrder);
 
-                        g_monoEngineData->monoBehaviourData.monoBehaviourSystems.emplace_back(
+                        g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                             MakeShared<CustomComponentSystemHolder>(
                                 systemName,
                                 ClassInfo<UpdateEvent>::UID(),
@@ -161,6 +163,20 @@ namespace Maze
                                 systemOrder));
                         Debug::Log("%s registered.", systemName.c_str());
                     }
+                }
+                else
+                // NativeComponent subclasses
+                if (mono_class_is_subclass_of(monoClass, MonoEngine::GetNativeComponentClass()->getMonoClass(), false) &&
+                    monoClass != MonoEngine::GetNativeComponentClass()->getMonoClass())
+                {
+                    ScriptClassPtr scriptClass = MakeShared<ScriptClass>(fullNamespace, typeName, monoClass);
+
+                    g_monoEngineData->ecsData.nativeComponentSubClasses.insert(
+                        HashedCString(fullName.c_str()),
+                        scriptClass);
+
+                    MonoType* monoType = mono_class_get_type(monoClass);
+                    g_monoEngineData->ecsData.monoTypePerComponentId[monoType] = GetComponentIdByName((String("Maze::") + typeName).c_str());
                 }
             }
         }
@@ -296,7 +312,10 @@ namespace Maze
     {
         g_monoEngineData->coreAssembly = LoadMonoAssembly(_csharpFile);
         g_monoEngineData->coreAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
-        g_monoEngineData->monoBehaviourData.monoBehaviourClass = MakeShared<ScriptClass>("Maze", "MonoBehaviour", g_monoEngineData->coreAssemblyImage);
+        g_monoEngineData->ecsData.monoBehaviourClass = MakeShared<ScriptClass>(
+            "Maze", "MonoBehaviour", g_monoEngineData->coreAssemblyImage);
+        g_monoEngineData->ecsData.nativeComponentClass = MakeShared<ScriptClass>(
+            "Maze", "NativeComponent", g_monoEngineData->coreAssemblyImage);
 
         LoadAssemblyClasses(g_monoEngineData->coreAssembly);
 
@@ -335,7 +354,13 @@ namespace Maze
     //////////////////////////////////////////
     ScriptClassPtr const& MonoEngine::GetMonoBehaviourClass()
     {
-        return g_monoEngineData->monoBehaviourData.monoBehaviourClass;
+        return g_monoEngineData->ecsData.monoBehaviourClass;
+    }
+
+    //////////////////////////////////////////
+    ScriptClassPtr const& MonoEngine::GetNativeComponentClass()
+    {
+        return g_monoEngineData->ecsData.nativeComponentClass;
     }
 
     //////////////////////////////////////////
@@ -343,8 +368,8 @@ namespace Maze
     {
         static ScriptClassPtr const nullPointer;
 
-        auto it = g_monoEngineData->monoBehaviourData.monoBehaviourSubClasses.find(_name);
-        if (it != g_monoEngineData->monoBehaviourData.monoBehaviourSubClasses.end())
+        auto it = g_monoEngineData->ecsData.monoBehaviourSubClasses.find(_name);
+        if (it != g_monoEngineData->ecsData.monoBehaviourSubClasses.end())
             return it->second;
         else
             return nullPointer;
@@ -355,11 +380,21 @@ namespace Maze
     {
         static ScriptClassPtr const nullPointer;
 
-        auto it = g_monoEngineData->monoBehaviourData.monoBehaviourSubClassesByComponentId.find(_id);
-        if (it != g_monoEngineData->monoBehaviourData.monoBehaviourSubClassesByComponentId.end())
+        auto it = g_monoEngineData->ecsData.monoBehaviourSubClassesByComponentId.find(_id);
+        if (it != g_monoEngineData->ecsData.monoBehaviourSubClassesByComponentId.end())
             return it->second;
         else
             return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    ComponentId MonoEngine::GetComponentIdByMonoType(MonoType* _monoType)
+    {
+        auto it = g_monoEngineData->ecsData.monoTypePerComponentId.find(_monoType);
+        if (it != g_monoEngineData->ecsData.monoTypePerComponentId.end())
+            return it->second;
+        else
+            return c_invalidComponentId;
     }
 
     //////////////////////////////////////////

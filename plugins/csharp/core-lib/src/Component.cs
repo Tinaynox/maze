@@ -14,14 +14,12 @@ namespace Maze
 
         public T GetComponent<T>() where T : class
         {
-            // TODO: Remove all string operations here.
-            // We should have some table C# type => C++ componentId
+            int componentId = InternalCalls.GetComponentIdByMonoType(typeof(T));
 
             // Native component wrappers
             if (typeof(NativeComponent).IsAssignableFrom(typeof(T)))
             {
-                int nativeComponentId = InternalCalls.GetComponentId($"Maze::{typeof(T).Name}");
-                IntPtr componentPtr = InternalCalls.GetComponent(nativeComponentPtr, nativeComponentId);
+                IntPtr componentPtr = InternalCalls.GetComponent(nativeComponentPtr, componentId);
                 if (componentPtr == IntPtr.Zero)
                     return default(T);
 
@@ -29,11 +27,13 @@ namespace Maze
             }
 
 
-            if (!typeof(MonoBehaviour).IsAssignableFrom(typeof(T)))
-                return default(T);
+            // MonoBehaviour refs
+            if (typeof(MonoBehaviour).IsAssignableFrom(typeof(T)))
+                return (T)(object)InternalCalls.GetMonoBehaviourComponentObject(nativeComponentPtr, componentId);
 
-            int componentId = InternalCalls.GetComponentId($"{typeof(T).Namespace}.{typeof(T).Name}");
-            return (T)(object)InternalCalls.GetMonoBehaviourComponentObject(nativeComponentPtr, componentId);
+
+            // Not supported type
+            return default(T);
         }
     }
 }

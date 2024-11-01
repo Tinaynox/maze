@@ -27,6 +27,7 @@
 #include "MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsCore.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
+#include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -90,6 +91,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline ComponentId GetComponentIdByMonoType(MonoReflectionType* _type)
+    {
+        MonoType* monoType = mono_reflection_type_get_type(_type);
+        ComponentId id = MonoEngine::GetComponentIdByMonoType(monoType);
+        return id;
+    }
+
+
+    //////////////////////////////////////////
     inline Component* GetComponent(Component* _component, ComponentId _componentId)
     {
         if (!_component->getEntityRaw())
@@ -151,6 +161,7 @@ namespace Maze
         MAZE_MONO_BIND_FUNC(GetFrameNumber);
         MAZE_MONO_BIND_FUNC(GetEntityId);
         MAZE_MONO_BIND_FUNC_WITH_NAME(GetComponentIdHelper, GetComponentId);
+        MAZE_MONO_BIND_FUNC(GetComponentIdByMonoType);
         MAZE_MONO_BIND_FUNC(GetComponent);
         MAZE_MONO_BIND_FUNC(GetMonoBehaviourComponentObject);
         MAZE_MONO_BIND_FUNC(Transform3DTranslate);

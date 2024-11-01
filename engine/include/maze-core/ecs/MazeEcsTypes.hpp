@@ -46,6 +46,7 @@ namespace Maze
 
     //////////////////////////////////////////
     static const EntityId c_invalidEntityId = EntityId();
+    static const ComponentId c_invalidComponentId = 0;
 
 } // namespace Maze
 //////////////////////////////////////////

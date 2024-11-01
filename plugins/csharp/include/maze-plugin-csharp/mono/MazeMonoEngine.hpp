@@ -73,10 +73,19 @@ namespace Maze
         static ScriptClassPtr const& GetMonoBehaviourClass();
 
         //////////////////////////////////////////
+        static ScriptClassPtr const& GetNativeComponentClass();
+
+
+        //////////////////////////////////////////
         static ScriptClassPtr const& GetMonoBehaviourSubClass(HashedCString _name);
 
         //////////////////////////////////////////
         static ScriptClassPtr const& GetMonoBehaviourSubClass(ComponentId _id);
+
+
+        //////////////////////////////////////////
+        static ComponentId GetComponentIdByMonoType(MonoType* _monoType);
+
 
         //////////////////////////////////////////
         static MonoObject* InstantiateClass(MonoClass* _monoClass);

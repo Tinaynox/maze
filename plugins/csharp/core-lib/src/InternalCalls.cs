@@ -32,6 +32,9 @@ namespace Maze
         internal extern static int GetComponentId(string _name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static int GetComponentIdByMonoType(Type _type);      
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static IntPtr GetComponent(IntPtr _nativeComponentPtr, int _componentId);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
