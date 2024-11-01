@@ -8,7 +8,7 @@ namespace Sandbox
         Transform3D transform;
         TestRotor testRotor;
 
-        public float Speed { get; } = 6.0f;
+        public float Speed { get; set; } = 6.0f;
 
 
         [EntitySystem]

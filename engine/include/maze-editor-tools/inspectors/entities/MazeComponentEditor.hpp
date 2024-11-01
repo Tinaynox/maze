@@ -150,6 +150,11 @@ namespace Maze
             CString _label = nullptr);
 
         //////////////////////////////////////////
+        void addPropertyDrawer(
+            MetaPropertyDrawerPtr const& _property,
+            CString _label = nullptr);
+
+        //////////////////////////////////////////
         void notifyExpandButtonClick(Button2D* _button, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////

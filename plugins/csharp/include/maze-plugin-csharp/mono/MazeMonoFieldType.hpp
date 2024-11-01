@@ -25,52 +25,51 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeMonoHelper_hpp_))
-#define _MazeMonoHelper_hpp_
+#if (!defined(_MazeMonoFieldType_hpp_))
+#define _MazeMonoFieldType_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-plugin-csharp/MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
-#include "maze-plugin-csharp/mono/MazeMonoFieldType.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/services/MazeLogService.hpp"
-#include "maze-core/ecs/MazeComponentSystem.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    namespace MonoHelper
-    {
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void PrintAssemblyTypes(MonoAssembly* _assembly);
-
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params = nullptr);
-
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void ParseMonoEntitySystemAttributes(
-            MonoMethod* _method,
-            Set<HashedString>& _outTags,
-            ComponentSystemOrder& _outOrder);
-
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API MonoFieldType MonoTypeStringToMonoFieldType(String const& _string);
-
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API MonoFieldType MonoTypeToMonoFieldType(MonoType* _monoType);
-
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API bool IsMethodPublic(MonoMethod* _method);
-
-    } // namespace MonoHelper
-    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_24_API(MAZE_PLUGIN_CSHARP_API, MonoFieldType,
+        TypeString,
+        TypeBool,
+        TypeS8,
+        TypeS16,
+        TypeS32,
+        TypeS64,
+        TypeU8,
+        TypeU16,
+        TypeU32,
+        TypeU64,
+        TypeF32,
+        TypeF64,
+        TypeVec2S,
+        TypeVec3S,
+        TypeVec4S,
+        TypeVec2U,
+        TypeVec3U,
+        TypeVec4U,
+        TypeVec2F,
+        TypeVec3F,
+        TypeVec4F,
+        TypeMat3F,
+        TypeMat4F,
+        TypeTMat);
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeMonoHelper_hpp_
+#endif // _MazeMonoFieldType_hpp_
 //////////////////////////////////////////

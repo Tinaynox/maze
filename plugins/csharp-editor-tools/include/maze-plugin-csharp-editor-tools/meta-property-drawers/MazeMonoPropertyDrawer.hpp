@@ -25,52 +25,82 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeMonoHelper_hpp_))
-#define _MazeMonoHelper_hpp_
+#if (!defined(_MazeMonoPropertyDrawer_hpp_))
+#define _MazeMonoPropertyDrawer_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-plugin-csharp/MazeCSharpHeader.hpp"
+#include "maze-plugin-csharp-editor-tools/MazeCSharpEditorToolsHeader.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
+#include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoFieldType.hpp"
-#include "maze-core/MazeTypes.hpp"
-#include "maze-core/services/MazeLogService.hpp"
-#include "maze-core/ecs/MazeComponentSystem.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    namespace MonoHelper
-    {
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void PrintAssemblyTypes(MonoAssembly* _assembly);
+    MAZE_USING_SHARED_PTR(MonoPropertyDrawer);
 
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params = nullptr);
 
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void ParseMonoEntitySystemAttributes(
-            MonoMethod* _method,
-            Set<HashedString>& _outTags,
-            ComponentSystemOrder& _outOrder);
-
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API MonoFieldType MonoTypeStringToMonoFieldType(String const& _string);
-
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API MonoFieldType MonoTypeToMonoFieldType(MonoType* _monoType);
-
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API bool IsMethodPublic(MonoMethod* _method);
-
-    } // namespace MonoHelper
     //////////////////////////////////////////
+    // Class MonoPropertyDrawer
+    //
+    //////////////////////////////////////////
+    class MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API MonoPropertyDrawer
+        : public MetaPropertyDrawer
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(MonoPropertyDrawer, MetaPropertyDrawer);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(MonoPropertyDrawer);
+
+    public:
+
+        //////////////////////////////////////////
+        virtual ~MonoPropertyDrawer();
+
+        //////////////////////////////////////////
+        static MonoPropertyDrawerPtr Create(
+            MonoProperty* _monoProperty,
+            MonoFieldType _monoFieldType);
+
+
+        //////////////////////////////////////////
+        virtual void processDataToUI() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void processDataFromUI() MAZE_OVERRIDE;
+
+    protected:
+
+        //////////////////////////////////////////
+        MonoPropertyDrawer();
+
+        //////////////////////////////////////////
+        virtual bool init(
+            MonoProperty* _monoProperty,
+            MonoFieldType _monoFieldType);
+
+        //////////////////////////////////////////
+        virtual void buildUI(
+            Transform2DPtr const& _parent,
+            CString _label) MAZE_OVERRIDE;
+
+    protected:
+        MonoProperty* m_monoProperty = nullptr;
+        MonoFieldType m_monoFieldType = MonoFieldType::None;
+
+        PropertyDrawerPtr m_drawer;
+    };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeMonoHelper_hpp_
+#endif // _MazeMonoPropertyDrawer_hpp_
 //////////////////////////////////////////

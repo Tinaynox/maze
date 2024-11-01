@@ -39,6 +39,16 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    namespace MonoHelper
+    {
+        //////////////////////////////////////////
+        extern MAZE_PLUGIN_CSHARP_API void InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params);
+
+    } // namespace MonoHelper
+    //////////////////////////////////////////
+
+
+    //////////////////////////////////////////
     // Class ScriptInstance
     //
     //////////////////////////////////////////
@@ -129,6 +139,25 @@ namespace Maze
 
             return setProperty(prop, _value);
         }
+
+
+
+        //////////////////////////////////////////
+        template <typename TValue>
+        inline bool getProperty(MonoProperty* _property, TValue& _value)
+        {
+            MonoMethod* getter = mono_property_get_get_method(_property);
+            if (!getter)
+                return false;
+
+            MonoObject* result = mono_property_get_value(_property, m_instance, nullptr, nullptr);
+            if (!result)
+                return false;
+
+            _value = *(TValue*)mono_object_unbox(result);
+            return true;
+        }
+
 
 
         //////////////////////////////////////////

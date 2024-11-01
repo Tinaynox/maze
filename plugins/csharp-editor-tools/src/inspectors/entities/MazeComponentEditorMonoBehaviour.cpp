@@ -26,7 +26,9 @@
 //////////////////////////////////////////
 #include "MazeCSharpEditorToolsHeader.hpp"
 #include "maze-plugin-csharp-editor-tools/inspectors/entities/MazeComponentEditorMonoBehaviour.hpp"
+#include "maze-plugin-csharp-editor-tools/meta-property-drawers/MazeMonoPropertyDrawer.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
+#include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
@@ -77,13 +79,45 @@ namespace Maze
     //////////////////////////////////////////
     void ComponentEditorMonoBehaviour::buildUI()
     {
-        Vector<MetaClass*> const& componentSuperMetaClasses = getComponentMetaClass()->getAllSuperMetaClasses();
-        for (MetaClass* metaClass : componentSuperMetaClasses)
+        ScriptClassPtr const& scriptClass = MonoEngine::GetMonoBehaviourSubClass(getComponentId());
+        if (scriptClass)
         {
-            for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+            MonoClass* monoClass = scriptClass->getMonoClass();
+
+            // Test fields
+            void* fieldIt = nullptr;
+            while (MonoClassField* field = mono_class_get_fields(monoClass, &fieldIt))
             {
-                MetaProperty* metaProperty = metaClass->getProperty(i);
-                buildPropertyDrawer(metaProperty);
+                CString fieldName = mono_field_get_name(field);
+                U32 flags = mono_field_get_flags(field);
+                if (flags & MONO_FIELD_ATTR_PUBLIC)
+                {
+                    MonoType* fieldType = mono_field_get_type(field);
+                    MonoFieldType monofieldType = MonoHelper::MonoTypeToMonoFieldType(fieldType);
+                    Debug::Log("%s => %s", fieldName, monofieldType.toCString());
+                }
+            }
+
+            // Test properties
+            void* propIt = nullptr;
+            while (MonoProperty* prop = mono_class_get_properties(monoClass, &propIt))
+            {
+                CString fieldName = mono_property_get_name(prop);
+
+                MonoMethod* getterMethod = mono_property_get_get_method(prop);
+                if (!MonoHelper::IsMethodPublic(getterMethod))
+                    continue;
+                MonoMethod* setterMethod = mono_property_get_set_method(prop);
+                if (!MonoHelper::IsMethodPublic(setterMethod))
+                    continue;
+
+                MonoMethodSignature* signature = mono_method_signature(getterMethod);
+                MonoType* fieldType = mono_signature_get_return_type(signature);
+                MonoFieldType monofieldType = MonoHelper::MonoTypeToMonoFieldType(fieldType);
+
+                Debug::Log("%s => %s", fieldName, monofieldType.toCString());
+
+                addPropertyDrawer(MonoPropertyDrawer::Create(prop, monofieldType), fieldName);
             }
         }
 

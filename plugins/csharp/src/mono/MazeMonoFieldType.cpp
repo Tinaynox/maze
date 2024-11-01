@@ -24,17 +24,15 @@
 
 
 //////////////////////////////////////////
-#pragma once
-#if (!defined(_MazeMonoHeader_hpp_))
-#define _MazeMonoHeader_hpp_
+#include "MazeCSharpHeader.hpp"
+#include "maze-plugin-csharp/mono/MazeMonoFieldType.hpp"
 
 
 //////////////////////////////////////////
-#include "maze-plugin-csharp/MazeCSharpHeader.hpp"
-#include <mono/jit/jit.h>
-#include <mono/metadata/assembly.h>
-#include <mono/metadata/attrdefs.h>
+namespace Maze
+{
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(MonoFieldType);
 
-
-#endif // _MazeMonoHeader_hpp_
+} // namespace Maze
 //////////////////////////////////////////

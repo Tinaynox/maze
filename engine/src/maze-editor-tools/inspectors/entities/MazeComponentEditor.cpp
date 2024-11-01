@@ -355,21 +355,23 @@ namespace Maze
 
         auto const& it = m_customPropertyDrawers.find(_metaProperty);
         if (it != m_customPropertyDrawers.end())
-        {
             property = it->second(_metaProperty);
-        }
         else
-        {
             property = InspectorManager::GetInstancePtr()->createMetaPropertyDrawer(_metaProperty);
-        }
 
         if (property)
-        {
-            property->buildUI(m_bodyRoot, _label);
-            m_propertyDrawers.push_back(property);
-        }
+            addPropertyDrawer(property, _label);
 
         return property;
+    }
+
+    //////////////////////////////////////////
+    void ComponentEditor::addPropertyDrawer(
+        MetaPropertyDrawerPtr const& _property,
+        CString _label)
+    {
+        _property->buildUI(m_bodyRoot, _label);
+        m_propertyDrawers.push_back(_property);
     }
 
     //////////////////////////////////////////
