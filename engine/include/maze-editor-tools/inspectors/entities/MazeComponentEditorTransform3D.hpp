@@ -68,7 +68,7 @@ namespace Maze
         virtual ~ComponentEditorTransform3D();
 
         //////////////////////////////////////////
-        static ComponentEditorTransform3DPtr Create();
+        static ComponentEditorTransform3DPtr Create(ComponentId _componentId, MetaClass* _metaClass);
 
 
     protected:
@@ -77,7 +77,7 @@ namespace Maze
         ComponentEditorTransform3D();
 
         //////////////////////////////////////////
-        virtual bool init() MAZE_OVERRIDE;
+        virtual bool init(ComponentId _componentId, MetaClass* _metaClass) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void buildUI() MAZE_OVERRIDE;

@@ -114,6 +114,12 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline String const& getNamespace() const { return m_namespace; }
+
+        //////////////////////////////////////////
+        inline String const& getClassName() const { return m_className; }
+
+        //////////////////////////////////////////
         String getFullname() const;
 
     protected:

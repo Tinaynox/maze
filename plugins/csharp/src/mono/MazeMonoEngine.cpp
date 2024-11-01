@@ -45,6 +45,7 @@ namespace Maze
     {
         ScriptClassPtr monoBehaviourClass;
         StringKeyMap<ScriptClassPtr> monoBehaviourSubClasses;
+        UnorderedMap<ComponentId, ScriptClassPtr> monoBehaviourSubClassesByComponentId;
 
         Vector<SharedPtr<CustomComponentSystemHolder>> monoBehaviourSystems;
     };
@@ -109,9 +110,6 @@ namespace Maze
                     else
                         fullName = typeName;
 
-                    if (fullName.back() == 0)
-                        fullName.pop_back();
-
                     ScriptClassPtr scriptClass = MakeShared<ScriptClass>(fullNamespace, typeName, monoClass);
 
                     g_monoEngineData->monoBehaviourData.monoBehaviourSubClasses.insert(
@@ -119,6 +117,11 @@ namespace Maze
                         scriptClass);
 
                     ComponentId componentId = GetComponentIdByName(fullName.c_str());
+                    g_monoEngineData->monoBehaviourData.monoBehaviourSubClassesByComponentId.emplace(
+                        componentId,
+                        scriptClass);
+
+                    
 
 
                     Set<HashedString> systemTags;
@@ -342,6 +345,18 @@ namespace Maze
 
         auto it = g_monoEngineData->monoBehaviourData.monoBehaviourSubClasses.find(_name);
         if (it != g_monoEngineData->monoBehaviourData.monoBehaviourSubClasses.end())
+            return it->second;
+        else
+            return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    ScriptClassPtr const& MonoEngine::GetMonoBehaviourSubClass(ComponentId _id)
+    {
+        static ScriptClassPtr const nullPointer;
+
+        auto it = g_monoEngineData->monoBehaviourData.monoBehaviourSubClassesByComponentId.find(_id);
+        if (it != g_monoEngineData->monoBehaviourData.monoBehaviourSubClassesByComponentId.end())
             return it->second;
         else
             return nullPointer;

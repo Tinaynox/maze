@@ -35,6 +35,7 @@
 #include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -73,6 +74,9 @@ namespace Maze
 
         //////////////////////////////////////////
         static ScriptClassPtr const& GetMonoBehaviourSubClass(HashedCString _name);
+
+        //////////////////////////////////////////
+        static ScriptClassPtr const& GetMonoBehaviourSubClass(ComponentId _id);
 
         //////////////////////////////////////////
         static MonoObject* InstantiateClass(MonoClass* _monoClass);

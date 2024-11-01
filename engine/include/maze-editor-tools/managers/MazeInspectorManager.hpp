@@ -100,21 +100,21 @@ namespace Maze
         template <typename TComponent, typename TComponentEditor>
         inline void registerComponentEditor()
         {
-            ClassUID componentUID = ClassInfo<TComponent>::UID();
+            ComponentId componentUID = GetStaticComponentId<TComponent>();
             registerComponentEditor(
                 componentUID,
-                []()
+                [](ComponentId _componentId, MetaClass* _metaClass)
                 {
-                    return TComponentEditor::Create();
+                    return TComponentEditor::Create(_componentId, _metaClass);
                 });
         }
 
         //////////////////////////////////////////
-        inline void registerComponentEditor(ClassUID _componentUID, std::function<ComponentEditorPtr()> _func)
+        inline void registerComponentEditor(ComponentId _componentId, std::function<ComponentEditorPtr(ComponentId, MetaClass*)> _func)
         {
             m_componentEditors.emplace(
                 std::piecewise_construct,
-                std::forward_as_tuple(_componentUID),
+                std::forward_as_tuple(_componentId),
                 std::forward_as_tuple(_func));
         }
 
@@ -404,7 +404,7 @@ namespace Maze
     protected:
         static InspectorManager* s_instance;
 
-        Map<ClassUID, std::function<ComponentEditorPtr()>> m_componentEditors;
+        Map<ClassUID, std::function<ComponentEditorPtr(ComponentId, MetaClass*)>> m_componentEditors;
         Map<ClassUID, std::function<PropertyDrawerPtr(String const&)>> m_propertyDrawers;
         Map<ClassUID, std::function<MetaPropertyDrawerPtr(MetaProperty*)>> m_metaPropertyDrawers;
         Map<ClassUID, Vector<std::pair<String, std::function<void(Entity*, Component*)>>>> m_inspectorComponentContextMenuOptions;

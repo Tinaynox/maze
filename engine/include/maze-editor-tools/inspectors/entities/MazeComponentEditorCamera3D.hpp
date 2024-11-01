@@ -68,7 +68,7 @@ namespace Maze
         virtual ~ComponentEditorCamera3D();
 
         //////////////////////////////////////////
-        static ComponentEditorCamera3DPtr Create();
+        static ComponentEditorCamera3DPtr Create(ComponentId _componentId, MetaClass* _metaClass);
 
 
     protected:
@@ -77,7 +77,7 @@ namespace Maze
         ComponentEditorCamera3D();
 
         //////////////////////////////////////////
-        virtual bool init() MAZE_OVERRIDE;
+        virtual bool init(ComponentId _componentId, MetaClass* _metaClass) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void buildUI() MAZE_OVERRIDE;

@@ -24,7 +24,8 @@
 
 
 ##########################################
-include_directories(${CMAKE_CURRENT_LIST_DIR}/mono/msvc/include)
+set(MONO_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/mono/msvc/include")
+include_directories(MONO_INCLUDE_DIR)
 
 if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
     if(${MAZE_ARCH_SUFFIX} STREQUAL "x64")

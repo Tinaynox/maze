@@ -78,8 +78,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ComponentEditor::init()
+    bool ComponentEditor::init(
+        ComponentId _componentId,
+        MetaClass* _componentMetaClass)
     {
+        m_componentId = _componentId;
+        m_metaClass = _componentMetaClass;
 
         return true;
     }
@@ -182,7 +186,7 @@ namespace Maze
         m_expandButton->eventClick.subscribe(this, &ComponentEditor::notifyExpandButtonClick);
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
-            EditorToolsHelper::BuildComponentName(getComponentMetaClass()->getName()).c_str(),
+            buildEditorTitle().c_str(),
             EditorToolsStyles::GetInstancePtr()->getDefaultBoldFontMaterial(),
             12,
             HorizontalAlignment2D::Left,
@@ -288,6 +292,12 @@ namespace Maze
             m_expandButtonSprite->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded));
         else
             m_expandButtonSprite->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonCollapsed));
+    }
+
+    //////////////////////////////////////////
+    String ComponentEditor::buildEditorTitle()
+    {
+        return EditorToolsHelper::BuildComponentName(getComponentMetaClass()->getName());
     }
 
     //////////////////////////////////////////

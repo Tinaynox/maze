@@ -326,7 +326,7 @@ namespace Maze
         }
         else
         {
-            return it->second();
+            return it->second(_componentId, _metaClass);
         }
     }
 

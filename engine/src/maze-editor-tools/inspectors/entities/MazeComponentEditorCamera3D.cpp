@@ -59,16 +59,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ComponentEditorCamera3DPtr ComponentEditorCamera3D::Create()
+    ComponentEditorCamera3DPtr ComponentEditorCamera3D::Create(ComponentId _componentId, MetaClass* _metaClass)
     {
         ComponentEditorCamera3DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentEditorCamera3D, object, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentEditorCamera3D, object, init(_componentId, _metaClass));
         return object;
     }
 
     //////////////////////////////////////////
-    bool ComponentEditorCamera3D::init()
+    bool ComponentEditorCamera3D::init(ComponentId _componentId, MetaClass* _metaClass)
     {
+        if (!ComponentEditor::init(_componentId, _metaClass))
+            return false;
+
         registerCustomPropertyDrawer<MetaPropertyDrawerFOV>(getComponentMetaClass()->getProperty("fov"));
 
         return true;

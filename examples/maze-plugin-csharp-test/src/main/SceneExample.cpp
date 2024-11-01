@@ -84,6 +84,7 @@
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-plugin-csharp/MazeCSharpPlugin.hpp"
 #include "maze-plugin-csharp/MazeCSharpService.hpp"
+#include "maze-plugin-csharp-editor-tools/MazeCSharpEditorToolsPlugin.hpp"
 #include "maze-plugin-console/MazeConsolePlugin.hpp"
 #include "maze-plugin-console/MazeConsoleService.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
@@ -161,6 +162,7 @@ namespace Maze
             return false;
 
         MAZE_LOAD_PLATFORM_PLUGIN(CSharp);
+        MAZE_LOAD_PLATFORM_PLUGIN(CSharpEditorTools);
         testMono();
 
         InputManager* inputManager = InputManager::GetInstancePtr();

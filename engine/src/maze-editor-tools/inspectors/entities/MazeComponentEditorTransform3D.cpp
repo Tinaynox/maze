@@ -56,16 +56,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ComponentEditorTransform3DPtr ComponentEditorTransform3D::Create()
+    ComponentEditorTransform3DPtr ComponentEditorTransform3D::Create(ComponentId _componentId, MetaClass* _metaClass)
     {
         ComponentEditorTransform3DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentEditorTransform3D, object, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentEditorTransform3D, object, init(_componentId, _metaClass));
         return object;
     }
 
     //////////////////////////////////////////
-    bool ComponentEditorTransform3D::init()
+    bool ComponentEditorTransform3D::init(ComponentId _componentId, MetaClass* _metaClass)
     {
+        if (!ComponentEditor::init(_componentId, _metaClass))
+            return false;
 
         return true;
     }

@@ -50,7 +50,6 @@ namespace Maze
 
     //////////////////////////////////////////
     ComponentEditorDefault::ComponentEditorDefault()
-        : m_metaClass(nullptr)
     {
 
     }
@@ -76,26 +75,12 @@ namespace Maze
         ComponentId _componentId,
         MetaClass* _metaClass)
     {
-        if (!ComponentEditor::init())
+        if (!ComponentEditor::init(_componentId, _metaClass))
             return false;
-
-        m_componentId = _componentId;
-        m_metaClass = _metaClass;
 
         return true;
     }
 
-    //////////////////////////////////////////
-    ComponentId ComponentEditorDefault::getComponentId()
-    {
-        return m_componentId;
-    }
-
-    //////////////////////////////////////////
-    MetaClass* ComponentEditorDefault::getComponentMetaClass()
-    {
-        return m_metaClass;
-    }
 
 } // namespace Maze
 //////////////////////////////////////////

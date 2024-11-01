@@ -83,10 +83,10 @@ namespace Maze
         virtual void removeEditor();
 
         //////////////////////////////////////////
-        virtual ComponentId getComponentId() MAZE_ABSTRACT;
+        ComponentId getComponentId() { return m_componentId; }
 
         //////////////////////////////////////////
-        virtual MetaClass* getComponentMetaClass() MAZE_ABSTRACT;
+        MetaClass* getComponentMetaClass() { return m_metaClass; }
 
 
         //////////////////////////////////////////
@@ -127,7 +127,9 @@ namespace Maze
         ComponentEditor();
 
         //////////////////////////////////////////
-        virtual bool init();
+        virtual bool init(
+            ComponentId _componentId,
+            MetaClass* _componentMetaClass);
 
 
         //////////////////////////////////////////
@@ -153,8 +155,14 @@ namespace Maze
         //////////////////////////////////////////
         void updateExpandButtonSprite();
 
+
+        //////////////////////////////////////////
+        virtual String buildEditorTitle();
+
     protected:
-        
+        ComponentId m_componentId = 0u;
+        MetaClass* m_metaClass = nullptr;
+
         Transform2DPtr m_editorRoot;
         Transform2DPtr m_titleRoot;
         Transform2DPtr m_bodyRoot;
@@ -182,18 +190,6 @@ namespace Maze
         MAZE_DECLARE_AND_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(GenericComponentEditor<TComponent>);
 
     protected:
-
-        //////////////////////////////////////////
-        virtual ComponentId getComponentId() MAZE_OVERRIDE
-        {
-            return GetStaticComponentId<TComponent>();
-        }
-
-        //////////////////////////////////////////
-        virtual MetaClass* getComponentMetaClass() MAZE_OVERRIDE
-        {
-            return TComponent::GetMetaClass();
-        }
     };
 
 

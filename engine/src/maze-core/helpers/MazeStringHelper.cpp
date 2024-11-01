@@ -91,6 +91,9 @@ namespace Maze
                 _buffer.resize((Size)requiredSize + 1);
                 
                 result = FormatString(&_buffer[0], _buffer.size(), _format, args);
+
+                if (_buffer.back() == 0)
+                    _buffer.pop_back();
             }
             
             va_end(args);
@@ -112,6 +115,9 @@ namespace Maze
                 _buffer.resize((Size)requiredSize + 1);
                 
                 result = FormatString(&_buffer[0], _buffer.size(), _format, args);
+
+                if (_buffer.back() == 0)
+                    _buffer.pop_back();
             }
             
             va_end(args);

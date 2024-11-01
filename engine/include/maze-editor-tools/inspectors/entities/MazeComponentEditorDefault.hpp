@@ -72,12 +72,6 @@ namespace Maze
             ComponentId _componentId,
             MetaClass* _componentMetaClass);
 
-        //////////////////////////////////////////
-        virtual ComponentId getComponentId() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual MetaClass* getComponentMetaClass() MAZE_OVERRIDE;
-
     protected:
 
         //////////////////////////////////////////
@@ -93,8 +87,6 @@ namespace Maze
 
 
     protected:
-        ComponentId m_componentId = 0u;
-        MetaClass* m_metaClass;
     };
 
 
