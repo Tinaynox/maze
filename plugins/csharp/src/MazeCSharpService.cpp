@@ -83,21 +83,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MonoAssembly* CSharpService::loadMonoAssembly(ByteBuffer const& _csharpFile)
-    {
-        return MonoEngine::LoadMonoAssembly(_csharpFile);
-    }
-
-    //////////////////////////////////////////
-    MonoAssembly* CSharpService::loadMonoAssembly(AssetFilePtr const& _csharpFile)
-    {
-        return MonoEngine::LoadMonoAssembly(_csharpFile);
-    }
-
-    //////////////////////////////////////////
     MonoAssembly* CSharpService::loadMonoAssembly(HashedCString _csharpFile)
     {
-        return MonoEngine::LoadMonoAssembly(_csharpFile);
+        return MonoEngine::LoadAppAssembly(_csharpFile);
     }
 
 } // namespace Maze

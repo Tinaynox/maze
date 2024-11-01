@@ -59,6 +59,9 @@ namespace Maze
         MonoAssembly* coreAssembly = nullptr;
         MonoImage* coreAssemblyImage = nullptr;
 
+        MonoAssembly* appAssembly = nullptr;
+        MonoImage* appAssemblyImage = nullptr;
+
         MonoBehaviourData monoBehaviourData;
     };
 
@@ -93,7 +96,7 @@ namespace Maze
                     monoClass,
                     MonoEngine::GetMonoBehaviourClass()->getMonoClass(),
                     false);
-                
+
                 if (isMonoBehaviour && monoClass != MonoEngine::GetMonoBehaviourClass()->getMonoClass())
                 {
                     String fullName;
@@ -116,7 +119,7 @@ namespace Maze
                         scriptClass);
 
                     ComponentId componentId = GetComponentIdByName(fullName.c_str());
-                    
+
 
                     Set<HashedString> systemTags;
                     ComponentSystemOrder systemOrder;
@@ -177,12 +180,7 @@ namespace Maze
 
         BindCppFunctionsCore();
 
-
-        g_monoEngineData->coreAssembly = LoadMonoAssembly(MAZE_HCS("maze-csharp-core-lib.dll"), false);
-        g_monoEngineData->coreAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
-        g_monoEngineData->monoBehaviourData.monoBehaviourClass = MakeShared<ScriptClass>("Maze", "MonoBehaviour", g_monoEngineData->coreAssemblyImage);
-
-        LoadAssemblyClasses(g_monoEngineData->coreAssembly);
+        LoadCoreAssembly(MAZE_HCS("maze-csharp-core-lib.dll"));
 
         return true;
     }
@@ -232,13 +230,18 @@ namespace Maze
     //////////////////////////////////////////
     void MonoEngine::ShutdownMono()
     {
+        g_monoEngineData->appAssembly = nullptr;
+        g_monoEngineData->appAssemblyImage = nullptr;
+
+        g_monoEngineData->coreAssembly = nullptr;
+        g_monoEngineData->coreAssemblyImage = nullptr;
+
         g_monoEngineData->monoDomain = nullptr;
         g_monoEngineData->appDomain = nullptr;
-        g_monoEngineData->coreAssembly = nullptr;
     }
-    
+
     //////////////////////////////////////////
-    MonoAssembly* MonoEngine::LoadMonoAssembly(ByteBuffer const& _csharpFile, bool _loadClasses)
+    MonoAssembly* MonoEngine::LoadMonoAssembly(ByteBuffer const& _csharpFile)
     {
         // NOTE: We can't use this image for anything other than loading the assembly
         // because this image doesn't have a reference to the assembly
@@ -259,15 +262,11 @@ namespace Maze
         MonoAssembly* assembly = mono_assembly_load_from_full(image, "", &status, 0);
         mono_image_close(image);
 
-
-        if (_loadClasses)
-            LoadAssemblyClasses(assembly);
-
         return assembly;
     }
 
     //////////////////////////////////////////
-    MonoAssembly* MonoEngine::LoadMonoAssembly(AssetFilePtr const& _csharpFile, bool _loadClasses)
+    MonoAssembly* MonoEngine::LoadMonoAssembly(AssetFilePtr const& _csharpFile)
     {
         if (!_csharpFile)
             return nullptr;
@@ -276,17 +275,40 @@ namespace Maze
         if (!byteBuffer)
             return nullptr;
 
-        return LoadMonoAssembly(*byteBuffer.get(), _loadClasses);
+        return LoadMonoAssembly(*byteBuffer.get());
     }
 
     //////////////////////////////////////////
-    MonoAssembly* MonoEngine::LoadMonoAssembly(HashedCString _csharpFile, bool _loadClasses)
+    MonoAssembly* MonoEngine::LoadMonoAssembly(HashedCString _csharpFile)
     {
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_csharpFile);
         if (!assetFile)
             return nullptr;
 
-        return LoadMonoAssembly(assetFile, _loadClasses);
+        return LoadMonoAssembly(assetFile);
+    }
+
+    //////////////////////////////////////////
+    MonoAssembly* MonoEngine::LoadCoreAssembly(HashedCString _csharpFile)
+    {
+        g_monoEngineData->coreAssembly = LoadMonoAssembly(_csharpFile);
+        g_monoEngineData->coreAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
+        g_monoEngineData->monoBehaviourData.monoBehaviourClass = MakeShared<ScriptClass>("Maze", "MonoBehaviour", g_monoEngineData->coreAssemblyImage);
+
+        LoadAssemblyClasses(g_monoEngineData->coreAssembly);
+
+        return g_monoEngineData->coreAssembly;
+    }
+
+    //////////////////////////////////////////
+    MonoAssembly* MonoEngine::LoadAppAssembly(HashedCString _csharpFile)
+    {
+        g_monoEngineData->appAssembly = LoadMonoAssembly(_csharpFile);
+        g_monoEngineData->appAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
+
+        LoadAssemblyClasses(g_monoEngineData->appAssembly);
+
+        return g_monoEngineData->appAssembly;
     }
 
     //////////////////////////////////////////

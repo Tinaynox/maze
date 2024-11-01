@@ -69,12 +69,6 @@ namespace Maze
         MonoDomain* getMonoDomain();
 
         //////////////////////////////////////////
-        MonoAssembly* loadMonoAssembly(ByteBuffer const& _csharpFile);
-
-        //////////////////////////////////////////
-        MonoAssembly* loadMonoAssembly(AssetFilePtr const& _csharpFile);
-
-        //////////////////////////////////////////
         MonoAssembly* loadMonoAssembly(HashedCString _csharpFile);
 
 
