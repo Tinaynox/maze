@@ -138,7 +138,7 @@ namespace Maze
 
                 CString attrClassName = mono_class_get_name(attrClass);
                 CString attrNamespace = mono_class_get_namespace(attrClass);
-                if (strcmp(attrClassName, "EntitySystemAttribute") == 0 && strcmp(attrNamespace, "Maze") == 0)
+                if (strcmp(attrClassName, "EntitySystemAttribute") == 0 && strcmp(attrNamespace, "Maze.Core") == 0)
                 {
                     MonoObject* attrObj = mono_custom_attrs_get_attr(attrInfo, attrClass);
                     if (attrObj)
