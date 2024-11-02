@@ -37,7 +37,7 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-core/math/MazeVec3.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRect2.hpp"
 #include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
 
 

@@ -93,11 +93,11 @@ namespace Maze
     ColorU32 const EditorToolsStyles::c_bodySubBackgroundColorDefault = ColorU32(164, 164, 164, 255);
     U32 const EditorToolsStyles::c_inspectorPropertyFontSizeDefault = 12;
     ColorU32 const EditorToolsStyles::c_inspectorPropertyColorDefault = ColorU32(5, 7, 5, 255);
-    Rect2DF const EditorToolsStyles::c_hierarchyViewportDefault(0.0f, 0.33f, 0.25f, 0.67f - topBarHeight);
-    Rect2DF const EditorToolsStyles::c_inspectorViewportDefault(0.75f, 0.33f, 0.25f, 0.67f - topBarHeight);
-    Rect2DF const EditorToolsStyles::c_assetsViewportDefault(0.0f, 0.0f, 0.5f, 0.33f);
-    Rect2DF const EditorToolsStyles::c_sceneViewportDefault(0.5f, 0.0f, 0.5f, 0.33f);
-    Rect2DF const EditorToolsStyles::c_topBarViewportDefault(0.0f, 0.975f, 1.0f, topBarHeight);
+    Rect2F const EditorToolsStyles::c_hierarchyViewportDefault(0.0f, 0.33f, 0.25f, 0.67f - topBarHeight);
+    Rect2F const EditorToolsStyles::c_inspectorViewportDefault(0.75f, 0.33f, 0.25f, 0.67f - topBarHeight);
+    Rect2F const EditorToolsStyles::c_assetsViewportDefault(0.0f, 0.0f, 0.5f, 0.33f);
+    Rect2F const EditorToolsStyles::c_sceneViewportDefault(0.5f, 0.0f, 0.5f, 0.33f);
+    Rect2F const EditorToolsStyles::c_topBarViewportDefault(0.0f, 0.975f, 1.0f, topBarHeight);
 
     ColorU32 const EditorToolsStyles::c_listObjectTextColorDefault = ColorU32(0, 0, 0, 255);
     ColorU32 const EditorToolsStyles::c_listObjectTextColorSelected = ColorU32(255, 255, 255, 255);

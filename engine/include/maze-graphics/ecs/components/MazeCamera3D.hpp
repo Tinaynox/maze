@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRect2.hpp"
 #include "maze-core/math/MazeRay.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
@@ -116,13 +116,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setViewport(Rect2DF const& _viewport) { m_viewport = _viewport; }
+        inline void setViewport(Rect2F const& _viewport) { m_viewport = _viewport; }
 
         //////////////////////////////////////////
-        inline void setViewport(F32 _x, F32 _y, F32 _w, F32 _h) { setViewport(Rect2DF(_x, _y, _w, _h)); }
+        inline void setViewport(F32 _x, F32 _y, F32 _w, F32 _h) { setViewport(Rect2F(_x, _y, _w, _h)); }
 
         //////////////////////////////////////////
-        inline Rect2DF const& getViewport() const { return m_viewport; }
+        inline Rect2F const& getViewport() const { return m_viewport; }
 
         //////////////////////////////////////////
         F32 getAspectRatio() const;
@@ -222,7 +222,7 @@ namespace Maze
         Transform3DPtr m_transform;
 
         RenderTargetPtr m_renderTarget;
-        Rect2DF m_viewport = { 0.0f, 0.0f, 1.0f, 1.0f };
+        Rect2F m_viewport = { 0.0f, 0.0f, 1.0f, 1.0f };
 
         F32 m_fieldOfViewY = Math::DegreesToRadians(60);
         F32 m_nearZ = 0.01f;

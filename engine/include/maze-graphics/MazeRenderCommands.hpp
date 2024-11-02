@@ -130,13 +130,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline RenderCommandPushScissorRect(
-            Rect2DF const& _scissorRect)
+            Rect2F const& _scissorRect)
             : RenderCommand(RenderCommandType::PushScissorRect)
             , scissorRect(_scissorRect)
         {}
 
     public:
-        Rect2DF scissorRect;
+        Rect2F scissorRect;
     };
 
 

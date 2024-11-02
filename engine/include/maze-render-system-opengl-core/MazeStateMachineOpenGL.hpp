@@ -40,7 +40,7 @@
 #include "maze-graphics/MazeTexture2DMS.hpp"
 #include "maze-graphics/MazeTextureCube.hpp"
 #include "maze-render-system-opengl-core/MazeConfigOpenGL.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRect2.hpp"
 #include "maze-core/math/MazeVec4.hpp"
 #include "maze-core/events/MazeEvent.hpp"
 #include <functional>
@@ -150,10 +150,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Rect2DS const& getViewportRect() const { return m_viewportRect; }
+        inline Rect2S const& getViewportRect() const { return m_viewportRect; }
 
         //////////////////////////////////////////
-        void setViewportRect(Rect2DS const& _viewportRect);
+        void setViewportRect(Rect2S const& _viewportRect);
 
 
         //////////////////////////////////////////
@@ -164,10 +164,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setScissorRect(Rect2DS const& _scissorRect);
+        void setScissorRect(Rect2S const& _scissorRect);
 
         //////////////////////////////////////////
-        inline Rect2DS const& getScissorRect() const { return m_scissorRect; }
+        inline Rect2S const& getScissorRect() const { return m_scissorRect; }
 
 
         //////////////////////////////////////////
@@ -318,9 +318,9 @@ namespace Maze
         MZGLuint m_frameBuffer;
         MZGLuint m_vertexArrayObject;
 
-        Rect2DS m_viewportRect;
+        Rect2S m_viewportRect;
         bool m_scissorTest;
-        Rect2DS m_scissorRect;
+        Rect2S m_scissorRect;
         Vec4F m_clearColor;
         F32 m_clearDepth;
 

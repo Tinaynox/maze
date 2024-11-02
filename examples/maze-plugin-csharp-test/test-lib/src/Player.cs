@@ -26,6 +26,7 @@ namespace Sandbox
         public Vec2F PVec2F { get; set; } = new Vec2F(6.0f, 7.0f);
         public Vec3F PVec3F { get; set; } = new Vec3F(1.0f, 2.0f, 3.0f);
         public Vec4F PVec4F { get; set; } = new Vec4F(7.0f, 7.0f, 7.0f, 7.0f);
+        public Rect2F PRect2F { get; set; } = new Rect2F(0.0f, 0.0f, 1.0f, 2.0f);
 
 
 

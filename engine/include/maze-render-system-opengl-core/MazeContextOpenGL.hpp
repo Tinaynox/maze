@@ -235,10 +235,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setViewportRect(Rect2DS const& _viewportRect);
+        void setViewportRect(Rect2S const& _viewportRect);
 
         //////////////////////////////////////////
-        inline Rect2DS const& getViewportRect() const { return m_stateMachine->getViewportRect(); }
+        inline Rect2S const& getViewportRect() const { return m_stateMachine->getViewportRect(); }
 
 
         //////////////////////////////////////////
@@ -377,16 +377,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setScissorRect(Rect2DS const& _scissorRect);
+        void setScissorRect(Rect2S const& _scissorRect);
 
         //////////////////////////////////////////
         inline void setScissorRect(S32 _x, S32 _y, S32 _w, S32 _h)
         {
-            setScissorRect(Rect2DS(_x, _y, _w, _h));
+            setScissorRect(Rect2S(_x, _y, _w, _h));
         }
 
         //////////////////////////////////////////
-        inline Rect2DS const& getScissorRect() const { return m_stateMachine->getScissorRect(); }
+        inline Rect2S const& getScissorRect() const { return m_stateMachine->getScissorRect(); }
 
         //////////////////////////////////////////
         void setScissorTestEnabled(bool _value);

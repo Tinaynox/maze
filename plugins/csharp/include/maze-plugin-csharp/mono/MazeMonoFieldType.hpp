@@ -41,7 +41,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_24_API(MAZE_PLUGIN_CSHARP_API, MonoFieldType,
+    MAZE_DECLARE_ENUMCLASS_25_API(MAZE_PLUGIN_CSHARP_API, MonoFieldType,
         TypeString,
         TypeBool,
         TypeS8,
@@ -65,7 +65,8 @@ namespace Maze
         TypeVec4F,
         TypeMat3F,
         TypeMat4F,
-        TypeTMat);
+        TypeTMat,
+        TypeRect2F);
 
 } // namespace Maze
 //////////////////////////////////////////

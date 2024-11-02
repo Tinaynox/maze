@@ -54,7 +54,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ViewportPtr Viewport::Create(RenderTargetPtr const& renderTarget, Rect2DF const& relativeRect)
+    ViewportPtr Viewport::Create(RenderTargetPtr const& renderTarget, Rect2F const& relativeRect)
     {
         ViewportPtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(Viewport, object, init(renderTarget, relativeRect));
@@ -62,7 +62,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool Viewport::init(RenderTargetPtr const& renderTarget, Rect2DF const& relativeRect)
+    bool Viewport::init(RenderTargetPtr const& renderTarget, Rect2F const& relativeRect)
     {
         setRenderTarget(renderTarget);
         setRelativeRect(relativeRect);
@@ -93,7 +93,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Viewport::setRelativeRect(Rect2DF const& relativeRect)
+    void Viewport::setRelativeRect(Rect2F const& relativeRect)
     {
         m_relativeRect = relativeRect;
         updateAbsoluteRect();

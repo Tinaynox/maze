@@ -165,11 +165,11 @@ namespace Maze
     {
         _dt = UpdateManager::GetInstancePtr()->getUnscaledDeltaTime();
 
-        Rect2DF viewportRect = m_camera3D->getViewport();
+        Rect2F viewportRect = m_camera3D->getViewport();
         viewportRect.position *= (Vec2F)m_camera3D->getRenderTarget()->getRenderTargetSize();
         viewportRect.size *= (Vec2F)m_camera3D->getRenderTarget()->getRenderTargetSize();
 
-        AABB2D aabb = AABB2D::FromRect2D(viewportRect);
+        AABB2D aabb = AABB2D::FromRect2(viewportRect);
 
         if (aabb.contains(InputManager::GetInstancePtr()->getCursorPosition(0)))
         {
@@ -237,7 +237,7 @@ namespace Maze
                 if (_data.buttonId == 1)
                 {
                     Vec2F cursorPosition = Vec2F((F32)_data.x, (F32)_data.y);
-                    Rect2DF viewportRect(
+                    Rect2F viewportRect(
                         m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                         m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
                         m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
@@ -277,7 +277,7 @@ namespace Maze
         m_camera3D->getTransform()->setLocalRotation(Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
         m_camera3D->setRenderMask(0xFFFFFFFF);
 
-        Rect2DF cameraViewport = m_sceneViewport;
+        Rect2F cameraViewport = m_sceneViewport;
         m_camera3D->setViewport(cameraViewport);
         m_camera3D->setRenderTarget(m_renderTarget);
         m_camera3D->setClearColor(ColorU32(99, 101, 140, 255));
@@ -319,7 +319,7 @@ namespace Maze
             m_hierarchyCanvas = hierarchyCanvasEntity->createComponent<Canvas>();
             m_hierarchyCanvas->setClearColorFlag(false);
             m_hierarchyCanvas->setClearColor(ColorU32::c_zero);
-            Rect2DF hierarchyCanvasViewport = m_hierarchyViewport;
+            Rect2F hierarchyCanvasViewport = m_hierarchyViewport;
             m_hierarchyCanvas->setViewport(hierarchyCanvasViewport);
             m_hierarchyCanvas->setRenderTarget(m_renderTarget);
             m_hierarchyCanvas->setSortOrder(-1000000);
@@ -342,7 +342,7 @@ namespace Maze
             m_hierarchyCanvas = hierarchyCanvasEntity->createComponent<Canvas>();
             m_hierarchyCanvas->setClearColorFlag(false);
             m_hierarchyCanvas->setClearColor(ColorU32::c_zero);
-            Rect2DF hierarchyCanvasViewport = m_hierarchyViewport;
+            Rect2F hierarchyCanvasViewport = m_hierarchyViewport;
             m_hierarchyCanvas->setViewport(hierarchyCanvasViewport);
             m_hierarchyCanvas->setRenderTarget(m_renderTarget);
             m_hierarchyCanvas->setSortOrder(-1000000);
@@ -364,7 +364,7 @@ namespace Maze
             m_inspectorCanvas = inspectorCanvasEntity->createComponent<Canvas>();
             m_inspectorCanvas->setClearColorFlag(false);
             m_inspectorCanvas->setClearColor(ColorU32::c_zero);
-            Rect2DF inspectorCanvasViewport = m_inspectorViewport;
+            Rect2F inspectorCanvasViewport = m_inspectorViewport;
             m_inspectorCanvas->setViewport(inspectorCanvasViewport);
             m_inspectorCanvas->setRenderTarget(m_renderTarget);
             m_inspectorCanvas->setSortOrder(-1000000);
@@ -379,7 +379,7 @@ namespace Maze
             m_assetsCanvas = assetsCanvasEntity->createComponent<Canvas>();
             m_assetsCanvas->setClearColorFlag(false);
             m_assetsCanvas->setClearColor(ColorU32::c_zero);
-            Rect2DF assetsCanvasViewport = m_assetsViewport;
+            Rect2F assetsCanvasViewport = m_assetsViewport;
             m_assetsCanvas->setViewport(assetsCanvasViewport);
             m_assetsCanvas->setRenderTarget(m_renderTarget);
             m_assetsCanvas->setSortOrder(-1000000);
@@ -394,7 +394,7 @@ namespace Maze
             m_topBarCanvas = topBarCanvasEntity->createComponent<Canvas>();
             m_topBarCanvas->setClearColorFlag(false);
             m_topBarCanvas->setClearColor(ColorU32::c_zero);
-            Rect2DF topBarCanvasViewport = m_topBarViewport;
+            Rect2F topBarCanvasViewport = m_topBarViewport;
             m_topBarCanvas->setViewport(topBarCanvasViewport);
             m_topBarCanvas->setRenderTarget(m_renderTarget);
             m_topBarCanvas->setSortOrder(-1000000);

@@ -33,7 +33,7 @@
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRect2.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
 #include "maze-graphics/ecs/MazeLightingSettings.hpp"
@@ -53,7 +53,7 @@ namespace Maze
         S32 renderMask = 0;
         TMat cameraTransform = TMat::c_identity;
         Mat4F projectionMatrix = Mat4F::c_identity;
-        Rect2DF viewport = Rect2DF(0.0f, 0.0f, 1.0f, 1.0f);
+        Rect2F viewport = Rect2F(0.0f, 0.0f, 1.0f, 1.0f);
         F32 nearZ = 0.001f;
         F32 farZ = 100.0f;
         F32 fieldOfViewY = Math::DegreesToRadians(30.0f);

@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeMPDRect2DF.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMPDRect2F.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
@@ -49,22 +49,22 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class MetaPropertyDrawerRect2DF
+    // Class MetaPropertyDrawerRect2F
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(MetaPropertyDrawerRect2DF, MetaPropertyDrawer);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(MetaPropertyDrawerRect2F, MetaPropertyDrawer);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MetaPropertyDrawerRect2DF);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MetaPropertyDrawerRect2F);
 
     //////////////////////////////////////////
-    MetaPropertyDrawerRect2DF::MetaPropertyDrawerRect2DF()
+    MetaPropertyDrawerRect2F::MetaPropertyDrawerRect2F()
     {
         
     }
 
     //////////////////////////////////////////
-    MetaPropertyDrawerRect2DF::~MetaPropertyDrawerRect2DF()
+    MetaPropertyDrawerRect2F::~MetaPropertyDrawerRect2F()
     {
         if (m_drawer)
         {
@@ -74,27 +74,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MetaPropertyDrawerRect2DFPtr MetaPropertyDrawerRect2DF::Create(MetaProperty* _metaProperty)
+    MetaPropertyDrawerRect2FPtr MetaPropertyDrawerRect2F::Create(MetaProperty* _metaProperty)
     {
-        MetaPropertyDrawerRect2DFPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(MetaPropertyDrawerRect2DF, object, init(_metaProperty));
+        MetaPropertyDrawerRect2FPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(MetaPropertyDrawerRect2F, object, init(_metaProperty));
         return object;
     }
 
     //////////////////////////////////////////
-    bool MetaPropertyDrawerRect2DF::init(MetaProperty* _metaProperty)
+    bool MetaPropertyDrawerRect2F::init(MetaProperty* _metaProperty)
     {
         if (!MetaPropertyDrawer::init(_metaProperty))
             return false;
 
-        m_drawer = PropertyDrawerRect2DF::Create(static_cast<CString>(_metaProperty->getName()));
-        m_drawer->eventUIData.subscribe(this, &MetaPropertyDrawerRect2DF::processDataFromUI);
+        m_drawer = PropertyDrawerRect2F::Create(static_cast<CString>(_metaProperty->getName()));
+        m_drawer->eventUIData.subscribe(this, &MetaPropertyDrawerRect2F::processDataFromUI);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void MetaPropertyDrawerRect2DF::buildUI(
+    void MetaPropertyDrawerRect2F::buildUI(
         Transform2DPtr const& _parent,
         CString _label)
     {
@@ -102,15 +102,15 @@ namespace Maze
     }
 
     ////////////////////////////////////////////
-    void MetaPropertyDrawerRect2DF::unselectUI()
+    void MetaPropertyDrawerRect2F::unselectUI()
     {
         m_drawer->unselectUI();
     }
 
     //////////////////////////////////////////
-    void MetaPropertyDrawerRect2DF::processDataToUI()
+    void MetaPropertyDrawerRect2F::processDataToUI()
     {
-        Rect2DF value;
+        Rect2F value;
         bool isMultiValue;
         fetchPropertyValue(value, isMultiValue);
 
@@ -122,12 +122,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MetaPropertyDrawerRect2DF::processDataFromUI()
+    void MetaPropertyDrawerRect2F::processDataFromUI()
     {
         if (m_processingDataToUI)
             return;
 
-        Rect2DF value = m_drawer->getValue();
+        Rect2F value = m_drawer->getValue();
 
         if (MetaClassHelper::IsValueEqual(value, m_metaProperty, m_metaInstances))
             return;

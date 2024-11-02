@@ -423,9 +423,9 @@ namespace Maze
         m_program = 0;
         m_frameBuffer = 0;
         m_vertexArrayObject = 0;
-        m_viewportRect = Rect2DS(0, 0, 0, 0);
+        m_viewportRect = Rect2S(0, 0, 0, 0);
         m_scissorTest = false;
-        m_scissorRect = Rect2DS(0, 0, 0, 0);
+        m_scissorRect = Rect2S(0, 0, 0, 0);
         m_clearColor = Vec4F(1.0f, 0.0f, 1.0f, 1.0f);
         m_clearDepth = 1.0f;
         m_blendEnabled = false;
@@ -667,7 +667,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void StateMachineOpenGL::setViewportRect(Rect2DS const& _viewportRect)
+    void StateMachineOpenGL::setViewportRect(Rect2S const& _viewportRect)
     {
         if (m_viewportRect == _viewportRect)
             return;
@@ -711,7 +711,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void StateMachineOpenGL::setScissorRect(Rect2DS const& _scissorRect)
+    void StateMachineOpenGL::setScissorRect(Rect2S const& _scissorRect)
     {
         if (m_scissorRect == _scissorRect)
             return;

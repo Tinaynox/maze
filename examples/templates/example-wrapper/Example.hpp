@@ -83,7 +83,7 @@ namespace Maze
         RenderWindowPtr const& getMainRenderWindow() const { return m_mainRenderWindow; }
 
         //////////////////////////////////////////
-        Rect2DF const& getMainRenderWindowViewport() const { return m_mainRenderWindowViewport; }
+        Rect2F const& getMainRenderWindowViewport() const { return m_mainRenderWindowViewport; }
 
         //////////////////////////////////////////
         inline Vec2U32 getMainRenderWindowAbsoluteSize()
@@ -130,7 +130,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        MultiDelegate<Rect2DF const&> eventMainRenderWindowViewportChanged;
+        MultiDelegate<Rect2F const&> eventMainRenderWindowViewportChanged;
         MultiDelegate<> eventMainRenderWindowCreated;
         MultiDelegate<> eventCoreGameResourcesLoaded;
 
@@ -167,7 +167,7 @@ namespace Maze
         bool loadPlugins();
 
         //////////////////////////////////////////
-        void setMainRenderWindowViewport(Rect2DF const& _mainRenderWindowViewport);
+        void setMainRenderWindowViewport(Rect2F const& _mainRenderWindowViewport);
 
         //////////////////////////////////////////
         void notifyDebuggerActiveChanged(bool const& _active);
@@ -186,7 +186,7 @@ namespace Maze
 
         ExampleMainRenderWindowState m_mainRenderWindowState;
         RenderWindowPtr m_mainRenderWindow;
-        Rect2DF m_mainRenderWindowViewport;
+        Rect2F m_mainRenderWindowViewport;
 
 
         F32 m_debugEditorProgress;

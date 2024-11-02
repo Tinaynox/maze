@@ -133,8 +133,8 @@ namespace Maze
             if (!canvas || !rootCanvas)
                 continue;
                             
-            Rect2DF const& viewport = canvas->getViewport();
-            Rect2DF const& rootViewport = rootCanvas->getViewport();
+            Rect2F const& viewport = canvas->getViewport();
+            Rect2F const& rootViewport = rootCanvas->getViewport();
 
             RenderTargetPtr const& renderTarget = canvas->getRenderTarget();
             RenderQueuePtr const& renderQueue = renderTarget->getRenderQueue();
@@ -154,7 +154,7 @@ namespace Maze
                     }
                     else
                     {
-                        Rect2DF p = viewport.intersectedCopy(rootViewport);
+                        Rect2F p = viewport.intersectedCopy(rootViewport);
                         renderQueue->addPushScissorRectCommand(p);
                     }
                 }
@@ -298,7 +298,7 @@ namespace Maze
                             ScissorMask2D* scissorMask = commandData.scissorMask;
                             
                             AABB2D const& aabb = scissorMask->getScissorBounds();
-                            Rect2DF rect = aabb.toRect();
+                            Rect2F rect = aabb.toRect();
                             Vec2F renderTargetSize = (Vec2F)renderTarget->getRenderTargetSize();
                             rect.position /= renderTargetSize;
                             rect.size /= renderTargetSize;

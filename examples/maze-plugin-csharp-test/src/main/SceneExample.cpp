@@ -225,7 +225,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
+    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
     {
         if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
             return;
@@ -279,7 +279,7 @@ namespace Maze
                 if (_data.buttonId == 1)
                 {
                     Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
-                    Rect2DF viewportRect(
+                    Rect2F viewportRect(
                         m_canvas->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                         m_canvas->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
                         m_canvas->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
@@ -334,7 +334,7 @@ namespace Maze
                 if (_data.index == 0)
                 {
                     Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
-                    Rect2DF viewportRect(
+                    Rect2F viewportRect(
                         m_canvas->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                         m_canvas->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
                         m_canvas->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,

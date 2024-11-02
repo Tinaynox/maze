@@ -58,7 +58,8 @@ namespace Maze
         { "Maze.Vec4F", MonoFieldType::TypeVec4F },
         { "Maze.Mat3F", MonoFieldType::TypeMat3F },
         { "Maze.Mat4F", MonoFieldType::TypeMat4F },
-        { "Maze.TMat", MonoFieldType::TypeTMat }
+        { "Maze.TMat", MonoFieldType::TypeTMat },
+        { "Maze.Rect2F", MonoFieldType::TypeRect2F },
     };
 
 

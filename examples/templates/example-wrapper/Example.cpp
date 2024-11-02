@@ -193,7 +193,7 @@ namespace Maze
     void Example::updateDebugEditorViewport()
     {
         F32 p = Math::SmoothStep(0.0f, 1.0f, m_debugEditorProgress);
-        Rect2DF viewport(
+        Rect2F viewport(
             Math::Lerp(0.0f, 0.25f, p),
             Math::Lerp(0.0f, 0.33f, p),
             Math::Lerp(1.0f, 0.5f, p),
@@ -403,7 +403,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Example::setMainRenderWindowViewport(Rect2DF const& _mainRenderWindowViewport)
+    void Example::setMainRenderWindowViewport(Rect2F const& _mainRenderWindowViewport)
     {
         if (m_mainRenderWindowViewport == _mainRenderWindowViewport)
             return;

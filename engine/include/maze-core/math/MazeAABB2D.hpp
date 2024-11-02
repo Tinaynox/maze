@@ -34,7 +34,7 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeVec2.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRect2.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
 #include <ostream>
 
@@ -102,7 +102,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <class UValue = F32>
-        static AABB2D FromRect2D(Rect2D<UValue> const& _rect)
+        static AABB2D FromRect2(Rect2<UValue> const& _rect)
         {
             AABB2D result;
             result.m_min.x = static_cast<F32>(_rect.position.x);
@@ -114,9 +114,9 @@ namespace Maze
 
         //////////////////////////////////////////
         template <class UValue = F32>
-        Rect2D<UValue> toRect() const
+        Rect2<UValue> toRect() const
         {
-            Rect2D<UValue> result;
+            Rect2<UValue> result;
             result.position.x = static_cast<UValue>(m_min.x);
             result.position.y = static_cast<UValue>(m_min.y);
             result.size.x = static_cast<UValue>(m_max.x - m_min.x);

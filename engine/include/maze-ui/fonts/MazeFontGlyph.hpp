@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRect2.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 
 
@@ -52,13 +52,13 @@ namespace Maze
         // Offset to move horizontally to the next character
         F32 advance = 0.0f;
         // Bounding rectangle of the glyph, in coordinates relative to the baseline
-        Rect2DF	bounds;
+        Rect2F	bounds;
         // Font's texture
         Texture2DPtr texture;
         // Texture coordinates of the glyph inside the font's texture
-        Rect2DS textureRect;
+        Rect2S textureRect;
         // Texture coordinates of the glyph inside the font's texture
-        Rect2DF textureCoords;
+        Rect2F textureCoords;
     };
 
 

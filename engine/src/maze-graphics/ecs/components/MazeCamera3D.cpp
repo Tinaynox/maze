@@ -44,7 +44,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Camera3D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Rect2DF, viewport, Rect2DF(0.0f, 0.0f, 1.0f, 1.0f), getViewport, setViewport),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Rect2F, viewport, Rect2F(0.0f, 0.0f, 1.0f, 1.0f), getViewport, setViewport),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, fov, Maze::Math::DegreesToRadians(60), getFOV, setFOV),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, nearZ, 0.01f, getNearZ, setNearZ),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, farZ, 200.0f, getFarZ, setFarZ),

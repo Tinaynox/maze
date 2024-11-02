@@ -117,7 +117,7 @@ namespace Maze
         Timer m_timer;
         F32 m_drawTime;
 
-        Stack<Rect2DS> m_scissorRects;
+        Stack<Rect2S> m_scissorRects;
 
         Vec4F m_clipPlanes[MAZE_GL_MAX_CLIP_DISTANCES_COUNT] = { Vec4F::c_zero };
     };

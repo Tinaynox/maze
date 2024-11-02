@@ -52,7 +52,7 @@ namespace Maze
         , m_order(0)
         , m_clearColor(ColorU32::c_lightGray)
         , m_clearDepth(1.0f)
-        , m_viewport(Rect2DF(0.0f, 0.0f, 1.0f, 1.0f))
+        , m_viewport(Rect2F(0.0f, 0.0f, 1.0f, 1.0f))
         , m_viewPosition(Vec3F::c_zero)
         , m_viewMatrix(TMat::c_identity)
         , m_projectionMatrix(Mat4F::c_identity)
@@ -123,7 +123,7 @@ namespace Maze
     {
         if (beginDraw())
         {
-            Rect2DF const viewport(0.0f, 0.0f, 1.0f, 1.0f);
+            Rect2F const viewport(0.0f, 0.0f, 1.0f, 1.0f);
 
             RenderTarget* renderTarget = this;
             RenderQueuePtr const& renderQueue = renderTarget->getRenderQueue();

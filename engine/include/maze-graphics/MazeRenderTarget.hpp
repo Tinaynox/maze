@@ -41,7 +41,7 @@
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/math/MazeMat4.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRect2.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 
@@ -166,13 +166,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Rect2DF const& getViewport() const { return m_viewport; }
+        inline Rect2F const& getViewport() const { return m_viewport; }
 
         //////////////////////////////////////////
-        inline void setViewport(Rect2DF const& _viewport) { m_viewport = _viewport; }
+        inline void setViewport(Rect2F const& _viewport) { m_viewport = _viewport; }
 
         //////////////////////////////////////////
-        inline void setViewport(F32 _x, F32 _y, F32 _w, F32 _h) { setViewport(Rect2DF(_x, _y, _w, _h)); }
+        inline void setViewport(F32 _x, F32 _y, F32 _w, F32 _h) { setViewport(Rect2F(_x, _y, _w, _h)); }
 
 
         //////////////////////////////////////////
@@ -259,7 +259,7 @@ namespace Maze
 
         RenderQueuePtr m_renderQueue;
 
-        Rect2DF m_viewport;
+        Rect2F m_viewport;
         Vec3F m_viewPosition;
         TMat m_viewMatrix;
 

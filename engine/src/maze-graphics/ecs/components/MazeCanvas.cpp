@@ -46,7 +46,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Canvas, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Rect2DF, viewport, Rect2DF(0.0f, 0.0f, 1.0f, 1.0f), getViewport, setViewport),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Rect2F, viewport, Rect2F(0.0f, 0.0f, 1.0f, 1.0f), getViewport, setViewport),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clearColorFlag, true, getClearColorFlag, setClearColorFlag),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, clearColor, ColorU32(99, 101, 140, 255), getClearColor, setClearColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clearDepthFlag, true, getClearDepthFlag, setClearDepthFlag),
@@ -130,7 +130,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Canvas::setViewport(Rect2DF const& _viewport)
+    void Canvas::setViewport(Rect2F const& _viewport)
     {
         if (m_viewport == _viewport)
             return;
@@ -143,12 +143,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Rect2DF Canvas::getRenderTargetRect() const
+    Rect2F Canvas::getRenderTargetRect() const
     {
         if (!getRenderTarget())
-            return Rect2DF::c_zero;
+            return Rect2F::c_zero;
 
-        Rect2DF viewportRect = getViewport();
+        Rect2F viewportRect = getViewport();
         viewportRect.position *= (Vec2F)getRenderTarget()->getRenderTargetSize();
         viewportRect.size *= (Vec2F)getRenderTarget()->getRenderTargetSize();
         viewportRect.position = Math::Round(viewportRect.position);
@@ -159,7 +159,7 @@ namespace Maze
     //////////////////////////////////////////
     AABB2D Canvas::getRenderTargetAABB() const
     {
-        return AABB2D::FromRect2D(getRenderTargetRect());
+        return AABB2D::FromRect2(getRenderTargetRect());
     }
 
     //////////////////////////////////////////
@@ -212,7 +212,7 @@ namespace Maze
 
                     if (renderTargetWidth > 0.0f && renderTargetHeight > 0.0f)
                     {
-                        Rect2DF listVieport(
+                        Rect2F listVieport(
                             lbRenderTargetSpace.x / renderTargetWidth,
                             lbRenderTargetSpace.y / renderTargetHeight,
                             (rtRenderTargetSpace.x - lbRenderTargetSpace.x) / renderTargetWidth,

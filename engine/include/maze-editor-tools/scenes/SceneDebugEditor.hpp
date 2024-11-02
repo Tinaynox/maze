@@ -118,19 +118,19 @@ namespace Maze
         CanvasPtr m_mainCanvas;
 
         CanvasPtr m_hierarchyCanvas;
-        Rect2DF m_hierarchyViewport;
+        Rect2F m_hierarchyViewport;
 
         CanvasPtr m_inspectorCanvas;
-        Rect2DF m_inspectorViewport;
+        Rect2F m_inspectorViewport;
 
         CanvasPtr m_assetsCanvas;
-        Rect2DF m_assetsViewport;
+        Rect2F m_assetsViewport;
 
         CanvasPtr m_topBarCanvas;
-        Rect2DF m_topBarViewport;
+        Rect2F m_topBarViewport;
 
         Camera3DPtr m_camera3D;
-        Rect2DF m_sceneViewport;
+        Rect2F m_sceneViewport;
 
         F32 m_yawAngle;
         F32 m_pitchAngle;

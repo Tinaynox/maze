@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRect2.hpp"
 #include "maze-core/math/MazeRay.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeAnimationCurve.hpp"

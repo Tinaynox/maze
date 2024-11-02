@@ -42,6 +42,7 @@
 #include "maze-editor-tools/property-drawers/MazePDVec3F32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDVec4F32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDVec2S32.hpp"
+#include "maze-editor-tools/property-drawers/MazePDRect2F.hpp"
 
 
 //////////////////////////////////////////
@@ -121,6 +122,7 @@ namespace Maze
             // case MonoFieldType::TypeMat3F: m_drawer = PropertyDrawerMat3F::Create(""); break;
             // case MonoFieldType::TypeMat4F: m_drawer = PropertyDrawerMat4F::Create(""); break;
             // case MonoFieldType::TypeTMat: m_drawer = PropertyDrawerTMat::Create(""); break;
+            case MonoFieldType::TypeRect2F: m_drawer = PropertyDrawerRect2F::Create(""); break;
             default:
                 return false;
         }
@@ -278,6 +280,12 @@ namespace Maze
             {
                 break;
             }
+            case MonoFieldType::TypeRect2F:
+            {
+                Rect2F value; monoBehaviour->getMonoInstance().getProperty(m_monoProperty, value);
+                m_drawer->castRaw<PropertyDrawerRect2F>()->setValue(value);
+                break;
+            }
         }
     }
 
@@ -418,6 +426,12 @@ namespace Maze
             }
             case MonoFieldType::TypeTMat:
             {
+                break;
+            }
+            case MonoFieldType::TypeRect2F:
+            {
+                monoBehaviour->getMonoInstance().setProperty(m_monoProperty,
+                    m_drawer->castRaw<PropertyDrawerRect2F>()->getValue());
                 break;
             }
         }

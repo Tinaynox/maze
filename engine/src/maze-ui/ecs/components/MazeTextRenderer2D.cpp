@@ -445,7 +445,7 @@ namespace Maze
         F32 descent = getFontMaterial()->getFont()->getDefaultFont()->getDescender(m_fontSize);
         F32 linespace = getFontMaterial()->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
 
-        Rect2DF xBounds = getFontMaterial()->getFont()->getDefaultFont()->ensureGlyph(L'x', m_fontSize, *ttfPage).bounds;
+        Rect2F xBounds = getFontMaterial()->getFont()->getDefaultFont()->ensureGlyph(L'x', m_fontSize, *ttfPage).bounds;
 
         F32 hSpace = static_cast<F32>(getFontMaterial()->getFont()->getDefaultFont()->ensureGlyph(L' ', m_fontSize, *ttfPage).advance);
         F32 vSpace = linespace;

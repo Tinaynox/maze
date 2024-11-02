@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazePropertyDrawerRect2DF_hpp_))
-#define _MazePropertyDrawerRect2DF_hpp_
+#if (!defined(_MazeMetaPropertyDrawerRect2F_hpp_))
+#define _MazeMetaPropertyDrawerRect2F_hpp_
 
 
 //////////////////////////////////////////
@@ -37,83 +37,74 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-core/math/MazeVec3.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
-#include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
+#include "maze-core/math/MazeRect2.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
+#include "maze-editor-tools/property-drawers/MazePDRect2F.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(PropertyDrawerRect2DF);
+    MAZE_USING_SHARED_PTR(MetaPropertyDrawerRect2F);
     MAZE_USING_SHARED_PTR(EditBox2D);
 
 
     //////////////////////////////////////////
-    // Class PropertyDrawerRect2DF
+    // Class MetaPropertyDrawerRect2F
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API PropertyDrawerRect2DF
-        : public GenericPropertyDrawer<Rect2DF>
-        , public MultiDelegateCallbackReceiver
+    class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerRect2F
+        : public GenericMetaPropertyDrawer<Rect2F>
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(PropertyDrawerRect2DF, PropertyDrawer);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(MetaPropertyDrawerRect2F, MetaPropertyDrawer);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(PropertyDrawerRect2DF);
+        MAZE_DECLARE_MEMORY_ALLOCATION(MetaPropertyDrawerRect2F);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~PropertyDrawerRect2DF();
+        virtual ~MetaPropertyDrawerRect2F();
 
         //////////////////////////////////////////
-        static PropertyDrawerRect2DFPtr Create(String const& _label);
-
-
-        //////////////////////////////////////////
-        virtual void setValue(Rect2DF const& _value) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual Rect2DF getValue() const MAZE_OVERRIDE;
+        static MetaPropertyDrawerRect2FPtr Create(MetaProperty* _metaProperty);
 
 
         //////////////////////////////////////////
-        virtual void buildUI(
-            Transform2DPtr const& _parent,
-            CString _label = nullptr) MAZE_OVERRIDE;
+        virtual void processDataToUI() MAZE_OVERRIDE;
 
-        ////////////////////////////////////////////
-        virtual void unselectUI() MAZE_OVERRIDE;
+        //////////////////////////////////////////
+        virtual void processDataFromUI() MAZE_OVERRIDE;
 
     protected:
 
         //////////////////////////////////////////
-        PropertyDrawerRect2DF();
+        MetaPropertyDrawerRect2F();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(MetaProperty* _metaProperty) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual void buildUI(
+            Transform2DPtr const& _parent,
+            CString _label) MAZE_OVERRIDE;
+
+        ////////////////////////////////////////////
+        virtual void unselectUI() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         EditBox2DPtr createF32Edit(
             CString _name,
             Transform2DPtr const& _parent);
 
-        //////////////////////////////////////////
-        void notifyTextInput(EditBox2D* _editBox);
-
-        //////////////////////////////////////////
-        void notifySelectedChanged(EditBox2D* _editBox, bool _selected);
-
     protected:
-        EditBox2DPtr m_editBoxX;
-        EditBox2DPtr m_editBoxY;
-        EditBox2DPtr m_editBoxW;
-        EditBox2DPtr m_editBoxH;
+        PropertyDrawerRect2FPtr m_drawer;
+
+        bool m_processingDataToUI = false;
     };
 
 
@@ -121,5 +112,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazePropertyDrawerRect2DF_hpp_
+#endif // _MazeMetaPropertyDrawerRect2F_hpp_
 //////////////////////////////////////////

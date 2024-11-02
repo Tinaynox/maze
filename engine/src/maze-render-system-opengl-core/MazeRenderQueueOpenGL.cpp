@@ -255,11 +255,11 @@ namespace Maze
                         sizeY += fractY;
                         
                         
-                        Rect2DS scissorRect;
+                        Rect2S scissorRect;
                         if (!m_scissorRects.empty())
                         {
                             scissorRect = m_scissorRects.top().intersectedCopy(
-                                Rect2DS(
+                                Rect2S(
                                     (S32)posX,
                                     (S32)posY,
                                     (S32)(sizeX + 0.5f),
@@ -268,7 +268,7 @@ namespace Maze
                         }
                         else
                         {
-                            scissorRect = Rect2DS(
+                            scissorRect = Rect2S(
                                 (S32)(posX),
                                 (S32)(posY),
                                 (S32)(sizeX + 0.5f),
@@ -444,7 +444,7 @@ namespace Maze
     void RenderQueueOpenGL::processDrawBegin()
     {
         m_context->setViewportRect(
-            Rect2DS(
+            Rect2S(
                 (S32)Math::Round(m_renderTarget->getRenderTargetWidth() * m_renderTarget->getViewport().position.x),
                 (S32)Math::Round(m_renderTarget->getRenderTargetHeight() * m_renderTarget->getViewport().position.y),
                 (S32)Math::Round(m_renderTarget->getRenderTargetWidth() * m_renderTarget->getViewport().size.x),

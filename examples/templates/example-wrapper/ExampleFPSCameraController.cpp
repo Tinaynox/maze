@@ -119,11 +119,11 @@ namespace Maze
         if (!Example::GetInstancePtr() || !Example::GetInstancePtr()->isWindowFocused())
             return;
 
-        Rect2DF viewportRect = m_canvas->getViewport();
+        Rect2F viewportRect = m_canvas->getViewport();
         viewportRect.position *= (Vec2F32)m_canvas->getRenderTarget()->getRenderTargetSize();
         viewportRect.size *= (Vec2F32)m_canvas->getRenderTarget()->getRenderTargetSize();
 
-        AABB2D aabb = AABB2D::FromRect2D(viewportRect);
+        AABB2D aabb = AABB2D::FromRect2(viewportRect);
         Vec2F32 cursorPositionRWS = InputManager::GetInstancePtr()->getCursorPosition(0);
 
         if (aabb.contains(cursorPositionRWS))

@@ -265,7 +265,7 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void addPushScissorRectCommand(
-            Rect2DF const& _scissorRect)
+            Rect2F const& _scissorRect)
         {
             m_lastDrawVAOInstancedCommand = nullptr;
             MAZE_DEBUG_ERROR_IF(_scissorRect.size.x < 0.0f || _scissorRect.size.y < 0.0f, "Scissor size is cannot be negative!");

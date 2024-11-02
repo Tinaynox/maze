@@ -311,7 +311,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void BaseSceneExample::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
+    void BaseSceneExample::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
     {
         if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
             return;
@@ -469,13 +469,13 @@ namespace Maze
         ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
 
         if (exampleCommonSettings->getBloomEnabled())
-            m_camera3D->setViewport(Rect2DF(0.0f, 0.0f, 1.0f, 1.0f));
+            m_camera3D->setViewport(Rect2F(0.0f, 0.0f, 1.0f, 1.0f));
         else
             m_camera3D->setViewport(getMainViewport());
     }
 
     //////////////////////////////////////////
-    Rect2DF BaseSceneExample::getMainViewport()
+    Rect2F BaseSceneExample::getMainViewport()
     {
         return Example::GetInstancePtr()->getMainRenderWindowViewport();
     }

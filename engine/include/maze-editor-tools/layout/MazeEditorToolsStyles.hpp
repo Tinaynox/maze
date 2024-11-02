@@ -79,11 +79,11 @@ namespace Maze
         static ColorU32 const c_bodySubBackgroundColorDefault;
         static U32 const c_inspectorPropertyFontSizeDefault;
         static ColorU32 const c_inspectorPropertyColorDefault;
-        static Rect2DF const c_hierarchyViewportDefault;
-        static Rect2DF const c_inspectorViewportDefault;
-        static Rect2DF const c_assetsViewportDefault;
-        static Rect2DF const c_sceneViewportDefault;
-        static Rect2DF const c_topBarViewportDefault;
+        static Rect2F const c_hierarchyViewportDefault;
+        static Rect2F const c_inspectorViewportDefault;
+        static Rect2F const c_assetsViewportDefault;
+        static Rect2F const c_sceneViewportDefault;
+        static Rect2F const c_topBarViewportDefault;
 
         static ColorU32 const c_listObjectTextColorDefault;
         static ColorU32 const c_listObjectTextColorSelected;
@@ -132,19 +132,19 @@ namespace Maze
         inline ColorU32 const& getInspectorPropertyColor() const { return m_inspectorPropertyColor; }
 
         //////////////////////////////////////////
-        inline Rect2DF const& getHierarchyViewport() const { return m_hierarchyViewport; }
+        inline Rect2F const& getHierarchyViewport() const { return m_hierarchyViewport; }
 
         //////////////////////////////////////////
-        inline Rect2DF const& getInspectorViewport() const { return m_inspectorViewport; }
+        inline Rect2F const& getInspectorViewport() const { return m_inspectorViewport; }
 
         //////////////////////////////////////////
-        inline Rect2DF const& getAssetsViewport() const { return m_assetsViewport; }
+        inline Rect2F const& getAssetsViewport() const { return m_assetsViewport; }
 
         //////////////////////////////////////////
-        inline Rect2DF const& getSceneViewport() const { return m_sceneViewport; }
+        inline Rect2F const& getSceneViewport() const { return m_sceneViewport; }
 
         //////////////////////////////////////////
-        inline Rect2DF const& getTopBarViewport() const { return m_topBarViewport; }
+        inline Rect2F const& getTopBarViewport() const { return m_topBarViewport; }
 
         //////////////////////////////////////////
         inline ColorU32 const& getListObjectTextColorDefault() const { return m_listObjectTextColorDefault; }
@@ -197,11 +197,11 @@ namespace Maze
         ColorU32 m_bodySubBackgroundColor;
         U32 m_inspectorPropertyFontSize;
         ColorU32 m_inspectorPropertyColor;
-        Rect2DF m_hierarchyViewport;
-        Rect2DF m_inspectorViewport;
-        Rect2DF m_assetsViewport;
-        Rect2DF m_sceneViewport;
-        Rect2DF m_topBarViewport;
+        Rect2F m_hierarchyViewport;
+        Rect2F m_inspectorViewport;
+        Rect2F m_assetsViewport;
+        Rect2F m_sceneViewport;
+        Rect2F m_topBarViewport;
 
         ColorU32 m_listObjectTextColorDefault;
         ColorU32 m_listObjectTextColorSelected;

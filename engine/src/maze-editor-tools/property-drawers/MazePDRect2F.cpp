@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/property-drawers/MazePDRect2DF.hpp"
+#include "maze-editor-tools/property-drawers/MazePDRect2F.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
@@ -49,22 +49,22 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class PropertyDrawerRect2DF
+    // Class PropertyDrawerRect2F
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerRect2DF, PropertyDrawer);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerRect2F, PropertyDrawer);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerRect2DF);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerRect2F);
 
     //////////////////////////////////////////
-    PropertyDrawerRect2DF::PropertyDrawerRect2DF()
+    PropertyDrawerRect2F::PropertyDrawerRect2F()
     {
         
     }
 
     //////////////////////////////////////////
-    PropertyDrawerRect2DF::~PropertyDrawerRect2DF()
+    PropertyDrawerRect2F::~PropertyDrawerRect2F()
     {
         if (m_editBoxX)
         {
@@ -92,15 +92,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerRect2DFPtr PropertyDrawerRect2DF::Create(String const& _label)
+    PropertyDrawerRect2FPtr PropertyDrawerRect2F::Create(String const& _label)
     {
-        PropertyDrawerRect2DFPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerRect2DF, object, init(_label));
+        PropertyDrawerRect2FPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerRect2F, object, init(_label));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerRect2DF::init(String const& _label)
+    bool PropertyDrawerRect2F::init(String const& _label)
     {
         if (!PropertyDrawer::init(_label))
             return false;
@@ -109,7 +109,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRect2DF::buildUI(
+    void PropertyDrawerRect2F::buildUI(
         Transform2DPtr const& _parent,
         CString _label)
     {
@@ -185,7 +185,7 @@ namespace Maze
     }
 
     ////////////////////////////////////////////
-    void PropertyDrawerRect2DF::unselectUI()
+    void PropertyDrawerRect2F::unselectUI()
     {
         m_editBoxX->setSelected(false);
         m_editBoxY->setSelected(false);
@@ -194,7 +194,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EditBox2DPtr PropertyDrawerRect2DF::createF32Edit(
+    EditBox2DPtr PropertyDrawerRect2F::createF32Edit(
         CString _name,
         Transform2DPtr const& _parent)
     {
@@ -231,20 +231,20 @@ namespace Maze
             _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.5f, 0.5f),
             Vec2F::c_zero);
-        editBox->eventTextInput.subscribe(this, &PropertyDrawerRect2DF::notifyTextInput);
-        editBox->eventSelectedChanged.subscribe(this, &PropertyDrawerRect2DF::notifySelectedChanged);
+        editBox->eventTextInput.subscribe(this, &PropertyDrawerRect2F::notifyTextInput);
+        editBox->eventSelectedChanged.subscribe(this, &PropertyDrawerRect2F::notifySelectedChanged);
 
         return editBox;
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRect2DF::notifyTextInput(EditBox2D* _editBox)
+    void PropertyDrawerRect2F::notifyTextInput(EditBox2D* _editBox)
     {
         eventUIData();
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRect2DF::notifySelectedChanged(EditBox2D* _editBox, bool _selected)
+    void PropertyDrawerRect2F::notifySelectedChanged(EditBox2D* _editBox, bool _selected)
     {
         if (!_selected)
         {
@@ -253,7 +253,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRect2DF::setValue(Rect2DF const& _value)
+    void PropertyDrawerRect2F::setValue(Rect2F const& _value)
     {
         if (!m_editBoxX->getSelected())
             m_editBoxX->setText(StringHelper::F32ToStringFormatted(_value.position.x, 4));
@@ -269,9 +269,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Rect2DF PropertyDrawerRect2DF::getValue() const
+    Rect2F PropertyDrawerRect2F::getValue() const
     {
-        Rect2DF value;
+        Rect2F value;
         value.position.x = StringHelper::StringToF32Safe(m_editBoxX->getText());
         value.position.y = StringHelper::StringToF32Safe(m_editBoxY->getText());
         value.size.x = StringHelper::StringToF32Safe(m_editBoxW->getText());

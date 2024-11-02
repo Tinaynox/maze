@@ -437,7 +437,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ContextOpenGL::setViewportRect(Rect2DS const& _viewportRect)
+    void ContextOpenGL::setViewportRect(Rect2S const& _viewportRect)
     {
         m_stateMachine->setViewportRect(_viewportRect);
     }
@@ -498,7 +498,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ContextOpenGL::setScissorRect(Rect2DS const& _scissorRect)
+    void ContextOpenGL::setScissorRect(Rect2S const& _scissorRect)
     {
         m_stateMachine->setScissorRect(_scissorRect);
     }

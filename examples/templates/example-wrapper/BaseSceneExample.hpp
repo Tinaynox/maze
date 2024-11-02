@@ -93,7 +93,7 @@ namespace Maze
         bool init(Vec2F const& _levelSize);
 
         //////////////////////////////////////////
-        void notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport);
+        void notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport);
 
         //////////////////////////////////////////
         void notifyRenderTargetResized(RenderTarget* _renderTarget);
@@ -123,7 +123,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual Rect2DF getMainViewport();
+        virtual Rect2F getMainViewport();
 
         //////////////////////////////////////////
         virtual Vec2U32 getMainRenderBufferSize();

@@ -43,7 +43,7 @@
 #include "maze-editor-tools/property-drawers/MazePDVec2S32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDVec2U32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDVec3F32.hpp"
-#include "maze-editor-tools/property-drawers/MazePDRect2DF.hpp"
+#include "maze-editor-tools/property-drawers/MazePDRect2F.hpp"
 #include "maze-editor-tools/property-drawers/MazePDString.hpp"
 #include "maze-editor-tools/property-drawers/MazePDQuaternion.hpp"
 #include "maze-editor-tools/property-drawers/MazePDEnumClass.hpp"
@@ -60,7 +60,7 @@
 #include "maze-editor-tools/meta-property-drawers/MazeMPDF32.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDVec2F32.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDVec3F32.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeMPDRect2DF.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMPDRect2F.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDString.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDQuaternion.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDEnumClass.hpp"
@@ -178,7 +178,7 @@ namespace Maze
         registerPropertyDrawer<Vec2S, PropertyDrawerVec2S32>();
         registerPropertyDrawer<Vec2U, PropertyDrawerVec2U32>();
         registerPropertyDrawer<Vec3F, PropertyDrawerVec3F32>();
-        registerPropertyDrawer<Rect2DF, PropertyDrawerRect2DF>();
+        registerPropertyDrawer<Rect2F, PropertyDrawerRect2F>();
         registerPropertyDrawer<String, PropertyDrawerString>();
         registerPropertyDrawer<Quaternion, PropertyDrawerQuaternion>();
         registerPropertyDrawer<ColorU32, PropertyDrawerColorU32>();
@@ -199,7 +199,7 @@ namespace Maze
         registerMetaPropertyDrawer<Vec2S, MetaPropertyDrawerVec2S32>();
         registerMetaPropertyDrawer<Vec2U, MetaPropertyDrawerVec2U32>();
         registerMetaPropertyDrawer<Vec3F, MetaPropertyDrawerVec3F32>();
-        registerMetaPropertyDrawer<Rect2DF, MetaPropertyDrawerRect2DF>();
+        registerMetaPropertyDrawer<Rect2F, MetaPropertyDrawerRect2F>();
         registerMetaPropertyDrawer<String, MetaPropertyDrawerString>();
         registerMetaPropertyDrawer<Quaternion, MetaPropertyDrawerQuaternion>();
         registerMetaPropertyDrawer<ColorU32, MetaPropertyDrawerColorU32>();

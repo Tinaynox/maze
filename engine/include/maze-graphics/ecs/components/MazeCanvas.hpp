@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRect2.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
 
@@ -93,16 +93,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setViewport(Rect2DF const& _viewport);
+        void setViewport(Rect2F const& _viewport);
 
         //////////////////////////////////////////
-        inline void setViewport(F32 _x, F32 _y, F32 _w, F32 _h) { setViewport(Rect2DF(_x, _y, _w, _h)); }
+        inline void setViewport(F32 _x, F32 _y, F32 _w, F32 _h) { setViewport(Rect2F(_x, _y, _w, _h)); }
 
         //////////////////////////////////////////
-        inline Rect2DF const& getViewport() const { return m_viewport; }
+        inline Rect2F const& getViewport() const { return m_viewport; }
     
         //////////////////////////////////////////
-        Rect2DF getRenderTargetRect() const;
+        Rect2F getRenderTargetRect() const;
 
         //////////////////////////////////////////
         AABB2D getRenderTargetAABB() const;
@@ -203,7 +203,7 @@ namespace Maze
         CanvasScalerWPtr m_canvasScaler;
 
         RenderTargetPtr m_renderTarget;
-        Rect2DF m_viewport;
+        Rect2F m_viewport;
 
         bool m_clearColorFlag;
         ColorU32 m_clearColor;

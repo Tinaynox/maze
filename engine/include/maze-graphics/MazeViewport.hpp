@@ -40,7 +40,7 @@
 #include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRect2.hpp"
 #include "maze-core/math/MazeMat3.hpp"
 
 
@@ -66,23 +66,23 @@ namespace Maze
         virtual ~Viewport();
 
         //////////////////////////////////////////
-        static ViewportPtr Create(RenderTargetPtr const& _renderTarget, Rect2DF const& _relativeRect);
+        static ViewportPtr Create(RenderTargetPtr const& _renderTarget, Rect2F const& _relativeRect);
 
 
         //////////////////////////////////////////
         void setRenderTarget(RenderTargetPtr const& _renderTarget);
 
         //////////////////////////////////////////
-        void setRelativeRect(Rect2DF const& _relativeRect);
+        void setRelativeRect(Rect2F const& _relativeRect);
 
         //////////////////////////////////////////
-        inline void setRelativeRect(F32 _x, F32 _y, F32 _width, F32 _height) { setRelativeRect(Rect2DF(_x, _y, _width, _height)); }
+        inline void setRelativeRect(F32 _x, F32 _y, F32 _width, F32 _height) { setRelativeRect(Rect2F(_x, _y, _width, _height)); }
 
         //////////////////////////////////////////
-        inline Rect2DF const& getRelativeRect() const { return m_relativeRect; }
+        inline Rect2F const& getRelativeRect() const { return m_relativeRect; }
 
         //////////////////////////////////////////
-        inline Rect2DU const& getAbsoluteRect() const { return m_absoluteRect; }
+        inline Rect2U const& getAbsoluteRect() const { return m_absoluteRect; }
 
         //////////////////////////////////////////
         inline U32 getAbsoluteX() const { return getAbsoluteRect().position.x; }
@@ -131,7 +131,7 @@ namespace Maze
         Viewport();
 
         //////////////////////////////////////////
-        bool init(RenderTargetPtr const& _renderTarget, Rect2DF const& _relativeRect);
+        bool init(RenderTargetPtr const& _renderTarget, Rect2F const& _relativeRect);
 
 
         //////////////////////////////////////////
@@ -162,8 +162,8 @@ namespace Maze
     protected:
         RenderTargetWPtr m_renderTarget;
 
-        Rect2DF m_relativeRect;
-        Rect2DU m_absoluteRect;
+        Rect2F m_relativeRect;
+        Rect2U m_absoluteRect;
         Mat3F m_transform;
         Mat3F m_externalTransform;
 

@@ -35,7 +35,7 @@
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/math/MazeVec3.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRect2.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
 #include <ostream>
 
