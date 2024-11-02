@@ -96,7 +96,7 @@ namespace Maze
                     MonoType* fieldType = mono_field_get_type(field);
                     HashedCString typeName = HashedCString(mono_type_get_name(fieldType));
 
-                    Debug::Log("%s => %s", fieldName, typeName.str);
+                    // Debug::Log("%s => %s", fieldName, typeName.str);
                 }
             }
 
@@ -117,7 +117,7 @@ namespace Maze
                 MonoType* fieldType = mono_signature_get_return_type(signature);
                 HashedCString typeName = HashedCString(mono_type_get_name(fieldType));
 
-                Debug::Log("%s => %s", fieldName, typeName.str);
+                // Debug::Log("%s => %s", fieldName, typeName.str);
 
                 MonoPropertyDrawerCallbacks callbacks;
 
