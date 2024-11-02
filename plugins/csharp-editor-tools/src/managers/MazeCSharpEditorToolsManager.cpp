@@ -30,6 +30,7 @@
 #include "maze-editor-tools/property-drawers/MazePDS32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDBool.hpp"
 #include "maze-editor-tools/property-drawers/MazePDF32.hpp"
+#include "maze-editor-tools/property-drawers/MazePDSliderF32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDVec2F32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDVec3F32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDVec4F32.hpp"
@@ -269,6 +270,32 @@ namespace Maze
             return &it->second;
 
         return nullptr;
+    }
+
+    //////////////////////////////////////////
+    MonoPropertyDrawerCallbacks CSharpEditorToolsManager::buildMonoPropertyDrawerSliderF32Callbacks(
+        F32 _from,
+        F32 _to)
+    {
+        MonoPropertyDrawerCallbacks callbacks = BuildMonoPropertyDrawerCallbacks<PropertyDrawerSliderF32>(
+            [](ScriptInstance const& _instance, MonoProperty* _property, PropertyDrawerSliderF32* _drawer)
+            {
+                F32 value; _instance.getProperty(_property, value); _drawer->setValue(value);
+            },
+            [](ScriptInstance& _instance, MonoProperty* _property, PropertyDrawerSliderF32 const* _drawer)
+            {
+                _instance.setProperty(_property, _drawer->getValue());
+            });
+        callbacks.createDrawerCb =
+            [_from, _to]()
+            {
+                PropertyDrawerSliderF32Ptr drawer = PropertyDrawerSliderF32::Create("");
+                drawer->setFromValue(_from);
+                drawer->setToValue(_to);
+                return drawer;
+            };
+
+        return callbacks;
     }
 
 } // namespace Maze

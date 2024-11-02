@@ -51,6 +51,32 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    template <typename TDrawer>
+    inline MonoPropertyDrawerCallbacks BuildMonoPropertyDrawerCallbacks(
+        std::function<void(ScriptInstance const&, MonoProperty*, TDrawer*)> _processDataToUICb,
+        std::function<void(ScriptInstance&, MonoProperty*, TDrawer const*)> _processDataFromUICb)
+    {
+        MonoPropertyDrawerCallbacks callbacks;
+        callbacks.createDrawerCb =
+            []()
+            {
+                return TDrawer::Create("");
+            };
+        callbacks.processDataToUICb =
+            [_processDataToUICb](ScriptInstance const& _instance, MonoProperty* _monoProperty, PropertyDrawerPtr const& _drawer)
+            {
+                _processDataToUICb(_instance, _monoProperty, _drawer->castRaw<TDrawer>());
+            };
+        callbacks.processDataFromUICb =
+            [_processDataFromUICb](ScriptInstance& _instance, MonoProperty* _monoProperty, PropertyDrawerPtr const& _drawer)
+            {
+                _processDataFromUICb(_instance, _monoProperty, _drawer->castRaw<TDrawer>());
+            };
+        return std::move(callbacks);
+    }
+
+
+    //////////////////////////////////////////
     // Class CSharpEditorToolsManager
     //
     //////////////////////////////////////////
@@ -83,23 +109,16 @@ namespace Maze
             std::function<void(ScriptInstance const&, MonoProperty*, TDrawer*)> _processDataToUICb,
             std::function<void(ScriptInstance&, MonoProperty*, TDrawer const*)> _processDataFromUICb)
         {
-            MonoPropertyDrawerCallbacks& callbacks = m_monoPropertyDrawerCallbacksPerMonoType[_monoTypeName];
-            callbacks.createDrawerCb =
-                []()
-                {
-                    return TDrawer::Create("");
-                };
-            callbacks.processDataToUICb =
-                [_processDataToUICb](ScriptInstance const& _instance, MonoProperty* _monoProperty, PropertyDrawerPtr const& _drawer)
-                {
-                    _processDataToUICb(_instance, _monoProperty, _drawer->castRaw<TDrawer>());
-                };
-            callbacks.processDataFromUICb =
-                [_processDataFromUICb](ScriptInstance& _instance, MonoProperty* _monoProperty, PropertyDrawerPtr const& _drawer)
-                {
-                    _processDataFromUICb(_instance, _monoProperty, _drawer->castRaw<TDrawer>());
-                };
+            m_monoPropertyDrawerCallbacksPerMonoType[_monoTypeName] = BuildMonoPropertyDrawerCallbacks<TDrawer>(
+                _processDataToUICb,
+                _processDataFromUICb);
         }
+
+        //////////////////////////////////////////
+        MonoPropertyDrawerCallbacks buildMonoPropertyDrawerSliderF32Callbacks(
+            F32 _from,
+            F32 _to);
+
 
     protected:
 

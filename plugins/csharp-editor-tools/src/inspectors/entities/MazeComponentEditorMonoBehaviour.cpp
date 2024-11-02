@@ -119,11 +119,21 @@ namespace Maze
 
                 Debug::Log("%s => %s", fieldName, typeName.str);
 
-                MonoPropertyDrawerCallbacks* callbacks = CSharpEditorToolsManager::GetInstancePtr()->getMonoPropertyDrawerCallbacksPerMonoType(typeName);
-                if (!callbacks)
-                    continue;
+                MonoPropertyDrawerCallbacks callbacks;
 
-                MonoPropertyDrawerPtr propertyDrawer = MonoPropertyDrawer::Create(prop, *callbacks);
+                MonoPropertyDrawerCallbacks* callbacksPtr = CSharpEditorToolsManager::GetInstancePtr()->getMonoPropertyDrawerCallbacksPerMonoType(typeName);
+                if (!callbacksPtr)
+                    continue;
+                callbacks = *callbacksPtr;
+
+                // #TODO: Slider mode
+                // if (typeName == MAZE_HCS("System.Single"))
+                // {
+                //      callbacks = CSharpEditorToolsManager::GetInstancePtr()->buildMonoPropertyDrawerSliderF32Callbacks(0.0f, 1.0f);
+                // }
+
+
+                MonoPropertyDrawerPtr propertyDrawer = MonoPropertyDrawer::Create(prop, callbacks);
                 if (propertyDrawer)
                     addPropertyDrawer(propertyDrawer, fieldName);
             }
