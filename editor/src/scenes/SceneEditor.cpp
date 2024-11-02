@@ -199,7 +199,7 @@ namespace Maze
             m_topMenuBarCanvas = topMenuBarCanvasEntity->createComponent<Canvas>();
             m_topMenuBarCanvas->setClearColorFlag(false);
             m_topMenuBarCanvas->setClearColor(ColorU32::c_zero);
-            Rect2DF topMenuBarCanvasViewport(
+            Rect2F topMenuBarCanvasViewport(
                 0.0f,
                 (renderWindow->getRenderTargetHeight() - (EditorLayout::c_menuBarHeight + 1)) / renderWindow->getRenderTargetHeight(),
                 1.0f,
@@ -369,7 +369,7 @@ namespace Maze
             m_workspaceCanvas = mainCanvasEntity->createComponent<Canvas>();
             m_workspaceCanvas->setClearColorFlag(true);
             m_workspaceCanvas->setClearColor(ColorU32::c_white);
-            Rect2DF mainCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
+            Rect2F mainCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
             m_workspaceCanvas->setViewport(mainCanvasViewport);
             m_workspaceCanvas->setRenderTarget(m_renderTarget);
             m_workspaceCanvas->setSortOrder(-1000000);
@@ -398,7 +398,7 @@ namespace Maze
             m_hierarchyCanvas = hierarchyCanvasEntity->createComponent<Canvas>();
             m_hierarchyCanvas->setClearColorFlag(false);
             m_hierarchyCanvas->setClearColor(ColorU32::c_zero);
-            Rect2DF hierarchyCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_hierarchyViewport);
+            Rect2F hierarchyCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_hierarchyViewport);
             m_hierarchyCanvas->setViewport(hierarchyCanvasViewport);
             m_hierarchyCanvas->setRenderTarget(m_renderTarget);
             m_hierarchyCanvas->setSortOrder(-1000000);
@@ -426,7 +426,7 @@ namespace Maze
             m_inspectorCanvas = inspectorCanvasEntity->createComponent<Canvas>();
             m_inspectorCanvas->setClearColorFlag(false);
             m_inspectorCanvas->setClearColor(ColorU32::c_zero);
-            Rect2DF inspectorCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_inspectorViewport);
+            Rect2F inspectorCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_inspectorViewport);
             m_inspectorCanvas->setViewport(inspectorCanvasViewport);
             m_inspectorCanvas->setRenderTarget(m_renderTarget);
             m_inspectorCanvas->setSortOrder(-1000000);
@@ -441,7 +441,7 @@ namespace Maze
             m_assetsCanvas = assetsCanvasEntity->createComponent<Canvas>();
             m_assetsCanvas->setClearColorFlag(false);
             m_assetsCanvas->setClearColor(ColorU32::c_zero);
-            Rect2DF assetsCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_assetsViewport);
+            Rect2F assetsCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_assetsViewport);
             m_assetsCanvas->setViewport(assetsCanvasViewport);
             m_assetsCanvas->setRenderTarget(m_renderTarget);
             m_assetsCanvas->setSortOrder(-1000000);
@@ -464,7 +464,7 @@ namespace Maze
             m_previewCanvas = previewCanvasEntity->createComponent<Canvas>();
             m_previewCanvas->setClearColorFlag(false);
             m_previewCanvas->setClearColor(ColorU32::c_zero);
-            Rect2DF previewCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport);
+            Rect2F previewCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport);
             m_previewCanvas->setViewport(previewCanvasViewport);
             m_previewCanvas->setRenderTarget(m_renderTarget);
             m_previewCanvas->setSortOrder(-1000000);
@@ -479,7 +479,7 @@ namespace Maze
             m_topBarCanvas = topBarCanvasEntity->createComponent<Canvas>();
             m_topBarCanvas->setClearColorFlag(false);
             m_topBarCanvas->setClearColor(ColorU32::c_zero);
-            Rect2DF topBarCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_topBarViewport);
+            Rect2F topBarCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_topBarViewport);
             m_topBarCanvas->setViewport(topBarCanvasViewport);
             m_topBarCanvas->setRenderTarget(m_renderTarget);
             m_topBarCanvas->setSortOrder(-1000000);
@@ -499,7 +499,7 @@ namespace Maze
 
         if (m_topMenuBarCanvas)
         {
-            Rect2DF topMenuBarCanvasViewport(
+            Rect2F topMenuBarCanvasViewport(
                 0.0f,
                 (renderWindow->getRenderTargetHeight() - (EditorLayout::c_menuBarHeight + 1)) / renderWindow->getRenderTargetHeight(),
                 1.0f,
@@ -509,31 +509,31 @@ namespace Maze
 
         if (m_workspaceCanvas)
         {
-            Rect2DF mainCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
+            Rect2F mainCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
             m_workspaceCanvas->setViewport(mainCanvasViewport);
         }
 
         if (m_hierarchyCanvas)
         {
-            Rect2DF hierarchyCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_hierarchyViewport);
+            Rect2F hierarchyCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_hierarchyViewport);
             m_hierarchyCanvas->setViewport(hierarchyCanvasViewport);
         }
 
         if (m_inspectorCanvas)
         {
-            Rect2DF inspectorCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_inspectorViewport);
+            Rect2F inspectorCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_inspectorViewport);
             m_inspectorCanvas->setViewport(inspectorCanvasViewport);
         }
 
         if (m_assetsCanvas)
         {
-            Rect2DF assetsCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_assetsViewport);
+            Rect2F assetsCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_assetsViewport);
             m_assetsCanvas->setViewport(assetsCanvasViewport);
         }
 
         if (m_previewCanvas)
         {
-            Rect2DF previewCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport);
+            Rect2F previewCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport);
             m_previewCanvas->setViewport(previewCanvasViewport);
         }
     }

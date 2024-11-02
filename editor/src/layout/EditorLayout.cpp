@@ -86,23 +86,23 @@ namespace Maze
     //////////////////////////////////////////
     F32 const EditorLayout::c_menuBarHeight = 17.0f;
     F32 const topBarHeight = 0.025f;
-    Rect2DF const EditorLayout::c_sceneViewport(0.25f, 0.33f, 0.5f, 0.645f);
-    Rect2DF const EditorLayout::c_hierarchyViewport(0.0f, 0.33f, 0.25f, 0.67f - topBarHeight);
-    Rect2DF const EditorLayout::c_inspectorViewport(0.75f, 0.33f, 0.25f, 0.67f - topBarHeight);
-    Rect2DF const EditorLayout::c_assetsViewport(0.0f, 0.0f, 0.5f, 0.33f);
-    Rect2DF const EditorLayout::c_previewViewport(0.5f, 0.0f, 0.5f, 0.33f);
-    Rect2DF const EditorLayout::c_topBarViewport(0.0f, 0.975f, 1.0f, topBarHeight);
+    Rect2F const EditorLayout::c_sceneViewport(0.25f, 0.33f, 0.5f, 0.645f);
+    Rect2F const EditorLayout::c_hierarchyViewport(0.0f, 0.33f, 0.25f, 0.67f - topBarHeight);
+    Rect2F const EditorLayout::c_inspectorViewport(0.75f, 0.33f, 0.25f, 0.67f - topBarHeight);
+    Rect2F const EditorLayout::c_assetsViewport(0.0f, 0.0f, 0.5f, 0.33f);
+    Rect2F const EditorLayout::c_previewViewport(0.5f, 0.0f, 0.5f, 0.33f);
+    Rect2F const EditorLayout::c_topBarViewport(0.0f, 0.975f, 1.0f, topBarHeight);
         
     //////////////////////////////////////////
-    Rect2DF EditorLayout::CalculateWorkViewport(Rect2DF const& _viewport)
+    Rect2F EditorLayout::CalculateWorkViewport(Rect2F const& _viewport)
     {
         Vec2F32 fullRenderTargetSize = (Vec2F32)Editor::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize();
         if (fullRenderTargetSize == Vec2F32::c_zero)
-            return Rect2DF::c_zero;
+            return Rect2F::c_zero;
 
         Vec2F32 workRenderTargetSize = Vec2F32(fullRenderTargetSize.x, fullRenderTargetSize.y - EditorLayout::c_menuBarHeight);
 
-        Rect2DF targetViewportZone = _viewport;
+        Rect2F targetViewportZone = _viewport;
         targetViewportZone.position *= workRenderTargetSize / fullRenderTargetSize;
         targetViewportZone.size *= workRenderTargetSize / fullRenderTargetSize;
 
@@ -113,7 +113,7 @@ namespace Maze
     Vec2F32 EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(Vec2F32 const& _coord)
     {
         RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
-        Rect2DF viewport = CalculateWorkViewport(c_sceneViewport);
+        Rect2F viewport = CalculateWorkViewport(c_sceneViewport);
 
         Vec2F32 workspaceStart = viewport.position * (Vec2F32)renderWindow->getRenderTargetSize();
 

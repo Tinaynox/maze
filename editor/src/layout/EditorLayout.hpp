@@ -65,15 +65,15 @@ namespace Maze
 
         //////////////////////////////////////////
         static F32 const c_menuBarHeight;
-        static Rect2DF const c_hierarchyViewport;
-        static Rect2DF const c_inspectorViewport;
-        static Rect2DF const c_assetsViewport;
-        static Rect2DF const c_sceneViewport;
-        static Rect2DF const c_previewViewport;
-        static Rect2DF const c_topBarViewport;
+        static Rect2F const c_hierarchyViewport;
+        static Rect2F const c_inspectorViewport;
+        static Rect2F const c_assetsViewport;
+        static Rect2F const c_sceneViewport;
+        static Rect2F const c_previewViewport;
+        static Rect2F const c_topBarViewport;
 
         //////////////////////////////////////////
-        static Rect2DF CalculateWorkViewport(Rect2DF const& _viewport);
+        static Rect2F CalculateWorkViewport(Rect2F const& _viewport);
 
         //////////////////////////////////////////
         static Vec2F32 ConvertRenderWindowCoordsToWorkspaceViewport(Vec2F32 const& _coord);

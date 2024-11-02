@@ -49,7 +49,9 @@ set(EXAMPLE_MAZE_LIBS
     maze-plugin-loader-ttf
     maze-plugin-archive-assets
     maze-plugin-particles-editor-tools
-    maze-plugin-physics2d-editor-tools)
+    maze-plugin-physics2d-editor-tools
+    maze-plugin-csharp
+    maze-plugin-csharp-editor-tools)
 
 
 ##########################################
@@ -91,6 +93,8 @@ add_subdirectory("${MAZE_DIR}/plugins/loader-ttf" "${CMAKE_CURRENT_BINARY_DIR}/p
 add_subdirectory("${MAZE_DIR}/plugins/archive-assets" "${CMAKE_CURRENT_BINARY_DIR}/plugins/archive-assets")
 add_subdirectory("${MAZE_DIR}/plugins/particles-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/plugins/particles-editor-tools")
 add_subdirectory("${MAZE_DIR}/plugins/physics2d-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/plugins/physics2d-editor-tools")
+add_subdirectory("${MAZE_DIR}/plugins/csharp" "${CMAKE_CURRENT_BINARY_DIR}/plugins/csharp")
+add_subdirectory("${MAZE_DIR}/plugins/csharp-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/plugins/csharp-editor-tools")
 
 
 ##########################################

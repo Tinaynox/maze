@@ -202,11 +202,11 @@ namespace Maze
         if (!Editor::GetInstancePtr()->getMainRenderWindow()->getFocused())
             return;
 
-        Rect2DF viewportRect = m_camera3D->getViewport();
+        Rect2F viewportRect = m_camera3D->getViewport();
         viewportRect.position *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
         viewportRect.size *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
 
-        AABB2D aabb = AABB2D::FromRect2D(viewportRect);
+        AABB2D aabb = AABB2D::FromRect2(viewportRect);
 
         Vec2F32 cursorPositionRWS = InputManager::GetInstancePtr()->getCursorPosition(0);
         if (m_camera3D && aabb.contains(cursorPositionRWS))
@@ -302,7 +302,7 @@ namespace Maze
                     if (m_camera3D && m_camera3D->getEntityRaw()->getActiveSelf())
                     {
                         Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
-                        Rect2DF viewportRect(
+                        Rect2F viewportRect(
                             m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                             m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
                             m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
@@ -341,7 +341,7 @@ namespace Maze
     //////////////////////////////////////////
     void ScenePlaytestTools::notifyMainRenderWindowResized(RenderTarget* _renderTarget)
     {
-        Rect2DF rect = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
+        Rect2F rect = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
 
         if (m_camera3D)
             m_camera3D->setViewport(rect);

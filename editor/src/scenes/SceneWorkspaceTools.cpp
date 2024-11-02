@@ -201,11 +201,11 @@ namespace Maze
         if (!Editor::GetInstancePtr()->getMainRenderWindow()->getFocused())
             return;
 
-        Rect2DF viewportRect = m_camera3D->getViewport();
+        Rect2F viewportRect = m_camera3D->getViewport();
         viewportRect.position *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
         viewportRect.size *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
 
-        AABB2D aabb = AABB2D::FromRect2D(viewportRect);
+        AABB2D aabb = AABB2D::FromRect2(viewportRect);
 
         Vec2F32 cursorPositionRWS = InputManager::GetInstancePtr()->getCursorPosition(0);
         Vec2F32 cursorPosition = EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(cursorPositionRWS);
@@ -304,7 +304,7 @@ namespace Maze
                     {
                         Vec2F32 cursorPositionRWS = Vec2F32((F32)_data.x, (F32)_data.y);
                         Vec2F32 cursorPosition = EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(cursorPositionRWS);
-                        Rect2DF viewportRect(
+                        Rect2F viewportRect(
                             m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                             m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
                             m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,

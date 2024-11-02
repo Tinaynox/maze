@@ -311,6 +311,8 @@ namespace Maze
     MonoAssembly* MonoEngine::LoadCoreAssembly(HashedCString _csharpFile)
     {
         g_monoEngineData->coreAssembly = LoadMonoAssembly(_csharpFile);
+        MAZE_ERROR_RETURN_VALUE_IF(!g_monoEngineData->coreAssembly, nullptr, "Failed to load core assembly - %s", _csharpFile.str);
+
         g_monoEngineData->coreAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
         g_monoEngineData->ecsData.monoBehaviourClass = MakeShared<ScriptClass>(
             "Maze.Core", "MonoBehaviour", g_monoEngineData->coreAssemblyImage);

@@ -93,6 +93,8 @@
 #include "maze-plugin-loader-tga/MazeLoaderTGAPlugin.hpp"
 #include "maze-plugin-loader-jpg/MazeLoaderJPGPlugin.hpp"
 #include "maze-plugin-loader-fbx/MazeLoaderFBXPlugin.hpp"
+#include "maze-plugin-csharp/MazeCSharpPlugin.hpp"
+#include "maze-plugin-csharp-editor-tools/MazeCSharpEditorToolsPlugin.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "Editor.hpp"
@@ -339,6 +341,14 @@ namespace Maze
             }
             case 13:
             {
+                MAZE_LOAD_PLATFORM_PLUGIN(CSharp);
+                MAZE_LOAD_PLATFORM_PLUGIN(CSharpEditorTools);
+
+                setCurrentProgress(0.975f);
+                break;
+            }
+            case 14:
+            {
                 AssetFilePtr const& pluginsDirectory = AssetManager::GetInstancePtr()->getAssetFile(MAZE_HASHED_CSTRING("plugins"));
                 if (pluginsDirectory && pluginsDirectory->getClassUID() == ClassInfo<AssetDirectory>::UID())
                 {
@@ -362,7 +372,7 @@ namespace Maze
                 delayToNextStep = 2;
                 break;
             }
-            case 14:
+            case 15:
             {
                 m_progressBarFill->getEntity()->setActiveSelf(false);
 

@@ -180,7 +180,7 @@ namespace Maze
         m_canvas->setSortOrder(1000000);
         m_canvas->setRenderTarget(Editor::GetInstancePtr()->getMainRenderWindow());
         m_canvas->getEntityRaw()->ensureComponent<Name>("Canvas");
-        Rect2DF sceneViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
+        Rect2F sceneViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
         m_canvas->setViewport(sceneViewport);
 
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
@@ -208,7 +208,7 @@ namespace Maze
     {
         if (m_canvas)
         {
-            Rect2DF sceneViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
+            Rect2F sceneViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
             m_canvas->setViewport(sceneViewport);
         }
     }

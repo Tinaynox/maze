@@ -39,6 +39,8 @@
 #include "maze-editor-tools/property-drawers/MazePDRect2F.hpp"
 #include "maze-editor-tools/property-drawers/MazePDColorU32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDColorF128.hpp"
+#include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
+#include "maze-ui/managers/MazeUIManager.hpp"
 
 
 //////////////////////////////////////////
@@ -72,6 +74,19 @@ namespace Maze
     //////////////////////////////////////////
     bool CSharpEditorToolsManager::init()
     {
+        AssetEditorToolsManager::GetInstancePtr()->registerIconCallbackForAssetFileExtension(
+            "cs",
+            [](AssetFilePtr const&)
+            {
+                return
+                    AssetFileEditorIconData
+                    {
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TextFile),
+                        ColorU32(75, 216, 19)
+                    };
+            });
+
+
         // Core
         registerMonoPropertyDrawerCallbacks<PropertyDrawerString>(MAZE_HCS("System.String"),
             [](ScriptInstance const& _instance, MonoProperty* _property, PropertyDrawerString* _drawer)
