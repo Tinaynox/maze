@@ -27,6 +27,7 @@
 #include "MazeCSharpEditorToolsHeader.hpp"
 #include "maze-plugin-csharp-editor-tools/inspectors/entities/MazeComponentEditorMonoBehaviour.hpp"
 #include "maze-plugin-csharp-editor-tools/meta-property-drawers/MazeMonoPropertyDrawer.hpp"
+#include "maze-plugin-csharp-editor-tools/managers/MazeCSharpEditorToolsManager.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
@@ -93,8 +94,9 @@ namespace Maze
                 if (flags & MONO_FIELD_ATTR_PUBLIC)
                 {
                     MonoType* fieldType = mono_field_get_type(field);
-                    MonoFieldType monofieldType = MonoHelper::MonoTypeToMonoFieldType(fieldType);
-                    Debug::Log("%s => %s", fieldName, monofieldType.toCString());
+                    HashedCString typeName = HashedCString(mono_type_get_name(fieldType));
+
+                    Debug::Log("%s => %s", fieldName, typeName.str);
                 }
             }
 
@@ -113,11 +115,15 @@ namespace Maze
 
                 MonoMethodSignature* signature = mono_method_signature(getterMethod);
                 MonoType* fieldType = mono_signature_get_return_type(signature);
-                MonoFieldType monofieldType = MonoHelper::MonoTypeToMonoFieldType(fieldType);
+                HashedCString typeName = HashedCString(mono_type_get_name(fieldType));
 
-                Debug::Log("%s => %s", fieldName, monofieldType.toCString());
+                Debug::Log("%s => %s", fieldName, typeName.str);
 
-                MonoPropertyDrawerPtr propertyDrawer = MonoPropertyDrawer::Create(prop, monofieldType);
+                MonoPropertyDrawerCallbacks* callbacks = CSharpEditorToolsManager::GetInstancePtr()->getMonoPropertyDrawerCallbacksPerMonoType(typeName);
+                if (!callbacks)
+                    continue;
+
+                MonoPropertyDrawerPtr propertyDrawer = MonoPropertyDrawer::Create(prop, *callbacks);
                 if (propertyDrawer)
                     addPropertyDrawer(propertyDrawer, fieldName);
             }

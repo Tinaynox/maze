@@ -45,6 +45,15 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    struct MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API MonoPropertyDrawerCallbacks
+    {
+        std::function<PropertyDrawerPtr()> createDrawerCb;
+        std::function<void(ScriptInstance const&, MonoProperty*, PropertyDrawerPtr const&)> processDataToUICb;
+        std::function<void(ScriptInstance&, MonoProperty*, PropertyDrawerPtr const&)> processDataFromUICb;
+    };
+
+
+    //////////////////////////////////////////
     // Class MonoPropertyDrawer
     //
     //////////////////////////////////////////
@@ -67,7 +76,7 @@ namespace Maze
         //////////////////////////////////////////
         static MonoPropertyDrawerPtr Create(
             MonoProperty* _monoProperty,
-            MonoFieldType _monoFieldType);
+            MonoPropertyDrawerCallbacks _callbacks);
 
 
         //////////////////////////////////////////
@@ -84,7 +93,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             MonoProperty* _monoProperty,
-            MonoFieldType _monoFieldType);
+            MonoPropertyDrawerCallbacks _callbacks);
 
         //////////////////////////////////////////
         virtual void buildUI(
@@ -93,9 +102,9 @@ namespace Maze
 
     protected:
         MonoProperty* m_monoProperty = nullptr;
-        MonoFieldType m_monoFieldType = MonoFieldType::None;
 
         PropertyDrawerPtr m_drawer;
+        MonoPropertyDrawerCallbacks m_callbacks;
     };
 
 } // namespace Maze

@@ -159,7 +159,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TValue>
-        inline bool getProperty(MonoProperty* _property, TValue& _value)
+        inline bool getProperty(MonoProperty* _property, TValue& _value) const
         {
             MonoMethod* getter = mono_property_get_get_method(_property);
             if (!getter)
@@ -175,7 +175,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <>
-        inline bool getProperty(MonoProperty* _property, String& _value)
+        inline bool getProperty(MonoProperty* _property, String& _value) const
         {
             MonoMethod* getter = mono_property_get_get_method(_property);
             if (!getter)

@@ -37,6 +37,7 @@
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDDefault.hpp"
 #include "maze-plugin-csharp-editor-tools/inspectors/entities/MazeComponentEditorMonoBehaviour.hpp"
+#include "maze-plugin-csharp-editor-tools/managers/MazeCSharpEditorToolsManager.hpp"
 
 
 
@@ -45,6 +46,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     static CSharpEditorToolsPluginPtr s_plugin;
+    static CSharpEditorToolsManagerPtr s_csharpEditorToolsManager;
 
 
 #if (MAZE_STATIC)
@@ -126,12 +128,13 @@ namespace Maze
             InspectorManager::GetInstancePtr()->registerComponentEditor<MonoBehaviour, ComponentEditorMonoBehaviour>();
         }
 
+        CSharpEditorToolsManager::Initialize(s_csharpEditorToolsManager);
     }
 
     //////////////////////////////////////////
     void CSharpEditorToolsPlugin::uninstall()
     {
-        
+        s_csharpEditorToolsManager.reset();
     }
 
 } // namespace Maze
