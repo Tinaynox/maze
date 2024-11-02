@@ -58,16 +58,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ComponentEditorParticleSystem3DPtr ComponentEditorParticleSystem3D::Create()
+    ComponentEditorParticleSystem3DPtr ComponentEditorParticleSystem3D::Create(
+        ComponentId _componentId,
+        MetaClass* _componentMetaClass)
     {
         ComponentEditorParticleSystem3DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentEditorParticleSystem3D, object, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentEditorParticleSystem3D, object, init(_componentId, _componentMetaClass));
         return object;
     }
 
     //////////////////////////////////////////
-    bool ComponentEditorParticleSystem3D::init()
+    bool ComponentEditorParticleSystem3D::init(
+        ComponentId _componentId,
+        MetaClass* _componentMetaClass)
     {
+        if (!ComponentEditor::init(_componentId, _componentMetaClass))
+            return false;
+
         return true;
     }
 

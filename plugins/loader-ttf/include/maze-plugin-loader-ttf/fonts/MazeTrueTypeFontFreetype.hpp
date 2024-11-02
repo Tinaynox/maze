@@ -143,7 +143,7 @@ namespace Maze
             F32 _outlineThickness = 0.0f);
 
         //////////////////////////////////////////
-        inline Rect2DS findGlyphRect(TTFPagePtr const& _page, U32 _width, U32 _height);
+        inline Rect2S findGlyphRect(TTFPagePtr const& _page, U32 _width, U32 _height);
 
         //////////////////////////////////////////
         inline U64 getTTFOutlineGlyphKey(U32 _fontSize, F32 _outlineThickness) const
@@ -326,7 +326,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    inline Rect2DS TrueTypeFontFreetype::findGlyphRect(TTFPagePtr const& _page, U32 _width, U32 _height)
+    inline Rect2S TrueTypeFontFreetype::findGlyphRect(TTFPagePtr const& _page, U32 _width, U32 _height)
     {
         // Find the line that fits well the glyph
         TTFRow* row = nullptr;
@@ -387,7 +387,7 @@ namespace Maze
                 {
                     // Oops, we've reached the maximum texture size...
                     MAZE_ERROR("Failed to add a new character to the font: the maximum texture size has been reached");
-                    return Rect2DS(0, 0, 2, 2);
+                    return Rect2S(0, 0, 2, 2);
                 }
             }
 
@@ -398,7 +398,7 @@ namespace Maze
         }
 
         // Find the glyph's rectangle on the selected row
-        Rect2DS rect(row->width, row->top, _width, _height);
+        Rect2S rect(row->width, row->top, _width, _height);
 
         // Update the row informations
         row->width += _width;

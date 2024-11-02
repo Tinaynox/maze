@@ -69,7 +69,9 @@ namespace Maze
         virtual ~ComponentEditorParticleSystem3D();
 
         //////////////////////////////////////////
-        static ComponentEditorParticleSystem3DPtr Create();
+        static ComponentEditorParticleSystem3DPtr Create(
+            ComponentId _componentId,
+            MetaClass* _componentMetaClass);
 
 
     protected:
@@ -78,7 +80,9 @@ namespace Maze
         ComponentEditorParticleSystem3D();
 
         //////////////////////////////////////////
-        virtual bool init() MAZE_OVERRIDE;
+        virtual bool init(
+            ComponentId _componentId,
+            MetaClass* _componentMetaClass) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void buildUI() MAZE_OVERRIDE;
