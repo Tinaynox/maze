@@ -131,6 +131,21 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <>
+        inline bool setProperty(MonoProperty* _property, String const& _value)
+        {
+            MonoMethod* setter = mono_property_get_set_method(_property);
+            if (!setter)
+                return false;
+
+            MonoString* monoString = mono_string_new(mono_domain_get(), _value.c_str());
+
+            void* stringParam = monoString;
+            MonoHelper::InvokeMethod(m_instance, setter, &stringParam);
+            return true;
+        }
+
+        //////////////////////////////////////////
         template <typename TValue>
         inline bool setProperty(CString _name, TValue const& _value)
         {
@@ -155,6 +170,25 @@ namespace Maze
                 return false;
 
             _value = *(TValue*)mono_object_unbox(result);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        template <>
+        inline bool getProperty(MonoProperty* _property, String& _value)
+        {
+            MonoMethod* getter = mono_property_get_get_method(_property);
+            if (!getter)
+                return false;
+
+            MonoObject* result = mono_property_get_value(_property, m_instance, nullptr, nullptr);
+            if (!result)
+                return false;
+
+            Char* cstr = mono_string_to_utf8((MonoString*)result);
+            _value = cstr;
+            mono_free(cstr);
+
             return true;
         }
 

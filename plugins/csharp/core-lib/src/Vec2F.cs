@@ -2,20 +2,17 @@ using System;
 
 namespace Maze
 {
-    public struct Vec3F
+    public struct Vec2F
     {
         public float X;
         public float Y;
-        public float Z;
 
-        public Vec3F(
+        public Vec2F(
             float _x = 0.0f,
-            float _y = 0.0f,
-            float _z = 0.0f)
+            float _y = 0.0f)
         {
             X = _x;
             Y = _y;
-            Z = _z;
         }
     }
 }

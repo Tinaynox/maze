@@ -117,7 +117,9 @@ namespace Maze
 
                 Debug::Log("%s => %s", fieldName, monofieldType.toCString());
 
-                addPropertyDrawer(MonoPropertyDrawer::Create(prop, monofieldType), fieldName);
+                MonoPropertyDrawerPtr propertyDrawer = MonoPropertyDrawer::Create(prop, monofieldType);
+                if (propertyDrawer)
+                    addPropertyDrawer(propertyDrawer, fieldName);
             }
         }
 
