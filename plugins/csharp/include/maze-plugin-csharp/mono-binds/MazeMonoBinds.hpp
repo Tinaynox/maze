@@ -38,10 +38,10 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    #define MAZE_MONO_BIND_FUNC(Name) mono_add_internal_call("Maze.InternalCalls::" #Name, Name);
+    #define MAZE_MONO_BIND_FUNC(DNamespace, DName) mono_add_internal_call(DNamespace ## ".InternalCalls::" #DName, DName);
 
     //////////////////////////////////////////
-    #define MAZE_MONO_BIND_FUNC_WITH_NAME(Func, Name) mono_add_internal_call("Maze.InternalCalls::" #Name, Func);
+    #define MAZE_MONO_BIND_FUNC_WITH_NAME(DNamespace, DFunc, DName) mono_add_internal_call(DNamespace ## ".InternalCalls::" #DName, DFunc);
 
 } // namespace Maze
 //////////////////////////////////////////

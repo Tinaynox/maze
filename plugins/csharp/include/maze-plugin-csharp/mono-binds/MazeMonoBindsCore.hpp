@@ -39,6 +39,12 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    #define MAZE_CORE_MONO_BIND_FUNC(DName) MAZE_MONO_BIND_FUNC("Maze.Core", DName)
+
+    //////////////////////////////////////////
+    #define MAZE_CORE_MONO_BIND_FUNC_WITH_NAME(DFunc, DName) MAZE_MONO_BIND_FUNC_WITH_NAME("Maze.Core", DFunc, DName)
+
+    //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsCore();
 
 } // namespace Maze

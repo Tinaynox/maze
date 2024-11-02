@@ -1,6 +1,6 @@
 using System;
 
-namespace Maze
+namespace Maze.Core
 {
     public class Transform3D : NativeComponent
     {

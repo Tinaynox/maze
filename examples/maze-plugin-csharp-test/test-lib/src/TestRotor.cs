@@ -1,5 +1,5 @@
 using Maze;
-
+using Maze.Core;
 
 namespace Sandbox
 {

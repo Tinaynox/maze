@@ -1,5 +1,5 @@
-using Maze;
-
+using Maze.Core;
+using Maze.Graphics;
 
 namespace Sandbox
 {
@@ -28,6 +28,9 @@ namespace Sandbox
         public Vec4F PVec4F { get; set; } = new Vec4F(7.0f, 7.0f, 7.0f, 7.0f);
         public Rect2F PRect2F { get; set; } = new Rect2F(0.0f, 0.0f, 1.0f, 2.0f);
 
+
+        public ColorU32 PColorU32 { get; set; } = new ColorU32(50, 255, 50, 255);
+        public ColorF128 PColorF128 { get; set; } = new ColorF128(1.0f, 0.66f, 0.0f, 1.0f);
 
 
         [EntitySystem]

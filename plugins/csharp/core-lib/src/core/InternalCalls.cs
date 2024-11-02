@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Maze
+namespace Maze.Core
 {
     public class InternalCalls
     {

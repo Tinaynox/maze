@@ -36,6 +36,8 @@
 #include "maze-editor-tools/property-drawers/MazePDVec2S32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDVec2U32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDRect2F.hpp"
+#include "maze-editor-tools/property-drawers/MazePDColorU32.hpp"
+#include "maze-editor-tools/property-drawers/MazePDColorF128.hpp"
 
 
 //////////////////////////////////////////
@@ -69,7 +71,7 @@ namespace Maze
     //////////////////////////////////////////
     bool CSharpEditorToolsManager::init()
     {
-
+        // Core
         registerMonoPropertyDrawerCallbacks<PropertyDrawerString>(MAZE_HCS("System.String"),
             [](ScriptInstance const& _instance, MonoProperty* _property, PropertyDrawerString* _drawer)
             {
@@ -179,7 +181,7 @@ namespace Maze
                 _instance.setProperty(_property, _drawer->getValue());
             });
 
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec2S32>(MAZE_HCS("Maze.Vec2S"),
+        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec2S32>(MAZE_HCS("Maze.Core.Vec2S"),
             [](ScriptInstance const& _instance, MonoProperty* _property, PropertyDrawerVec2S32* _drawer)
             {
                 Vec2S value; _instance.getProperty(_property, value); _drawer->setValue(value);
@@ -188,7 +190,7 @@ namespace Maze
             {
                 _instance.setProperty(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec2U32>(MAZE_HCS("Maze.Vec2U"),
+        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec2U32>(MAZE_HCS("Maze.Core.Vec2U"),
             [](ScriptInstance const& _instance, MonoProperty* _property, PropertyDrawerVec2U32* _drawer)
             {
                 Vec2U value; _instance.getProperty(_property, value); _drawer->setValue(value);
@@ -197,7 +199,7 @@ namespace Maze
             {
                 _instance.setProperty(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec2F32>(MAZE_HCS("Maze.Vec2F"),
+        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec2F32>(MAZE_HCS("Maze.Core.Vec2F"),
             [](ScriptInstance const& _instance, MonoProperty* _property, PropertyDrawerVec2F32* _drawer)
             {
                 Vec2F value; _instance.getProperty(_property, value); _drawer->setValue(value);
@@ -206,7 +208,7 @@ namespace Maze
             {
                 _instance.setProperty(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec3F32>(MAZE_HCS("Maze.Vec3F"),
+        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec3F32>(MAZE_HCS("Maze.Core.Vec3F"),
             [](ScriptInstance const& _instance, MonoProperty* _property, PropertyDrawerVec3F32* _drawer)
             {
                 Vec3F value; _instance.getProperty(_property, value); _drawer->setValue(value);
@@ -215,7 +217,7 @@ namespace Maze
             {
                 _instance.setProperty(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec4F32>(MAZE_HCS("Maze.Vec4F"),
+        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec4F32>(MAZE_HCS("Maze.Core.Vec4F"),
             [](ScriptInstance const& _instance, MonoProperty* _property, PropertyDrawerVec4F32* _drawer)
             {
                 Vec4F value; _instance.getProperty(_property, value); _drawer->setValue(value);
@@ -225,7 +227,7 @@ namespace Maze
                 _instance.setProperty(_property, _drawer->getValue());
             });
 
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerRect2F>(MAZE_HCS("Maze.Rect2F"),
+        registerMonoPropertyDrawerCallbacks<PropertyDrawerRect2F>(MAZE_HCS("Maze.Core.Rect2F"),
             [](ScriptInstance const& _instance, MonoProperty* _property, PropertyDrawerRect2F* _drawer)
             {
                 Rect2F value; _instance.getProperty(_property, value); _drawer->setValue(value);
@@ -233,6 +235,27 @@ namespace Maze
             [](ScriptInstance& _instance, MonoProperty* _property, PropertyDrawerRect2F const* _drawer)
             {
                 _instance.setProperty(_property, _drawer->getValue());
+            });
+        
+
+        // Graphics
+        registerMonoPropertyDrawerCallbacks<PropertyDrawerColorU32>(MAZE_HCS("Maze.Graphics.ColorU32"),
+            [](ScriptInstance const& _instance, MonoProperty* _property, PropertyDrawerColorU32* _drawer)
+            {
+                Vec4U8 value; _instance.getProperty(_property, value); _drawer->setValue(ColorU32::FromVec4U8(value));
+            },
+            [](ScriptInstance& _instance, MonoProperty* _property, PropertyDrawerColorU32 const* _drawer)
+            {
+                _instance.setProperty(_property, _drawer->getValue().toVec4U8());
+            });
+        registerMonoPropertyDrawerCallbacks<PropertyDrawerColorF128>(MAZE_HCS("Maze.Graphics.ColorF128"),
+            [](ScriptInstance const& _instance, MonoProperty* _property, PropertyDrawerColorF128* _drawer)
+            {
+                Vec4F value; _instance.getProperty(_property, value); _drawer->setValue(ColorF128(value));
+            },
+            [](ScriptInstance& _instance, MonoProperty* _property, PropertyDrawerColorF128 const* _drawer)
+            {
+                _instance.setProperty(_property, _drawer->getValue().toVec4F32());
             });
 
         return true;

@@ -154,20 +154,20 @@ namespace Maze
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsCore()
     {
-        MAZE_MONO_BIND_FUNC(MazeLog);
-        MAZE_MONO_BIND_FUNC(MazeLogWarning);
-        MAZE_MONO_BIND_FUNC(MazeLogError);
-        MAZE_MONO_BIND_FUNC(GetKeyState);
-        MAZE_MONO_BIND_FUNC(GetFrameNumber);
-        MAZE_MONO_BIND_FUNC(GetEntityId);
-        MAZE_MONO_BIND_FUNC_WITH_NAME(GetComponentIdHelper, GetComponentId);
-        MAZE_MONO_BIND_FUNC(GetComponentIdByMonoType);
-        MAZE_MONO_BIND_FUNC(GetComponent);
-        MAZE_MONO_BIND_FUNC(GetMonoBehaviourComponentObject);
-        MAZE_MONO_BIND_FUNC(Transform3DTranslate);
-        MAZE_MONO_BIND_FUNC(Transform3DRotate);
-        MAZE_MONO_BIND_FUNC(Transform3DGetPosition);
-        MAZE_MONO_BIND_FUNC(Transform3DSetPosition);
+        MAZE_CORE_MONO_BIND_FUNC(MazeLog);
+        MAZE_CORE_MONO_BIND_FUNC(MazeLogWarning);
+        MAZE_CORE_MONO_BIND_FUNC(MazeLogError);
+        MAZE_CORE_MONO_BIND_FUNC(GetKeyState);
+        MAZE_CORE_MONO_BIND_FUNC(GetFrameNumber);
+        MAZE_CORE_MONO_BIND_FUNC(GetEntityId);
+        MAZE_CORE_MONO_BIND_FUNC_WITH_NAME(GetComponentIdHelper, GetComponentId);
+        MAZE_CORE_MONO_BIND_FUNC(GetComponentIdByMonoType);
+        MAZE_CORE_MONO_BIND_FUNC(GetComponent);
+        MAZE_CORE_MONO_BIND_FUNC(GetMonoBehaviourComponentObject);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DTranslate);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DRotate);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DGetPosition);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DSetPosition);
     }
 
 } // namespace Maze

@@ -1,7 +1,7 @@
 using System;
 using Maze;
 
-namespace Maze
+namespace Maze.Core
 {
     public class NativeComponent : Component
     {

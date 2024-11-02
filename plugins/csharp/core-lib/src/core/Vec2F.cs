@@ -1,6 +1,6 @@
 using System;
 
-namespace Maze
+namespace Maze.Core
 {
     public struct Vec2F
     {

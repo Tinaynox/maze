@@ -61,12 +61,9 @@ namespace Maze
             m_namespace.c_str(),
             m_className.c_str());
 
-        if (!m_monoClass)
-            Debug::LogError(
-                "Unknown Core class: %s.%s",
-                m_namespace.c_str(),
-                m_className.c_str());
-        else
+        MAZE_ERROR_IF(!m_monoClass, "Unknown Core class: %s.%s", m_namespace.c_str(), m_className.c_str());
+            
+        if (m_monoClass)
             assignDefaultMethods();
     }
 

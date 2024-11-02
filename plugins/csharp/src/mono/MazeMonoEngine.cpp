@@ -313,9 +313,9 @@ namespace Maze
         g_monoEngineData->coreAssembly = LoadMonoAssembly(_csharpFile);
         g_monoEngineData->coreAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
         g_monoEngineData->ecsData.monoBehaviourClass = MakeShared<ScriptClass>(
-            "Maze", "MonoBehaviour", g_monoEngineData->coreAssemblyImage);
+            "Maze.Core", "MonoBehaviour", g_monoEngineData->coreAssemblyImage);
         g_monoEngineData->ecsData.nativeComponentClass = MakeShared<ScriptClass>(
-            "Maze", "NativeComponent", g_monoEngineData->coreAssemblyImage);
+            "Maze.Core", "NativeComponent", g_monoEngineData->coreAssemblyImage);
 
         LoadAssemblyClasses(g_monoEngineData->coreAssembly);
 

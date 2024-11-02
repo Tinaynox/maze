@@ -1,6 +1,6 @@
 using System;
 
-namespace Maze
+namespace Maze.Core
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class EntitySystemAttribute : Attribute
