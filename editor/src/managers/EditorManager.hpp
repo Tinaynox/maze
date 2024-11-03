@@ -58,6 +58,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EditorManager);
     MAZE_USING_SHARED_PTR(EditorActionManager);
+    MAZE_USING_SHARED_PTR(EditorUIManager);
     MAZE_USING_SHARED_PTR(EditorAssetsManager);
     MAZE_USING_SHARED_PTR(EditorCSharpManager);
     MAZE_USING_SHARED_PTR(EditorProjectManager);
@@ -190,6 +191,7 @@ namespace Maze
         EditorSceneMode m_sceneMode = EditorSceneMode::None;
 
         EditorActionManagerPtr m_editorActionManager;
+        EditorUIManagerPtr m_editorUIManager;
         EditorAssetsManagerPtr m_editorAssetsManager;
         EditorCSharpManagerPtr m_editorCSharpManager;
         EditorPrefabManagerPtr m_editorPrefabManager;

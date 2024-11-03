@@ -45,6 +45,8 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-ui/ecs/components/MazeMenuListTree2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "scenes/SceneWorkspace.hpp"
 #include "editor/EditorSceneMode.hpp"
 
@@ -56,6 +58,25 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EditorAssetsManager);
     MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(SceneWorkspace);
+
+
+    //////////////////////////////////////////
+    struct EditorAssetContextOption
+    {
+        //////////////////////////////////////////
+        EditorAssetContextOption(
+            String _menuName,
+            std::function<void(AssetsController*, Path const&)> const& _callback,
+            MenuListTree2D::ItemValidateCallback const& _validate)
+            : menuName(_menuName)
+            , callback(_callback)
+            , validate(_validate)
+        {}
+
+        String menuName;
+        std::function<void(AssetsController*, Path const&)> callback = nullptr;
+        MenuListTree2D::ItemValidateCallback validate = nullptr;
+    };
 
 
     //////////////////////////////////////////
@@ -84,6 +105,14 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        void addAssetContextOption(
+            HashedCString _extension,
+            String const& _menuName,
+            std::function<void(AssetsController*, Path const&)> const& _callback,
+            MenuListTree2D::ItemValidateCallback _validate = nullptr);
 
     protected:
 
@@ -118,10 +147,14 @@ namespace Maze
         //////////////////////////////////////////
         void fixAssetFilesNow();
 
+        //////////////////////////////////////////
+
     protected:
         static EditorAssetsManager* s_instance;
 
         Set<AssetFilePtr> m_assetFilessToFix;
+
+        StringKeyMap<Vector<EditorAssetContextOption>> m_editorAssetContextOptions;
     };
 
 

@@ -57,10 +57,20 @@ namespace Maze
         MAZE_CORE_API String ConstructSystemInfo();
 
         //////////////////////////////////////////
+        MAZE_CORE_API extern void ExecuteShell(
+            Path const& _executablePath,
+            Path const& _params = Path());
+
+        //////////////////////////////////////////
         MAZE_CORE_API extern void OpenURL(Path const& _url);
 
         //////////////////////////////////////////
         MAZE_CORE_API extern void OpenExplorer(Path const& _fullPath, bool _select = true);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API extern bool ExecuteSync(
+            Path const& _executablePath,
+            Path const& _workingDirectory = Path());
 
         //////////////////////////////////////////
         MAZE_CORE_API extern String const& GetOSVersion();

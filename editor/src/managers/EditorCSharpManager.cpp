@@ -29,8 +29,13 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/assets/MazeAssetDirectory.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
+#include "maze-core/helpers/MazeSystemHelper.hpp"
+#include "maze-core/helpers/MazeThreadHelper.hpp"
 #include "events/EditorEvents.hpp"
 #include "helpers/EditorProjectHelper.hpp"
+#include "helpers/EditorAssetHelper.hpp"
+#include "managers/EditorUIManager.hpp"
+#include "managers/EditorAssetsManager.hpp"
 
 
 //////////////////////////////////////////
@@ -69,6 +74,47 @@ namespace Maze
     bool EditorCSharpManager::init()
     {
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectOpenedEvent>(this, &EditorCSharpManager::notifyEvent);
+
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Scripts",
+            "Generate",
+            [](String const& _text)
+            {
+                if (EditorCSharpManager::GetInstancePtr())
+                    EditorCSharpManager::GetInstancePtr()->generateCSharpAssembly();
+            },
+            []() { return true; });
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Scripts",
+            "Compile",
+            [](String const& _text)
+            {
+                if (EditorCSharpManager::GetInstancePtr())
+                    EditorCSharpManager::GetInstancePtr()->compileCSharpAssembly();
+            },
+            []() { return true; });
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Scripts",
+            "Open project",
+            [](String const& _text)
+            {
+                Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharp/prj/Assembly-CSharp.sln";
+                SystemHelper::OpenURL(csharpPath);
+            },
+            []() { return true; });
+
+        EditorAssetsManager::GetInstancePtr()->addAssetContextOption(
+            MAZE_HCS("cs"),
+            "Edit",
+            [](AssetsController* _controller, Path const& _fullPath)
+            {
+                // #TODO: move to setting
+                Path devenv = "F:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/devenv.exe";
+
+                Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharp/prj/Assembly-CSharp.sln";
+                Path params = csharpPath + Path(" ") + _fullPath;
+                SystemHelper::ExecuteShell(devenv, params);
+            });
 
         return true;
     }
@@ -125,37 +171,7 @@ namespace Maze
 #if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
         Path generateAssemblyPath = csharpPath + "/generate.bat";
 
-        PROCESS_INFORMATION processInfo;
-        STARTUPINFOW startupInfo;
-        ZeroMemory(&processInfo, sizeof(PROCESS_INFORMATION));
-        ZeroMemory(&startupInfo, sizeof(STARTUPINFOW));
-        startupInfo.cb = sizeof(STARTUPINFOW);
-        startupInfo.lpReserved = NULL;
-        startupInfo.lpDesktop = NULL;
-        startupInfo.lpTitle = NULL;
-        startupInfo.dwFlags = NULL;
-        startupInfo.cbReserved2 = 0;
-        startupInfo.lpReserved2 = NULL;
-        startupInfo.wShowWindow = SW_SHOWDEFAULT;
-
-        // Launch the new process with the specified working directory
-        BOOL res = CreateProcessW(
-            generateAssemblyPath.c_str(),                       // Path to the executable
-            nullptr,                                            // Command-line arguments (optional)
-            nullptr,                                            // Process handle not inheritable
-            nullptr,                                            // Thread handle not inheritable
-            FALSE,                                              // Set handle inheritance to FALSE
-            0,                                                  // No creation flags
-            nullptr,                                            // Use parent's environment block
-            csharpPath.c_str(),                                 // Set the working directory
-            &startupInfo,                                       // Pointer to STARTUPINFO structure
-            &processInfo                                        // Pointer to PROCESS_INFORMATION structure
-        );
-        MAZE_ERROR_RETURN_IF(!res, "Failed to generate charp assembly project!");
-
-        WaitForSingleObject(processInfo.hProcess, INFINITE);
-        CloseHandle(processInfo.hProcess);
-        CloseHandle(processInfo.hThread);
+        MAZE_ERROR_RETURN_IF(!SystemHelper::ExecuteSync(generateAssemblyPath, csharpPath), "Failed to generate charp assembly project!");
 #else
         MAZE_NOT_IMPLEMENTED;
 #endif
@@ -173,37 +189,7 @@ namespace Maze
 #if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
         Path compileAssemblyPath = csharpPath + "/compile.bat";
 
-        PROCESS_INFORMATION processInfo;
-        STARTUPINFOW startupInfo;
-        ZeroMemory(&processInfo, sizeof(PROCESS_INFORMATION));
-        ZeroMemory(&startupInfo, sizeof(STARTUPINFOW));
-        startupInfo.cb = sizeof(STARTUPINFOW);
-        startupInfo.lpReserved = NULL;
-        startupInfo.lpDesktop = NULL;
-        startupInfo.lpTitle = NULL;
-        startupInfo.dwFlags = NULL;
-        startupInfo.cbReserved2 = 0;
-        startupInfo.lpReserved2 = NULL;
-        startupInfo.wShowWindow = SW_SHOWDEFAULT;
-
-        // Launch the new process with the specified working directory
-        BOOL res = CreateProcessW(
-            compileAssemblyPath.c_str(),                        // Path to the executable
-            nullptr,                                            // Command-line arguments (optional)
-            nullptr,                                            // Process handle not inheritable
-            nullptr,                                            // Thread handle not inheritable
-            FALSE,                                              // Set handle inheritance to FALSE
-            0,                                                  // No creation flags
-            nullptr,                                            // Use parent's environment block
-            csharpPath.c_str(),                                 // Set the working directory
-            &startupInfo,                                       // Pointer to STARTUPINFO structure
-            &processInfo                                        // Pointer to PROCESS_INFORMATION structure
-        );
-        MAZE_ERROR_RETURN_IF(!res, "Failed to compile charp assembly!");
-
-        WaitForSingleObject(processInfo.hProcess, INFINITE);
-        CloseHandle(processInfo.hProcess);
-        CloseHandle(processInfo.hThread);
+        MAZE_ERROR_RETURN_IF(!SystemHelper::ExecuteSync(compileAssemblyPath, csharpPath), "Failed to compile charp assembly!");
 #else
         MAZE_NOT_IMPLEMENTED;
 #endif

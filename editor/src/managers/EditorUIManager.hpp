@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorCSharpManager_hpp_))
-#define _EditorCSharpManager_hpp_
+#if (!defined(_EditorUIManager_hpp_))
+#define _EditorUIManager_hpp_
 
 
 //////////////////////////////////////////
@@ -45,6 +45,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-ui/ecs/components/MazeMenuListTree2D.hpp"
 #include "scenes/SceneWorkspace.hpp"
 #include "editor/EditorSceneMode.hpp"
 
@@ -53,60 +54,76 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorCSharpManager);
+    MAZE_USING_SHARED_PTR(EditorUIManager);
 
 
     //////////////////////////////////////////
-    // Class EditorCSharpManager
+    struct TopBarMenuData
+    {
+        TopBarMenuData(
+            String const& _menuName = String(),
+            String const& _option = String(),
+            MenuListTree2D::ItemCallback _callback = nullptr,
+            MenuListTree2D::ItemValidateCallback _validate = nullptr)
+            : menuName(_menuName)
+            , option(_option)
+            , callback(_callback)
+            , validate(_validate)
+        {}
+
+        String menuName;
+        String option;
+        MenuListTree2D::ItemCallback callback;
+        MenuListTree2D::ItemValidateCallback validate;
+    };
+
+
+    //////////////////////////////////////////
+    // Class EditorUIManager
     //
     //////////////////////////////////////////
-    class EditorCSharpManager
+    class EditorUIManager
         : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        ~EditorCSharpManager();
+        ~EditorUIManager();
 
         //////////////////////////////////////////
-        static void Initialize(EditorCSharpManagerPtr& _manager);
+        static void Initialize(EditorUIManagerPtr& _manager);
         
 
         //////////////////////////////////////////
-        static inline EditorCSharpManager* GetInstancePtr() { return s_instance; }
+        static inline EditorUIManager* GetInstancePtr() { return s_instance; }
 
         //////////////////////////////////////////
-        static inline EditorCSharpManager& GetInstance() { return *s_instance; }
-
+        static inline EditorUIManager& GetInstance() { return *s_instance; }
 
 
         //////////////////////////////////////////
-        void updateCSharpFolder();
+        void addTopBarOption(
+            String const& _menuName,
+            String const& _option,
+            MenuListTree2D::ItemCallback _callback,
+            MenuListTree2D::ItemValidateCallback _validate);
 
         //////////////////////////////////////////
-        void updateLibraryFolder();
-
-        //////////////////////////////////////////
-        void generateCSharpAssembly();
-
-        //////////////////////////////////////////
-        void compileCSharpAssembly();
+        inline Vector<TopBarMenuData> const& getTopBarMenuData() const { return m_topBarMenuData; }
 
     protected:
 
         //////////////////////////////////////////
-        EditorCSharpManager();
+        EditorUIManager();
 
         //////////////////////////////////////////
         bool init();
 
 
-        //////////////////////////////////////////
-        void notifyEvent(ClassUID _eventUID, Event* _event);
-
-
     protected:
-        static EditorCSharpManager* s_instance;
+        static EditorUIManager* s_instance;
+
+        Vector<TopBarMenuData> m_topBarMenuData;
     };
 
 
@@ -114,5 +131,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorCSharpManager_hpp_
+#endif // _EditorUIManager_hpp_
 //////////////////////////////////////////

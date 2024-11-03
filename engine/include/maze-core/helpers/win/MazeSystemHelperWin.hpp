@@ -51,7 +51,17 @@ namespace Maze
         MAZE_CORE_API GeoLanguage GetSystemLanguage();
 
         //////////////////////////////////////////
+        MAZE_CORE_API void ExecuteShell(
+            Path const& _executablePath,
+            Path const& _params);
+
+        //////////////////////////////////////////
         MAZE_CORE_API void OpenURL(Path const& _url);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool ExecuteSync(
+            Path const& _executablePath,
+            Path const& _workingDirectory);
 
         //////////////////////////////////////////
         MAZE_CORE_API String const& GetOSVersion();

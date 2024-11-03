@@ -108,6 +108,7 @@
 #include "managers/EditorManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
 #include "managers/EditorEntityManager.hpp"
+#include "managers/EditorUIManager.hpp"
 #include "editor/EditorSceneModeController.hpp"
 #include "editor/scene-mode-none/EditorSceneModeControllerNone.hpp"
 #include "editor/scene-mode-prefab/EditorSceneModeControllerPrefab.hpp"
@@ -291,6 +292,15 @@ namespace Maze
                     EntityPtr child = EditorHelper::CreateNewParticleSystem3D("Particle System");
                 },
                 EditorHelper::IsValidSceneMode);
+
+            for (TopBarMenuData const& optionData : EditorUIManager::GetInstancePtr()->getTopBarMenuData())
+            {
+                menuBar->addOption(
+                    optionData.menuName,
+                    optionData.option,
+                    optionData.callback,
+                    optionData.validate);
+            }
                         
             
 

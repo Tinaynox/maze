@@ -38,10 +38,25 @@ namespace Maze
     //////////////////////////////////////////
     namespace SystemHelper
     {
+        //////////////////////////////////////////
+        MAZE_CORE_API void ExecuteShell(
+            Path const& _executablePath,
+            Path const& _params)
+        {
+        }
         
         //////////////////////////////////////////
         MAZE_CORE_API void OpenExplorer(Path const& _fullPath, bool _select)
         {
+        }
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API bool ExecuteSync(
+            Path const& _executablePath,
+            Path const& _workingDirectory)
+        {
+            MAZE_NOT_IMPLEMENTED;
+            return false;
         }
 
         //////////////////////////////////////////

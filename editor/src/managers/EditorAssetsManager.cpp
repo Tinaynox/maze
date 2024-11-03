@@ -208,8 +208,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EditorAssetsManager::addAssetContextOption(
+        HashedCString _extension,
+        String const& _menuName,
+        std::function<void(AssetsController*, Path const&)> const& _callback,
+        MenuListTree2D::ItemValidateCallback _validate)
+    {
+        m_editorAssetContextOptions[_extension].emplace_back(
+            _menuName, _callback, _validate);
+    }
+
+    //////////////////////////////////////////
     void EditorAssetsManager::registerAssetFileCallbacks()
     {
+        addAssetContextOption(
+            MAZE_HCS("mzmaterial"),
+            "Duplicate",
+            [](AssetsController* _controller, Path const& _fullPath) { EditorAssetHelper::Duplicate(_controller, _fullPath); });
+
         AssetEditorToolsManager::GetInstancePtr()->registerAssetFileContextMenuCallback(
             [](AssetsController* _controller, Path const& _fullPath, MenuListTree2DPtr const& _menuListTree)
         {
@@ -255,12 +271,24 @@ namespace Maze
                     "Edit",
                     [_fullPath](String const& _text) { EditorAssetHelper::Edit(_fullPath); });
             }
-            else
-            if (extension == "mzmaterial")
+
+            if (EditorAssetsManager::GetInstancePtr())
             {
-                _menuListTree->addItem(
-                    "Duplicate",
-                    [_controller, _fullPath](String const& _text) { EditorAssetHelper::Duplicate(_controller, _fullPath); });
+                auto it = EditorAssetsManager::GetInstancePtr()->m_editorAssetContextOptions.find(extension);
+                if (it != EditorAssetsManager::GetInstancePtr()->m_editorAssetContextOptions.end())
+                {
+                    for (EditorAssetContextOption const& option : it->second)
+                    {
+                        std::function<void(AssetsController*, Path const&)> callback = option.callback;
+                        _menuListTree->addItem(
+                            option.menuName,
+                            [_controller, _fullPath, callback](String const& _text)
+                            {
+                                callback(_controller, _fullPath);
+                            },
+                            option.validate);
+                    }
+                }
             }
         });
     }

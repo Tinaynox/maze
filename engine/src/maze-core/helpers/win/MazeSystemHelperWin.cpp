@@ -65,21 +65,75 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_CORE_API void ExecuteShell(
+            Path const& _executablePath,
+            Path const& _params)
+        {
+            ShellExecuteW(
+                NULL,
+                L"open",
+                _executablePath.c_str(),
+                !_params.empty() ? _params.c_str() : NULL,
+                NULL,
+                SW_SHOW);
+        }
+
+        //////////////////////////////////////////
         MAZE_CORE_API void OpenURL(Path const& _url)
         {
             ShellExecuteW(NULL, L"open", _url.c_str(), NULL, NULL, SW_SHOW);
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern void OpenExplorer(Path const& _fullPath, bool _select)
+        MAZE_CORE_API void OpenExplorer(Path const& _fullPath, bool _select)
         {
             WString winPath = _fullPath;
             StringHelper::ReplaceSubstring(winPath, L"/", L"\\");
 
             if (_select)
-                ShellExecuteW(NULL, L"open", L"explorer.exe", (L"/select," + winPath).c_str(), NULL, SW_SHOW);
+                ExecuteShell(L"explorer.exe", L"/select," + winPath);
             else
-                ShellExecuteW(NULL, L"open", L"explorer.exe", (winPath).c_str(), NULL, SW_SHOW);
+                ExecuteShell(L"explorer.exe", winPath);
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool ExecuteSync(
+            Path const& _executablePath,
+            Path const& _workingDirectory)
+        {
+            PROCESS_INFORMATION processInfo;
+            STARTUPINFOW startupInfo;
+            ZeroMemory(&processInfo, sizeof(PROCESS_INFORMATION));
+            ZeroMemory(&startupInfo, sizeof(STARTUPINFOW));
+            startupInfo.cb = sizeof(STARTUPINFOW);
+            startupInfo.lpReserved = NULL;
+            startupInfo.lpDesktop = NULL;
+            startupInfo.lpTitle = NULL;
+            startupInfo.dwFlags = NULL;
+            startupInfo.cbReserved2 = 0;
+            startupInfo.lpReserved2 = NULL;
+            startupInfo.wShowWindow = SW_SHOWDEFAULT;
+
+            BOOL res = CreateProcessW(
+                _executablePath.c_str(),                            // Path to the executable
+                nullptr,                                            // Command-line arguments (optional)
+                nullptr,                                            // Process handle not inheritable
+                nullptr,                                            // Thread handle not inheritable
+                FALSE,                                              // Set handle inheritance to FALSE
+                0,                                                  // No creation flags
+                nullptr,                                            // Use parent's environment block
+                !_workingDirectory.empty() ? _workingDirectory.c_str() : nullptr, // Set the working directory
+                &startupInfo,                                       // Pointer to STARTUPINFO structure
+                &processInfo                                        // Pointer to PROCESS_INFORMATION structure
+            );
+            if (!res)
+                return false;
+
+            WaitForSingleObject(processInfo.hProcess, INFINITE);
+            CloseHandle(processInfo.hProcess);
+            CloseHandle(processInfo.hThread);
+
+            return true;
         }
 
         //////////////////////////////////////////

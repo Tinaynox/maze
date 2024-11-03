@@ -85,6 +85,7 @@
 #include "settings/MazeEditorSettings.hpp"
 #include "Editor.hpp"
 #include "managers/EditorActionManager.hpp"
+#include "managers/EditorUIManager.hpp"
 #include "managers/EditorAssetsManager.hpp"
 #include "managers/EditorCSharpManager.hpp"
 #include "managers/EditorProjectManager.hpp"
@@ -133,6 +134,10 @@ namespace Maze
     //////////////////////////////////////////
     bool EditorManager::init()
     {
+        EditorUIManager::Initialize(m_editorUIManager);
+        if (!m_editorUIManager)
+            return false;
+
         EditorAssetsManager::Initialize(m_editorAssetsManager);
         if (!m_editorAssetsManager)
             return false;
