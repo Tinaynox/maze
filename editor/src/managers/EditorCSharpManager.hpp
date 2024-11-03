@@ -25,17 +25,15 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorProjectModeHelper_hpp_))
-#define _EditorProjectModeHelper_hpp_
+#if (!defined(_EditorCSharpManager_hpp_))
+#define _EditorCSharpManager_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/utils/MazeDelegate.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
-#include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -47,37 +45,67 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
-#include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
-#include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "scenes/SceneWorkspace.hpp"
+#include "editor/EditorSceneMode.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    namespace EditorHelper
+    MAZE_USING_SHARED_PTR(EditorCSharpManager);
+
+
+    //////////////////////////////////////////
+    // Class EditorCSharpManager
+    //
+    //////////////////////////////////////////
+    class EditorCSharpManager
+        : public MultiDelegateCallbackReceiver
     {
-        //////////////////////////////////////////
-        bool IsProjectPathValid();
+    public:
 
         //////////////////////////////////////////
-        bool SelectProject();
+        ~EditorCSharpManager();
 
         //////////////////////////////////////////
-        bool SelectProjectOrShutdown();
+        static void Initialize(EditorCSharpManagerPtr& _manager);
+        
 
         //////////////////////////////////////////
-        bool ValidateProjectOrSelect();
+        static inline EditorCSharpManager* GetInstancePtr() { return s_instance; }
 
         //////////////////////////////////////////
-        Path GetProjectFolder();
+        static inline EditorCSharpManager& GetInstance() { return *s_instance; }
+
+
+    protected:
 
         //////////////////////////////////////////
-        Path GetProjectAssetsFolder();
+        EditorCSharpManager();
 
         //////////////////////////////////////////
-        Path GetProjectPackagesFolder();
+        bool init();
+
+
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
+
+        //////////////////////////////////////////
+        void updateCSharpFolder();
+
+        //////////////////////////////////////////
+        void updateLibraryFolder();
+
+        //////////////////////////////////////////
+        void generateCSharpAssembly();
+
+        //////////////////////////////////////////
+        void compileCSharpAssembly();
+
+    protected:
+        static EditorCSharpManager* s_instance;
     };
 
 
@@ -85,5 +113,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorProjectModeHelper_hpp_
+#endif // _EditorCSharpManager_hpp_
 //////////////////////////////////////////

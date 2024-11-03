@@ -86,6 +86,7 @@
 #include "Editor.hpp"
 #include "managers/EditorActionManager.hpp"
 #include "managers/EditorAssetsManager.hpp"
+#include "managers/EditorCSharpManager.hpp"
 #include "managers/EditorProjectManager.hpp"
 #include "managers/EditorGizmosManager.hpp"
 #include "managers/EditorEntityManager.hpp"
@@ -134,6 +135,10 @@ namespace Maze
     {
         EditorAssetsManager::Initialize(m_editorAssetsManager);
         if (!m_editorAssetsManager)
+            return false;
+
+        EditorCSharpManager::Initialize(m_editorCSharpManager);
+        if (!m_editorCSharpManager)
             return false;
 
         EditorPrefabManager::Initialize(m_editorPrefabManager);

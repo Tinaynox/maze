@@ -59,6 +59,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EditorManager);
     MAZE_USING_SHARED_PTR(EditorActionManager);
     MAZE_USING_SHARED_PTR(EditorAssetsManager);
+    MAZE_USING_SHARED_PTR(EditorCSharpManager);
     MAZE_USING_SHARED_PTR(EditorProjectManager);
     MAZE_USING_SHARED_PTR(EditorGizmosManager);
     MAZE_USING_SHARED_PTR(EditorEntityManager);
@@ -190,6 +191,7 @@ namespace Maze
 
         EditorActionManagerPtr m_editorActionManager;
         EditorAssetsManagerPtr m_editorAssetsManager;
+        EditorCSharpManagerPtr m_editorCSharpManager;
         EditorPrefabManagerPtr m_editorPrefabManager;
         EditorSceneManagerPtr m_editorSceneManager;
         EditorProjectManagerPtr m_editorProjectManager;

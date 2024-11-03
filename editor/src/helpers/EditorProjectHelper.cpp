@@ -207,6 +207,16 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        Path GetProjectFolder()
+        {
+            if (!IsProjectPathValid())
+                return Path();
+
+            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+            return editorSettings->getProjectFullPath();
+        }
+
+        //////////////////////////////////////////
         Path GetProjectAssetsFolder()
         {
             if (!IsProjectPathValid())
