@@ -31,6 +31,8 @@
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazeSystemHelper.hpp"
 #include "maze-core/helpers/MazeThreadHelper.hpp"
+#include "maze-plugin-csharp/MazeCSharpService.hpp"
+#include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "events/EditorEvents.hpp"
 #include "helpers/EditorProjectHelper.hpp"
 #include "helpers/EditorAssetHelper.hpp"
@@ -59,6 +61,7 @@ namespace Maze
         if (EventManager::GetInstancePtr())
         {
             EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectOpenedEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectWillBeClosedEvent>(this);
         }
 
         s_instance = nullptr;
@@ -74,6 +77,7 @@ namespace Maze
     bool EditorCSharpManager::init()
     {
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectOpenedEvent>(this, &EditorCSharpManager::notifyEvent);
+        EventManager::GetInstancePtr()->subscribeEvent<EditorProjectWillBeClosedEvent>(this, &EditorCSharpManager::notifyEvent);
 
         EditorUIManager::GetInstancePtr()->addTopBarOption(
             "Scripts",
@@ -125,9 +129,18 @@ namespace Maze
         if (_eventUID == ClassInfo<EditorProjectOpenedEvent>::UID())
         {
             updateLibraryFolder();
+            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies");
+
             updateCSharpFolder();
             generateCSharpAssembly();
             compileCSharpAssembly();
+
+            loadCSharpAssembly();
+        }
+        else
+        if (_eventUID == ClassInfo< EditorProjectWillBeClosedEvent>::UID())
+        {
+            AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies");
         }
     }
 
@@ -195,6 +208,12 @@ namespace Maze
 #endif
 
         Debug::Log("CSharp assembly project compilation finished.");
+    }
+
+    //////////////////////////////////////////
+    void EditorCSharpManager::loadCSharpAssembly()
+    {
+        CSharpService::GetInstancePtr()->loadMonoAssembly(MAZE_HCS("Assembly-CSharp.dll"));
     }
 
 } // namespace Maze
