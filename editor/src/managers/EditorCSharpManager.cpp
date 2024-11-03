@@ -33,6 +33,8 @@
 #include "maze-core/helpers/MazeThreadHelper.hpp"
 #include "maze-plugin-csharp/MazeCSharpService.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
+#include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
+#include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "events/EditorEvents.hpp"
 #include "helpers/EditorProjectHelper.hpp"
 #include "helpers/EditorAssetHelper.hpp"
@@ -118,6 +120,13 @@ namespace Maze
                 Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharp/prj/Assembly-CSharp.sln";
                 Path params = csharpPath + Path(" ") + _fullPath;
                 SystemHelper::ExecuteShell(devenv, params);
+            });
+
+        InspectorManager::GetInstancePtr()->addAddComponentCallback(
+            "Scripts/Sandbox.Player",
+            [](EntityPtr const& _entity)
+            {
+                _entity->createComponent<MonoBehaviour>(MAZE_HCS("Sandbox.Player"));
             });
 
         return true;

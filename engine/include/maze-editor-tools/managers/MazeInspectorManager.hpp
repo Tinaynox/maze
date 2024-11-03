@@ -41,6 +41,7 @@
 #include "maze-editor-tools/property-drawers/MazePDVec2U32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDTexture2D.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDDefault.hpp"
+#include "maze-ui/ecs/components/MazeMenuListTree2D.hpp"
 #include <functional>
 
 
@@ -66,6 +67,25 @@ namespace Maze
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Vec2S, PropertyDrawerVec2U32>;
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Vec2U, PropertyDrawerVec2U32>;
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Texture2DPtr, PropertyDrawerTexture2D>;
+
+
+    //////////////////////////////////////////
+    struct MAZE_EDITOR_TOOLS_API AddComponentCallback
+    {
+        //////////////////////////////////////////
+        AddComponentCallback(
+            String const& _menuName,
+            std::function<void(EntityPtr const&)> const& _callback,
+            MenuListTree2D::ItemValidateCallback const& _validate)
+            : menuName(_menuName)
+            , callback(_callback)
+            , validate(_validate)
+        {}
+
+        String menuName;
+        std::function<void(EntityPtr const&)> callback;
+        MenuListTree2D::ItemValidateCallback validate;
+    };
 
 
     //////////////////////////////////////////
@@ -388,6 +408,17 @@ namespace Maze
         //////////////////////////////////////////
         inline void setSaveAssetButtonEnabled(bool _value) { m_saveAssetButtonEnabled = _value; }
 
+
+
+        //////////////////////////////////////////
+        void addAddComponentCallback(
+            String const& _menuName,
+            std::function<void(EntityPtr const&)> const& _callback,
+            MenuListTree2D::ItemValidateCallback const& _validate = nullptr);
+
+        //////////////////////////////////////////
+        inline Vector<AddComponentCallback> const& getExtraAddComponentCallbacks() const { return m_extraAddComponentCallbacks; }
+
     public:
 
         //////////////////////////////////////////
@@ -410,6 +441,9 @@ namespace Maze
         Map<ClassUID, Vector<std::pair<String, std::function<void(Entity*, Component*)>>>> m_inspectorComponentContextMenuOptions;
 
         bool m_saveAssetButtonEnabled = true;
+
+
+        Vector<AddComponentCallback> m_extraAddComponentCallbacks;
     };
     
 

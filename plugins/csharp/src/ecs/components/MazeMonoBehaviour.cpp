@@ -40,7 +40,6 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(MonoBehaviour, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(DataBlock, classData, DataBlock(), getMonoClassData, setMonoClassData),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(DataBlock, data, DataBlock(), getData, setData));
 
     //////////////////////////////////////////
@@ -105,7 +104,7 @@ namespace Maze
         m_monoClass->getMethod("OnCreate");
         m_monoClass->getMethod("OnUpdate", 1);
 
-        m_componentId = GetComponentIdByName(m_monoClass->getFullname().c_str());
+        m_componentId = GetComponentIdByName(m_monoClass->getFullName().c_str());
 
         createMonoInstance();
     }
@@ -119,31 +118,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MonoBehaviour::setMonoClassData(DataBlock _dataBlock)
-    {
-        Debug::LogError("4");
-    }
-
-    //////////////////////////////////////////
-    DataBlock MonoBehaviour::getMonoClassData() const
-    {
-        DataBlock db;
-        Debug::LogError("3");
-
-        return std::move(db);
-    }
-
-    //////////////////////////////////////////
     void MonoBehaviour::setData(DataBlock _dataBlock)
     {
-        Debug::LogError("1");
+        //Debug::LogError("1");
     }
 
     //////////////////////////////////////////
     DataBlock MonoBehaviour::getData() const
     {
         DataBlock db;
-        Debug::LogError("2");
+        //Debug::LogError("2");
 
         return std::move(db);
     }
@@ -183,87 +167,6 @@ namespace Maze
                 scriptClass->getOnUpdateMethod(),
                 _event.getDt());
     }
-
-    /*
-    CustomComponentSystemHolder holder0(
-        MAZE_HCS("123"),
-        ClassInfo<EntityAddedToSampleEvent>::UID(),
-        [](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(GetComponentIdByName("Sandbox.Player")); },
-        (ComponentSystemEventHandler::Func)&MonoBehaviourOnCreate);
-
-    CustomComponentSystemHolder holder1(
-        MAZE_HCS("456"),
-        ClassInfo<UpdateEvent>::UID(),
-        [](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(GetComponentIdByName("Sandbox.Player")); },
-        (ComponentSystemEventHandler::Func)&MonoBehaviourOnUpdate);
-
-    CustomComponentSystemHolder holder2(
-        MAZE_HCS("789"),
-        ClassInfo<EntityAddedToSampleEvent>::UID(),
-        [](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(GetComponentIdByName("Sandbox.Player2")); },
-        (ComponentSystemEventHandler::Func)&MonoBehaviourOnCreate);
-
-    CustomComponentSystemHolder holder3(
-        MAZE_HCS("000"),
-        ClassInfo<UpdateEvent>::UID(),
-        [](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(GetComponentIdByName("Sandbox.Player2")); },
-        (ComponentSystemEventHandler::Func)&MonoBehaviourOnUpdate);
-    */
-
-
-
-    /*
-    //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(MonoBehaviourSystemAppear,
-        {},
-        {},
-        EntityAddedToSampleEvent const& _event,
-        Entity* _entity,
-        MonoBehaviour*)
-    {
-        _entity->findMultiComponent<MonoBehaviour>(
-            [&_event](MonoBehaviour* _monoBehaviour)
-            {
-                ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
-                ScriptInstance& scriptInstance = _monoBehaviour->getMonoInstance();
-
-                if (!scriptClass || !scriptInstance.isValid())
-                    return false;
-
-                if (scriptClass->getOnCreateMethod())
-                    scriptInstance.invokeMethod(
-                        scriptClass->getOnCreateMethod());
-
-                return false;
-            });
-    }
-
-    //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(MonoBehaviourSystemUpdate,
-        {},
-        {},
-        UpdateEvent const& _event,
-        Entity* _entity,
-        MonoBehaviour*)
-    {
-        _entity->findMultiComponent<MonoBehaviour>(
-            [&_event](MonoBehaviour* _monoBehaviour)
-            {
-                ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
-                ScriptInstance& scriptInstance = _monoBehaviour->getMonoInstance();
-
-                if (!scriptClass || !scriptInstance.isValid())
-                    return false;
-
-                if (scriptClass->getOnUpdateMethod())
-                    scriptInstance.invokeMethod(
-                        scriptClass->getOnUpdateMethod(),
-                        _event.getDt());
-                return false;
-            });
-        
-    }
-    */
 
 } // namespace Maze
 //////////////////////////////////////////

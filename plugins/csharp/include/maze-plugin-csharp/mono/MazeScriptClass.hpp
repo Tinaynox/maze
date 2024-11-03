@@ -120,16 +120,20 @@ namespace Maze
         inline String const& getClassName() const { return m_className; }
 
         //////////////////////////////////////////
-        String getFullname() const;
+        inline String const& getFullName() const { return m_fullName; }
 
     protected:
 
         //////////////////////////////////////////
         void assignDefaultMethods();
 
+        //////////////////////////////////////////
+        String buildFullName() const;
+
     private:
         String m_namespace;
         String m_className;
+        String m_fullName;
         MonoClass* m_monoClass = nullptr;
 
         MonoMethod* m_onCreateMethod = nullptr;

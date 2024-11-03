@@ -184,6 +184,9 @@ namespace Maze
         virtual ComponentId getComponentId() const { return getClassUID(); }
 
         //////////////////////////////////////////
+        virtual CString getComponentClassName() const { return getClassName(); }
+
+        //////////////////////////////////////////
         inline Entity* getEntityRaw() const { return m_entityRaw; }
 
         //////////////////////////////////////////

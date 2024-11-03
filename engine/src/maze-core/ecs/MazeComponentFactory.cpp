@@ -39,7 +39,7 @@ namespace Maze
     //////////////////////////////////////////
     ComponentCreationData::ComponentCreationData()
         : name(nullptr)
-        , id(0)
+        , staticId(0)
         , createComponentMethod(nullptr)
         , metaClass(nullptr)
         , group(nullptr)
@@ -100,11 +100,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ComponentPtr ComponentFactory::createDynamicComponent(ComponentId _id, HashedCString _dynamicComponentName)
+    {
+        Map<ComponentId, ComponentCreationData>::const_iterator it = m_sceneObjectCreationData.find(_id);
+
+        MAZE_ERROR_RETURN_VALUE_IF(it == m_sceneObjectCreationData.end(), ComponentPtr(), "Undefined component index: %u", _id);
+        MAZE_ERROR_RETURN_VALUE_IF(!it->second.createDynamicComponentFunc, ComponentPtr(), "Component is not dynamic: %u", _id);
+
+        return it->second.createDynamicComponentFunc(_dynamicComponentName);
+    }
+
+    //////////////////////////////////////////
+    ComponentPtr ComponentFactory::createDynamicComponent(CString _staticComponentName, HashedCString _dynamicComponentName)
+    {
+        ComponentId componentId = getComponentId(_staticComponentName);
+        return createDynamicComponent(componentId, _dynamicComponentName);
+    }
+
+    //////////////////////////////////////////
     ComponentId ComponentFactory::getComponentId(CString _className)
     {
         for (auto const& sceneObjectCreationData : m_sceneObjectCreationData)
             if (strcmp(sceneObjectCreationData.second.name, _className) == 0)
-                return sceneObjectCreationData.second.id;
+                return sceneObjectCreationData.second.staticId;
 
         MAZE_ERROR("Undefined component: %s", _className);
         return 0;
@@ -114,7 +132,7 @@ namespace Maze
     CString ComponentFactory::getComponentName(ComponentId _id)
     {
         for (auto const& sceneObjectCreationData : m_sceneObjectCreationData)
-            if (sceneObjectCreationData.second.id == _id)
+            if (sceneObjectCreationData.second.staticId == _id)
                 return sceneObjectCreationData.second.name;
         
         MAZE_ERROR("Undefined component with uid=%u", _id);
@@ -125,7 +143,7 @@ namespace Maze
     MetaClass* ComponentFactory::getComponentMetaClass(ComponentId _id)
     {
         for (auto const& sceneObjectCreationData : m_sceneObjectCreationData)
-            if (sceneObjectCreationData.second.id == _id)
+            if (sceneObjectCreationData.second.staticId == _id)
                 return sceneObjectCreationData.second.metaClass;
 
         MAZE_ERROR("Undefined component with uid=%u", _id);

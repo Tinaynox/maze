@@ -153,6 +153,11 @@ namespace Maze
                     componentBlock->setS32(MAZE_HCS("_i"), propertyValueIndexIt->second);
                 componentBlock->setCString(MAZE_HCS("_t"), static_cast<CString>(_component->getMetaClass()->getName()));
 
+                if (strcmp(_component->getClassName(), _component->getComponentClassName()) != 0)
+                {
+                    componentBlock->setCString(MAZE_HCS("_ct"), static_cast<CString>(_component->getComponentClassName()));
+                }
+
                 MetaClass const* metaClass = _component->getMetaClass();
                 MetaInstance metaInstance = _component->getMetaInstance();
 
@@ -519,6 +524,8 @@ namespace Maze
         EcsWorld* world = _world ? _world
             : (scene ? scene->getWorld() : nullptr);
 
+        ComponentFactoryPtr const& factory = EntityManager::GetInstancePtr()->getComponentFactory();
+
         Map<S32, EntityPtr> entities;
         Map<S32, ComponentPtr> components;
 
@@ -558,11 +565,14 @@ namespace Maze
                             componentIndex = --autoComponentIndexCounter;
 
                         CString componentClassName = componentBlock->getCString(MAZE_HCS("_t"));
-                        ComponentId componentId = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentId(componentClassName);
+                        HashedCString componentDynamicClassName = componentBlock->getHashedCString(MAZE_HCS("_ct"));
+                        ComponentId componentId = !componentDynamicClassName.empty() ? GetComponentIdByName(componentDynamicClassName)
+                                                                                     : factory->getComponentId(componentClassName);
                         ComponentPtr component = entity->getComponentById(componentId);
                         if (!component)
                         {
-                            component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentId);
+                            component = !componentDynamicClassName.empty() ? factory->createDynamicComponent(componentClassName, componentDynamicClassName)
+                                                                           : factory->createComponent(componentId);
 
                             if (!component)
                             {
@@ -610,7 +620,7 @@ namespace Maze
 
                                 if (componentClassName && componentPropertyName && componentPropertyValue)
                                 {
-                                    ComponentId componentId = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentId(componentClassName);
+                                    ComponentId componentId = factory->getComponentId(componentClassName);
                                     ComponentPtr const& component = entity->getComponentById(componentId);
                                     MetaProperty* metaProperty = component->getMetaClass()->getProperty(componentPropertyName);
                                     if (metaProperty)
@@ -659,11 +669,14 @@ namespace Maze
                                     componentIndex = --autoComponentIndexCounter;
 
                                 CString componentClassName = prefabChildBlock->getCString(MAZE_HCS("_t"));
-                                ComponentId componentId = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentId(componentClassName);
+                                HashedCString componentDynamicClassName = prefabChildBlock->getHashedCString(MAZE_HCS("_ct"));
+                                ComponentId componentId = !componentDynamicClassName.empty() ? GetComponentIdByName(componentDynamicClassName)
+                                                                                             : factory->getComponentId(componentClassName);
                                 ComponentPtr component = entity->getComponentById(componentId);
                                 if (!component)
                                 {
-                                    component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentId);
+                                    component = !componentDynamicClassName.empty() ? factory->createDynamicComponent(componentClassName, componentDynamicClassName)
+                                                                                   : factory->createComponent(componentId);
 
                                     if (!component)
                                     {
@@ -843,6 +856,7 @@ namespace Maze
         EcsWorld* world = _world ? _world
             : (scene ? scene->getWorld() : nullptr);
 
+        ComponentFactoryPtr const& factory = EntityManager::GetInstancePtr()->getComponentFactory();
 
         S32 autoEntityIndexCounter = 0;
         S32 autoComponentIndexCounter = 0;
@@ -879,11 +893,14 @@ namespace Maze
                             componentIndex = --autoComponentIndexCounter;
 
                         CString componentClassName = componentBlock->getCString(MAZE_HCS("_t"));
-                        ComponentId componentId = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentId(componentClassName);
+                        HashedCString componentDynamicClassName = componentBlock->getHashedCString(MAZE_HCS("_ct"));
+                        ComponentId componentId = !componentDynamicClassName.empty() ? GetComponentIdByName(componentDynamicClassName)
+                                                                                     : factory->getComponentId(componentClassName);
                         ComponentPtr component = entity->getComponentById(componentId);
                         if (!component)
                         {
-                            component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentId);
+                            component = !componentDynamicClassName.empty() ? factory->createDynamicComponent(componentClassName, componentDynamicClassName)
+                                                                           : factory->createComponent(componentId);
 
                             if (!component)
                             {
@@ -940,11 +957,14 @@ namespace Maze
                                     componentIndex = --autoComponentIndexCounter;
 
                                 CString componentClassName = prefabChildBlock->getCString(MAZE_HCS("_t"));
-                                ComponentId componentId = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentId(componentClassName);
+                                HashedCString componentDynamicClassName = prefabChildBlock->getHashedCString(MAZE_HCS("_ct"));
+                                ComponentId componentId = !componentDynamicClassName.empty() ? GetComponentIdByName(componentDynamicClassName)
+                                                                                             : factory->getComponentId(componentClassName);
                                 ComponentPtr component = entity->getComponentById(componentId);
                                 if (!component)
                                 {
-                                    component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentId);
+                                    component = !componentDynamicClassName.empty() ? factory->createDynamicComponent(componentClassName, componentDynamicClassName)
+                                                                                   : factory->createComponent(componentId);
 
                                     if (!component)
                                     {
@@ -1001,7 +1021,7 @@ namespace Maze
 
                             if (componentClassName && componentPropertyName)
                             {
-                                ComponentId componentId = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentId(componentClassName);
+                                ComponentId componentId = factory->getComponentId(componentClassName);
                                 ComponentPtr const& component = entity->getComponentById(componentId);
                                 MetaProperty* metaProperty = component->getMetaClass()->getProperty(componentPropertyName);
                                 if (metaProperty)

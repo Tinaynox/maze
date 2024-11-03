@@ -91,6 +91,8 @@ namespace Maze
         //////////////////////////////////////////
         void setEntities(Set<EntityPtr> const& _entities);
 
+
+
     protected:
 
         //////////////////////////////////////////
@@ -139,6 +141,9 @@ namespace Maze
         bool m_entitiesPropertiesListDirty;
 
         EcsWorld* m_world = nullptr;
+
+
+        
     };
 
 

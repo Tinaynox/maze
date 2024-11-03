@@ -315,6 +315,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void InspectorManager::addAddComponentCallback(
+        String const& _menuName,
+        std::function<void(EntityPtr const&)> const& _callback,
+        MenuListTree2D::ItemValidateCallback const& _validate)
+    {
+        m_extraAddComponentCallbacks.emplace_back(_menuName, _callback, _validate);
+    }
+
+    //////////////////////////////////////////
     ComponentEditorPtr InspectorManager::createComponentEditor(
         ComponentId _componentId,
         MetaClass* _metaClass)

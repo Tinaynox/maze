@@ -331,6 +331,10 @@ namespace Maze
                 ComponentFactoryPtr const& componentFactory = EntityManager::GetInstancePtr()->getComponentFactory();
                 for (auto const& sceneObjectCreationData : componentFactory->getSceneObjectCreationData())
                 {
+                    // Ignore dynamic components
+                    if (sceneObjectCreationData.second.createDynamicComponentFunc)
+                        continue;
+
                     String itemName;
                     if (sceneObjectCreationData.second.group)
                         itemName += String(sceneObjectCreationData.second.group) + "/";
@@ -340,7 +344,7 @@ namespace Maze
                         itemName,
                         [this, sceneObjectCreationData](String const& _text)
                         {
-                            ComponentId id = sceneObjectCreationData.second.id;
+                            ComponentId id = sceneObjectCreationData.second.staticId;
 
                             for (EntityPtr const& entity : m_entities)
                             {
@@ -364,6 +368,19 @@ namespace Maze
                         },
                         nullptr,
                         false);
+                }
+
+                for (AddComponentCallback const& callbackData : InspectorManager::GetInstancePtr()->getExtraAddComponentCallbacks())
+                {
+                    std::function<void(EntityPtr const&)> callback = callbackData.callback;
+                    _menuListTree->addItem(
+                        callbackData.menuName,
+                        [this, callback](String const& _text)
+                        {
+                            for (EntityPtr const& entity : m_entities)
+                                callback(entity);
+                        },
+                        callbackData.validate);
                 }
             });
 

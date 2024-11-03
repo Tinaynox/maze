@@ -58,8 +58,9 @@ namespace Maze
         ComponentCreationData();
 
         CString name;
-        ComponentId id;
+        ComponentId staticId;
         ComponentPtr (ComponentFactory::*createComponentMethod)(void);
+        std::function<ComponentPtr(HashedCString)> createDynamicComponentFunc;
         MetaClass* metaClass;
 
         CString group;
@@ -82,7 +83,9 @@ namespace Maze
 
         //////////////////////////////////////////
         template <class T>
-        void registerComponent(CString _group = nullptr)
+        void registerComponent(
+            CString _group = nullptr,
+            std::function<ComponentPtr(HashedCString)> const& _createDynamicComponentFunc = nullptr)
         {
             MAZE_ERROR_IF(strcmp(T::GetMetaClass()->getName(), static_cast<CString>(ClassInfo<T>::Name())) != 0, "Class %s should have his own MetaClass! Current MetaClass is %s", ClassInfo<T>::Name(), T::GetMetaClass()->getName());
 
@@ -90,8 +93,9 @@ namespace Maze
 
             ComponentCreationData objectData;
             objectData.name = ClassInfo<T>::Name();
-            objectData.id = staticId;
+            objectData.staticId = staticId;
             objectData.createComponentMethod = &ComponentFactory::createComponent<T>;
+            objectData.createDynamicComponentFunc = _createDynamicComponentFunc;
             objectData.metaClass = T::GetMetaClass();
             objectData.group = _group;
 
@@ -116,6 +120,12 @@ namespace Maze
 
         //////////////////////////////////////////
         ComponentPtr createComponent(ComponentId _componentUID);
+
+        //////////////////////////////////////////
+        ComponentPtr createDynamicComponent(ComponentId _componentUID, HashedCString _dynamicComponentName);
+
+        //////////////////////////////////////////
+        ComponentPtr createDynamicComponent(CString _staticComponentName, HashedCString _dynamicComponentName);
 
         //////////////////////////////////////////
         ComponentId getComponentId(CString _className);

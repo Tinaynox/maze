@@ -233,19 +233,27 @@ namespace Maze
 
             _menuListTree->addItem(
                 "Create/Folder",
-                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateFolder(_controller, _fullPath); });
+                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateFolder(_controller, _fullPath); },
+                nullptr,
+                false);
 
             _menuListTree->addItem(
                 "Create/Scene",
-                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateScene(_controller, _fullPath); });
+                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateScene(_controller, _fullPath); },
+                nullptr,
+                false);
 
             _menuListTree->addItem(
                 "Create/Prefab/3D",
-                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreatePrefab3D(_controller, _fullPath); });
+                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreatePrefab3D(_controller, _fullPath); },
+                nullptr,
+                false);
 
             _menuListTree->addItem(
                 "Create/Material",
-                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateMaterial(_controller, _fullPath); });
+                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateMaterial(_controller, _fullPath); },
+                nullptr,
+                false);
 
             auto  const& assetDirectoryPathes = AssetManager::GetInstancePtr()->getAssetDirectoryPathes();
             bool isRootAssetDirectory = assetDirectoryPathes.find(_fullPath) != assetDirectoryPathes.end();
@@ -254,22 +262,30 @@ namespace Maze
             {
                 _menuListTree->addItem(
                     "Rename",
-                    [_controller, _fullPath](String const& _text) { EditorAssetHelper::Rename(_controller, _fullPath); });
+                    [_controller, _fullPath](String const& _text) { EditorAssetHelper::Rename(_controller, _fullPath); },
+                    nullptr,
+                    false);
 
                 _menuListTree->addItem(
                     "Delete",
-                    [_fullPath](String const& _text) { EditorAssetHelper::Delete(_fullPath); });
+                    [_fullPath](String const& _text) { EditorAssetHelper::Delete(_fullPath); },
+                    nullptr,
+                    false);
             }
 
             if (AssetEditorToolsManager::GetInstancePtr()->isPrefabExtension(extension))
             {
                 _menuListTree->addItem(
                     "Duplicate",
-                    [_controller, _fullPath](String const& _text) { EditorAssetHelper::Duplicate(_controller, _fullPath); });
+                    [_controller, _fullPath](String const& _text) { EditorAssetHelper::Duplicate(_controller, _fullPath); },
+                    nullptr,
+                    false);
 
                 _menuListTree->addItem(
                     "Edit",
-                    [_fullPath](String const& _text) { EditorAssetHelper::Edit(_fullPath); });
+                    [_fullPath](String const& _text) { EditorAssetHelper::Edit(_fullPath); },
+                    nullptr,
+                    false);
             }
 
             if (EditorAssetsManager::GetInstancePtr())
@@ -286,10 +302,13 @@ namespace Maze
                             {
                                 callback(_controller, _fullPath);
                             },
-                            option.validate);
+                            option.validate,
+                            false);
                     }
                 }
             }
+
+            _menuListTree->rebuildItems();
         });
     }
 

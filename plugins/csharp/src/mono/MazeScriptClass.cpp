@@ -45,6 +45,7 @@ namespace Maze
         , m_className(_className)
         , m_monoClass(_monoClass)
     {
+        m_fullName = buildFullName();
         assignDefaultMethods();
     }
      
@@ -56,6 +57,7 @@ namespace Maze
         : m_namespace(_namespace)
         , m_className(_className)
     {
+        m_fullName = buildFullName();
         m_monoClass = mono_class_from_name(
             _monoImage,
             m_namespace.c_str(),
@@ -95,7 +97,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String ScriptClass::getFullname() const
+    String ScriptClass::buildFullName() const
     {
         if (!m_namespace.empty())
         {

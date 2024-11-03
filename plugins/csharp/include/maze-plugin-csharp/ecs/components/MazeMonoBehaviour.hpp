@@ -76,6 +76,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual ComponentId getComponentId() const MAZE_OVERRIDE { return m_componentId; }
 
+        //////////////////////////////////////////
+        virtual CString getComponentClassName() const { return m_monoClass ? m_monoClass->getFullName().c_str() : getClassName(); }
+
 
         //////////////////////////////////////////
         void setMonoClass(ScriptClassPtr const& _scriptClass);
@@ -85,12 +88,6 @@ namespace Maze
 
         //////////////////////////////////////////
         ScriptClassPtr const& getMonoClass() const { return m_monoClass; }
-
-        //////////////////////////////////////////
-        void setMonoClassData(DataBlock _dataBlock);
-
-        //////////////////////////////////////////
-        DataBlock getMonoClassData() const;
 
 
         //////////////////////////////////////////

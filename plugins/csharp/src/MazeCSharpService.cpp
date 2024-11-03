@@ -67,7 +67,9 @@ namespace Maze
     {
         MonoEngine::Initialize();
 
-        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MonoBehaviour>("Mono");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MonoBehaviour>(
+            "Mono",
+            [](HashedCString _dynamicClassName) { return MonoBehaviour::Create(_dynamicClassName); });
     }
 
     //////////////////////////////////////////
