@@ -35,6 +35,7 @@
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
+#include "maze-plugin-csharp/managers/MazeMonoSerializationManager.hpp"
 
 
 //////////////////////////////////////////
@@ -65,11 +66,16 @@ namespace Maze
     //////////////////////////////////////////
     void CSharpService::initialize()
     {
+        MonoSerializationManager::Initialize(m_monoSerializationManager);
+        if (!m_monoSerializationManager)
+            return;
+
         MonoEngine::Initialize();
 
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MonoBehaviour>(
             "Mono",
             [](HashedCString _dynamicClassName) { return MonoBehaviour::Create(_dynamicClassName); });
+
     }
 
     //////////////////////////////////////////

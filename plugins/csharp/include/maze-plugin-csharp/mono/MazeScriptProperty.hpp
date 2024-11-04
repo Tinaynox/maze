@@ -25,122 +25,102 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeMonoBehaviour_hpp_))
-#define _MazeMonoBehaviour_hpp_
+#if (!defined(_MazeScriptProperty_hpp_))
+#define _MazeScriptProperty_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-plugin-csharp/MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
-#include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
-#include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
-#include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
+#include "maze-core/data/MazeHashedString.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(MonoBehaviour);
+    MAZE_USING_SHARED_PTR(ScriptProperty);
 
 
     //////////////////////////////////////////
-    // Class MonoBehaviour
-    //
-    //////////////////////////////////////////
-    class MAZE_PLUGIN_CSHARP_API MonoBehaviour
-        : public Component
+    enum class ScriptPropertyFlags : U8
     {
-    public:
-
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(MonoBehaviour, Component);
-
-        //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(MonoBehaviour);
-
-        //////////////////////////////////////////
-        friend class Entity;
-
-    public:
-
-        //////////////////////////////////////////
-        virtual ~MonoBehaviour();
-
-        //////////////////////////////////////////
-        static MonoBehaviourPtr Create(HashedCString _scriptClass = HashedCString());
-
-
-        //////////////////////////////////////////
-        virtual ComponentId getComponentId() const MAZE_OVERRIDE { return m_componentId; }
-
-        //////////////////////////////////////////
-        virtual CString getComponentClassName() const { return m_monoClass ? m_monoClass->getFullName().c_str() : getClassName(); }
-
-
-        //////////////////////////////////////////
-        void setMonoClass(ScriptClassPtr const& _scriptClass);
-
-        //////////////////////////////////////////
-        void setMonoClass(HashedCString _scriptClass);
-
-        //////////////////////////////////////////
-        ScriptClassPtr const& getMonoClass() const { return m_monoClass; }
-
-
-        //////////////////////////////////////////
-        void setData(DataBlock const& _dataBlock);
-
-        //////////////////////////////////////////
-        DataBlock getData() const;
-
-
-        //////////////////////////////////////////
-        ScriptInstancePtr const& getMonoInstance() const { return m_monoInstance; }
-
-
-    protected:
-
-        //////////////////////////////////////////
-        MonoBehaviour();
-
-        //////////////////////////////////////////
-        using Component::init;
-
-        //////////////////////////////////////////
-        bool init(HashedCString _scriptClass);
-
-
-        //////////////////////////////////////////
-        void destroyMonoInstance();
-
-        //////////////////////////////////////////
-        void createMonoInstance();
-
-    protected:
-        ComponentId m_componentId = 0u;
-        ScriptClassPtr m_monoClass;
-        ScriptInstancePtr m_monoInstance;
+        PublicGetter = MAZE_BIT(0),
+        PublicSetter = MAZE_BIT(1)
     };
 
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnCreate(
-        EntityAddedToSampleEvent const& _event,
-        Entity* _entity,
-        MonoBehaviour* _monoBehaviour);
-
+    // Class ScriptProperty
+    //
     //////////////////////////////////////////
-    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnUpdate(
-        UpdateEvent const& _event,
-        Entity* _entity,
-        MonoBehaviour* _monoBehaviour);
+    class MAZE_PLUGIN_CSHARP_API ScriptProperty
+    {
+    public:
+
+        //////////////////////////////////////////
+        ScriptProperty() = default;
+    
+        //////////////////////////////////////////
+        ScriptProperty(
+            MonoProperty* _monoProperty);
+
+        //////////////////////////////////////////
+        ScriptProperty(ScriptProperty const&) = default;
+
+        //////////////////////////////////////////
+        ScriptProperty(ScriptProperty&&) = default;
+
+        //////////////////////////////////////////
+        ScriptProperty& operator=(ScriptProperty const&) = default;
+
+        //////////////////////////////////////////
+        ScriptProperty& operator=(ScriptProperty&&) = default;
+
+
+
+        //////////////////////////////////////////
+        inline HashedString const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        inline HashedString const& getTypeName() const { return m_typeName; }
+
+        //////////////////////////////////////////
+        inline U8 getFlags() const { return m_flags; }
+
+        //////////////////////////////////////////
+        inline bool isPublicGetter() const { return m_flags & (U8)ScriptPropertyFlags::PublicGetter;  }
+
+        //////////////////////////////////////////
+        inline bool isPublicSetter() const { return m_flags & (U8)ScriptPropertyFlags::PublicSetter; }
+
+        //////////////////////////////////////////
+        inline bool isPublic() const { return isPublicGetter() && isPublicSetter(); }
+
+        //////////////////////////////////////////
+        inline MonoProperty* getMonoProperty() const { return m_monoProperty; }
+
+        //////////////////////////////////////////
+        inline MonoMethod* getGetterMethod() const { return m_getterMethod; }
+
+        //////////////////////////////////////////
+        inline MonoMethod* getSetterMethod() const { return m_setterMethod; }
+
+    private:
+        HashedString m_name;
+        HashedString m_typeName;
+
+        U8 m_flags = 0;
+
+        MonoProperty* m_monoProperty = nullptr;
+        MonoMethod* m_getterMethod = nullptr;
+        MonoMethod* m_setterMethod = nullptr;
+    };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeMonoBehaviour_hpp_
+#endif // _MazeScriptProperty_hpp_
 //////////////////////////////////////////

@@ -25,19 +25,18 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeCSharpService_hpp_))
-#define _MazeCSharpService_hpp_
+#if (!defined(_MazeMonoSerializationManager_hpp_))
+#define _MazeMonoSerializationManager_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-plugin-csharp/MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/MazeRenderWindow.hpp"
-#include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
+#include "maze-core/MazeTypes.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -48,49 +47,66 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class CSharpService
+    struct MAZE_PLUGIN_CSHARP_API CSharpPropertyDataBlockSerializationData
+    {
+        std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> propToDataBlockCb;
+        std::function<void(ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> propFromDataBlockCb;
+    };
+
+
+    //////////////////////////////////////////
+    // Class MonoSerializationManager
     //
     //////////////////////////////////////////
-    class MAZE_PLUGIN_CSHARP_API CSharpService
-        : public MultiDelegateCallbackReceiver
+    class MAZE_PLUGIN_CSHARP_API MonoSerializationManager
     {
     public:
-        
-        //////////////////////////////////////////
-        CSharpService();
 
         //////////////////////////////////////////
-        ~CSharpService();
-        
+        virtual ~MonoSerializationManager();
 
         //////////////////////////////////////////
-        void initialize();
-
-        //////////////////////////////////////////
-        void shutdown();
+        static void Initialize(
+            MonoSerializationManagerPtr& _manager);
 
 
         //////////////////////////////////////////
-        MonoDomain* getMonoDomain();
+        static inline MonoSerializationManager* GetInstancePtr() { return s_instance; }
 
         //////////////////////////////////////////
-        MonoAssembly* loadMonoAssembly(HashedCString _csharpFile);
+        static inline MonoSerializationManager& GetInstance() { return *s_instance; }
 
 
-        //////////////////////////////////////////
-        static CSharpService& GetInstance();
 
         //////////////////////////////////////////
-        static inline CSharpService* GetInstancePtr() { return &GetInstance(); }
+        void registerPropertyDataBlockSerialization(
+            HashedCString _typeName,
+            std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> _propToDataBlockCb,
+            std::function<void(ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> _propFromDataBlockCb);
 
+        //////////////////////////////////////////
+        bool savePropertyToDataBlock(ScriptInstance const& _instance, ScriptPropertyPtr const& _property, DataBlock& _dataBlock);
+
+        //////////////////////////////////////////
+        bool loadPropertyFromDataBlock(ScriptInstance& _instance, ScriptPropertyPtr const& _property, DataBlock const& _dataBlock);
 
     protected:
-        MonoSerializationManagerPtr m_monoSerializationManager;
+
+        //////////////////////////////////////////
+        MonoSerializationManager();
+
+        //////////////////////////////////////////
+        bool init();
+
+    protected:
+        static MonoSerializationManager* s_instance;
+
+        StringKeyMap<CSharpPropertyDataBlockSerializationData> m_propertyDataBlockSerializationData;
     };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeCSharpService_hpp_
+#endif // _MazeMonoSerializationManager_hpp_
 //////////////////////////////////////////

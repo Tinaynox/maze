@@ -53,8 +53,8 @@ namespace Maze
     //////////////////////////////////////////
     template <typename TDrawer>
     inline MonoPropertyDrawerCallbacks BuildMonoPropertyDrawerCallbacks(
-        std::function<void(ScriptInstance const&, MonoProperty*, TDrawer*)> _processDataToUICb,
-        std::function<void(ScriptInstance&, MonoProperty*, TDrawer const*)> _processDataFromUICb)
+        std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, TDrawer*)> _processDataToUICb,
+        std::function<void(ScriptInstance&, ScriptPropertyPtr const&, TDrawer const*)> _processDataFromUICb)
     {
         MonoPropertyDrawerCallbacks callbacks;
         callbacks.createDrawerCb =
@@ -63,14 +63,14 @@ namespace Maze
                 return TDrawer::Create("");
             };
         callbacks.processDataToUICb =
-            [_processDataToUICb](ScriptInstance const& _instance, MonoProperty* _monoProperty, PropertyDrawerPtr const& _drawer)
+            [_processDataToUICb](ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, PropertyDrawerPtr const& _drawer)
             {
-                _processDataToUICb(_instance, _monoProperty, _drawer->castRaw<TDrawer>());
+                _processDataToUICb(_instance, _prop, _drawer->castRaw<TDrawer>());
             };
         callbacks.processDataFromUICb =
-            [_processDataFromUICb](ScriptInstance& _instance, MonoProperty* _monoProperty, PropertyDrawerPtr const& _drawer)
+            [_processDataFromUICb](ScriptInstance& _instance, ScriptPropertyPtr const& _prop, PropertyDrawerPtr const& _drawer)
             {
-                _processDataFromUICb(_instance, _monoProperty, _drawer->castRaw<TDrawer>());
+                _processDataFromUICb(_instance, _prop, _drawer->castRaw<TDrawer>());
             };
         return std::move(callbacks);
     }
@@ -106,8 +106,8 @@ namespace Maze
         template <typename TDrawer>
         inline void registerMonoPropertyDrawerCallbacks(
             HashedCString _monoTypeName,
-            std::function<void(ScriptInstance const&, MonoProperty*, TDrawer*)> _processDataToUICb,
-            std::function<void(ScriptInstance&, MonoProperty*, TDrawer const*)> _processDataFromUICb)
+            std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, TDrawer*)> _processDataToUICb,
+            std::function<void(ScriptInstance&, ScriptPropertyPtr const&, TDrawer const*)> _processDataFromUICb)
         {
             m_monoPropertyDrawerCallbacksPerMonoType[_monoTypeName] = BuildMonoPropertyDrawerCallbacks<TDrawer>(
                 _processDataToUICb,

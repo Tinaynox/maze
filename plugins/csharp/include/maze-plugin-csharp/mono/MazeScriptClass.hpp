@@ -32,8 +32,9 @@
 //////////////////////////////////////////
 #include "maze-plugin-csharp/MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
-#include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -41,6 +42,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(ScriptClass);
+    MAZE_USING_SHARED_PTR(ScriptInstance);
 
 
     //////////////////////////////////////////
@@ -48,6 +50,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_PLUGIN_CSHARP_API ScriptClass
+        : public std::enable_shared_from_this<ScriptClass>
     {
     public:
 
@@ -88,13 +91,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ScriptInstance instantiate();
+        ScriptInstancePtr instantiate();
 
         //////////////////////////////////////////
         MonoMethod* getMethod(CString _name, S32 _paramCount = 0);
 
         //////////////////////////////////////////
         MonoProperty* getProperty(CString _propertyName);
+
+        //////////////////////////////////////////
+        ScriptPropertyPtr const& getProperty(HashedCString _propertyName);
 
         //////////////////////////////////////////
         bool invokeMethod(MonoObject* _instance, CString _name);
@@ -122,10 +128,23 @@ namespace Maze
         //////////////////////////////////////////
         inline String const& getFullName() const { return m_fullName; }
 
+
+        //////////////////////////////////////////
+        inline StringKeyMap<ScriptPropertyPtr> const& getProperties() const { return m_properties; }
+
+        //////////////////////////////////////////
+        ScriptPropertyPtr assignPrivateProperty(HashedCString _propertyName);
+
     protected:
 
         //////////////////////////////////////////
+        void setup();
+
+        //////////////////////////////////////////
         void assignDefaultMethods();
+
+        //////////////////////////////////////////
+        void assignPublicProperties();
 
         //////////////////////////////////////////
         String buildFullName() const;
@@ -138,6 +157,8 @@ namespace Maze
 
         MonoMethod* m_onCreateMethod = nullptr;
         MonoMethod* m_onUpdateMethod = nullptr;
+
+        StringKeyMap<ScriptPropertyPtr> m_properties;
     };
 
 } // namespace Maze

@@ -112,6 +112,7 @@ namespace Maze
                     monoClass != MonoEngine::GetMonoBehaviourClass()->getMonoClass())
                 {
                     ScriptClassPtr scriptClass = MakeShared<ScriptClass>(fullNamespace, typeName, monoClass);
+                    scriptClass->assignPrivateProperty(MAZE_HCS("nativeComponentPtr"));
 
                     g_monoEngineData->ecsData.monoBehaviourSubClasses.insert(
                         HashedCString(fullName.c_str()),
@@ -170,6 +171,7 @@ namespace Maze
                     monoClass != MonoEngine::GetNativeComponentClass()->getMonoClass())
                 {
                     ScriptClassPtr scriptClass = MakeShared<ScriptClass>(fullNamespace, typeName, monoClass);
+                    scriptClass->assignPrivateProperty(MAZE_HCS("nativeComponentPtr"));
 
                     g_monoEngineData->ecsData.nativeComponentSubClasses.insert(
                         HashedCString(fullName.c_str()),

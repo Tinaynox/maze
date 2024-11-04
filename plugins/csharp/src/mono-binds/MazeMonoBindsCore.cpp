@@ -120,7 +120,7 @@ namespace Maze
             return nullptr;
 
         MAZE_ERROR_RETURN_VALUE_IF(component->getClassUID() != ClassInfo<MonoBehaviour>::UID(), nullptr, "Component is not MonoBehaviour!");
-        return component->castRaw<MonoBehaviour>()->getMonoInstance().getInstance();
+        return component->castRaw<MonoBehaviour>()->getMonoInstance()->getInstance();
     }
 
     //////////////////////////////////////////

@@ -27,6 +27,7 @@
 #include "MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 
 
@@ -46,7 +47,9 @@ namespace Maze
         , m_monoClass(_monoClass)
     {
         m_fullName = buildFullName();
-        assignDefaultMethods();
+
+        if (m_monoClass)
+            setup();
     }
      
     //////////////////////////////////////////
@@ -66,14 +69,14 @@ namespace Maze
         MAZE_ERROR_IF(!m_monoClass, "Unknown Core class: %s.%s", m_namespace.c_str(), m_className.c_str());
             
         if (m_monoClass)
-            assignDefaultMethods();
+            setup();
     }
 
     //////////////////////////////////////////
-    ScriptInstance ScriptClass::instantiate()
+    ScriptInstancePtr ScriptClass::instantiate()
     {
-        return ScriptInstance(
-            m_monoClass,
+        return MakeShared<ScriptInstance>(
+            shared_from_this(),
             MonoEngine::InstantiateClass(m_monoClass));
     }
 
@@ -90,10 +93,58 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ScriptPropertyPtr const& ScriptClass::getProperty(HashedCString _propertyName)
+    {
+        static ScriptPropertyPtr const nullPointer;
+
+        auto it = m_properties.find(_propertyName);
+        if (it != m_properties.end())
+            return it->second;
+
+        return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    void ScriptClass::setup()
+    {
+        assignDefaultMethods();
+        assignPublicProperties();
+    }
+
+    //////////////////////////////////////////
     void ScriptClass::assignDefaultMethods()
     {
         m_onCreateMethod = getMethod("OnCreate");
         m_onUpdateMethod = getMethod("OnUpdate", 1);
+    }
+
+    //////////////////////////////////////////
+    void ScriptClass::assignPublicProperties()
+    {
+        void* propIt = nullptr;
+        while (MonoProperty* prop = mono_class_get_properties(m_monoClass, &propIt))
+        {
+            ScriptPropertyPtr scriptProperty = MakeShared<ScriptProperty>(prop);
+            m_properties.emplace(scriptProperty->getName(), scriptProperty);
+        }
+    }
+
+    //////////////////////////////////////////
+    ScriptPropertyPtr ScriptClass::assignPrivateProperty(HashedCString _propertyName)
+    {
+        ScriptPropertyPtr scriptProperty = getProperty(_propertyName);
+        if (scriptProperty)
+            return scriptProperty;
+
+        MonoProperty* prop = mono_class_get_property_from_name(m_monoClass, _propertyName);
+        if (prop)
+        {
+            ScriptPropertyPtr scriptProperty = MakeShared<ScriptProperty>(prop);
+            m_properties.emplace(scriptProperty->getName(), scriptProperty);
+            return scriptProperty;
+        }
+
+        return nullptr;
     }
 
     //////////////////////////////////////////

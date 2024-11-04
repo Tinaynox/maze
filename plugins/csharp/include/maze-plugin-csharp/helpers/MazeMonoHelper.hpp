@@ -42,6 +42,11 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(ScriptClass);
+    MAZE_USING_SHARED_PTR(ScriptProperty);
+
+
+    //////////////////////////////////////////
     namespace MonoHelper
     {
         //////////////////////////////////////////
@@ -64,6 +69,11 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API bool IsMethodPublic(MonoMethod* _method);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void IteratePublicProperties(
+            ScriptClassPtr const& _scriptClass,
+            std::function<void(ScriptPropertyPtr const&)> const& _cb);
 
     } // namespace MonoHelper
     //////////////////////////////////////////

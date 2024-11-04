@@ -36,9 +36,17 @@ namespace Maze
 {
     //////////////////////////////////////////
     template <>
+    struct DataBlock::TypeOf<S8> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamS8; };
+    template <>
+    struct DataBlock::TypeOf<S16> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamS16; };
+    template <>
     struct DataBlock::TypeOf<S32> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamS32; };
     template <>
     struct DataBlock::TypeOf<S64> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamS64; };
+    template <>
+    struct DataBlock::TypeOf<U8> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamU8; };
+    template <>
+    struct DataBlock::TypeOf<U16> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamU16; };
     template <>
     struct DataBlock::TypeOf<U32> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamU32; };
     template <>
@@ -48,7 +56,7 @@ namespace Maze
     template <>
     struct DataBlock::TypeOf<F64> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamF64; };
     template <>
-    struct DataBlock::TypeOf<bool> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamBool; };
+    struct DataBlock::TypeOf<Bool> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamBool; };
     template <>
     struct DataBlock::TypeOf<Vec4S8> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec4S8; };
     template <>

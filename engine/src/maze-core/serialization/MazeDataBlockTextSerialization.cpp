@@ -257,8 +257,12 @@ namespace Maze
                     Char buff[256];
                     switch (DataBlockParamType(param.type))
                     {
+                        case DataBlockParamType::ParamS8: snprintf(buff, sizeof(buff), "%d", paramDataS8[0]); break;
+                        case DataBlockParamType::ParamS16: snprintf(buff, sizeof(buff), "%hd", *(S16 const*)paramData); break;
                         case DataBlockParamType::ParamS32: snprintf(buff, sizeof(buff), "%d", paramDataS32[0]); break;
                         case DataBlockParamType::ParamS64: snprintf(buff, sizeof(buff), "%lld", paramDataS64[0]); break;
+                        case DataBlockParamType::ParamU8: snprintf(buff, sizeof(buff), "%d", paramData[0]); break;
+                        case DataBlockParamType::ParamU16: snprintf(buff, sizeof(buff), "%hu", *(U16 const*)paramData); break;
                         case DataBlockParamType::ParamU32: snprintf(buff, sizeof(buff), "%u", paramDataU32[0]); break;
                         case DataBlockParamType::ParamU64: snprintf(buff, sizeof(buff), "%llu", paramDataU64[0]); break;
                         case DataBlockParamType::ParamF32: snprintf(buff, sizeof(buff), "%g", paramDataF32[0]); break;
@@ -308,7 +312,7 @@ namespace Maze
                                 paramDataF32[9], paramDataF32[10], paramDataF32[11]);
                             break;
                         default:
-                            MAZE_WARNING("Undefined data block param type: %d", (S32)param.type);
+                            MAZE_ERROR("Undefined data block param type: %d", (S32)param.type);
                             break;
                     }
 
@@ -1151,6 +1155,28 @@ namespace Maze
         {
             switch (_type)
             {
+                case DataBlockParamType::ParamS8:
+                {
+                    S8 value = 0;
+                    if (!StringHelper::ParseNumber<S8>(_value, _value + _size, value))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addS8(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamS16:
+                {
+                    S16 value = 0;
+                    if (!StringHelper::ParseNumber<S16>(_value, _value + _size, value))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addS16(_name, value);
+                    break;
+                }
                 case DataBlockParamType::ParamS32:
                 {
                     S32 value = 0;
@@ -1171,6 +1197,28 @@ namespace Maze
                         return false;
                     }
                     _dataBlock.addS64(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamU8:
+                {
+                    U8 value = 0;
+                    if (!StringHelper::ParseNumber<U8>(_value, _value + _size, value))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addU8(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamU16:
+                {
+                    U16 value = 0;
+                    if (!StringHelper::ParseNumber<U16>(_value, _value + _size, value))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addU16(_name, value);
                     break;
                 }
                 case DataBlockParamType::ParamU32:

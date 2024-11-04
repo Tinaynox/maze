@@ -88,8 +88,12 @@ namespace Maze
     enum class MAZE_CORE_API DataBlockParamType : U8
     {
         None,
+        ParamS8,
+        ParamS16,
         ParamS32,
         ParamS64,
+        ParamU8,
+        ParamU16,
         ParamU32,
         ParamU64,
         ParamF32,
@@ -138,8 +142,12 @@ namespace Maze
     DataBlockParamTypeInfo const c_dataBlockParamTypeInfo[(Size)DataBlockParamType::MAX] =
     {
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING(""), 0u),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("S8"), sizeof(S8)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("S16"), sizeof(S16)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("S32"), sizeof(S32)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("S64"), sizeof(S64)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("U8"), sizeof(U8)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("U16"), sizeof(U16)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("U32"), sizeof(U32)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("U64"), sizeof(U64)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("F32"), sizeof(F32)),
@@ -474,8 +482,12 @@ namespace Maze
 #define MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(__DValueType, __typeName) MAZE_DECLARE_DATA_BLOCK_GET_SET_API_BASE(__DValueType, __DValueType, __typeName)
 #define MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(__DValueType, __typeName) MAZE_DECLARE_DATA_BLOCK_GET_SET_API_BASE(__DValueType, __DValueType const&, __typeName)
 
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(S8, S8);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(S16, S16);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(S32, S32);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(S64, S64);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(U8, U8);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(U16, U16);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(U32, U32);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(U64, U64);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(F32, F32);
@@ -844,6 +856,13 @@ namespace Maze
         U16 m_paramsCount = 0u;
         U16 m_dataBlocksCount = 0u;
     };
+
+
+    //////////////////////////////////////////
+    template <typename>
+    struct IsDataBlock : std::false_type {};
+    template <>
+    struct IsDataBlock<DataBlock> : std::true_type {};
 
 
 } // namespace Maze

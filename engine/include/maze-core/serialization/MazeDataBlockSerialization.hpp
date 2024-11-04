@@ -94,6 +94,26 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Type: DataBlock
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsDataBlock<TValue>::value), void>::type
+        ValueToDataBlock(TValue const& _value, DataBlock& _data)
+    {
+        _data = _value;
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsDataBlock<TValue>::value), void>::type
+        ValueFromDataBlock(TValue& _value, DataBlock const& _data)
+    {
+        _value = _data;
+    }
+
+
+    //////////////////////////////////////////
     // Type: Any base type (non-class, non-enum)
     //
     //////////////////////////////////////////

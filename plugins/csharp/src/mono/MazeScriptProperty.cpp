@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeCSharpHeader.hpp"
-#include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 
@@ -34,47 +34,29 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class ScriptInstance
-    //    
+    // Class ScriptProperty
+    //
     //////////////////////////////////////////
-    ScriptInstance::ScriptInstance(
-        ScriptClassPtr const& _scriptClass,
-        MonoObject* _instance)
-        : m_scriptClass(_scriptClass)
-        , m_instance(_instance)
+    ScriptProperty::ScriptProperty(
+        MonoProperty* _monoProperty)
+        : m_monoProperty(_monoProperty)
     {
+        m_getterMethod = mono_property_get_get_method(m_monoProperty);
+        m_setterMethod = mono_property_get_set_method(m_monoProperty);
 
+        if (m_getterMethod && MonoHelper::IsMethodPublic(m_getterMethod))
+            m_flags |= (U8)ScriptPropertyFlags::PublicGetter;
+
+        if (m_setterMethod && MonoHelper::IsMethodPublic(m_setterMethod))
+            m_flags |= (U8)ScriptPropertyFlags::PublicSetter;
+
+        MonoMethodSignature* signature = mono_method_signature(m_getterMethod);
+        MonoType* fieldType = mono_signature_get_return_type(signature);
+
+        m_name = mono_property_get_name(m_monoProperty);
+        m_typeName = mono_type_get_name(fieldType);
     }
-
-    //////////////////////////////////////////
-    MonoMethod* ScriptInstance::getMethod(CString _name, S32 _paramCount)
-    {
-        return mono_class_get_method_from_name(getMonoClass()->getMonoClass(), _name, _paramCount);
-    }
-
-    //////////////////////////////////////////
-    ScriptPropertyPtr const& ScriptInstance::getProperty(HashedCString _propertyName)
-    {
-        return getMonoClass()->getProperty(_propertyName);
-    }
-
-    //////////////////////////////////////////
-    bool ScriptInstance::invokeMethod(MonoMethod* _method)
-    {
-        MonoHelper::InvokeMethod(m_instance, _method);
-        return true;
-    }
-
-    //////////////////////////////////////////
-    bool ScriptInstance::invokeMethod(CString _name)
-    {
-        MonoMethod* method = getMethod(_name);
-        if (!method)
-            return false;
-
-        return invokeMethod(method);
-    }
-    
+     
 
 } // namespace Maze
 //////////////////////////////////////////

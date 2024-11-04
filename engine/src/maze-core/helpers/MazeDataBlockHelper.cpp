@@ -245,9 +245,10 @@ namespace Maze
             HashedCString _propertyName,
             DataBlock const& _dataBlock)
         {
+            ClassUID valueClassUID = _metaProperty->getValueClassUID();
+
             if (_dataBlock.isParamExists(_propertyName))
             {
-                ClassUID valueClassUID = _metaProperty->getValueClassUID();
                 if (valueClassUID == ClassInfo<S32>::UID())
                 {
                     S32 value = _dataBlock.getS32(_propertyName);
@@ -388,7 +389,10 @@ namespace Maze
             else
             if (DataBlock const* childBlock = _dataBlock.getDataBlock(_propertyName))
             {
-                _metaProperty->setDataBlock(_metaInstance, *childBlock);
+                if (valueClassUID == ClassInfo<DataBlock>::UID())
+                    _metaProperty->setValue(_metaInstance, childBlock);
+                else
+                    _metaProperty->setDataBlock(_metaInstance, *childBlock);
             }
         }
 

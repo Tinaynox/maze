@@ -68,23 +68,23 @@ namespace Maze
 
     //////////////////////////////////////////
     MonoPropertyDrawerPtr MonoPropertyDrawer::Create(
-        MonoProperty* _monoProperty,
+        ScriptPropertyPtr const& _scriptProperty,
         MonoPropertyDrawerCallbacks _callbacks)
     {
         MonoPropertyDrawerPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(MonoPropertyDrawer, object, init(_monoProperty, _callbacks));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(MonoPropertyDrawer, object, init(_scriptProperty, _callbacks));
         return object;
     }
 
     //////////////////////////////////////////
     bool MonoPropertyDrawer::init(
-        MonoProperty* _monoProperty,
+        ScriptPropertyPtr const& _scriptProperty,
         MonoPropertyDrawerCallbacks _callbacks)
     {
         if (!MetaPropertyDrawer::init(nullptr))
             return false;
 
-        m_monoProperty = _monoProperty;
+        m_scriptProperty = _scriptProperty;
         m_callbacks = _callbacks;
         
         m_drawer = m_callbacks.createDrawerCb();
@@ -112,7 +112,8 @@ namespace Maze
             return;
 
         MonoBehaviour* monoBehaviour = m_metaInstances.begin()->reinterpretObjectCast<MonoBehaviour>();
-        m_callbacks.processDataToUICb(monoBehaviour->getMonoInstance(), m_monoProperty, m_drawer);
+        if (monoBehaviour->getMonoInstance())
+            m_callbacks.processDataToUICb(*monoBehaviour->getMonoInstance(), m_scriptProperty, m_drawer);
     }
 
     //////////////////////////////////////////
@@ -125,7 +126,8 @@ namespace Maze
             return;
 
         MonoBehaviour* monoBehaviour = m_metaInstances.begin()->reinterpretObjectCast<MonoBehaviour>();
-        m_callbacks.processDataFromUICb(monoBehaviour->getMonoInstance(), m_monoProperty, m_drawer);
+        if (monoBehaviour->getMonoInstance())
+            m_callbacks.processDataFromUICb(*monoBehaviour->getMonoInstance(), m_scriptProperty, m_drawer);
     }
 
 

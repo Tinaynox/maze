@@ -32,12 +32,19 @@
 //////////////////////////////////////////
 #include "maze-plugin-csharp/MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
+#include "maze-core/data/MazeHashedCString.hpp"
 #include "maze-core/MazeTypes.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(ScriptClass);
+    MAZE_USING_SHARED_PTR(ScriptProperty);
+
+
     //////////////////////////////////////////
     namespace MonoHelper
     {
@@ -61,7 +68,7 @@ namespace Maze
 
         //////////////////////////////////////////
         ScriptInstance(
-            MonoClass* _monoClass,
+            ScriptClassPtr const& _scriptClass,
             MonoObject* _instance);
 
         //////////////////////////////////////////
@@ -81,7 +88,7 @@ namespace Maze
         MonoMethod* getMethod(CString _name, S32 _paramCount = 0);
 
         //////////////////////////////////////////
-        MonoProperty* getProperty(CString _propertyName);
+        ScriptPropertyPtr const& getProperty(HashedCString _propertyName);
 
         //////////////////////////////////////////
         bool invokeMethod(MonoMethod* _method);
@@ -91,7 +98,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline MonoClass* getMonoClass() const { return m_monoClass; }
+        inline ScriptClassPtr getMonoClass() const { return m_scriptClass.lock(); }
 
         //////////////////////////////////////////
         inline MonoObject* getInstance() const { return m_instance; }
@@ -121,35 +128,29 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TValue>
-        inline bool setProperty(MonoProperty* _property, TValue const& _value)
+        inline bool setProperty(ScriptPropertyPtr const& _property, TValue const& _value)
         {
-            MonoMethod* setter = mono_property_get_set_method(_property);
-            if (!setter)
+            if (!_property->getSetterMethod())
                 return false;
 
-            return invokeMethod(setter, _value);
+            return invokeMethod(_property->getSetterMethod(), _value);
         }
 
         //////////////////////////////////////////
         template <>
-        inline bool setProperty(MonoProperty* _property, String const& _value)
+        inline bool setProperty(ScriptPropertyPtr const& _property, String const& _value)
         {
-            MonoMethod* setter = mono_property_get_set_method(_property);
-            if (!setter)
-                return false;
-
             MonoString* monoString = mono_string_new(mono_domain_get(), _value.c_str());
-
             void* stringParam = monoString;
-            MonoHelper::InvokeMethod(m_instance, setter, &stringParam);
+            MonoHelper::InvokeMethod(m_instance, _property->getSetterMethod(), &stringParam);
             return true;
         }
 
         //////////////////////////////////////////
         template <typename TValue>
-        inline bool setProperty(CString _name, TValue const& _value)
+        inline bool setProperty(HashedCString _name, TValue const& _value)
         {
-            MonoProperty* prop = getProperty(_name);
+            ScriptPropertyPtr const& prop = getProperty(_name);
             MAZE_ERROR_RETURN_VALUE_IF(!prop, false, "%s property is not found!", _name);
 
             return setProperty(prop, _value);
@@ -159,13 +160,9 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TValue>
-        inline bool getProperty(MonoProperty* _property, TValue& _value) const
+        inline bool getProperty(ScriptPropertyPtr const& _property, TValue& _value) const
         {
-            MonoMethod* getter = mono_property_get_get_method(_property);
-            if (!getter)
-                return false;
-
-            MonoObject* result = mono_property_get_value(_property, m_instance, nullptr, nullptr);
+            MonoObject* result = mono_property_get_value(_property->getMonoProperty(), m_instance, nullptr, nullptr);
             if (!result)
                 return false;
 
@@ -175,13 +172,9 @@ namespace Maze
 
         //////////////////////////////////////////
         template <>
-        inline bool getProperty(MonoProperty* _property, String& _value) const
+        inline bool getProperty(ScriptPropertyPtr const& _property, String& _value) const
         {
-            MonoMethod* getter = mono_property_get_get_method(_property);
-            if (!getter)
-                return false;
-
-            MonoObject* result = mono_property_get_value(_property, m_instance, nullptr, nullptr);
+            MonoObject* result = mono_property_get_value(_property->getMonoProperty(), m_instance, nullptr, nullptr);
             if (!result)
                 return false;
 
@@ -198,7 +191,7 @@ namespace Maze
         inline bool isValid() const { return m_instance != nullptr; }
 
     private:
-        MonoClass* m_monoClass = nullptr;
+        ScriptClassWPtr m_scriptClass;
         MonoObject* m_instance = nullptr;
     };
 

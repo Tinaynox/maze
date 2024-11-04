@@ -208,6 +208,22 @@ namespace Maze
             return flags & MONO_METHOD_ATTR_PUBLIC;
         }
 
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void IteratePublicProperties(
+            ScriptClassPtr const& _scriptClass,
+            std::function<void(ScriptPropertyPtr const&)> const& _cb)
+        {
+            for (auto const& data : _scriptClass->getProperties())
+            {
+                ScriptPropertyPtr const& prop = data.second;
+                if (!prop->isPublic())
+                    continue;
+
+                _cb(prop);
+            }
+        }
+
+
     } // namespace AssetHelper
     //////////////////////////////////////////
 

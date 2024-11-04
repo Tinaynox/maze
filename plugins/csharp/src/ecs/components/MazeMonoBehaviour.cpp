@@ -28,6 +28,8 @@
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-plugin-csharp/MazeCSharpService.hpp"
+#include "maze-plugin-csharp/managers/MazeMonoSerializationManager.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/MazeCustomComponentSystemHolder.hpp"
 
@@ -75,7 +77,7 @@ namespace Maze
     //////////////////////////////////////////
     void MonoBehaviour::destroyMonoInstance()
     {
-        if (!m_monoInstance.isValid())
+        if (!m_monoInstance || !m_monoInstance->isValid())
             return;
 
         MAZE_NOT_IMPLEMENTED;
@@ -90,7 +92,7 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(!m_monoClass->isValid(), "MonoClass is invalid!");
 
         m_monoInstance = m_monoClass->instantiate();
-        m_monoInstance.setProperty("nativeComponentPtr", castRaw<Component>());
+        m_monoInstance->setProperty(MAZE_HCS("nativeComponentPtr"), castRaw<Component>());
     }
 
     //////////////////////////////////////////
@@ -118,16 +120,38 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MonoBehaviour::setData(DataBlock _dataBlock)
+    void MonoBehaviour::setData(DataBlock const& _dataBlock)
     {
-        //Debug::LogError("1");
+        if (m_monoClass && m_monoInstance)
+        {
+            MonoHelper::IteratePublicProperties(m_monoClass,
+                [&](ScriptPropertyPtr const& _prop)
+                {
+                    MonoSerializationManager::GetInstancePtr()->loadPropertyFromDataBlock(
+                        *m_monoInstance,
+                        _prop,
+                        _dataBlock);
+                });
+        }
     }
 
     //////////////////////////////////////////
     DataBlock MonoBehaviour::getData() const
     {
         DataBlock db;
-        //Debug::LogError("2");
+        
+        if (m_monoClass && m_monoInstance)
+        {
+            MonoHelper::IteratePublicProperties(m_monoClass,
+                [&](ScriptPropertyPtr const& _prop)
+                {
+                    MonoSerializationManager::GetInstancePtr()->savePropertyToDataBlock(
+                        *m_monoInstance,
+                        _prop,
+                        db);
+                });
+        }
+
 
         return std::move(db);
     }
@@ -140,13 +164,13 @@ namespace Maze
         MonoBehaviour* _monoBehaviour)
     {
         ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
-        ScriptInstance& scriptInstance = _monoBehaviour->getMonoInstance();
+        ScriptInstancePtr const& scriptInstance = _monoBehaviour->getMonoInstance();
 
-        if (!scriptClass || !scriptInstance.isValid())
+        if (!scriptClass || !scriptInstance || !scriptInstance->isValid())
             return;
 
         if (scriptClass->getOnCreateMethod())
-            scriptInstance.invokeMethod(
+            scriptInstance->invokeMethod(
                 scriptClass->getOnCreateMethod());
     }
 
@@ -157,13 +181,13 @@ namespace Maze
         MonoBehaviour* _monoBehaviour)
     {
         ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
-        ScriptInstance& scriptInstance = _monoBehaviour->getMonoInstance();
+        ScriptInstancePtr const& scriptInstance = _monoBehaviour->getMonoInstance();
 
-        if (!scriptClass || !scriptInstance.isValid())
+        if (!scriptClass || !scriptInstance || !scriptInstance->isValid())
             return;
 
         if (scriptClass->getOnUpdateMethod())
-            scriptInstance.invokeMethod(
+            scriptInstance->invokeMethod(
                 scriptClass->getOnUpdateMethod(),
                 _event.getDt());
     }

@@ -100,43 +100,29 @@ namespace Maze
                 }
             }
 
-            // Test properties
-            void* propIt = nullptr;
-            while (MonoProperty* prop = mono_class_get_properties(monoClass, &propIt))
-            {
-                CString fieldName = mono_property_get_name(prop);
+            
+            MonoHelper::IteratePublicProperties(scriptClass,
+                [&](ScriptPropertyPtr const& _prop)
+                {
+                    MonoPropertyDrawerCallbacks callbacks;
 
-                MonoMethod* getterMethod = mono_property_get_get_method(prop);
-                if (!MonoHelper::IsMethodPublic(getterMethod))
-                    continue;
-                MonoMethod* setterMethod = mono_property_get_set_method(prop);
-                if (!MonoHelper::IsMethodPublic(setterMethod))
-                    continue;
+                    MonoPropertyDrawerCallbacks* callbacksPtr = CSharpEditorToolsManager::GetInstancePtr()->getMonoPropertyDrawerCallbacksPerMonoType(
+                        _prop->getTypeName());
+                    if (!callbacksPtr)
+                        return;
+                    callbacks = *callbacksPtr;
 
-                MonoMethodSignature* signature = mono_method_signature(getterMethod);
-                MonoType* fieldType = mono_signature_get_return_type(signature);
-                HashedCString typeName = HashedCString(mono_type_get_name(fieldType));
-
-                // Debug::Log("%s => %s", fieldName, typeName.str);
-
-                MonoPropertyDrawerCallbacks callbacks;
-
-                MonoPropertyDrawerCallbacks* callbacksPtr = CSharpEditorToolsManager::GetInstancePtr()->getMonoPropertyDrawerCallbacksPerMonoType(typeName);
-                if (!callbacksPtr)
-                    continue;
-                callbacks = *callbacksPtr;
-
-                // #TODO: Slider mode
-                // if (typeName == MAZE_HCS("System.Single"))
-                // {
-                //      callbacks = CSharpEditorToolsManager::GetInstancePtr()->buildMonoPropertyDrawerSliderF32Callbacks(0.0f, 1.0f);
-                // }
+                    // #TODO: Slider mode
+                    // if (typeName == MAZE_HCS("System.Single"))
+                    // {
+                    //      callbacks = CSharpEditorToolsManager::GetInstancePtr()->buildMonoPropertyDrawerSliderF32Callbacks(0.0f, 1.0f);
+                    // }
 
 
-                MonoPropertyDrawerPtr propertyDrawer = MonoPropertyDrawer::Create(prop, callbacks);
-                if (propertyDrawer)
-                    addPropertyDrawer(propertyDrawer, fieldName);
-            }
+                    MonoPropertyDrawerPtr propertyDrawer = MonoPropertyDrawer::Create(_prop, callbacks);
+                    if (propertyDrawer)
+                        addPropertyDrawer(propertyDrawer, _prop->getName().c_str());
+                });
         }
 
         m_expandButtonSprite->getEntityRaw()->setActiveSelf(!m_propertyDrawers.empty());
