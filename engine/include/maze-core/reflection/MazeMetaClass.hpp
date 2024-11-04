@@ -666,16 +666,17 @@ namespace Maze
     template <
         typename TObject,
         typename TValue,
-        typename TPropertyValue,
-        typename TSetterReturnValue = void>
+        typename TGetterReturnValue,
+        typename TSetterReturnValue,
+        typename TSetterValue>
     class GenericMetaProperty
         : public MetaProperty
     {
     public:
 
         //////////////////////////////////////////
-        using Getter = TPropertyValue (TObject::*)(void) const;
-        using Setter = TSetterReturnValue (TObject::*)(TPropertyValue);
+        using Getter = TGetterReturnValue (TObject::*)(void) const;
+        using Setter = TSetterReturnValue (TObject::*)(TSetterValue);
 
         //////////////////////////////////////////
         GenericMetaProperty(
@@ -1114,28 +1115,65 @@ namespace Maze
         template <typename TValue>
         static MetaProperty* Create(CString _name, TValue (TObject::*_getter)(void) const, void (TObject::*_setter)(TValue), TValue const& _defaultValue = TValue())
         {
-            return new GenericMetaProperty<TObject, TValue, TValue, void>(_name, _getter, _setter, _defaultValue);
+            return new GenericMetaProperty<
+                TObject,
+                TValue,
+                TValue, // TGetterReturnValue
+                void,   // TSetterReturnValue
+                TValue  // TSetterValue
+            >(_name, _getter, _setter, _defaultValue);
         }
 
         //////////////////////////////////////////
         template <typename TValue>
         static MetaProperty* Create(CString _name, TValue const& (TObject::*_getter)(void) const, void (TObject::*_setter)(TValue const&), TValue const& _defaultValue = TValue())
         {
-            return new GenericMetaProperty<TObject, TValue, const TValue&, void>(_name, _getter, _setter, _defaultValue);
+            return new GenericMetaProperty<
+                TObject,
+                TValue,
+                const TValue&, // TGetterReturnValue
+                void,          // TSetterReturnValue
+                const TValue&  // TSetterValue
+            >(_name, _getter, _setter, _defaultValue);
+        }
+
+        //////////////////////////////////////////
+        template <typename TValue>
+        static MetaProperty* Create(CString _name, TValue (TObject::* _getter)(void) const, void (TObject::* _setter)(TValue const&), TValue const& _defaultValue = TValue())
+        {
+            return new GenericMetaProperty<
+                TObject,
+                TValue,
+                TValue,        // TGetterReturnValue
+                void,          // TSetterReturnValue
+                const TValue&  // TSetterValue
+            >(_name, _getter, _setter, _defaultValue);
         }
 
         //////////////////////////////////////////
         template <typename TValue>
         static MetaProperty* Create(CString _name, TValue (TObject::*_getter)(void) const, bool (TObject::*_setter)(TValue), TValue const& _defaultValue = TValue())
         {
-            return new GenericMetaProperty<TObject, TValue, TValue, bool>(_name, _getter, _setter, _defaultValue);
+            return new GenericMetaProperty<
+                TObject,
+                TValue,
+                TValue, // TGetterReturnValue
+                bool,   // TSetterReturnValue
+                TValue  // TSetterValue
+            >(_name, _getter, _setter, _defaultValue);
         }
 
         //////////////////////////////////////////
         template <typename TValue>
         static MetaProperty* Create(CString _name, TValue const& (TObject::*_getter)(void) const, bool (TObject::*_setter)(TValue const&), const TValue& _defaultValue = TValue())
         {
-            return new GenericMetaProperty<TObject, TValue, TValue const&, bool>(_name, _getter, _setter, _defaultValue);
+            return new GenericMetaProperty<
+                TObject,
+                TValue,
+                TValue const&, // TGetterReturnValue
+                bool,          // TSetterReturnValue
+                TValue const&  // TSetterValue
+            >(_name, _getter, _setter, _defaultValue);
         }
     };
 

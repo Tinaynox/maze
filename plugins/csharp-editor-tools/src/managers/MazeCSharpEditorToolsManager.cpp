@@ -194,7 +194,7 @@ namespace Maze
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setProperty(_property, (F64)_drawer->getValue());
             });
 
         registerMonoPropertyDrawerCallbacks<PropertyDrawerVec2S32>(MAZE_HCS("Maze.Core.Vec2S"),
