@@ -111,7 +111,7 @@ namespace Maze
                 if (mono_class_is_subclass_of(monoClass, MonoEngine::GetMonoBehaviourClass()->getMonoClass(), false) &&
                     monoClass != MonoEngine::GetMonoBehaviourClass()->getMonoClass())
                 {
-                    ScriptClassPtr scriptClass = MakeShared<ScriptClass>(fullNamespace, typeName, monoClass);
+                    ScriptClassPtr scriptClass = ScriptClass::Create(fullNamespace, typeName, monoClass);
                     scriptClass->assignPrivateProperty(MAZE_HCS("nativeComponentPtr"));
 
                     g_monoEngineData->ecsData.monoBehaviourSubClasses.insert(
@@ -170,7 +170,7 @@ namespace Maze
                 if (mono_class_is_subclass_of(monoClass, MonoEngine::GetNativeComponentClass()->getMonoClass(), false) &&
                     monoClass != MonoEngine::GetNativeComponentClass()->getMonoClass())
                 {
-                    ScriptClassPtr scriptClass = MakeShared<ScriptClass>(fullNamespace, typeName, monoClass);
+                    ScriptClassPtr scriptClass = ScriptClass::Create(fullNamespace, typeName, monoClass);
                     scriptClass->assignPrivateProperty(MAZE_HCS("nativeComponentPtr"));
 
                     g_monoEngineData->ecsData.nativeComponentSubClasses.insert(
@@ -316,9 +316,9 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!g_monoEngineData->coreAssembly, nullptr, "Failed to load core assembly - %s", _csharpFile.str);
 
         g_monoEngineData->coreAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
-        g_monoEngineData->ecsData.monoBehaviourClass = MakeShared<ScriptClass>(
+        g_monoEngineData->ecsData.monoBehaviourClass = ScriptClass::Create(
             "Maze.Core", "MonoBehaviour", g_monoEngineData->coreAssemblyImage);
-        g_monoEngineData->ecsData.nativeComponentClass = MakeShared<ScriptClass>(
+        g_monoEngineData->ecsData.nativeComponentClass = ScriptClass::Create(
             "Maze.Core", "NativeComponent", g_monoEngineData->coreAssemblyImage);
 
         LoadAssemblyClasses(g_monoEngineData->coreAssembly);

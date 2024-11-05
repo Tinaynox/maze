@@ -40,38 +40,64 @@ namespace Maze
     // Class ScriptClass
     //
     //////////////////////////////////////////
-    ScriptClass::ScriptClass(
+    ScriptClassPtr ScriptClass::Create(
         String const& _namespace,
         String const& _className,
         MonoClass* _monoClass)
-        : m_namespace(_namespace)
-        , m_className(_className)
-        , m_monoClass(_monoClass)
     {
+        ScriptClassPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ScriptClass, object, init(_namespace, _className, _monoClass));
+        return object;
+    }
+
+    //////////////////////////////////////////
+    ScriptClassPtr ScriptClass::Create(
+        String const& _namespace,
+        String const& _className,
+        MonoImage* _monoImage)
+    {
+        ScriptClassPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ScriptClass, object, init(_namespace, _className, _monoImage));
+        return object;
+    }
+     
+    //////////////////////////////////////////
+    bool ScriptClass::init(
+        String const& _namespace,
+        String const& _className,
+        MonoClass* _monoClass)
+    {
+        m_namespace = _namespace;
+        m_className = _className;
+        m_monoClass = _monoClass;
         m_fullName = buildFullName();
 
         if (m_monoClass)
             setup();
+
+        return true;
     }
      
     //////////////////////////////////////////
-    ScriptClass::ScriptClass(
+    bool ScriptClass::init(
         String const& _namespace,
         String const& _className,
         MonoImage* _monoImage)
-        : m_namespace(_namespace)
-        , m_className(_className)
     {
+        m_namespace = _namespace;
+        m_className = _className;
         m_fullName = buildFullName();
         m_monoClass = mono_class_from_name(
             _monoImage,
             m_namespace.c_str(),
             m_className.c_str());
 
-        MAZE_ERROR_IF(!m_monoClass, "Unknown Core class: %s.%s", m_namespace.c_str(), m_className.c_str());
+        MAZE_ERROR_RETURN_VALUE_IF(!m_monoClass, false, "Unknown Core class: %s.%s", m_namespace.c_str(), m_className.c_str());
             
         if (m_monoClass)
             setup();
+
+        return true;
     }
 
     //////////////////////////////////////////
@@ -136,10 +162,11 @@ namespace Maze
     //////////////////////////////////////////
     void ScriptClass::assignPublicProperties()
     {
+        ScriptClassPtr thisShared = shared_from_this();
         void* propIt = nullptr;
         while (MonoProperty* prop = mono_class_get_properties(m_monoClass, &propIt))
         {
-            ScriptPropertyPtr scriptProperty = MakeShared<ScriptProperty>(prop);
+            ScriptPropertyPtr scriptProperty = MakeShared<ScriptProperty>(thisShared, prop);
             m_properties.emplace(scriptProperty->getName(), scriptProperty);
         }
     }
@@ -147,15 +174,14 @@ namespace Maze
     //////////////////////////////////////////
     void ScriptClass::assignPublicFields()
     {
+        ScriptClassPtr thisShared = shared_from_this();
         void* propIt = nullptr;
         while (MonoClassField* field = mono_class_get_fields(m_monoClass, &propIt))
         {
-            U32 flags = mono_field_get_flags(field);
-            Bool isPublic = flags & MONO_FIELD_ATTR_PUBLIC;
-            if (!isPublic)
+            ScriptFieldPtr scriptField = MakeShared<ScriptField>(thisShared, field);
+            if (!scriptField->isPublic() && !scriptField->isSerializable())
                 continue;
-
-            ScriptFieldPtr scriptField = MakeShared<ScriptField>(field);
+            
             m_fields.emplace(scriptField->getName(), scriptField);
         }
 
@@ -171,7 +197,7 @@ namespace Maze
         MonoProperty* prop = mono_class_get_property_from_name(m_monoClass, _propertyName);
         if (prop)
         {
-            ScriptPropertyPtr scriptProperty = MakeShared<ScriptProperty>(prop);
+            ScriptPropertyPtr scriptProperty = MakeShared<ScriptProperty>(shared_from_this(), prop);
             m_properties.emplace(scriptProperty->getName(), scriptProperty);
             return scriptProperty;
         }

@@ -65,12 +65,12 @@ namespace Maze
         MAZE_PLUGIN_CSHARP_API bool IsMethodPublic(MonoMethod* _method);
 
         //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void IteratePublicProperties(
+        MAZE_PLUGIN_CSHARP_API void IterateSerializableProperties(
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptPropertyPtr const&)> const& _cb);
 
         //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void IteratePublicFields(
+        MAZE_PLUGIN_CSHARP_API void IterateSerializableFields(
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptFieldPtr const&)> const& _cb);
 

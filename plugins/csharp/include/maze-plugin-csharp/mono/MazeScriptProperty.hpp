@@ -41,6 +41,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(ScriptProperty);
+    MAZE_USING_SHARED_PTR(ScriptClass);
 
 
     //////////////////////////////////////////
@@ -64,6 +65,7 @@ namespace Maze
     
         //////////////////////////////////////////
         ScriptProperty(
+            ScriptClassPtr const& _scriptClass,
             MonoProperty* _monoProperty);
 
         //////////////////////////////////////////
@@ -108,6 +110,8 @@ namespace Maze
         inline MonoMethod* getSetterMethod() const { return m_setterMethod; }
 
     private:
+        ScriptClassWPtr m_scriptClass;
+
         HashedString m_name;
         HashedString m_typeName;
 

@@ -41,12 +41,14 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(ScriptField);
+    MAZE_USING_SHARED_PTR(ScriptClass);
 
 
     //////////////////////////////////////////
     enum class MAZE_PLUGIN_CSHARP_API ScriptFieldFlags : U8
     {
-        Public = MAZE_BIT(0)
+        Public = MAZE_BIT(0),
+        Serializable = MAZE_BIT(1)
     };
 
 
@@ -63,6 +65,7 @@ namespace Maze
     
         //////////////////////////////////////////
         ScriptField(
+            ScriptClassPtr const& _scriptClass,
             MonoClassField* _monoField);
 
         //////////////////////////////////////////
@@ -92,9 +95,14 @@ namespace Maze
         inline bool isPublic() const { return m_flags & (U8)ScriptFieldFlags::Public; }
 
         //////////////////////////////////////////
+        inline bool isSerializable() const { return m_flags & (U8)ScriptFieldFlags::Serializable; }
+
+        //////////////////////////////////////////
         inline MonoClassField* getMonoClassField() const { return m_monoField; }
 
     private:
+        ScriptClassWPtr m_scriptClass;
+
         HashedString m_name;
         HashedString m_typeName;
 

@@ -164,34 +164,32 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void IteratePublicProperties(
+        MAZE_PLUGIN_CSHARP_API void IterateSerializableProperties(
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptPropertyPtr const&)> const& _cb)
         {
             for (auto const& data : _scriptClass->getProperties())
             {
                 ScriptPropertyPtr const& prop = data.second;
-                if (!prop->isPublic())
-                    continue;
-
-                _cb(prop);
+                if (prop->isPublic())
+                    _cb(prop);
             }
         }
 
         //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void IteratePublicFields(
+        MAZE_PLUGIN_CSHARP_API void IterateSerializableFields(
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptFieldPtr const&)> const& _cb)
         {
             for (auto const& data : _scriptClass->getFields())
             {
                 ScriptFieldPtr const& field = data.second;
-                if (!field->isPublic())
-                    continue;
-
-                _cb(field);
+                if (field->isPublic() || field->isSerializable())
+                    _cb(field);
             }
         }
+
+
 
 
     } // namespace AssetHelper

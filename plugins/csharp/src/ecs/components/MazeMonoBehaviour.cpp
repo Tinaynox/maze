@@ -124,7 +124,7 @@ namespace Maze
     {
         if (m_monoClass && m_monoInstance)
         {
-            MonoHelper::IteratePublicFields(m_monoClass,
+            MonoHelper::IterateSerializableFields(m_monoClass,
                 [&](ScriptFieldPtr const& _field)
                 {
                     MonoSerializationManager::GetInstancePtr()->loadFieldFromDataBlock(
@@ -133,7 +133,7 @@ namespace Maze
                         _dataBlock);
                 });
 
-            MonoHelper::IteratePublicProperties(m_monoClass,
+            MonoHelper::IterateSerializableProperties(m_monoClass,
                 [&](ScriptPropertyPtr const& _prop)
                 {
                     MonoSerializationManager::GetInstancePtr()->loadPropertyFromDataBlock(
@@ -151,7 +151,7 @@ namespace Maze
         
         if (m_monoClass && m_monoInstance)
         {
-            MonoHelper::IteratePublicFields(m_monoClass,
+            MonoHelper::IterateSerializableFields(m_monoClass,
                 [&](ScriptFieldPtr const& _prop)
             {
                 MonoSerializationManager::GetInstancePtr()->saveFieldToDataBlock(
@@ -160,7 +160,7 @@ namespace Maze
                     db);
             });
 
-            MonoHelper::IteratePublicProperties(m_monoClass,
+            MonoHelper::IterateSerializableProperties(m_monoClass,
                 [&](ScriptPropertyPtr const& _prop)
                 {
                     MonoSerializationManager::GetInstancePtr()->savePropertyToDataBlock(

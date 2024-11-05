@@ -56,31 +56,29 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        ScriptClass() = default;
-    
-        //////////////////////////////////////////
-        ScriptClass(
+        static ScriptClassPtr Create(
             String const& _namespace,
             String const& _className,
             MonoClass* _monoClass);
 
         //////////////////////////////////////////
-        ScriptClass(
+        static ScriptClassPtr Create(
             String const& _namespace,
             String const& _className,
             MonoImage* _monoImage);
+    
 
         //////////////////////////////////////////
-        ScriptClass(ScriptClass const&) = default;
+        ScriptClass(ScriptClass const&) = delete;
 
         //////////////////////////////////////////
-        ScriptClass(ScriptClass&&) = default;
+        ScriptClass(ScriptClass&&) = delete;
 
         //////////////////////////////////////////
-        ScriptClass& operator=(ScriptClass const&) = default;
+        ScriptClass& operator=(ScriptClass const&) = delete;
 
         //////////////////////////////////////////
-        ScriptClass& operator=(ScriptClass&&) = default;
+        ScriptClass& operator=(ScriptClass&&) = delete;
 
 
         //////////////////////////////////////////
@@ -144,6 +142,22 @@ namespace Maze
         inline StringKeyMap<ScriptFieldPtr> const& getFields() const { return m_fields; }
 
     protected:
+
+        //////////////////////////////////////////
+        ScriptClass() = default;
+
+        //////////////////////////////////////////
+        bool init(
+            String const& _namespace,
+            String const& _className,
+            MonoClass* _monoClass);
+
+        //////////////////////////////////////////
+        bool init(
+            String const& _namespace,
+            String const& _className,
+            MonoImage* _monoImage);
+
 
         //////////////////////////////////////////
         void setup();

@@ -38,8 +38,10 @@ namespace Maze
     //
     //////////////////////////////////////////
     ScriptField::ScriptField(
+        ScriptClassPtr const& _scriptClass,
         MonoClassField* _monoField)
-        : m_monoField(_monoField)
+        : m_scriptClass(_scriptClass)
+        , m_monoField(_monoField)
     {
         U32 flags = mono_field_get_flags(m_monoField);
 
@@ -50,6 +52,23 @@ namespace Maze
 
         m_name = mono_field_get_name(m_monoField);
         m_typeName = mono_type_get_name(fieldType);
+
+        MonoCustomAttrInfo* attrInfo = mono_custom_attrs_from_field(_scriptClass->getMonoClass(), m_monoField);
+        if (attrInfo)
+        {
+            for (S32 i = 0; i < attrInfo->num_attrs; ++i)
+            {
+                MonoCustomAttrEntry& entry = attrInfo->attrs[i];
+                MonoClass* attrClass = mono_method_get_class(entry.ctor);
+
+                CString attrClassName = mono_class_get_name(attrClass);
+                CString attrNamespace = mono_class_get_namespace(attrClass);
+                if (strcmp(attrClassName, "SerializeFieldAttribute") == 0 && strcmp(attrNamespace, "Maze.Core") == 0)
+                {
+                    m_flags |= (U8)ScriptFieldFlags::Serializable;
+                }
+            }
+        }
     }
      
 

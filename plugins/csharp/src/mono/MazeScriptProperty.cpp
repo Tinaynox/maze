@@ -38,8 +38,10 @@ namespace Maze
     //
     //////////////////////////////////////////
     ScriptProperty::ScriptProperty(
+        ScriptClassPtr const& _scriptClass,
         MonoProperty* _monoProperty)
-        : m_monoProperty(_monoProperty)
+        : m_scriptClass(_scriptClass)
+        , m_monoProperty(_monoProperty)
     {
         m_getterMethod = mono_property_get_get_method(m_monoProperty);
         m_setterMethod = mono_property_get_set_method(m_monoProperty);

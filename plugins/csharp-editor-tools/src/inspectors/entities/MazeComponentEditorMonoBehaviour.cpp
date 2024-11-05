@@ -84,7 +84,7 @@ namespace Maze
         if (scriptClass)
         {
 
-            MonoHelper::IteratePublicFields(scriptClass,
+            MonoHelper::IterateSerializableFields(scriptClass,
                 [&](ScriptFieldPtr const& _field)
                 {
                     ScriptFieldDrawerCallbacks callbacks;
@@ -107,7 +107,7 @@ namespace Maze
                         addPropertyDrawer(propertyDrawer, _field->getName().c_str());
                 });
             
-            MonoHelper::IteratePublicProperties(scriptClass,
+            MonoHelper::IterateSerializableProperties(scriptClass,
                 [&](ScriptPropertyPtr const& _prop)
                 {
                     ScriptPropertyDrawerCallbacks callbacks;
