@@ -48,7 +48,8 @@ namespace Maze
     enum class MAZE_PLUGIN_CSHARP_API ScriptPropertyFlags : U8
     {
         PublicGetter = MAZE_BIT(0),
-        PublicSetter = MAZE_BIT(1)
+        PublicSetter = MAZE_BIT(1),
+        Serializable = MAZE_BIT(2),
     };
 
 
@@ -99,6 +100,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool isPublic() const { return isPublicGetter() && isPublicSetter(); }
+
+        //////////////////////////////////////////
+        inline bool isSerializable() const { return m_flags & (U8)ScriptPropertyFlags::Serializable; }
 
         //////////////////////////////////////////
         inline MonoProperty* getMonoProperty() const { return m_monoProperty; }

@@ -57,6 +57,23 @@ namespace Maze
 
         m_name = mono_property_get_name(m_monoProperty);
         m_typeName = mono_type_get_name(fieldType);
+
+        MonoCustomAttrInfo* attrInfo = mono_custom_attrs_from_property(_scriptClass->getMonoClass(), m_monoProperty);
+        if (attrInfo)
+        {
+            for (S32 i = 0; i < attrInfo->num_attrs; ++i)
+            {
+                MonoCustomAttrEntry& entry = attrInfo->attrs[i];
+                MonoClass* attrClass = mono_method_get_class(entry.ctor);
+
+                CString attrClassName = mono_class_get_name(attrClass);
+                CString attrNamespace = mono_class_get_namespace(attrClass);
+                if (strcmp(attrClassName, "SerializePropertyAttribute") == 0 && strcmp(attrNamespace, "Maze.Core") == 0)
+                {
+                    m_flags |= (U8)ScriptPropertyFlags::Serializable;
+                }
+            }
+        }
     }
      
 

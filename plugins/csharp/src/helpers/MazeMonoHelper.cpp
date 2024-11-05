@@ -171,7 +171,7 @@ namespace Maze
             for (auto const& data : _scriptClass->getProperties())
             {
                 ScriptPropertyPtr const& prop = data.second;
-                if (prop->isPublic())
+                if (prop->isSerializable())
                     _cb(prop);
             }
         }
