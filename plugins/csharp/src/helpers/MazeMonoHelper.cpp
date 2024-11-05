@@ -27,42 +27,12 @@
 #include "MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-    //////////////////////////////////////////
-    UnorderedMap<String, MonoFieldType> g_monoFieldTypePerMonoTypeName =
-    {
-        { "System.String", MonoFieldType::TypeString },
-        { "System.Boolean", MonoFieldType::TypeBool },
-        { "System.Char", MonoFieldType::TypeS8 },
-        { "System.Int16", MonoFieldType::TypeS16 },
-        { "System.Int32", MonoFieldType::TypeS32 },
-        { "System.Int64", MonoFieldType::TypeS64 },
-        { "System.Byte", MonoFieldType::TypeU8 },
-        { "System.UInt16", MonoFieldType::TypeU16 },
-        { "System.UInt32", MonoFieldType::TypeU32 },
-        { "System.UInt64", MonoFieldType::TypeU64 },
-        { "System.Single", MonoFieldType::TypeF32 },
-        { "System.Double", MonoFieldType::TypeF64 },
-        { "Maze.Vec2S", MonoFieldType::TypeVec2S },
-        { "Maze.Vec3S", MonoFieldType::TypeVec3S },
-        { "Maze.Vec4S", MonoFieldType::TypeVec4S },
-        { "Maze.Vec2U", MonoFieldType::TypeVec2U },
-        { "Maze.Vec3U", MonoFieldType::TypeVec3U },
-        { "Maze.Vec4U", MonoFieldType::TypeVec4U },
-        { "Maze.Vec2F", MonoFieldType::TypeVec2F },
-        { "Maze.Vec3F", MonoFieldType::TypeVec3F },
-        { "Maze.Vec4F", MonoFieldType::TypeVec4F },
-        { "Maze.Mat3F", MonoFieldType::TypeMat3F },
-        { "Maze.Mat4F", MonoFieldType::TypeMat4F },
-        { "Maze.TMat", MonoFieldType::TypeTMat },
-        { "Maze.Rect2F", MonoFieldType::TypeRect2F },
-    };
-
-
     //////////////////////////////////////////
     namespace MonoHelper
     {
@@ -179,22 +149,6 @@ namespace Maze
             }
 
             mono_custom_attrs_free(attrInfo);
-        }
-
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API MonoFieldType MonoTypeStringToMonoFieldType(String const& _string)
-        {
-            auto it = g_monoFieldTypePerMonoTypeName.find(_string);
-            if (it != g_monoFieldTypePerMonoTypeName.end())
-                return it->second;
-            return MonoFieldType::None;
-        }
-
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API MonoFieldType MonoTypeToMonoFieldType(MonoType* _monoType)
-        {
-            String typeName = mono_type_get_name(_monoType);
-            return MonoTypeStringToMonoFieldType(typeName);
         }
 
         //////////////////////////////////////////

@@ -33,6 +33,7 @@
 #include "maze-plugin-csharp/MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptField.hpp"
 #include "maze-core/data/MazeHashedCString.hpp"
 #include "maze-core/MazeTypes.hpp"
 

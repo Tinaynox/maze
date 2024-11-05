@@ -34,7 +34,7 @@
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
 #include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
-#include "maze-plugin-csharp/mono/MazeMonoFieldType.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
 
 
 //////////////////////////////////////////

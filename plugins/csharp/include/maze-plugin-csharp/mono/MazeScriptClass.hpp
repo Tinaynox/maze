@@ -32,7 +32,6 @@
 //////////////////////////////////////////
 #include "maze-plugin-csharp/MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
-#include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 
@@ -43,6 +42,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(ScriptClass);
     MAZE_USING_SHARED_PTR(ScriptInstance);
+    MAZE_USING_SHARED_PTR(ScriptProperty);
+    MAZE_USING_SHARED_PTR(ScriptField);
 
 
     //////////////////////////////////////////
@@ -103,6 +104,9 @@ namespace Maze
         ScriptPropertyPtr const& getProperty(HashedCString _propertyName);
 
         //////////////////////////////////////////
+        ScriptFieldPtr const& getField(HashedCString _fieldName);
+
+        //////////////////////////////////////////
         bool invokeMethod(MonoObject* _instance, CString _name);
 
         //////////////////////////////////////////
@@ -135,6 +139,10 @@ namespace Maze
         //////////////////////////////////////////
         ScriptPropertyPtr assignPrivateProperty(HashedCString _propertyName);
 
+
+        //////////////////////////////////////////
+        inline StringKeyMap<ScriptFieldPtr> const& getFields() const { return m_fields; }
+
     protected:
 
         //////////////////////////////////////////
@@ -145,6 +153,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void assignPublicProperties();
+
+        //////////////////////////////////////////
+        void assignPublicFields();
 
         //////////////////////////////////////////
         String buildFullName() const;
@@ -159,6 +170,7 @@ namespace Maze
         MonoMethod* m_onUpdateMethod = nullptr;
 
         StringKeyMap<ScriptPropertyPtr> m_properties;
+        StringKeyMap<ScriptFieldPtr> m_fields;
     };
 
 } // namespace Maze

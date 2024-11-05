@@ -25,14 +25,33 @@
 
 //////////////////////////////////////////
 #include "MazeCSharpHeader.hpp"
-#include "maze-plugin-csharp/mono/MazeMonoFieldType.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptField.hpp"
+#include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
+#include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_ENUMCLASS(MonoFieldType);
+    // Class ScriptField
+    //
+    //////////////////////////////////////////
+    ScriptField::ScriptField(
+        MonoClassField* _monoField)
+        : m_monoField(_monoField)
+    {
+        U32 flags = mono_field_get_flags(m_monoField);
+
+        if (flags & MONO_FIELD_ATTR_PUBLIC)
+            m_flags |= (U8)ScriptFieldFlags::Public;
+
+        MonoType* fieldType = mono_field_get_type(m_monoField);
+
+        m_name = mono_field_get_name(m_monoField);
+        m_typeName = mono_type_get_name(fieldType);
+    }
+     
 
 } // namespace Maze
 //////////////////////////////////////////

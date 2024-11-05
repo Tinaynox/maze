@@ -25,55 +25,87 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeMonoHelper_hpp_))
-#define _MazeMonoHelper_hpp_
+#if (!defined(_MazeScriptField_hpp_))
+#define _MazeScriptField_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-plugin-csharp/MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/services/MazeLogService.hpp"
-#include "maze-core/ecs/MazeComponentSystem.hpp"
+#include "maze-core/data/MazeHashedString.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ScriptClass);
-    MAZE_USING_SHARED_PTR(ScriptProperty);
+    MAZE_USING_SHARED_PTR(ScriptField);
 
 
     //////////////////////////////////////////
-    namespace MonoHelper
+    enum class MAZE_PLUGIN_CSHARP_API ScriptFieldFlags : U8
     {
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void PrintAssemblyTypes(MonoAssembly* _assembly);
+        Public = MAZE_BIT(0)
+    };
 
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params = nullptr);
 
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void ParseMonoEntitySystemAttributes(
-            MonoMethod* _method,
-            Set<HashedString>& _outTags,
-            ComponentSystemOrder& _outOrder);
-
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API bool IsMethodPublic(MonoMethod* _method);
-
-        //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void IteratePublicProperties(
-            ScriptClassPtr const& _scriptClass,
-            std::function<void(ScriptPropertyPtr const&)> const& _cb);
-
-    } // namespace MonoHelper
     //////////////////////////////////////////
+    // Class ScriptField
+    //
+    //////////////////////////////////////////
+    class MAZE_PLUGIN_CSHARP_API ScriptField
+    {
+    public:
+
+        //////////////////////////////////////////
+        ScriptField() = default;
+    
+        //////////////////////////////////////////
+        ScriptField(
+            MonoClassField* _monoField);
+
+        //////////////////////////////////////////
+        ScriptField(ScriptField const&) = default;
+
+        //////////////////////////////////////////
+        ScriptField(ScriptField&&) = default;
+
+        //////////////////////////////////////////
+        ScriptField& operator=(ScriptField const&) = default;
+
+        //////////////////////////////////////////
+        ScriptField& operator=(ScriptField&&) = default;
+
+
+
+        //////////////////////////////////////////
+        inline HashedString const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        inline HashedString const& getTypeName() const { return m_typeName; }
+
+        //////////////////////////////////////////
+        inline U8 getFlags() const { return m_flags; }
+
+        //////////////////////////////////////////
+        inline bool isPublic() const { return m_flags & (U8)ScriptFieldFlags::Public; }
+
+        //////////////////////////////////////////
+        inline MonoClassField* getMonoClassField() const { return m_monoField; }
+
+    private:
+        HashedString m_name;
+        HashedString m_typeName;
+
+        U8 m_flags = 0;
+
+        MonoClassField* m_monoField = nullptr;
+    };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeMonoHelper_hpp_
+#endif // _MazeScriptField_hpp_
 //////////////////////////////////////////

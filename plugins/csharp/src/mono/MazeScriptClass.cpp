@@ -29,6 +29,8 @@
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptField.hpp"
 
 
 //////////////////////////////////////////
@@ -105,10 +107,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ScriptFieldPtr const& ScriptClass::getField(HashedCString _fieldName)
+    {
+        static ScriptFieldPtr const nullPointer;
+
+        auto it = m_fields.find(_fieldName);
+        if (it != m_fields.end())
+            return it->second;
+
+        return nullPointer;
+    }
+
+    //////////////////////////////////////////
     void ScriptClass::setup()
     {
         assignDefaultMethods();
         assignPublicProperties();
+        assignPublicFields();
     }
 
     //////////////////////////////////////////
@@ -127,6 +142,23 @@ namespace Maze
             ScriptPropertyPtr scriptProperty = MakeShared<ScriptProperty>(prop);
             m_properties.emplace(scriptProperty->getName(), scriptProperty);
         }
+    }
+
+    //////////////////////////////////////////
+    void ScriptClass::assignPublicFields()
+    {
+        void* propIt = nullptr;
+        while (MonoClassField* field = mono_class_get_fields(m_monoClass, &propIt))
+        {
+            U32 flags = mono_field_get_flags(field);
+            Bool isPublic = flags & MONO_FIELD_ATTR_PUBLIC;
+            if (!isPublic)
+                continue;
+
+            ScriptFieldPtr scriptField = MakeShared<ScriptField>(field);
+            m_fields.emplace(scriptField->getName(), scriptField);
+        }
+
     }
 
     //////////////////////////////////////////

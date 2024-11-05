@@ -44,7 +44,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class ScriptPropertyFlags : U8
+    enum class MAZE_PLUGIN_CSHARP_API ScriptPropertyFlags : U8
     {
         PublicGetter = MAZE_BIT(0),
         PublicSetter = MAZE_BIT(1)
