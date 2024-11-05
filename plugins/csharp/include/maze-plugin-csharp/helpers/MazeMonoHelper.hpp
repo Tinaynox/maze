@@ -43,6 +43,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(ScriptClass);
     MAZE_USING_SHARED_PTR(ScriptProperty);
+    MAZE_USING_SHARED_PTR(ScriptField);
 
 
     //////////////////////////////////////////
@@ -67,6 +68,11 @@ namespace Maze
         MAZE_PLUGIN_CSHARP_API void IteratePublicProperties(
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptPropertyPtr const&)> const& _cb);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void IteratePublicFields(
+            ScriptClassPtr const& _scriptClass,
+            std::function<void(ScriptFieldPtr const&)> const& _cb);
 
     } // namespace MonoHelper
     //////////////////////////////////////////

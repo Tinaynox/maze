@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeCSharpEditorToolsHeader.hpp"
-#include "maze-plugin-csharp-editor-tools/meta-property-drawers/MazeMonoPropertyDrawer.hpp"
+#include "maze-plugin-csharp-editor-tools/meta-property-drawers/MazeScriptPropertyDrawer.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -42,22 +42,22 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class MonoPropertyDrawer
+    // Class ScriptPropertyDrawer
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(MonoPropertyDrawer, MetaPropertyDrawer);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ScriptPropertyDrawer, MetaPropertyDrawer);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MonoPropertyDrawer);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(ScriptPropertyDrawer);
 
     //////////////////////////////////////////
-    MonoPropertyDrawer::MonoPropertyDrawer()
+    ScriptPropertyDrawer::ScriptPropertyDrawer()
     {
         
     }
 
     //////////////////////////////////////////
-    MonoPropertyDrawer::~MonoPropertyDrawer()
+    ScriptPropertyDrawer::~ScriptPropertyDrawer()
     {
         if (m_drawer)
         {
@@ -67,19 +67,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MonoPropertyDrawerPtr MonoPropertyDrawer::Create(
+    ScriptPropertyDrawerPtr ScriptPropertyDrawer::Create(
         ScriptPropertyPtr const& _scriptProperty,
-        MonoPropertyDrawerCallbacks _callbacks)
+        ScriptPropertyDrawerCallbacks _callbacks)
     {
-        MonoPropertyDrawerPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(MonoPropertyDrawer, object, init(_scriptProperty, _callbacks));
+        ScriptPropertyDrawerPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ScriptPropertyDrawer, object, init(_scriptProperty, _callbacks));
         return object;
     }
 
     //////////////////////////////////////////
-    bool MonoPropertyDrawer::init(
+    bool ScriptPropertyDrawer::init(
         ScriptPropertyPtr const& _scriptProperty,
-        MonoPropertyDrawerCallbacks _callbacks)
+        ScriptPropertyDrawerCallbacks _callbacks)
     {
         if (!MetaPropertyDrawer::init(nullptr))
             return false;
@@ -88,13 +88,13 @@ namespace Maze
         m_callbacks = _callbacks;
         
         m_drawer = m_callbacks.createDrawerCb();
-        m_drawer->eventUIData.subscribe(this, &MonoPropertyDrawer::processDataFromUI);
+        m_drawer->eventUIData.subscribe(this, &ScriptPropertyDrawer::processDataFromUI);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void MonoPropertyDrawer::buildUI(
+    void ScriptPropertyDrawer::buildUI(
         Transform2DPtr const& _parent,
         CString _label)
     {
@@ -103,7 +103,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MonoPropertyDrawer::processDataToUI()
+    void ScriptPropertyDrawer::processDataToUI()
     {
         if (m_metaInstances.empty())
             return;
@@ -117,7 +117,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MonoPropertyDrawer::processDataFromUI()
+    void ScriptPropertyDrawer::processDataFromUI()
     {
         if (m_metaInstances.empty())
             return;

@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeMonoPropertyDrawer_hpp_))
-#define _MazeMonoPropertyDrawer_hpp_
+#if (!defined(_MazeScriptFieldDrawer_hpp_))
+#define _MazeScriptFieldDrawer_hpp_
 
 
 //////////////////////////////////////////
@@ -41,42 +41,42 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(MonoPropertyDrawer);
+    MAZE_USING_SHARED_PTR(ScriptFieldDrawer);
 
 
     //////////////////////////////////////////
-    struct MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API MonoPropertyDrawerCallbacks
+    struct MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API ScriptFieldDrawerCallbacks
     {
         std::function<PropertyDrawerPtr()> createDrawerCb;
-        std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, PropertyDrawerPtr const&)> processDataToUICb;
-        std::function<void(ScriptInstance&, ScriptPropertyPtr const&, PropertyDrawerPtr const&)> processDataFromUICb;
+        std::function<void(ScriptInstance const&, ScriptFieldPtr const&, PropertyDrawerPtr const&)> processDataToUICb;
+        std::function<void(ScriptInstance&, ScriptFieldPtr const&, PropertyDrawerPtr const&)> processDataFromUICb;
     };
 
 
     //////////////////////////////////////////
-    // Class MonoPropertyDrawer
+    // Class ScriptFieldDrawer
     //
     //////////////////////////////////////////
-    class MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API MonoPropertyDrawer
+    class MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API ScriptFieldDrawer
         : public MetaPropertyDrawer
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(MonoPropertyDrawer, MetaPropertyDrawer);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(ScriptFieldDrawer, MetaPropertyDrawer);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(MonoPropertyDrawer);
+        MAZE_DECLARE_MEMORY_ALLOCATION(ScriptFieldDrawer);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~MonoPropertyDrawer();
+        virtual ~ScriptFieldDrawer();
 
         //////////////////////////////////////////
-        static MonoPropertyDrawerPtr Create(
-            ScriptPropertyPtr const& _scriptProperty,
-            MonoPropertyDrawerCallbacks _callbacks);
+        static ScriptFieldDrawerPtr Create(
+            ScriptFieldPtr const& _scriptProperty,
+            ScriptFieldDrawerCallbacks _callbacks);
 
 
         //////////////////////////////////////////
@@ -88,12 +88,12 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        MonoPropertyDrawer();
+        ScriptFieldDrawer();
 
         //////////////////////////////////////////
         virtual bool init(
-            ScriptPropertyPtr const& _scriptProperty,
-            MonoPropertyDrawerCallbacks _callbacks);
+            ScriptFieldPtr const& _scriptProperty,
+            ScriptFieldDrawerCallbacks _callbacks);
 
         //////////////////////////////////////////
         virtual void buildUI(
@@ -101,15 +101,15 @@ namespace Maze
             CString _label) MAZE_OVERRIDE;
 
     protected:
-        ScriptPropertyPtr m_scriptProperty;
+        ScriptFieldPtr m_scriptProperty;
 
         PropertyDrawerPtr m_drawer;
-        MonoPropertyDrawerCallbacks m_callbacks;
+        ScriptFieldDrawerCallbacks m_callbacks;
     };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeMonoPropertyDrawer_hpp_
+#endif // _MazeScriptFieldDrawer_hpp_
 //////////////////////////////////////////

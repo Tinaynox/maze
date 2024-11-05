@@ -28,6 +28,7 @@
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptField.hpp"
 
 
 //////////////////////////////////////////
@@ -174,6 +175,21 @@ namespace Maze
                     continue;
 
                 _cb(prop);
+            }
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void IteratePublicFields(
+            ScriptClassPtr const& _scriptClass,
+            std::function<void(ScriptFieldPtr const&)> const& _cb)
+        {
+            for (auto const& data : _scriptClass->getFields())
+            {
+                ScriptFieldPtr const& field = data.second;
+                if (!field->isPublic())
+                    continue;
+
+                _cb(field);
             }
         }
 

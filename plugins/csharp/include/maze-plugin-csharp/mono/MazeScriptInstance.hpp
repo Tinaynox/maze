@@ -129,7 +129,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TValue>
-        inline bool setProperty(ScriptPropertyPtr const& _property, TValue const& _value)
+        inline bool setPropertyValue(ScriptPropertyPtr const& _property, TValue const& _value)
         {
             if (!_property->getSetterMethod())
                 return false;
@@ -139,7 +139,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <>
-        inline bool setProperty(ScriptPropertyPtr const& _property, String const& _value)
+        inline bool setPropertyValue(ScriptPropertyPtr const& _property, String const& _value)
         {
             MonoString* monoString = mono_string_new(mono_domain_get(), _value.c_str());
             void* stringParam = monoString;
@@ -149,19 +149,19 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TValue>
-        inline bool setProperty(HashedCString _name, TValue const& _value)
+        inline bool setPropertyValue(HashedCString _name, TValue const& _value)
         {
             ScriptPropertyPtr const& prop = getProperty(_name);
             MAZE_ERROR_RETURN_VALUE_IF(!prop, false, "%s property is not found!", _name);
 
-            return setProperty(prop, _value);
+            return setPropertyValue(prop, _value);
         }
 
 
 
         //////////////////////////////////////////
         template <typename TValue>
-        inline bool getProperty(ScriptPropertyPtr const& _property, TValue& _value) const
+        inline bool getPropertyValue(ScriptPropertyPtr const& _property, TValue& _value) const
         {
             MonoObject* result = mono_property_get_value(_property->getMonoProperty(), m_instance, nullptr, nullptr);
             if (!result)
@@ -173,7 +173,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <>
-        inline bool getProperty(ScriptPropertyPtr const& _property, String& _value) const
+        inline bool getPropertyValue(ScriptPropertyPtr const& _property, String& _value) const
         {
             MonoObject* result = mono_property_get_value(_property->getMonoProperty(), m_instance, nullptr, nullptr);
             if (!result)
@@ -185,6 +185,52 @@ namespace Maze
 
             return true;
         }
+
+
+
+        //////////////////////////////////////////
+        template <typename TValue>
+        inline bool setFieldValue(ScriptFieldPtr const& _field, TValue const& _value)
+        {
+            mono_field_set_value(m_instance, _field->getMonoClassField(), (void*)&_value);
+            return false;
+        }
+
+        //////////////////////////////////////////
+        template <>
+        inline bool setFieldValue(ScriptFieldPtr const& _field, String const& _value)
+        {
+            MonoString* monoString = mono_string_new(mono_domain_get(), _value.c_str());
+            mono_field_set_value(m_instance, _field->getMonoClassField(), monoString);
+
+            return true;
+        }
+
+        //////////////////////////////////////////
+        template <typename TValue>
+        inline bool getFieldValue(ScriptFieldPtr const& _field, TValue& _value) const
+        {
+            mono_field_get_value(m_instance, _field->getMonoClassField(), &_value);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        template <>
+        inline bool getFieldValue(ScriptFieldPtr const& _field, String& _value) const
+        {
+            MonoString* monoString = nullptr;
+            mono_field_get_value(m_instance, _field->getMonoClassField(), &monoString);
+
+            if (monoString)
+            {
+                Char* cStr = mono_string_to_utf8(monoString);
+                _value = cStr;
+                mono_free(cStr);
+            }
+
+            return true;
+        }
+
 
 
 

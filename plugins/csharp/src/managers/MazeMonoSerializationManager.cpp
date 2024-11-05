@@ -60,24 +60,36 @@ namespace Maze
     bool MonoSerializationManager::init()
     {
 #define MAZE_MONO_SERIALIZATION_TYPE(DTypeName, DType)                                                      \
-        registerPropertyDataBlockSerialization(MAZE_HCS(DTypeName),                                         \
+        registerPropertyAndFieldDataBlockSerialization(MAZE_HCS(DTypeName),                                 \
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)      \
             {                                                                                               \
                 DType value;                                                                                \
-                _instance.getProperty(_prop, value);                                                        \
+                _instance.getPropertyValue(_prop, value);                                                   \
                 _dataBlock.set ## DType(_prop->getName(), value);                                           \
             },                                                                                              \
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)      \
             {                                                                                               \
                 DataBlock::ParamIndex idx = _dataBlock.findParamIndex(_prop->getName());                    \
                 if (idx >= 0)                                                                               \
-                    _instance.setProperty(_prop, _dataBlock.get ## DType(idx));                             \
+                    _instance.setPropertyValue(_prop, _dataBlock.get ## DType(idx));                        \
+            },                                                                                              \
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)        \
+            {                                                                                               \
+                DType value;                                                                                \
+                _instance.getFieldValue(_field, value);                                                     \
+                _dataBlock.set ## DType(_field->getName(), value);                                          \
+            },                                                                                              \
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)        \
+            {                                                                                               \
+                DataBlock::ParamIndex idx = _dataBlock.findParamIndex(_field->getName());                   \
+                if (idx >= 0)                                                                               \
+                    _instance.setFieldValue(_field, _dataBlock.get ## DType(idx));                          \
             });
 
         // Core
         MAZE_MONO_SERIALIZATION_TYPE("System.String", String);
         MAZE_MONO_SERIALIZATION_TYPE("System.Boolean", Bool);
-        MAZE_MONO_SERIALIZATION_TYPE("System.Char", S8);
+        MAZE_MONO_SERIALIZATION_TYPE("System.SByte", S8);
         MAZE_MONO_SERIALIZATION_TYPE("System.Int16", S16);
         MAZE_MONO_SERIALIZATION_TYPE("System.Int32", S32);
         MAZE_MONO_SERIALIZATION_TYPE("System.Int64", S64);
@@ -113,10 +125,10 @@ namespace Maze
     //////////////////////////////////////////
     void MonoSerializationManager::registerPropertyDataBlockSerialization(
         HashedCString _typeName,
-        std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> _propToDataBlockCb,
-        std::function<void(ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> _propFromDataBlockCb)
+        std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> const& _propToDataBlockCb,
+        std::function<void(ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propFromDataBlockCb)
     {
-        CSharpPropertyDataBlockSerializationData& data = m_propertyDataBlockSerializationData[_typeName];
+        ScriptPropertyDataBlockSerializationData& data = m_propertyDataBlockSerializationData[_typeName];
         data.propToDataBlockCb = _propToDataBlockCb;
         data.propFromDataBlockCb = _propFromDataBlockCb;
     }
@@ -141,6 +153,43 @@ namespace Maze
         if (it != m_propertyDataBlockSerializationData.end())
         {
             it->second.propFromDataBlockCb(_instance, _property, _dataBlock);
+            return true;
+        }
+
+        return false;
+    }
+
+    //////////////////////////////////////////
+    void MonoSerializationManager::registerFieldDataBlockSerialization(
+        HashedCString _typeName,
+        std::function<void(ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> const& _propToDataBlockCb,
+        std::function<void(ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _propFromDataBlockCb)
+    {
+        ScriptFieldDataBlockSerializationData& data = m_fieldDataBlockSerializationData[_typeName];
+        data.propToDataBlockCb = _propToDataBlockCb;
+        data.propFromDataBlockCb = _propFromDataBlockCb;
+    }
+
+    //////////////////////////////////////////
+    bool MonoSerializationManager::saveFieldToDataBlock(ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+    {
+        auto it = m_fieldDataBlockSerializationData.find(_field->getTypeName());
+        if (it != m_fieldDataBlockSerializationData.end())
+        {
+            it->second.propToDataBlockCb(_instance, _field, _dataBlock);
+            return true;
+        }
+
+        return false;
+    }
+
+    //////////////////////////////////////////
+    bool MonoSerializationManager::loadFieldFromDataBlock(ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+    {
+        auto it = m_fieldDataBlockSerializationData.find(_field->getTypeName());
+        if (it != m_fieldDataBlockSerializationData.end())
+        {
+            it->second.propFromDataBlockCb(_instance, _field, _dataBlock);
             return true;
         }
 

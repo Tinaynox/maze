@@ -88,197 +88,357 @@ namespace Maze
 
 
         // Core
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerString>(MAZE_HCS("System.String"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerString>(MAZE_HCS("System.String"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerString* _drawer)
             {
-                String value; _instance.getProperty(_property, value); _drawer->setValue(value);
+                String value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerString const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerString* _drawer)
+            {
+                String value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerString const* _drawer)
+            {
+                _instance.setFieldValue(_field, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerBool>(MAZE_HCS("System.Boolean"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerBool>(MAZE_HCS("System.Boolean"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerBool* _drawer)
             {
-                Bool value; _instance.getProperty(_property, value); _drawer->setValue(value);
+                Bool value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerBool const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerBool* _drawer)
+            {
+                Bool value; _instance.getFieldValue(_property, value); _drawer->setValue(value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerBool const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Char"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.SByte"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
             {
-                S8 value; _instance.getProperty(_property, value); _drawer->setValue((S32)value);
+                S8 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32* _drawer)
+            {
+                S8 value; _instance.getFieldValue(_property, value); _drawer->setValue((S32)value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Int16"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Int16"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
             {
-                S16 value; _instance.getProperty(_property, value); _drawer->setValue((S32)value);
+                S16 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32* _drawer)
+            {
+                S16 value; _instance.getFieldValue(_property, value); _drawer->setValue((S32)value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Int32"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Int32"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
             {
-                S32 value; _instance.getProperty(_property, value); _drawer->setValue((S32)value);
+                S32 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32* _drawer)
+            {
+                S32 value; _instance.getFieldValue(_property, value); _drawer->setValue((S32)value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Int64"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Int64"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
             {
-                S64 value; _instance.getProperty(_property, value); _drawer->setValue((S32)value);
+                S64 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32* _drawer)
+            {
+                S64 value; _instance.getFieldValue(_property, value); _drawer->setValue((S32)value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Byte"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Byte"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
             {
-                U8 value; _instance.getProperty(_property, value); _drawer->setValue((S32)value);
+                U8 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32* _drawer)
+            {
+                U8 value; _instance.getFieldValue(_property, value); _drawer->setValue((S32)value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.UInt16"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.UInt16"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
             {
-                U16 value; _instance.getProperty(_property, value); _drawer->setValue((S32)value);
+                U16 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32* _drawer)
+            {
+                U16 value; _instance.getFieldValue(_property, value); _drawer->setValue((S32)value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.UInt32"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.UInt32"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
             {
-                U32 value; _instance.getProperty(_property, value); _drawer->setValue((S32)value);
+                U32 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32* _drawer)
+            {
+                U32 value; _instance.getFieldValue(_property, value); _drawer->setValue((S32)value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.UInt64"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.UInt64"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
             {
-                U64 value; _instance.getProperty(_property, value); _drawer->setValue((S32)value);
+                U64 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32* _drawer)
+            {
+                U64 value; _instance.getFieldValue(_property, value); _drawer->setValue((S32)value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerF32>(MAZE_HCS("System.Single"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerF32>(MAZE_HCS("System.Single"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32* _drawer)
             {
-                F32 value; _instance.getProperty(_property, value); _drawer->setValue(value);
+                F32 value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerF32* _drawer)
+            {
+                F32 value; _instance.getFieldValue(_property, value); _drawer->setValue(value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerF32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerF32>(MAZE_HCS("System.Double"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerF32>(MAZE_HCS("System.Double"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32* _drawer)
             {
-                F64 value; _instance.getProperty(_property, value); _drawer->setValue((F32)value);
+                F64 value; _instance.getPropertyValue(_property, value); _drawer->setValue((F32)value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32 const* _drawer)
             {
-                _instance.setProperty(_property, (F64)_drawer->getValue());
+                _instance.setPropertyValue(_property, (F64)_drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerF32* _drawer)
+            {
+                F64 value; _instance.getFieldValue(_property, value); _drawer->setValue((F32)value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerF32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, (F64)_drawer->getValue());
             });
 
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec2S32>(MAZE_HCS("Maze.Core.Vec2S"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec2S32>(MAZE_HCS("Maze.Core.Vec2S"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2S32* _drawer)
             {
-                Vec2S value; _instance.getProperty(_property, value); _drawer->setValue(value);
+                Vec2S value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2S32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec2S32* _drawer)
+            {
+                Vec2S value; _instance.getFieldValue(_property, value); _drawer->setValue(value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec2S32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec2U32>(MAZE_HCS("Maze.Core.Vec2U"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec2U32>(MAZE_HCS("Maze.Core.Vec2U"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2U32* _drawer)
             {
-                Vec2U value; _instance.getProperty(_property, value); _drawer->setValue(value);
+                Vec2U value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2U32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec2U32* _drawer)
+            {
+                Vec2U value; _instance.getFieldValue(_property, value); _drawer->setValue(value);
+            },
+                [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec2U32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec2F32>(MAZE_HCS("Maze.Core.Vec2F"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec2F32>(MAZE_HCS("Maze.Core.Vec2F"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2F32* _drawer)
             {
-                Vec2F value; _instance.getProperty(_property, value); _drawer->setValue(value);
+                Vec2F value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2F32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec2F32* _drawer)
+            {
+                Vec2F value; _instance.getFieldValue(_property, value); _drawer->setValue(value);
+            },
+                [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec2F32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec3F32>(MAZE_HCS("Maze.Core.Vec3F"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec3F32>(MAZE_HCS("Maze.Core.Vec3F"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec3F32* _drawer)
             {
-                Vec3F value; _instance.getProperty(_property, value); _drawer->setValue(value);
+                Vec3F value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec3F32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec3F32* _drawer)
+            {
+                Vec3F value; _instance.getFieldValue(_property, value); _drawer->setValue(value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec3F32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerVec4F32>(MAZE_HCS("Maze.Core.Vec4F"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec4F32>(MAZE_HCS("Maze.Core.Vec4F"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec4F32* _drawer)
             {
-                Vec4F value; _instance.getProperty(_property, value); _drawer->setValue(value);
+                Vec4F value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec4F32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec4F32* _drawer)
+            {
+                Vec4F value; _instance.getFieldValue(_property, value); _drawer->setValue(value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec4F32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
 
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerRect2F>(MAZE_HCS("Maze.Core.Rect2F"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerRect2F>(MAZE_HCS("Maze.Core.Rect2F"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerRect2F* _drawer)
             {
-                Rect2F value; _instance.getProperty(_property, value); _drawer->setValue(value);
+                Rect2F value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerRect2F const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerRect2F* _drawer)
+            {
+                Rect2F value; _instance.getFieldValue(_property, value); _drawer->setValue(value);
+            },
+                [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerRect2F const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
             });
         
 
         // Graphics
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerColorU32>(MAZE_HCS("Maze.Graphics.ColorU32"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerColorU32>(MAZE_HCS("Maze.Graphics.ColorU32"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorU32* _drawer)
             {
-                Vec4U8 value; _instance.getProperty(_property, value); _drawer->setValue(ColorU32::FromVec4U8(value));
+                Vec4U8 value; _instance.getPropertyValue(_property, value); _drawer->setValue(ColorU32::FromVec4U8(value));
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorU32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue().toVec4U8());
+                _instance.setPropertyValue(_property, _drawer->getValue().toVec4U8());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerColorU32* _drawer)
+            {
+                Vec4U8 value; _instance.getFieldValue(_property, value); _drawer->setValue(ColorU32::FromVec4U8(value));
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerColorU32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue().toVec4U8());
             });
-        registerMonoPropertyDrawerCallbacks<PropertyDrawerColorF128>(MAZE_HCS("Maze.Graphics.ColorF128"),
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerColorF128>(MAZE_HCS("Maze.Graphics.ColorF128"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorF128* _drawer)
             {
-                Vec4F value; _instance.getProperty(_property, value); _drawer->setValue(ColorF128(value));
+                Vec4F value; _instance.getPropertyValue(_property, value); _drawer->setValue(ColorF128(value));
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorF128 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue().toVec4F32());
+                _instance.setPropertyValue(_property, _drawer->getValue().toVec4F32());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerColorF128* _drawer)
+            {
+                Vec4F value; _instance.getFieldValue(_property, value); _drawer->setValue(ColorF128(value));
+            },
+                [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerColorF128 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue().toVec4F32());
             });
 
         return true;
     }
 
     //////////////////////////////////////////
-    MonoPropertyDrawerCallbacks* CSharpEditorToolsManager::getMonoPropertyDrawerCallbacksPerMonoType(HashedCString _monoTypeName)
+    ScriptPropertyDrawerCallbacks* CSharpEditorToolsManager::getScriptPropertyDrawerCallbacksPerMonoType(HashedCString _monoTypeName)
     {
         auto it = m_monoPropertyDrawerCallbacksPerMonoType.find(_monoTypeName);
         if (it != m_monoPropertyDrawerCallbacksPerMonoType.end())
@@ -288,18 +448,54 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MonoPropertyDrawerCallbacks CSharpEditorToolsManager::buildMonoPropertyDrawerSliderF32Callbacks(
+    ScriptPropertyDrawerCallbacks CSharpEditorToolsManager::buildScriptPropertyDrawerSliderF32Callbacks(
         F32 _from,
         F32 _to)
     {
-        MonoPropertyDrawerCallbacks callbacks = BuildMonoPropertyDrawerCallbacks<PropertyDrawerSliderF32>(
+        ScriptPropertyDrawerCallbacks callbacks = BuildScriptPropertyDrawerCallbacks<PropertyDrawerSliderF32>(
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerSliderF32* _drawer)
             {
-                F32 value; _instance.getProperty(_property, value); _drawer->setValue(value);
+                F32 value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
             },
             [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerSliderF32 const* _drawer)
             {
-                _instance.setProperty(_property, _drawer->getValue());
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            });
+        callbacks.createDrawerCb =
+            [_from, _to]()
+            {
+                PropertyDrawerSliderF32Ptr drawer = PropertyDrawerSliderF32::Create("");
+                drawer->setFromValue(_from);
+                drawer->setToValue(_to);
+                return drawer;
+            };
+
+        return callbacks;
+    }
+
+    //////////////////////////////////////////
+    ScriptFieldDrawerCallbacks* CSharpEditorToolsManager::getScriptFieldDrawerCallbacksPerMonoType(HashedCString _monoTypeName)
+    {
+        auto it = m_monoFieldDrawerCallbacksPerMonoType.find(_monoTypeName);
+        if (it != m_monoFieldDrawerCallbacksPerMonoType.end())
+            return &it->second;
+
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
+    ScriptFieldDrawerCallbacks CSharpEditorToolsManager::buildScriptFieldDrawerSliderF32Callbacks(
+        F32 _from,
+        F32 _to)
+    {
+        ScriptFieldDrawerCallbacks callbacks = BuildScriptFieldDrawerCallbacks<PropertyDrawerSliderF32>(
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerSliderF32* _drawer)
+            {
+                F32 value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerSliderF32 const* _drawer)
+            {
+                _instance.setFieldValue(_field, _drawer->getValue());
             });
         callbacks.createDrawerCb =
             [_from, _to]()

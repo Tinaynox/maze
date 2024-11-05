@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCSharpEditorToolsHeader.hpp"
 #include "maze-plugin-csharp-editor-tools/inspectors/entities/MazeComponentEditorMonoBehaviour.hpp"
-#include "maze-plugin-csharp-editor-tools/meta-property-drawers/MazeMonoPropertyDrawer.hpp"
+#include "maze-plugin-csharp-editor-tools/meta-property-drawers/MazeScriptPropertyDrawer.hpp"
 #include "maze-plugin-csharp-editor-tools/managers/MazeCSharpEditorToolsManager.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
@@ -83,30 +83,36 @@ namespace Maze
         ScriptClassPtr const& scriptClass = MonoEngine::GetMonoBehaviourSubClass(getComponentId());
         if (scriptClass)
         {
-            MonoClass* monoClass = scriptClass->getMonoClass();
 
-            // Test fields
-            void* fieldIt = nullptr;
-            while (MonoClassField* field = mono_class_get_fields(monoClass, &fieldIt))
-            {
-                CString fieldName = mono_field_get_name(field);
-                U32 flags = mono_field_get_flags(field);
-                if (flags & MONO_FIELD_ATTR_PUBLIC)
+            MonoHelper::IteratePublicFields(scriptClass,
+                [&](ScriptFieldPtr const& _field)
                 {
-                    MonoType* fieldType = mono_field_get_type(field);
-                    HashedCString typeName = HashedCString(mono_type_get_name(fieldType));
+                    ScriptFieldDrawerCallbacks callbacks;
 
-                    // Debug::Log("%s => %s", fieldName, typeName.str);
-                }
-            }
+                    ScriptFieldDrawerCallbacks* callbacksPtr = CSharpEditorToolsManager::GetInstancePtr()->getScriptFieldDrawerCallbacksPerMonoType(
+                        _field->getTypeName());
+                    if (!callbacksPtr)
+                        return;
+                    callbacks = *callbacksPtr;
 
+                    // #TODO: Slider mode
+                    // if (typeName == MAZE_HCS("System.Single"))
+                    // {
+                    //      callbacks = CSharpEditorToolsManager::GetInstancePtr()->buildScriptFieldDrawerSliderF32Callbacks(0.0f, 1.0f);
+                    // }
+
+
+                    ScriptFieldDrawerPtr propertyDrawer = ScriptFieldDrawer::Create(_field, callbacks);
+                    if (propertyDrawer)
+                        addPropertyDrawer(propertyDrawer, _field->getName().c_str());
+                });
             
             MonoHelper::IteratePublicProperties(scriptClass,
                 [&](ScriptPropertyPtr const& _prop)
                 {
-                    MonoPropertyDrawerCallbacks callbacks;
+                    ScriptPropertyDrawerCallbacks callbacks;
 
-                    MonoPropertyDrawerCallbacks* callbacksPtr = CSharpEditorToolsManager::GetInstancePtr()->getMonoPropertyDrawerCallbacksPerMonoType(
+                    ScriptPropertyDrawerCallbacks* callbacksPtr = CSharpEditorToolsManager::GetInstancePtr()->getScriptPropertyDrawerCallbacksPerMonoType(
                         _prop->getTypeName());
                     if (!callbacksPtr)
                         return;
@@ -115,14 +121,16 @@ namespace Maze
                     // #TODO: Slider mode
                     // if (typeName == MAZE_HCS("System.Single"))
                     // {
-                    //      callbacks = CSharpEditorToolsManager::GetInstancePtr()->buildMonoPropertyDrawerSliderF32Callbacks(0.0f, 1.0f);
+                    //      callbacks = CSharpEditorToolsManager::GetInstancePtr()->buildScriptPropertyDrawerSliderF32Callbacks(0.0f, 1.0f);
                     // }
 
 
-                    MonoPropertyDrawerPtr propertyDrawer = MonoPropertyDrawer::Create(_prop, callbacks);
+                    ScriptPropertyDrawerPtr propertyDrawer = ScriptPropertyDrawer::Create(_prop, callbacks);
                     if (propertyDrawer)
                         addPropertyDrawer(propertyDrawer, _prop->getName().c_str());
                 });
+
+            
         }
 
         m_expandButtonSprite->getEntityRaw()->setActiveSelf(!m_propertyDrawers.empty());

@@ -92,7 +92,7 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(!m_monoClass->isValid(), "MonoClass is invalid!");
 
         m_monoInstance = m_monoClass->instantiate();
-        m_monoInstance->setProperty(MAZE_HCS("nativeComponentPtr"), castRaw<Component>());
+        m_monoInstance->setPropertyValue(MAZE_HCS("nativeComponentPtr"), castRaw<Component>());
     }
 
     //////////////////////////////////////////
@@ -124,6 +124,15 @@ namespace Maze
     {
         if (m_monoClass && m_monoInstance)
         {
+            MonoHelper::IteratePublicFields(m_monoClass,
+                [&](ScriptFieldPtr const& _field)
+                {
+                    MonoSerializationManager::GetInstancePtr()->loadFieldFromDataBlock(
+                        *m_monoInstance,
+                        _field,
+                        _dataBlock);
+                });
+
             MonoHelper::IteratePublicProperties(m_monoClass,
                 [&](ScriptPropertyPtr const& _prop)
                 {
@@ -142,6 +151,15 @@ namespace Maze
         
         if (m_monoClass && m_monoInstance)
         {
+            MonoHelper::IteratePublicFields(m_monoClass,
+                [&](ScriptFieldPtr const& _prop)
+            {
+                MonoSerializationManager::GetInstancePtr()->saveFieldToDataBlock(
+                    *m_monoInstance,
+                    _prop,
+                    db);
+            });
+
             MonoHelper::IteratePublicProperties(m_monoClass,
                 [&](ScriptPropertyPtr const& _prop)
                 {
