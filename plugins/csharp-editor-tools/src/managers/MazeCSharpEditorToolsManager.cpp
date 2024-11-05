@@ -105,6 +105,23 @@ namespace Maze
             {
                 _instance.setFieldValue(_field, _drawer->getValue());
             });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Char"),
+            [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
+            {
+                U16 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
+            },
+            [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
+            {
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32* _drawer)
+            {
+                U16 value; _instance.getFieldValue(_property, value); _drawer->setValue((S32)value);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerS32 const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue());
+            });
         registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerBool>(MAZE_HCS("System.Boolean"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerBool* _drawer)
             {

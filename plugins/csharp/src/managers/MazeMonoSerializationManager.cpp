@@ -88,6 +88,7 @@ namespace Maze
 
         // Core
         MAZE_MONO_SERIALIZATION_TYPE("System.String", String);
+        MAZE_MONO_SERIALIZATION_TYPE("System.Char", U16); // Wide char
         MAZE_MONO_SERIALIZATION_TYPE("System.Boolean", Bool);
         MAZE_MONO_SERIALIZATION_TYPE("System.SByte", S8);
         MAZE_MONO_SERIALIZATION_TYPE("System.Int16", S16);
