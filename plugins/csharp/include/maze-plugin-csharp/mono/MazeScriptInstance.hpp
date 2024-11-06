@@ -152,7 +152,7 @@ namespace Maze
         inline bool setPropertyValue(HashedCString _name, TValue const& _value)
         {
             ScriptPropertyPtr const& prop = getProperty(_name);
-            MAZE_ERROR_RETURN_VALUE_IF(!prop, false, "%s property is not found!", _name);
+            MAZE_ERROR_RETURN_VALUE_IF(!prop, false, "%s property is not found!", _name.str);
 
             return setPropertyValue(prop, _value);
         }
