@@ -5,10 +5,9 @@ namespace Maze.Core
 {
     public class NativeComponent : Component
     {
-
-        public NativeComponent(IntPtr _nativeComponentPtr)
+        public NativeComponent(NativePtr _nativeComponentPtr)
         {
-            nativeComponentPtr = _nativeComponentPtr;
+            NativeComponentPtr = _nativeComponentPtr;
         }
     }
 }

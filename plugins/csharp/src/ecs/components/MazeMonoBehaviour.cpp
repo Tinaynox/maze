@@ -92,7 +92,7 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(!m_monoClass->isValid(), "MonoClass is invalid!");
 
         m_monoInstance = m_monoClass->instantiate();
-        m_monoInstance->setPropertyValue(MAZE_HCS("nativeComponentPtr"), castRaw<Component>());
+        m_monoInstance->setPropertyValue(MAZE_HCS("NativeComponentPtr"), castRaw<Component>());
     }
 
     //////////////////////////////////////////

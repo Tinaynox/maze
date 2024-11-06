@@ -1,20 +1,19 @@
 using System;
-using Maze;
 
 namespace Maze.Core
 {
-    public class Component
+    public struct Entity
     {
-        protected NativePtr NativeComponentPtr { get; set; }
+        public NativePtr NativeEntityPtr { get; private set; }
+
+        public Entity(NativePtr _ptr)
+        {
+            NativeEntityPtr = _ptr;
+        }
 
         public int GetEntityId()
         {
-            return InternalCalls.ComponentGetEntityId(NativeComponentPtr);
-        }
-
-        public Entity GetEntity()
-        {
-            return new Entity(InternalCalls.ComponentGetEntity(NativeComponentPtr));
+            return InternalCalls.EntityGetEntityId(NativeEntityPtr);
         }
 
         public T GetComponent<T>() where T : class
@@ -24,7 +23,7 @@ namespace Maze.Core
             // Native component wrappers
             if (typeof(NativeComponent).IsAssignableFrom(typeof(T)))
             {
-                NativePtr componentPtr = InternalCalls.ComponentGetComponent(NativeComponentPtr, componentId);
+                NativePtr componentPtr = InternalCalls.EntityGetComponent(NativeEntityPtr, componentId);
                 if (componentPtr == NativePtr.Zero)
                     return default(T);
 
@@ -34,7 +33,7 @@ namespace Maze.Core
 
             // MonoBehaviour refs
             if (typeof(MonoBehaviour).IsAssignableFrom(typeof(T)))
-                return (T)(object)InternalCalls.ComponentGetMonoBehaviourComponentObject(NativeComponentPtr, componentId);
+                return (T)(object)InternalCalls.EntityGetMonoBehaviourComponentObject(NativeEntityPtr, componentId);
 
 
             // Not supported type

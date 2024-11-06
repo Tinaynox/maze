@@ -5,8 +5,8 @@ namespace Sandbox
 {
     public class Player : MonoBehaviour
     {
-        Transform3D transform;
-        TestRotor testRotor;
+        Transform3D m_Transform;
+        TestRotor m_TestRotor;
 
         public float Speed { get; set; } = 6.0f;
 
@@ -36,33 +36,34 @@ namespace Sandbox
         [EntitySystem]
         public void OnCreate()
         {
-            transform = GetComponent<Transform3D>();
-            testRotor = GetComponent<TestRotor>();
+            Debug.LogError("Some!");
+            m_Transform = GetEntity().GetComponent<Transform3D>();
+            m_TestRotor = GetEntity().GetComponent<TestRotor>();
         }
 
         [EntitySystem(new string[] { "default" })]
         public void OnUpdate(float _dt)
         {
-            testRotor.Speed = transform.position.X * 3.0f;
+            m_TestRotor.Speed = m_Transform.position.X * 3.0f;
 
             if (Input.GetKeyState(KeyCode.Left))
             {
-                transform.Translate(new Vec3F(-Speed * _dt, 0.0f, 0.0f));
+                m_Transform.Translate(new Vec3F(-Speed * _dt, 0.0f, 0.0f));
             }
 
             if (Input.GetKeyState(KeyCode.Right))
             {
-                transform.Translate(new Vec3F(Speed * _dt, 0.0f, 0.0f));
+                m_Transform.Translate(new Vec3F(Speed * _dt, 0.0f, 0.0f));
             }
 
             if (Input.GetKeyState(KeyCode.Down))
             {
-                transform.Translate(new Vec3F(0.0f, -Speed * _dt, 0.0f));
+                m_Transform.Translate(new Vec3F(0.0f, -Speed * _dt, 0.0f));
             }
 
             if (Input.GetKeyState(KeyCode.Up))
             {
-                transform.Translate(new Vec3F(0.0f, Speed * _dt, 0.0f));
+                m_Transform.Translate(new Vec3F(0.0f, Speed * _dt, 0.0f));
             }
         }
     }

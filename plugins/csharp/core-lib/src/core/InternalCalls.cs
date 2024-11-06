@@ -5,54 +5,71 @@ namespace Maze.Core
 {
     public class InternalCalls
     {
-#region Log
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        #region Log
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void MazeLog(string _text);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void MazeLogWarning(string _text);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void MazeLogError(string _text);
-#endregion
+        #endregion
 
-#region Input
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        #region Input
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool GetKeyState(int _keyCode);
         #endregion
 
-#region Ecs
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static int GetFrameNumber(IntPtr _nativeComponentPtr);
+        #region Ecs
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int GetComponentIdByMonoType(Type _type);
+        #endregion
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static int GetEntityId(IntPtr _nativeComponentPtr);
+        #region Entity
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int EntityGetEntityId(NativePtr _nativeEntityPtr);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static int GetComponentId(string _name);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static NativePtr EntityGetComponent(NativePtr _nativeEntityPtr, int _componentId);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static int GetComponentIdByMonoType(Type _type);      
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static MonoBehaviour EntityGetMonoBehaviourComponentObject(NativePtr _nativeEntityPtr, int _componentId);
+        #endregion
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static IntPtr GetComponent(IntPtr _nativeComponentPtr, int _componentId);
+        #region Component
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int ComponentGetFrameNumber(NativePtr _nativeComponentPtr);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static MonoBehaviour GetMonoBehaviourComponentObject(IntPtr _nativeComponentPtr, int _componentId);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int ComponentGetEntityId(NativePtr _nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int ComponentGetComponentId(string _name);
+      
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static NativePtr ComponentGetComponent(NativePtr _nativeComponentPtr, int _componentId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static MonoBehaviour ComponentGetMonoBehaviourComponentObject(NativePtr _nativeComponentPtr, int _componentId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static NativePtr ComponentGetEntity(NativePtr _nativeComponentPtr);
         #endregion
 
         #region Transform3D
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DTranslate(IntPtr _nativeComponentPtr, Vec3F _delta);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform3DTranslate(NativePtr _nativeComponentPtr, Vec3F _delta);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DRotate(IntPtr _nativeComponentPtr, Vec3F _axis, float _angle);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform3DRotate(NativePtr _nativeComponentPtr, Vec3F _axis, float _angle);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetPosition(IntPtr _nativeComponentPtr, out Vec3F _delta);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform3DGetPosition(NativePtr _nativeComponentPtr, out Vec3F _delta);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetPosition(IntPtr _nativeComponentPtr, Vec3F _delta);
-#endregion
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform3DSetPosition(NativePtr _nativeComponentPtr, Vec3F _delta);
+        #endregion
     }
 }

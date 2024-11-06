@@ -75,22 +75,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    inline S32 GetFrameNumber(Component* _component) { return _component->getEntityRaw()->getEcsWorld()->getFrameNumber(); }
-
-    //////////////////////////////////////////
-    inline S32 GetEntityId(Component* _component) { return (S32)_component->getEntityId(); }
-
-    //////////////////////////////////////////
-    inline ComponentId GetComponentIdHelper(MonoString* _name)
-    {
-        Char* cstr = mono_string_to_utf8(_name);
-        ComponentId id = GetComponentIdByName(cstr);
-        mono_free(cstr);
-
-        return id;
-    }
-
-    //////////////////////////////////////////
     inline ComponentId GetComponentIdByMonoType(MonoReflectionType* _type)
     {
         MonoType* monoType = mono_reflection_type_get_type(_type);
@@ -100,7 +84,51 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    inline Component* GetComponent(Component* _component, ComponentId _componentId)
+    inline S32 EntityGetEntityId(Entity* _entity) { return (S32)_entity->getId(); }
+
+    //////////////////////////////////////////
+    inline Component* EntityGetComponent(Entity* _entity, ComponentId _componentId)
+    {
+        if (!_entity)
+            return nullptr;
+
+        ComponentPtr const& component = _entity->getComponentById(_componentId);
+        return component.get();
+    }
+
+    //////////////////////////////////////////
+    inline MonoObject* EntityGetMonoBehaviourComponentObject(Entity* _entity, ComponentId _componentId)
+    {
+        if (!_entity)
+            return nullptr;
+
+        ComponentPtr const& component = _entity->getComponentById(_componentId);
+        if (!component)
+            return nullptr;
+
+        MAZE_ERROR_RETURN_VALUE_IF(component->getClassUID() != ClassInfo<MonoBehaviour>::UID(), nullptr, "Component is not MonoBehaviour!");
+        return component->castRaw<MonoBehaviour>()->getMonoInstance()->getInstance();
+    }
+
+
+    //////////////////////////////////////////
+    inline S32 ComponentGetFrameNumber(Component* _component) { return _component->getEntityRaw()->getEcsWorld()->getFrameNumber(); }
+
+    //////////////////////////////////////////
+    inline S32 ComponentGetEntityId(Component* _component) { return (S32)_component->getEntityId(); }
+
+    //////////////////////////////////////////
+    inline ComponentId ComponentGetComponentId(MonoString* _name)
+    {
+        Char* cstr = mono_string_to_utf8(_name);
+        ComponentId id = GetComponentIdByName(cstr);
+        mono_free(cstr);
+
+        return id;
+    }
+
+    //////////////////////////////////////////
+    inline Component* ComponentGetComponent(Component* _component, ComponentId _componentId)
     {
         if (!_component->getEntityRaw())
             return nullptr;
@@ -110,7 +138,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline MonoObject* GetMonoBehaviourComponentObject(Component* _component, ComponentId _componentId)
+    inline MonoObject* ComponentGetMonoBehaviourComponentObject(Component* _component, ComponentId _componentId)
     {
         if (!_component->getEntityRaw())
             return nullptr;
@@ -122,6 +150,13 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(component->getClassUID() != ClassInfo<MonoBehaviour>::UID(), nullptr, "Component is not MonoBehaviour!");
         return component->castRaw<MonoBehaviour>()->getMonoInstance()->getInstance();
     }
+
+    //////////////////////////////////////////
+    inline Entity* ComponentGetEntity(Component* _component)
+    {
+        return _component->getEntityRaw();
+    }
+
 
     //////////////////////////////////////////
     inline void Transform3DTranslate(Component* _component, Vec3F _delta)
@@ -154,16 +189,31 @@ namespace Maze
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsCore()
     {
+        // Log
         MAZE_CORE_MONO_BIND_FUNC(MazeLog);
         MAZE_CORE_MONO_BIND_FUNC(MazeLogWarning);
         MAZE_CORE_MONO_BIND_FUNC(MazeLogError);
+
+        // Input
         MAZE_CORE_MONO_BIND_FUNC(GetKeyState);
-        MAZE_CORE_MONO_BIND_FUNC(GetFrameNumber);
-        MAZE_CORE_MONO_BIND_FUNC(GetEntityId);
-        MAZE_CORE_MONO_BIND_FUNC_WITH_NAME(GetComponentIdHelper, GetComponentId);
+
+        // Ecs
         MAZE_CORE_MONO_BIND_FUNC(GetComponentIdByMonoType);
-        MAZE_CORE_MONO_BIND_FUNC(GetComponent);
-        MAZE_CORE_MONO_BIND_FUNC(GetMonoBehaviourComponentObject);
+
+        // Entity
+        MAZE_CORE_MONO_BIND_FUNC(EntityGetEntityId);
+        MAZE_CORE_MONO_BIND_FUNC(EntityGetComponent);
+        MAZE_CORE_MONO_BIND_FUNC(EntityGetMonoBehaviourComponentObject);
+
+        // Component
+        MAZE_CORE_MONO_BIND_FUNC(ComponentGetFrameNumber);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentGetEntityId);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentGetComponentId);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentGetComponent);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentGetMonoBehaviourComponentObject);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentGetEntity);
+
+        // Transform3D
         MAZE_CORE_MONO_BIND_FUNC(Transform3DTranslate);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DRotate);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetPosition);
