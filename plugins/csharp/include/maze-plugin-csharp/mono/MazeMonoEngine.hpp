@@ -82,6 +82,9 @@ namespace Maze
         //////////////////////////////////////////
         static ScriptClassPtr const& GetMonoBehaviourSubClass(ComponentId _id);
 
+        //////////////////////////////////////////
+        static StringKeyMap<ScriptClassPtr> const& GetMonoBehaviourSubClasses();
+
 
         //////////////////////////////////////////
         static ComponentId GetComponentIdByMonoType(MonoType* _monoType);

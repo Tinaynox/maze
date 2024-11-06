@@ -33,6 +33,7 @@
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
+#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 
@@ -334,6 +335,8 @@ namespace Maze
 
         LoadAssemblyClasses(g_monoEngineData->appAssembly);
 
+        EventManager::GetInstancePtr()->broadcastEvent<CSharpAppAssemblyLoadedEvent>();
+
         return g_monoEngineData->appAssembly;
     }
 
@@ -389,6 +392,12 @@ namespace Maze
             return it->second;
         else
             return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    StringKeyMap<ScriptClassPtr> const& MonoEngine::GetMonoBehaviourSubClasses()
+    {
+        return g_monoEngineData->ecsData.monoBehaviourSubClasses;
     }
 
     //////////////////////////////////////////

@@ -128,7 +128,7 @@ namespace Maze
         inline String const& getClassName() const { return m_className; }
 
         //////////////////////////////////////////
-        inline String const& getFullName() const { return m_fullName; }
+        inline HashedString const& getFullName() const { return m_fullName; }
 
 
         //////////////////////////////////////////
@@ -172,12 +172,12 @@ namespace Maze
         void assignPublicFields();
 
         //////////////////////////////////////////
-        String buildFullName() const;
+        HashedString buildFullName() const;
 
     private:
         String m_namespace;
         String m_className;
-        String m_fullName;
+        HashedString m_fullName;
         MonoClass* m_monoClass = nullptr;
 
         MonoMethod* m_onCreateMethod = nullptr;

@@ -34,6 +34,7 @@
 #include "maze-plugin-csharp/MazeCSharpService.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
+#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "events/EditorEvents.hpp"
 #include "helpers/EditorProjectHelper.hpp"
@@ -64,6 +65,7 @@ namespace Maze
         {
             EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectOpenedEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectWillBeClosedEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<CSharpAppAssemblyLoadedEvent>(this);
         }
 
         s_instance = nullptr;
@@ -80,6 +82,7 @@ namespace Maze
     {
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectOpenedEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectWillBeClosedEvent>(this, &EditorCSharpManager::notifyEvent);
+        EventManager::GetInstancePtr()->subscribeEvent<CSharpAppAssemblyLoadedEvent>(this, &EditorCSharpManager::notifyEvent);
 
         EditorUIManager::GetInstancePtr()->addTopBarOption(
             "Scripts",
@@ -122,13 +125,6 @@ namespace Maze
                 SystemHelper::ExecuteShell(devenv, params);
             });
 
-        InspectorManager::GetInstancePtr()->addAddComponentCallback(
-            "Scripts/Sandbox.Player",
-            [](EntityPtr const& _entity)
-            {
-                _entity->createComponent<MonoBehaviour>(MAZE_HCS("Sandbox.Player"));
-            });
-
         return true;
     }
 
@@ -147,9 +143,24 @@ namespace Maze
             loadCSharpAssembly();
         }
         else
-        if (_eventUID == ClassInfo< EditorProjectWillBeClosedEvent>::UID())
+        if (_eventUID == ClassInfo<EditorProjectWillBeClosedEvent>::UID())
         {
             AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies");
+        }
+        else
+        if (_eventUID == ClassInfo<CSharpAppAssemblyLoadedEvent>::UID())
+        {
+            StringKeyMap<ScriptClassPtr> const& monoBehaviourSubClasses = MonoEngine::GetMonoBehaviourSubClasses();
+            for (auto const& data : monoBehaviourSubClasses)
+            {
+                InspectorManager::GetInstancePtr()->addAddComponentCallback(
+                    "Scripts/" + data.first,
+                    [&](EntityPtr const& _entity)
+                    {
+                        _entity->createComponent<MonoBehaviour>(
+                            data.second->getFullName().asHashedCString());
+                    });
+            }
         }
     }
 

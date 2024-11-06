@@ -206,16 +206,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String ScriptClass::buildFullName() const
+    HashedString ScriptClass::buildFullName() const
     {
         if (!m_namespace.empty())
         {
             String result;
             StringHelper::FormatString(result, "%s.%s", m_namespace.c_str(), m_className.c_str());
-            return std::move(result);
+            return HashedString(result);
         }
         else
-            return m_className;
+            return HashedString(m_className);
     }
 
 } // namespace Maze
