@@ -88,7 +88,7 @@ namespace Maze
         bool saveSceneToDataBlockFile(EcsScenePtr const& _scene, Path const& _fileFullPath) const;
 
         //////////////////////////////////////////
-        bool loadSceneFromDataBlock(EcsScenePtr const& _scene, DataBlock const& _dataBlock) const;
+        bool loadSceneFromDataBlock(EcsScenePtr const& _scene, DataBlock& _dataBlock) const;
 
         //////////////////////////////////////////
         bool loadSceneFromDataBlockFile(EcsScenePtr const& _scene, Path const& _fileFullPath) const;
@@ -114,7 +114,7 @@ namespace Maze
 
         //////////////////////////////////////////
         EntityPtr loadPrefab(
-            DataBlock const& _dataBlock,
+            DataBlock& _dataBlock,
             EcsWorld* _world = nullptr,
             EcsScene* _scene = nullptr) const;
 
@@ -155,8 +155,20 @@ namespace Maze
             Map<String, EntityPtr>& _identityPrefabs,
             DataBlock& _dataBlock) const;
 
+        //////////////////////////////////////////
+        void replaceDataBlockEcsIds(
+            DataBlock& _dataBlock,
+            Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
+            Map<void*, S32>& _pointerIndices) const;
+
+        //////////////////////////////////////////
+        void restoreDataBlockEcsIds(
+            DataBlock& _dataBlock,
+            Map<S32, EntityPtr>& _outEntities,
+            Map<S32, ComponentPtr>& _outComponents) const;
+
         void loadEntities(
-            DataBlock const& _dataBlock,
+            DataBlock& _dataBlock,
             EcsWorld* _world,
             EcsScene* _scene,
             Map<S32, EntityPtr>& _outEntities,

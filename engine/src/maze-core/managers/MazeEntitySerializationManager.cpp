@@ -222,7 +222,7 @@ namespace Maze
                         }
 
                         DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, *componentBlock);
-
+                        replaceDataBlockEcsIds(*componentBlock, _entityComponents, _pointerIndices);
                     }
                 }
             };
@@ -318,6 +318,66 @@ namespace Maze
                 {
                     saveComponentFunc(componentData.second, *entityBlock);
                 }
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void EntitySerializationManager::replaceDataBlockEcsIds(
+        DataBlock& _dataBlock,
+        Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
+        Map<void*, S32>& _pointerIndices) const
+    {
+        auto findEntity =
+            [&](EntityId _eid)
+            {
+                for (auto const& data : _entityComponents)
+                    if (data.first->getId() == _eid)
+                        return data.first.get();
+
+                return (Entity*)nullptr;
+            };
+
+        for (DataBlock* subBlock : _dataBlock)
+        {
+            if (StringHelper::IsEndsWith(subBlock->getName().str, ":eid"))
+            {
+                EntityId eid = EntityId(subBlock->getS32(MAZE_HCS("value"), (S32)c_invalidEntityId));
+                Entity* entity = findEntity(eid);
+                subBlock->setS32(MAZE_HCS("value"), _pointerIndices[entity]);
+            }
+            else
+            {
+                replaceDataBlockEcsIds(*subBlock, _entityComponents, _pointerIndices);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void EntitySerializationManager::restoreDataBlockEcsIds(
+        DataBlock& _dataBlock,
+        Map<S32, EntityPtr>& _outEntities,
+        Map<S32, ComponentPtr>& _outComponents) const
+    {
+        for (DataBlock* subBlock : _dataBlock)
+        {
+            if (StringHelper::IsEndsWith(subBlock->getName().str, ":eid"))
+            {
+                S32 index = subBlock->getS32(MAZE_HCS("value"), -1);
+                if (index >= 0)
+                {
+                    EntityPtr entity = _outEntities[index];
+                    if (entity)
+                        subBlock->setS32(MAZE_HCS("value"), (S32)entity->getId());
+                    else
+                        subBlock->setS32(MAZE_HCS("value"), (S32)c_invalidEntityId);
+                }
+                else
+                    subBlock->setS32(MAZE_HCS("value"), (S32)c_invalidEntityId);
+            }
+            else
+            {
+                restoreDataBlockEcsIds(*subBlock, _outEntities, _outComponents);
             }
         }
     }
@@ -431,7 +491,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool EntitySerializationManager::loadSceneFromDataBlock(EcsScenePtr const& _scene, DataBlock const& _dataBlock) const
+    bool EntitySerializationManager::loadSceneFromDataBlock(EcsScenePtr const& _scene, DataBlock& _dataBlock) const
     {
         MAZE_PROFILE_EVENT("EntitySerializationManager::loadSceneFromDataBlock");
 
@@ -440,7 +500,7 @@ namespace Maze
 
         _scene->deserializeSceneCommonInfo(_dataBlock);
 
-        DataBlock const* entitiesBlock = _dataBlock.getDataBlock(MAZE_HCS("entities"));
+        DataBlock* entitiesBlock = _dataBlock.getDataBlock(MAZE_HCS("entities"));
         if (entitiesBlock)
         {
             Map<S32, EntityPtr> entities;
@@ -844,7 +904,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void EntitySerializationManager::loadEntities(
-        DataBlock const& _dataBlock,
+        DataBlock& _dataBlock,
         EcsWorld* _world,
         EcsScene* _scene,
         Map<S32, EntityPtr>& _outEntities,
@@ -989,6 +1049,8 @@ namespace Maze
         }
 
         autoComponentIndexCounter = 0;
+
+        restoreDataBlockEcsIds(_dataBlock, _outEntities, _outComponents);
 
         // Load
         {
@@ -1210,7 +1272,7 @@ namespace Maze
 
     //////////////////////////////////////////
     EntityPtr EntitySerializationManager::loadPrefab(
-        DataBlock const& _dataBlock,
+        DataBlock& _dataBlock,
         EcsWorld* _world,
         EcsScene* _scene) const
     {

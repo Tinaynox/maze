@@ -128,6 +128,7 @@ namespace Maze
                 [&](ScriptFieldPtr const& _field)
                 {
                     MonoSerializationManager::GetInstancePtr()->loadFieldFromDataBlock(
+                        getEntityRaw()->getEcsWorld(),
                         *m_monoInstance,
                         _field,
                         _dataBlock);
@@ -137,6 +138,7 @@ namespace Maze
                 [&](ScriptPropertyPtr const& _prop)
                 {
                     MonoSerializationManager::GetInstancePtr()->loadPropertyFromDataBlock(
+                        getEntityRaw()->getEcsWorld(),
                         *m_monoInstance,
                         _prop,
                         _dataBlock);
@@ -155,6 +157,7 @@ namespace Maze
                 [&](ScriptFieldPtr const& _prop)
             {
                 MonoSerializationManager::GetInstancePtr()->saveFieldToDataBlock(
+                    getEntityRaw()->getEcsWorld(),
                     *m_monoInstance,
                     _prop,
                     db);
@@ -164,6 +167,7 @@ namespace Maze
                 [&](ScriptPropertyPtr const& _prop)
                 {
                     MonoSerializationManager::GetInstancePtr()->savePropertyToDataBlock(
+                        getEntityRaw()->getEcsWorld(),
                         *m_monoInstance,
                         _prop,
                         db);

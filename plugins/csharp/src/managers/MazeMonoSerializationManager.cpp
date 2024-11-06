@@ -26,6 +26,9 @@
 //////////////////////////////////////////
 #include "MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/managers/MazeMonoSerializationManager.hpp"
+#include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -59,34 +62,34 @@ namespace Maze
     //////////////////////////////////////////
     bool MonoSerializationManager::init()
     {
-#define MAZE_MONO_SERIALIZATION_TYPE(DTypeName, DType)                                                      \
-        registerPropertyAndFieldDataBlockSerialization(MAZE_HCS(DTypeName),                                 \
-            [](ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)      \
-            {                                                                                               \
-                DType value;                                                                                \
-                _instance.getPropertyValue(_prop, value);                                                   \
-                _dataBlock.set ## DType(_prop->getName(), value);                                           \
-            },                                                                                              \
-            [](ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)      \
-            {                                                                                               \
-                DataBlock::ParamIndex idx = _dataBlock.findParamIndex(_prop->getName());                    \
-                if (idx >= 0)                                                                               \
-                    _instance.setPropertyValue(_prop, _dataBlock.get ## DType(idx));                        \
-            },                                                                                              \
-            [](ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)        \
-            {                                                                                               \
-                DType value;                                                                                \
-                _instance.getFieldValue(_field, value);                                                     \
-                _dataBlock.set ## DType(_field->getName(), value);                                          \
-            },                                                                                              \
-            [](ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)        \
-            {                                                                                               \
-                DataBlock::ParamIndex idx = _dataBlock.findParamIndex(_field->getName());                   \
-                if (idx >= 0)                                                                               \
-                    _instance.setFieldValue(_field, _dataBlock.get ## DType(idx));                          \
+#define MAZE_MONO_SERIALIZATION_TYPE(DTypeName, DType)                                                                 \
+        registerPropertyAndFieldDataBlockSerialization(MAZE_HCS(DTypeName),                                            \
+            [](EcsWorld*, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)      \
+            {                                                                                                          \
+                DType value;                                                                                           \
+                _instance.getPropertyValue(_prop, value);                                                              \
+                _dataBlock.set ## DType(_prop->getName(), value);                                                      \
+            },                                                                                                         \
+            [](EcsWorld*, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)      \
+            {                                                                                                          \
+                DataBlock::ParamIndex idx = _dataBlock.findParamIndex(_prop->getName());                               \
+                if (idx >= 0)                                                                                          \
+                    _instance.setPropertyValue(_prop, _dataBlock.get ## DType(idx));                                   \
+            },                                                                                                         \
+            [](EcsWorld*, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)        \
+            {                                                                                                          \
+                DType value;                                                                                           \
+                _instance.getFieldValue(_field, value);                                                                \
+                _dataBlock.set ## DType(_field->getName(), value);                                                     \
+            },                                                                                                         \
+            [](EcsWorld*, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)        \
+            {                                                                                                          \
+                DataBlock::ParamIndex idx = _dataBlock.findParamIndex(_field->getName());                              \
+                if (idx >= 0)                                                                                          \
+                    _instance.setFieldValue(_field, _dataBlock.get ## DType(idx));                                     \
             });
 
-        // Core
+        // System
         MAZE_MONO_SERIALIZATION_TYPE("System.String", String);
         MAZE_MONO_SERIALIZATION_TYPE("System.Char", U16); // Wide char
         MAZE_MONO_SERIALIZATION_TYPE("System.Boolean", Bool);
@@ -100,6 +103,39 @@ namespace Maze
         MAZE_MONO_SERIALIZATION_TYPE("System.UInt64", U64);
         MAZE_MONO_SERIALIZATION_TYPE("System.Single", F32);
         MAZE_MONO_SERIALIZATION_TYPE("System.Double", F64);
+
+        // Core
+        registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("Maze.Core.Entity"), 
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+            {                                                                                               
+                Entity* value = nullptr;
+                _instance.getPropertyValue(_prop, value);
+                EcsHelper::SerializeEntityIdToDataBlock(_dataBlock, _prop->getName().c_str(), value ? value->getId() : c_invalidEntityId);
+            }, 
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+            {                                                                                               
+                EntityId entityId = EcsHelper::DeserializeEntityIdFromDataBlock(_dataBlock, _prop->getName().c_str());
+                EntityPtr const& entity = _world->getEntity(entityId);
+                if (entity)
+                    _instance.setPropertyValue(_prop, entity.get());
+                else
+                    _instance.setPropertyValue(_prop, nullptr);
+            }, 
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+            {                                                                                               
+                Entity* value = nullptr;
+                _instance.getFieldValue(_field, value);                                                     
+                EcsHelper::SerializeEntityIdToDataBlock(_dataBlock, _field->getName().c_str(), value ? value->getId() : c_invalidEntityId);
+            }, 
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+            {                                                                                               
+                EntityId entityId = EcsHelper::DeserializeEntityIdFromDataBlock(_dataBlock, _field->getName().c_str());
+                EntityPtr const& entity = _world->getEntity(entityId);
+                if (entity)
+                    _instance.setFieldValue(_field, entity.get());
+                else
+                    _instance.setFieldValue(_field, nullptr);
+            });
         MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.Vec2S", Vec2S);
         MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.Vec3S", Vec3S);
         MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.Vec4S", Vec4S);
@@ -126,8 +162,8 @@ namespace Maze
     //////////////////////////////////////////
     void MonoSerializationManager::registerPropertyDataBlockSerialization(
         HashedCString _typeName,
-        std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> const& _propToDataBlockCb,
-        std::function<void(ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propFromDataBlockCb)
+        std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> const& _propToDataBlockCb,
+        std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propFromDataBlockCb)
     {
         ScriptPropertyDataBlockSerializationData& data = m_propertyDataBlockSerializationData[_typeName];
         data.propToDataBlockCb = _propToDataBlockCb;
@@ -135,12 +171,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool MonoSerializationManager::savePropertyToDataBlock(ScriptInstance const& _instance, ScriptPropertyPtr const& _property, DataBlock& _dataBlock)
+    bool MonoSerializationManager::savePropertyToDataBlock(
+        EcsWorld* _ecsWorld,
+        ScriptInstance const& _instance,
+        ScriptPropertyPtr const& _property,
+        DataBlock& _dataBlock)
     {
         auto it = m_propertyDataBlockSerializationData.find(_property->getTypeName());
         if (it != m_propertyDataBlockSerializationData.end())
         {
-            it->second.propToDataBlockCb(_instance, _property, _dataBlock);
+            it->second.propToDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
             return true;
         }
 
@@ -148,12 +188,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool MonoSerializationManager::loadPropertyFromDataBlock(ScriptInstance& _instance, ScriptPropertyPtr const& _property, DataBlock const& _dataBlock)
+    bool MonoSerializationManager::loadPropertyFromDataBlock(
+        EcsWorld* _ecsWorld,
+        ScriptInstance& _instance,
+        ScriptPropertyPtr const& _property,
+        DataBlock const& _dataBlock)
     {
         auto it = m_propertyDataBlockSerializationData.find(_property->getTypeName());
         if (it != m_propertyDataBlockSerializationData.end())
         {
-            it->second.propFromDataBlockCb(_instance, _property, _dataBlock);
+            it->second.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
             return true;
         }
 
@@ -163,8 +207,8 @@ namespace Maze
     //////////////////////////////////////////
     void MonoSerializationManager::registerFieldDataBlockSerialization(
         HashedCString _typeName,
-        std::function<void(ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> const& _propToDataBlockCb,
-        std::function<void(ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _propFromDataBlockCb)
+        std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> const& _propToDataBlockCb,
+        std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _propFromDataBlockCb)
     {
         ScriptFieldDataBlockSerializationData& data = m_fieldDataBlockSerializationData[_typeName];
         data.propToDataBlockCb = _propToDataBlockCb;
@@ -172,12 +216,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool MonoSerializationManager::saveFieldToDataBlock(ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+    bool MonoSerializationManager::saveFieldToDataBlock(
+        EcsWorld* _ecsWorld,
+        ScriptInstance const& _instance,
+        ScriptFieldPtr const& _field,
+        DataBlock& _dataBlock)
     {
         auto it = m_fieldDataBlockSerializationData.find(_field->getTypeName());
         if (it != m_fieldDataBlockSerializationData.end())
         {
-            it->second.propToDataBlockCb(_instance, _field, _dataBlock);
+            it->second.propToDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
             return true;
         }
 
@@ -185,12 +233,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool MonoSerializationManager::loadFieldFromDataBlock(ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+    bool MonoSerializationManager::loadFieldFromDataBlock(
+        EcsWorld* _ecsWorld,
+        ScriptInstance& _instance,
+        ScriptFieldPtr const& _field,
+        DataBlock const& _dataBlock)
     {
         auto it = m_fieldDataBlockSerializationData.find(_field->getTypeName());
         if (it != m_fieldDataBlockSerializationData.end())
         {
-            it->second.propFromDataBlockCb(_instance, _field, _dataBlock);
+            it->second.propFromDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
             return true;
         }
 

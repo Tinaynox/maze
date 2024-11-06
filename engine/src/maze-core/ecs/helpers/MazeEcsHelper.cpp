@@ -78,6 +78,27 @@ namespace Maze
             return parentId;
         }
 
+        //////////////////////////////////////////
+        MAZE_CORE_API void SerializeEntityIdToDataBlock(DataBlock& _data, CString _name, EntityId _id)
+        {
+            Char buffer[64];
+            StringHelper::FormatString(buffer, sizeof(buffer), "%s:eid", _name);
+            _data.ensureDataBlock(HashedCString(buffer))->setS32(MAZE_HCS("value"), (S32)_id);
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API EntityId DeserializeEntityIdFromDataBlock(DataBlock const& _data, CString _name)
+        {
+            Char buffer[64];
+            StringHelper::FormatString(buffer, sizeof(buffer), "%s:eid", _name);
+
+            DataBlock const* dataBlock = _data.getDataBlock(HashedCString(buffer));
+            if (!dataBlock)
+                return c_invalidEntityId;
+
+            return EntityId(dataBlock->getS32(MAZE_HCS("value"), (S32)c_invalidEntityId));
+        }
+
     } // namespace EcsHelper
     //////////////////////////////////////////
 

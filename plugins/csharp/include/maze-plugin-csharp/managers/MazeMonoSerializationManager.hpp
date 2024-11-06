@@ -44,20 +44,21 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(MonoSerializationManager);
+    MAZE_USING_SHARED_PTR(EcsWorld);
 
 
     //////////////////////////////////////////
     struct MAZE_PLUGIN_CSHARP_API ScriptPropertyDataBlockSerializationData
     {
-        std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> propToDataBlockCb;
-        std::function<void(ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> propFromDataBlockCb;
+        std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> propToDataBlockCb;
+        std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> propFromDataBlockCb;
     };
 
     //////////////////////////////////////////
     struct MAZE_PLUGIN_CSHARP_API ScriptFieldDataBlockSerializationData
     {
-        std::function<void(ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> propToDataBlockCb;
-        std::function<void(ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> propFromDataBlockCb;
+        std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> propToDataBlockCb;
+        std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> propFromDataBlockCb;
     };
 
 
@@ -88,37 +89,53 @@ namespace Maze
         //////////////////////////////////////////
         void registerPropertyDataBlockSerialization(
             HashedCString _typeName,
-            std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> const& _propToDataBlockCb,
-            std::function<void(ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propFromDataBlockCb);
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> const& _propToDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propFromDataBlockCb);
 
         //////////////////////////////////////////
-        bool savePropertyToDataBlock(ScriptInstance const& _instance, ScriptPropertyPtr const& _property, DataBlock& _dataBlock);
+        bool savePropertyToDataBlock(
+            EcsWorld* _ecsWorld,
+            ScriptInstance const& _instance,
+            ScriptPropertyPtr const& _property,
+            DataBlock& _dataBlock);
 
         //////////////////////////////////////////
-        bool loadPropertyFromDataBlock(ScriptInstance& _instance, ScriptPropertyPtr const& _property, DataBlock const& _dataBlock);
+        bool loadPropertyFromDataBlock(
+            EcsWorld* _ecsWorld,
+            ScriptInstance& _instance,
+            ScriptPropertyPtr const& _property,
+            DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
         void registerFieldDataBlockSerialization(
             HashedCString _typeName,
-            std::function<void(ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> const& _propToDataBlockCb,
-            std::function<void(ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _propFromDataBlockCb);
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> const& _propToDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _propFromDataBlockCb);
 
         //////////////////////////////////////////
-        bool saveFieldToDataBlock(ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock);
+        bool saveFieldToDataBlock(
+            EcsWorld* _ecsWorld,
+            ScriptInstance const& _instance,
+            ScriptFieldPtr const& _field,
+            DataBlock& _dataBlock);
 
         //////////////////////////////////////////
-        bool loadFieldFromDataBlock(ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock);
+        bool loadFieldFromDataBlock(
+            EcsWorld* _ecsWorld,
+            ScriptInstance& _instance,
+            ScriptFieldPtr const& _field,
+            DataBlock const& _dataBlock);
 
 
 
         //////////////////////////////////////////
         inline void registerPropertyAndFieldDataBlockSerialization(
             HashedCString _typeName,
-            std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> const& _propertyPropToDataBlockCb,
-            std::function<void(ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propertyPropFromDataBlockCb,
-            std::function<void(ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> const& _fieldPropToDataBlockCb,
-            std::function<void(ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _fieldPropFromDataBlockCb)
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> const& _propertyPropToDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propertyPropFromDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> const& _fieldPropToDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _fieldPropFromDataBlockCb)
         {
             registerPropertyDataBlockSerialization(_typeName, _propertyPropToDataBlockCb, _propertyPropFromDataBlockCb);
             registerFieldDataBlockSerialization(_typeName, _fieldPropToDataBlockCb, _fieldPropFromDataBlockCb);
