@@ -39,6 +39,7 @@
 #include "maze-editor-tools/property-drawers/MazePDRect2F.hpp"
 #include "maze-editor-tools/property-drawers/MazePDColorU32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDColorF128.hpp"
+#include "maze-editor-tools/property-drawers/MazePDEntityPtr.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 
@@ -87,7 +88,7 @@ namespace Maze
             });
 
 
-        // Core
+        // System  
         registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerString>(MAZE_HCS("System.String"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerString* _drawer)
             {
@@ -310,6 +311,26 @@ namespace Maze
                 _instance.setFieldValue(_property, (F64)_drawer->getValue());
             });
 
+        // Maze Core
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerEntityPtr>(MAZE_HCS("Maze.Core.Entity"),
+            [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerEntityPtr* _drawer)
+            {
+                Entity* value; _instance.getPropertyValue(_property, value);
+                _drawer->setValue(value ? value->getSharedPtr() : nullptr);
+            },
+            [](ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerEntityPtr const* _drawer)
+            {
+                _instance.setPropertyValue(_property, _drawer->getValue().get());
+            },
+            [](ScriptInstance const& _instance, ScriptFieldPtr const& _property, PropertyDrawerEntityPtr* _drawer)
+            {
+                Entity* value; _instance.getFieldValue(_property, value);
+                _drawer->setValue(value ? value->getSharedPtr() : nullptr);
+            },
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerEntityPtr const* _drawer)
+            {
+                _instance.setFieldValue(_property, _drawer->getValue().get());
+            });
         registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec2S32>(MAZE_HCS("Maze.Core.Vec2S"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2S32* _drawer)
             {
@@ -340,7 +361,7 @@ namespace Maze
             {
                 Vec2U value; _instance.getFieldValue(_property, value); _drawer->setValue(value);
             },
-                [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec2U32 const* _drawer)
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec2U32 const* _drawer)
             {
                 _instance.setFieldValue(_property, _drawer->getValue());
             });
@@ -357,7 +378,7 @@ namespace Maze
             {
                 Vec2F value; _instance.getFieldValue(_property, value); _drawer->setValue(value);
             },
-                [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec2F32 const* _drawer)
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerVec2F32 const* _drawer)
             {
                 _instance.setFieldValue(_property, _drawer->getValue());
             });
@@ -409,13 +430,13 @@ namespace Maze
             {
                 Rect2F value; _instance.getFieldValue(_property, value); _drawer->setValue(value);
             },
-                [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerRect2F const* _drawer)
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerRect2F const* _drawer)
             {
                 _instance.setFieldValue(_property, _drawer->getValue());
             });
         
 
-        // Graphics
+        // Maze Graphics
         registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerColorU32>(MAZE_HCS("Maze.Graphics.ColorU32"),
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorU32* _drawer)
             {
@@ -446,7 +467,7 @@ namespace Maze
             {
                 Vec4F value; _instance.getFieldValue(_property, value); _drawer->setValue(ColorF128(value));
             },
-                [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerColorF128 const* _drawer)
+            [](ScriptInstance& _instance, ScriptFieldPtr const& _property, PropertyDrawerColorF128 const* _drawer)
             {
                 _instance.setFieldValue(_property, _drawer->getValue().toVec4F32());
             });
@@ -470,6 +491,7 @@ namespace Maze
         F32 _to)
     {
         ScriptPropertyDrawerCallbacks callbacks = BuildScriptPropertyDrawerCallbacks<PropertyDrawerSliderF32>(
+            CreateScriptPropertyDrawerDefault<PropertyDrawerSliderF32>,
             [](ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerSliderF32* _drawer)
             {
                 F32 value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
@@ -506,6 +528,7 @@ namespace Maze
         F32 _to)
     {
         ScriptFieldDrawerCallbacks callbacks = BuildScriptFieldDrawerCallbacks<PropertyDrawerSliderF32>(
+            CreateScriptPropertyDrawerDefault<PropertyDrawerSliderF32>,
             [](ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerSliderF32* _drawer)
             {
                 F32 value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
