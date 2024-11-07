@@ -360,7 +360,7 @@ namespace Maze
         if (it != m_sceneLines.end())
             return it->second;
 
-        Debug::Log("HierarchyController::addEcsScene %s...", _scene->getClassName());
+        Debug::Log("HierarchyController::addEcsScene %s...", _scene->getClassName().str);
 
         HierarchyLinePtr hierarchyLine = createHierarchyLine(HierarchyLineType::Scene);
         hierarchyLine->setText(_scene->getMetaClass()->getName().str);
@@ -380,7 +380,7 @@ namespace Maze
                 std::forward_as_tuple(entity->cast<Entity>()));
         }
 
-        Debug::Log("HierarchyController::addEcsScene %s finished.", _scene->getClassName());
+        Debug::Log("HierarchyController::addEcsScene %s finished.", _scene->getClassName().str);
 
         return hierarchyLine;
     }

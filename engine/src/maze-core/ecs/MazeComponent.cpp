@@ -61,7 +61,7 @@ namespace Maze
     {
         MetaClass* metaClass = _component->getMetaClass();
         ComponentPtr newComponent(static_cast<Component*>(metaClass->createInstance()));
-        MAZE_ERROR_RETURN_VALUE_IF(!newComponent, ComponentPtr(), "Can't instanciate Component %s!", _component->getClassName());
+        MAZE_ERROR_RETURN_VALUE_IF(!newComponent, ComponentPtr(), "Can't instantiate Component %s!", _component->getClassName().str);
         if (!newComponent->init(_component, _world, _copyData))
             return ComponentPtr();
         

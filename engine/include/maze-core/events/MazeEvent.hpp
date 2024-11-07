@@ -91,7 +91,7 @@ namespace Maze
                 !getMetaClass()->isInheritedFrom<UEvent>(),
                 nullptr,
                 "Incompatible cast '%s' to '%s'!",
-                getClassName(),
+                getClassName().str,
                 ClassInfo<UEvent>::Name());
 
             return static_cast<UEvent*>(this);

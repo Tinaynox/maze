@@ -184,7 +184,7 @@ namespace Maze
         virtual ComponentId getComponentId() const { return getClassUID(); }
 
         //////////////////////////////////////////
-        virtual CString getComponentClassName() const { return getClassName(); }
+        virtual CString getComponentClassName() const { return getClassQualifiedName(); }
 
         //////////////////////////////////////////
         inline Entity* getEntityRaw() const { return m_entityRaw; }
@@ -213,7 +213,7 @@ namespace Maze
                 !getMetaClass()->isInheritedFrom<UComponent>(),
                 SharedPtr<UComponent>(),
                 "Incompatible cast '%s' to '%s'!",
-                getClassName(),
+                getClassName().str,
                 ClassInfo<UComponent>::Name());
 
             return cast<UComponent>();
@@ -227,7 +227,7 @@ namespace Maze
                 !getMetaClass()->isInheritedFrom<UComponent>(),
                 nullptr,
                 "Incompatible cast '%s' to '%s'!",
-                getClassName(),
+                getClassName().str,
                 ClassInfo<UComponent>::Name());
 
             return static_cast<UComponent*>(this);

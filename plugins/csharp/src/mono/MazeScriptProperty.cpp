@@ -53,10 +53,10 @@ namespace Maze
             m_flags |= (U8)ScriptPropertyFlags::PublicSetter;
 
         MonoMethodSignature* signature = mono_method_signature(m_getterMethod);
-        MonoType* fieldType = mono_signature_get_return_type(signature);
+        m_monoType = mono_signature_get_return_type(signature);
 
         m_name = mono_property_get_name(m_monoProperty);
-        m_typeName = mono_type_get_name(fieldType);
+        m_typeName = mono_type_get_name(m_monoType);
 
         MonoCustomAttrInfo* attrInfo = mono_custom_attrs_from_property(_scriptClass->getMonoClass(), m_monoProperty);
         if (attrInfo)

@@ -32,6 +32,9 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(CSharpCoreAssemblyLoadedEvent, Event);
+
+    //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(CSharpAppAssemblyLoadedEvent, Event);
 
 

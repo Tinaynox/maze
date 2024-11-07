@@ -306,7 +306,7 @@ namespace Maze
     //////////////////////////////////////////
     void SettingsManager::indentifyUnregisteredSetting(Settings* _settings)
     {
-        HashedCString settingsName = HashedCString(_settings->getClassName());
+        HashedCString settingsName = _settings->getClassName();
         auto it = m_unregisteredSettings.find(settingsName);
         if (it == m_unregisteredSettings.end())
             return;

@@ -104,6 +104,10 @@ namespace Maze
         //////////////////////////////////////////
         inline bool isSerializable() const { return m_flags & (U8)ScriptPropertyFlags::Serializable; }
 
+
+        //////////////////////////////////////////
+        inline MonoType* getMonoType() const { return m_monoType; }
+
         //////////////////////////////////////////
         inline MonoProperty* getMonoProperty() const { return m_monoProperty; }
 
@@ -121,6 +125,7 @@ namespace Maze
 
         U8 m_flags = 0;
 
+        MonoType* m_monoType = nullptr;
         MonoProperty* m_monoProperty = nullptr;
         MonoMethod* m_getterMethod = nullptr;
         MonoMethod* m_setterMethod = nullptr;

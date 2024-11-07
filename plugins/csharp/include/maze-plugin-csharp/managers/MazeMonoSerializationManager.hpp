@@ -37,6 +37,7 @@
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-core/events/MazeEvent.hpp"
 
 
 //////////////////////////////////////////
@@ -67,6 +68,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_PLUGIN_CSHARP_API MonoSerializationManager
+        : public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -93,6 +95,12 @@ namespace Maze
             std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propFromDataBlockCb);
 
         //////////////////////////////////////////
+        void registerPropertyDataBlockSubClassSerialization(
+            MonoClass* _monoClass,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> const& _propToDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propFromDataBlockCb);
+
+        //////////////////////////////////////////
         bool savePropertyToDataBlock(
             EcsWorld* _ecsWorld,
             ScriptInstance const& _instance,
@@ -110,6 +118,12 @@ namespace Maze
         //////////////////////////////////////////
         void registerFieldDataBlockSerialization(
             HashedCString _typeName,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> const& _propToDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _propFromDataBlockCb);
+
+        //////////////////////////////////////////
+        void registerFieldDataBlockSubClassSerialization(
+            MonoClass* _monoClass,
             std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> const& _propToDataBlockCb,
             std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _propFromDataBlockCb);
 
@@ -141,6 +155,18 @@ namespace Maze
             registerFieldDataBlockSerialization(_typeName, _fieldPropToDataBlockCb, _fieldPropFromDataBlockCb);
         }
 
+        //////////////////////////////////////////
+        inline void registerPropertyAndFieldDataBlockSubClassSerialization(
+            MonoClass* _monoClass,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> const& _propertyPropToDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propertyPropFromDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> const& _fieldPropToDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _fieldPropFromDataBlockCb)
+        {
+            registerPropertyDataBlockSubClassSerialization(_monoClass, _propertyPropToDataBlockCb, _propertyPropFromDataBlockCb);
+            registerFieldDataBlockSubClassSerialization(_monoClass, _fieldPropToDataBlockCb, _fieldPropFromDataBlockCb);
+        }
+
     protected:
 
         //////////////////////////////////////////
@@ -149,11 +175,17 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
     protected:
         static MonoSerializationManager* s_instance;
 
         StringKeyMap<ScriptPropertyDataBlockSerializationData> m_propertyDataBlockSerializationData;
         StringKeyMap<ScriptFieldDataBlockSerializationData> m_fieldDataBlockSerializationData;
+
+        UnorderedMap<MonoClass*, ScriptPropertyDataBlockSerializationData> m_propertyDataBlockSubClassSerializationData;
+        UnorderedMap<MonoClass*, ScriptFieldDataBlockSerializationData> m_fieldDataBlockSubClassSerializationData;
     };
 
 } // namespace Maze

@@ -270,7 +270,7 @@ namespace Maze
         auto componentIt = m_components.find(_component->getComponentId());
         if (componentIt != m_components.end())
         {
-            MAZE_ERROR("Component %s (%d) already exists!", componentIt->second->getClassName(), (S32)_component->getComponentId());
+            MAZE_ERROR("Component %s (%d) already exists!", componentIt->second->getClassName().str, (S32)_component->getComponentId());
             return componentIt->second;
         }
         

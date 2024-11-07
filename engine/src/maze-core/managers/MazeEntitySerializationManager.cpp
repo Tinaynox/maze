@@ -153,7 +153,7 @@ namespace Maze
                     componentBlock->setS32(MAZE_HCS("_i"), propertyValueIndexIt->second);
                 componentBlock->setCString(MAZE_HCS("_t"), static_cast<CString>(_component->getMetaClass()->getName()));
 
-                if (strcmp(_component->getClassName(), _component->getComponentClassName()) != 0)
+                if (strcmp(_component->getClassQualifiedName().str, _component->getComponentClassName()) != 0)
                 {
                     componentBlock->setCString(MAZE_HCS("_ct"), static_cast<CString>(_component->getComponentClassName()));
                 }
@@ -340,7 +340,7 @@ namespace Maze
 
         for (DataBlock* subBlock : _dataBlock)
         {
-            if (StringHelper::IsEndsWith(subBlock->getName().str, ":eid"))
+            if (StringHelper::IsEndsWith(subBlock->getName().str, ":EntityId"))
             {
                 EntityId eid = EntityId(subBlock->getS32(MAZE_HCS("value"), (S32)c_invalidEntityId));
                 Entity* entity = findEntity(eid);
@@ -361,7 +361,7 @@ namespace Maze
     {
         for (DataBlock* subBlock : _dataBlock)
         {
-            if (StringHelper::IsEndsWith(subBlock->getName().str, ":eid"))
+            if (StringHelper::IsEndsWith(subBlock->getName().str, ":EntityId"))
             {
                 S32 index = subBlock->getS32(MAZE_HCS("value"), -1);
                 if (index >= 0)

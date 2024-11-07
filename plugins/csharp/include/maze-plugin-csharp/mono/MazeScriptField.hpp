@@ -97,6 +97,10 @@ namespace Maze
         //////////////////////////////////////////
         inline bool isSerializable() const { return m_flags & (U8)ScriptFieldFlags::Serializable; }
 
+
+        //////////////////////////////////////////
+        inline MonoType* getMonoType() const { return m_monoType; }
+
         //////////////////////////////////////////
         inline MonoClassField* getMonoClassField() const { return m_monoField; }
 
@@ -108,6 +112,7 @@ namespace Maze
 
         U8 m_flags = 0;
 
+        MonoType* m_monoType = nullptr;
         MonoClassField* m_monoField = nullptr;
     };
 

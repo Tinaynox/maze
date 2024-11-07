@@ -77,7 +77,7 @@ namespace Maze
         virtual ComponentId getComponentId() const MAZE_OVERRIDE { return m_componentId; }
 
         //////////////////////////////////////////
-        virtual CString getComponentClassName() const { return m_monoClass ? m_monoClass->getFullName().c_str() : getClassName(); }
+        virtual CString getComponentClassName() const { return m_monoClass ? m_monoClass->getFullName().c_str() : getClassQualifiedName(); }
 
 
         //////////////////////////////////////////

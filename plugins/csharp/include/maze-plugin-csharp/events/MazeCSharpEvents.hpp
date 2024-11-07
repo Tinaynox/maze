@@ -47,6 +47,19 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Class CSharpCoreAssemblyLoadedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_PLUGIN_CSHARP_API CSharpCoreAssemblyLoadedEvent
+        : public GenericEvent<CSharpCoreAssemblyLoadedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(CSharpCoreAssemblyLoadedEvent, Event);
+    };
+
+
+    //////////////////////////////////////////
     // Class CSharpAppAssemblyLoadedEvent
     //
     //////////////////////////////////////////

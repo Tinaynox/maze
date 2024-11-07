@@ -48,10 +48,10 @@ namespace Maze
         if (flags & MONO_FIELD_ATTR_PUBLIC)
             m_flags |= (U8)ScriptFieldFlags::Public;
 
-        MonoType* fieldType = mono_field_get_type(m_monoField);
+        m_monoType = mono_field_get_type(m_monoField);
 
         m_name = mono_field_get_name(m_monoField);
-        m_typeName = mono_type_get_name(fieldType);
+        m_typeName = mono_type_get_name(m_monoType);
 
         MonoCustomAttrInfo* attrInfo = mono_custom_attrs_from_field(_scriptClass->getMonoClass(), m_monoField);
         if (attrInfo)

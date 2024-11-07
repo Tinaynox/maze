@@ -1188,7 +1188,8 @@ namespace Maze
             friend class Maze::GenericMetaClass<DClassName>;\
             static Maze::MetaClass* GetMetaClass();\
             virtual Maze::ClassUID getClassUID() const;\
-            virtual Maze::CString getClassName() const;\
+            virtual Maze::HashedCString getClassName() const;\
+            virtual Maze::HashedCString getClassQualifiedName() const;\
             virtual const Maze::MetaClass* getMetaClass() const;\
             virtual Maze::MetaClass* getMetaClass();\
             virtual Maze::MetaInstance getMetaInstance();\
@@ -1213,7 +1214,9 @@ namespace Maze
             DExplicitSpecialization\
             Maze::ClassUID DClassName::getClassUID() const { return Maze::ClassInfo<DClassName>::UID(); };\
             DExplicitSpecialization\
-            Maze::CString DClassName::getClassName() const { return Maze::ClassInfo<DClassName>::Name(); };\
+            Maze::HashedCString DClassName::getClassName() const { return Maze::ClassInfo<DClassName>::Name(); };\
+            DExplicitSpecialization\
+            Maze::HashedCString DClassName::getClassQualifiedName() const { return Maze::ClassInfo<DClassName>::QualifiedName(); };\
             DExplicitSpecialization\
             Maze::MetaClass const* DClassName::getMetaClass() const { return GetMetaClass(); }\
             DExplicitSpecialization\
@@ -1240,7 +1243,8 @@ namespace Maze
             friend class Maze::GenericMetaClass<DClassName>;\
             static Maze::MetaClass* GetMetaClass();\
             virtual Maze::ClassUID getClassUID() const MAZE_OVERRIDE;\
-            virtual Maze::CString getClassName() const MAZE_OVERRIDE;\
+            virtual Maze::HashedCString getClassName() const MAZE_OVERRIDE;\
+            virtual Maze::HashedCString getClassQualifiedName() const MAZE_OVERRIDE;\
             virtual const Maze::MetaClass* getMetaClass() const MAZE_OVERRIDE;\
             virtual Maze::MetaClass* getMetaClass() MAZE_OVERRIDE;\
             virtual Maze::MetaInstance getMetaInstance() MAZE_OVERRIDE;\
@@ -1268,7 +1272,9 @@ namespace Maze
             DExplicitSpecialization\
             Maze::ClassUID DClassName::getClassUID() const { return Maze::ClassInfo<DClassName>::UID(); };\
             DExplicitSpecialization\
-            Maze::CString DClassName::getClassName() const { return Maze::ClassInfo<DClassName>::Name(); };\
+            Maze::HashedCString DClassName::getClassName() const { return Maze::ClassInfo<DClassName>::Name(); };\
+            DExplicitSpecialization\
+            Maze::HashedCString DClassName::getClassQualifiedName() const { return Maze::ClassInfo<DClassName>::QualifiedName(); };\
             DExplicitSpecialization\
             Maze::MetaClass const* DClassName::getMetaClass() const { return GetMetaClass(); }\
             DExplicitSpecialization\

@@ -29,6 +29,9 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
+#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
+#include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 
 
 //////////////////////////////////////////
@@ -50,6 +53,9 @@ namespace Maze
     MonoSerializationManager::~MonoSerializationManager()
     {
         s_instance = nullptr;
+
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->unsubscribeEvent<CSharpCoreAssemblyLoadedEvent>(this);
     }
 
     //////////////////////////////////////////
@@ -62,6 +68,8 @@ namespace Maze
     //////////////////////////////////////////
     bool MonoSerializationManager::init()
     {
+        EventManager::GetInstancePtr()->subscribeEvent<CSharpCoreAssemblyLoadedEvent>(this, &MonoSerializationManager::notifyEvent);
+
 #define MAZE_MONO_SERIALIZATION_TYPE(DTypeName, DType)                                                                 \
         registerPropertyAndFieldDataBlockSerialization(MAZE_HCS(DTypeName),                                            \
             [](EcsWorld*, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)      \
@@ -136,6 +144,7 @@ namespace Maze
                 else
                     _instance.setFieldValue(_field, nullptr);
             });
+
         MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.Vec2S", Vec2S);
         MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.Vec3S", Vec3S);
         MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.Vec4S", Vec4S);
@@ -160,12 +169,75 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void MonoSerializationManager::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+        if (_eventUID == ClassInfo<CSharpCoreAssemblyLoadedEvent>::UID())
+        {
+            ScriptClassPtr const& componentClass = MonoEngine::GetComponentClass();
+
+            // Core
+            registerPropertyAndFieldDataBlockSubClassSerialization(componentClass->getMonoClass(),
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+                {
+                    MonoObject* componentInstance = nullptr;
+                    _instance.getPropertyValue(_prop, componentInstance);
+                    if (componentInstance)
+                    {
+                        MonoProperty* componentPtrProperty = MonoEngine::GetNativeComponentPtrProperty()->getMonoProperty();
+                        MonoObject* result = mono_property_get_value(componentPtrProperty, componentInstance, nullptr, nullptr);
+                        if (!result)
+                            return;
+
+                        Component* component = *(Component**)mono_object_unbox(result);
+                        EcsHelper::SerializeComponentToDataBlock(_dataBlock, _prop->getName().c_str(), component);
+                    }
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+                {
+                    
+                },
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+                {
+                    MonoObject* componentInstance = nullptr;
+                    _instance.getFieldValue(_field, componentInstance);
+                    if (componentInstance)
+                    {
+                        MonoProperty* componentPtrProperty = MonoEngine::GetNativeComponentPtrProperty()->getMonoProperty();
+                        MonoObject* result = mono_property_get_value(componentPtrProperty, componentInstance, nullptr, nullptr);
+                        if (!result)
+                            return;
+
+                        Component* component = *(Component**)mono_object_unbox(result);
+                        EcsHelper::SerializeComponentToDataBlock(_dataBlock, _field->getName().c_str(), component);
+                    }
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+                {
+                    Component* component = EcsHelper::DeserializeComponentFromDataBlock(_world, _dataBlock, _field->getName().c_str());
+
+                    int a = 0;
+                });
+        }
+    }
+
+    //////////////////////////////////////////
     void MonoSerializationManager::registerPropertyDataBlockSerialization(
         HashedCString _typeName,
         std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> const& _propToDataBlockCb,
         std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propFromDataBlockCb)
     {
         ScriptPropertyDataBlockSerializationData& data = m_propertyDataBlockSerializationData[_typeName];
+        data.propToDataBlockCb = _propToDataBlockCb;
+        data.propFromDataBlockCb = _propFromDataBlockCb;
+    }
+
+    //////////////////////////////////////////
+    void MonoSerializationManager::registerPropertyDataBlockSubClassSerialization(
+        MonoClass* _monoClass,
+        std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> const& _propToDataBlockCb,
+        std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propFromDataBlockCb)
+    {
+        ScriptPropertyDataBlockSerializationData& data = m_propertyDataBlockSubClassSerializationData[_monoClass];
         data.propToDataBlockCb = _propToDataBlockCb;
         data.propFromDataBlockCb = _propFromDataBlockCb;
     }
@@ -182,6 +254,22 @@ namespace Maze
         {
             it->second.propToDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
             return true;
+        }
+        else
+        {
+            MonoClass* monoClass = mono_class_from_mono_type(_property->getMonoType());
+            if (monoClass)
+            {
+                for (auto const& data : m_propertyDataBlockSubClassSerializationData)
+                {
+                    MonoClass* baseClass = data.first;
+                    if (mono_class_is_subclass_of(monoClass, baseClass, false))
+                    {
+                        it->second.propToDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;
@@ -200,6 +288,22 @@ namespace Maze
             it->second.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
             return true;
         }
+        else
+        {
+            MonoClass* monoClass = mono_class_from_mono_type(_property->getMonoType());
+            if (monoClass)
+            {
+                for (auto const& data : m_propertyDataBlockSubClassSerializationData)
+                {
+                    MonoClass* baseClass = data.first;
+                    if (mono_class_is_subclass_of(monoClass, baseClass, false))
+                    {
+                        it->second.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
+                        return true;
+                    }
+                }
+            }
+        }
 
         return false;
     }
@@ -211,6 +315,17 @@ namespace Maze
         std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _propFromDataBlockCb)
     {
         ScriptFieldDataBlockSerializationData& data = m_fieldDataBlockSerializationData[_typeName];
+        data.propToDataBlockCb = _propToDataBlockCb;
+        data.propFromDataBlockCb = _propFromDataBlockCb;
+    }
+
+    //////////////////////////////////////////
+    void MonoSerializationManager::registerFieldDataBlockSubClassSerialization(
+        MonoClass* _monoClass,
+        std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> const& _propToDataBlockCb,
+        std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _propFromDataBlockCb)
+    {
+        ScriptFieldDataBlockSerializationData& data = m_fieldDataBlockSubClassSerializationData[_monoClass];
         data.propToDataBlockCb = _propToDataBlockCb;
         data.propFromDataBlockCb = _propFromDataBlockCb;
     }
@@ -228,6 +343,22 @@ namespace Maze
             it->second.propToDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
             return true;
         }
+        else
+        {
+            MonoClass* monoClass = mono_class_from_mono_type(_field->getMonoType());
+            if (monoClass)
+            {
+                for (auto const& data : m_fieldDataBlockSubClassSerializationData)
+                {
+                    MonoClass* baseClass = data.first;
+                    if (mono_class_is_subclass_of(monoClass, baseClass, false))
+                    {
+                        data.second.propToDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
+                        return true;
+                    }
+                }
+            }
+        }
 
         return false;
     }
@@ -244,6 +375,22 @@ namespace Maze
         {
             it->second.propFromDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
             return true;
+        }
+        else
+        {
+            MonoClass* monoClass = mono_class_from_mono_type(_field->getMonoType());
+            if (monoClass)
+            {
+                for (auto const& data : m_fieldDataBlockSubClassSerializationData)
+                {
+                    MonoClass* baseClass = data.first;
+                    if (mono_class_is_subclass_of(monoClass, baseClass, false))
+                    {
+                        data.second.propFromDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;
