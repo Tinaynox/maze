@@ -201,6 +201,23 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* GetComponentByType(
+            Component* _component,
+            MonoType* _monoType)
+        {
+            MonoMethod* getComponentByType = MonoEngine::GetEcsUtilsClass()->getMethod("GetComponentByType", 2);
+
+            MonoReflectionType* reflectionType = mono_type_get_object(mono_domain_get(), _monoType);
+
+            void* params[] = {
+                &_component,
+                reflectionType
+            };
+
+            return MonoHelper::InvokeStaticMethod(getComponentByType, params);
+        }
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API MonoObject* DeserializeComponentFromDataBlock(
             EcsWorld* _world,
             DataBlock const& _dataBlock,
@@ -211,16 +228,7 @@ namespace Maze
             if (!component)
                 return nullptr;
 
-            MonoMethod* getComponentByType = MonoEngine::GetEcsUtilsClass()->getMethod("GetComponentByType", 2);
-
-            MonoReflectionType* reflectionType = mono_type_get_object(mono_domain_get(), _monoType);
-
-            void* params[] = {
-                &component,
-                reflectionType
-            };
-
-            return MonoHelper::InvokeStaticMethod(getComponentByType, params);
+            return GetComponentByType(component, _monoType);
         }
 
         //////////////////////////////////////////

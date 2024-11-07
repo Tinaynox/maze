@@ -63,20 +63,20 @@ namespace Maze
     template <typename TDrawer>
     inline ScriptPropertyDrawerCallbacks BuildScriptPropertyDrawerCallbacks(
         std::function<PropertyDrawerPtr()> _createDrawerCb,
-        std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, TDrawer*)> _processDataToUICb,
-        std::function<void(ScriptInstance&, ScriptPropertyPtr const&, TDrawer const*)> _processDataFromUICb)
+        std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, TDrawer*)> _processDataToUICb,
+        std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, TDrawer const*)> _processDataFromUICb)
     {
         ScriptPropertyDrawerCallbacks callbacks;
         callbacks.createDrawerCb = _createDrawerCb;
         callbacks.processDataToUICb =
-            [_processDataToUICb](ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, PropertyDrawerPtr const& _drawer)
+            [_processDataToUICb](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, PropertyDrawerPtr const& _drawer)
             {
-                _processDataToUICb(_instance, _prop, _drawer->castRaw<TDrawer>());
+                _processDataToUICb(_world, _instance, _prop, _drawer->castRaw<TDrawer>());
             };
         callbacks.processDataFromUICb =
-            [_processDataFromUICb](ScriptInstance& _instance, ScriptPropertyPtr const& _prop, PropertyDrawerPtr const& _drawer)
+            [_processDataFromUICb](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, PropertyDrawerPtr const& _drawer)
             {
-                _processDataFromUICb(_instance, _prop, _drawer->castRaw<TDrawer>());
+                _processDataFromUICb(_world, _instance, _prop, _drawer->castRaw<TDrawer>());
             };
         return std::move(callbacks);
     }
@@ -86,20 +86,20 @@ namespace Maze
     template <typename TDrawer>
     inline ScriptFieldDrawerCallbacks BuildScriptFieldDrawerCallbacks(
         std::function<PropertyDrawerPtr()> _createDrawerCb,
-        std::function<void(ScriptInstance const&, ScriptFieldPtr const&, TDrawer*)> _processDataToUICb,
-        std::function<void(ScriptInstance&, ScriptFieldPtr const&, TDrawer const*)> _processDataFromUICb)
+        std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, TDrawer*)> _processDataToUICb,
+        std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, TDrawer const*)> _processDataFromUICb)
     {
         ScriptFieldDrawerCallbacks callbacks;
         callbacks.createDrawerCb = _createDrawerCb;
         callbacks.processDataToUICb =
-            [_processDataToUICb](ScriptInstance const& _instance, ScriptFieldPtr const& _prop, PropertyDrawerPtr const& _drawer)
+            [_processDataToUICb](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _prop, PropertyDrawerPtr const& _drawer)
             {
-                _processDataToUICb(_instance, _prop, _drawer->castRaw<TDrawer>());
+                _processDataToUICb(_world, _instance, _prop, _drawer->castRaw<TDrawer>());
             };
         callbacks.processDataFromUICb =
-            [_processDataFromUICb](ScriptInstance& _instance, ScriptFieldPtr const& _prop, PropertyDrawerPtr const& _drawer)
+            [_processDataFromUICb](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _prop, PropertyDrawerPtr const& _drawer)
             {
-                _processDataFromUICb(_instance, _prop, _drawer->castRaw<TDrawer>());
+                _processDataFromUICb(_world, _instance, _prop, _drawer->castRaw<TDrawer>());
             };
         return std::move(callbacks);
     }
@@ -110,6 +110,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API CSharpEditorToolsManager
+        : public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -129,17 +130,31 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ScriptPropertyDrawerCallbacks* getScriptPropertyDrawerCallbacksPerMonoType(HashedCString _monoTypeName);
+        ScriptPropertyDrawerCallbacks const* getScriptPropertyDrawerCallbacks(ScriptPropertyPtr const& _prop);
 
         //////////////////////////////////////////
         template <typename TDrawer>
         inline void registerScriptPropertyDrawerCallbacks(
             HashedCString _monoTypeName,
             std::function<PropertyDrawerPtr()> _createDrawerCb,
-            std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, TDrawer*)> _processDataToUICb,
-            std::function<void(ScriptInstance&, ScriptPropertyPtr const&, TDrawer const*)> _processDataFromUICb)
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, TDrawer*)> _processDataToUICb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, TDrawer const*)> _processDataFromUICb)
         {
             m_monoPropertyDrawerCallbacksPerMonoType[_monoTypeName] = BuildScriptPropertyDrawerCallbacks<TDrawer>(
+                _createDrawerCb,
+                _processDataToUICb,
+                _processDataFromUICb);
+        }
+
+        //////////////////////////////////////////
+        template <typename TDrawer>
+        inline void registerScriptPropertyDrawerSuperClassCallbacks(
+            MonoClass* _superClass,
+            std::function<PropertyDrawerPtr()> _createDrawerCb,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, TDrawer*)> _processDataToUICb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, TDrawer const*)> _processDataFromUICb)
+        {
+            m_monoPropertyDrawerCallbacksPerMonoSuperClass[_superClass] = BuildScriptPropertyDrawerCallbacks<TDrawer>(
                 _createDrawerCb,
                 _processDataToUICb,
                 _processDataFromUICb);
@@ -152,17 +167,31 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ScriptFieldDrawerCallbacks* getScriptFieldDrawerCallbacksPerMonoType(HashedCString _monoTypeName);
+        ScriptFieldDrawerCallbacks const* getScriptFieldDrawerCallbacks(ScriptFieldPtr const& _field);
 
         //////////////////////////////////////////
         template <typename TDrawer>
         inline void registerScriptFieldDrawerCallbacks(
             HashedCString _monoTypeName,
             std::function<PropertyDrawerPtr()> _createDrawerCb,
-            std::function<void(ScriptInstance const&, ScriptFieldPtr const&, TDrawer*)> _processDataToUICb,
-            std::function<void(ScriptInstance&, ScriptFieldPtr const&, TDrawer const*)> _processDataFromUICb)
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, TDrawer*)> _processDataToUICb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, TDrawer const*)> _processDataFromUICb)
         {
             m_monoFieldDrawerCallbacksPerMonoType[_monoTypeName] = BuildScriptFieldDrawerCallbacks<TDrawer>(
+                _createDrawerCb,
+                _processDataToUICb,
+                _processDataFromUICb);
+        }
+
+        //////////////////////////////////////////
+        template <typename TDrawer>
+        inline void registerScriptFieldDrawerSuperClassCallbacks(
+            MonoClass* _superClass,
+            std::function<PropertyDrawerPtr()> _createDrawerCb,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, TDrawer*)> _processDataToUICb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, TDrawer const*)> _processDataFromUICb)
+        {
+            m_monoFieldDrawerCallbacksPerMonoSuperClass[_superClass] = BuildScriptFieldDrawerCallbacks<TDrawer>(
                 _createDrawerCb,
                 _processDataToUICb,
                 _processDataFromUICb);
@@ -179,14 +208,28 @@ namespace Maze
         template <typename TDrawer>
         inline void registerScriptPropertyAndFieldDrawerCallbacks(
             HashedCString _monoTypeName,
-            std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, TDrawer*)> _propertyProcessDataToUICb,
-            std::function<void(ScriptInstance&, ScriptPropertyPtr const&, TDrawer const*)> _propertyProcessDataFromUICb,
-            std::function<void(ScriptInstance const&, ScriptFieldPtr const&, TDrawer*)> _fieldProcessDataToUICb,
-            std::function<void(ScriptInstance&, ScriptFieldPtr const&, TDrawer const*)> _fieldProcessDataFromUICb,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, TDrawer*)> _propertyProcessDataToUICb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, TDrawer const*)> _propertyProcessDataFromUICb,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, TDrawer*)> _fieldProcessDataToUICb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, TDrawer const*)> _fieldProcessDataFromUICb,
             std::function<PropertyDrawerPtr()> _createDrawerCb = CreateScriptPropertyDrawerDefault<TDrawer>)
         {
             registerScriptPropertyDrawerCallbacks(_monoTypeName, _createDrawerCb, _propertyProcessDataToUICb, _propertyProcessDataFromUICb);
             registerScriptFieldDrawerCallbacks(_monoTypeName, _createDrawerCb, _fieldProcessDataToUICb, _fieldProcessDataFromUICb);
+        }
+
+        //////////////////////////////////////////
+        template <typename TDrawer>
+        inline void registerScriptPropertyAndFieldDrawerSuperClassCallbacks(
+            MonoClass* _superClass,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, TDrawer*)> _propertyProcessDataToUICb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, TDrawer const*)> _propertyProcessDataFromUICb,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, TDrawer*)> _fieldProcessDataToUICb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, TDrawer const*)> _fieldProcessDataFromUICb,
+            std::function<PropertyDrawerPtr()> _createDrawerCb = CreateScriptPropertyDrawerDefault<TDrawer>)
+        {
+            registerScriptPropertyDrawerSuperClassCallbacks(_superClass, _createDrawerCb, _propertyProcessDataToUICb, _propertyProcessDataFromUICb);
+            registerScriptFieldDrawerSuperClassCallbacks(_superClass, _createDrawerCb, _fieldProcessDataToUICb, _fieldProcessDataFromUICb);
         }
 
     protected:
@@ -197,11 +240,17 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
     protected:
         static CSharpEditorToolsManager* s_instance;
 
         StringKeyMap<ScriptPropertyDrawerCallbacks> m_monoPropertyDrawerCallbacksPerMonoType;
         StringKeyMap<ScriptFieldDrawerCallbacks> m_monoFieldDrawerCallbacksPerMonoType;
+
+        UnorderedMap<MonoClass*, ScriptPropertyDrawerCallbacks> m_monoPropertyDrawerCallbacksPerMonoSuperClass;
+        UnorderedMap<MonoClass*, ScriptFieldDrawerCallbacks> m_monoFieldDrawerCallbacksPerMonoSuperClass;
     };
 
 

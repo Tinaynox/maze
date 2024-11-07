@@ -42,14 +42,15 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(ScriptPropertyDrawer);
+    MAZE_USING_SHARED_PTR(EcsWorld);
 
 
     //////////////////////////////////////////
     struct MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API ScriptPropertyDrawerCallbacks
     {
         std::function<PropertyDrawerPtr()> createDrawerCb;
-        std::function<void(ScriptInstance const&, ScriptPropertyPtr const&, PropertyDrawerPtr const&)> processDataToUICb;
-        std::function<void(ScriptInstance&, ScriptPropertyPtr const&, PropertyDrawerPtr const&)> processDataFromUICb;
+        std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, PropertyDrawerPtr const&)> processDataToUICb;
+        std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, PropertyDrawerPtr const&)> processDataFromUICb;
     };
 
 

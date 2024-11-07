@@ -25,92 +25,92 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeScriptFieldDrawer_hpp_))
-#define _MazeScriptFieldDrawer_hpp_
+#if (!defined(_MazePropertyDrawerComponentPtr_hpp_))
+#define _MazePropertyDrawerComponentPtr_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-plugin-csharp-editor-tools/MazeCSharpEditorToolsHeader.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/system/MazeTimer.hpp"
+#include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/settings/MazeSettings.hpp"
+#include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-ui/ecs/components/MazeTextRenderer2D.hpp"
 #include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
-#include "maze-plugin-csharp/MazeMonoHeader.hpp"
-#include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ScriptFieldDrawer);
-    MAZE_USING_SHARED_PTR(EcsWorld);
+    MAZE_USING_SHARED_PTR(PropertyDrawerComponentPtr);
+    MAZE_USING_SHARED_PTR(EditBox2D);
 
 
     //////////////////////////////////////////
-    struct MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API ScriptFieldDrawerCallbacks
-    {
-        std::function<PropertyDrawerPtr()> createDrawerCb;
-        std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, PropertyDrawerPtr const&)> processDataToUICb;
-        std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, PropertyDrawerPtr const&)> processDataFromUICb;
-    };
-
-
-    //////////////////////////////////////////
-    // Class ScriptFieldDrawer
+    // Class PropertyDrawerComponentPtr
     //
     //////////////////////////////////////////
-    class MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API ScriptFieldDrawer
-        : public MetaPropertyDrawer
+    class MAZE_EDITOR_TOOLS_API PropertyDrawerComponentPtr
+        : public GenericPropertyDrawer<ComponentPtr>
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(ScriptFieldDrawer, MetaPropertyDrawer);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PropertyDrawerComponentPtr, PropertyDrawer);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(ScriptFieldDrawer);
+        MAZE_DECLARE_MEMORY_ALLOCATION(PropertyDrawerComponentPtr);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~ScriptFieldDrawer();
+        virtual ~PropertyDrawerComponentPtr();
 
         //////////////////////////////////////////
-        static ScriptFieldDrawerPtr Create(
-            ScriptFieldPtr const& _scriptProperty,
-            ScriptFieldDrawerCallbacks _callbacks);
+        static PropertyDrawerComponentPtrPtr Create(String const& _label);
 
 
         //////////////////////////////////////////
-        virtual void processDataToUI() MAZE_OVERRIDE;
+        virtual void setValue(ComponentPtr const& _entity) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processDataFromUI() MAZE_OVERRIDE;
+        virtual ComponentPtr getValue() const MAZE_OVERRIDE;
 
-    protected:
-
-        //////////////////////////////////////////
-        ScriptFieldDrawer();
-
-        //////////////////////////////////////////
-        virtual bool init(
-            ScriptFieldPtr const& _scriptProperty,
-            ScriptFieldDrawerCallbacks _callbacks);
 
         //////////////////////////////////////////
         virtual void buildUI(
             Transform2DPtr const& _parent,
-            CString _label) MAZE_OVERRIDE;
+            CString _label = nullptr) MAZE_OVERRIDE;
+
+        ////////////////////////////////////////////
+        virtual void unselectUI() MAZE_OVERRIDE;
 
     protected:
-        ScriptFieldPtr m_scriptProperty;
 
-        PropertyDrawerPtr m_drawer;
-        ScriptFieldDrawerCallbacks m_callbacks;
+        //////////////////////////////////////////
+        PropertyDrawerComponentPtr();
+
+        //////////////////////////////////////////
+        virtual bool init(String const& _label) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        // void notifyTextInput(EditBox2D* _editBox);
+
+        //////////////////////////////////////////
+        // void notifySelectedChanged(EditBox2D* _editBox, bool _selected);
+
+    protected:
+        AbstractTextRenderer2DPtr m_text;
     };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeScriptFieldDrawer_hpp_
+#endif // _MazePropertyDrawerComponentPtr_hpp_
 //////////////////////////////////////////

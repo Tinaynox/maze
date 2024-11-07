@@ -89,8 +89,7 @@ namespace Maze
                 {
                     ScriptFieldDrawerCallbacks callbacks;
 
-                    ScriptFieldDrawerCallbacks* callbacksPtr = CSharpEditorToolsManager::GetInstancePtr()->getScriptFieldDrawerCallbacksPerMonoType(
-                        _field->getTypeName());
+                    ScriptFieldDrawerCallbacks const* callbacksPtr = CSharpEditorToolsManager::GetInstancePtr()->getScriptFieldDrawerCallbacks(_field);
                     if (!callbacksPtr)
                         return;
                     callbacks = *callbacksPtr;
@@ -112,8 +111,7 @@ namespace Maze
                 {
                     ScriptPropertyDrawerCallbacks callbacks;
 
-                    ScriptPropertyDrawerCallbacks* callbacksPtr = CSharpEditorToolsManager::GetInstancePtr()->getScriptPropertyDrawerCallbacksPerMonoType(
-                        _prop->getTypeName());
+                    ScriptPropertyDrawerCallbacks const* callbacksPtr = CSharpEditorToolsManager::GetInstancePtr()->getScriptPropertyDrawerCallbacks(_prop);
                     if (!callbacksPtr)
                         return;
                     callbacks = *callbacksPtr;

@@ -112,8 +112,12 @@ namespace Maze
             return;
 
         MonoBehaviour* monoBehaviour = m_metaInstances.begin()->reinterpretObjectCast<MonoBehaviour>();
-        if (monoBehaviour->getMonoInstance())
-            m_callbacks.processDataToUICb(*monoBehaviour->getMonoInstance(), m_scriptProperty, m_drawer);
+        if (monoBehaviour->getEntityRaw() && monoBehaviour->getMonoInstance())
+            m_callbacks.processDataToUICb(
+                monoBehaviour->getEntityRaw()->getEcsWorld(),
+                *monoBehaviour->getMonoInstance(),
+                m_scriptProperty,
+                m_drawer);
     }
 
     //////////////////////////////////////////
@@ -126,8 +130,12 @@ namespace Maze
             return;
 
         MonoBehaviour* monoBehaviour = m_metaInstances.begin()->reinterpretObjectCast<MonoBehaviour>();
-        if (monoBehaviour->getMonoInstance())
-            m_callbacks.processDataFromUICb(*monoBehaviour->getMonoInstance(), m_scriptProperty, m_drawer);
+        if (monoBehaviour->getEntityRaw() && monoBehaviour->getEntityRaw() && monoBehaviour->getMonoInstance())
+            m_callbacks.processDataFromUICb(
+                monoBehaviour->getEntityRaw()->getEcsWorld(),
+                *monoBehaviour->getMonoInstance(),
+                m_scriptProperty,
+                m_drawer);
     }
 
 

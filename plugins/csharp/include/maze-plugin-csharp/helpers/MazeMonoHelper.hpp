@@ -35,6 +35,7 @@
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/services/MazeLogService.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
 
 
 //////////////////////////////////////////
@@ -76,6 +77,11 @@ namespace Maze
         MAZE_PLUGIN_CSHARP_API void IterateSerializableFields(
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptFieldPtr const&)> const& _cb);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* GetComponentByType(
+            Component* _component,
+            MonoType* _monoType);
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API MonoObject* DeserializeComponentFromDataBlock(

@@ -177,7 +177,8 @@ namespace Maze
             ScriptClassPtr const& componentClass = MonoEngine::GetComponentClass();
 
             // Core
-            registerPropertyAndFieldDataBlockSubClassSerialization(componentClass->getMonoClass(),
+            registerPropertyAndFieldDataBlockSubClassSerialization(
+                componentClass->getMonoClass(),
                 [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
                 {
                     MonoObject* componentInstance = nullptr;
