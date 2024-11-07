@@ -29,6 +29,7 @@
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptField.hpp"
+#include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -199,7 +200,52 @@ namespace Maze
             }
         }
 
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* DeserializeComponentFromDataBlock(
+            EcsWorld* _world,
+            DataBlock const& _dataBlock,
+            CString _name,
+            MonoType* _monoType)
+        {
+            Component* component = EcsHelper::DeserializeComponentFromDataBlock(_world, _dataBlock, _name);
+            if (!component)
+                return nullptr;
 
+            MonoMethod* getComponentByType = MonoEngine::GetEcsUtilsClass()->getMethod("GetComponentByType", 2);
+
+            MonoReflectionType* reflectionType = mono_type_get_object(mono_domain_get(), _monoType);
+
+            void* params[] = {
+                &component,
+                reflectionType
+            };
+
+            return MonoHelper::InvokeStaticMethod(getComponentByType, params);
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void SerializeComponentToDataBlock(
+            DataBlock& _dataBlock,
+            CString _name,
+            MonoObject* _componentInstance)
+        {
+            if (_componentInstance)
+            {
+                MonoProperty* componentPtrProperty = MonoEngine::GetNativeComponentPtrProperty()->getMonoProperty();
+                MonoObject* result = mono_property_get_value(componentPtrProperty, _componentInstance, nullptr, nullptr);
+                if (!result)
+                    return;
+
+                Component* component = *(Component**)mono_object_unbox(result);
+                EcsHelper::SerializeComponentToDataBlock(_dataBlock, _name, component);
+            }
+            else
+            {
+                Char buffer[128];
+                StringHelper::FormatString(buffer, sizeof(buffer), "%s:Component", _name);
+                _dataBlock.removeDataBlock(HashedCString(buffer));
+            }
+        }
 
 
     } // namespace AssetHelper

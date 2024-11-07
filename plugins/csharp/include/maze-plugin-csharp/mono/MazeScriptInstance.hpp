@@ -148,6 +148,15 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline bool resetPropertyValue(ScriptPropertyPtr const& _property)
+        {
+            if (!_property->getSetterMethod())
+                return false;
+
+            return MonoHelper::InvokeMethod(m_instance, _property->getSetterMethod(), nullptr);            
+        }
+
+        //////////////////////////////////////////
         template <typename TValue>
         inline bool setPropertyValue(HashedCString _name, TValue const& _value)
         {
@@ -204,6 +213,13 @@ namespace Maze
             mono_field_set_value(m_instance, _field->getMonoClassField(), monoString);
 
             return true;
+        }
+
+        //////////////////////////////////////////
+        inline bool resetFieldValue(ScriptFieldPtr const& _field)
+        {
+            mono_field_set_value(m_instance, _field->getMonoClassField(), nullptr);
+            return false;
         }
 
         //////////////////////////////////////////

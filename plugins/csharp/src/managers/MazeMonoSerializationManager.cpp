@@ -182,57 +182,31 @@ namespace Maze
                 {
                     MonoObject* componentInstance = nullptr;
                     _instance.getPropertyValue(_prop, componentInstance);
-                    if (componentInstance)
-                    {
-                        MonoProperty* componentPtrProperty = MonoEngine::GetNativeComponentPtrProperty()->getMonoProperty();
-                        MonoObject* result = mono_property_get_value(componentPtrProperty, componentInstance, nullptr, nullptr);
-                        if (!result)
-                            return;
-
-                        Component* component = *(Component**)mono_object_unbox(result);
-                        EcsHelper::SerializeComponentToDataBlock(_dataBlock, _prop->getName().c_str(), component);
-                    }
+                    MonoHelper::SerializeComponentToDataBlock(_dataBlock, _prop->getName().c_str(), componentInstance);
                 },
                 [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
                 {
-                    
+                    MonoObject* result = MonoHelper::DeserializeComponentFromDataBlock(
+                        _world, _dataBlock, _prop->getName().c_str(), _prop->getMonoType());
+                    if (result)
+                        _instance.setPropertyValue(_prop, *result);
+                    else
+                        _instance.resetPropertyValue(_prop);
                 },
                 [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
                 {
                     MonoObject* componentInstance = nullptr;
                     _instance.getFieldValue(_field, componentInstance);
-                    if (componentInstance)
-                    {
-                        MonoProperty* componentPtrProperty = MonoEngine::GetNativeComponentPtrProperty()->getMonoProperty();
-                        MonoObject* result = mono_property_get_value(componentPtrProperty, componentInstance, nullptr, nullptr);
-                        if (!result)
-                            return;
-
-                        Component* component = *(Component**)mono_object_unbox(result);
-                        EcsHelper::SerializeComponentToDataBlock(_dataBlock, _field->getName().c_str(), component);
-                    }
+                    MonoHelper::SerializeComponentToDataBlock(_dataBlock, _field->getName().c_str(), componentInstance);
                 },
                 [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
                 {
-                    Component* component = EcsHelper::DeserializeComponentFromDataBlock(_world, _dataBlock, _field->getName().c_str());
-                    if (component)
-                    {
-                        MonoMethod* getComponentByType = MonoEngine::GetEcsUtilsClass()->getMethod("GetComponentByType", 2);
-
-                        MonoType* monoType = _field->getMonoType();
-                        MonoReflectionType* reflectionType = mono_type_get_object(mono_domain_get(), monoType);
-
-                        void* params[] = {
-                            &component,
-                            reflectionType
-                        };
-
-                        MonoObject* result = MonoHelper::InvokeStaticMethod(getComponentByType, params);
-
+                    MonoObject* result = MonoHelper::DeserializeComponentFromDataBlock(
+                        _world, _dataBlock, _field->getName().c_str(), _field->getMonoType());
+                    if (result)
                         _instance.setFieldValue(_field, *result);
-                    }
                     else
-                        _instance.setFieldValue(_field, nullptr);
+                        _instance.resetFieldValue(_field);
                 });
         }
     }

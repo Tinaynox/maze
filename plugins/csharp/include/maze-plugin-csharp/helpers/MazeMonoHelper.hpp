@@ -77,6 +77,19 @@ namespace Maze
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptFieldPtr const&)> const& _cb);
 
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* DeserializeComponentFromDataBlock(
+            EcsWorld* _world,
+            DataBlock const& _dataBlock,
+            CString _name,
+            MonoType* _monoType);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void SerializeComponentToDataBlock(
+            DataBlock& _dataBlock,
+            CString _name,
+            MonoObject* _componentInstance);
+
     } // namespace MonoHelper
     //////////////////////////////////////////
 
