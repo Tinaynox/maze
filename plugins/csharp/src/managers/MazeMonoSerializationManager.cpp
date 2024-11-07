@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
+#include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -214,8 +215,24 @@ namespace Maze
                 [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
                 {
                     Component* component = EcsHelper::DeserializeComponentFromDataBlock(_world, _dataBlock, _field->getName().c_str());
+                    if (component)
+                    {
+                        MonoMethod* getComponentByType = MonoEngine::GetEcsUtilsClass()->getMethod("GetComponentByType", 2);
 
-                    int a = 0;
+                        MonoType* monoType = _field->getMonoType();
+                        MonoReflectionType* reflectionType = mono_type_get_object(mono_domain_get(), monoType);
+
+                        void* params[] = {
+                            &component,
+                            reflectionType
+                        };
+
+                        MonoObject* result = MonoHelper::InvokeStaticMethod(getComponentByType, params);
+
+                        _instance.setFieldValue(_field, *result);
+                    }
+                    else
+                        _instance.setFieldValue(_field, nullptr);
                 });
         }
     }

@@ -50,7 +50,7 @@ namespace Maze
     namespace MonoHelper
     {
         //////////////////////////////////////////
-        extern MAZE_PLUGIN_CSHARP_API void InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params);
+        extern MAZE_PLUGIN_CSHARP_API MonoObject* InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params);
 
     } // namespace MonoHelper
     //////////////////////////////////////////

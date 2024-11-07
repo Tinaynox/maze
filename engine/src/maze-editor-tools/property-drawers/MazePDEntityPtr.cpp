@@ -157,7 +157,7 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerEntityPtr::setValue(EntityPtr const& _value)
     {
-        m_text->setTextFormatted("%d", (S32)_value->getId());
+        m_text->setTextFormatted("%d", _value ? (S32)_value->getId() : (S32)c_invalidEntityId);
     }
 
     //////////////////////////////////////////

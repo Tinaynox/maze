@@ -19,26 +19,27 @@ namespace Maze.Core
 
         public T GetComponent<T>() where T : class
         {
-            int componentId = InternalCalls.GetComponentIdByMonoType(typeof(T));
+            return GetComponentByType(typeof(T)) as T;
+        }
 
-            // Native component wrappers
-            if (typeof(NativeComponent).IsAssignableFrom(typeof(T)))
-            {
-                NativePtr componentPtr = InternalCalls.ComponentGetComponent(NativeComponentPtr, componentId);
-                if (componentPtr == NativePtr.Zero)
-                    return default(T);
+        public object GetComponentByType(Type _componentType)
+        {
+            return EcsUtils.GetComponentByType(NativeComponentPtr, _componentType);
+        }
 
-                return (T)Activator.CreateInstance(typeof(T), componentPtr);
-            }
+        public static bool operator !(Component _instance)
+        {
+            return _instance.NativeComponentPtr == NativePtr.Zero;
+        }
 
+        public static bool operator true(Component _instance)
+        {
+            return _instance.NativeComponentPtr != NativePtr.Zero;
+        }
 
-            // MonoBehaviour refs
-            if (typeof(MonoBehaviour).IsAssignableFrom(typeof(T)))
-                return (T)(object)InternalCalls.ComponentGetMonoBehaviourComponentObject(NativeComponentPtr, componentId);
-
-
-            // Not supported type
-            return default(T);
+        public static bool operator false(Component _instance)
+        {
+            return _instance.NativeComponentPtr == NativePtr.Zero;
         }
     }
 }

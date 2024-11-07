@@ -52,6 +52,7 @@ namespace Maze
         ScriptClassPtr componentClass;
         ScriptPropertyPtr nativeComponentPtrProperty;
         ScriptClassPtr nativeComponentClass;
+        ScriptClassPtr ecsUtilsClass;
         StringKeyMap<ScriptClassPtr> nativeComponentSubClasses;
 
         UnorderedMap<MonoType*, ComponentId> monoTypePerComponentId;
@@ -327,6 +328,8 @@ namespace Maze
             MAZE_HCS("NativeComponentPtr"));
         g_monoEngineData->ecsData.nativeComponentClass = ScriptClass::Create(
             "Maze.Core", "NativeComponent", g_monoEngineData->coreAssemblyImage);
+        g_monoEngineData->ecsData.ecsUtilsClass = ScriptClass::Create(
+            "Maze.Core", "EcsUtils", g_monoEngineData->coreAssemblyImage);
 
         LoadAssemblyClasses(g_monoEngineData->coreAssembly);
 
@@ -388,6 +391,12 @@ namespace Maze
     ScriptClassPtr const& MonoEngine::GetNativeComponentClass()
     {
         return g_monoEngineData->ecsData.nativeComponentClass;
+    }
+
+    //////////////////////////////////////////
+    ScriptClassPtr const& MonoEngine::GetEcsUtilsClass()
+    {
+        return g_monoEngineData->ecsData.ecsUtilsClass;
     }
 
     //////////////////////////////////////////

@@ -53,7 +53,10 @@ namespace Maze
         MAZE_PLUGIN_CSHARP_API void PrintAssemblyTypes(MonoAssembly* _assembly);
 
         //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params = nullptr);
+        MAZE_PLUGIN_CSHARP_API MonoObject* InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params = nullptr);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* InvokeStaticMethod(MonoMethod* _method, void** _params = nullptr);
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void ParseMonoEntitySystemAttributes(

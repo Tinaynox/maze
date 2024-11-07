@@ -74,10 +74,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params)
+        MAZE_PLUGIN_CSHARP_API MonoObject* InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params)
         {
             MonoObject* exception = nullptr;
-            mono_runtime_invoke(_method, _instance, _params, &exception);
+            MonoObject* result = mono_runtime_invoke(_method, _instance, _params, &exception);
 
             if (exception)
             {
@@ -85,7 +85,17 @@ namespace Maze
                 Char* cstr = mono_string_to_utf8(excStr);
                 MAZE_ERROR("MONO runtime error: %s", cstr);
                 mono_free(cstr);
+
+                return nullptr;
             }
+
+            return result;
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* InvokeStaticMethod(MonoMethod* _method, void** _params)
+        {
+            return InvokeMethod(nullptr, _method, _params);
         }
 
         //////////////////////////////////////////
