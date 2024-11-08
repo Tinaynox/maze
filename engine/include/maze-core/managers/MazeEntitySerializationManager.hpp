@@ -107,10 +107,12 @@ namespace Maze
             EcsScene* _scene = nullptr) const;
 
         //////////////////////////////////////////
+        /*
         EntityPtr loadPrefabOBSOLETE(
             DataBlock const& _dataBlock,
             EcsWorld* _world = nullptr,
             EcsScene* _scene = nullptr) const;
+        */
 
         //////////////////////////////////////////
         EntityPtr loadPrefab(

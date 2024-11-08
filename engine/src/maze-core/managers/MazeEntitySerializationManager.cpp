@@ -542,10 +542,9 @@ namespace Maze
     {
         DataBlock dataBlock = _assetFile->readAsDataBlock();
 
-        if (dataBlock.getS32(MAZE_HCS("_version")) > 0)
-            return loadPrefab(dataBlock, _world, _scene);
-        else
-            return loadPrefabOBSOLETE(dataBlock, _world, _scene);
+        MAZE_WARNING_IF(dataBlock.getS32(MAZE_HCS("_version")) == 0, "Invalid prefab with no version!");
+
+        return loadPrefab(dataBlock, _world, _scene);
     }
 
     //////////////////////////////////////////
@@ -562,6 +561,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    /*
     EntityPtr EntitySerializationManager::loadPrefabOBSOLETE(
         DataBlock const& _dataBlock,
         EcsWorld* _world,
@@ -901,6 +901,7 @@ namespace Maze
 
         return entities[rootIndex];
     }
+    */
 
     //////////////////////////////////////////
     void EntitySerializationManager::loadEntities(
@@ -1050,6 +1051,13 @@ namespace Maze
 
         autoComponentIndexCounter = 0;
 
+        UnorderedMap<EntityId, EntityPtr> entitiesPerEntityId;
+        for (auto const& entityData : _outEntities)
+            entitiesPerEntityId.emplace(
+                std::piecewise_construct,
+                std::forward_as_tuple(entityData.second->getId()),
+                std::forward_as_tuple(entityData.second));
+
         restoreDataBlockEcsIds(_dataBlock, _outEntities, _outComponents);
 
         // Load
@@ -1190,8 +1198,19 @@ namespace Maze
                                             else
                                             if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
                                             {
-                                                S32 valueIndex = componentBlock->getS32(propertyName);
-                                                metaProperty->setValue(componentMetaInstance, &_outEntities[valueIndex]);
+                                                DataBlock const* entityIdParam = EcsHelper::GetEntityIdParam(*componentBlock, propertyName.str);
+                                                if (entityIdParam)
+                                                {
+                                                    EntityId entityId(entityIdParam->getS32(MAZE_HCS("value")));
+                                                    metaProperty->setValue(componentMetaInstance, &entitiesPerEntityId[entityId]);
+                                                }
+                                                else
+                                                if (componentBlock->isParamExists(propertyName))
+                                                {
+                                                    MAZE_ERROR("Obsolete eid param: %s!", propertyName.str);
+                                                    S32 valueIndex = componentBlock->getS32(propertyName);
+                                                    metaProperty->setValue(componentMetaInstance, &_outEntities[valueIndex]);
+                                                }
                                                 continue;
                                             }
                                             else

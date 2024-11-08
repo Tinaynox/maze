@@ -53,13 +53,26 @@ namespace Maze
         MAZE_CORE_API EntityId GetEntityParentId(Entity const* _entity);
 
         //////////////////////////////////////////
+        MAZE_CORE_API DataBlock* EnsureEntityIdParam(DataBlock& _data, CString _name);
+
+        //////////////////////////////////////////
         MAZE_CORE_API void SerializeEntityIdToDataBlock(DataBlock& _data, CString _name, EntityId _id);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API DataBlock const* GetEntityIdParam(DataBlock const& _data, CString _name);
 
         //////////////////////////////////////////
         MAZE_CORE_API EntityId DeserializeEntityIdFromDataBlock(DataBlock const& _data, CString _name);
 
+
+        //////////////////////////////////////////
+        MAZE_CORE_API DataBlock* EnsureComponentParam(DataBlock& _data, CString _name);
+
         //////////////////////////////////////////
         MAZE_CORE_API void SerializeComponentToDataBlock(DataBlock& _data, CString _name, Component* _component);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API DataBlock const* GetComponentParam(DataBlock const& _data, CString _name);
 
         //////////////////////////////////////////
         MAZE_CORE_API Component* DeserializeComponentFromDataBlock(EcsWorld* _ecsWorld, DataBlock const& _data, CString _name);
