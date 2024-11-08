@@ -501,18 +501,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntitiesSamplePtr EcsWorld::requestCommonSample(EntityAspect const& _aspect)
+    EntitiesSamplePtr EcsWorld::requestCommonSample(
+        EntityAspect const& _aspect,
+        U8 _flags)
     {
         for (Size i = 0, in = m_samples.size(); i < in; ++i)
         {
             if (m_samples[i]->getType() != EntitiesSampleType::Common)
                 continue;
 
+            if (m_samples[i]->getFlags() != _flags)
+                continue;
+
             if (m_samples[i]->getAspect() == _aspect)
                 return m_samples[i]->cast<EntitiesSample>();
         }
 
-        EntitiesSamplePtr sample = EntitiesSample::Create(getSharedPtr(), _aspect);
+        EntitiesSamplePtr sample = EntitiesSample::Create(getSharedPtr(), _aspect, _flags);
         m_samples.push_back(sample);
 
         for (Size i = 0, in = m_entities.size(); i < in; ++i)

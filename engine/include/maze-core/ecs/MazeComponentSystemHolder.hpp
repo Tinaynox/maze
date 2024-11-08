@@ -55,6 +55,13 @@ namespace Maze
             return s_systemHolders;
         }
 
+        //////////////////////////////////////////
+        enum class Type
+        {
+            Default,
+            Global
+        };
+
     public:
 
         //////////////////////////////////////////
@@ -72,7 +79,8 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        using AddSystemFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, Set<HashedString> const&, ComponentSystemOrder const&);
+        using AddSystemFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, Set<HashedString> const&, ComponentSystemOrder const&, U8);
+        using AddSystemGlobalFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, Set<HashedString> const&, ComponentSystemOrder const&);
 
 
         //////////////////////////////////////////
@@ -81,12 +89,16 @@ namespace Maze
             HashedCString _name,
             void(*_func)(TEventType&, Entity*, TComponents* ...),
             Set<HashedString> _tags = Set<HashedString>(),
-            ComponentSystemOrder const& _order = ComponentSystemOrder())
+            ComponentSystemOrder const& _order = ComponentSystemOrder(),
+            U8 _sampleFlags = 0)
             : m_name(_name)
             , m_func((ComponentSystemEventHandler::Func)_func)
             , m_tags(_tags)
             , m_order(_order)
+            , m_sampleFlags(_sampleFlags)
         {
+            m_type = Type::Default;
+
             auto address = &EcsWorld::addSystemEventHandler<TEventType, TComponents...>;
             m_addSystemFunc = (AddSystemFunc)(address);
 
@@ -105,8 +117,10 @@ namespace Maze
             , m_tags(_tags)
             , m_order(_order)
         {
+            m_type = Type::Global;
+
             auto address = &EcsWorld::addSystemEventHandlerGlobal<TEventType>;
-            m_addSystemFunc = (AddSystemFunc)(address);
+            m_addSystemGlobalFunc = (AddSystemGlobalFunc)(address);
 
             GetSystemHolders().insert(this);
         }
@@ -120,7 +134,24 @@ namespace Maze
         //////////////////////////////////////////
         inline void attach(EcsWorld* _world)
         {
-            m_systems[_world] = (_world->*m_addSystemFunc)(m_name, m_func, m_tags, m_order);
+            switch (m_type)
+            {
+                case Type::Default:
+                {
+                    m_systems[_world] = (_world->*m_addSystemFunc)(m_name, m_func, m_tags, m_order, m_sampleFlags);
+                    break;
+                }
+                case Type::Global:
+                {
+                    m_systems[_world] = (_world->*m_addSystemGlobalFunc)(m_name, m_func, m_tags, m_order);
+                    break;
+                }
+                default:
+                {
+                    MAZE_NOT_IMPLEMENTED;
+                }
+            }
+            
         }
 
         //////////////////////////////////////////
@@ -130,20 +161,29 @@ namespace Maze
         }
 
     protected:
+        Type m_type = Type::Default;
         HashedCString m_name;
         Set<HashedString> m_tags;
         typename ComponentSystemEventHandler::Func m_func;
         ComponentSystemOrder m_order;
+        U8 m_sampleFlags = 0;
         AddSystemFunc m_addSystemFunc;
+        AddSystemGlobalFunc m_addSystemGlobalFunc;
         Map<EcsWorld*, WeakPtr<ComponentSystemEventHandler>> m_systems;
     };
 
 
     //////////////////////////////////////////
-    #define COMPONENT_SYSTEM_EVENT_HANDLER(TName, TTags, TOrder, ...) \
-        void TName(__VA_ARGS__); \
-        static ComponentSystemHolder TName##_holder(MAZE_HCS(#TName), TName, TTags, TOrder); \
-        void TName(__VA_ARGS__)
+    #define COMPONENT_SYSTEM_EVENT_HANDLER(DName, DTags, DOrder, ...) \
+        void DName(__VA_ARGS__); \
+        static ComponentSystemHolder DName##_holder(MAZE_HCS(#DName), DName, DTags, DOrder); \
+        void DName(__VA_ARGS__)
+
+    //////////////////////////////////////////
+    #define COMPONENT_SYSTEM_EVENT_HANDLER_EX(DName, DTags, DOrder, DSampleFlags, ...) \
+        void DName(__VA_ARGS__); \
+        static ComponentSystemHolder DName##_holder(MAZE_HCS(#DName), DName, DTags, DOrder, DSampleFlags); \
+        void DName(__VA_ARGS__)
         
 
 } // namespace Maze

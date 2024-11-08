@@ -70,6 +70,15 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    enum class EntitiesSampleFlags : U8
+    {
+        None = 0,
+
+        IncludeInactive = MAZE_BIT(0)
+    };
+
+
+    //////////////////////////////////////////
     // Class IEntitiesSample
     //
     //////////////////////////////////////////
@@ -93,6 +102,9 @@ namespace Maze
 
         //////////////////////////////////////////
         EntityAspect const& getAspect() const { return m_aspect; }
+
+        //////////////////////////////////////////
+        inline U8 getFlags() const { return m_flags; }
 
 
         //////////////////////////////////////////
@@ -119,12 +131,14 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             EcsWorldPtr const& _ecs,
-            EntityAspect const& _aspect);
+            EntityAspect const& _aspect,
+            U8 _flags = 0);
 
     protected:
         EcsWorldWPtr m_world;
         EcsWorld* m_worldRaw;
         EntityAspect m_aspect;
+        U8 m_flags = 0;
     };
 
 
@@ -148,10 +162,11 @@ namespace Maze
         //////////////////////////////////////////
         static EntitiesSamplePtr Create(
             EcsWorldPtr const& _ecs,
-            EntityAspect const& _aspect)
+            EntityAspect const& _aspect,
+            U8 _flags = 0)
         {
             EntitiesSamplePtr object;
-            MAZE_CREATE_AND_INIT_SHARED_PTR(EntitiesSample, object, init(_ecs, _aspect));
+            MAZE_CREATE_AND_INIT_SHARED_PTR(EntitiesSample, object, init(_ecs, _aspect, _flags));
             return object;
         }
 
@@ -193,7 +208,8 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             EcsWorldPtr const& _ecs,
-            EntityAspect const& _aspect) MAZE_OVERRIDE;
+            EntityAspect const& _aspect,
+            U8 _flags = 0) MAZE_OVERRIDE;
 
     protected:
         Vector<Entity*> m_entities;
@@ -242,7 +258,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline SharedPtr<GenericInclusiveEntitiesSample> Create(EcsWorldPtr const& _ecs)
+        static inline SharedPtr<GenericInclusiveEntitiesSample> Create(
+            EcsWorldPtr const& _ecs,
+            U8 _flags = 0)
         {
             SharedPtr<GenericInclusiveEntitiesSample> object;
 
@@ -250,7 +268,7 @@ namespace Maze
 
             EntityAspect aspect = EntityAspect::HaveAllOfComponents<TComponents...>();
 
-            if (!object->init(_ecs, aspect))
+            if (!object->init(_ecs, aspect, _flags))
                 object.reset();
             return object;
         }
@@ -291,7 +309,8 @@ namespace Maze
             typename UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entity->getId());
 
             bool intersects;
-            if (!_entity->getActiveInHierarchy() || !_entity->getEcsWorld())
+            bool includeInactive = m_flags & (U8)EntitiesSampleFlags::IncludeInactive;
+            if ((!includeInactive && !_entity->getActiveInHierarchy()) || !_entity->getEcsWorld())
                 intersects = false;
             else
                 intersects = m_aspect.hasIntersection(_entity);
@@ -462,9 +481,10 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             EcsWorldPtr const& _ecs,
-            EntityAspect const& _aspect) MAZE_OVERRIDE
+            EntityAspect const& _aspect,
+            U8 _flags = 0) MAZE_OVERRIDE
         {
-            if (!IEntitiesSample::init(_ecs, _aspect))
+            if (!IEntitiesSample::init(_ecs, _aspect, _flags))
                 return false;
 
             return true;
@@ -537,7 +557,8 @@ namespace Maze
         //////////////////////////////////////////
         static inline SharedPtr<DynamicIdEntitiesSample> Create(
             EcsWorldPtr const& _ecs,
-            ComponentId _id)
+            ComponentId _id,
+            U8 _flags = 0)
         {
             SharedPtr<DynamicIdEntitiesSample> object;
 
@@ -546,7 +567,7 @@ namespace Maze
 
             EntityAspect aspect(EntityAspectType::HaveAllOfComponents, { _id });
 
-            if (!object->init(_ecs, aspect))
+            if (!object->init(_ecs, aspect, _flags))
                 object.reset();
             return object;
         }
@@ -587,7 +608,8 @@ namespace Maze
             typename UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entity->getId());
 
             bool intersects;
-            if (!_entity->getActiveInHierarchy() || !_entity->getEcsWorld())
+            bool includeInactive = m_flags & (U8)EntitiesSampleFlags::IncludeInactive;
+            if ((!includeInactive && !_entity->getActiveInHierarchy()) || !_entity->getEcsWorld())
                 intersects = false;
             else
                 intersects = m_aspect.hasIntersection(_entity);
@@ -703,9 +725,10 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             EcsWorldPtr const& _ecs,
-            EntityAspect const& _aspect) MAZE_OVERRIDE
+            EntityAspect const& _aspect,
+            U8 _flags = 0) MAZE_OVERRIDE
         {
-            if (!IEntitiesSample::init(_ecs, _aspect))
+            if (!IEntitiesSample::init(_ecs, _aspect, _flags))
                 return false;
 
             return true;

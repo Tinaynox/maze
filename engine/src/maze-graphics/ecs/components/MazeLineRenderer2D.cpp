@@ -346,9 +346,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(LineRenderer2DOnEcsWorldWillBeDestroyed,
+    COMPONENT_SYSTEM_EVENT_HANDLER_EX(LineRenderer2DOnEcsWorldWillBeDestroyed,
         {},
         {},
+        (U8)EntitiesSampleFlags::IncludeInactive,
         EcsWorldWillBeDestroyedEvent const& _event,
         Entity* _entity,
         LineRenderer2D* _lineRenderer)

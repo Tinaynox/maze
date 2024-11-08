@@ -500,9 +500,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(TrailRenderer3DOnEcsWorldWillBeDestroyed,
+    COMPONENT_SYSTEM_EVENT_HANDLER_EX(TrailRenderer3DOnEcsWorldWillBeDestroyed,
         {},
         {},
+        (U8)EntitiesSampleFlags::IncludeInactive,
         EcsWorldWillBeDestroyedEvent const& _event,
         Entity* _entity,
         TrailRenderer3D* _trailRenderer)

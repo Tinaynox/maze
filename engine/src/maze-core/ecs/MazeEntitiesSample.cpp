@@ -49,7 +49,8 @@ namespace Maze
     //////////////////////////////////////////
     bool IEntitiesSample::init(
         EcsWorldPtr const& _ecs,
-        EntityAspect const& _aspect)
+        EntityAspect const& _aspect,
+        U8 _flags)
     {
         if (!_ecs)
             return false;
@@ -57,6 +58,7 @@ namespace Maze
         m_world = _ecs;
         m_worldRaw = _ecs.get();
         m_aspect = _aspect;
+        m_flags = _flags;
 
         return true;
     }
@@ -83,9 +85,10 @@ namespace Maze
     //////////////////////////////////////////
     bool EntitiesSample::init(
         EcsWorldPtr const& _ecs,
-        EntityAspect const& _aspect)
+        EntityAspect const& _aspect,
+        U8 _flags)
     {
-        if (!IEntitiesSample::init(_ecs, _aspect))
+        if (!IEntitiesSample::init(_ecs, _aspect, _flags))
             return false;
 
         return true;
@@ -112,7 +115,8 @@ namespace Maze
             _entity);
 
         bool intersects;
-        if (!_entity->getActiveInHierarchy() || !_entity->getEcsWorld())
+        bool includeInactive = m_flags & (U8)EntitiesSampleFlags::IncludeInactive;
+        if ((!includeInactive && !_entity->getActiveInHierarchy()) || !_entity->getEcsWorld())
             intersects = false;
         else
             intersects = m_aspect.hasIntersection(_entity);            

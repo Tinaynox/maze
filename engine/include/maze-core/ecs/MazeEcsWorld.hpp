@@ -195,22 +195,30 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        EntitiesSamplePtr requestCommonSample(EntityAspect const& _aspect);
+        EntitiesSamplePtr requestCommonSample(
+            EntityAspect const& _aspect,
+            U8 _flags = 0);
 
         //////////////////////////////////////////
         template<typename ...TComponents>
-        inline SharedPtr<GenericInclusiveEntitiesSample<TComponents...>> requestInclusiveSample()
+        inline SharedPtr<GenericInclusiveEntitiesSample<TComponents...>> requestInclusiveSample(
+            U8 _flags = 0)
         {
             for (Size i = 0, in = m_samples.size(); i < in; ++i)
             {
                 if (m_samples[i]->getType() != EntitiesSampleType::GenericInclusive)
                     continue;
 
+                if (m_samples[i]->getFlags() != _flags)
+                    continue;
+
                 if (m_samples[i]->getAspect().isAspect<TComponents...>(EntityAspectType::HaveAllOfComponents))
                     return m_samples[i]->cast<GenericInclusiveEntitiesSample<TComponents...>>();
             }
 
-            SharedPtr<GenericInclusiveEntitiesSample<TComponents...>> sample = GenericInclusiveEntitiesSample<TComponents...>::Create(getSharedPtr());
+            SharedPtr<GenericInclusiveEntitiesSample<TComponents...>> sample = GenericInclusiveEntitiesSample<TComponents...>::Create(
+                getSharedPtr(),
+                _flags);
             m_samples.push_back(sample);
 
             for (Size i = 0, in = m_entities.size(); i < in; ++i)
@@ -222,11 +230,16 @@ namespace Maze
 
         //////////////////////////////////////////
         template<typename TComponent>
-        inline SharedPtr<DynamicIdEntitiesSample<TComponent>> requestDynamicIdSample(ComponentId _dynamicId)
+        inline SharedPtr<DynamicIdEntitiesSample<TComponent>> requestDynamicIdSample(
+            ComponentId _dynamicId,
+            U8 _flags = 0)
         {
             for (Size i = 0, in = m_samples.size(); i < in; ++i)
             {
                 if (m_samples[i]->getType() != EntitiesSampleType::DynamicId)
+                    continue;
+
+                if (m_samples[i]->getFlags() != _flags)
                     continue;
 
                 if (m_samples[i]->getAspect().getComponentIds().size() == 1 && m_samples[i]->getAspect().getComponentIds()[0] == _dynamicId)
@@ -234,7 +247,7 @@ namespace Maze
             }
 
             SharedPtr<DynamicIdEntitiesSample<TComponent>> sample = DynamicIdEntitiesSample<TComponent>::Create(
-                getSharedPtr(), _dynamicId);
+                getSharedPtr(), _dynamicId, _flags);
             m_samples.push_back(sample);
 
             for (Size i = 0, in = m_entities.size(); i < in; ++i)
@@ -250,13 +263,14 @@ namespace Maze
             HashedCString _name,
             void (*_func)(TEventType&, Entity*, TComponents* ...),
             Set<HashedString> const& _tags = Set<HashedString>(),
-            ComponentSystemOrder const& _order = ComponentSystemOrder())
+            ComponentSystemOrder const& _order = ComponentSystemOrder(),
+            U8 _sampleFlags = 0)
         {
             ComponentSystemEventHandlerPtr system = ComponentSystemEventHandler::Create(
                 this,
                 _name,
                 ClassInfo<typename std::remove_const<TEventType>::type>::UID(),
-                requestInclusiveSample<TComponents...>(),
+                requestInclusiveSample<TComponents...>(_sampleFlags),
                 (ComponentSystemEventHandler::Func)_func,
                 _tags,
                 _order);
