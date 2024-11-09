@@ -363,10 +363,10 @@ namespace Maze
         {
             if (StringHelper::IsEndsWith(subBlock->getName().str, ":EntityId"))
             {
-                S32 index = subBlock->getS32(MAZE_HCS("value"), -1);
-                if (index >= 0)
+                S32 entityIndex = subBlock->getS32(MAZE_HCS("value"), -1);
+                if (entityIndex >= 0)
                 {
-                    EntityPtr entity = _outEntities[index];
+                    EntityPtr const& entity = _outEntities[entityIndex];
                     if (entity)
                         subBlock->setS32(MAZE_HCS("value"), (S32)entity->getId());
                     else
@@ -374,6 +374,28 @@ namespace Maze
                 }
                 else
                     subBlock->setS32(MAZE_HCS("value"), (S32)c_invalidEntityId);
+            }
+            else
+            if (StringHelper::IsEndsWith(subBlock->getName().str, ":Array<EntityId>"))
+            {
+                for (DataBlock::ParamIndex i = 0; i < (DataBlock::ParamIndex)subBlock->getParamsCount(); ++i)
+                {
+                    DataBlockParamType paramType = subBlock->getParamType(i);
+                    if (paramType == DataBlockParamType::ParamS32)
+                    {
+                        S32 entityIndex = subBlock->getS32(i);
+                        if (entityIndex >= 0)
+                        {
+                            EntityPtr const& entity = _outEntities[entityIndex];
+                            if (entity)
+                                subBlock->setS32(i, (S32)entity->getId());
+                            else
+                                subBlock->setS32(i, (S32)c_invalidEntityId);
+                        }
+                        else
+                            subBlock->setS32(i, (S32)c_invalidEntityId);
+                    }
+                }
             }
             else
             {
@@ -1198,13 +1220,20 @@ namespace Maze
                                             else
                                             if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
                                             {
-                                                DataBlock const* entityIdParam = EcsHelper::GetEntityIdParam(*componentBlock, propertyName.str);
-                                                if (entityIdParam)
+                                                DataBlock const* entityIdBlock = EcsHelper::GetEntityIdParam(*componentBlock, propertyName.str);
+                                                if (entityIdBlock)
                                                 {
-                                                    EntityId entityId(entityIdParam->getS32(MAZE_HCS("value")));
+                                                    EntityId entityId(entityIdBlock->getS32(MAZE_HCS("value")));
                                                     metaProperty->setValue(componentMetaInstance, &entitiesPerEntityId[entityId]);
+
+                                                    MAZE_ERROR_IF(
+                                                        entityId != c_invalidEntityId && !entitiesPerEntityId[entityId],
+                                                        "Entity %d is not found! propertyName=%s",
+                                                        (S32)entityId,
+                                                        propertyName.str);
                                                 }
                                                 else
+                                                // #TODO: OBSOLETE, remove later
                                                 if (componentBlock->isParamExists(propertyName))
                                                 {
                                                     MAZE_ERROR("Obsolete eid param: %s!", propertyName.str);
@@ -1237,21 +1266,47 @@ namespace Maze
                                             else
                                             if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
                                             {
-                                                DataBlock const* propertyBlock = componentBlock->getDataBlock(propertyName);
-                                                if (propertyBlock)
+                                                DataBlock const* entityIdArrayBlock = EcsHelper::GetEntityIdArrayParam(*componentBlock, propertyName.str);
+                                                if (entityIdArrayBlock)
                                                 {
-                                                    Vector<S32> entitiesIndices;
-                                                    ValueFromDataBlock(entitiesIndices, *propertyBlock);
+                                                    Vector<S32> entitiesIds;
+                                                    ValueFromDataBlock(entitiesIds, *entityIdArrayBlock);
 
                                                     Vector<EntityPtr> entitiesValue;
-                                                    entitiesValue.resize(entitiesIndices.size());
-                                                    for (Size i = 0, in = entitiesIndices.size(); i < in; ++i)
-                                                        entitiesValue[i] = _outEntities[entitiesIndices[i]];
+                                                    entitiesValue.resize(entitiesIds.size());
+                                                    for (Size i = 0, in = entitiesIds.size(); i < in; ++i)
+                                                    {
+                                                        EntityId entityId(entitiesIds[i]);
+                                                        entitiesValue[i] = entitiesPerEntityId[entityId];
+                                                        MAZE_ERROR_IF(
+                                                            entityId != c_invalidEntityId && !entitiesValue[i],
+                                                            "Entity %d is not found! propertyName=%s",
+                                                            entitiesIds[i],
+                                                            propertyName.str);
+                                                    }
                                                     metaProperty->setValue(componentMetaInstance, &entitiesValue);
                                                 }
+                                                // #TODO: OBSOLETE, remove later
                                                 else
                                                 {
-                                                    MAZE_ERROR("Invalid property '%s'", propertyName.str);
+                                                    DataBlock const* propertyBlock = componentBlock->getDataBlock(propertyName);
+                                                    if (propertyBlock)
+                                                    {
+                                                        MAZE_ERROR("Obsolete eid array block: %s!", propertyName.str);
+
+                                                        Vector<S32> entitiesIndices;
+                                                        ValueFromDataBlock(entitiesIndices, *propertyBlock);
+
+                                                        Vector<EntityPtr> entitiesValue;
+                                                        entitiesValue.resize(entitiesIndices.size());
+                                                        for (Size i = 0, in = entitiesIndices.size(); i < in; ++i)
+                                                            entitiesValue[i] = _outEntities[entitiesIndices[i]];
+                                                        metaProperty->setValue(componentMetaInstance, &entitiesValue);
+                                                    }
+                                                    else
+                                                    {
+                                                        MAZE_ERROR("Invalid property '%s'", propertyName.str);
+                                                    }
                                                 }
                                                 continue;
                                             }

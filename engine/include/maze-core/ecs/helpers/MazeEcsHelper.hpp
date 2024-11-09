@@ -52,6 +52,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API EntityId GetEntityParentId(Entity const* _entity);
 
+
         //////////////////////////////////////////
         MAZE_CORE_API DataBlock* EnsureEntityIdParam(DataBlock& _data, CString _name);
 
@@ -63,6 +64,13 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API EntityId DeserializeEntityIdFromDataBlock(DataBlock const& _data, CString _name);
+
+
+        //////////////////////////////////////////
+        MAZE_CORE_API DataBlock* EnsureEntityIdArrayParam(DataBlock& _data, CString _name);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API DataBlock const* GetEntityIdArrayParam(DataBlock const& _data, CString _name);
 
 
         //////////////////////////////////////////

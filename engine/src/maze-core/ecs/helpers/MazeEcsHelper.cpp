@@ -114,6 +114,25 @@ namespace Maze
             return EntityId(dataBlock->getS32(MAZE_HCS("value"), (S32)c_invalidEntityId));
         }
 
+
+        //////////////////////////////////////////
+        MAZE_CORE_API DataBlock* EnsureEntityIdArrayParam(DataBlock& _data, CString _name)
+        {
+            Char buffer[128];
+            StringHelper::FormatString(buffer, sizeof(buffer), "%s:Array<EntityId>", _name);
+            return _data.ensureDataBlock(HashedCString(buffer));
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API DataBlock const* GetEntityIdArrayParam(DataBlock const& _data, CString _name)
+        {
+            Char buffer[128];
+            StringHelper::FormatString(buffer, sizeof(buffer), "%s:Array<EntityId>", _name);
+
+            return _data.getDataBlock(HashedCString(buffer));
+        }
+
+
         //////////////////////////////////////////
         MAZE_CORE_API DataBlock* EnsureComponentParam(DataBlock& _data, CString _name)
         {
