@@ -82,7 +82,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock* EnsureEntityIdParam(DataBlock& _data, CString _name)
+        MAZE_CORE_API DataBlock* EnsureEntityIdBlock(DataBlock& _data, CString _name)
         {
             Char buffer[128];
             StringHelper::FormatString(buffer, sizeof(buffer), "%s:EntityId", _name);
@@ -92,11 +92,11 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API void SerializeEntityIdToDataBlock(DataBlock& _data, CString _name, EntityId _id)
         {
-            EnsureEntityIdParam(_data, _name)->setS32(MAZE_HCS("value"), (S32)_id);
+            EnsureEntityIdBlock(_data, _name)->setS32(MAZE_HCS("value"), (S32)_id);
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock const* GetEntityIdParam(DataBlock const& _data, CString _name)
+        MAZE_CORE_API DataBlock const* GetEntityIdBlock(DataBlock const& _data, CString _name)
         {
             Char buffer[128];
             StringHelper::FormatString(buffer, sizeof(buffer), "%s:EntityId", _name);
@@ -107,7 +107,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API EntityId DeserializeEntityIdFromDataBlock(DataBlock const& _data, CString _name)
         {
-            DataBlock const* dataBlock = GetEntityIdParam(_data, _name);
+            DataBlock const* dataBlock = GetEntityIdBlock(_data, _name);
             if (!dataBlock)
                 return c_invalidEntityId;
 
@@ -116,7 +116,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock* EnsureEntityIdArrayParam(DataBlock& _data, CString _name)
+        MAZE_CORE_API DataBlock* EnsureEntityIdArrayBlock(DataBlock& _data, CString _name)
         {
             Char buffer[128];
             StringHelper::FormatString(buffer, sizeof(buffer), "%s:Array<EntityId>", _name);
@@ -124,7 +124,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock const* GetEntityIdArrayParam(DataBlock const& _data, CString _name)
+        MAZE_CORE_API DataBlock const* GetEntityIdArrayBlock(DataBlock const& _data, CString _name)
         {
             Char buffer[128];
             StringHelper::FormatString(buffer, sizeof(buffer), "%s:Array<EntityId>", _name);
@@ -134,7 +134,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock* EnsureComponentParam(DataBlock& _data, CString _name)
+        MAZE_CORE_API DataBlock* EnsureComponentBlock(DataBlock& _data, CString _name)
         {
             Char buffer[128];
             StringHelper::FormatString(buffer, sizeof(buffer), "%s:Component", _name);
@@ -147,13 +147,13 @@ namespace Maze
             if (!_component || !_component->getEntity())
                 return;
 
-            DataBlock* cmpBlock = EnsureComponentParam(_data, _name);
+            DataBlock* cmpBlock = EnsureComponentBlock(_data, _name);
             SerializeEntityIdToDataBlock(*cmpBlock, "eid", _component->getEntityId());
             cmpBlock->setString(MAZE_HCS("class"), _component->getComponentClassName());
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock const* GetComponentParam(DataBlock const& _data, CString _name)
+        MAZE_CORE_API DataBlock const* GetComponentBlock(DataBlock const& _data, CString _name)
         {
             Char buffer[128];
             StringHelper::FormatString(buffer, sizeof(buffer), "%s:Component", _name);
@@ -164,7 +164,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Component* DeserializeComponentFromDataBlock(EcsWorld* _ecsWorld, DataBlock const& _data, CString _name)
         {
-            DataBlock const* cmpBlock = GetComponentParam(_data, _name);
+            DataBlock const* cmpBlock = GetComponentBlock(_data, _name);
             if (!cmpBlock)
                 return nullptr;
 
@@ -179,6 +179,24 @@ namespace Maze
 
             ComponentId componentId = GetComponentIdByName(className);
             return entity->getComponentById(componentId).get();
+        }
+
+
+        //////////////////////////////////////////
+        MAZE_CORE_API DataBlock* EnsureComponentArrayBlock(DataBlock& _data, CString _name)
+        {
+            Char buffer[128];
+            StringHelper::FormatString(buffer, sizeof(buffer), "%s:Array<Component>", _name);
+            return _data.ensureDataBlock(HashedCString(buffer));
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API DataBlock const* GetComponentArrayBlock(DataBlock const& _data, CString _name)
+        {
+            Char buffer[128];
+            StringHelper::FormatString(buffer, sizeof(buffer), "%s:Array<Component>", _name);
+
+            return _data.getDataBlock(HashedCString(buffer));
         }
 
     } // namespace EcsHelper

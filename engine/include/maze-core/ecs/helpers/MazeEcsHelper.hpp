@@ -54,36 +54,43 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock* EnsureEntityIdParam(DataBlock& _data, CString _name);
+        MAZE_CORE_API DataBlock* EnsureEntityIdBlock(DataBlock& _data, CString _name);
 
         //////////////////////////////////////////
         MAZE_CORE_API void SerializeEntityIdToDataBlock(DataBlock& _data, CString _name, EntityId _id);
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock const* GetEntityIdParam(DataBlock const& _data, CString _name);
+        MAZE_CORE_API DataBlock const* GetEntityIdBlock(DataBlock const& _data, CString _name);
 
         //////////////////////////////////////////
         MAZE_CORE_API EntityId DeserializeEntityIdFromDataBlock(DataBlock const& _data, CString _name);
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock* EnsureEntityIdArrayParam(DataBlock& _data, CString _name);
+        MAZE_CORE_API DataBlock* EnsureEntityIdArrayBlock(DataBlock& _data, CString _name);
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock const* GetEntityIdArrayParam(DataBlock const& _data, CString _name);
+        MAZE_CORE_API DataBlock const* GetEntityIdArrayBlock(DataBlock const& _data, CString _name);
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock* EnsureComponentParam(DataBlock& _data, CString _name);
+        MAZE_CORE_API DataBlock* EnsureComponentBlock(DataBlock& _data, CString _name);
 
         //////////////////////////////////////////
         MAZE_CORE_API void SerializeComponentToDataBlock(DataBlock& _data, CString _name, Component* _component);
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock const* GetComponentParam(DataBlock const& _data, CString _name);
+        MAZE_CORE_API DataBlock const* GetComponentBlock(DataBlock const& _data, CString _name);
 
         //////////////////////////////////////////
         MAZE_CORE_API Component* DeserializeComponentFromDataBlock(EcsWorld* _ecsWorld, DataBlock const& _data, CString _name);
+
+
+        //////////////////////////////////////////
+        MAZE_CORE_API DataBlock* EnsureComponentArrayBlock(DataBlock& _data, CString _name);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API DataBlock const* GetComponentArrayBlock(DataBlock const& _data, CString _name);
 
     } // namespace EcsHelper
     //////////////////////////////////////////

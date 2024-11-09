@@ -1213,14 +1213,34 @@ namespace Maze
                                         {
                                             if (metaPropertyUID == ClassInfo<ComponentPtr>::UID())
                                             {
-                                                S32 valueIndex = componentBlock->getS32(propertyName);
-                                                metaProperty->setValue(componentMetaInstance, &_outComponents[valueIndex]);
+                                                DataBlock const* cmpBlock = EcsHelper::GetComponentBlock(*componentBlock, propertyName.str);
+                                                if (cmpBlock)
+                                                {
+                                                    S32 valueIndex = cmpBlock->getS32(MAZE_HCS("value"));
+
+                                                    MAZE_ERROR_IF(
+                                                        valueIndex > 0 && !_outComponents[valueIndex],
+                                                        "Component %d is not found! propertyName=%s",
+                                                        valueIndex,
+                                                        propertyName.str);
+
+                                                    metaProperty->setValue(componentMetaInstance, &_outComponents[valueIndex]);
+                                                }
+                                                else
+                                                // #TODO: OBSOLETE, remove later
+                                                if (componentBlock->isParamExists(propertyName))
+                                                {
+                                                    // MAZE_ERROR("Obsolete component param: %s!", propertyName.str);
+                                                    S32 valueIndex = componentBlock->getS32(propertyName);
+                                                    metaProperty->setValue(componentMetaInstance, &_outComponents[valueIndex]);
+                                                }
+
                                                 continue;
                                             }
                                             else
                                             if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
                                             {
-                                                DataBlock const* entityIdBlock = EcsHelper::GetEntityIdParam(*componentBlock, propertyName.str);
+                                                DataBlock const* entityIdBlock = EcsHelper::GetEntityIdBlock(*componentBlock, propertyName.str);
                                                 if (entityIdBlock)
                                                 {
                                                     EntityId entityId(entityIdBlock->getS32(MAZE_HCS("value")));
@@ -1245,28 +1265,54 @@ namespace Maze
                                             else
                                             if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
                                             {
-                                                DataBlock const* propertyBlock = componentBlock->getDataBlock(propertyName);
-                                                if (propertyBlock)
+                                                DataBlock const* cmpArrayBlock = EcsHelper::GetComponentArrayBlock(*componentBlock, propertyName.str);
+                                                if (cmpArrayBlock)
                                                 {
                                                     Vector<S32> componentsIndices;
-                                                    ValueFromDataBlock(componentsIndices, *propertyBlock);
+                                                    ValueFromDataBlock(componentsIndices, *cmpArrayBlock);
 
                                                     Vector<ComponentPtr> componentsValue;
                                                     componentsValue.resize(componentsIndices.size());
                                                     for (Size i = 0, in = componentsIndices.size(); i < in; ++i)
+                                                    {
+                                                        MAZE_ERROR_IF(
+                                                            componentsIndices[i] > 0 && !_outComponents[componentsIndices[i]],
+                                                            "Component %d is not found! propertyName=%s",
+                                                            componentsIndices[i],
+                                                            propertyName.str);
+
                                                         componentsValue[i] = _outComponents[componentsIndices[i]];
+                                                    }
                                                     metaProperty->setValue(componentMetaInstance, &componentsValue);
                                                 }
                                                 else
                                                 {
-                                                    MAZE_ERROR("Invalid property '%s'!", propertyName.str);
+                                                    DataBlock const* propertyBlock = componentBlock->getDataBlock(propertyName);
+                                                    if (propertyBlock)
+                                                    {
+                                                        // MAZE_ERROR("Obsolete component param: %s!", propertyName.str);
+
+                                                        Vector<S32> componentsIndices;
+                                                        ValueFromDataBlock(componentsIndices, *propertyBlock);
+
+                                                        Vector<ComponentPtr> componentsValue;
+                                                        componentsValue.resize(componentsIndices.size());
+                                                        for (Size i = 0, in = componentsIndices.size(); i < in; ++i)
+                                                            componentsValue[i] = _outComponents[componentsIndices[i]];
+                                                        metaProperty->setValue(componentMetaInstance, &componentsValue);
+                                                    }
+                                                    else
+                                                    {
+                                                        MAZE_ERROR("Invalid property '%s'!", propertyName.str);
+                                                    }
                                                 }
+
                                                 continue;
                                             }
                                             else
                                             if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
                                             {
-                                                DataBlock const* entityIdArrayBlock = EcsHelper::GetEntityIdArrayParam(*componentBlock, propertyName.str);
+                                                DataBlock const* entityIdArrayBlock = EcsHelper::GetEntityIdArrayBlock(*componentBlock, propertyName.str);
                                                 if (entityIdArrayBlock)
                                                 {
                                                     Vector<S32> entitiesIds;
