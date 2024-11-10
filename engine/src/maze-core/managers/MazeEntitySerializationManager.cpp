@@ -1230,7 +1230,7 @@ namespace Maze
                                                 // #TODO: OBSOLETE, remove later
                                                 if (componentBlock->isParamExists(propertyName))
                                                 {
-                                                    // MAZE_ERROR("Obsolete component param: %s!", propertyName.str);
+                                                    MAZE_ERROR("Obsolete component param: %s!", propertyName.str);
                                                     S32 valueIndex = componentBlock->getS32(propertyName);
                                                     metaProperty->setValue(componentMetaInstance, &_outComponents[valueIndex]);
                                                 }
@@ -1290,7 +1290,7 @@ namespace Maze
                                                     DataBlock const* propertyBlock = componentBlock->getDataBlock(propertyName);
                                                     if (propertyBlock)
                                                     {
-                                                        // MAZE_ERROR("Obsolete component param: %s!", propertyName.str);
+                                                        MAZE_ERROR("Obsolete component param: %s!", propertyName.str);
 
                                                         Vector<S32> componentsIndices;
                                                         ValueFromDataBlock(componentsIndices, *propertyBlock);
