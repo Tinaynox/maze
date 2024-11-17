@@ -96,6 +96,10 @@ namespace Maze
         //////////////////////////////////////////
         virtual EcsWorld* assignWorld() MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        void setCurrentDropZone(EntityId _eid);
+
     protected:
         CanvasPtr m_canvas;
         UIElement2DPtr m_element;

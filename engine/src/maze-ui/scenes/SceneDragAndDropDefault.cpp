@@ -89,7 +89,7 @@ namespace Maze
         m_canvas->setClearColorFlag(false);
         m_canvas->setClearDepthFlag(false);
         m_canvas->setRenderTarget(m_renderTarget);
-        m_canvas->setSortOrder(1000000);
+        m_canvas->setSortOrder(9000000);
         m_canvas->setViewportTransformPolicy(ViewportTransformPolicy::ViewportToTransform);
         m_canvas->getCanvasScaler()->setScaleMode(CanvasScalerScaleMode::ConstantPixelSize);
 
@@ -101,20 +101,6 @@ namespace Maze
         elementTransform->getEntityRaw()->ensureComponent<SizePolicy2D>();
         m_element = elementTransform->getEntityRaw()->ensureComponent<UIElement2D>();
         m_element->setCaptureCursorHits(false);
-
-        /*
-        SpriteRenderer2DPtr fakeView = SpriteHelper::CreateSprite(
-            SpriteManager::GetCurrentInstance()->getBuiltinSprite(BuiltinSpriteType::White),
-            Vec2F(32.0f),
-            Vec2F(0.0f, 0.0f),
-            MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::Sprite),
-            m_canvas->getTransform(),
-            this,
-            Vec2F(0.0f, 0.0f),
-            Vec2F(0.5f));
-        fakeView->setColor(ColorU32(255, 160, 0, 255));
-        m_dragAndDropView = fakeView->getTransform();
-        */
 
         return true;
     }
@@ -133,7 +119,7 @@ namespace Maze
             else
             if (InputManager::GetInstancePtr()->getCursorButtonState(0, 0))
             {
-                m_currentDropZoneEid = c_invalidEntityId;
+                setCurrentDropZone(c_invalidEntityId);
 
                 m_dragAndDropView->setLocalPosition(renderTargetCursorPos);
 
@@ -151,7 +137,7 @@ namespace Maze
                                     renderTargetCursorPos,
                                     traceParams))
                                 {
-                                    m_currentDropZoneEid = _zone->getEntityId();
+                                    setCurrentDropZone(_zone->getEntityId());
                                 }
                             });
                     });
@@ -200,6 +186,8 @@ namespace Maze
         if (m_element)
             m_element->setCaptureCursorHits(false);
 
+        setCurrentDropZone(c_invalidEntityId);
+
         m_viewEntityId = c_invalidEntityId;
         m_data.clear();
 
@@ -221,6 +209,17 @@ namespace Maze
         }
 
         cancelDrag();
+    }
+
+    //////////////////////////////////////////
+    void SceneDragAndDropDefault::setCurrentDropZone(EntityId _eid)
+    {
+        if (m_currentDropZoneEid == _eid)
+            return;
+
+        m_currentDropZoneEid = _eid;
+
+        getWorld()->broadcastEvent<DragAndDropCurrentZoneChangedEvent>(m_currentDropZoneEid);
     }
 
 } // namespace Maze

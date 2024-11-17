@@ -26,9 +26,11 @@
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/events/MazeUIEvents.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
@@ -125,6 +127,7 @@ namespace Maze
             m_cursorIndex = _inputEvent.index;
 
             eventCursorPressIn(positionOS, _inputEvent);
+            getEntityRaw()->getEcsWorld()->sendEvent<UIElementCursorPressInEvent>(getEntityId(), positionOS, _inputEvent);
 
             setPressed(true);
         }
@@ -154,6 +157,7 @@ namespace Maze
                 _inputEvent.captureHit((S32)getEntityId());
 
             eventSingleClick(positionOS, _inputEvent);
+            getEntityRaw()->getEcsWorld()->sendEvent<UIElementSingleClickEvent>(getEntityId(), positionOS, _inputEvent);
         }
     }
 
@@ -181,6 +185,7 @@ namespace Maze
                 _inputEvent.captureHit((S32)getEntityId());
 
             eventDoubleClick(positionOS, _inputEvent);
+            getEntityRaw()->getEcsWorld()->sendEvent<UIElementDoubleClickEvent>(getEntityId(), positionOS, _inputEvent);
         }
     }
 
@@ -227,6 +232,7 @@ namespace Maze
                 if (m_focused)
                 {
                     eventClick(positionOS, _inputEvent);
+                    getEntityRaw()->getEcsWorld()->sendEvent<UIElementClickEvent>(getEntityId(), positionOS, _inputEvent);
                 }
             }
         }

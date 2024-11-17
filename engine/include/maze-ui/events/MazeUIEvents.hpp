@@ -33,6 +33,7 @@
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/events/MazeEvent.hpp"
 #include "maze-core/ecs/MazeEcsTypes.hpp"
+#include "maze-ui/MazeCursorInputEvent.hpp"
 
 
 //////////////////////////////////////////
@@ -65,6 +66,154 @@ namespace Maze
     public:
         DataBlock data;
         EntityId viewEid;
+    };
+
+
+    //////////////////////////////////////////
+    // Class DragAndDropCurrentZoneChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API DragAndDropCurrentZoneChangedEvent
+        : public GenericEvent<DragAndDropCurrentZoneChangedEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(DragAndDropCurrentZoneChangedEvent, Event);
+
+
+        //////////////////////////////////////////
+        DragAndDropCurrentZoneChangedEvent() = default;
+
+        //////////////////////////////////////////
+        DragAndDropCurrentZoneChangedEvent(
+            EntityId _zoneEid)
+            : zoneEid(_zoneEid)
+        {}
+
+    public:
+        EntityId zoneEid;
+    };
+
+
+
+    //////////////////////////////////////////
+    // Class UIElementClickEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UIElementClickEvent
+        : public GenericEvent<UIElementClickEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UIElementClickEvent, Event);
+
+
+        //////////////////////////////////////////
+        UIElementClickEvent() = default;
+
+        //////////////////////////////////////////
+        UIElementClickEvent(
+            Vec2F const& _positionOS,
+            CursorInputEvent _inputEvent)
+            : positionOS(_positionOS)
+            , inputEvent(_inputEvent)
+        {}
+
+    public:
+        Vec2F positionOS;
+        CursorInputEvent inputEvent;
+    };
+
+
+    //////////////////////////////////////////
+    // Class UIElementSingleClickEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UIElementSingleClickEvent
+        : public GenericEvent<UIElementSingleClickEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UIElementSingleClickEvent, Event);
+
+
+        //////////////////////////////////////////
+        UIElementSingleClickEvent() = default;
+
+        //////////////////////////////////////////
+        UIElementSingleClickEvent(
+            Vec2F const& _positionOS,
+            CursorInputEvent _inputEvent)
+            : positionOS(_positionOS)
+            , inputEvent(_inputEvent)
+        {}
+
+    public:
+        Vec2F positionOS;
+        CursorInputEvent inputEvent;
+    };
+
+
+    //////////////////////////////////////////
+    // Class UIElementDoubleClickEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UIElementDoubleClickEvent
+        : public GenericEvent<UIElementDoubleClickEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UIElementDoubleClickEvent, Event);
+
+
+        //////////////////////////////////////////
+        UIElementDoubleClickEvent() = default;
+
+        //////////////////////////////////////////
+        UIElementDoubleClickEvent(
+            Vec2F const& _positionOS,
+            CursorInputEvent _inputEvent)
+            : positionOS(_positionOS)
+            , inputEvent(_inputEvent)
+        {}
+
+    public:
+        Vec2F positionOS;
+        CursorInputEvent inputEvent;
+    };
+
+
+    //////////////////////////////////////////
+    // Class UIElementCursorPressInEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UIElementCursorPressInEvent
+        : public GenericEvent<UIElementCursorPressInEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UIElementCursorPressInEvent, Event);
+
+
+        //////////////////////////////////////////
+        UIElementCursorPressInEvent() = default;
+
+        //////////////////////////////////////////
+        UIElementCursorPressInEvent(
+            Vec2F const& _positionOS,
+            CursorInputEvent _inputEvent)
+            : positionOS(_positionOS)
+            , inputEvent(_inputEvent)
+        {}
+
+    public:
+        Vec2F positionOS;
+        CursorInputEvent inputEvent;
     };
 
 

@@ -42,6 +42,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(InventorySlot);
     MAZE_USING_SHARED_PTR(InventoryItem);
     MAZE_USING_SHARED_PTR(DragAndDropZone);
+    MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     
 
     //////////////////////////////////////////
@@ -77,6 +78,13 @@ namespace Maze
         //////////////////////////////////////////
         inline InventoryItemPtr const& getItem() const { return m_item; }
 
+
+        //////////////////////////////////////////
+        inline SpriteRenderer2DPtr const& getGlow() const { return m_glow; }
+
+        //////////////////////////////////////////
+        inline void setGlow(SpriteRenderer2DPtr const& _glow) { m_glow = _glow; }
+
     protected:
 
         //////////////////////////////////////////
@@ -94,6 +102,8 @@ namespace Maze
     protected:
         InventoryItemPtr m_item;
         DragAndDropZonePtr m_dragAndDropZone;
+
+        SpriteRenderer2DPtr m_glow;
     };
 
 

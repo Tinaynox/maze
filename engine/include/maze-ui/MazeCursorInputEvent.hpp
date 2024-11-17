@@ -69,7 +69,7 @@ namespace Maze
     {
         //////////////////////////////////////////
         inline CursorInputEvent(
-            CursorInputType _type,
+            CursorInputType _type = CursorInputType::None,
             S32 _index = 0,
             Vec2F const& _position = Vec2F::c_zero,
             S32 _button = 0,

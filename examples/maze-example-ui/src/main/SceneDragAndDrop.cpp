@@ -58,6 +58,7 @@
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -217,27 +218,24 @@ namespace Maze
             _pos,
             m_canvas->getTransform(),
             this);
-        button->eventCursorPressIn.subscribe(
-            [eid = button->getEntityId(), this](
-                Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _event)
-            {
-                EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorld()->getEntity(eid);
-                if (entity)
-                {
-                    InventorySlot* slot = entity->getComponentRaw<InventorySlot>();
-                    if (slot && slot->getItem())
-                    {
-                        SceneDragAndDropDefaultPtr dndScene = SceneManager::GetInstancePtr()->getScene<SceneDragAndDropDefault>();
-                        if (dndScene)
-                        {
-                            dndScene->startDrag(
-                                slot->getItem()->getEntityRaw()->getComponent<Transform2D>());
-                        }
-                    }
-                }
-            });
+        button->setNormalColor(ColorU32{ 245, 245, 245 });
+        button->setFocusedColor(ColorU32{ 163, 181, 248 });
+        button->setPressedColor(ColorU32{ 255, 160, 0 });
+        
+
+        SpriteRenderer2DPtr glow = SpriteHelper::CreateSprite(
+            MAZE_HCS("cell00_glow.png"),
+            Vec2F(64.0f, 64.0f) * (255.0f / 166.0f),
+            Vec2F::c_zero,
+            button->getTransform(),
+            this);
+        glow->setColor(ColorU32(30, 30, 30, 255));
+        glow->setMaterial(
+            MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::SpriteAdditivePA));
+        glow->getMeshRenderer()->setEnabled(false);
 
         InventorySlotPtr inventorySlot = button->getEntityRaw()->ensureComponent<InventorySlot>();
+        inventorySlot->setGlow(glow);
         return inventorySlot;
     }
 

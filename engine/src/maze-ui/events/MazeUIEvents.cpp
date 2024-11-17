@@ -32,10 +32,22 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class DragAndDropEvent
-    //
-    //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(DragAndDropEvent, Event);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(DragAndDropCurrentZoneChangedEvent, Event);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementClickEvent, Event);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementSingleClickEvent, Event);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementDoubleClickEvent, Event);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementCursorPressInEvent, Event);
 
 
 } // namespace Maze

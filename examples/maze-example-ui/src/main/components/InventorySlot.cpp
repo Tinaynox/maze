@@ -25,12 +25,18 @@
 
 //////////////////////////////////////////
 #include "InventorySlot.hpp"
-#include "ecs/MazeEntity.hpp"
-#include "ecs/components/MazeTransform2D.hpp"
-#include "main/components/InventoryItem.hpp"
+#include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
+#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/events/MazeUIEvents.hpp"
+#include "maze-ui/scenes/SceneDragAndDropDefault.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "main/components/InventoryItem.hpp"
 
 
 //////////////////////////////////////////
@@ -96,6 +102,27 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(InventorySlotOnPressInEvent,
+        {},
+        {},
+        UIElementCursorPressInEvent const& _event,
+        Entity* _entity,
+        InventorySlot* _slot)
+    {
+        if (_slot->getItem())
+        {
+            SceneDragAndDropDefaultPtr dndScene = SceneManager::GetInstancePtr()->getScene<SceneDragAndDropDefault>();
+            if (dndScene)
+            {
+                dndScene->startDrag(
+                    _slot->getItem()->getEntityRaw()->getComponent<Transform2D>());
+                _entity->getComponent<ClickButton2D>()->getUIElement()->setPressed(false);
+                _entity->getComponent<ClickButton2D>()->getUIElement()->setFocused(false);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(InventorySlotOnDragAndDropEvent,
         {},
         {},
@@ -111,6 +138,20 @@ namespace Maze
                 _slot->setItem(item);
         }
     }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(InventorySlotOnDragAndDropCurrentZoneChangedEvent,
+        {},
+        {},
+        DragAndDropCurrentZoneChangedEvent const& _event,
+        Entity* _entity,
+        InventorySlot* _slot)
+    {
+        _slot->getGlow()->getMeshRenderer()->setEnabled(
+            _entity->getId() == _event.zoneEid);
+    }
+
+    
 
 } // namespace Maze
 //////////////////////////////////////////
