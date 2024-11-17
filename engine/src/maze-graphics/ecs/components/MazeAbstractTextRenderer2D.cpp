@@ -86,12 +86,10 @@ namespace Maze
     //////////////////////////////////////////
     bool AbstractTextRenderer2D::init(
         Component* _component,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         if (!AbstractTextRenderer::init(
             _component,
-            _world,
             _copyData))
             return false;
 

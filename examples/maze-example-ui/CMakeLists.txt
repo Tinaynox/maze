@@ -36,7 +36,8 @@ set(EXAMPLE_MAZE_LIBS
     maze-ui
     maze-engine
     maze-editor-tools
-    maze-plugin-loader-ttf)
+    maze-plugin-loader-ttf
+    maze-plugin-loader-png)
 
 
 ##########################################
@@ -56,6 +57,7 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
 
 ##########################################
 add_subdirectory("${MAZE_DIR}/plugins/loader-ttf" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-ttf")
+add_subdirectory("${MAZE_DIR}/plugins/loader-png" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-png")
 
 
 ##########################################

@@ -77,10 +77,9 @@ namespace Maze
     //////////////////////////////////////////
     bool Transform3D::init(
         Component* _component,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
-        if (!Component::init(_component, _world, _copyData))
+        if (!Component::init(_component, _copyData))
             return false;
 
         Transform3D* transform3D = static_cast<Transform3D*>(_component);
@@ -89,7 +88,7 @@ namespace Maze
 
         for (Transform3D* childTransform : transform3D->m_children)
         {
-            EntityPtr child = childTransform->getEntityRaw()->createCopy(_world, _copyData);
+            EntityPtr child = childTransform->getEntityRaw()->createCopy(_copyData);
             Transform3D* childTransformCopy = child->getComponentRaw<Transform3D>();
             childTransformCopy->setParent(cast<Transform3D>());
         }

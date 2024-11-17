@@ -215,7 +215,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             Component* _component,
-            EcsWorld* _world,
             EntityCopyData _copyData = EntityCopyData()) MAZE_OVERRIDE;
 
 

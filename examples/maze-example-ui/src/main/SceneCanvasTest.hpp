@@ -94,7 +94,7 @@ namespace Maze
         virtual bool init() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport);
+        void notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport);
 
         //////////////////////////////////////////
         void create3D();
@@ -105,7 +105,7 @@ namespace Maze
 
     protected:        
         CanvasPtr m_canvas0;
-        Rect2DF m_canvas0Viewport = Rect2DF(0.33f, 0.33f, 0.66f, 0.66f);
+        Rect2F m_canvas0Viewport = Rect2F(0.33f, 0.33f, 0.66f, 0.66f);
         SpriteRenderer2DPtr m_square0;
         TextRenderer2DPtr m_text0;
     };

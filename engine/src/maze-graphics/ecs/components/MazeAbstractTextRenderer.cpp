@@ -87,14 +87,12 @@ namespace Maze
     //////////////////////////////////////////
     bool AbstractTextRenderer::init(
         Component* _component,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         m_renderSystem = _component->castRaw<AbstractTextRenderer>()->m_renderSystem;
 
         if (!Component::init(
             _component,
-            _world,
             _copyData))
             return false;
 

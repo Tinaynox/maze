@@ -135,7 +135,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCanvasTest::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
+    void SceneCanvasTest::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
     {
         m_canvas0->setViewport(m_canvas0Viewport);
     }

@@ -73,11 +73,10 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr Entity::Create(
         Entity* _entity,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         EntityPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(Entity, object, init(_entity, _world, _copyData));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(Entity, object, init(_entity, _copyData));
         return object;
     }
 
@@ -96,7 +95,6 @@ namespace Maze
     //////////////////////////////////////////
     bool Entity::init(
         Entity* _entity,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         m_transitionFlags |= static_cast<U8>(TransitionFlags::AwakeForbidden);
@@ -104,16 +102,19 @@ namespace Maze
         _copyData.pushStackDepth();
         _copyData.getEntities()[_entity] = this;
 
-        setEcsScene(_entity->m_scene);
+        if (!_copyData.getWorld())
+            _copyData.setWorld(_entity->m_world);
+
+        if (!_copyData.getScene())
+            _copyData.setScene(_entity->m_scene);
+
+        MAZE_DEBUG_ERROR_RETURN_VALUE_IF(!_copyData.getWorld(), false, "You cannot copy entities out of World!");
+
+        setEcsScene(_copyData.getScene());
 
         setFlags(_entity->m_flags);
 
-        if (!_world)
-            _world = _entity->m_world;
-
-        MAZE_DEBUG_ERROR_RETURN_VALUE_IF(!_world, false, "You cannot copy entities out of World!");
-
-        _world->addEntity(getSharedPtr());
+        _copyData.getWorld()->addEntity(getSharedPtr());
 
         for (auto const& componentData : _entity->m_components)
         {
@@ -122,12 +123,11 @@ namespace Maze
             {
                 componentIt->second->init(
                     componentData.second.get(),
-                    _world,
                     _copyData);
             }
             else
             {
-                ComponentPtr component = componentData.second->createCopy(_world, _copyData);
+                ComponentPtr component = componentData.second->createCopy(_copyData);
                 addComponent(component);
             }
 

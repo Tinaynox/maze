@@ -84,12 +84,7 @@ namespace Maze
 
         return true;
     }
-
-    //////////////////////////////////////////
-    void Experimental::processEntityAwakened()
-    {
-        
-    }        
+   
 
 } // namespace Maze
 //////////////////////////////////////////

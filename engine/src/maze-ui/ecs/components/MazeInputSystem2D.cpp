@@ -43,6 +43,7 @@
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeWindowManager.hpp"
 #include "maze-ui/ecs/components/MazeEditBox2D.hpp"
 #include "maze-ui/ecs/components/MazeDropdown2D.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
@@ -88,6 +89,25 @@ namespace Maze
 #else
 #   define INPUT_SYSTEM2D_ELEMENTS_LOCK()
 #endif
+
+
+    //////////////////////////////////////////
+    void SetupCursorInputEventForCanvasData(
+        CursorInputEvent& _event,
+        InputSystem2D::CanvasData const& _canvasData,
+        Vec2F const& _renderTargetCoords)
+    {
+        _event.canvas = _canvasData.canvas;
+        _event.rootCanvas = _canvasData.rootCanvas;
+
+        //bool canvasContainsCursor = _canvasData.canvas->getRenderTargetAABB().contains(_renderTargetCoords);
+
+        if (_event.rootCanvas)
+            _event.position = _event.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+        else
+            _event.position = _event.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+
+    }
 
 
     //////////////////////////////////////////
@@ -280,6 +300,72 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool InputSystem2D::traceElement(
+        UIElement2D const* _element,
+        Vec2F const& _renderTargetCoords,
+        CursorElementTraceParams const& _traceParams)
+    {
+        Window* window = _traceParams.window;
+
+        if (!window)
+            window = WindowManager::GetInstancePtr()->getFirstOpenedWindow();
+
+        if (!m_sortedUIElements2DLocked)
+            updateSortedUIElements2DList();
+
+        CursorInputEvent cursorInputEvent(
+            CursorInputType::Trace,
+            _traceParams.cursorIndex,
+            Maze::Vec2F::c_zero,
+            _traceParams.buttonIndex,
+            _traceParams.inputSource,
+            window);
+
+        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
+                                                        end = m_sortedUIElements2D.rend();
+                                                        it != end;
+                                                        ++it)
+        {
+            CanvasData const& canvasData = *it;
+
+            if (canvasData.rootCanvas &&
+                canvasData.rootCanvas->getRenderTarget() &&
+                canvasData.rootCanvas->getRenderTarget()->getMetaClass()->isInheritedFrom<RenderWindow>())
+            {
+                if (window != canvasData.rootCanvas->getRenderTarget()->castRaw<RenderWindow>()->getWindowRaw())
+                    continue;
+            }
+
+            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+            SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
+
+            for (Vector<UIElement2D*>::const_reverse_iterator it2 = sortedUIElements2D.rbegin(),
+                end2 = sortedUIElements2D.rend();
+                it2 != end2;
+                ++it2)
+            {
+                UIElement2D* element = *it2;
+
+                if (_traceParams.ignoreElements.count(element->getEntityId()))
+                    continue;
+
+                bool traceResult = element->processCursorTrace(cursorInputEvent);
+
+                if (element == _element)
+                    return traceResult;
+
+                if (cursorInputEvent.isCaptured())
+                    return false;
+            }
+
+            if (cursorInputEvent.isCaptured())
+                return false;
+        }
+
+        return false;
+    }
+
+    //////////////////////////////////////////
     void InputSystem2D::processCanvasEntityAdded(Entity* _entity)
     {
         updateSortedCanvasesList();
@@ -426,24 +512,6 @@ namespace Maze
                 break;
             }
         }
-    }
-
-    //////////////////////////////////////////
-    void SetupCursorInputEventForCanvasData(
-        CursorInputEvent& _event,
-        InputSystem2D::CanvasData const& _canvasData,
-        Vec2F const& _renderTargetCoords)
-    {
-        _event.canvas = _canvasData.canvas;
-        _event.rootCanvas = _canvasData.rootCanvas;
-
-        //bool canvasContainsCursor = _canvasData.canvas->getRenderTargetAABB().contains(_renderTargetCoords);
-
-        if (_event.rootCanvas)
-            _event.position = _event.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-        else
-            _event.position = _event.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-
     }
 
 

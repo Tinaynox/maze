@@ -52,6 +52,7 @@
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeExperimental.hpp"
 #include "maze-ui/ecs/components/MazeTextRenderer2D.hpp"
+#include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
 
 
 //////////////////////////////////////////
@@ -162,6 +163,7 @@ namespace Maze
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UITweenTransitionScale>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Experimental>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<TextRenderer2D>("UI");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<DragAndDropZone>("UI");
 
         return true;
     }

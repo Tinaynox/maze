@@ -358,6 +358,21 @@ namespace Maze
         //////////////////////////////////////////
         inline bool isEntityActiveChanged() { return isEntityActiveChangedCurrentFrame() || isEntityActiveChangedPreviousFrame(); }
 
+
+        //////////////////////////////////////////
+        inline Transform2D* findRecursive(std::function<bool(Transform2D*)> _pred)
+        {
+            if (_pred(this))
+                return this;
+
+            for (Transform2D* child : m_children)
+                if (Transform2D* result = child->findRecursive(_pred))
+                    return result;
+
+            return nullptr;
+        }
+
+
         //////////////////////////////////////////
         Vector<Transform2D*> const& getChildren() const { return m_children; }
 
@@ -618,7 +633,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             Component* _component,
-            EcsWorld* _world,
             EntityCopyData _copyData = EntityCopyData()) MAZE_OVERRIDE;
 
         ////////////////////////////////////

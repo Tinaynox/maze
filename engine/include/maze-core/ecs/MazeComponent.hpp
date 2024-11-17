@@ -45,6 +45,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Component);
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(EcsWorld);
+    MAZE_USING_SHARED_PTR(EcsScene);
     MAZE_USING_SHARED_PTR(ComponentEntityLinker);
 
 
@@ -132,12 +133,28 @@ namespace Maze
         //////////////////////////////////////////
         inline void popStackDepth() { --m_stackDepth; }
 
+
+        //////////////////////////////////////////
+        inline EcsWorld* getWorld() const { return m_world; }
+
+        //////////////////////////////////////////
+        inline void setWorld(EcsWorld* _world) { m_world = _world; }
+
+        //////////////////////////////////////////
+        inline EcsScene* getScene() const { return m_scene; }
+
+        //////////////////////////////////////////
+        inline void setScene(EcsScene* _scene) { m_scene = _scene; }
+
     private:
         SharedPtr<Map<Entity*, Entity*>> m_entities;
         SharedPtr<Map<Component*, Component*>> m_components;
         SharedPtr<Vector<ComponentPropertyData>> m_componentProperties;
         SharedPtr<Vector<EntityPropertyData>> m_entityProperties;
         S32 m_stackDepth;
+
+        EcsWorld* m_world = nullptr;
+        EcsScene* m_scene = nullptr;
     };
 
 
@@ -169,15 +186,13 @@ namespace Maze
         //////////////////////////////////////////
         ComponentPtr Create(
             Component* _component,
-            EcsWorld* _world = nullptr,
             EntityCopyData _copyData = EntityCopyData());
 
         //////////////////////////////////////////
         inline ComponentPtr createCopy(
-            EcsWorld* _world = nullptr,
             EntityCopyData _copyData = EntityCopyData())
         {
-            return Create(this, _world, _copyData);
+            return Create(this, _copyData);
         }
 
         //////////////////////////////////////////
@@ -257,7 +272,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             Component* _component,
-            EcsWorld* _world,
             EntityCopyData _copyData = EntityCopyData());
 
         //////////////////////////////////////////

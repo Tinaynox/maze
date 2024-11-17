@@ -100,6 +100,9 @@ namespace Maze
         void processCursorRelease(CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
+        bool processCursorTrace(CursorInputEvent const& _inputEvent);
+
+        //////////////////////////////////////////
         void processCursorMove(CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////

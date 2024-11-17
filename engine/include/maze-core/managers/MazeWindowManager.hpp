@@ -85,6 +85,9 @@ namespace Maze
         WindowsList const& getWindows() const { return m_windows; }
 
         //////////////////////////////////////////
+        Window* getFirstOpenedWindow() const;
+
+        //////////////////////////////////////////
         virtual void updateDisplaysList() MAZE_ABSTRACT;
 
         //////////////////////////////////////////

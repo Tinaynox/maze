@@ -133,7 +133,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneFontTest::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
+    void SceneFontTest::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
     {
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
     }

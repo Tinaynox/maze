@@ -56,13 +56,12 @@ namespace Maze
     //////////////////////////////////////////
     ComponentPtr Component::Create(
         Component* _component,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         MetaClass* metaClass = _component->getMetaClass();
         ComponentPtr newComponent(static_cast<Component*>(metaClass->createInstance()));
         MAZE_ERROR_RETURN_VALUE_IF(!newComponent, ComponentPtr(), "Can't instantiate Component %s!", _component->getClassName().str);
-        if (!newComponent->init(_component, _world, _copyData))
+        if (!newComponent->init(_component, _copyData))
             return ComponentPtr();
         
         return newComponent;
@@ -71,7 +70,6 @@ namespace Maze
     //////////////////////////////////////////
     bool Component::init(
         Component* _component,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         _copyData.getComponents()[_component] = this;

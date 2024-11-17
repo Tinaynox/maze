@@ -103,14 +103,12 @@ namespace Maze
     //////////////////////////////////////////
     bool MeshRenderer::init(
         Component* _component,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         m_renderSystem = _component->castRaw<MeshRenderer>()->m_renderSystem;
 
         if (!Component::init(
             _component,
-            _world,
             _copyData))
             return false;
 

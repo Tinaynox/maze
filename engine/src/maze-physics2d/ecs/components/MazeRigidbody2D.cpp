@@ -127,10 +127,9 @@ namespace Maze
     //////////////////////////////////////////
     bool Rigidbody2D::init(
         Component* _component,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
-        if (!Component::init(_component, _world, _copyData))
+        if (!Component::init(_component, _copyData))
             return false;
 
         setWorld(_component->castRaw<Rigidbody2D>()->m_world);

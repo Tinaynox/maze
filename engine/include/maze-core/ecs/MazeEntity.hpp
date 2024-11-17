@@ -110,16 +110,14 @@ namespace Maze
         //////////////////////////////////////////
         static EntityPtr Create(
             Entity* _entity,
-            EcsWorld* _world = nullptr,
             EntityCopyData _copyData = EntityCopyData());
 
         //////////////////////////////////////////
         inline static EntityPtr Create(
             EntityPtr const& _entity,
-            EcsWorld* _world = nullptr,
             EntityCopyData _copyData = EntityCopyData())
         {
-            return Create(_entity.get(), _world, _copyData);
+            return Create(_entity.get(), _copyData);
         }
 
         //////////////////////////////////////////
@@ -127,10 +125,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline EntityPtr createCopy(
-            EcsWorld* _world = nullptr,
             EntityCopyData _copyData = EntityCopyData())
         {
-            return Create(this, _world, _copyData);
+            return Create(this, _copyData);
         }
 
         //////////////////////////////////////////
@@ -370,7 +367,6 @@ namespace Maze
         //////////////////////////////////////////
         bool init(
             Entity* _entity,
-            EcsWorld* _world,
             EntityCopyData _copyData = EntityCopyData());
 
         

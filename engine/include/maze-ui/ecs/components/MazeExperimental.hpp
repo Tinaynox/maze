@@ -120,9 +120,6 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
-        //////////////////////////////////////////
-        virtual void processEntityAwakened() MAZE_OVERRIDE;
-        
 
     protected:
         int m_test;

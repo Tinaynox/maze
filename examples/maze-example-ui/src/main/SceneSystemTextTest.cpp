@@ -144,7 +144,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneSystemTextTest::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
+    void SceneSystemTextTest::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
     {
         m_camera3D->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());

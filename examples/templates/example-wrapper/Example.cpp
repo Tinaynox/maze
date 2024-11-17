@@ -57,6 +57,7 @@
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
+#include "maze-ui/scenes/SceneDragAndDropDefault.hpp"
 #include "ExampleCommonSettings.hpp"
 
 #if MAZE_RENDER_SYSTEM_OPENGL_ENABLED
@@ -371,6 +372,9 @@ namespace Maze
         createEngineScene(sceneEngineInitConfig);
         
         Debug::Log("Example Init - 7 [%ums]", getTime());
+
+        // UI utils scenes
+        m_sceneManager->loadScene<SceneDragAndDropDefault>(true, m_mainRenderWindow);
         
         LoadFirstExampleScene(m_sceneManager.get());
 

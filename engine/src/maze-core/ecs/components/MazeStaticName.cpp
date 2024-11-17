@@ -72,10 +72,9 @@ namespace Maze
     //////////////////////////////////////////
     bool StaticName::init(
         Component* _component,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
-        if (!Component::init(_component, _world, _copyData))
+        if (!Component::init(_component, _copyData))
             return false;
 
         m_name = _component->castRaw<StaticName>()->getName();

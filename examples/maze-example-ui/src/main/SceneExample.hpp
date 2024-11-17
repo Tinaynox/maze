@@ -89,7 +89,7 @@ namespace Maze
         virtual bool init() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport);
+        void notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport);
 
         //////////////////////////////////////////
         void create3D();

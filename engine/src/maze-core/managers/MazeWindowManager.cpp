@@ -202,6 +202,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Window* WindowManager::getFirstOpenedWindow() const
+    {
+        for (WindowWPtr const& windowWeak : m_windows)
+        {
+            if (WindowPtr window = windowWeak.lock())
+            {
+                if (window->isOpened())
+                    return window.get();
+            }
+        }
+
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
     bool WindowManager::processWindowCanBeCreated(WindowParamsPtr const& _params)
     {
         return true;

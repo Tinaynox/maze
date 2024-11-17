@@ -233,6 +233,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool UIElement2D::processCursorTrace(CursorInputEvent const& _inputEvent)
+    {
+        if (m_cursorIndex != -1 && m_cursorIndex != _inputEvent.index)
+            return false;
+
+        Vec2F const& positionWS = _inputEvent.position;
+
+        if (!m_bounds->getBounds().contains(positionWS))
+            return false;
+
+        Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
+
+        if (positionOS.x < 0 || positionOS.y < 0 ||
+            positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
+            return false;
+
+        if (m_captureCursorHits)
+            _inputEvent.captureHit((S32)getEntityId());
+        
+        return true;
+    }
+
+    //////////////////////////////////////////
     void UIElement2D::processCursorMove(
         CursorInputEvent const& _inputEvent)
     {

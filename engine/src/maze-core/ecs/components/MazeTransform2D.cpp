@@ -87,10 +87,9 @@ namespace Maze
     //////////////////////////////////////////
     bool Transform2D::init(
         Component* _component,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
-        if (!Component::init(_component, _world, _copyData))
+        if (!Component::init(_component, _copyData))
             return false;
 
         Transform2D* transform2D = static_cast<Transform2D*>(_component);
@@ -101,7 +100,7 @@ namespace Maze
         {
             Transform2D* childTransform = transform2D->m_children[i];
 
-            EntityPtr child = childTransform->getEntityRaw()->createCopy(_world, _copyData);
+            EntityPtr child = childTransform->getEntityRaw()->createCopy(_copyData);
             Transform2D* childTransformCopy = child->getComponentRaw<Transform2D>();
             childTransformCopy->setParent(cast<Transform2D>());
         }

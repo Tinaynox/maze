@@ -64,6 +64,18 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    struct MAZE_UI_API CursorElementTraceParams
+    {
+        Window* window = nullptr;
+        CursorInputSource inputSource;
+        S32 cursorIndex = 0;
+        S32 buttonIndex = 0;
+        Set<EntityId> ignoreElements;
+    };
+
+
+
+    //////////////////////////////////////////
     // Class InputSystem2D
     //
     //////////////////////////////////////////
@@ -134,6 +146,12 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void setCoordsConverter(std::function<Vec2F(Vec2F const&)> const& _coordsConverter) { m_coordsConverter = _coordsConverter; }
+
+        //////////////////////////////////////////
+        bool traceElement(
+            UIElement2D const* _element,
+            Vec2F const& _renderTargetCoords,
+            CursorElementTraceParams const& _traceParams = CursorElementTraceParams());
 
     protected:
 

@@ -109,10 +109,9 @@ namespace Maze
     //////////////////////////////////////////
     bool SpriteRenderer2D::init(
         Component* _component,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
-        if (!Component::init(_component, _world, _copyData))
+        if (!Component::init(_component, _copyData))
             return false;
 
         enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);

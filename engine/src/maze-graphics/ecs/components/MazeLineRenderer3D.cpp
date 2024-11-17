@@ -134,12 +134,11 @@ namespace Maze
     //////////////////////////////////////////
     bool LineRenderer3D::init(
         Component* _component,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         m_renderSystem = _component->castRaw<LineRenderer3D>()->m_renderSystem;
 
-        if (!Component::init(_component, _world, _copyData))
+        if (!Component::init(_component, _copyData))
             return false;
 
         return true;

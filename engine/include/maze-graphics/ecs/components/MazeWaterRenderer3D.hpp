@@ -109,7 +109,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             Component* _component,
-            EcsWorld* _world,
             EntityCopyData _copyData) MAZE_OVERRIDE;
 
         //////////////////////////////////////////

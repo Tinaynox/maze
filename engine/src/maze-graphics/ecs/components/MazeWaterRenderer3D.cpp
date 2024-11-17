@@ -101,14 +101,12 @@ namespace Maze
     //////////////////////////////////////////
     bool WaterRenderer3D::init(
         Component* _component,
-        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         m_renderSystem = _component->castRaw<WaterRenderer3D>()->m_renderSystem;
 
         if (!Component::init(
             _component,
-            _world,
             _copyData))
             return false;
 

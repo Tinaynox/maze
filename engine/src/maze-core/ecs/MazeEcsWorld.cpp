@@ -598,7 +598,7 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorld::broadcastEvent(EventPtr const& _event)
     {
-        if (m_state != EcsWorldState::Active || m_state != EcsWorldState::PreparingToDestroy)
+        if (m_state != EcsWorldState::Active && m_state != EcsWorldState::PreparingToDestroy)
             return;
 
         m_eventHolders.current()->addBroadcastEvent(_event);
@@ -607,7 +607,7 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorld::sendEvent(EntityId _entityId, EventPtr const& _event)
     {
-        if (m_state != EcsWorldState::Active || m_state != EcsWorldState::PreparingToDestroy)
+        if (m_state != EcsWorldState::Active && m_state != EcsWorldState::PreparingToDestroy)
             return;
 
         m_eventHolders.current()->addUnicastEvent(_entityId, _event);
