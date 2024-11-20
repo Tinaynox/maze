@@ -35,6 +35,7 @@
 #include "maze-core/ecs/MazeEcsWorldEventsQueue.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/managers/MazeInputManager.hpp"
 
 
 //////////////////////////////////////////
@@ -201,6 +202,14 @@ namespace Maze
     //////////////////////////////////////////
     EcsWorld::~EcsWorld()
     {
+        if (InputManager::GetInstancePtr())
+        {
+            InputManager::GetInstancePtr()->eventMouse.unsubscribe(this);
+            InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
+            InputManager::GetInstancePtr()->eventTouch.unsubscribe(this);
+            InputManager::GetInstancePtr()->eventVirtualCursor.unsubscribe(this);
+        }
+
         m_state = EcsWorldState::PreparingToDestroy;
         do
         {
@@ -283,6 +292,14 @@ namespace Maze
         {
             ComponentSystemHolder::Attach(this);
             CustomComponentSystemHolder::Attach(this);
+        }
+
+        if (InputManager::GetInstancePtr())
+        {
+            InputManager::GetInstancePtr()->eventMouse.subscribe(this, &EcsWorld::notifyMouse);
+            InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &EcsWorld::notifyKeyboard);
+            InputManager::GetInstancePtr()->eventTouch.subscribe(this, &EcsWorld::notifyTouch);
+            InputManager::GetInstancePtr()->eventVirtualCursor.subscribe(this, &EcsWorld::notifyVirtualCursor);
         }
 
         m_state = EcsWorldState::Active;
@@ -611,6 +628,70 @@ namespace Maze
             return;
 
         m_eventHolders.current()->addUnicastEvent(_entityId, _event);
+    }
+
+    //////////////////////////////////////////
+    void EcsWorld::notifyMouse(InputEventMouseData const& _data)
+    {
+        switch (_data.type)
+        {
+            case InputEventMouseType::ButtonUp:
+            {
+                broadcastEventImmediate<InputCursorReleaseEvent>(
+                    0,
+                    _data.buttonId,
+                    Vec2S(_data.x, _data.y),
+                    _data.window);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    //////////////////////////////////////////
+    void EcsWorld::notifyKeyboard(InputEventKeyboardData const& _data)
+    {
+
+    }
+
+    //////////////////////////////////////////
+    void EcsWorld::notifyTouch(InputEventTouchData const& _data)
+    {
+        switch (_data.type)
+        {
+            case InputEventTouchType::Release:
+            {
+                broadcastEventImmediate<InputCursorReleaseEvent>(
+                    _data.index,
+                    0,
+                    Vec2S(_data.x, _data.y),
+                    _data.window);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    //////////////////////////////////////////
+    void EcsWorld::notifyVirtualCursor(InputEventVirtualCursorData const& _data)
+    {
+        switch (_data.type)
+        {
+            case InputEventVirtualCursorType::Release:
+            {
+                broadcastEventImmediate<InputCursorReleaseEvent>(
+                    0,
+                    0,
+                    Vec2S(_data.x, _data.y),
+                    _data.window);
+
+                break;
+            }
+            default:
+                break;
+        }
     }
 
 } // namespace Maze

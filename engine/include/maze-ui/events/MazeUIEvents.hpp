@@ -217,6 +217,62 @@ namespace Maze
     };
 
 
+    //////////////////////////////////////////
+    // Class UIElementCursorMoveInEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UIElementCursorMoveInEvent
+        : public GenericEvent<UIElementCursorMoveInEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UIElementCursorMoveInEvent, Event);
+
+
+        //////////////////////////////////////////
+        UIElementCursorMoveInEvent() = default;
+
+        //////////////////////////////////////////
+        UIElementCursorMoveInEvent(
+            Vec2F const& _positionOS,
+            CursorInputEvent _inputEvent)
+            : positionOS(_positionOS)
+            , inputEvent(_inputEvent)
+        {}
+
+    public:
+        Vec2F positionOS;
+        CursorInputEvent inputEvent;
+    };
+
+
+    //////////////////////////////////////////
+    // Class UIElementCursorMoveOutEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UIElementCursorMoveOutEvent
+        : public GenericEvent<UIElementCursorMoveOutEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UIElementCursorMoveOutEvent, Event);
+
+
+        //////////////////////////////////////////
+        UIElementCursorMoveOutEvent() = default;
+
+        //////////////////////////////////////////
+        UIElementCursorMoveOutEvent(
+            CursorInputEvent _inputEvent)
+            : inputEvent(_inputEvent)
+        {}
+
+    public:
+        CursorInputEvent inputEvent;
+    };
+
     
 } // namespace Maze
 //////////////////////////////////////////

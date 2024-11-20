@@ -44,6 +44,7 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/events/MazeEvent.hpp"
+#include "maze-core/ecs/events/MazeEcsInputEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -78,6 +79,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_CORE_API EcsWorld
         : public SharedObject<EcsWorld>
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -440,6 +442,19 @@ namespace Maze
 
         //////////////////////////////////////////
         void removeEntityNow(EntityId _id);
+
+
+        //////////////////////////////////////////
+        void notifyMouse(InputEventMouseData const& _data);
+
+        //////////////////////////////////////////
+        void notifyKeyboard(InputEventKeyboardData const& _data);
+
+        //////////////////////////////////////////
+        void notifyTouch(InputEventTouchData const& _data);
+
+        //////////////////////////////////////////
+        void notifyVirtualCursor(InputEventVirtualCursorData const& _data);
 
     protected:
         HashedString m_name;

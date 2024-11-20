@@ -278,6 +278,7 @@ namespace Maze
                     setFocused(false);
 
                 eventCursorMoveOut(_inputEvent);
+                getEntityRaw()->getEcsWorld()->sendEvent<UIElementCursorMoveOutEvent>(getEntityId(), _inputEvent);
 
                 return;
             }
@@ -291,6 +292,7 @@ namespace Maze
                     setFocused(false);
 
                 eventCursorMoveOut(_inputEvent);
+                getEntityRaw()->getEcsWorld()->sendEvent<UIElementCursorMoveOutEvent>(getEntityId(), _inputEvent);
 
                 return;
             }
@@ -302,6 +304,7 @@ namespace Maze
                 _inputEvent.captureHit((S32)getEntityId());
 
             eventCursorMoveIn(positionOS, _inputEvent);
+            getEntityRaw()->getEcsWorld()->sendEvent<UIElementCursorMoveInEvent>(getEntityId(), positionOS, _inputEvent);
         }
     }
 

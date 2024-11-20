@@ -31,6 +31,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
+#include "maze-ui/ecs/components/MazeUIDragElement2D.hpp"
 #include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/events/MazeUIEvents.hpp"
@@ -98,6 +99,7 @@ namespace Maze
     void InventorySlot::processEntityAwakened()
     {
         m_dragAndDropZone = getEntityRaw()->ensureComponent<DragAndDropZone>();
+        getEntityRaw()->ensureComponent<UIDragElement2D>();
     }
 
 

@@ -24,37 +24,20 @@
 
 
 //////////////////////////////////////////
-#include "MazeUIHeader.hpp"
-#include "maze-ui/events/MazeUIEvents.hpp"
+#include "MazeCoreHeader.hpp"
+#include "maze-core/ecs/events/MazeEcsInputEvents.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(DragAndDropEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputMouseEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputKeyboardEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputTouchEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputVirtualCursorEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputCursorReleaseEvent, Event);
 
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(DragAndDropCurrentZoneChangedEvent, Event);
-
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementClickEvent, Event);
-
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementSingleClickEvent, Event);
-
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementDoubleClickEvent, Event);
-
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementCursorPressInEvent, Event);
-
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementCursorMoveInEvent, Event);
-
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementCursorMoveOutEvent, Event);
-
-
+    
 } // namespace Maze
 //////////////////////////////////////////

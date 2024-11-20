@@ -47,6 +47,7 @@
 #include "maze-ui/ecs/components/MazeEditBox2D.hpp"
 #include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/ecs/components/MazeUIDragElement2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
@@ -159,6 +160,7 @@ namespace Maze
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<EditBox2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ToggleButton2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UIElement2D>("UI");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UIDragElement2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UITweenTransitionAlpha>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UITweenTransitionScale>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Experimental>("UI");
