@@ -29,7 +29,9 @@
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/events/MazeUIEvents.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
 
 
 //////////////////////////////////////////
@@ -76,6 +78,55 @@ namespace Maze
         m_element = getEntityRaw()->ensureComponent<UIElement2D>();
     }        
 
+    //////////////////////////////////////////
+    void UIDragElement2D::setState(State _state)
+    {
+        if (m_state == _state)
+            return;
+
+        m_state = _state;
+
+        switch (m_state)
+        {
+            case State::Dragging:
+            {
+                if (getEntityRaw() && getEntityRaw()->getEcsWorld())
+                    getEntityRaw()->getEcsWorld()->sendEvent<UIDragElementDragStartedEvent>(getEntityId());
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    //////////////////////////////////////////
+    void UIDragElement2D::processPress(Vec2S const& _pos)
+    {
+        if (m_state == State::None)
+        {
+            setState(State::PrepareToDrag);
+            m_startPos = _pos;
+        }
+    }
+
+    //////////////////////////////////////////
+    void UIDragElement2D::processMove(Vec2S const& _pos)
+    {
+        if (m_state == State::PrepareToDrag)
+        {
+            Vec2F delta = (Vec2F)_pos - (Vec2F)m_startPos;
+            if (delta.squaredLength() >= 3.0f * 3.0f)
+                setState(State::Dragging);
+        }
+    }
+
+    //////////////////////////////////////////
+    void UIDragElement2D::processRelease()
+    {
+        if (m_state != State::None)
+            setState(State::None);
+    }
+
 
     //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(UIDragElement2DOnUIElementCursorPressIn,
@@ -85,7 +136,7 @@ namespace Maze
         Entity* _entity,
         UIDragElement2D* _dragElement)
     {
-        Debug::Log("Press %d!", _entity->getId());
+        _dragElement->processPress(_event.getPositionOS());
     }
 
     //////////////////////////////////////////
@@ -99,7 +150,7 @@ namespace Maze
         if (_event.getCursorId() != 0 || _event.getButtonId() != 0)
             return;
 
-        Debug::Log("Release %d!", _entity->getId());
+        _dragElement->processRelease();
     }    
 
     //////////////////////////////////////////
@@ -110,7 +161,7 @@ namespace Maze
         Entity* _entity,
         UIDragElement2D* _dragElement)
     {
-        // Debug::Log("Move In %d!", _entity->getId());
+        _dragElement->processMove(_event.getPositionOS());
     }
 
     //////////////////////////////////////////
@@ -119,11 +170,14 @@ namespace Maze
         {},
         UIElementCursorMoveOutEvent const& _event,
         Entity* _entity,
-        UIDragElement2D* _dragElement)
+        UIDragElement2D* _dragElement,
+        Transform2D* _transform)
     {
-        // Debug::Log("Move Out %d!", _entity->getId());
-    }
-    
+        Vec2F positionOS = _transform->getWorldTransform().inversed().transform(
+            _event.getInputEvent().position);
+
+        _dragElement->processMove(positionOS);
+    }    
     
 } // namespace Maze
 //////////////////////////////////////////

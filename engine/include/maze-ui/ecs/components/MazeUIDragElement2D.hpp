@@ -62,6 +62,15 @@ namespace Maze
         //////////////////////////////////////////
         friend class Entity;
 
+
+        //////////////////////////////////////////
+        enum State
+        {
+            None = 0,
+            PrepareToDrag,
+            Dragging
+        };
+
     public:
 
         //////////////////////////////////////////
@@ -73,6 +82,20 @@ namespace Maze
 
         //////////////////////////////////////////
         UIElement2DPtr const& getElement() const { return m_element; }
+
+
+        //////////////////////////////////////////
+        State getState() const { return m_state; }
+
+
+        //////////////////////////////////////////
+        void processPress(Vec2S const& _pos);
+
+        //////////////////////////////////////////
+        void processMove(Vec2S const& _pos);
+
+        //////////////////////////////////////////
+        void processRelease();
 
     protected:
 
@@ -88,8 +111,15 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
         
+
+        //////////////////////////////////////////
+        void setState(State _state);
+
     protected:
         UIElement2DPtr m_element;
+
+        State m_state = State::None;
+        Vec2S m_startPos = Vec2S::c_zero;
     };
 
 

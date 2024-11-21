@@ -121,6 +121,12 @@ namespace Maze
             , inputEvent(_inputEvent)
         {}
 
+        //////////////////////////////////////////
+        inline Vec2F const& getPositionOS() const { return positionOS; }
+
+        //////////////////////////////////////////
+        inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
+
     public:
         Vec2F positionOS;
         CursorInputEvent inputEvent;
@@ -150,6 +156,12 @@ namespace Maze
             : positionOS(_positionOS)
             , inputEvent(_inputEvent)
         {}
+
+        //////////////////////////////////////////
+        inline Vec2F const& getPositionOS() const { return positionOS; }
+
+        //////////////////////////////////////////
+        inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
 
     public:
         Vec2F positionOS;
@@ -181,6 +193,12 @@ namespace Maze
             , inputEvent(_inputEvent)
         {}
 
+        //////////////////////////////////////////
+        inline Vec2F const& getPositionOS() const { return positionOS; }
+
+        //////////////////////////////////////////
+        inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
+
     public:
         Vec2F positionOS;
         CursorInputEvent inputEvent;
@@ -210,6 +228,12 @@ namespace Maze
             : positionOS(_positionOS)
             , inputEvent(_inputEvent)
         {}
+
+        //////////////////////////////////////////
+        inline Vec2F const& getPositionOS() const { return positionOS; }
+
+        //////////////////////////////////////////
+        inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
 
     public:
         Vec2F positionOS;
@@ -241,6 +265,12 @@ namespace Maze
             , inputEvent(_inputEvent)
         {}
 
+        //////////////////////////////////////////
+        inline Vec2F const& getPositionOS() const { return positionOS; }
+
+        //////////////////////////////////////////
+        inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
+
     public:
         Vec2F positionOS;
         CursorInputEvent inputEvent;
@@ -269,10 +299,32 @@ namespace Maze
             : inputEvent(_inputEvent)
         {}
 
+        //////////////////////////////////////////
+        inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
+
     public:
         CursorInputEvent inputEvent;
     };
 
+
+    //////////////////////////////////////////
+    // Class UIDragElementDragStartedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UIDragElementDragStartedEvent
+        : public GenericEvent<UIDragElementDragStartedEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UIDragElementDragStartedEvent, Event);
+
+
+        //////////////////////////////////////////
+        UIDragElementDragStartedEvent() = default;
+
+    public:
+    };
     
 } // namespace Maze
 //////////////////////////////////////////

@@ -104,10 +104,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(InventorySlotOnPressInEvent,
+    COMPONENT_SYSTEM_EVENT_HANDLER(InventorySlotOnDragStartedEvent,
         {},
         {},
-        UIElementCursorPressInEvent const& _event,
+        UIDragElementDragStartedEvent const& _event,
         Entity* _entity,
         InventorySlot* _slot)
     {

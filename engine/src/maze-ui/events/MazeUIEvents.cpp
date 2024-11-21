@@ -55,6 +55,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementCursorMoveOutEvent, Event);
 
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIDragElementDragStartedEvent, Event);
 
 } // namespace Maze
 //////////////////////////////////////////
