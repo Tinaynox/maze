@@ -46,6 +46,7 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "scenes/SceneWorkspace.hpp"
+#include "scenes/SceneDragAndDropWorkspace.hpp"
 #include "editor/EditorSceneMode.hpp"
 
 
@@ -125,6 +126,7 @@ namespace Maze
         RenderBufferPtr m_workspaceRenderBuffer;
         SceneWorkspacePtr m_sceneWorkspace;
         SceneWorkspaceToolsPtr m_sceneWorkspaceTools;
+        SceneDragAndDropWorkspacePtr m_sceneDragAndDropWorkspace;
     };
 
 

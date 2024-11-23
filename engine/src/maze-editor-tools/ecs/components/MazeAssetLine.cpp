@@ -37,6 +37,7 @@
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -61,8 +62,11 @@
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
+#include "maze-ui/ecs/components/MazeUIDragElement2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-ui/events/MazeUIEvents.hpp"
+#include "maze-ui/scenes/SceneDragAndDropDefault.hpp"
 
 
 //////////////////////////////////////////
@@ -78,15 +82,23 @@ namespace Maze
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(AssetLine);
 
     //////////////////////////////////////////
+    ObservableValue<AssetLine*> AssetLine::s_pressedAssetLine = ObservableValue<AssetLine*>();
+
+    //////////////////////////////////////////
     AssetLine::AssetLine()
         : m_selected(false)
         , m_selectAssetFileByClick(false)
     {
+        s_pressedAssetLine.eventValueChanged.subscribe(this, &AssetLine::notifyPressedAssetLineChanged);
     }
 
     //////////////////////////////////////////
     AssetLine::~AssetLine()
     {
+        s_pressedAssetLine.eventValueChanged.unsubscribe(this, &AssetLine::notifyPressedAssetLineChanged);
+        if (s_pressedAssetLine == this)
+            s_pressedAssetLine = nullptr;
+
         if (m_dropDownRenderer && m_dropDownRenderer->getEntityRaw())
         {
             ClickButton2D* button = m_dropDownRenderer->getEntityRaw()->getComponentRaw<ClickButton2D>();
@@ -238,6 +250,7 @@ namespace Maze
         m_textEdit->getEntityRaw()->setActiveSelf(false);
 
         m_textButton = m_mainTransform->getEntityRaw()->ensureComponent<ClickButton2D>();
+        m_textButton->eventClick.subscribe(this, &AssetLine::notifyLineClick);
         m_textButton->eventCursorPressIn.subscribe(this, &AssetLine::notifyLineCursorPressIn);
         m_textButton->eventDoubleClick.subscribe(this, &AssetLine::notifyLineDoubleClick);
         m_textButton->eventFocusChanged.subscribe(this, &AssetLine::notifyLineFocusChanged);
@@ -255,6 +268,8 @@ namespace Maze
             Vec2F(0.0f, 1.0f));
         // m_childrenLayout->setSpacing(5.0f);
         m_childrenTransform = m_childrenLayout->getTransform();
+
+        m_textButton->getEntityRaw()->ensureComponent<UIDragElement2D>();
 
         SizePolicy2DPtr childrenLayoutSizePolicy = m_childrenLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         childrenLayoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
@@ -278,7 +293,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetLine::notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _inputEvent)
+    void AssetLine::AssetLine::notifyLineClick(Button2D* _button, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -297,6 +312,15 @@ namespace Maze
         }
 
         eventLineClick(this);
+    }
+
+    //////////////////////////////////////////
+    void AssetLine::notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _inputEvent)
+    {
+        if (_inputEvent.button != 0)
+            return;
+        
+        s_pressedAssetLine = this;
     }
 
     //////////////////////////////////////////
@@ -404,7 +428,12 @@ namespace Maze
         if (!m_textRenderer)
             return;
 
-        if (m_selected)
+        bool showSelected = m_selected;
+
+        if (s_pressedAssetLine != nullptr)
+            showSelected = (s_pressedAssetLine == this);
+
+        if (showSelected)
         {
             m_textRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectTextColorSelected());
             m_backgroundRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjecBackgroundColorSelected());
@@ -458,6 +487,53 @@ namespace Maze
 
         if (cancelRename)
             m_assetsController->setAssetFileRename(m_assetFile, false);
+    }
+
+    //////////////////////////////////////////
+    void AssetLine::notifyPressedAssetLineChanged(AssetLine* const& _line)
+    {
+        updateState();
+    }
+
+    //////////////////////////////////////////
+    void AssetLine::processCursorRelease(InputCursorReleaseEvent const& _event)
+    {
+        if (s_pressedAssetLine == this)
+            s_pressedAssetLine = nullptr;
+    }
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(AssetLineOnCursorRelease,
+        {},
+        {},
+        InputCursorReleaseEvent const& _event,
+        Entity* _entity,
+        AssetLine* _assetLine)
+    {
+        _assetLine->processCursorRelease(_event);
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(AssetLineOnDragStartedEvent,
+        {},
+        {},
+        UIDragElementDragStartedEvent const& _event,
+        Entity* _entity,
+        ClickButton2D* _clickButton)
+    {
+        AssetLine* assetLine = _clickButton->getTransform()->getParent()->getEntityRaw()->getComponentRaw<AssetLine>();
+        if (!assetLine)
+            return;
+
+        SceneDragAndDropDefaultPtr dndScene = SceneManager::GetInstancePtr()->getScene<SceneDragAndDropDefault>();
+        if (dndScene)
+        {
+            dndScene->startDrag(
+                assetLine->getIconRenderer()->getEntityRaw()->getComponent<Transform2D>());
+            _entity->getComponent<ClickButton2D>()->getUIElement()->setPressed(false);
+            _entity->getComponent<ClickButton2D>()->getUIElement()->setFocused(false);
+        }
     }
     
 } // namespace Maze

@@ -71,6 +71,7 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/scenes/SceneDragAndDropDefault.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -256,37 +257,49 @@ namespace Maze
             }
             case 5:
             {
+                // UI utils scenes
+                /*
+                SceneManager::GetInstancePtr()->loadScene<SceneDragAndDropDefault>(
+                    true,
+                    Editor::GetInstancePtr()->getMainRenderWindow());
+                */
+
+                setCurrentProgress(0.5f);
+                break;
+            }
+            case 6:
+            {
                 MeshManager::GetInstancePtr()->createBuiltinMeshes();
                 RenderMeshManager::GetCurrentInstancePtr()->createBuiltinRenderMeshes();
                 setCurrentProgress(0.55f);
                 break;
             }
-            case 6:
+            case 7:
             {
                 SystemFontManager::GetCurrentInstancePtr()->createBuiltinSystemFonts();
                 setCurrentProgress(0.65f);
                 break;
             }
-            case 7:
+            case 8:
             {
                 GizmosManager::GetInstancePtr()->createGizmosElements();
                 EditorGizmosManager::GetInstancePtr()->createGizmosElements();
                 setCurrentProgress(0.7f);
                 break;
             }
-            case 8:
+            case 9:
             {
                 UIManager::GetInstancePtr()->createUIElements();
                 setCurrentProgress(0.75f);
                 break;
             }
-            case 9:
+            case 10:
             {
                 ParticlesManager::GetInstancePtr()->createBuiltinAssets();
                 setCurrentProgress(0.8f);
                 break;
             }
-            case 10:
+            case 11:
             {
                 Editor::GetInstancePtr()->eventCoreEditorResourcesLoaded();
 
@@ -298,7 +311,7 @@ namespace Maze
                 setCurrentProgress(0.85f);
                 break;
             }
-            case 11:
+            case 12:
             {
                 MAZE_LOAD_PLATFORM_PLUGIN(LoaderDDS);
                 MAZE_LOAD_PLATFORM_PLUGIN(LoaderTGA);
@@ -308,7 +321,7 @@ namespace Maze
                 setCurrentProgress(0.9f);
                 break;
             }
-            case 12:
+            case 13:
             {
                 MAZE_LOAD_PLATFORM_PLUGIN(ArchiveAssets);
                 MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView);
@@ -339,7 +352,7 @@ namespace Maze
                 setCurrentProgress(0.95f);
                 break;
             }
-            case 13:
+            case 14:
             {
                 MAZE_LOAD_PLATFORM_PLUGIN(CSharp);
                 MAZE_LOAD_PLATFORM_PLUGIN(CSharpEditorTools);
@@ -347,7 +360,7 @@ namespace Maze
                 setCurrentProgress(0.975f);
                 break;
             }
-            case 14:
+            case 15:
             {
                 AssetFilePtr const& pluginsDirectory = AssetManager::GetInstancePtr()->getAssetFile(MAZE_HASHED_CSTRING("plugins"));
                 if (pluginsDirectory && pluginsDirectory->getClassUID() == ClassInfo<AssetDirectory>::UID())
@@ -372,7 +385,7 @@ namespace Maze
                 delayToNextStep = 2;
                 break;
             }
-            case 15:
+            case 16:
             {
                 m_progressBarFill->getEntity()->setActiveSelf(false);
 

@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneDragAndDropDefault_hpp_))
-#define _SceneDragAndDropDefault_hpp_
+#if (!defined(_SceneDragAndDrop_hpp_))
+#define _SceneDragAndDrop_hpp_
 
 
 //////////////////////////////////////////
@@ -35,53 +35,81 @@
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
 #include "maze-ui/ecs/components/MazeInputSystem2D.hpp"
-#include "maze-ui/scenes/SceneDragAndDrop.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneDragAndDropDefault);
+    MAZE_USING_SHARED_PTR(SceneDragAndDrop);
+    MAZE_USING_SHARED_PTR(Canvas);
+    MAZE_USING_SHARED_PTR(Transform2D);
+    MAZE_USING_SHARED_PTR(UIElement2D);
 
 
     //////////////////////////////////////////
-    // Class SceneDragAndDropDefault
+    // Class SceneDragAndDrop
     //
     //////////////////////////////////////////
-    class MAZE_UI_API SceneDragAndDropDefault
-        : public SceneDragAndDrop
+    class MAZE_UI_API SceneDragAndDrop
+        : public EcsRenderScene
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneDragAndDropDefault, SceneDragAndDrop);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneDragAndDrop, EcsRenderScene);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(SceneDragAndDropDefault);
+        MAZE_DECLARE_MEMORY_ALLOCATION(SceneDragAndDrop);
 
     public:
 
         //////////////////////////////////////////
-        static SceneDragAndDropDefaultPtr Create(RenderTargetPtr const& _renderTarget);
+        static SceneDragAndDropPtr Create(RenderTargetPtr const& _renderTarget);
     
         //////////////////////////////////////////
-        virtual ~SceneDragAndDropDefault();
+        virtual ~SceneDragAndDrop();
 
+        //////////////////////////////////////////
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        void startDrag(
+            Transform2DPtr const& _viewEntity,
+            DataBlock const& _data = DataBlock());
+
+        //////////////////////////////////////////
+        void cancelDrag();
+
+        //////////////////////////////////////////
+        void tryDrop();
 
     protected:
 
         //////////////////////////////////////////
-        SceneDragAndDropDefault();
+        SceneDragAndDrop();
 
         //////////////////////////////////////////
         virtual bool init(RenderTargetPtr const& _renderTarget);
 
-        //////////////////////////////////////////
-        virtual EcsWorld* assignWorld() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        void setCurrentDropZone(EntityId _eid);
 
     protected:
+        CanvasPtr m_canvas;
+        UIElement2DPtr m_element;
+
+        EntityId m_viewEntityId;
+        Transform2DPtr m_dragAndDropView;
+
+        DataBlock m_data;
+
+        EntityId m_currentDropZoneEid;
+
+        SharedPtr<GenericInclusiveEntitiesSample<DragAndDropZone>> m_dragAndDropZonesSample;
+        SharedPtr<GenericInclusiveEntitiesSample<InputSystem2D>> m_inputSystemSample;
     };
 
 
@@ -89,5 +117,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneDragAndDropDefault_hpp_
+#endif // _SceneDragAndDrop_hpp_
 //////////////////////////////////////////

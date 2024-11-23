@@ -25,12 +25,11 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneDragAndDropDefault_hpp_))
-#define _SceneDragAndDropDefault_hpp_
+#if (!defined(_SceneDragAndDropWorkspace_hpp_))
+#define _SceneDragAndDropWorkspace_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
@@ -42,40 +41,40 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneDragAndDropDefault);
+    MAZE_USING_SHARED_PTR(SceneDragAndDropWorkspace);
 
 
     //////////////////////////////////////////
-    // Class SceneDragAndDropDefault
+    // Class SceneDragAndDropWorkspace
     //
     //////////////////////////////////////////
-    class MAZE_UI_API SceneDragAndDropDefault
+    class SceneDragAndDropWorkspace
         : public SceneDragAndDrop
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneDragAndDropDefault, SceneDragAndDrop);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneDragAndDropWorkspace, SceneDragAndDrop);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(SceneDragAndDropDefault);
+        MAZE_DECLARE_MEMORY_ALLOCATION(SceneDragAndDropWorkspace);
 
     public:
 
         //////////////////////////////////////////
-        static SceneDragAndDropDefaultPtr Create(RenderTargetPtr const& _renderTarget);
+        static SceneDragAndDropWorkspacePtr Create();
     
         //////////////////////////////////////////
-        virtual ~SceneDragAndDropDefault();
+        virtual ~SceneDragAndDropWorkspace();
 
 
     protected:
 
         //////////////////////////////////////////
-        SceneDragAndDropDefault();
+        SceneDragAndDropWorkspace();
 
         //////////////////////////////////////////
-        virtual bool init(RenderTargetPtr const& _renderTarget);
+        virtual bool init();
 
         //////////////////////////////////////////
         virtual EcsWorld* assignWorld() MAZE_OVERRIDE;
@@ -89,5 +88,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneDragAndDropDefault_hpp_
+#endif // _SceneDragAndDropWorkspace_hpp_
 //////////////////////////////////////////

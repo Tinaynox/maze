@@ -130,7 +130,7 @@ namespace Maze
 
     //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(UIDragElement2DOnUIElementCursorPressIn,
-        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
         {},
         UIElementCursorPressInEvent const& _event,
         Entity* _entity,
@@ -141,7 +141,7 @@ namespace Maze
 
     //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(UIDragElement2DOnUIElementCursorRelease,
-        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
         {},
         InputCursorReleaseEvent const& _event,
         Entity* _entity,
@@ -155,7 +155,7 @@ namespace Maze
 
     //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(UIDragElement2DOnUIElementCursorMoveIn,
-        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
         {},
         UIElementCursorMoveInEvent const& _event,
         Entity* _entity,
@@ -166,7 +166,7 @@ namespace Maze
 
     //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(UIDragElement2DOnUIElementCursorMoveOut,
-        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
         {},
         UIElementCursorMoveOutEvent const& _event,
         Entity* _entity,

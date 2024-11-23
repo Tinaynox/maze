@@ -33,6 +33,8 @@
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/ecs/events/MazeEcsInputEvents.hpp"
+#include "maze-core/utils/MazeObservableValue.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
@@ -137,6 +139,9 @@ namespace Maze
         void setSelectAssetFileByClick(bool _value) { m_selectAssetFileByClick = _value; }
 
 
+        //////////////////////////////////////////
+        void processCursorRelease(InputCursorReleaseEvent const& _event);
+
     public:
 
         //////////////////////////////////////////
@@ -165,6 +170,9 @@ namespace Maze
         void notifyDropDownClick(Button2D* _button, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
+        void notifyLineClick(Button2D* _button, CursorInputEvent const& _inputEvent);
+
+        //////////////////////////////////////////
         void notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
@@ -182,6 +190,17 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifyTextEditInput(EditBox2D* _edit);
+
+
+        //////////////////////////////////////////
+        void notifyPressedAssetLineChanged(AssetLine* const& _line);
+
+        
+
+    private:
+
+        //////////////////////////////////////////
+        static ObservableValue<AssetLine*> s_pressedAssetLine;
 
     protected:
         AssetsController* m_assetsController = nullptr;

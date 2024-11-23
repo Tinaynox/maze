@@ -24,8 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "MazeUIHeader.hpp"
-#include "maze-ui/scenes/SceneDragAndDropDefault.hpp"
+#include "scenes/SceneDragAndDropWorkspace.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/events/MazeUIEvents.hpp"
@@ -39,52 +38,56 @@
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "managers/EditorEntityManager.hpp"
+#include "managers/EditorWorkspaceManager.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class SceneDragAndDropDefault
+    // Class SceneDragAndDropWorkspace
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneDragAndDropDefault, SceneDragAndDrop);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneDragAndDropWorkspace, SceneDragAndDrop);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_DEFAULT(SceneDragAndDropDefault);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_DEFAULT(SceneDragAndDropWorkspace);
 
     //////////////////////////////////////////
-    SceneDragAndDropDefault::SceneDragAndDropDefault()
-    {
-    }
-
-    //////////////////////////////////////////
-    SceneDragAndDropDefault::~SceneDragAndDropDefault()
+    SceneDragAndDropWorkspace::SceneDragAndDropWorkspace()
     {
 
     }
 
     //////////////////////////////////////////
-    SceneDragAndDropDefaultPtr SceneDragAndDropDefault::Create(RenderTargetPtr const& _renderTarget)
+    SceneDragAndDropWorkspace::~SceneDragAndDropWorkspace()
     {
-        SceneDragAndDropDefaultPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneDragAndDropDefault, object, init(_renderTarget));
+
+    }
+
+    //////////////////////////////////////////
+    SceneDragAndDropWorkspacePtr SceneDragAndDropWorkspace::Create()
+    {
+        SceneDragAndDropWorkspacePtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneDragAndDropWorkspace, object, init());
         return object;
     }
 
     //////////////////////////////////////////
-    bool SceneDragAndDropDefault::init(RenderTargetPtr const& _renderTarget)
+    bool SceneDragAndDropWorkspace::init()
     {
-        if (!SceneDragAndDrop::init(_renderTarget))
+        RenderBufferPtr const& renderTarget = EditorWorkspaceManager::GetInstancePtr()->getWorkspaceRenderBuffer();
+        if (!SceneDragAndDrop::init(renderTarget))
             return false;
 
         return true;
     }
 
     //////////////////////////////////////////
-    EcsWorld* SceneDragAndDropDefault::assignWorld()
+    EcsWorld* SceneDragAndDropWorkspace::assignWorld()
     {
-        return EntityManager::GetInstancePtr()->getDefaultWorldRaw();
+        return EditorEntityManager::GetInstancePtr()->getWorkspaceWorld().get();
     }
 
 

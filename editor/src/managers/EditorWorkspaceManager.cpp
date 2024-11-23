@@ -143,6 +143,7 @@ namespace Maze
 
         m_sceneWorkspace = Editor::GetInstancePtr()->getSceneManager()->loadScene<SceneWorkspace>();
         m_sceneWorkspaceTools = Editor::GetInstancePtr()->getSceneManager()->loadScene<SceneWorkspaceTools>();
+        m_sceneDragAndDropWorkspace = Editor::GetInstancePtr()->getSceneManager()->loadScene<SceneDragAndDropWorkspace>();
     }
 
     //////////////////////////////////////////
@@ -160,6 +161,13 @@ namespace Maze
             m_sceneWorkspaceTools->destroyAllEntities();
             Editor::GetInstancePtr()->getSceneManager()->destroyScene(m_sceneWorkspaceTools);
             m_sceneWorkspaceTools.reset();
+        }
+
+        if (m_sceneDragAndDropWorkspace)
+        {
+            m_sceneDragAndDropWorkspace->destroyAllEntities();
+            Editor::GetInstancePtr()->getSceneManager()->destroyScene(m_sceneDragAndDropWorkspace);
+            m_sceneDragAndDropWorkspace.reset();
         }
     }
 
