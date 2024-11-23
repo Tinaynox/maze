@@ -174,16 +174,29 @@ namespace Maze
                         if (metaPropertyUID != 0)
                         {
                             MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
-                            if (metaPropertyMetaClass && (metaPropertyMetaClass->isInheritedFrom<Component>() || metaPropertyMetaClass->isInheritedFrom<Entity>()))
+                            if (metaPropertyMetaClass)
                             {
-                                void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
-                                if (propertyValuePointer)
+                                if (metaPropertyMetaClass->isInheritedFrom<Component>())
                                 {
-                                    S32 propertyValueIndex = _pointerIndices[propertyValuePointer];
-                                    componentBlock->setS32(propertyName, propertyValueIndex);
+                                    void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
+                                    if (propertyValuePointer)
+                                    {
+                                        S32 propertyValueIndex = _pointerIndices[propertyValuePointer];
+                                        EcsHelper::EnsureComponentBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
+                                    }
+                                    continue;
                                 }
-
-                                continue;
+                                else
+                                if (metaPropertyMetaClass->isInheritedFrom<Entity>())
+                                {
+                                    void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
+                                    if (propertyValuePointer)
+                                    {
+                                        S32 propertyValueIndex = _pointerIndices[propertyValuePointer];
+                                        EcsHelper::EnsureEntityIdBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
+                                    }
+                                    continue;
+                                }
                             }
                             else
                             if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
@@ -197,7 +210,10 @@ namespace Maze
                                     compIndices.resize(comps.size());
                                     for (S32 i = 0, in = S32(comps.size()); i < in; ++i)
                                         compIndices[i] = _pointerIndices[comps[i].get()];
-                                    AddDataToDataBlock(*componentBlock, propertyName, compIndices);
+
+                                    Char newPropertyName[128];
+                                    StringHelper::FormatString(newPropertyName, sizeof(newPropertyName), "%s:Array<EntityId>", propertyName);
+                                    AddDataToDataBlock(*componentBlock, HashedCString(newPropertyName), compIndices);
                                 }
 
                                 continue;
@@ -214,7 +230,10 @@ namespace Maze
                                     entIndices.resize(ents.size());
                                     for (S32 i = 0, in = S32(ents.size()); i < in; ++i)
                                         entIndices[i] = _pointerIndices[ents[i].get()];
-                                    AddDataToDataBlock(*componentBlock, propertyName, entIndices);
+
+                                    Char newPropertyName[128];
+                                    StringHelper::FormatString(newPropertyName, sizeof(newPropertyName), "%s:Array<Component>", propertyName);
+                                    AddDataToDataBlock(*componentBlock, HashedCString(newPropertyName), entIndices);
                                 }
 
                                 continue;
