@@ -156,6 +156,23 @@ namespace Maze
         m_dragAndDropFrame->getMeshRenderer()->setEnabled(false);
 
         m_dragAndDropZone = m_materialButton->getEntityRaw()->ensureComponent<DragAndDropZone>();
+        m_dragAndDropZone->eventDragAndDropValidate.subscribe(
+            [this](DataBlock const& _data, EntityId _viewEid, bool& _outDropAllowed)
+            {
+                if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("assetFile"))
+                {
+                    AssetFileId afid = _data.getS32(MAZE_HCS("afid"));
+                    AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(afid);
+                    if (!assetFile)
+                        return;
+
+                    MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(assetFile);
+                    if (!material)
+                        return;
+
+                    _outDropAllowed = true;
+                }
+            });
         m_dragAndDropZone->eventDragAndDrop.subscribe(
             [this](DataBlock const& _data, EntityId _viewEid)
             {

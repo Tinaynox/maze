@@ -134,14 +134,20 @@ namespace Maze
                         traceParams.ignoreElements.insert(m_element->getEntityId());
 
                         m_dragAndDropZonesSample->query(
-                            [&](Entity*, DragAndDropZone* _zone)
+                            [&](Entity* _zoneEntity, DragAndDropZone* _zone)
                             {
                                 if (_inputSystem->traceElement(
                                     _zone->getUIElement().get(),
                                     renderTargetCursorPos,
                                     traceParams))
                                 {
-                                    setCurrentDropZone(_zone->getEntityId());
+                                    DragAndDropValidateEvent validateEvent(m_data, m_viewEntityId);
+                                    _zoneEntity->getEcsWorld()->sendEventImmediate(
+                                        _zoneEntity->getId(),
+                                        &validateEvent);
+
+                                    if (validateEvent.dropAllowed)
+                                        setCurrentDropZone(_zone->getEntityId());
                                 }
                             });
                     });

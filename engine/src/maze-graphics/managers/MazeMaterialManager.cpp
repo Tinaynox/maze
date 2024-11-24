@@ -200,6 +200,9 @@ namespace Maze
             return libraryData->material;
         }
 
+        if (_assetFile->getExtension() != Path("mzmaterial"))
+            return nullPointer;
+
         MaterialPtr material = Material::Create(_assetFile);
         material->setName(HashedString(_assetFile->getFileName().toUTF8()));
 

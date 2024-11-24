@@ -70,6 +70,37 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Class DragAndDropValidateEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API DragAndDropValidateEvent
+        : public GenericEvent<DragAndDropValidateEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(DragAndDropValidateEvent, Event);
+
+
+        //////////////////////////////////////////
+        DragAndDropValidateEvent() = default;
+
+        //////////////////////////////////////////
+        DragAndDropValidateEvent(
+            DataBlock const& _data,
+            EntityId _viewEid)
+            : data(_data)
+            , viewEid(_viewEid)
+        {}
+
+    public:
+        DataBlock data;
+        EntityId viewEid;
+        bool dropAllowed = false;
+    };
+
+
+    //////////////////////////////////////////
     // Class DragAndDropCurrentZoneChangedEvent
     //
     //////////////////////////////////////////

@@ -35,6 +35,9 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(DragAndDropEvent, Event);
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(DragAndDropValidateEvent, Event);
+
+    //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(DragAndDropCurrentZoneChangedEvent, Event);
 
     //////////////////////////////////////////

@@ -89,6 +89,18 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(DragAndDropZoneOnDragAndDropValidateEvent,
+        {},
+        {},
+        DragAndDropValidateEvent& _event,
+        Entity* _entity,
+        DragAndDropZone* _zone)
+    {
+        _zone->eventDragAndDropValidate(_event.data, _event.viewEid, _event.dropAllowed);
+    }
+    
+
+    //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(DragAndDropZoneOnDragAndDropEvent,
         {},
         {},

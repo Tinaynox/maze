@@ -81,6 +81,7 @@ namespace Maze
 
     public:
         MultiDelegate<DataBlock const&, EntityId> eventDragAndDrop;
+        MultiDelegate<DataBlock const&, EntityId, bool&> eventDragAndDropValidate;
         MultiDelegate<bool> eventDragAndDropZoneOnDragAndDropCurrentZoneChanged;
 
     protected:
