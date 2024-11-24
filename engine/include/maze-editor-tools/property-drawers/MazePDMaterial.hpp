@@ -47,6 +47,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(PropertyDrawerMaterial);
     MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(DragAndDropZone);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(PropertyDrawerMaterialAssetRef);
     MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
@@ -105,6 +106,8 @@ namespace Maze
 
     protected:
         ClickButton2DPtr m_materialButton;
+        SpriteRenderer2DPtr m_dragAndDropFrame;
+        DragAndDropZonePtr m_dragAndDropZone;
         SpriteRenderer2DPtr m_materialIcon;
         AbstractTextRenderer2DPtr m_materialNameDrawer;
         MaterialPtr m_material;

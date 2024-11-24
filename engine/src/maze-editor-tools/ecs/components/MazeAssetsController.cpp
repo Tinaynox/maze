@@ -362,6 +362,7 @@ namespace Maze
 
             EntityPtr assetLineObject = getEntityRaw()->getEcsScene()->createEntity();
             AssetLinePtr line = assetLineObject->ensureComponent<AssetLine>(this, assetFile);
+            line->setDragAndDropEnabled(false);
 
             Size fullPathLastSlashPosition = fullPath.getPath().find_last_of('/');
             if (fullPathLastSlashPosition != String::npos)
@@ -543,6 +544,7 @@ namespace Maze
 
             EntityPtr assetLineObject = getEntityRaw()->getEcsScene()->createEntity();
             AssetLinePtr line = assetLineObject->ensureComponent<AssetLine>(this, assetFile);
+            line->setDragAndDropEnabled(true);
 
             line->getTransform()->setParent(lineParent);
             line->setDropDownVisible(false);

@@ -32,6 +32,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -39,6 +40,7 @@
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/events/MazeUIEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -83,6 +85,30 @@ namespace Maze
     void DragAndDropZone::processEntityAwakened()
     {
         m_element = getEntityRaw()->ensureComponent<UIElement2D>();
+    }
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(DragAndDropZoneOnDragAndDropEvent,
+        {},
+        {},
+        DragAndDropEvent const& _event,
+        Entity* _entity,
+        DragAndDropZone* _zone)
+    {
+        _zone->eventDragAndDrop(_event.data, _event.viewEid);
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(DragAndDropZoneOnDragAndDropCurrentZoneChangedEvent,
+        {},
+        {},
+        DragAndDropCurrentZoneChangedEvent const& _event,
+        Entity* _entity,
+        DragAndDropZone* _zone)
+    {
+        _zone->eventDragAndDropZoneOnDragAndDropCurrentZoneChanged(
+            _entity->getId() == _event.zoneEid);
     }
 
 

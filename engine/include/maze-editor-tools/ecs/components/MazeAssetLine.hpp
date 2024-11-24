@@ -138,6 +138,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline void setDragAndDropEnabled(bool _value) { m_dragAndDropEnabled = _value; }
+
+        //////////////////////////////////////////
+        inline bool getDragAndDropEnabled() const { return m_dragAndDropEnabled; }
+
+
+        //////////////////////////////////////////
         AssetFilePtr const& getAssetFile() const { return m_assetFile; }
 
 
@@ -230,6 +237,7 @@ namespace Maze
         Transform2DPtr m_childrenTransform;
 
         bool m_selected;
+        bool m_dragAndDropEnabled = true;
 
         bool m_selectAssetFileByClick;
     };

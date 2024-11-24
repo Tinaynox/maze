@@ -79,6 +79,10 @@ namespace Maze
         //////////////////////////////////////////
         UIElement2DPtr const& getUIElement() const { return m_element; }
 
+    public:
+        MultiDelegate<DataBlock const&, EntityId> eventDragAndDrop;
+        MultiDelegate<bool> eventDragAndDropZoneOnDragAndDropCurrentZoneChanged;
+
     protected:
 
         //////////////////////////////////////////

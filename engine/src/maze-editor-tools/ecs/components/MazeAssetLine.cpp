@@ -321,7 +321,8 @@ namespace Maze
         if (_inputEvent.button != 0)
             return;
         
-        s_pressedAssetLine = this;
+        if (getDragAndDropEnabled())
+            s_pressedAssetLine = this;
     }
 
     //////////////////////////////////////////
@@ -431,8 +432,11 @@ namespace Maze
 
         bool showSelected = m_selected;
 
-        if (s_pressedAssetLine != nullptr)
-            showSelected = (s_pressedAssetLine == this);
+        if (getDragAndDropEnabled())
+        {
+            if (s_pressedAssetLine != nullptr)
+                showSelected = (s_pressedAssetLine == this);
+        }
 
         if (showSelected)
         {
@@ -527,6 +531,9 @@ namespace Maze
         if (!assetLine)
             return;
 
+        if (!assetLine->getDragAndDropEnabled())
+            return;
+
         auto dragAndDropControllerSample = _entity->getEcsWorld()->requestInclusiveSample<DragAndDropController>();
         dragAndDropControllerSample->findQuery(
             [&](Entity* _entity, DragAndDropController* _controller)
@@ -534,8 +541,13 @@ namespace Maze
                 SceneDragAndDrop* dndScene = _controller->getDragAndDropScene();
                 if (dndScene)
                 {
+                    DataBlock dataBlock;
+                    dataBlock.setString(MAZE_HCS("type"), "assetFile");
+                    dataBlock.setS32(MAZE_HCS("afid"), assetLine->getAssetFile()->getAssetFileId());
+
                     dndScene->startDrag(
-                        assetLine->getIconRenderer()->getEntityRaw()->getComponent<Transform2D>());
+                        assetLine->getIconRenderer()->getEntityRaw()->getComponent<Transform2D>(),
+                        dataBlock);
                     _clickButton->getUIElement()->setPressed(false);
                     _clickButton->getUIElement()->setFocused(false);
                 }
