@@ -334,7 +334,7 @@ namespace Maze
     {
         F32 dt = _dt;
 
-        m_transform2Ds->process(
+        m_transform2Ds->query(
             [&](Entity* _entity, Transform2D* _transform)
             {
                 if (_transform->updateChildrenOrder() || !_transform->getEntityRaw()->getActiveInHierarchy() ||
@@ -344,13 +344,13 @@ namespace Maze
                 }
             }); 
 
-        m_canvasScalersSample->process(
+        m_canvasScalersSample->query(
             [&](Entity* _entity, CanvasScaler* _canvasScaler)
             {
                 _canvasScaler->updateCanvasScale();
             });            
 
-        m_sizePolicy2D->process(
+        m_sizePolicy2D->query(
             [](Entity* entity, SizePolicy2D* _sizePolicy, Transform2D* _transform)
             {
                 if (_transform->isWorldTransformChanged())
@@ -358,7 +358,7 @@ namespace Maze
             });
         
 
-        m_canvasGroupsSample->process(
+        m_canvasGroupsSample->query(
             [](Entity* _entity, CanvasGroup* _canvasGroup)
             {
                 std::function<void(Transform2D*)> updateFunc =
@@ -384,14 +384,14 @@ namespace Maze
                 }
             });
 
-        m_canvasRenderersSample->process(
+        m_canvasRenderersSample->query(
             [](Entity* _entity, CanvasRenderer* _canvasRenderer)
             {
                 if (_canvasRenderer->getTransform()->isHierarchyChanged())
                     _canvasRenderer->dirtyAlpha();
             });
 
-        m_systemTextRenderer2DsSample->process(
+        m_systemTextRenderer2DsSample->query(
             [](Entity* _entity, SystemTextRenderer2D* _systemTextRenderer2D)
             {
                 if (_systemTextRenderer2D->getTransform()->isSizeChanged())
@@ -414,7 +414,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderControllerModule2D::processPostUpdate(F32 _dt)
     {
-        m_canvasGroupsSample->process(
+        m_canvasGroupsSample->query(
             [](Entity* _entity, CanvasGroup* _canvasGroup)
             {
                 _canvasGroup->clearEventFlags();
@@ -462,7 +462,7 @@ namespace Maze
     {
         m_sortedCanvases.clear();
 
-        m_canvasesSample->process(
+        m_canvasesSample->query(
             [&](Entity* _entity, Canvas* _canvas)        
             {
                 m_sortedCanvases.emplace_back(_canvas);

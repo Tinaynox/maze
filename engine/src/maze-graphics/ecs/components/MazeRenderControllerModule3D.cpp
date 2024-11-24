@@ -104,7 +104,7 @@ namespace Maze
         Light3D* mainLight = nullptr;
         Vec4F mainLightColor = Vec4F::c_zero;
         Vec3F mainLightDirection = Vec3F::c_unitZ;
-        m_lights3DSample->process(
+        m_lights3DSample->query(
             [&](Entity* _entity, Light3D* _light3D)
             {
                 if (_params.renderMask & _light3D->getRenderMask()->getMask())
@@ -297,7 +297,7 @@ namespace Maze
         MAZE_PROFILE_EVENT("RenderControllerModule3D::draw");
 
         Vector<Camera3D*> cameras;
-        m_cameras3DSample->process(
+        m_cameras3DSample->query(
             [&](Entity* _entity, Camera3D* _camera3D)
             {
                 cameras.push_back(_camera3D);

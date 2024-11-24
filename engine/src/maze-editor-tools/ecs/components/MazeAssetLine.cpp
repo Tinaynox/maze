@@ -63,6 +63,7 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/components/MazeUIDragElement2D.hpp"
+#include "maze-ui/ecs/components/MazeDragAndDropController.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/events/MazeUIEvents.hpp"
@@ -526,14 +527,21 @@ namespace Maze
         if (!assetLine)
             return;
 
-        SceneDragAndDropDefaultPtr dndScene = SceneManager::GetInstancePtr()->getScene<SceneDragAndDropDefault>();
-        if (dndScene)
-        {
-            dndScene->startDrag(
-                assetLine->getIconRenderer()->getEntityRaw()->getComponent<Transform2D>());
-            _entity->getComponent<ClickButton2D>()->getUIElement()->setPressed(false);
-            _entity->getComponent<ClickButton2D>()->getUIElement()->setFocused(false);
-        }
+        auto dragAndDropControllerSample = _entity->getEcsWorld()->requestInclusiveSample<DragAndDropController>();
+        dragAndDropControllerSample->findQuery(
+            [&](Entity* _entity, DragAndDropController* _controller)
+            {
+                SceneDragAndDrop* dndScene = _controller->getDragAndDropScene();
+                if (dndScene)
+                {
+                    dndScene->startDrag(
+                        assetLine->getIconRenderer()->getEntityRaw()->getComponent<Transform2D>());
+                    _clickButton->getUIElement()->setPressed(false);
+                    _clickButton->getUIElement()->setFocused(false);
+                }
+
+                return true;
+            });
     }
     
 } // namespace Maze

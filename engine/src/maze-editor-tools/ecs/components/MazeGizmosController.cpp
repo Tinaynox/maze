@@ -179,7 +179,7 @@ namespace Maze
         GizmosController* _gizmosController)
     {
         bool haveGizmosMask = false;
-        _gizmosController->getCameras3DSample()->process(
+        _gizmosController->getCameras3DSample()->query(
             [&haveGizmosMask](Entity* _entity, Camera3D* _camera)
             {
                 haveGizmosMask |= (bool)(_camera->getRenderMask() & S32(DefaultRenderMask::Gizmos));

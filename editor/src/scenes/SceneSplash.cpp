@@ -258,11 +258,9 @@ namespace Maze
             case 5:
             {
                 // UI utils scenes
-                /*
                 SceneManager::GetInstancePtr()->loadScene<SceneDragAndDropDefault>(
                     true,
                     Editor::GetInstancePtr()->getMainRenderWindow());
-                */
 
                 setCurrentProgress(0.5f);
                 break;

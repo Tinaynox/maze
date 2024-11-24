@@ -111,7 +111,7 @@ namespace Maze
         RenderTarget* renderTarget = _event.getRenderTarget();
 
 
-        _particlesDrawerController->getParticleSystem3DSample()->process(
+        _particlesDrawerController->getParticleSystem3DSample()->query(
             [renderTarget, &_event, &cameraPosition, &cameraForward, &cameraUp](Entity* _entity, ParticleSystem3D* _particleSystem)
         {
             if (!(_particleSystem->getRenderMask()->getMask() & _event.getPassParams()->renderMask))

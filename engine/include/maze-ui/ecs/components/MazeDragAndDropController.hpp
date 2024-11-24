@@ -25,94 +25,76 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneDragAndDrop_hpp_))
-#define _SceneDragAndDrop_hpp_
+#if (!defined(_MazeDragAndDropController_hpp_))
+#define _MazeDragAndDropController_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
-#include "maze-core/ecs/MazeEntitiesSample.hpp"
-#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
-#include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
-#include "maze-ui/ecs/components/MazeInputSystem2D.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-ui/MazeCursorInputEvent.hpp"
+#include "maze-core/math/MazeAnimationCurve.hpp"
+#include "maze-graphics/MazeColorGradient.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneDragAndDrop);
-    MAZE_USING_SHARED_PTR(Canvas);
-    MAZE_USING_SHARED_PTR(Transform2D);
-    MAZE_USING_SHARED_PTR(UIElement2D);
     MAZE_USING_SHARED_PTR(DragAndDropController);
+    MAZE_USING_SHARED_PTR(SceneDragAndDrop);
 
 
     //////////////////////////////////////////
-    // Class SceneDragAndDrop
+    // Class DragAndDropController
     //
     //////////////////////////////////////////
-    class MAZE_UI_API SceneDragAndDrop
-        : public EcsRenderScene
+    class MAZE_UI_API DragAndDropController
+        : public Component
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneDragAndDrop, EcsRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(DragAndDropController, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(SceneDragAndDrop);
+        MAZE_DECLARE_MEMORY_ALLOCATION(DragAndDropController);
+
+        //////////////////////////////////////////
+        friend class Entity;
 
     public:
 
         //////////////////////////////////////////
-        static SceneDragAndDropPtr Create(RenderTargetPtr const& _renderTarget);
-    
-        //////////////////////////////////////////
-        virtual ~SceneDragAndDrop();
+        virtual ~DragAndDropController();
 
         //////////////////////////////////////////
-        virtual void update(F32 _dt) MAZE_OVERRIDE;
+        static DragAndDropControllerPtr Create(
+            EcsSceneId _dragAndDropSceneId = c_invalidEcsSceneId);
 
 
         //////////////////////////////////////////
-        void startDrag(
-            Transform2DPtr const& _viewEntity,
-            DataBlock const& _data = DataBlock());
+        inline EcsSceneId getDragAndDropSceneId() const { return m_dragAndDropSceneId; }
 
         //////////////////////////////////////////
-        void cancelDrag();
-
-        //////////////////////////////////////////
-        void tryDrop();
+        SceneDragAndDrop* getDragAndDropScene();
 
     protected:
 
         //////////////////////////////////////////
-        SceneDragAndDrop();
+        DragAndDropController();
 
         //////////////////////////////////////////
-        virtual bool init(RenderTargetPtr const& _renderTarget);
-
-
+        using Component::init;
+        
         //////////////////////////////////////////
-        void setCurrentDropZone(EntityId _eid);
+        bool init(EcsSceneId _dragAndDropSceneId);
+        
 
     protected:
-        DragAndDropControllerPtr m_dragAndDropController;
-        CanvasPtr m_canvas;
-        UIElement2DPtr m_element;
-
-        EntityId m_viewEntityId;
-        Transform2DPtr m_dragAndDropView;
-
-        DataBlock m_data;
-
-        EntityId m_currentDropZoneEid;
-
-        SharedPtr<GenericInclusiveEntitiesSample<DragAndDropZone>> m_dragAndDropZonesSample;
-        SharedPtr<GenericInclusiveEntitiesSample<InputSystem2D>> m_inputSystemSample;
-        SharedPtr<GenericInclusiveEntitiesSample<DragAndDropController>> m_dragAndDropControllerSample;
+        EcsSceneId m_dragAndDropSceneId;
     };
 
 
@@ -120,5 +102,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneDragAndDrop_hpp_
+#endif // _MazeDragAndDropController_hpp_
 //////////////////////////////////////////

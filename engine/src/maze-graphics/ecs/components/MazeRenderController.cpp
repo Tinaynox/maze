@@ -127,14 +127,14 @@ namespace Maze
     {
         clearRenderTargets();
 
-        m_canvasesSample->process(
+        m_canvasesSample->query(
             [&](Entity* _entity, Canvas* _canvas)
             {
                 if (_canvas->getRenderTarget())
                     addRenderTarget(_canvas->getRenderTarget().get());
             });
 
-        m_cameras3DSample->process(
+        m_cameras3DSample->query(
             [&](Entity* _entity, Camera3D* _camera)
             {
                 if (_camera->getRenderTarget())

@@ -53,6 +53,9 @@ namespace Maze
     //////////////////////////////////////////
     using EcsSceneId = IdWithGeneration<S32, 8>;
 
+    //////////////////////////////////////////
+    static const EcsSceneId c_invalidEcsSceneId = EcsSceneId();
+
 
     //////////////////////////////////////////
     MAZE_DECLARE_ENUMCLASS_3_API(MAZE_CORE_API, EcsSceneState,

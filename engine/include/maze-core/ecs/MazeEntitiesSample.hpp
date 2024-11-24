@@ -108,7 +108,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void process(void (*)()) MAZE_ABSTRACT;
+        virtual void query(void (*)()) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual EntityId findQuery(EntityId(*)()) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual void processEvent(Event* _event, EcsEventParams _params, void (*)()) MAZE_ABSTRACT;
@@ -187,8 +190,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void process(void (*_func)()) MAZE_OVERRIDE
+        virtual void query(void (*_func)()) MAZE_OVERRIDE
         { }
+
+        //////////////////////////////////////////
+        virtual EntityId findQuery(EntityId(*_func)()) MAZE_OVERRIDE
+        {
+            return c_invalidEntityId;
+        }
 
 
         //////////////////////////////////////////
@@ -230,10 +239,17 @@ namespace Maze
         using Indices = IndexTupleBuilder<sizeof ...(TComponents)>;
 
         //////////////////////////////////////////
-        using ProcessFunc = std::function<void(Entity*, TComponents* ..._components)>;
+        using QueryFunc = std::function<void(Entity*, TComponents* ..._components)>;
 
         //////////////////////////////////////////
-        using ProcessFuncRaw = void(*)(Entity*, TComponents* ..._components);
+        using QueryFuncRaw = void(*)(Entity*, TComponents* ..._components);
+
+
+        //////////////////////////////////////////
+        using FindQueryFunc = std::function<bool(Entity*, TComponents* ..._components)>;
+
+        //////////////////////////////////////////
+        using FindQueryFuncRaw = bool(*)(Entity*, TComponents* ..._components);
 
 
         //////////////////////////////////////////
@@ -347,11 +363,11 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void process(ProcessFunc _func)
+        void query(QueryFunc _func)
         {
             for (EntityData entityData : m_entitiesData)
             {
-                callProcess(
+                callQuery(
                     _func,
                     entityData.entity,
                     entityData.components,
@@ -360,10 +376,36 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual void process(void (*_func)()) MAZE_OVERRIDE
+        virtual void query(void (*_func)()) MAZE_OVERRIDE
         {
-            ProcessFuncRaw rawFunc = (ProcessFuncRaw)_func;
-            process((ProcessFunc)(rawFunc));
+            QueryFuncRaw rawFunc = (QueryFuncRaw)_func;
+            query((QueryFunc)(rawFunc));
+        }
+
+
+        //////////////////////////////////////////
+        EntityId findQuery(FindQueryFunc _func)
+        {
+            for (EntityData entityData : m_entitiesData)
+            {
+                bool res = callFindQuery(
+                    _func,
+                    entityData.entity,
+                    entityData.components,
+                    typename Indices::Indexes());
+
+                if (res)
+                    return entityData.entity->getId();
+            }
+
+            return c_invalidEntityId;
+        }
+
+        //////////////////////////////////////////
+        virtual EntityId findQuery(EntityId(*_func)()) MAZE_OVERRIDE
+        {
+            FindQueryFuncRaw rawFunc = (FindQueryFuncRaw)_func;
+            return findQuery((FindQueryFunc)(rawFunc));
         }
 
 
@@ -445,13 +487,23 @@ namespace Maze
         }
 
         template<S32 ...Idxs> 
-        inline void callProcess(
-            ProcessFunc _func,
+        inline void callQuery(
+            QueryFunc _func,
             Entity* _entity,
             std::tuple<TComponents*...>& _components,
             IndexesTuple<Idxs...> const&)
         {
             _func(_entity, std::get<Idxs>(_components)...);
+        }
+
+        template<S32 ...Idxs>
+        inline bool callFindQuery(
+            FindQueryFunc _func,
+            Entity* _entity,
+            std::tuple<TComponents*...>& _components,
+            IndexesTuple<Idxs...> const&)
+        {
+            return _func(_entity, std::get<Idxs>(_components)...);
         }
 
         template<S32 ...Idxs>
@@ -527,10 +579,17 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        using ProcessFunc = std::function<void(Entity*, TComponent* _component)>;
+        using QueryFunc = std::function<void(Entity*, TComponent* _component)>;
 
         //////////////////////////////////////////
-        using ProcessFuncRaw = void(*)(Entity*, TComponent* _component);
+        using QueryFuncRaw = void(*)(Entity*, TComponent* _component);
+
+
+        //////////////////////////////////////////
+        using FindQueryFunc = std::function<bool(Entity*, TComponent* _component)>;
+
+        //////////////////////////////////////////
+        using FindQueryFuncRaw = bool(*)(Entity*, TComponent* _component);
 
 
         //////////////////////////////////////////
@@ -646,7 +705,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void process(ProcessFunc _func)
+        void query(QueryFunc _func)
         {
             for (EntityData entityData : m_entitiesData)
             {
@@ -655,10 +714,30 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual void process(void (*_func)()) MAZE_OVERRIDE
+        virtual void query(void (*_func)()) MAZE_OVERRIDE
         {
-            ProcessFuncRaw rawFunc = (ProcessFuncRaw)_func;
-            process((ProcessFunc)(rawFunc));
+            QueryFuncRaw rawFunc = (QueryFuncRaw)_func;
+            query((QueryFunc)(rawFunc));
+        }
+
+
+        //////////////////////////////////////////
+        EntityId findQuery(FindQueryFunc _func)
+        {
+            for (EntityData entityData : m_entitiesData)
+            {
+                if (_func(entityData.entity, entityData.component))
+                    return entityData.entity->getId();
+            }
+
+            return c_invalidEntityId;
+        }
+
+        //////////////////////////////////////////
+        virtual EntityId findQuery(EntityId (*_func)()) MAZE_OVERRIDE
+        {
+            FindQueryFuncRaw rawFunc = (FindQueryFuncRaw)_func;
+            return findQuery((FindQueryFunc)(rawFunc));
         }
 
 

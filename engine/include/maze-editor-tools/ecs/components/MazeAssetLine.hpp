@@ -95,6 +95,12 @@ namespace Maze
         VerticalLayout2DPtr const& getMainLayout() const { return m_mainLayout; }
 
         //////////////////////////////////////////
+        Transform2DPtr const& getMainTransform() const { return m_mainTransform; }
+
+        //////////////////////////////////////////
+        AbstractTextRenderer2DPtr const& getTextRenderer() const { return m_textRenderer; }
+
+        //////////////////////////////////////////
         VerticalLayout2DPtr const& getChildrenLayout() const { return m_childrenLayout; }
 
         //////////////////////////////////////////

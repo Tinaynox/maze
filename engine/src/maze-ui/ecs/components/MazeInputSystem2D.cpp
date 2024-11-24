@@ -211,7 +211,7 @@ namespace Maze
         };
 
         Vector<Layout2DSortData> layouts;
-        m_horizontalLayouts2D->process(
+        m_horizontalLayouts2D->query(
             [&](Entity* _entity, HorizontalLayout2D* _layout)
             {
                 layouts.emplace_back(
@@ -222,7 +222,7 @@ namespace Maze
                     });
             });
 
-        m_verticalLayouts2D->process(
+        m_verticalLayouts2D->query(
             [&](Entity* _entity, VerticalLayout2D* _layout)
             {
                 layouts.emplace_back(
@@ -264,13 +264,13 @@ namespace Maze
                 return false;
             });
 
-        m_canvasScalersSample->process(
+        m_canvasScalersSample->query(
             [&](Entity* _entity, CanvasScaler* _canvasScaler)
             {
                 _canvasScaler->updateCanvasScale();
             });
 
-        m_sizePolicy2D->process(
+        m_sizePolicy2D->query(
             [](Entity* entity, SizePolicy2D* _sizePolicy, Transform2D* _transform)
             {
                 if (_transform->isWorldTransformChanged())
@@ -280,19 +280,19 @@ namespace Maze
         for (Layout2DSortData const& layoutData : layouts)
             layoutData.layout->update();
 
-        m_systemTextEditBoxesSample->process(
+        m_systemTextEditBoxesSample->query(
             [&](Entity* _entity, EditBox2D* _editBox)
             {
                 _editBox->update(dt);
             });
 
-        m_systemTextDropdownsSample->process(
+        m_systemTextDropdownsSample->query(
             [&](Entity* _entity, Dropdown2D* _dropdown)
             {
                 _dropdown->update(dt);
             });
 
-        m_scrollRects2D->process(
+        m_scrollRects2D->query(
             [&](Entity* _entity, ScrollRect2D* _scrollRect)
             {
                 _scrollRect->update(dt);
@@ -394,7 +394,7 @@ namespace Maze
     {
         m_sortedCanvases.clear();
 
-        m_canvasesSample->process(
+        m_canvasesSample->query(
             [&](Entity* _entity, Canvas* _canvas)        
             {
                 m_sortedCanvases.emplace_back(_canvas);

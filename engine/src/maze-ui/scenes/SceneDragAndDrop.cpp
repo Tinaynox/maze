@@ -28,6 +28,7 @@
 #include "maze-ui/scenes/SceneDragAndDrop.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/ecs/components/MazeDragAndDropController.hpp"
 #include "maze-ui/events/MazeUIEvents.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
@@ -82,9 +83,11 @@ namespace Maze
 
         m_dragAndDropZonesSample = m_world->requestInclusiveSample<DragAndDropZone>();
         m_inputSystemSample = m_world->requestInclusiveSample<InputSystem2D>();
+        m_dragAndDropControllerSample = m_world->requestInclusiveSample<DragAndDropController>();
 
         
-        EntityPtr canvasEntity = createEntity();
+        EntityPtr canvasEntity = createEntity("DragAndDropController");
+        m_dragAndDropController = canvasEntity->createComponent<DragAndDropController>(getId());
         m_canvas = canvasEntity->createComponent<Canvas>();
         m_canvas->setClearColorFlag(false);
         m_canvas->setClearDepthFlag(false);
@@ -124,13 +127,13 @@ namespace Maze
 
                 m_dragAndDropView->setLocalPosition(renderTargetCursorPos);
 
-                m_inputSystemSample->process(
+                m_inputSystemSample->query(
                     [&](Entity*, InputSystem2D* _inputSystem)
                     {
                         CursorElementTraceParams traceParams;
                         traceParams.ignoreElements.insert(m_element->getEntityId());
 
-                        m_dragAndDropZonesSample->process(
+                        m_dragAndDropZonesSample->query(
                             [&](Entity*, DragAndDropZone* _zone)
                             {
                                 if (_inputSystem->traceElement(
