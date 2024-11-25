@@ -39,6 +39,7 @@
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/managers/MazeRenderMeshPickerManager.hpp"
 #include "maze-editor-tools/render-mesh-picker/MazeSceneRenderMeshPicker.hpp"
@@ -143,6 +144,61 @@ namespace Maze
             layout->getTransform(),
             _parent->getEntityRaw()->getEcsScene());
         m_renderMeshButton->eventClick.subscribe(this, &PropertyDrawerRenderMesh::notifyRenderMeshButtonClick);
+
+
+        m_dragAndDropFrame = SpriteHelper::CreateSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Focused),
+            m_renderMeshButton->getTransform()->getSize(),
+            Vec2F::c_zero,
+            nullptr,
+            m_renderMeshButton->getTransform(),
+            _parent->getEntityRaw()->getEcsScene());
+        m_dragAndDropFrame->setColor(255, 200, 40);
+        m_dragAndDropFrame->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        m_dragAndDropFrame->getMeshRenderer()->setEnabled(false);
+
+        m_dragAndDropZone = m_renderMeshButton->getEntityRaw()->ensureComponent<DragAndDropZone>();
+        m_dragAndDropZone->eventDragAndDropValidate.subscribe(
+            [this](DataBlock const& _data, EntityId _viewEid, bool& _outDropAllowed)
+            {
+                if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("assetFile"))
+                {
+                    AssetFileId afid = _data.getS32(MAZE_HCS("afid"));
+                    AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(afid);
+                    if (!assetFile)
+                        return;
+
+                    RenderMeshPtr const& renderMesh = RenderMeshManager::GetCurrentInstancePtr()->getOrLoadRenderMesh(assetFile);
+                    if (!renderMesh)
+                        return;
+
+                    _outDropAllowed = true;
+                }
+            });
+        m_dragAndDropZone->eventDragAndDrop.subscribe(
+            [this](DataBlock const& _data, EntityId _viewEid)
+            {
+                if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("assetFile"))
+                {
+                    AssetFileId afid = _data.getS32(MAZE_HCS("afid"));
+                    AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(afid);
+                    if (!assetFile)
+                        return;
+
+                    RenderMeshPtr const& renderMesh = RenderMeshManager::GetCurrentInstancePtr()->getOrLoadRenderMesh(assetFile);
+                    if (!renderMesh)
+                        return;
+
+                    setValue(renderMesh);
+                    eventUIData();
+                }
+            });
+        m_dragAndDropZone->eventDragAndDropZoneOnDragAndDropCurrentZoneChanged.subscribe(
+            [this](bool _active)
+            {
+                this->m_dragAndDropFrame->getMeshRenderer()->setEnabled(_active);
+            });
+
 
         m_selectAssetButton = UIHelper::CreateClickButton(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::SelectAsset),

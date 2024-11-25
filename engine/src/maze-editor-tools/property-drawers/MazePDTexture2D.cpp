@@ -30,11 +30,14 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/managers/MazeTexturePickerManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -170,6 +173,61 @@ namespace Maze
             materialManager->getSpriteMaterial(),
             textureHolder->getTransform(),
             _parent->getEntityRaw()->getEcsScene());
+
+        m_dragAndDropFrame = SpriteHelper::CreateSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
+            m_textureRenderer->getTransform()->getSize(),
+            Vec2F::c_zero,
+            nullptr,
+            m_textureRenderer->getTransform(),
+            _parent->getEntityRaw()->getEcsScene());
+        m_dragAndDropFrame->setColor(255, 200, 40);
+        m_dragAndDropFrame->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        m_dragAndDropFrame->getMeshRenderer()->setEnabled(false);
+
+        m_dragAndDropZone = m_textureRenderer->getEntityRaw()->ensureComponent<DragAndDropZone>();
+        m_dragAndDropZone->getUIElement()->setCaptureCursorHits(true);
+        m_dragAndDropZone->eventDragAndDropValidate.subscribe(
+            [this](DataBlock const& _data, EntityId _viewEid, bool& _outDropAllowed)
+            {
+                if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("assetFile"))
+                {
+                    AssetFileId afid = _data.getS32(MAZE_HCS("afid"));
+                    AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(afid);
+                    if (!assetFile)
+                        return;
+
+                    Texture2DPtr const& texture2d = TextureManager::GetCurrentInstancePtr()->getOrLoadTexture2D(assetFile);
+                    if (!texture2d)
+                        return;
+
+                    _outDropAllowed = true;
+                }
+            });
+        m_dragAndDropZone->eventDragAndDrop.subscribe(
+            [this](DataBlock const& _data, EntityId _viewEid)
+            {
+                if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("assetFile"))
+                {
+                    AssetFileId afid = _data.getS32(MAZE_HCS("afid"));
+                    AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(afid);
+                    if (!assetFile)
+                        return;
+
+                    Texture2DPtr const& texture2d = TextureManager::GetCurrentInstancePtr()->getOrLoadTexture2D(assetFile);
+                    if (!texture2d)
+                        return;
+
+                    setValue(texture2d);
+                    eventUIData();
+                }
+            });
+        m_dragAndDropZone->eventDragAndDropZoneOnDragAndDropCurrentZoneChanged.subscribe(
+            [this](bool _active)
+            {
+                this->m_dragAndDropFrame->getMeshRenderer()->setEnabled(_active);
+            });
+
     }
 
     //////////////////////////////////////////

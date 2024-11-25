@@ -49,6 +49,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(PropertyDrawerRenderMesh);
     MAZE_USING_SHARED_PTR(PropertyDrawerRenderMeshAssetRef);
     MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(DragAndDropZone);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
 
 
@@ -105,6 +106,8 @@ namespace Maze
 
     protected:
         ClickButton2DPtr m_renderMeshButton;
+        SpriteRenderer2DPtr m_dragAndDropFrame;
+        DragAndDropZonePtr m_dragAndDropZone;
         SpriteRenderer2DPtr m_renderMeshIcon;
         AbstractTextRenderer2DPtr m_renderMeshNameDrawer;
         RenderMeshPtr m_renderMesh;

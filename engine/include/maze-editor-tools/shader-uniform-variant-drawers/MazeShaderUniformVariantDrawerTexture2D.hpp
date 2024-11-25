@@ -50,6 +50,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(ClickButton2D);
     MAZE_USING_SHARED_PTR(Button2D);
+    MAZE_USING_SHARED_PTR(DragAndDropZone);
 
 
     //////////////////////////////////////////
@@ -110,6 +111,8 @@ namespace Maze
         SpriteRenderer2DPtr m_textureRenderer;
 
         ClickButton2DPtr m_selectAssetButton;
+        SpriteRenderer2DPtr m_dragAndDropFrame;
+        DragAndDropZonePtr m_dragAndDropZone;
     };
 
 

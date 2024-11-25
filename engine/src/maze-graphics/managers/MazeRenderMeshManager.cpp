@@ -274,6 +274,10 @@ namespace Maze
             return it->second.renderMesh;
         }
 
+        Vector<HashedString> loaderExtensions = MeshManager::GetInstancePtr()->getMeshLoaderExtensions();
+        if (std::find(loaderExtensions.begin(), loaderExtensions.end(), HashedString(_assetFile->getExtension())) == loaderExtensions.end())
+            return nullPointer;
+
         RenderMeshPtr renderMesh = RenderMesh::Create(_assetFile);
         renderMesh->setName(HashedString(_assetFile->getFileName().toUTF8()));
         RenderMeshLibraryData* data = addRenderMeshToLibrary(renderMesh);

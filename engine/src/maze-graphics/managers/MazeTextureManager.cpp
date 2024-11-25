@@ -208,6 +208,10 @@ namespace Maze
             return libraryData->texture;
         }
 
+        Vector<HashedString> loaderExtensions = getTextureLoaderExtensions();
+        if (std::find(loaderExtensions.begin(), loaderExtensions.end(), HashedString(_assetFile->getExtension())) == loaderExtensions.end())
+            return nullPointer;
+
         Texture2DPtr texture2D = Texture2D::Create(_assetFile, m_renderSystemRaw);
         texture2D->setName(_assetFile->getFileName());
 
