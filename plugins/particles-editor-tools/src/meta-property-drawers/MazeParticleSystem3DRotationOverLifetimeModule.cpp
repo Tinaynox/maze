@@ -96,10 +96,13 @@ namespace Maze
         if (!MetaPropertyDrawer::init(_metaProperty))
             return false;
 
-        m_enabledDrawer = PropertyDrawerBool::Create("Rotation over Lifetime");
+        DataBlock data;
+        data.setCString(MAZE_HCS("label"), "Rotation over Lifetime");
+        m_enabledDrawer = PropertyDrawerBool::Create(data);
         m_enabledDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DRotationOverLifetimeModule::processDataFromUI);
 
-        m_parameterDrawer = PropertyDrawerParticleSystemParameterF32Degrees::Create("Rotation");
+        data.setCString(MAZE_HCS("label"), "Rotation");
+        m_parameterDrawer = PropertyDrawerParticleSystemParameterF32Degrees::Create(data);
         m_parameterDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DRotationOverLifetimeModule::processDataFromUI);
 
         return true;

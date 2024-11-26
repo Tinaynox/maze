@@ -108,16 +108,21 @@ namespace Maze
         if (!MetaPropertyDrawer::init(_metaProperty))
             return false;
 
-        m_enabledDrawer = PropertyDrawerBool::Create("Texture Sheet Animation");
+        DataBlock data;
+        data.setCString(MAZE_HCS("label"), "Texture Sheet Animation");
+        m_enabledDrawer = PropertyDrawerBool::Create(data);
         m_enabledDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DTextureSheetAnimationModule::processDataFromUI);
 
-        m_tilesDrawer = PropertyDrawerVec2S32::Create("Tiles");
+        data.setCString(MAZE_HCS("label"), "Tiles");
+        m_tilesDrawer = PropertyDrawerVec2S32::Create(data);
         m_tilesDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DTextureSheetAnimationModule::processDataFromUI);
 
-        m_startFrameDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create("Start Frame");
+        data.setCString(MAZE_HCS("label"), "Start Frame");
+        m_startFrameDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create(data);
         m_startFrameDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DTextureSheetAnimationModule::processDataFromUI);
 
-        m_frameOverTimeDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create("Frame Over Time");
+        data.setCString(MAZE_HCS("label"), "Frame Over Time");
+        m_frameOverTimeDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create(data);
         m_frameOverTimeDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DTextureSheetAnimationModule::processDataFromUI);
 
         return true;

@@ -75,20 +75,20 @@ namespace Maze
 
     //////////////////////////////////////////
     PropertyDrawerEnumClassPtr PropertyDrawerEnumClass::Create(
-        String const& _label,
+        DataBlock const& _dataBlock,
         Vector<String> const& _enumValues)
     {
         PropertyDrawerEnumClassPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerEnumClass, object, init(_label, _enumValues));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerEnumClass, object, init(_dataBlock, _enumValues));
         return object;
     }
 
     //////////////////////////////////////////
     bool PropertyDrawerEnumClass::init(
-        String const& _label,
+        DataBlock const& _dataBlock,
         Vector<String> const& _enumValues)
     {
-        if (!PropertyDrawer::init(_label))
+        if (!PropertyDrawer::init(_dataBlock))
             return false;
 
         m_enumValues = _enumValues;
@@ -117,7 +117,7 @@ namespace Maze
         layout->setExpand(true);
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
-            EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
+            EditorToolsHelper::BuildPropertyName(m_dataBlock.getCString(MAZE_HCS("label")), _label).c_str(),
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
             HorizontalAlignment2D::Left,

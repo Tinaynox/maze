@@ -74,7 +74,7 @@ namespace Maze
         virtual ~PropertyDrawerParticleSystemBurst();
 
         //////////////////////////////////////////
-        static PropertyDrawerParticleSystemBurstPtr Create(String const& _label);
+        static PropertyDrawerParticleSystemBurstPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -102,7 +102,7 @@ namespace Maze
         PropertyDrawerParticleSystemBurst();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         EditBox2DPtr createEdit(

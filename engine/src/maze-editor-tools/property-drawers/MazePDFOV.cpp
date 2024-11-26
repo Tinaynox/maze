@@ -74,17 +74,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerFOVPtr PropertyDrawerFOV::Create(String const& _label)
+    PropertyDrawerFOVPtr PropertyDrawerFOV::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerFOVPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerFOV, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerFOV, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerFOV::init(String const& _label)
+    bool PropertyDrawerFOV::init(DataBlock const& _dataBlock)
     {
-        if (!PropertyDrawerSliderRadians::init(_label))
+        if (!PropertyDrawerSliderRadians::init(_dataBlock))
             return false;
 
         return true;

@@ -75,7 +75,7 @@ namespace Maze
         virtual ~PropertyDrawerRenderMesh();
 
         //////////////////////////////////////////
-        static PropertyDrawerRenderMeshPtr Create(String const& _label);
+        static PropertyDrawerRenderMeshPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -96,7 +96,7 @@ namespace Maze
         PropertyDrawerRenderMesh();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void notifyRenderMeshButtonClick(Button2D* _button, CursorInputEvent const& _event);
@@ -138,7 +138,7 @@ namespace Maze
         virtual ~PropertyDrawerRenderMeshAssetRef();
 
         //////////////////////////////////////////
-        static PropertyDrawerRenderMeshAssetRefPtr Create(String const& _label);
+        static PropertyDrawerRenderMeshAssetRefPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -159,7 +159,7 @@ namespace Maze
         PropertyDrawerRenderMeshAssetRef();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void processDataFromUI();

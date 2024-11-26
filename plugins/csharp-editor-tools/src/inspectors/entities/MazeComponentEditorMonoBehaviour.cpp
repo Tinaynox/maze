@@ -100,8 +100,9 @@ namespace Maze
                     //      callbacks = CSharpEditorToolsManager::GetInstancePtr()->buildScriptFieldDrawerSliderF32Callbacks(0.0f, 1.0f);
                     // }
 
+                    DataBlock data;
 
-                    ScriptFieldDrawerPtr propertyDrawer = ScriptFieldDrawer::Create(_field, callbacks);
+                    ScriptFieldDrawerPtr propertyDrawer = ScriptFieldDrawer::Create(_field, callbacks, data);
                     if (propertyDrawer)
                         addPropertyDrawer(propertyDrawer, _field->getName().c_str());
                 });
@@ -122,8 +123,9 @@ namespace Maze
                     //      callbacks = CSharpEditorToolsManager::GetInstancePtr()->buildScriptPropertyDrawerSliderF32Callbacks(0.0f, 1.0f);
                     // }
 
+                    DataBlock data;
 
-                    ScriptPropertyDrawerPtr propertyDrawer = ScriptPropertyDrawer::Create(_prop, callbacks);
+                    ScriptPropertyDrawerPtr propertyDrawer = ScriptPropertyDrawer::Create(_prop, callbacks, data);
                     if (propertyDrawer)
                         addPropertyDrawer(propertyDrawer, _prop->getName().c_str());
                 });

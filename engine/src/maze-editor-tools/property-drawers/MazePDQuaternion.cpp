@@ -87,17 +87,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerQuaternionPtr PropertyDrawerQuaternion::Create(String const& _label)
+    PropertyDrawerQuaternionPtr PropertyDrawerQuaternion::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerQuaternionPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerQuaternion, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerQuaternion, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerQuaternion::init(String const& _label)
+    bool PropertyDrawerQuaternion::init(DataBlock const& _dataBlock)
     {
-        if (!PropertyDrawer::init(_label))
+        if (!PropertyDrawer::init(_dataBlock))
             return false;
 
         return true;
@@ -122,7 +122,7 @@ namespace Maze
         layout->setExpand(true);
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
-            EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
+            EditorToolsHelper::BuildPropertyName(m_dataBlock.getCString(MAZE_HCS("label")), _label).c_str(),
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
             HorizontalAlignment2D::Left,

@@ -70,7 +70,7 @@ namespace Maze
         virtual ~PropertyDrawerVec2F32();
 
         //////////////////////////////////////////
-        static PropertyDrawerVec2F32Ptr Create(String const& _label);
+        static PropertyDrawerVec2F32Ptr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -94,7 +94,7 @@ namespace Maze
         PropertyDrawerVec2F32();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         
 

@@ -83,17 +83,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerMaterialPtr PropertyDrawerMaterial::Create(String const& _label)
+    PropertyDrawerMaterialPtr PropertyDrawerMaterial::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerMaterialPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerMaterial, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerMaterial, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerMaterial::init(String const& _label)
+    bool PropertyDrawerMaterial::init(DataBlock const& _dataBlock)
     {
-        if (!PropertyDrawer::init(_label))
+        if (!PropertyDrawer::init(_dataBlock))
             return false;
 
         return true;
@@ -121,7 +121,7 @@ namespace Maze
         layout->setExpand(true);
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
-            EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
+            EditorToolsHelper::BuildPropertyName(m_dataBlock.getCString(MAZE_HCS("label")), _label).c_str(),
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
             HorizontalAlignment2D::Left,
@@ -326,20 +326,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerMaterialAssetRefPtr PropertyDrawerMaterialAssetRef::Create(String const& _label)
+    PropertyDrawerMaterialAssetRefPtr PropertyDrawerMaterialAssetRef::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerMaterialAssetRefPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerMaterialAssetRef, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerMaterialAssetRef, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerMaterialAssetRef::init(String const& _label)
+    bool PropertyDrawerMaterialAssetRef::init(DataBlock const& _dataBlock)
     {
-        if (!PropertyDrawer::init(_label))
+        if (!PropertyDrawer::init(_dataBlock))
             return false;
 
-        m_drawer = PropertyDrawerMaterial::Create(_label);
+        m_drawer = PropertyDrawerMaterial::Create(_dataBlock);
         m_drawer->eventUIData.subscribe(this, &PropertyDrawerMaterialAssetRef::processDataFromUI);
 
         return true;

@@ -70,7 +70,7 @@ namespace Maze
         virtual ~PropertyDrawerSliderRadians();
 
         //////////////////////////////////////////
-        static PropertyDrawerSliderRadiansPtr Create(String const& _label);
+        static PropertyDrawerSliderRadiansPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -104,7 +104,7 @@ namespace Maze
         PropertyDrawerSliderRadians();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         
         //////////////////////////////////////////

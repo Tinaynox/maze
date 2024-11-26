@@ -72,7 +72,7 @@ namespace Maze
         virtual ~PropertyDrawerColorU32();
 
         //////////////////////////////////////////
-        static PropertyDrawerColorU32Ptr Create(String const& _label);
+        static PropertyDrawerColorU32Ptr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -93,7 +93,7 @@ namespace Maze
         PropertyDrawerColorU32();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         
         //////////////////////////////////////////

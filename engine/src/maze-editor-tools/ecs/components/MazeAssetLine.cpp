@@ -67,7 +67,7 @@
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/events/MazeUIEvents.hpp"
-#include "maze-ui/scenes/SceneDragAndDropDefault.hpp"
+#include "maze-ui/scenes/SceneDragAndDrop.hpp"
 
 
 //////////////////////////////////////////

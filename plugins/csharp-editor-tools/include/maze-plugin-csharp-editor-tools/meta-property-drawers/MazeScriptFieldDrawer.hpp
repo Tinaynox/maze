@@ -48,7 +48,7 @@ namespace Maze
     //////////////////////////////////////////
     struct MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API ScriptFieldDrawerCallbacks
     {
-        std::function<PropertyDrawerPtr()> createDrawerCb;
+        std::function<PropertyDrawerPtr(DataBlock const&)> createDrawerCb;
         std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, PropertyDrawerPtr const&)> processDataToUICb;
         std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, PropertyDrawerPtr const&)> processDataFromUICb;
     };
@@ -77,7 +77,8 @@ namespace Maze
         //////////////////////////////////////////
         static ScriptFieldDrawerPtr Create(
             ScriptFieldPtr const& _scriptProperty,
-            ScriptFieldDrawerCallbacks _callbacks);
+            ScriptFieldDrawerCallbacks _callbacks,
+            DataBlock const& _data);
 
 
         //////////////////////////////////////////
@@ -94,7 +95,8 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             ScriptFieldPtr const& _scriptProperty,
-            ScriptFieldDrawerCallbacks _callbacks);
+            ScriptFieldDrawerCallbacks _callbacks,
+            DataBlock const& _data);
 
         //////////////////////////////////////////
         virtual void buildUI(
@@ -106,6 +108,7 @@ namespace Maze
 
         PropertyDrawerPtr m_drawer;
         ScriptFieldDrawerCallbacks m_callbacks;
+        DataBlock m_data;
     };
 
 } // namespace Maze

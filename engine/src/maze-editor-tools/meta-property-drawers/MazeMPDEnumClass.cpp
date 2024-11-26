@@ -95,7 +95,9 @@ namespace Maze
         if (!MetaPropertyDrawer::init(_metaProperty))
             return false;
 
-        m_drawer = PropertyDrawerEnumClass::Create(static_cast<CString>(_metaProperty->getName()), _enumValues);
+        DataBlock data;
+        data.setCString(MAZE_HCS("label"), static_cast<CString>(_metaProperty->getName()));
+        m_drawer = PropertyDrawerEnumClass::Create(data, _enumValues);
         m_drawer->eventUIData.subscribe(this, &MetaPropertyDrawerEnumClass::processDataFromUI);
 
         return true;

@@ -96,10 +96,13 @@ namespace Maze
         if (!MetaPropertyDrawer::init(_metaProperty))
             return false;
 
-        m_enabledDrawer = PropertyDrawerBool::Create("Size over Lifetime");
+        DataBlock data;
+        data.setCString(MAZE_HCS("label"), "Size over Lifetime");
+        m_enabledDrawer = PropertyDrawerBool::Create(data);
         m_enabledDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DSizeOverLifetimeModule::processDataFromUI);
 
-        m_parameterDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create("Size");
+        data.setCString(MAZE_HCS("label"), "Size");
+        m_parameterDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create(data);
         m_parameterDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DSizeOverLifetimeModule::processDataFromUI);
 
         return true;

@@ -71,7 +71,7 @@ namespace Maze
         virtual ~PropertyDrawerEntityPtr();
 
         //////////////////////////////////////////
-        static PropertyDrawerEntityPtrPtr Create(String const& _label);
+        static PropertyDrawerEntityPtrPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -95,7 +95,7 @@ namespace Maze
         PropertyDrawerEntityPtr();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////

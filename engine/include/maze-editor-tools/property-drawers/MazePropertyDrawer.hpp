@@ -37,6 +37,7 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 
 
 //////////////////////////////////////////
@@ -93,10 +94,10 @@ namespace Maze
         PropertyDrawer();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label);
+        virtual bool init(DataBlock const& _dataBlock);
 
     protected:
-        String m_label;
+        DataBlock m_dataBlock;
     };
 
 

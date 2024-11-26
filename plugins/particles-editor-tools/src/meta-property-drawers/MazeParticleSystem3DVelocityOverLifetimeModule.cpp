@@ -108,16 +108,21 @@ namespace Maze
         if (!MetaPropertyDrawer::init(_metaProperty))
             return false;
 
-        m_enabledDrawer = PropertyDrawerBool::Create("Velocity over Lifetime");
+        DataBlock data;
+        data.setCString(MAZE_HCS("label"), "Velocity over Lifetime");
+        m_enabledDrawer = PropertyDrawerBool::Create(data);
         m_enabledDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DVelocityOverLifetimeModule::processDataFromUI);
 
-        m_linearXParameterDrawer = PropertyDrawerParticleSystemParameterF32::Create("Linear X");
+        data.setCString(MAZE_HCS("label"), "Linear X");
+        m_linearXParameterDrawer = PropertyDrawerParticleSystemParameterF32::Create(data);
         m_linearXParameterDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DVelocityOverLifetimeModule::processDataFromUI);
 
-        m_linearYParameterDrawer = PropertyDrawerParticleSystemParameterF32::Create("Linear Y");
+        data.setCString(MAZE_HCS("label"), "Linear Y");
+        m_linearYParameterDrawer = PropertyDrawerParticleSystemParameterF32::Create(data);
         m_linearYParameterDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DVelocityOverLifetimeModule::processDataFromUI);
 
-        m_linearZParameterDrawer = PropertyDrawerParticleSystemParameterF32::Create("Linear Z");
+        data.setCString(MAZE_HCS("label"), "Linear Z");
+        m_linearZParameterDrawer = PropertyDrawerParticleSystemParameterF32::Create(data);
         m_linearZParameterDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DVelocityOverLifetimeModule::processDataFromUI);
 
         return true;

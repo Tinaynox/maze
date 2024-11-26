@@ -527,9 +527,9 @@ namespace Maze
                 _instance.setPropertyValue(_property, _drawer->getValue());
             });
         callbacks.createDrawerCb =
-            [_from, _to]()
+            [_from, _to](DataBlock const& _data)
             {
-                PropertyDrawerSliderF32Ptr drawer = PropertyDrawerSliderF32::Create("");
+                PropertyDrawerSliderF32Ptr drawer = PropertyDrawerSliderF32::Create(_data);
                 drawer->setFromValue(_from);
                 drawer->setToValue(_to);
                 return drawer;
@@ -579,9 +579,9 @@ namespace Maze
                 _instance.setFieldValue(_field, _drawer->getValue());
             });
         callbacks.createDrawerCb =
-            [_from, _to]()
+            [_from, _to](DataBlock const& _dataBlock)
             {
-                PropertyDrawerSliderF32Ptr drawer = PropertyDrawerSliderF32::Create("");
+                PropertyDrawerSliderF32Ptr drawer = PropertyDrawerSliderF32::Create(_dataBlock);
                 drawer->setFromValue(_from);
                 drawer->setToValue(_to);
                 return drawer;

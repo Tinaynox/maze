@@ -90,17 +90,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerParticleSystemBurstPtr PropertyDrawerParticleSystemBurst::Create(String const& _label)
+    PropertyDrawerParticleSystemBurstPtr PropertyDrawerParticleSystemBurst::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerParticleSystemBurstPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerParticleSystemBurst, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerParticleSystemBurst, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerParticleSystemBurst::init(String const& _label)
+    bool PropertyDrawerParticleSystemBurst::init(DataBlock const& _dataBlock)
     {
-        if (!PropertyDrawer::init(_label))
+        if (!PropertyDrawer::init(_dataBlock))
             return false;
 
         return true;
@@ -127,7 +127,7 @@ namespace Maze
         m_rootEntity = layout->getEntity();
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
-            EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
+            EditorToolsHelper::BuildPropertyName(m_dataBlock.getCString(MAZE_HCS("label")), _label).c_str(),
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
             HorizontalAlignment2D::Left,

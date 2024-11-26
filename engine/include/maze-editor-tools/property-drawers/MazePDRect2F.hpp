@@ -71,7 +71,7 @@ namespace Maze
         virtual ~PropertyDrawerRect2F();
 
         //////////////////////////////////////////
-        static PropertyDrawerRect2FPtr Create(String const& _label);
+        static PropertyDrawerRect2FPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -95,7 +95,7 @@ namespace Maze
         PropertyDrawerRect2F();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////

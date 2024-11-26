@@ -72,7 +72,7 @@ namespace Maze
         virtual ~PropertyDrawerColorGradient();
 
         //////////////////////////////////////////
-        static PropertyDrawerColorGradientPtr Create(String const& _label);
+        static PropertyDrawerColorGradientPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -93,7 +93,7 @@ namespace Maze
         PropertyDrawerColorGradient();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
         
 
         //////////////////////////////////////////

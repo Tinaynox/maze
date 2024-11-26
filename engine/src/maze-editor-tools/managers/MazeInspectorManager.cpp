@@ -340,7 +340,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerPtr InspectorManager::createPropertyDrawer(ClassUID _propertyClassUID, String const& _label)
+    PropertyDrawerPtr InspectorManager::createPropertyDrawer(ClassUID _propertyClassUID, DataBlock const& _dataBlock)
     {
         auto it = m_propertyDrawers.find(_propertyClassUID);
         if (it == m_propertyDrawers.end())
@@ -349,7 +349,7 @@ namespace Maze
         }
         else
         {
-            return it->second(_label);
+            return it->second(_dataBlock);
         }
     }
 

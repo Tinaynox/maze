@@ -70,7 +70,7 @@ namespace Maze
         virtual ~PropertyDrawerQuaternion();
 
         //////////////////////////////////////////
-        static PropertyDrawerQuaternionPtr Create(String const& _label);
+        static PropertyDrawerQuaternionPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -94,7 +94,7 @@ namespace Maze
         PropertyDrawerQuaternion();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         EditBox2DPtr createF32Edit(

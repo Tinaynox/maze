@@ -72,7 +72,7 @@ namespace Maze
         virtual ~PropertyDrawerAnimationCurve();
 
         //////////////////////////////////////////
-        static PropertyDrawerAnimationCurvePtr Create(String const& _label);
+        static PropertyDrawerAnimationCurvePtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -97,7 +97,7 @@ namespace Maze
         PropertyDrawerAnimationCurve();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         
 

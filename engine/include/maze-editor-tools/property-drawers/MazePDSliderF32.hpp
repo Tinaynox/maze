@@ -70,7 +70,7 @@ namespace Maze
         virtual ~PropertyDrawerSliderF32();
 
         //////////////////////////////////////////
-        static PropertyDrawerSliderF32Ptr Create(String const& _label);
+        static PropertyDrawerSliderF32Ptr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -104,7 +104,7 @@ namespace Maze
         PropertyDrawerSliderF32();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
         
 
         //////////////////////////////////////////

@@ -69,17 +69,19 @@ namespace Maze
     //////////////////////////////////////////
     ScriptPropertyDrawerPtr ScriptPropertyDrawer::Create(
         ScriptPropertyPtr const& _scriptProperty,
-        ScriptPropertyDrawerCallbacks _callbacks)
+        ScriptPropertyDrawerCallbacks _callbacks,
+        DataBlock const& _data)
     {
         ScriptPropertyDrawerPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ScriptPropertyDrawer, object, init(_scriptProperty, _callbacks));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ScriptPropertyDrawer, object, init(_scriptProperty, _callbacks, _data));
         return object;
     }
 
     //////////////////////////////////////////
     bool ScriptPropertyDrawer::init(
         ScriptPropertyPtr const& _scriptProperty,
-        ScriptPropertyDrawerCallbacks _callbacks)
+        ScriptPropertyDrawerCallbacks _callbacks,
+        DataBlock const& _data)
     {
         if (!MetaPropertyDrawer::init(nullptr))
             return false;
@@ -87,7 +89,7 @@ namespace Maze
         m_scriptProperty = _scriptProperty;
         m_callbacks = _callbacks;
         
-        m_drawer = m_callbacks.createDrawerCb();
+        m_drawer = m_callbacks.createDrawerCb(_data);
         m_drawer->eventUIData.subscribe(this, &ScriptPropertyDrawer::processDataFromUI);
 
         return true;

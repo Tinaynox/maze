@@ -80,7 +80,7 @@ namespace Maze
         //////////////////////////////////////////
         static PropertyDrawerVectorPtr Create(
             ClassUID _childPropertyClassUID,
-            String const& _label);
+            DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -108,7 +108,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             ClassUID _childPropertyClassUID,
-            String const& _label);
+            DataBlock const& _dataBlock);
 
         //////////////////////////////////////////
         using PropertyDrawer::init;

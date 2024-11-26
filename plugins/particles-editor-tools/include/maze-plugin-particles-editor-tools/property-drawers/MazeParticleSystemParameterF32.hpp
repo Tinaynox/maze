@@ -76,7 +76,7 @@ namespace Maze
         virtual ~PropertyDrawerParticleSystemParameterF32();
 
         //////////////////////////////////////////
-        static PropertyDrawerParticleSystemParameterF32Ptr Create(String const& _label);
+        static PropertyDrawerParticleSystemParameterF32Ptr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -101,7 +101,7 @@ namespace Maze
         PropertyDrawerParticleSystemParameterF32();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         
 
@@ -164,7 +164,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        static PropertyDrawerParticleSystemParameterF32PositivePtr Create(String const& _label);
+        static PropertyDrawerParticleSystemParameterF32PositivePtr Create(DataBlock const& _dataBlock);
 
     protected:
 
@@ -191,7 +191,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        static PropertyDrawerParticleSystemParameterF32DegreesPtr Create(String const& _label);
+        static PropertyDrawerParticleSystemParameterF32DegreesPtr Create(DataBlock const& _dataBlock);
 
     
         //////////////////////////////////////////
@@ -220,7 +220,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        static PropertyDrawerParticleSystemParameterF32ConstantsPtr Create(String const& _label);
+        static PropertyDrawerParticleSystemParameterF32ConstantsPtr Create(DataBlock const& _dataBlock);
 
     protected:
 

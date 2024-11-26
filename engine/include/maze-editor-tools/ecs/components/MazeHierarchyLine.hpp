@@ -108,6 +108,9 @@ namespace Maze
         //////////////////////////////////////////
         inline ContextMenu2DPtr const& getContextMenu() const { return m_contextMenu; }
 
+        //////////////////////////////////////////
+        SpriteRenderer2DPtr const& getIconRenderer() const { return m_iconRenderer; }
+
 
 
         //////////////////////////////////////////
@@ -155,6 +158,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool hasChildren() const { return getChildrenCount() > 0; }
+
+
+        //////////////////////////////////////////
+        inline void setDragAndDropEnabled(bool _value) { m_dragAndDropEnabled = _value; }
+
+        //////////////////////////////////////////
+        inline bool getDragAndDropEnabled() const { return m_dragAndDropEnabled; }
 
 
         //////////////////////////////////////////
@@ -259,6 +269,8 @@ namespace Maze
 
         bool m_selected = false;
         bool m_active = true;
+
+        bool m_dragAndDropEnabled = true;
     };
 
 

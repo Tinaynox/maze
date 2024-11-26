@@ -96,17 +96,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerParticleSystemParameterF32Ptr PropertyDrawerParticleSystemParameterF32::Create(String const& _label)
+    PropertyDrawerParticleSystemParameterF32Ptr PropertyDrawerParticleSystemParameterF32::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerParticleSystemParameterF32Ptr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerParticleSystemParameterF32, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerParticleSystemParameterF32, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerParticleSystemParameterF32::init(String const& _label)
+    bool PropertyDrawerParticleSystemParameterF32::init(DataBlock const& _dataBlock)
     {
-        if (!PropertyDrawer::init(_label))
+        if (!PropertyDrawer::init(_dataBlock))
             return false;
 
         return true;
@@ -132,7 +132,7 @@ namespace Maze
         m_rootEntity = layout->getEntity();
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
-            EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
+            EditorToolsHelper::BuildPropertyName(m_dataBlock.getCString(MAZE_HCS("label")), _label).c_str(),
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
             HorizontalAlignment2D::Left,
@@ -677,10 +677,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerParticleSystemParameterF32PositivePtr PropertyDrawerParticleSystemParameterF32Positive::Create(String const& _label)
+    PropertyDrawerParticleSystemParameterF32PositivePtr PropertyDrawerParticleSystemParameterF32Positive::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerParticleSystemParameterF32PositivePtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Positive, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Positive, object, init(_dataBlock));
         return object;
     }
 
@@ -695,10 +695,10 @@ namespace Maze
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerParticleSystemParameterF32Degrees);
 
     //////////////////////////////////////////
-    PropertyDrawerParticleSystemParameterF32DegreesPtr PropertyDrawerParticleSystemParameterF32Degrees::Create(String const& _label)
+    PropertyDrawerParticleSystemParameterF32DegreesPtr PropertyDrawerParticleSystemParameterF32Degrees::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerParticleSystemParameterF32DegreesPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Degrees, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Degrees, object, init(_dataBlock));
         return object;
     }
 
@@ -735,10 +735,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerParticleSystemParameterF32ConstantsPtr PropertyDrawerParticleSystemParameterF32Constants::Create(String const& _label)
+    PropertyDrawerParticleSystemParameterF32ConstantsPtr PropertyDrawerParticleSystemParameterF32Constants::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerParticleSystemParameterF32ConstantsPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Constants, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Constants, object, init(_dataBlock));
         return object;
     }
 

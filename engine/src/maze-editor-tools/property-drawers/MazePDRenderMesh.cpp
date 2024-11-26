@@ -84,17 +84,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerRenderMeshPtr PropertyDrawerRenderMesh::Create(String const& _label)
+    PropertyDrawerRenderMeshPtr PropertyDrawerRenderMesh::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerRenderMeshPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerRenderMesh, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerRenderMesh, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerRenderMesh::init(String const& _label)
+    bool PropertyDrawerRenderMesh::init(DataBlock const& _dataBlock)
     {
-        if (!PropertyDrawer::init(_label))
+        if (!PropertyDrawer::init(_dataBlock))
             return false;
 
         return true;
@@ -122,7 +122,7 @@ namespace Maze
         layout->setExpand(true);
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
-            EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
+            EditorToolsHelper::BuildPropertyName(m_dataBlock.getCString(MAZE_HCS("label")), _label).c_str(),
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
             HorizontalAlignment2D::Left,
@@ -307,20 +307,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerRenderMeshAssetRefPtr PropertyDrawerRenderMeshAssetRef::Create(String const& _label)
+    PropertyDrawerRenderMeshAssetRefPtr PropertyDrawerRenderMeshAssetRef::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerRenderMeshAssetRefPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerRenderMeshAssetRef, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerRenderMeshAssetRef, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerRenderMeshAssetRef::init(String const& _label)
+    bool PropertyDrawerRenderMeshAssetRef::init(DataBlock const& _dataBlock)
     {
-        if (!PropertyDrawer::init(_label))
+        if (!PropertyDrawer::init(_dataBlock))
             return false;
 
-        m_drawer = PropertyDrawerRenderMesh::Create(_label);
+        m_drawer = PropertyDrawerRenderMesh::Create(_dataBlock);
         m_drawer->eventUIData.subscribe(this, &PropertyDrawerRenderMeshAssetRef::processDataFromUI);
 
         return true;

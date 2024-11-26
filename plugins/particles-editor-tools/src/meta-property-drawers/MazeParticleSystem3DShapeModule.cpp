@@ -96,7 +96,9 @@ namespace Maze
         if (!MetaPropertyDrawer::init(_metaProperty))
             return false;
 
-        m_enabledDrawer = PropertyDrawerBool::Create("Emitter Shape");
+        DataBlock data;
+        data.setCString(MAZE_HCS("label"), "Emitter Shape");
+        m_enabledDrawer = PropertyDrawerBool::Create(data);
         m_enabledDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DShapeModule::processDataFromUI);
 
         return true;

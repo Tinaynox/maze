@@ -81,19 +81,19 @@ namespace Maze
     //////////////////////////////////////////
     PropertyDrawerVectorPtr PropertyDrawerVector::Create(
         ClassUID _childPropertyClassUID,
-        String const& _label)
+        DataBlock const& _dataBlock)
     {
         PropertyDrawerVectorPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerVector, object, init(_childPropertyClassUID, _label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerVector, object, init(_childPropertyClassUID, _dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
     bool PropertyDrawerVector::init(
         ClassUID _childPropertyClassUID,
-        String const& _label)
+        DataBlock const& _dataBlock)
     {
-        if (!PropertyDrawer::init(_label))
+        if (!PropertyDrawer::init(_dataBlock))
             return false;
 
         m_childPropertyClassUID = _childPropertyClassUID;
@@ -179,7 +179,9 @@ namespace Maze
         bodyLayoutSizePolicy->setFlag(SizePolicy2D::Height, false);
         bodyLayoutSizePolicy->setSizeDelta(-20, 0);
 
-        m_vectorSizeDrawer = PropertyDrawerS32::Create("Size");
+        DataBlock data;
+        data.setCString(MAZE_HCS("label"), "Size");
+        m_vectorSizeDrawer = PropertyDrawerS32::Create(data);
         m_vectorSizeDrawer->buildUI(m_bodyLayout->getTransform());
         m_vectorSizeDrawer->eventUIData.subscribe(this, &PropertyDrawerVector::notifyVectorSizeChanged);
 
@@ -276,9 +278,11 @@ namespace Maze
         {
             while (itemDrawersCount < _count)
             {
+                DataBlock data;
+                data.setString(MAZE_HCS("label"), "Element" + StringHelper::ToString((U32)m_itemDrawers.size()));
                 PropertyDrawerPtr itemDrawer = InspectorManager::GetInstancePtr()->createPropertyDrawer(
                     m_childPropertyClassUID,
-                    "Element" + StringHelper::ToString((U32)m_itemDrawers.size()));
+                    data);
 
                 if (itemDrawer)
                 {

@@ -145,14 +145,14 @@ namespace Maze
             ClassUID propertyUID = ClassInfo<TProperty>::UID();
             registerPropertyDrawer(
                 propertyUID,
-                [](String const& _label)
+                [](DataBlock const& _dataBlock)
                 {
-                    return TPropertyDrawer::Create(_label);
+                    return TPropertyDrawer::Create(_dataBlock);
                 });
         }
 
         //////////////////////////////////////////
-        inline void registerPropertyDrawer(ClassUID _propertyUID, std::function<PropertyDrawerPtr(String const&)> _func)
+        inline void registerPropertyDrawer(ClassUID _propertyUID, std::function<PropertyDrawerPtr(DataBlock const&)> _func)
         {
             m_propertyDrawers.emplace(
                 std::piecewise_construct,
@@ -188,7 +188,7 @@ namespace Maze
             MetaClass* _metaClass);
 
         //////////////////////////////////////////
-        PropertyDrawerPtr createPropertyDrawer(ClassUID _propertyClassUID, String const& _label);
+        PropertyDrawerPtr createPropertyDrawer(ClassUID _propertyClassUID, DataBlock const& _dataBlock);
 
         //////////////////////////////////////////
         MetaPropertyDrawerPtr createMetaPropertyDrawer(MetaProperty* _metaProperty);
@@ -436,7 +436,7 @@ namespace Maze
         static InspectorManager* s_instance;
 
         Map<ClassUID, std::function<ComponentEditorPtr(ComponentId, MetaClass*)>> m_componentEditors;
-        Map<ClassUID, std::function<PropertyDrawerPtr(String const&)>> m_propertyDrawers;
+        Map<ClassUID, std::function<PropertyDrawerPtr(DataBlock const&)>> m_propertyDrawers;
         Map<ClassUID, std::function<MetaPropertyDrawerPtr(MetaProperty*)>> m_metaPropertyDrawers;
         Map<ClassUID, Vector<std::pair<String, std::function<void(Entity*, Component*)>>>> m_inspectorComponentContextMenuOptions;
 

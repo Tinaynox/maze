@@ -96,10 +96,13 @@ namespace Maze
         if (!MetaPropertyDrawer::init(_metaProperty))
             return false;
 
-        m_enabledDrawer = PropertyDrawerBool::Create("Limit Velocity over Lifetime");
+        DataBlock data;
+        data.setCString(MAZE_HCS("label"), "Limit Velocity over Lifetime");
+        m_enabledDrawer = PropertyDrawerBool::Create(data);
         m_enabledDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DVelocityLimitOverLifetimeModule::processDataFromUI);
 
-        m_parameterDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create("Speed");
+        data.setCString(MAZE_HCS("label"), "Speed");
+        m_parameterDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create(data);
         m_parameterDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DVelocityLimitOverLifetimeModule::processDataFromUI);
 
         return true;

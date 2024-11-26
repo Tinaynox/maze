@@ -88,7 +88,9 @@ namespace Maze
         if (!MetaPropertyDrawer::init(_metaProperty))
             return false;
 
-        m_drawer = PropertyDrawerColorF128::Create(static_cast<CString>(_metaProperty->getName()));
+        DataBlock data;
+        data.setCString(MAZE_HCS("label"), static_cast<CString>(_metaProperty->getName()));
+        m_drawer = PropertyDrawerColorF128::Create(data);
         m_drawer->eventUIData.subscribe(this, &MetaPropertyDrawerColorF128::processDataFromUI);
 
         return true;

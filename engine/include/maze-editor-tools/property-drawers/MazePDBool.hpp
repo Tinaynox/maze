@@ -71,7 +71,7 @@ namespace Maze
         virtual ~PropertyDrawerBool();
 
         //////////////////////////////////////////
-        static PropertyDrawerBoolPtr Create(String const& _label);
+        static PropertyDrawerBoolPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -92,7 +92,7 @@ namespace Maze
         PropertyDrawerBool();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void notifyCheckedChanged(ToggleButton2D* _button, bool _checked);

@@ -70,7 +70,7 @@ namespace Maze
         virtual ~PropertyDrawerFOV();
 
         //////////////////////////////////////////
-        static PropertyDrawerFOVPtr Create(String const& _label);
+        static PropertyDrawerFOVPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -84,7 +84,7 @@ namespace Maze
         PropertyDrawerFOV();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
 
     };

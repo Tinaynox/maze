@@ -62,6 +62,10 @@
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
+#include "maze-ui/ecs/components/MazeUIDragElement2D.hpp"
+#include "maze-ui/ecs/components/MazeDragAndDropController.hpp"
+#include "maze-ui/events/MazeUIEvents.hpp"
+#include "maze-ui/scenes/SceneDragAndDrop.hpp"
 
 
 //////////////////////////////////////////
@@ -299,6 +303,8 @@ namespace Maze
                 Vec2F(0.0f, 0.5f),
                 Vec2F(0.5f, 0.5f));
             m_iconRenderer->setColor(ColorU32::c_black);
+
+            m_backgroundButton->getEntityRaw()->ensureComponent<UIDragElement2D>();
         }
         else
         if (m_type == HierarchyLineType::Scene)
@@ -520,6 +526,60 @@ namespace Maze
         ComponentPoolObject<HierarchyLine>* _poolObject)
     {
         _hierarchyLine->release();
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(HierarchyLineOnCursorRelease,
+        {},
+        {},
+        InputCursorReleaseEvent const& _event,
+        Entity* _entity,
+        HierarchyLine* _hierarchyLine)
+    {
+        // _hierarchyLine->processCursorRelease(_event);
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(HierarchyLineOnDragStartedEvent,
+        {},
+        {},
+        UIDragElementDragStartedEvent const& _event,
+        Entity* _entity,
+        ClickButton2D* _clickButton)
+    {
+        HierarchyLine* hierarchyLine = _clickButton->getTransform()->getParent()->getEntityRaw()->getComponentRaw<HierarchyLine>();
+        if (!hierarchyLine)
+            return;
+
+        if (!hierarchyLine->getDragAndDropEnabled())
+            return;
+
+        auto dragAndDropControllerSample = _entity->getEcsWorld()->requestInclusiveSample<DragAndDropController>();
+        dragAndDropControllerSample->findQuery(
+            [&](Entity* _entity, DragAndDropController* _controller)
+        {
+            SceneDragAndDrop* dndScene = _controller->getDragAndDropScene();
+            if (dndScene)
+            {
+                HierarchyLineType type = hierarchyLine->getType();
+                if (type == HierarchyLineType::Entity)
+                {
+                    EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(hierarchyLine->getUserData()));
+
+                    DataBlock dataBlock;
+                    dataBlock.setString(MAZE_HCS("type"), "entity");
+                    dataBlock.setS32(MAZE_HCS("eid"), (S32)entityId);
+
+                    dndScene->startDrag(
+                        hierarchyLine->getIconRenderer()->getEntityRaw()->getComponent<Transform2D>(),
+                        dataBlock);
+                    _clickButton->getUIElement()->setPressed(false);
+                    _clickButton->getUIElement()->setFocused(false);
+                }
+            }
+
+            return true;
+        });
     }
 
 } // namespace Maze

@@ -104,18 +104,23 @@ namespace Maze
         if (!MetaPropertyDrawer::init(_metaProperty))
             return false;
 
-        m_enabledDrawer = PropertyDrawerBool::Create("Emission");
+        DataBlock data;
+        data.setCString(MAZE_HCS("label"), "Emission");
+        m_enabledDrawer = PropertyDrawerBool::Create(data);
         m_enabledDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DEmissionModule::processDataFromUI);
 
-        m_emissionPerSecondDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create("Per Second");
+        data.setCString(MAZE_HCS("label"), "Per Second");
+        m_emissionPerSecondDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create(data);
         m_emissionPerSecondDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DEmissionModule::processDataFromUI);
 
-        m_emissionPerDistanceDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create("Per Meters");
+        data.setCString(MAZE_HCS("label"), "Per Meters");
+        m_emissionPerDistanceDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create(data);
         m_emissionPerDistanceDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DEmissionModule::processDataFromUI);
 
+        data.setCString(MAZE_HCS("label"), "Bursts");
         m_burstsDrawer = PropertyDrawerVector::Create(
             ParticleSystemBurst::GetMetaClass()->getClassUID(),
-            "Bursts");
+            data);
         m_burstsDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DEmissionModule::processDataFromUI);
 
         return true;

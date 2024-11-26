@@ -76,17 +76,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerTexture2DPtr PropertyDrawerTexture2D::Create(String const& _label)
+    PropertyDrawerTexture2DPtr PropertyDrawerTexture2D::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerTexture2DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerTexture2D, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerTexture2D, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerTexture2D::init(String const& _label)
+    bool PropertyDrawerTexture2D::init(DataBlock const& _dataBlock)
     {
-        if (!PropertyDrawer::init(_label))
+        if (!PropertyDrawer::init(_dataBlock))
             return false;
 
         return true;
@@ -115,7 +115,7 @@ namespace Maze
 
         
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
-            EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
+            EditorToolsHelper::BuildPropertyName(m_dataBlock.getCString(MAZE_HCS("label")), _label).c_str(),
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
             HorizontalAlignment2D::Left,

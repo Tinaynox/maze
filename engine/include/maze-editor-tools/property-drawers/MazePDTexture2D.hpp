@@ -76,7 +76,7 @@ namespace Maze
         virtual ~PropertyDrawerTexture2D();
 
         //////////////////////////////////////////
-        static PropertyDrawerTexture2DPtr Create(String const& _label);
+        static PropertyDrawerTexture2DPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -97,7 +97,7 @@ namespace Maze
         PropertyDrawerTexture2D();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void notifySelectAssetClick(Button2D* _button, CursorInputEvent const& _event);

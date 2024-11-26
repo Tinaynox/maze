@@ -56,9 +56,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawer::init(String const& _label)
+    bool PropertyDrawer::init(DataBlock const& _dataBlock)
     {
-        m_label = _label;
+        m_dataBlock = _dataBlock;
         return true;
     }
 

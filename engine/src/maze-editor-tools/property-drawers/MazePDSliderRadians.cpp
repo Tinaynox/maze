@@ -69,17 +69,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerSliderRadiansPtr PropertyDrawerSliderRadians::Create(String const& _label)
+    PropertyDrawerSliderRadiansPtr PropertyDrawerSliderRadians::Create(DataBlock const& _dataBlock)
     {
         PropertyDrawerSliderRadiansPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerSliderRadians, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerSliderRadians, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerSliderRadians::init(String const& _label)
+    bool PropertyDrawerSliderRadians::init(DataBlock const& _dataBlock)
     {
-        if (!PropertyDrawerSliderF32::init(_label))
+        if (!PropertyDrawerSliderF32::init(_dataBlock))
             return false;
 
         return true;

@@ -75,7 +75,7 @@ namespace Maze
         virtual ~PropertyDrawerMaterial();
 
         //////////////////////////////////////////
-        static PropertyDrawerMaterialPtr Create(String const& _label);
+        static PropertyDrawerMaterialPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -96,7 +96,7 @@ namespace Maze
         PropertyDrawerMaterial();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void notifyMaterialButtonClick(Button2D* _button, CursorInputEvent const& _event);
@@ -138,7 +138,7 @@ namespace Maze
         virtual ~PropertyDrawerMaterialAssetRef();
 
         //////////////////////////////////////////
-        static PropertyDrawerMaterialAssetRefPtr Create(String const& _label);
+        static PropertyDrawerMaterialAssetRefPtr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -159,7 +159,7 @@ namespace Maze
         PropertyDrawerMaterialAssetRef();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void processDataFromUI();

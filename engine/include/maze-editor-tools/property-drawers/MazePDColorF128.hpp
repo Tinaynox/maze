@@ -72,7 +72,7 @@ namespace Maze
         virtual ~PropertyDrawerColorF128();
 
         //////////////////////////////////////////
-        static PropertyDrawerColorF128Ptr Create(String const& _label);
+        static PropertyDrawerColorF128Ptr Create(DataBlock const& _dataBlock);
 
 
         //////////////////////////////////////////
@@ -93,7 +93,7 @@ namespace Maze
         PropertyDrawerColorF128();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _label) MAZE_OVERRIDE;
+        virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
         
 
         //////////////////////////////////////////

@@ -73,7 +73,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static PropertyDrawerEnumClassPtr Create(
-            String const& _label,
+            DataBlock const& _dataBlock,
             Vector<String> const& _enumValues);
 
 
@@ -109,7 +109,7 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init(
-            String const& _label,
+            DataBlock const& _dataBlock,
             Vector<String> const& _enumValues);
                 
 

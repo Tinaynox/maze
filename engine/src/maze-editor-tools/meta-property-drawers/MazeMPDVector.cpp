@@ -184,7 +184,9 @@ namespace Maze
         bodyLayoutSizePolicy->setFlag(SizePolicy2D::Height, false);
         bodyLayoutSizePolicy->setSizeDelta(-20, 0);
 
-        m_vectorSizeDrawer = PropertyDrawerS32::Create("Size");
+        DataBlock data;
+        data.setCString(MAZE_HCS("label"), "Size");
+        m_vectorSizeDrawer = PropertyDrawerS32::Create(data);
         m_vectorSizeDrawer->buildUI(m_bodyLayout->getTransform());
         m_vectorSizeDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerVector::processDataFromUI);
 
@@ -325,9 +327,12 @@ namespace Maze
 
             while (itemDrawersCount < _count)
             {
+                DataBlock data;
+                data.setString(MAZE_HCS("label"), "Element" + StringHelper::ToString((U32)m_itemDrawers.size()));
+
                 PropertyDrawerPtr itemDrawer = InspectorManager::GetInstancePtr()->createPropertyDrawer(
                     vectorItemClassUID,
-                    "Element" + StringHelper::ToString((U32)m_itemDrawers.size()));
+                    data);
 
                 if (itemDrawer)
                 {
