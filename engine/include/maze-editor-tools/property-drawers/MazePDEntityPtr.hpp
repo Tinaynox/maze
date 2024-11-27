@@ -47,6 +47,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(PropertyDrawerEntityPtr);
     MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(SpriteRenderer2D);
+    MAZE_USING_SHARED_PTR(DragAndDropZone);
 
 
     //////////////////////////////////////////
@@ -106,6 +108,12 @@ namespace Maze
 
     protected:
         AbstractTextRenderer2DPtr m_text;
+
+        EntityId m_entityId = c_invalidEntityId;
+
+        SpriteRenderer2DPtr m_panelRenderer;
+        SpriteRenderer2DPtr m_dragAndDropFrame;
+        DragAndDropZonePtr m_dragAndDropZone;
     };
 
 } // namespace Maze

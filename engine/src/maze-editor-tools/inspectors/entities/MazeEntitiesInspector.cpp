@@ -176,7 +176,8 @@ namespace Maze
 
         bool checkedValue = (*m_entities.begin())->getActiveSelf();
         bool mixedValue = false;
-        EntityId entityId = (*m_entities.begin())->getId();
+        EntityPtr const& entity = (*m_entities.begin());
+        EntityId entityId = entity->getId();
 
         for (Set<EntityPtr>::iterator it = ++m_entities.begin(); it != m_entities.end(); ++it)
         {
@@ -189,7 +190,10 @@ namespace Maze
 
         m_entitiesEnabledToggleButton->setChecked(checkedValue);
 
-        m_entityIdText->setText("Entity Id: " + StringHelper::ToString(entityId));
+        m_entityIdText->setTextFormatted(
+            "Entity Id: %s\nWorld: %s",
+            StringHelper::ToString(entityId).c_str(),
+            entity->getEcsWorld() ? entity->getEcsWorld()->getName().c_str() : "None");
     }
 
     //////////////////////////////////////////
