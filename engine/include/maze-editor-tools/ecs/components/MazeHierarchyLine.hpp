@@ -37,6 +37,7 @@
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/utils/MazeComponentPool.hpp"
 
 
@@ -56,6 +57,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(ContextMenu2D);
+    MAZE_USING_SHARED_PTR(HierarchyController);
 
 
     //////////////////////////////////////////
@@ -124,6 +126,12 @@ namespace Maze
         inline HierarchyLineType getType() const { return m_type; }
 
         
+        //////////////////////////////////////////
+        inline void setWorld(EcsWorld* _world) { m_world = _world; }
+
+        //////////////////////////////////////////
+        inline EcsWorld* getWorld() const { return m_world; }
+
 
         //////////////////////////////////////////
         inline void* getUserData() const { return m_userData; }
@@ -242,6 +250,8 @@ namespace Maze
         void updateDropDownRenderer();
 
     protected:
+        EcsWorld* m_world = nullptr;
+
         String m_text;
         HierarchyLineType m_type = HierarchyLineType::Entity;
         void* m_userData = nullptr;

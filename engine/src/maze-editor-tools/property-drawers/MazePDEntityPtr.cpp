@@ -154,7 +154,12 @@ namespace Maze
                     if (eid == c_invalidEntityId)
                         return;
 
-                    EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorld()->getEntity(eid);
+                    EcsWorldId worldId(_data.getS8(MAZE_HCS("world")));
+                    EcsWorld* world = EcsWorld::GetEcsWorld(worldId);
+                    if (!world)
+                        return;
+
+                    EntityPtr const& entity = world->getEntity(eid);
                     if (!entity)
                         return;
 
@@ -170,7 +175,12 @@ namespace Maze
                     if (eid == c_invalidEntityId)
                         return;
 
-                    EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorld()->getEntity(eid);
+                    EcsWorldId worldId(_data.getS8(MAZE_HCS("world")));
+                    EcsWorld* world = EcsWorld::GetEcsWorld(worldId);
+                    if (!world)
+                        return;
+
+                    EntityPtr const& entity = world->getEntity(eid);
                     if (!entity)
                         return;
 

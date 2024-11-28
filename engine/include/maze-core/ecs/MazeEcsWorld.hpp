@@ -142,6 +142,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline EcsWorldId getId() const { return m_id; }
+
+
+        //////////////////////////////////////////
         EntityPtr const& getEntity(EntityId _id) const;
 
         //////////////////////////////////////////
@@ -409,6 +413,11 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        static EcsWorld* GetEcsWorld(EcsWorldId _id);
+
+    public:
+
+        //////////////////////////////////////////
         MultiDelegate<EcsWorld*> eventOnDestroy;
         MultiDelegate<EntityPtr const&> eventEntityAdded;
         MultiDelegate<EntityPtr const&> eventEntityChanged;
@@ -470,6 +479,19 @@ namespace Maze
         FastVector<ComponentSystemEntityRemovedFromSampleEventHandlerPtr> m_entityRemovedFromSampleEventHandlers;
 
     private:
+
+        //////////////////////////////////////////
+        static EcsWorldId GenerateNewEcsWorldId(EcsWorld* _world);
+
+        //////////////////////////////////////////
+        static void ReleaseEcsWorldId(EcsWorldId _id);
+
+    private:
+        static FastVector<EcsWorld*> s_worlds;
+        static Stack<EcsWorldId> s_freeEcsWorldIndices;
+
+    private:
+        EcsWorldId m_id;
         bool m_updatingNow = false;
         EcsWorldState m_state = EcsWorldState::None;
         S32 m_newEntityIdsCount = 0;

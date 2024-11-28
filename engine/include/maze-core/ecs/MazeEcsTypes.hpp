@@ -44,6 +44,8 @@ namespace Maze
     using EntityId = IdWithGeneration<S32, 8>;
     using EntityIds = Set<EntityId>;
 
+    using EcsWorldId = IdWithGeneration<S8, 4>;
+
     //////////////////////////////////////////
     static const EntityId c_invalidEntityId = EntityId();
     static const ComponentId c_invalidComponentId = 0;

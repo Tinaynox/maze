@@ -26,12 +26,14 @@
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/ecs/components/MazeHierarchyLine.hpp"
+#include "maze-editor-tools/ecs/components/MazeHierarchyController.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
@@ -562,12 +564,13 @@ namespace Maze
             if (dndScene)
             {
                 HierarchyLineType type = hierarchyLine->getType();
-                if (type == HierarchyLineType::Entity)
+                if (type == HierarchyLineType::Entity && hierarchyLine->getWorld())
                 {
                     EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(hierarchyLine->getUserData()));
 
                     DataBlock dataBlock;
                     dataBlock.setString(MAZE_HCS("type"), "entity");
+                    dataBlock.setS8(MAZE_HCS("world"), (S8)hierarchyLine->getWorld()->getId());
                     dataBlock.setS32(MAZE_HCS("eid"), (S32)entityId);
 
                     dndScene->startDrag(

@@ -95,6 +95,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline EcsWorld* getWorld() const { return m_world; }
+
+
+        //////////////////////////////////////////
         inline void addIgnoreScene(ClassUID _classUID) { m_ignoreScenes.insert(_classUID); }
 
 

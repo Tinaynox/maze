@@ -189,6 +189,12 @@ namespace Maze
     // Class EcsWorld
     //
     //////////////////////////////////////////
+    FastVector<EcsWorld*> EcsWorld::s_worlds = FastVector<EcsWorld*>();
+
+    //////////////////////////////////////////
+    Stack<EcsWorldId> EcsWorld::s_freeEcsWorldIndices = Stack<EcsWorldId>();
+    
+    //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(EcsWorld);
 
     //////////////////////////////////////////
@@ -197,6 +203,7 @@ namespace Maze
     //////////////////////////////////////////
     EcsWorld::EcsWorld()
     {
+        m_id = GenerateNewEcsWorldId(this);
     }
 
     //////////////////////////////////////////
@@ -257,6 +264,8 @@ namespace Maze
 
         m_state = EcsWorldState::Destroyed;
         eventOnDestroy(this);
+
+        ReleaseEcsWorldId(m_id);
     }
 
     //////////////////////////////////////////
@@ -692,6 +701,41 @@ namespace Maze
             default:
                 break;
         }
+    }
+
+
+    //////////////////////////////////////////
+    EcsWorld* EcsWorld::GetEcsWorld(EcsWorldId _id)
+    {
+        if ((Size)_id.getIndex() >= s_worlds.size())
+            return nullptr;
+
+        return s_worlds[(Size)_id.getIndex()];
+    }
+
+
+    //////////////////////////////////////////
+    EcsWorldId EcsWorld::GenerateNewEcsWorldId(EcsWorld* _world)
+    {
+        if (!s_freeEcsWorldIndices.empty())
+        {
+            EcsWorldId id = s_freeEcsWorldIndices.top();
+            s_freeEcsWorldIndices.pop();
+            s_worlds[(Size)id.getIndex()] = _world;
+            return id;
+        }
+
+        EcsWorldId id((S8)s_worlds.size());
+        s_worlds.push_back(_world);
+        return id;
+    }
+
+    //////////////////////////////////////////
+    void EcsWorld::ReleaseEcsWorldId(EcsWorldId _id)
+    {
+        s_worlds[(Size)_id.getIndex()] = nullptr;
+        _id.incrementGeneration();
+        s_freeEcsWorldIndices.push(_id);
     }
 
 } // namespace Maze

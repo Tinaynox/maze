@@ -382,6 +382,7 @@ namespace Maze
             return it->second;
 
         HierarchyLinePtr hierarchyLine = createHierarchyLine(HierarchyLineType::Scene);
+        hierarchyLine->setWorld(m_world);
         hierarchyLine->setText(_scene->getSceneName().str);
         hierarchyLine->getTransform()->setParent(m_hierarchyMainLayoutEntity);
         hierarchyLine->setUserData(reinterpret_cast<void*>((Size)(S32)_scene->getId()));
@@ -447,6 +448,7 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(m_hierarchyMode == EditorHierarchyMode::Scene && !parentLine, nullptr, "Parent line is not found!");
 
         HierarchyLinePtr hierarchyLine = createHierarchyLine(HierarchyLineType::Entity);
+        hierarchyLine->setWorld(m_world);
         hierarchyLine->setUserData(reinterpret_cast<void*>((Size)(S32)_entity->getId()));
 
         if (parentLine)
@@ -514,6 +516,7 @@ namespace Maze
     HierarchyLinePtr EditorHierarchyController::createHierarchyLine(HierarchyLineType _type)
     {
         HierarchyLinePtr hierarchyLine = m_hierarchyLinePool->createHierarchyLine(_type);
+        hierarchyLine->setWorld(m_world);
         subscribeHierarchyLine(hierarchyLine.get());
 
         EditorHierarchyControllerWPtr controllerWeak = cast<EditorHierarchyController>();
