@@ -710,7 +710,8 @@ namespace Maze
         if ((Size)_id.getIndex() >= s_worlds.size())
             return nullptr;
 
-        return s_worlds[(Size)_id.getIndex()];
+        Size index = (Size)_id.getIndex();
+        return s_worlds[index];
     }
 
 
@@ -725,7 +726,7 @@ namespace Maze
             return id;
         }
 
-        EcsWorldId id((S8)s_worlds.size());
+        EcsWorldId id((S8)s_worlds.size(), 0);
         s_worlds.push_back(_world);
         return id;
     }

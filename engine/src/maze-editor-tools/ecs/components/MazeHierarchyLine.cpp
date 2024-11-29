@@ -567,10 +567,11 @@ namespace Maze
                 if (type == HierarchyLineType::Entity && hierarchyLine->getWorld())
                 {
                     EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(hierarchyLine->getUserData()));
+                    EcsWorldId worldId = hierarchyLine->getWorld()->getId();
 
                     DataBlock dataBlock;
                     dataBlock.setString(MAZE_HCS("type"), "entity");
-                    dataBlock.setS8(MAZE_HCS("world"), (S8)hierarchyLine->getWorld()->getId());
+                    dataBlock.setS8(MAZE_HCS("world"), (S8)worldId);
                     dataBlock.setS32(MAZE_HCS("eid"), (S32)entityId);
 
                     dndScene->startDrag(

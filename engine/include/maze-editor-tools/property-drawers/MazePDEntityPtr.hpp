@@ -109,6 +109,7 @@ namespace Maze
     protected:
         AbstractTextRenderer2DPtr m_text;
 
+        EcsWorldId m_worldId;
         EntityId m_entityId = c_invalidEntityId;
 
         SpriteRenderer2DPtr m_panelRenderer;

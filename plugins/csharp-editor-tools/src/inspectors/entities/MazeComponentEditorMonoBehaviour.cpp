@@ -30,6 +30,7 @@
 #include "maze-plugin-csharp-editor-tools/managers/MazeCSharpEditorToolsManager.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-plugin-csharp/MazeCSharpService.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
@@ -100,7 +101,31 @@ namespace Maze
                     //      callbacks = CSharpEditorToolsManager::GetInstancePtr()->buildScriptFieldDrawerSliderF32Callbacks(0.0f, 1.0f);
                     // }
 
+                    MonoClass* fieldTypeMonoClass = mono_class_from_mono_type(_field->getMonoType());
+                    CString fieldTypeMonoClassName = mono_class_get_name(fieldTypeMonoClass);
+                    CString fieldTypeMonoClassNamespace = mono_class_get_namespace(fieldTypeMonoClass);
+
                     DataBlock data;
+                    
+                    if (mono_class_is_subclass_of(
+                        fieldTypeMonoClass,
+                        MonoEngine::GetNativeComponentClass()->getMonoClass(),
+                        false))
+                    {
+                        ComponentId componentId = GetComponentIdByName((String("Maze::") + fieldTypeMonoClassName).c_str());
+                        data.setS32(MAZE_HCS("componentId"), componentId);
+                    }
+                    else
+                    if (mono_class_is_subclass_of(
+                        fieldTypeMonoClass,
+                        MonoEngine::GetMonoBehaviourClass()->getMonoClass(),
+                        false))
+                    {
+                        HashedString fullClassName = MonoHelper::BuildMonoClassFullName(fieldTypeMonoClassNamespace, fieldTypeMonoClassName);
+
+                        ComponentId componentId = GetComponentIdByName(fullClassName.c_str());
+                        data.setS32(MAZE_HCS("componentId"), componentId);
+                    }
 
                     ScriptFieldDrawerPtr propertyDrawer = ScriptFieldDrawer::Create(_field, callbacks, data);
                     if (propertyDrawer)
@@ -123,7 +148,31 @@ namespace Maze
                     //      callbacks = CSharpEditorToolsManager::GetInstancePtr()->buildScriptPropertyDrawerSliderF32Callbacks(0.0f, 1.0f);
                     // }
 
+                    MonoClass* fieldTypeMonoClass = mono_class_from_mono_type(_prop->getMonoType());
+                    CString fieldTypeMonoClassName = mono_class_get_name(fieldTypeMonoClass);
+                    CString fieldTypeMonoClassNamespace = mono_class_get_namespace(fieldTypeMonoClass);
+
                     DataBlock data;
+
+                    if (mono_class_is_subclass_of(
+                        fieldTypeMonoClass,
+                        MonoEngine::GetNativeComponentClass()->getMonoClass(),
+                        false))
+                    {
+                        ComponentId componentId = GetComponentIdByName((String("Maze::") + fieldTypeMonoClassName).c_str());
+                        data.setS32(MAZE_HCS("componentId"), componentId);
+                    }
+                    else
+                    if (mono_class_is_subclass_of(
+                        fieldTypeMonoClass,
+                        MonoEngine::GetMonoBehaviourClass()->getMonoClass(),
+                        false))
+                    {
+                        HashedString fullClassName = MonoHelper::BuildMonoClassFullName(fieldTypeMonoClassNamespace, fieldTypeMonoClassName);
+
+                        ComponentId componentId = GetComponentIdByName(fullClassName.c_str());
+                        data.setS32(MAZE_HCS("componentId"), componentId);
+                    }
 
                     ScriptPropertyDrawerPtr propertyDrawer = ScriptPropertyDrawer::Create(_prop, callbacks, data);
                     if (propertyDrawer)

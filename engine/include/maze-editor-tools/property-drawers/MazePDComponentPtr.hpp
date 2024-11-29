@@ -47,6 +47,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(PropertyDrawerComponentPtr);
     MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(SpriteRenderer2D);
+    MAZE_USING_SHARED_PTR(DragAndDropZone);
 
 
     //////////////////////////////////////////
@@ -89,6 +91,10 @@ namespace Maze
         ////////////////////////////////////////////
         virtual void unselectUI() MAZE_OVERRIDE;
 
+
+        ////////////////////////////////////////////
+        inline ComponentId getComponentId() const { return m_componentId; }
+
     protected:
 
         //////////////////////////////////////////
@@ -106,6 +112,14 @@ namespace Maze
 
     protected:
         AbstractTextRenderer2DPtr m_text;
+
+        EcsWorldId m_worldId;
+        EntityId m_entityId = c_invalidEntityId;
+        ComponentId m_componentId = c_invalidComponentId;
+
+        SpriteRenderer2DPtr m_panelRenderer;
+        SpriteRenderer2DPtr m_dragAndDropFrame;
+        DragAndDropZonePtr m_dragAndDropZone;
     };
 
 } // namespace Maze

@@ -39,6 +39,21 @@ namespace Maze
     namespace MonoHelper
     {
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API HashedString BuildMonoClassFullName(
+            CString _namespace,
+            CString _className)
+        {
+            if (_namespace && _namespace[0])
+            {
+                String result;
+                StringHelper::FormatString(result, "%s.%s", _namespace, _className);
+                return HashedString(result);
+            }
+            else
+                return HashedString(_className);
+        }
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void PrintAssemblyTypes(MonoAssembly* _assembly)
         {
             MonoImage* image = mono_assembly_get_image(_assembly);

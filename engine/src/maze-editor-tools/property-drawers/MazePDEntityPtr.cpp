@@ -169,7 +169,7 @@ namespace Maze
         m_dragAndDropZone->eventDragAndDrop.subscribe(
             [this](DataBlock const& _data, EntityId _viewEid)
             {
-                if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("assetFile"))
+                if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("entity"))
                 {
                     EntityId eid(_data.getS32(MAZE_HCS("eid")));
                     if (eid == c_invalidEntityId)
@@ -236,6 +236,7 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerEntityPtr::setValue(EntityPtr const& _value)
     {
+        m_worldId = _value ? _value->getEcsWorld()->getId() : EcsWorldId(0);
         m_entityId = _value ? _value->getId() : c_invalidEntityId;
         CString name = _value ? EcsHelper::GetName(_value.get()) : "None";
 
@@ -245,7 +246,11 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr PropertyDrawerEntityPtr::getValue() const
     {
-        return EntityManager::GetInstancePtr()->getDefaultWorld()->getEntity(m_entityId);
+        EcsWorld* world = EcsWorld::GetEcsWorld(m_worldId);
+        if (!world)
+            return EntityPtr();
+
+        return world->getEntity(m_entityId);
     }
 
 

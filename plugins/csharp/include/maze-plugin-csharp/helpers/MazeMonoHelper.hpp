@@ -51,6 +51,11 @@ namespace Maze
     namespace MonoHelper
     {
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API HashedString BuildMonoClassFullName(
+            CString _namespace,
+            CString _className);
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void PrintAssemblyTypes(MonoAssembly* _assembly);
 
         //////////////////////////////////////////

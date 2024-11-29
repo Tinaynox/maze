@@ -645,7 +645,17 @@ namespace Maze
                 },
                 [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerComponentPtr const* _drawer)
                 {
-                    
+                    ComponentPtr component = _drawer->getValue();
+                    if (component)
+                    {
+                        MonoObject* result = MonoHelper::GetComponentByType(component.get(), _field->getMonoType());
+                        if (result)
+                            _instance.setFieldValue(_field, *result);
+                        else
+                            _instance.resetFieldValue(_field);
+                    }
+                    else
+                        _instance.resetFieldValue(_field);
                 });
         }
     }

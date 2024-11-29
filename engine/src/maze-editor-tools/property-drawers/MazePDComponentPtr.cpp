@@ -32,10 +32,13 @@
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
+#include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
@@ -83,6 +86,8 @@ namespace Maze
         if (!PropertyDrawer::init(_dataBlock))
             return false;
 
+        m_componentId = _dataBlock.getS32(MAZE_HCS("componentId"), c_invalidComponentId);
+
         return true;
     }
 
@@ -118,19 +123,98 @@ namespace Maze
             Vec2F::c_zero);
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
 
+        m_panelRenderer = SpriteHelper::CreateSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+            Vec2F(180, 18),
+            Vec2F(0, 0),
+            nullptr,
+            layout->getTransform(),
+            _parent->getEntityRaw()->getEcsScene(),
+            Vec2F(0.5f, 0.5f),
+            Vec2F::c_zero);
+
+        m_dragAndDropFrame = SpriteHelper::CreateSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Focused),
+            m_panelRenderer->getTransform()->getSize(),
+            Vec2F::c_zero,
+            nullptr,
+            m_panelRenderer->getTransform(),
+            _parent->getEntityRaw()->getEcsScene());
+        m_dragAndDropFrame->setColor(255, 200, 40);
+        m_dragAndDropFrame->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        m_dragAndDropFrame->getMeshRenderer()->setEnabled(false);
+
+        m_dragAndDropZone = m_panelRenderer->getEntityRaw()->ensureComponent<DragAndDropZone>();
+        m_dragAndDropZone->eventDragAndDropValidate.subscribe(
+            [this](DataBlock const& _data, EntityId _viewEid, bool& _outDropAllowed)
+        {
+            if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("entity"))
+            {
+                EntityId eid(_data.getS32(MAZE_HCS("eid")));
+                if (eid == c_invalidEntityId)
+                    return;
+
+                EcsWorldId worldId(_data.getS8(MAZE_HCS("world")));
+                EcsWorld* world = EcsWorld::GetEcsWorld(worldId);
+                if (!world)
+                    return;
+
+                EntityPtr const& entity = world->getEntity(eid);
+                if (!entity)
+                    return;
+
+                ComponentPtr const& component = entity->getComponentById(m_componentId);
+                if (!component)
+                    return;
+
+                _outDropAllowed = true;
+            }
+        });
+        m_dragAndDropZone->eventDragAndDrop.subscribe(
+            [this](DataBlock const& _data, EntityId _viewEid)
+        {
+            if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("entity"))
+            {
+                EntityId eid(_data.getS32(MAZE_HCS("eid")));
+                if (eid == c_invalidEntityId)
+                    return;
+
+                EcsWorldId worldId(_data.getS8(MAZE_HCS("world")));
+                EcsWorld* world = EcsWorld::GetEcsWorld(worldId);
+                if (!world)
+                    return;
+
+                EntityPtr const& entity = world->getEntity(eid);
+                if (!entity)
+                    return;
+
+                ComponentPtr const& component = entity->getComponentById(m_componentId);
+                setValue(component);
+                eventUIData();
+            }
+        });
+        m_dragAndDropZone->eventDragAndDropZoneOnDragAndDropCurrentZoneChanged.subscribe(
+            [this](bool _active)
+        {
+            this->m_dragAndDropFrame->getMeshRenderer()->setEnabled(_active);
+        });
+
         m_text = EditorToolsUIHelper::CreateText(
             EditorToolsHelper::BuildPropertyName(m_dataBlock.getCString(MAZE_HCS("label")), _label).c_str(),
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
-            HorizontalAlignment2D::Right,
+            HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2F(8, 18),
-            Vec2F(0, 0),
-            layout->getTransform(),
+            Vec2F(0, 18),
+            Vec2F(3, 0),
+            m_panelRenderer->getTransform(),
             _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
-            Vec2F::c_zero);
+            Vec2F(0.0f, 0.5f));
         m_text->setColor(ColorU32::c_black);
+
+        SizePolicy2DPtr textSizePolicy = m_text->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        textSizePolicy->setSizeDelta(-10.0f, 0.0f);
     }
 
     ////////////////////////////////////////////
@@ -157,15 +241,28 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerComponentPtr::setValue(ComponentPtr const& _value)
     {
-        m_text->setTextFormatted("%d (%s)",
-            _value ? (S32)_value->getEntityId() : (S32)c_invalidEntityId,
-            _value ? _value->getComponentClassName() : "None");
+        if (m_componentId != c_invalidComponentId && _value->getComponentId() != m_componentId)
+            return;
+
+        m_worldId = _value ? _value->getEntityRaw()->getEcsWorld()->getId() : EcsWorldId(0);
+        m_entityId = _value ? _value->getEntityRaw()->getId() : c_invalidEntityId;
+        CString name = _value ? EcsHelper::GetName(_value->getEntityRaw()) : "None";
+
+        m_text->setTextFormatted("%s [%d]", name, (S32)m_entityId);
     }
 
     //////////////////////////////////////////
     ComponentPtr PropertyDrawerComponentPtr::getValue() const
     {
-        return nullptr;
+        EcsWorld* world = EcsWorld::GetEcsWorld(m_worldId);
+        if (!world)
+            return ComponentPtr();
+
+        EntityPtr const& entity = world->getEntity(m_entityId);
+        if (!entity)
+            return ComponentPtr();
+
+        return entity->getComponentById(m_componentId);
     }
 
 
