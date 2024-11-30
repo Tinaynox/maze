@@ -241,7 +241,7 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerComponentPtr::setValue(ComponentPtr const& _value)
     {
-        if (m_componentId != c_invalidComponentId && _value->getComponentId() != m_componentId)
+        if (_value && m_componentId != c_invalidComponentId && _value->getComponentId() != m_componentId)
             return;
 
         m_worldId = _value ? _value->getEntityRaw()->getEcsWorld()->getId() : EcsWorldId(0);
