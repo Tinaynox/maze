@@ -141,6 +141,8 @@ namespace Maze
 
                         MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnCreateMethod(), systemTags, systemOrder);
 
+                        systemTags.insert(MAZE_HS("default"));
+
                         g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                             MakeShared<CustomComponentSystemHolder>(
                                 systemName,
@@ -157,6 +159,8 @@ namespace Maze
                         HashedString systemName(fullName + "::OnUpdate");
 
                         MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnUpdateMethod(), systemTags, systemOrder);
+
+                        systemTags.insert(MAZE_HS("default"));
 
                         g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                             MakeShared<CustomComponentSystemHolder>(
