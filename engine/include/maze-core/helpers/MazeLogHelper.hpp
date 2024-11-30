@@ -50,6 +50,8 @@ namespace Maze
         MAZE_CORE_API extern void LogWarning(CWString _text, ...);
         MAZE_CORE_API extern void LogError(CString _text, ...);
         MAZE_CORE_API extern void LogError(CWString _text, ...);
+        MAZE_CORE_API extern void LogFatal(CString _text, ...);
+        MAZE_CORE_API extern void LogFatal(CWString _text, ...);
 
     } // namespace Debug
     //////////////////////////////////////////
@@ -283,6 +285,17 @@ namespace Maze
         MAZE_FATAL(__VA_ARGS__);\
     }\
 }
+
+
+//////////////////////////////////////////
+// Assert
+//
+//////////////////////////////////////////
+#if (MAZE_DEBUG)
+#    define MAZE_DEBUG_ASSERT(__condition) MAZE_FATAL_IF(!static_cast<bool>(__condition), "Condition '" #__condition "' failed!");
+#else
+#    define MAZE_DEBUG_ASSERT(__condition, ...)
+#endif
 
 
 //////////////////////////////////////////

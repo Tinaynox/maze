@@ -28,6 +28,7 @@
 #include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -37,12 +38,20 @@ namespace Maze
     // Class ScriptProperty
     //
     //////////////////////////////////////////
+    ScriptProperty::ScriptProperty()
+    {
+        EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &ScriptProperty::notifyEvent);
+    }
+
+    //////////////////////////////////////////
     ScriptProperty::ScriptProperty(
         ScriptClassPtr const& _scriptClass,
         MonoProperty* _monoProperty)
         : m_scriptClass(_scriptClass)
         , m_monoProperty(_monoProperty)
     {
+        EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &ScriptProperty::notifyEvent);
+
         m_getterMethod = mono_property_get_get_method(m_monoProperty);
         m_setterMethod = mono_property_get_set_method(m_monoProperty);
 
@@ -73,6 +82,24 @@ namespace Maze
                     m_flags |= (U8)ScriptPropertyFlags::Serializable;
                 }
             }
+        }
+    }
+
+    //////////////////////////////////////////
+    ScriptProperty::~ScriptProperty()
+    {
+        EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
+    }
+
+    //////////////////////////////////////////
+    void ScriptProperty::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+        if (_eventUID == ClassInfo<MonoShutdownEvent>::UID())
+        {
+            m_monoType = nullptr;
+            m_monoProperty = nullptr;
+            m_getterMethod = nullptr;
+            m_setterMethod = nullptr;
         }
     }
      

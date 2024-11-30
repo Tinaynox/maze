@@ -35,6 +35,7 @@
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/system/MazeMutex.hpp"
+#include "maze-core/helpers/MazeLogHelper.hpp"
 #include <cstring>
 
 

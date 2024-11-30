@@ -28,6 +28,7 @@
 #include "maze-plugin-csharp/mono/MazeScriptField.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -37,12 +38,20 @@ namespace Maze
     // Class ScriptField
     //
     //////////////////////////////////////////
+    ScriptField::ScriptField()
+    {
+        EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &ScriptField::notifyEvent);
+    }
+    
+    //////////////////////////////////////////
     ScriptField::ScriptField(
         ScriptClassPtr const& _scriptClass,
         MonoClassField* _monoField)
         : m_scriptClass(_scriptClass)
         , m_monoField(_monoField)
     {
+        EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &ScriptField::notifyEvent);
+
         U32 flags = mono_field_get_flags(m_monoField);
 
         if (flags & MONO_FIELD_ATTR_PUBLIC)
@@ -68,6 +77,22 @@ namespace Maze
                     m_flags |= (U8)ScriptFieldFlags::Serializable;
                 }
             }
+        }
+    }
+
+    //////////////////////////////////////////
+    ScriptField::~ScriptField()
+    {
+        EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
+    }
+
+    //////////////////////////////////////////
+    void ScriptField::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+        if (_eventUID == ClassInfo<MonoShutdownEvent>::UID())
+        {
+            m_monoType = nullptr;
+            m_monoField = nullptr;
         }
     }
      

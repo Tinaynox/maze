@@ -56,6 +56,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void PrintAssemblyTypes(MonoAssembly* _assembly)
         {
+            MAZE_DEBUG_ASSERT(_assembly);
+
             MonoImage* image = mono_assembly_get_image(_assembly);
             MonoTableInfo const* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
             S32 numTypes = mono_table_info_get_rows(typeDefinitionsTable);
@@ -92,6 +94,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API MonoObject* InvokeMethod(MonoObject* _instance, MonoMethod* _method, void** _params)
         {
+            MAZE_DEBUG_ASSERT(_method);
+
             MonoObject* exception = nullptr;
             MonoObject* result = mono_runtime_invoke(_method, _instance, _params, &exception);
 
@@ -223,6 +227,7 @@ namespace Maze
             MonoMethod* getComponentByType = MonoEngine::GetEcsUtilsClass()->getMethod("GetComponentByType", 2);
 
             MonoReflectionType* reflectionType = mono_type_get_object(mono_domain_get(), _monoType);
+            MAZE_DEBUG_ASSERT(reflectionType);
 
             void* params[] = {
                 &_component,

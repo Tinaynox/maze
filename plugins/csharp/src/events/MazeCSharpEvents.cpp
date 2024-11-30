@@ -32,10 +32,11 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(CSharpCoreAssemblyLoadedEvent, Event);
-
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(CSharpAppAssemblyLoadedEvent, Event);
+    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(CSharpCoreAssemblyLoadedEvent);
+    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(CSharpAppAssemblyLoadedEvent);
+    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoPreShutdownEvent);
+    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoShutdownEvent);
+    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoReloadEvent);
 
 
 } // namespace Maze

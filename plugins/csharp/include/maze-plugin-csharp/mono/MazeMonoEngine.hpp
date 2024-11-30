@@ -58,6 +58,9 @@ namespace Maze
         //////////////////////////////////////////
         static bool Shutdown();
 
+        //////////////////////////////////////////
+        static bool Reload();
+
         
 
         //////////////////////////////////////////
@@ -123,6 +126,9 @@ namespace Maze
         static MonoAssembly* LoadCoreAssembly(HashedCString _csharpFile);
 
     private:
+
+        //////////////////////////////////////////
+        static bool InitializeMonoPath();
 
         //////////////////////////////////////////
         static bool InitializeMono();

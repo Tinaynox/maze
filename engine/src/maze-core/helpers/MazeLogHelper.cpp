@@ -101,6 +101,22 @@ namespace Maze
             MAZE_FORMAT_VA_STRING(_text, newText);
             LogService::GetInstancePtr()->logFormatted(c_logPriority_Error, L"%s", newText.c_str());
         }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void LogFatal(CString _text, ...)
+        {
+            String newText;
+            MAZE_FORMAT_VA_STRING(_text, newText);
+            LogService::GetInstancePtr()->logFormatted(c_logPriority_Fatal, "%s", newText.c_str());
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void LogFatal(CWString _text, ...)
+        {
+            WString newText;
+            MAZE_FORMAT_VA_STRING(_text, newText);
+            LogService::GetInstancePtr()->logFormatted(c_logPriority_Fatal, L"%s", newText.c_str());
+        }
     
     } // namespace Debug
     //////////////////////////////////////////

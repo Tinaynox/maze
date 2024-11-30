@@ -52,6 +52,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_CSHARP_API MonoBehaviour
         : public Component
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -119,10 +120,15 @@ namespace Maze
         //////////////////////////////////////////
         void createMonoInstance();
 
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
     protected:
         ComponentId m_componentId = 0u;
         ScriptClassPtr m_monoClass;
         ScriptInstancePtr m_monoInstance;
+
+        DataBlock m_cachedData;
     };
 
 

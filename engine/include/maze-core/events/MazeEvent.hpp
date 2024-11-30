@@ -131,6 +131,27 @@ namespace Maze
         GenericEvent() {}
     };
     
+    //////////////////////////////////////////
+    #define MAZE_DECLARE_SIMPLE_GENERIC_EVENT_API(DClassAPI, DEventName)     \
+        class DClassAPI DEventName                                           \
+            : public GenericEvent<DEventName>                                \
+        {                                                                    \
+        public:                                                              \
+            MAZE_DECLARE_METACLASS_WITH_PARENT(DEventName, Event);           \
+        };
+
+    //////////////////////////////////////////
+    #define MAZE_DECLARE_SIMPLE_GENERIC_EVENT(DEventName)                    \
+        class DEventName                                                     \
+            : public GenericEvent<DEventName>                                \
+        {                                                                    \
+        public:                                                              \
+            MAZE_DECLARE_METACLASS_WITH_PARENT(DEventName, Event);           \
+        };
+
+    //////////////////////////////////////////
+    #define MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(DEventName)                  \
+        MAZE_IMPLEMENT_METACLASS_WITH_PARENT(DEventName, Event);
     
 } // namespace Maze
 //////////////////////////////////////////

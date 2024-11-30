@@ -47,8 +47,9 @@ namespace Maze
         c_logPriority_Default = 0,
         c_logPriority_Warning = 1,
         c_logPriority_Error = 2,
-        c_logPriority_Minor = 3,
-        c_logPriority_Temp = 4
+        c_logPriority_Fatal = 3,
+        c_logPriority_Minor = 4,
+        c_logPriority_Temp = 5
     };
 
 

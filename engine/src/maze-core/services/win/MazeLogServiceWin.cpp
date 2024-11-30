@@ -47,6 +47,7 @@ namespace Maze
         setPriorityColor(c_logPriority_Default, LogServiceWinColor::Gray, LogServiceWinColor::Black);
         setPriorityColor(c_logPriority_Warning, LogServiceWinColor::Yellow, LogServiceWinColor::Black);
         setPriorityColor(c_logPriority_Error, LogServiceWinColor::Red, LogServiceWinColor::Black);
+        setPriorityColor(c_logPriority_Fatal, LogServiceWinColor::DarkRed, LogServiceWinColor::Black);
         setPriorityColor(c_logPriority_Minor, LogServiceWinColor::DarkGray, LogServiceWinColor::Black);
         setPriorityColor(c_logPriority_Temp, LogServiceWinColor::DarkBlue, LogServiceWinColor::Black);
     }

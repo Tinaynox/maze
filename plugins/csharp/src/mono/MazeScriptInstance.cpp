@@ -28,6 +28,7 @@
 #include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -35,7 +36,13 @@ namespace Maze
 {
     //////////////////////////////////////////
     // Class ScriptInstance
-    //    
+    // 
+    //////////////////////////////////////////
+    ScriptInstance::ScriptInstance()
+    {
+        EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &ScriptInstance::notifyEvent);
+    }
+    
     //////////////////////////////////////////
     ScriptInstance::ScriptInstance(
         ScriptClassPtr const& _scriptClass,
@@ -43,7 +50,22 @@ namespace Maze
         : m_scriptClass(_scriptClass)
         , m_instance(_instance)
     {
+        EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &ScriptInstance::notifyEvent);
+    }
 
+    //////////////////////////////////////////
+    ScriptInstance::~ScriptInstance()
+    {
+        EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
+    }
+
+    //////////////////////////////////////////
+    void ScriptInstance::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+        if (_eventUID == ClassInfo<MonoShutdownEvent>::UID())
+        {
+            m_instance = nullptr;
+        }
     }
 
     //////////////////////////////////////////
@@ -73,6 +95,15 @@ namespace Maze
             return false;
 
         return invokeMethod(method);
+    }
+
+    //////////////////////////////////////////
+    void ScriptInstance::destroy()
+    {
+        if (!m_instance)
+            return;
+
+        m_instance = nullptr;
     }
     
 

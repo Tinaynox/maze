@@ -31,6 +31,7 @@
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptField.hpp"
+#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -39,6 +40,18 @@ namespace Maze
     //////////////////////////////////////////
     // Class ScriptClass
     //
+    //////////////////////////////////////////
+    ScriptClass::ScriptClass()
+    {
+        EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &ScriptClass::notifyEvent);
+    }
+
+    //////////////////////////////////////////
+    ScriptClass::~ScriptClass()
+    {
+        EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
+    }
+    
     //////////////////////////////////////////
     ScriptClassPtr ScriptClass::Create(
         String const& _namespace,
@@ -98,6 +111,17 @@ namespace Maze
             setup();
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void ScriptClass::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+        if (_eventUID == ClassInfo<MonoShutdownEvent>::UID())
+        {
+            m_monoClass = nullptr;
+            m_onCreateMethod = nullptr;
+            m_onUpdateMethod = nullptr;
+        }
     }
 
     //////////////////////////////////////////

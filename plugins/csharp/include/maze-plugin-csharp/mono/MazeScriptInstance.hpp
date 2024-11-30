@@ -36,6 +36,8 @@
 #include "maze-plugin-csharp/mono/MazeScriptField.hpp"
 #include "maze-core/data/MazeHashedCString.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/events/MazeEvent.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
 
 
 //////////////////////////////////////////
@@ -61,11 +63,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_PLUGIN_CSHARP_API ScriptInstance
+        : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        ScriptInstance() = default;
+        ScriptInstance();
 
         //////////////////////////////////////////
         ScriptInstance(
@@ -73,10 +76,13 @@ namespace Maze
             MonoObject* _instance);
 
         //////////////////////////////////////////
-        ScriptInstance(ScriptInstance const&) = default;
+        ~ScriptInstance();
 
         //////////////////////////////////////////
-        ScriptInstance(ScriptInstance&&) = default;
+        ScriptInstance(ScriptInstance const&) = delete;
+
+        //////////////////////////////////////////
+        ScriptInstance(ScriptInstance&&) = delete;
 
         //////////////////////////////////////////
         ScriptInstance& operator=(ScriptInstance const&) = default;
@@ -249,9 +255,17 @@ namespace Maze
 
 
 
+        //////////////////////////////////////////
+        void destroy();
 
         //////////////////////////////////////////
         inline bool isValid() const { return m_instance != nullptr; }
+
+
+    private:
+
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
 
     private:
         ScriptClassWPtr m_scriptClass;

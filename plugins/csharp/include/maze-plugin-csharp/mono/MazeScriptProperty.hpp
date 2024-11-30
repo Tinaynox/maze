@@ -34,6 +34,8 @@
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
+#include "maze-core/events/MazeEvent.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
 
 
 //////////////////////////////////////////
@@ -58,11 +60,15 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_PLUGIN_CSHARP_API ScriptProperty
+        : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        ScriptProperty() = default;
+        ScriptProperty();
+
+        //////////////////////////////////////////
+        ~ScriptProperty();
     
         //////////////////////////////////////////
         ScriptProperty(
@@ -70,10 +76,10 @@ namespace Maze
             MonoProperty* _monoProperty);
 
         //////////////////////////////////////////
-        ScriptProperty(ScriptProperty const&) = default;
+        ScriptProperty(ScriptProperty const&) = delete;
 
         //////////////////////////////////////////
-        ScriptProperty(ScriptProperty&&) = default;
+        ScriptProperty(ScriptProperty&&) = delete;
 
         //////////////////////////////////////////
         ScriptProperty& operator=(ScriptProperty const&) = default;
@@ -116,6 +122,11 @@ namespace Maze
 
         //////////////////////////////////////////
         inline MonoMethod* getSetterMethod() const { return m_setterMethod; }
+
+    private:
+
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
 
     private:
         ScriptClassWPtr m_scriptClass;

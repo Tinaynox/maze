@@ -65,9 +65,11 @@ namespace Maze
         MonoDomain* monoDomain = nullptr;
         MonoDomain* appDomain = nullptr;
 
+        HashedString coreAssemblyFilePath;
         MonoAssembly* coreAssembly = nullptr;
         MonoImage* coreAssemblyImage = nullptr;
 
+        HashedString appAssemblyFilePath;
         MonoAssembly* appAssembly = nullptr;
         MonoImage* appAssemblyImage = nullptr;
 
@@ -204,10 +206,11 @@ namespace Maze
 
         g_monoEngineData = MAZE_NEW(MonoEngineData);
 
-        if (!InitializeMono())
+        if (!InitializeMonoPath())
             return false;
 
-        BindCppFunctionsCore();
+        if (!InitializeMono())
+            return false;
 
         LoadCoreAssembly(MAZE_HCS("maze-csharp-core-lib.dll"));
 
@@ -227,7 +230,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool MonoEngine::InitializeMono()
+    bool MonoEngine::Reload()
+    {
+        ShutdownMono();
+        if (!InitializeMono())
+            return false;
+
+        LoadCoreAssembly(g_monoEngineData->coreAssemblyFilePath);
+
+        if (!g_monoEngineData->appAssemblyFilePath.empty())
+            LoadAppAssembly(g_monoEngineData->appAssemblyFilePath);
+
+        EventManager::GetInstancePtr()->broadcastEventImmediate<MonoReloadEvent>();
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool MonoEngine::InitializeMonoPath()
     {
         Debug::Log("MonoEngine - initializing Mono...");
 
@@ -249,9 +269,17 @@ namespace Maze
         // Store the root domain pointer
         g_monoEngineData->monoDomain = rootDomain;
 
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool MonoEngine::InitializeMono()
+    {
         g_monoEngineData->appDomain = mono_domain_create_appdomain("MazeCSharpRuntime", nullptr);
-        MAZE_ERROR_RETURN_VALUE_IF(!rootDomain, false, "Failed to create app domain!");
+        MAZE_ERROR_RETURN_VALUE_IF(!g_monoEngineData->appDomain, false, "Failed to create app domain!");
         mono_domain_set(g_monoEngineData->appDomain, true);
+
+        BindCppFunctionsCore();
 
         return true;
     }
@@ -259,14 +287,24 @@ namespace Maze
     //////////////////////////////////////////
     void MonoEngine::ShutdownMono()
     {
+        EventManager::GetInstancePtr()->broadcastEventImmediate<MonoPreShutdownEvent>();
+        EventManager::GetInstancePtr()->broadcastEventImmediate<MonoShutdownEvent>();
+
+        mono_domain_set(mono_get_root_domain(), false);
+        if (g_monoEngineData->appDomain)
+            mono_domain_unload(g_monoEngineData->appDomain);
+
+        g_monoEngineData->ecsData = MonoEcsData();
+
         g_monoEngineData->appAssembly = nullptr;
         g_monoEngineData->appAssemblyImage = nullptr;
 
         g_monoEngineData->coreAssembly = nullptr;
         g_monoEngineData->coreAssemblyImage = nullptr;
 
-        g_monoEngineData->monoDomain = nullptr;
         g_monoEngineData->appDomain = nullptr;
+
+        
     }
 
     //////////////////////////////////////////
@@ -320,6 +358,7 @@ namespace Maze
     //////////////////////////////////////////
     MonoAssembly* MonoEngine::LoadCoreAssembly(HashedCString _csharpFile)
     {
+        g_monoEngineData->coreAssemblyFilePath = _csharpFile;
         g_monoEngineData->coreAssembly = LoadMonoAssembly(_csharpFile);
         MAZE_ERROR_RETURN_VALUE_IF(!g_monoEngineData->coreAssembly, nullptr, "Failed to load core assembly - %s", _csharpFile.str);
 
@@ -345,6 +384,7 @@ namespace Maze
     //////////////////////////////////////////
     MonoAssembly* MonoEngine::LoadAppAssembly(HashedCString _csharpFile)
     {
+        g_monoEngineData->appAssemblyFilePath = _csharpFile;
         g_monoEngineData->appAssembly = LoadMonoAssembly(_csharpFile);
         g_monoEngineData->appAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
 

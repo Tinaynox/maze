@@ -51,6 +51,7 @@ namespace Maze
         setPriorityMark(c_logPriority_Default, ' ');
         setPriorityMark(c_logPriority_Warning, 'W');
         setPriorityMark(c_logPriority_Error, 'E');
+        setPriorityMark(c_logPriority_Fatal, 'F');
         setPriorityMark(c_logPriority_Minor, ' ');
         setPriorityMark(c_logPriority_Temp, 'T');
     }
@@ -278,6 +279,7 @@ namespace Maze
         {
             case c_logPriority_Warning:
             case c_logPriority_Error:
+            case c_logPriority_Fatal:
                 std::cerr.write(_text, _size);
                 break;
             default:
@@ -293,6 +295,7 @@ namespace Maze
         {
             case c_logPriority_Warning:
             case c_logPriority_Error:
+            case c_logPriority_Fatal:
                 std::wcerr.write(_text, _size);
                 break;
             default:
@@ -304,7 +307,7 @@ namespace Maze
     //////////////////////////////////////////
     void LogServiceBase::appendToLogFile(S32 _priority, CString _text, Size _size)
     {
-        if (_priority == c_logPriority_Warning || _priority == c_logPriority_Error)
+        if (_priority == c_logPriority_Warning || _priority == c_logPriority_Error || _priority == c_logPriority_Fatal)
         {
             if (m_logErrorFile.is_open())
             {

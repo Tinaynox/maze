@@ -34,6 +34,8 @@
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
+#include "maze-core/events/MazeEvent.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
 
 
 //////////////////////////////////////////
@@ -57,11 +59,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_PLUGIN_CSHARP_API ScriptField
+        : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        ScriptField() = default;
+        ScriptField();
     
         //////////////////////////////////////////
         ScriptField(
@@ -69,10 +72,13 @@ namespace Maze
             MonoClassField* _monoField);
 
         //////////////////////////////////////////
-        ScriptField(ScriptField const&) = default;
+        ~ScriptField();
 
         //////////////////////////////////////////
-        ScriptField(ScriptField&&) = default;
+        ScriptField(ScriptField const&) = delete;
+
+        //////////////////////////////////////////
+        ScriptField(ScriptField&&) = delete;
 
         //////////////////////////////////////////
         ScriptField& operator=(ScriptField const&) = default;
@@ -103,6 +109,11 @@ namespace Maze
 
         //////////////////////////////////////////
         inline MonoClassField* getMonoClassField() const { return m_monoField; }
+
+    private:
+
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
 
     private:
         ScriptClassWPtr m_scriptClass;

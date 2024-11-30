@@ -66,6 +66,7 @@ namespace Maze
             EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectOpenedEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectWillBeClosedEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<CSharpAppAssemblyLoadedEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
         }
 
         s_instance = nullptr;
@@ -83,7 +84,9 @@ namespace Maze
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectOpenedEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectWillBeClosedEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<CSharpAppAssemblyLoadedEvent>(this, &EditorCSharpManager::notifyEvent);
+        EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &EditorCSharpManager::notifyEvent);
 
+        /*
         EditorUIManager::GetInstancePtr()->addTopBarOption(
             "Scripts",
             "Generate",
@@ -100,6 +103,20 @@ namespace Maze
             {
                 if (EditorCSharpManager::GetInstancePtr())
                     EditorCSharpManager::GetInstancePtr()->compileCSharpAssembly();
+            },
+            []() { return true; });
+        */
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Scripts",
+            "Reload scripts",
+            [](String const& _text)
+            {
+                if (EditorCSharpManager::GetInstancePtr())
+                {
+                    EditorCSharpManager::GetInstancePtr()->generateCSharpAssembly();
+                    EditorCSharpManager::GetInstancePtr()->compileCSharpAssembly();
+                    EditorCSharpManager::GetInstancePtr()->reloadCSharpScripts();
+                }
             },
             []() { return true; });
         EditorUIManager::GetInstancePtr()->addTopBarOption(
@@ -234,6 +251,12 @@ namespace Maze
     void EditorCSharpManager::loadCSharpAssembly()
     {
         CSharpService::GetInstancePtr()->loadMonoAssembly(MAZE_HCS("Assembly-CSharp.dll"));
+    }
+
+    //////////////////////////////////////////
+    void EditorCSharpManager::reloadCSharpScripts()
+    {
+        MonoEngine::Reload();
     }
 
 } // namespace Maze

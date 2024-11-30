@@ -41,35 +41,12 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ScriptClass);
-    MAZE_USING_SHARED_PTR(ScriptProperty);
-    MAZE_USING_SHARED_PTR(ScriptField);
-
-
-    //////////////////////////////////////////
-    // Class CSharpCoreAssemblyLoadedEvent
-    //
-    //////////////////////////////////////////
-    class MAZE_PLUGIN_CSHARP_API CSharpCoreAssemblyLoadedEvent
-        : public GenericEvent<CSharpCoreAssemblyLoadedEvent>
-    {
-    public:
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(CSharpCoreAssemblyLoadedEvent, Event);
-    };
-
-
-    //////////////////////////////////////////
-    // Class CSharpAppAssemblyLoadedEvent
-    //
-    //////////////////////////////////////////
-    class MAZE_PLUGIN_CSHARP_API CSharpAppAssemblyLoadedEvent
-        : public GenericEvent<CSharpAppAssemblyLoadedEvent>
-    {
-    public:
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(CSharpAppAssemblyLoadedEvent, Event);
-    };
+    MAZE_DECLARE_SIMPLE_GENERIC_EVENT_API(MAZE_PLUGIN_CSHARP_API, CSharpCoreAssemblyLoadedEvent);
+    MAZE_DECLARE_SIMPLE_GENERIC_EVENT_API(MAZE_PLUGIN_CSHARP_API, CSharpAppAssemblyLoadedEvent);
+    MAZE_DECLARE_SIMPLE_GENERIC_EVENT_API(MAZE_PLUGIN_CSHARP_API, MonoPreShutdownEvent);
+    MAZE_DECLARE_SIMPLE_GENERIC_EVENT_API(MAZE_PLUGIN_CSHARP_API, MonoShutdownEvent);
+    MAZE_DECLARE_SIMPLE_GENERIC_EVENT_API(MAZE_PLUGIN_CSHARP_API, MonoReloadEvent);
+    
 
 } // namespace Maze
 //////////////////////////////////////////

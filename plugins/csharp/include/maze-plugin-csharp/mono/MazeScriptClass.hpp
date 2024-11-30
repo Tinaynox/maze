@@ -34,6 +34,8 @@
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-core/events/MazeEvent.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
 
 
 //////////////////////////////////////////
@@ -52,6 +54,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_CSHARP_API ScriptClass
         : public std::enable_shared_from_this<ScriptClass>
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -67,6 +70,10 @@ namespace Maze
             String const& _className,
             MonoImage* _monoImage);
     
+
+        //////////////////////////////////////////
+        ~ScriptClass();
+
 
         //////////////////////////////////////////
         ScriptClass(ScriptClass const&) = delete;
@@ -144,7 +151,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        ScriptClass() = default;
+        ScriptClass();
 
         //////////////////////////////////////////
         bool init(
@@ -173,6 +180,10 @@ namespace Maze
 
         //////////////////////////////////////////
         HashedString buildFullName() const;
+
+
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
 
     private:
         String m_namespace;
