@@ -82,6 +82,7 @@
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
+#include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "Editor.hpp"
 #include "managers/EditorActionManager.hpp"
@@ -337,6 +338,13 @@ namespace Maze
             m_editorPlaytestManager->destroyScenes();
             m_editorWorkspaceManager->createScenes();
         }
+
+        getMainEcsWorld()->requestInclusiveSample<GizmosController>()->findQuery(
+            [](Entity* _entity, GizmosController* _gizmosController)
+            {
+                EditorToolsManager::GetInstancePtr()->setGizmosController(_gizmosController);
+                return true;
+            });
 
         SceneManager::GetInstancePtr()->setMainScene(getSceneMain());
 
