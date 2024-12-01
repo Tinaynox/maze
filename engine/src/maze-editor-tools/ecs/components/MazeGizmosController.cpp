@@ -162,10 +162,23 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosController::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
     {
+        if (m_drawer)
+            m_drawer->destroy();
+
+        m_samples.clear();
+        m_drawer.reset();
+
         if (_renderTarget)
             _renderTarget->eventRenderTargetDestroyed.unsubscribe(this);
 
         m_renderTarget = nullptr;
+    }
+
+    //////////////////////////////////////////
+    void GizmosController::processEcsWorldWillBeDestroyed()
+    {
+        if (m_drawer)
+            m_drawer->destroy();
 
         m_samples.clear();
         m_drawer.reset();
@@ -191,6 +204,17 @@ namespace Maze
             });
 
         _gizmosController->drawGizmos(_event.getDt(), haveGizmosMask);
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(GizmosControllerOnEcsWorldWillBeDestroyed,
+        {},
+        {},
+        EcsWorldWillBeDestroyedEvent const& _event,
+        Entity* _entity,
+        GizmosController* _gizmosController)
+    {
+        _gizmosController->processEcsWorldWillBeDestroyed();
     }
 
     

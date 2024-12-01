@@ -52,6 +52,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(Sprite);
+    MAZE_USING_SHARED_PTR(MeshRenderer);
 
 
     //////////////////////////////////////////
@@ -99,6 +100,7 @@ namespace Maze
             EntityPtr entity;
             VertexArrayObjectPtr vao;
             RenderMeshPtr renderMesh;
+            MeshRendererPtr meshRenderer;
             FastVector<Vec3F> vertices;
             FastVector<Vec4F> colors;
             FastVector<U16> indices;
@@ -123,6 +125,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void clear();
+
+        //////////////////////////////////////////
+        void destroy();
 
         //////////////////////////////////////////
         void drawLine(

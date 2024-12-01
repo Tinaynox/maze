@@ -71,14 +71,7 @@ namespace Maze
     //////////////////////////////////////////
     GizmosDrawer::~GizmosDrawer()
     {
-        for (S32 renderMode = 0; renderMode < (S32)MeshRenderMode::MAX; ++renderMode)
-        {
-            if (m_lines[renderMode].entity)
-                m_lines[renderMode].entity->removeFromEcsWorld();
-
-            if (m_triangles[renderMode].entity)
-                m_triangles[renderMode].entity->removeFromEcsWorld();
-        }
+        destroy();
     }
 
     //////////////////////////////////////////
@@ -141,10 +134,10 @@ namespace Maze
                 meshData.entity = Entity::Create();
                 m_world->addEntity(meshData.entity);
                 meshData.entity->createComponent<Transform3D>();
-                MeshRendererPtr meshRenderer = meshData.entity->createComponent<MeshRenderer>();
-                meshRenderer->setRenderMesh(meshData.renderMesh);
-                meshRenderer->setMaterial(material);
-                meshRenderer->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
+                meshData.meshRenderer = meshData.entity->createComponent<MeshRenderer>();
+                meshData.meshRenderer->setRenderMesh(meshData.renderMesh);
+                meshData.meshRenderer->setMaterial(material);
+                meshData.meshRenderer->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
             }
 
             {
@@ -160,10 +153,10 @@ namespace Maze
                 meshData.entity = Entity::Create();
                 m_world->addEntity(meshData.entity);
                 meshData.entity->createComponent<Transform3D>();
-                MeshRendererPtr meshRenderer = meshData.entity->createComponent<MeshRenderer>();
-                meshRenderer->setRenderMesh(meshData.renderMesh);
-                meshRenderer->setMaterial(material);
-                meshRenderer->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
+                meshData.meshRenderer = meshData.entity->createComponent<MeshRenderer>();
+                meshData.meshRenderer->setRenderMesh(meshData.renderMesh);
+                meshData.meshRenderer->setMaterial(material);
+                meshData.meshRenderer->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
             }
         }
 
@@ -224,6 +217,27 @@ namespace Maze
         }
 
         m_billboardsData.clear();
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::destroy()
+    {
+        clear();
+
+        for (S32 renderMode = 0; renderMode < (S32)MeshRenderMode::MAX; ++renderMode)
+        {
+            if (m_lines[renderMode].entity)
+            {
+                m_lines[renderMode].meshRenderer->setRenderMesh(RenderMeshPtr());
+                m_lines[renderMode].entity->removeFromEcsWorld();
+            }
+
+            if (m_triangles[renderMode].entity)
+            {
+                m_triangles[renderMode].meshRenderer->setRenderMesh(RenderMeshPtr());
+                m_triangles[renderMode].entity->removeFromEcsWorld();
+            }
+        }
     }
 
     //////////////////////////////////////////

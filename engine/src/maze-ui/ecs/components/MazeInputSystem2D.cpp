@@ -84,11 +84,9 @@ namespace Maze
         bool& m_mutex;
     };
 
-#if MAZE_DEBUG
-#   define INPUT_SYSTEM2D_ELEMENTS_LOCK() InputSystem2DSimpleBoolMutex elementsLock(m_sortedUIElements2DLocked)
-#else
-#   define INPUT_SYSTEM2D_ELEMENTS_LOCK()
-#endif
+
+#define INPUT_SYSTEM2D_ELEMENTS_LOCK() InputSystem2DSimpleBoolMutex elementsLock(m_sortedUIElements2DLocked)
+
 
 
     //////////////////////////////////////////

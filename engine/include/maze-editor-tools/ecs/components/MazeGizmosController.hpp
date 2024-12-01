@@ -96,6 +96,10 @@ namespace Maze
         //////////////////////////////////////////
         inline SharedPtr<GenericInclusiveEntitiesSample<Camera3D>> const& getCameras3DSample() const { return m_cameras3DSample; }
 
+
+        //////////////////////////////////////////
+        void processEcsWorldWillBeDestroyed();
+
     public:
 
         //////////////////////////////////////////

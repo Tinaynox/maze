@@ -272,9 +272,7 @@ namespace Maze
         bool m_processClick = false;
 
     private:
-#if MAZE_DEBUG
         bool m_sortedUIElements2DLocked = false;
-#endif
     };
 
 
