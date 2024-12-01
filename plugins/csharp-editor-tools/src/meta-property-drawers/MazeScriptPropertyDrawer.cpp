@@ -34,6 +34,7 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -53,7 +54,6 @@ namespace Maze
     //////////////////////////////////////////
     ScriptPropertyDrawer::ScriptPropertyDrawer()
     {
-        
     }
 
     //////////////////////////////////////////
@@ -93,6 +93,12 @@ namespace Maze
         m_drawer->eventUIData.subscribe(this, &ScriptPropertyDrawer::processDataFromUI);
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void ScriptPropertyDrawer::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+
     }
 
     //////////////////////////////////////////

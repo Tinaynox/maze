@@ -178,6 +178,7 @@ namespace Maze
         template <typename TValue>
         inline bool getPropertyValue(ScriptPropertyPtr const& _property, TValue& _value) const
         {
+            MAZE_DEBUG_ASSERT(_property->getMonoProperty());
             MonoObject* result = mono_property_get_value(_property->getMonoProperty(), m_instance, nullptr, nullptr);
             if (!result)
                 return false;
@@ -190,6 +191,7 @@ namespace Maze
         template <>
         inline bool getPropertyValue(ScriptPropertyPtr const& _property, String& _value) const
         {
+            MAZE_DEBUG_ASSERT(_property->getMonoProperty());
             MonoObject* result = mono_property_get_value(_property->getMonoProperty(), m_instance, nullptr, nullptr);
             if (!result)
                 return false;
@@ -207,6 +209,7 @@ namespace Maze
         template <typename TValue>
         inline bool setFieldValue(ScriptFieldPtr const& _field, TValue const& _value)
         {
+            MAZE_DEBUG_ASSERT(_field->getMonoClassField());
             mono_field_set_value(m_instance, _field->getMonoClassField(), (void*)&_value);
             return false;
         }
@@ -215,6 +218,8 @@ namespace Maze
         template <>
         inline bool setFieldValue(ScriptFieldPtr const& _field, String const& _value)
         {
+            MAZE_DEBUG_ASSERT(_field->getMonoClassField());
+
             MonoString* monoString = mono_string_new(mono_domain_get(), _value.c_str());
             mono_field_set_value(m_instance, _field->getMonoClassField(), monoString);
 
@@ -224,6 +229,7 @@ namespace Maze
         //////////////////////////////////////////
         inline bool resetFieldValue(ScriptFieldPtr const& _field)
         {
+            MAZE_DEBUG_ASSERT(_field->getMonoClassField());
             mono_field_set_value(m_instance, _field->getMonoClassField(), nullptr);
             return false;
         }
@@ -232,6 +238,7 @@ namespace Maze
         template <typename TValue>
         inline bool getFieldValue(ScriptFieldPtr const& _field, TValue& _value) const
         {
+            MAZE_DEBUG_ASSERT(_field->getMonoClassField());
             mono_field_get_value(m_instance, _field->getMonoClassField(), &_value);
             return true;
         }
@@ -240,6 +247,8 @@ namespace Maze
         template <>
         inline bool getFieldValue(ScriptFieldPtr const& _field, String& _value) const
         {
+            MAZE_DEBUG_ASSERT(_field->getMonoClassField());
+
             MonoString* monoString = nullptr;
             mono_field_get_value(m_instance, _field->getMonoClassField(), &monoString);
 

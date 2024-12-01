@@ -243,6 +243,9 @@ namespace Maze
         //////////////////////////////////////////
         void notifyEvent(ClassUID _eventUID, Event* _event);
 
+        //////////////////////////////////////////
+        void registerDrawers();
+
     protected:
         static CSharpEditorToolsManager* s_instance;
 

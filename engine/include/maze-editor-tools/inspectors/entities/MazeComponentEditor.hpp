@@ -145,6 +145,9 @@ namespace Maze
         virtual void buildUI();
 
         //////////////////////////////////////////
+        void rebuildUI();
+
+        //////////////////////////////////////////
         MetaPropertyDrawerPtr buildPropertyDrawer(
             MetaProperty* _metaProperty,
             CString _label = nullptr);

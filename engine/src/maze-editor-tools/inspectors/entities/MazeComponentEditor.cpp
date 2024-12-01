@@ -347,6 +347,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ComponentEditor::rebuildUI()
+    {
+        if (!m_bodyRoot)
+            return;
+
+        m_bodyRoot->removeAllChildren();
+        m_propertyDrawers.clear();
+
+        updateExpandButtonSprite();
+
+        buildUI();
+    }
+
+    //////////////////////////////////////////
     MetaPropertyDrawerPtr ComponentEditor::buildPropertyDrawer(
         MetaProperty* _metaProperty,
         CString _label)

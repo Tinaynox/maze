@@ -84,7 +84,9 @@ namespace Maze
         static GizmosControllerPtr Create(RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
-        void drawGizmos(F32 _dt);
+        void drawGizmos(
+            F32 _dt,
+            bool _draw = true);
 
 
         //////////////////////////////////////////

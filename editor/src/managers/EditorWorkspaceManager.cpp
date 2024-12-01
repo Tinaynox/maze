@@ -78,6 +78,8 @@
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
+#include "managers/EditorEntityManager.hpp"
 #include "Editor.hpp"
 #include "layout/EditorLayout.hpp"
 #include "scenes/SceneWorkspace.hpp"

@@ -76,7 +76,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static ScriptFieldDrawerPtr Create(
-            ScriptFieldPtr const& _scriptProperty,
+            ScriptFieldPtr const& _scriptField,
             ScriptFieldDrawerCallbacks _callbacks,
             DataBlock const& _data);
 
@@ -94,7 +94,7 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init(
-            ScriptFieldPtr const& _scriptProperty,
+            ScriptFieldPtr const& _scriptField,
             ScriptFieldDrawerCallbacks _callbacks,
             DataBlock const& _data);
 
@@ -103,8 +103,11 @@ namespace Maze
             Transform2DPtr const& _parent,
             CString _label) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
     protected:
-        ScriptFieldPtr m_scriptProperty;
+        ScriptFieldPtr m_scriptField;
 
         PropertyDrawerPtr m_drawer;
         ScriptFieldDrawerCallbacks m_callbacks;

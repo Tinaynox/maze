@@ -103,6 +103,9 @@ namespace Maze
             Transform2DPtr const& _parent,
             CString _label) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
     protected:
         ScriptPropertyPtr m_scriptProperty;
 

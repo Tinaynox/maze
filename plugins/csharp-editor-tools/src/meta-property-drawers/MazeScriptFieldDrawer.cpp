@@ -34,6 +34,7 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -53,7 +54,6 @@ namespace Maze
     //////////////////////////////////////////
     ScriptFieldDrawer::ScriptFieldDrawer()
     {
-        
     }
 
     //////////////////////////////////////////
@@ -68,31 +68,36 @@ namespace Maze
 
     //////////////////////////////////////////
     ScriptFieldDrawerPtr ScriptFieldDrawer::Create(
-        ScriptFieldPtr const& _scriptProperty,
+        ScriptFieldPtr const& _scriptField,
         ScriptFieldDrawerCallbacks _callbacks,
         DataBlock const& _data)
     {
         ScriptFieldDrawerPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ScriptFieldDrawer, object, init(_scriptProperty, _callbacks, _data));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ScriptFieldDrawer, object, init(_scriptField, _callbacks, _data));
         return object;
     }
 
     //////////////////////////////////////////
     bool ScriptFieldDrawer::init(
-        ScriptFieldPtr const& _scriptProperty,
+        ScriptFieldPtr const& _scriptField,
         ScriptFieldDrawerCallbacks _callbacks,
         DataBlock const& _data)
     {
         if (!MetaPropertyDrawer::init(nullptr))
             return false;
 
-        m_scriptProperty = _scriptProperty;
+        m_scriptField = _scriptField;
         m_callbacks = _callbacks;
         
         m_drawer = m_callbacks.createDrawerCb(_data);
         m_drawer->eventUIData.subscribe(this, &ScriptFieldDrawer::processDataFromUI);
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void ScriptFieldDrawer::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
     }
 
     //////////////////////////////////////////
@@ -118,7 +123,7 @@ namespace Maze
             m_callbacks.processDataToUICb(
                 monoBehaviour->getEntityRaw()->getEcsWorld(),
                 *monoBehaviour->getMonoInstance(),
-                m_scriptProperty,
+                m_scriptField,
                 m_drawer);
     }
 
@@ -136,7 +141,7 @@ namespace Maze
             m_callbacks.processDataFromUICb(
                 monoBehaviour->getEntityRaw()->getEcsWorld(),
                 *monoBehaviour->getMonoInstance(),
-                m_scriptProperty,
+                m_scriptField,
                 m_drawer);
     }
 

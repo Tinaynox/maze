@@ -106,6 +106,17 @@ namespace Maze
             },
             []() { return true; });
         */
+        
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Scripts",
+            "Open project",
+            [](String const& _text)
+            {
+                Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharp/prj/Assembly-CSharp.sln";
+                SystemHelper::OpenURL(csharpPath);
+            },
+            []() { return true; });
+
         EditorUIManager::GetInstancePtr()->addTopBarOption(
             "Scripts",
             "Reload scripts",
@@ -117,15 +128,6 @@ namespace Maze
                     EditorCSharpManager::GetInstancePtr()->compileCSharpAssembly();
                     EditorCSharpManager::GetInstancePtr()->reloadCSharpScripts();
                 }
-            },
-            []() { return true; });
-        EditorUIManager::GetInstancePtr()->addTopBarOption(
-            "Scripts",
-            "Open project",
-            [](String const& _text)
-            {
-                Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharp/prj/Assembly-CSharp.sln";
-                SystemHelper::OpenURL(csharpPath);
             },
             []() { return true; });
 

@@ -130,24 +130,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosController::drawGizmos(F32 _dt)
+    void GizmosController::drawGizmos(
+        F32 _dt,
+        bool _draw)
     {
         if (!m_drawer)
             return;
 
         m_drawer->clear();
 
-        for (GizmosSample const& gizmosSample : m_samples)
+        if (_draw)
         {
-            for (Entity* entity : gizmosSample.sample->getEntities())
+            for (GizmosSample const& gizmosSample : m_samples)
             {
-                if (!entity)
-                    continue;
+                for (Entity* entity : gizmosSample.sample->getEntities())
+                {
+                    if (!entity)
+                        continue;
 
-                ComponentPtr const& component = entity->getComponentById(gizmosSample.componentId);
-                gizmosSample.gizmos->drawGizmos(entity, component, m_drawer.get());
+                    ComponentPtr const& component = entity->getComponentById(gizmosSample.componentId);
+                    gizmosSample.gizmos->drawGizmos(entity, component, m_drawer.get());
 
-                eventDrawGizmosEvent(gizmosSample.gizmos, entity, component, m_drawer.get());
+                    eventDrawGizmosEvent(gizmosSample.gizmos, entity, component, m_drawer.get());
+                }
             }
         }
 
@@ -185,8 +190,7 @@ namespace Maze
                 haveGizmosMask |= (bool)(_camera->getRenderMask() & S32(DefaultRenderMask::Gizmos));
             });
 
-        if (haveGizmosMask)
-            _gizmosController->drawGizmos(_event.getDt());
+        _gizmosController->drawGizmos(_event.getDt(), haveGizmosMask);
     }
 
     

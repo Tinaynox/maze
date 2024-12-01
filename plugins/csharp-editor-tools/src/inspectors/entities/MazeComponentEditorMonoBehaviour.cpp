@@ -34,6 +34,7 @@
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
+#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -53,12 +54,13 @@ namespace Maze
     //////////////////////////////////////////
     ComponentEditorMonoBehaviour::ComponentEditorMonoBehaviour()
     {
-        
+        EventManager::GetInstancePtr()->subscribeEvent<MonoReloadEvent>(this, &ComponentEditorMonoBehaviour::notifyEvent);
     }
 
     //////////////////////////////////////////
     ComponentEditorMonoBehaviour::~ComponentEditorMonoBehaviour()
     {
+        EventManager::GetInstancePtr()->unsubscribeEvent<MonoReloadEvent>(this);
     }
 
     //////////////////////////////////////////
@@ -76,6 +78,15 @@ namespace Maze
             return false;
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void ComponentEditorMonoBehaviour::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+        if (_eventUID == ClassInfo<MonoReloadEvent>::UID())
+        {
+            rebuildUI();
+        }
     }
 
     //////////////////////////////////////////

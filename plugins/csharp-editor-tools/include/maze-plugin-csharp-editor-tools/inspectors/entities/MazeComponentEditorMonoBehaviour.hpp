@@ -87,6 +87,10 @@ namespace Maze
         //////////////////////////////////////////
         virtual String buildEditorTitle() MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
     protected:
     };
 

@@ -100,6 +100,7 @@ namespace Maze
                     };
             });
 
+        registerDrawers();
 
         return true;
     }
@@ -213,452 +214,7 @@ namespace Maze
     {
         if (_eventUID == ClassInfo<CSharpCoreAssemblyLoadedEvent>::UID())
         {
-            // System  
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerString>(MAZE_HCS("System.String"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerString* _drawer)
-            {
-                String value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerString const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerString* _drawer)
-            {
-                String value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerString const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Char"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
-            {
-                U16 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
-            {
-                U16 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerBool>(MAZE_HCS("System.Boolean"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerBool* _drawer)
-            {
-                Bool value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerBool const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerBool* _drawer)
-            {
-                Bool value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerBool const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.SByte"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
-            {
-                S8 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
-            {
-                S8 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Int16"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
-            {
-                S16 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
-            {
-                S16 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Int32"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
-            {
-                S32 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
-            {
-                S32 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Int64"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
-            {
-                S64 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
-            {
-                S64 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Byte"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
-            {
-                U8 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
-            {
-                U8 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.UInt16"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
-            {
-                U16 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
-            {
-                U16 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.UInt32"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
-            {
-                U32 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
-            {
-                U32 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.UInt64"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
-            {
-                U64 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
-            {
-                U64 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerF32>(MAZE_HCS("System.Single"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32* _drawer)
-            {
-                F32 value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerF32* _drawer)
-            {
-                F32 value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerF32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerF32>(MAZE_HCS("System.Double"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32* _drawer)
-            {
-                F64 value; _instance.getPropertyValue(_property, value); _drawer->setValue((F32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, (F64)_drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerF32* _drawer)
-            {
-                F64 value; _instance.getFieldValue(_field, value); _drawer->setValue((F32)value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerF32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, (F64)_drawer->getValue());
-            });
-
-            // Maze Core
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerEntityPtr>(MAZE_HCS("Maze.Core.Entity"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerEntityPtr* _drawer)
-            {
-                Entity* value; _instance.getPropertyValue(_property, value);
-                _drawer->setValue(value ? value->getSharedPtr() : nullptr);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerEntityPtr const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue().get());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerEntityPtr* _drawer)
-            {
-                Entity* value; _instance.getFieldValue(_field, value);
-                _drawer->setValue(value ? value->getSharedPtr() : nullptr);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerEntityPtr const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue().get());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec2S32>(MAZE_HCS("Maze.Core.Vec2S"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2S32* _drawer)
-            {
-                Vec2S value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2S32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec2S32* _drawer)
-            {
-                Vec2S value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec2S32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec2U32>(MAZE_HCS("Maze.Core.Vec2U"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2U32* _drawer)
-            {
-                Vec2U value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2U32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec2U32* _drawer)
-            {
-                Vec2U value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec2U32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec2F32>(MAZE_HCS("Maze.Core.Vec2F"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2F32* _drawer)
-            {
-                Vec2F value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2F32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec2F32* _drawer)
-            {
-                Vec2F value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec2F32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec3F32>(MAZE_HCS("Maze.Core.Vec3F"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec3F32* _drawer)
-            {
-                Vec3F value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec3F32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec3F32* _drawer)
-            {
-                Vec3F value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec3F32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec4F32>(MAZE_HCS("Maze.Core.Vec4F"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec4F32* _drawer)
-            {
-                Vec4F value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec4F32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec4F32* _drawer)
-            {
-                Vec4F value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec4F32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerRect2F>(MAZE_HCS("Maze.Core.Rect2F"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerRect2F* _drawer)
-            {
-                Rect2F value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerRect2F const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerRect2F* _drawer)
-            {
-                Rect2F value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerRect2F const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue());
-            });
-
-
-            // Maze Graphics
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerColorU32>(MAZE_HCS("Maze.Graphics.ColorU32"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorU32* _drawer)
-            {
-                Vec4U8 value; _instance.getPropertyValue(_property, value); _drawer->setValue(ColorU32::FromVec4U8(value));
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorU32 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue().toVec4U8());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerColorU32* _drawer)
-            {
-                Vec4U8 value; _instance.getFieldValue(_field, value); _drawer->setValue(ColorU32::FromVec4U8(value));
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerColorU32 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue().toVec4U8());
-            });
-            registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerColorF128>(MAZE_HCS("Maze.Graphics.ColorF128"),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorF128* _drawer)
-            {
-                Vec4F value; _instance.getPropertyValue(_property, value); _drawer->setValue(ColorF128(value));
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorF128 const* _drawer)
-            {
-                _instance.setPropertyValue(_property, _drawer->getValue().toVec4F32());
-            },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerColorF128* _drawer)
-            {
-                Vec4F value; _instance.getFieldValue(_field, value); _drawer->setValue(ColorF128(value));
-            },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerColorF128 const* _drawer)
-            {
-                _instance.setFieldValue(_field, _drawer->getValue().toVec4F32());
-            });
-
-            ScriptClassPtr const& componentClass = MonoEngine::GetComponentClass();
-
-            registerScriptPropertyAndFieldDrawerSuperClassCallbacks<PropertyDrawerComponentPtr>(
-                componentClass->getMonoClass(),
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerComponentPtr* _drawer)
-                {
-                    MonoObject* componentInstance = nullptr;
-                    _instance.getPropertyValue(_property, componentInstance);
-                    MonoProperty* componentPtrProperty = MonoEngine::GetNativeComponentPtrProperty()->getMonoProperty();
-
-                    MonoObject* result = mono_property_get_value(componentPtrProperty, componentInstance, nullptr, nullptr);
-                    if (result)
-                    {
-                        Component* component = *(Component**)mono_object_unbox(result);
-                        _drawer->setValue(component ? component->getSharedPtr() : nullptr);
-                    }
-                    else
-                        _drawer->setValue(nullptr);
-                },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerComponentPtr const* _drawer)
-                {
-                    ComponentPtr component = _drawer->getValue();
-                    if (component)
-                    {
-                        MonoObject* result = MonoHelper::GetComponentByType(component.get(), _property->getMonoType());
-                        if (result)
-                            _instance.setPropertyValue(_property, *result);
-                        else
-                            _instance.resetPropertyValue(_property);
-                    }
-                    else
-                        _instance.resetPropertyValue(_property);
-                },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerComponentPtr* _drawer)
-                {
-                    MonoObject* componentInstance = nullptr;
-                    _instance.getFieldValue(_field, componentInstance);
-                    MonoProperty* componentPtrProperty = MonoEngine::GetNativeComponentPtrProperty()->getMonoProperty();
-
-                    MonoObject* result = mono_property_get_value(componentPtrProperty, componentInstance, nullptr, nullptr);
-                    if (result)
-                    {
-                        Component* component = *(Component**)mono_object_unbox(result);
-                        _drawer->setValue(component ? component->getSharedPtr() : nullptr);
-                    }
-                    else
-                        _drawer->setValue(nullptr);
-                },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerComponentPtr const* _drawer)
-                {
-                    ComponentPtr component = _drawer->getValue();
-                    if (component)
-                    {
-                        MonoObject* result = MonoHelper::GetComponentByType(component.get(), _field->getMonoType());
-                        if (result)
-                            _instance.setFieldValue(_field, *result);
-                        else
-                            _instance.resetFieldValue(_field);
-                    }
-                    else
-                        _instance.resetFieldValue(_field);
-                });
+            registerDrawers();
         }
         else
         if (_eventUID == ClassInfo<MonoShutdownEvent>::UID())
@@ -668,6 +224,457 @@ namespace Maze
             m_monoPropertyDrawerCallbacksPerMonoSuperClass.clear();
             m_monoFieldDrawerCallbacksPerMonoSuperClass.clear();
         }
+    }
+
+    //////////////////////////////////////////
+    void CSharpEditorToolsManager::registerDrawers()
+    {
+        // System  
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerString>(MAZE_HCS("System.String"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerString* _drawer)
+        {
+            String value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerString const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerString* _drawer)
+        {
+            String value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerString const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Char"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
+        {
+            U16 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
+        {
+            U16 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerBool>(MAZE_HCS("System.Boolean"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerBool* _drawer)
+        {
+            Bool value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerBool const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerBool* _drawer)
+        {
+            Bool value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerBool const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.SByte"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
+        {
+            S8 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
+        {
+            S8 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Int16"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
+        {
+            S16 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
+        {
+            S16 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Int32"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
+        {
+            S32 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
+        {
+            S32 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Int64"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
+        {
+            S64 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
+        {
+            S64 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.Byte"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
+        {
+            U8 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
+        {
+            U8 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.UInt16"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
+        {
+            U16 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
+        {
+            U16 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.UInt32"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
+        {
+            U32 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
+        {
+            U32 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerS32>(MAZE_HCS("System.UInt64"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32* _drawer)
+        {
+            U64 value; _instance.getPropertyValue(_property, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32* _drawer)
+        {
+            U64 value; _instance.getFieldValue(_field, value); _drawer->setValue((S32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerS32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerF32>(MAZE_HCS("System.Single"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32* _drawer)
+        {
+            F32 value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerF32* _drawer)
+        {
+            F32 value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerF32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerF32>(MAZE_HCS("System.Double"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32* _drawer)
+        {
+            F64 value; _instance.getPropertyValue(_property, value); _drawer->setValue((F32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerF32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, (F64)_drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerF32* _drawer)
+        {
+            F64 value; _instance.getFieldValue(_field, value); _drawer->setValue((F32)value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerF32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, (F64)_drawer->getValue());
+        });
+
+        // Maze Core
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerEntityPtr>(MAZE_HCS("Maze.Core.Entity"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerEntityPtr* _drawer)
+        {
+            Entity* value; _instance.getPropertyValue(_property, value);
+            _drawer->setValue(value ? value->getSharedPtr() : nullptr);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerEntityPtr const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue().get());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerEntityPtr* _drawer)
+        {
+            Entity* value; _instance.getFieldValue(_field, value);
+            _drawer->setValue(value ? value->getSharedPtr() : nullptr);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerEntityPtr const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue().get());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec2S32>(MAZE_HCS("Maze.Core.Vec2S"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2S32* _drawer)
+        {
+            Vec2S value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2S32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec2S32* _drawer)
+        {
+            Vec2S value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec2S32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec2U32>(MAZE_HCS("Maze.Core.Vec2U"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2U32* _drawer)
+        {
+            Vec2U value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2U32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec2U32* _drawer)
+        {
+            Vec2U value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec2U32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec2F32>(MAZE_HCS("Maze.Core.Vec2F"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2F32* _drawer)
+        {
+            Vec2F value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec2F32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec2F32* _drawer)
+        {
+            Vec2F value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec2F32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec3F32>(MAZE_HCS("Maze.Core.Vec3F"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec3F32* _drawer)
+        {
+            Vec3F value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec3F32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec3F32* _drawer)
+        {
+            Vec3F value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec3F32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerVec4F32>(MAZE_HCS("Maze.Core.Vec4F"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec4F32* _drawer)
+        {
+            Vec4F value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerVec4F32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec4F32* _drawer)
+        {
+            Vec4F value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerVec4F32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerRect2F>(MAZE_HCS("Maze.Core.Rect2F"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerRect2F* _drawer)
+        {
+            Rect2F value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerRect2F const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerRect2F* _drawer)
+        {
+            Rect2F value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerRect2F const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+
+
+        // Maze Graphics
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerColorU32>(MAZE_HCS("Maze.Graphics.ColorU32"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorU32* _drawer)
+        {
+            Vec4U8 value; _instance.getPropertyValue(_property, value); _drawer->setValue(ColorU32::FromVec4U8(value));
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorU32 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue().toVec4U8());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerColorU32* _drawer)
+        {
+            Vec4U8 value; _instance.getFieldValue(_field, value); _drawer->setValue(ColorU32::FromVec4U8(value));
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerColorU32 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue().toVec4U8());
+        });
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerColorF128>(MAZE_HCS("Maze.Graphics.ColorF128"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorF128* _drawer)
+        {
+            Vec4F value; _instance.getPropertyValue(_property, value); _drawer->setValue(ColorF128(value));
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorF128 const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue().toVec4F32());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerColorF128* _drawer)
+        {
+            Vec4F value; _instance.getFieldValue(_field, value); _drawer->setValue(ColorF128(value));
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerColorF128 const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue().toVec4F32());
+        });
+
+        ScriptClassPtr const& componentClass = MonoEngine::GetComponentClass();
+
+        registerScriptPropertyAndFieldDrawerSuperClassCallbacks<PropertyDrawerComponentPtr>(
+            componentClass->getMonoClass(),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerComponentPtr* _drawer)
+        {
+            MonoObject* componentInstance = nullptr;
+            _instance.getPropertyValue(_property, componentInstance);
+            MonoProperty* componentPtrProperty = MonoEngine::GetNativeComponentPtrProperty()->getMonoProperty();
+
+            MonoObject* result = mono_property_get_value(componentPtrProperty, componentInstance, nullptr, nullptr);
+            if (result)
+            {
+                Component* component = *(Component**)mono_object_unbox(result);
+                _drawer->setValue(component ? component->getSharedPtr() : nullptr);
+            }
+            else
+                _drawer->setValue(nullptr);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerComponentPtr const* _drawer)
+        {
+            ComponentPtr component = _drawer->getValue();
+            if (component)
+            {
+                MonoObject* result = MonoHelper::GetComponentByType(component.get(), _property->getMonoType());
+                if (result)
+                    _instance.setPropertyValue(_property, *result);
+                else
+                    _instance.resetPropertyValue(_property);
+            }
+            else
+                _instance.resetPropertyValue(_property);
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerComponentPtr* _drawer)
+        {
+            MonoObject* componentInstance = nullptr;
+            _instance.getFieldValue(_field, componentInstance);
+            MonoProperty* componentPtrProperty = MonoEngine::GetNativeComponentPtrProperty()->getMonoProperty();
+
+            MonoObject* result = mono_property_get_value(componentPtrProperty, componentInstance, nullptr, nullptr);
+            if (result)
+            {
+                Component* component = *(Component**)mono_object_unbox(result);
+                _drawer->setValue(component ? component->getSharedPtr() : nullptr);
+            }
+            else
+                _drawer->setValue(nullptr);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerComponentPtr const* _drawer)
+        {
+            ComponentPtr component = _drawer->getValue();
+            if (component)
+            {
+                MonoObject* result = MonoHelper::GetComponentByType(component.get(), _field->getMonoType());
+                if (result)
+                    _instance.setFieldValue(_field, *result);
+                else
+                    _instance.resetFieldValue(_field);
+            }
+            else
+                _instance.resetFieldValue(_field);
+        });
     }
 
 } // namespace Maze

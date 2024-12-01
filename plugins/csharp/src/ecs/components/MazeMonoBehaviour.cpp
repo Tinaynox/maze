@@ -32,6 +32,7 @@
 #include "maze-plugin-csharp/managers/MazeMonoSerializationManager.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/MazeCustomComponentSystemHolder.hpp"
+#include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 
 
@@ -52,6 +53,7 @@ namespace Maze
     MonoBehaviour::MonoBehaviour()
     {
         EventManager::GetInstancePtr()->subscribeEvent<MonoPreShutdownEvent>(this, &MonoBehaviour::notifyEvent);
+        EventManager::GetInstancePtr()->subscribeEvent<MonoPreReloadEvent>(this, &MonoBehaviour::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<MonoReloadEvent>(this, &MonoBehaviour::notifyEvent);
     }
 
@@ -59,6 +61,7 @@ namespace Maze
     MonoBehaviour::~MonoBehaviour()
     {
         EventManager::GetInstancePtr()->unsubscribeEvent<MonoPreShutdownEvent>(this);
+        EventManager::GetInstancePtr()->unsubscribeEvent<MonoPreReloadEvent>(this);
         EventManager::GetInstancePtr()->unsubscribeEvent<MonoReloadEvent>(this);
     }
 
@@ -85,16 +88,18 @@ namespace Maze
         if (_eventUID == ClassInfo<MonoPreShutdownEvent>::UID())
         {
             m_cachedData = getData();
+            // m_cachedData.saveTextFile(EcsHelper::GetName(getEntityRaw()));
             destroyMonoInstance();
+        }
+        else
+        if (_eventUID == ClassInfo<MonoPreReloadEvent>::UID())
+        {
+            if (m_monoClass)
+                setMonoClass(MonoEngine::GetMonoBehaviourSubClass(m_monoClass->getFullName()));
         }
         else
         if (_eventUID == ClassInfo<MonoReloadEvent>::UID())
         {
-            if (m_monoClass)
-            {
-                setMonoClass(MonoEngine::GetMonoBehaviourSubClass(m_monoClass->getFullName()));
-            }
-
             setData(m_cachedData);
             m_cachedData.clear();
         }

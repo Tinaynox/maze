@@ -241,6 +241,7 @@ namespace Maze
         if (!g_monoEngineData->appAssemblyFilePath.empty())
             LoadAppAssembly(g_monoEngineData->appAssemblyFilePath);
 
+        EventManager::GetInstancePtr()->broadcastEventImmediate<MonoPreReloadEvent>();
         EventManager::GetInstancePtr()->broadcastEventImmediate<MonoReloadEvent>();
 
         return true;
@@ -376,7 +377,7 @@ namespace Maze
 
         LoadAssemblyClasses(g_monoEngineData->coreAssembly);
 
-        EventManager::GetInstancePtr()->broadcastEvent<CSharpCoreAssemblyLoadedEvent>();
+        EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpCoreAssemblyLoadedEvent>();
 
         return g_monoEngineData->coreAssembly;
     }
@@ -390,7 +391,7 @@ namespace Maze
 
         LoadAssemblyClasses(g_monoEngineData->appAssembly);
 
-        EventManager::GetInstancePtr()->broadcastEvent<CSharpAppAssemblyLoadedEvent>();
+        EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpAppAssemblyLoadedEvent>();
 
         return g_monoEngineData->appAssembly;
     }
