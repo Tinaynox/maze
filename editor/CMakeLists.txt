@@ -98,6 +98,10 @@ add_subdirectory("${MAZE_DIR}/plugins/csharp-editor-tools" "${CMAKE_CURRENT_BINA
 
 
 ##########################################
+include("${MAZE_DIR}/third-party/filewatch.cmake")
+
+
+##########################################
 maze_add_sources(${CMAKE_CURRENT_SOURCE_DIR}/src EXAMPLE_FILES)
 maze_sort_sources("${EXAMPLE_FILES}" EXAMPLE_FILES)
 

@@ -34,6 +34,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -47,6 +48,7 @@
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "scenes/SceneWorkspace.hpp"
 #include "editor/EditorSceneMode.hpp"
+#include <FileWatch.hpp>
 
 
 //////////////////////////////////////////
@@ -57,11 +59,21 @@ namespace Maze
 
 
     //////////////////////////////////////////
+#if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
+    using MazeFileWatchStringType = StdWString;
+#else
+    using MazeFileWatchStringType = StdString;
+#endif
+    using MazeFileWatch = filewatch::FileWatch<typename MazeFileWatchStringType>;
+
+
+    //////////////////////////////////////////
     // Class EditorCSharpManager
     //
     //////////////////////////////////////////
     class EditorCSharpManager
         : public MultiDelegateCallbackReceiver
+        , public Updatable
     {
     public:
 
@@ -106,13 +118,43 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
+        //////////////////////////////////////////
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void notifyEvent(ClassUID _eventUID, Event* _event);
 
 
+        //////////////////////////////////////////
+        void processScriptAssembliesModified();
+
+        //////////////////////////////////////////
+        void processCSharpScriptsModified();
+
+        //////////////////////////////////////////
+        void processCSharpScriptsChanged();
+
+    private:
+
+        //////////////////////////////////////////
+        static void NotifyScriptAssembliesWatch(
+            typename MazeFileWatchStringType const& _path,
+            filewatch::Event const _changeType);
+
+        /////////////////////////////////////////
+        static void NotifyCSharpScriptsWatch(
+            typename MazeFileWatchStringType const& _path,
+            filewatch::Event const _changeType);
+
     protected:
         static EditorCSharpManager* s_instance;
+
+        UniquePtr<MazeFileWatch> m_scriptAssembliesWatch;
+        bool m_scriptAssembliesReloadRequired = false;
+        F32 m_scriptReloadingBlockedUntil = 0.0f;
+
+        UniquePtr<MazeFileWatch> m_csharpScriptsWatch;
+        bool m_csharpScriptsRecompileRequired = false;
     };
 
 

@@ -80,9 +80,16 @@ namespace Maze
 
         m_update = true;
 
-        FastVector<SharedPtr<TaskDelegate>>& mainThreadTasks = m_mainThreadTasks.switchContainer();
-        for (SharedPtr<TaskDelegate>& mainThreadTask : mainThreadTasks)
+        FastVector<SharedPtr<TaskDelegate>>* mainThreadTasks;
+        
+        {
+            MAZE_MUTEX_SCOPED_LOCK(m_mainThreadTasksMutex);
+            mainThreadTasks = &m_mainThreadTasks.switchContainer();
+        }
+
+        for (SharedPtr<TaskDelegate>& mainThreadTask : *mainThreadTasks)
             mainThreadTask->run();
+
         m_mainThreadTasks.other().clear();
 
         for (List<DelayedTask>::iterator it = m_delayedMainThreadTasks.begin(),
@@ -92,6 +99,7 @@ namespace Maze
             --it->framesDelay;
             if (it->framesDelay <= 0)
             {
+                MAZE_MUTEX_SCOPED_LOCK(m_mainThreadTasksMutex);
                 m_mainThreadTasks.current().emplace_back(std::move(it->task));
                 it = m_delayedMainThreadTasks.erase(it);
             }

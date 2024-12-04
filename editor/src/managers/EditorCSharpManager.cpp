@@ -27,6 +27,8 @@
 #include "EditorCSharpManager.hpp"
 #include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeTaskManager.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/assets/MazeAssetDirectory.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazeSystemHelper.hpp"
@@ -41,6 +43,7 @@
 #include "helpers/EditorAssetHelper.hpp"
 #include "managers/EditorUIManager.hpp"
 #include "managers/EditorAssetsManager.hpp"
+#include "Editor.hpp"
 
 
 //////////////////////////////////////////
@@ -81,6 +84,8 @@ namespace Maze
     //////////////////////////////////////////
     bool EditorCSharpManager::init()
     {
+        UpdateManager::GetInstancePtr()->addUpdatable(this);
+
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectOpenedEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectWillBeClosedEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<CSharpAppAssemblyLoadedEvent>(this, &EditorCSharpManager::notifyEvent);
@@ -148,18 +153,59 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EditorCSharpManager::update(F32 _dt)
+    {
+        if (m_scriptReloadingBlockedUntil < UpdateManager::GetInstancePtr()->getAppTime())
+        {
+            if (Editor::GetInstancePtr()->getMainRenderWindow() &&
+                Editor::GetInstancePtr()->getMainRenderWindow()->getWindow() &&
+                Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->getFocused())
+            {
+                if (m_csharpScriptsRecompileRequired)
+                {
+                    m_csharpScriptsRecompileRequired = false;
+                    compileCSharpAssembly();
+                }
+            }
+
+            if (m_scriptAssembliesReloadRequired)
+            {
+                m_scriptAssembliesReloadRequired = false;
+                reloadCSharpScripts();
+            }
+        }
+    }
+
+    //////////////////////////////////////////
     void EditorCSharpManager::notifyEvent(ClassUID _eventUID, Event* _event)
     {
         if (_eventUID == ClassInfo<EditorProjectOpenedEvent>::UID())
         {
+            Path scriptAssembliesPath = EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies";
+            Path csharpScriptsPath = EditorHelper::GetProjectAssetsFolder();
+
             updateLibraryFolder();
-            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies");
+            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(scriptAssembliesPath);
 
             updateCSharpFolder();
             generateCSharpAssembly();
             compileCSharpAssembly();
 
             loadCSharpAssembly();
+
+            StdWString scriptAssembliesWatchPath(
+                scriptAssembliesPath.getPath().begin(),
+                scriptAssembliesPath.getPath().end());
+            m_scriptAssembliesWatch = MakeUnique<MazeFileWatch>(
+                scriptAssembliesWatchPath,
+                EditorCSharpManager::NotifyScriptAssembliesWatch);
+
+            StdWString csharpScriptsWatchPath(
+                csharpScriptsPath.getPath().begin(),
+                csharpScriptsPath.getPath().end());
+            m_csharpScriptsWatch = MakeUnique<MazeFileWatch>(
+                csharpScriptsWatchPath,
+                EditorCSharpManager::NotifyCSharpScriptsWatch);
         }
         else
         if (_eventUID == ClassInfo<EditorProjectWillBeClosedEvent>::UID())
@@ -258,7 +304,76 @@ namespace Maze
     //////////////////////////////////////////
     void EditorCSharpManager::reloadCSharpScripts()
     {
-        MonoEngine::Reload();
+        MonoEngine::ReloadAssemblies();
+    }
+
+    //////////////////////////////////////////
+    void EditorCSharpManager::processScriptAssembliesModified()
+    {
+        m_scriptAssembliesReloadRequired = true;
+        m_scriptReloadingBlockedUntil = UpdateManager::GetInstancePtr()->getAppTime() + 0.1f;
+    }
+
+    //////////////////////////////////////////
+    void EditorCSharpManager::processCSharpScriptsModified()
+    {
+        m_csharpScriptsRecompileRequired = true;
+        m_scriptReloadingBlockedUntil = UpdateManager::GetInstancePtr()->getAppTime() + 0.1f;
+    }
+
+    //////////////////////////////////////////
+    void EditorCSharpManager::processCSharpScriptsChanged()
+    {
+        // TODO: Compare cs assets
+    }
+
+    //////////////////////////////////////////
+    void EditorCSharpManager::NotifyScriptAssembliesWatch(
+        typename MazeFileWatchStringType const& _path,
+        filewatch::Event const _changeType)
+    {
+        if (_changeType == filewatch::Event::modified)
+        {
+            TaskManager::GetInstancePtr()->addMainThreadTask(
+                []()
+                {
+                    if (EditorCSharpManager::GetInstancePtr())
+                        EditorCSharpManager::GetInstancePtr()->processScriptAssembliesModified();
+                });
+        }
+    }
+
+    //////////////////////////////////////////
+    void EditorCSharpManager::NotifyCSharpScriptsWatch(
+        typename MazeFileWatchStringType const& _path,
+        filewatch::Event const _changeType)
+    {
+
+#if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
+        if (StringHelper::IsEndsWith(_path.c_str(), L".cs"))
+#else
+        if (StringHelper::IsEndsWith(_path.c_str(), ".cs"))
+#endif
+        {
+            if (_changeType == filewatch::Event::modified)
+            {
+                TaskManager::GetInstancePtr()->addMainThreadTask(
+                    []()
+                    {
+                        if (EditorCSharpManager::GetInstancePtr())
+                            EditorCSharpManager::GetInstancePtr()->processCSharpScriptsModified();
+                    });
+            }
+            else
+            {
+                TaskManager::GetInstancePtr()->addMainThreadTask(
+                    []()
+                    {
+                        if (EditorCSharpManager::GetInstancePtr())
+                            EditorCSharpManager::GetInstancePtr()->processCSharpScriptsChanged();
+                    });
+            }
+        }
     }
 
 } // namespace Maze

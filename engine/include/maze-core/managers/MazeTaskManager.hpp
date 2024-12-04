@@ -36,6 +36,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/utils/MazeSwitchableContainer.hpp"
 #include "maze-core/system/MazeTaskDelegate.hpp"
+#include "maze-core/system/MazeMutex.hpp"
 
 
 //////////////////////////////////////////
@@ -91,6 +92,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void addMainThreadTask(Delegate<void> const& _delegate)
         {
+            MAZE_MUTEX_SCOPED_LOCK(m_mainThreadTasksMutex);
             m_mainThreadTasks.current().emplace_back(
                 new TaskDelegate0{ [_delegate]() { _delegate(); return 0; } });
         }
@@ -99,6 +101,7 @@ namespace Maze
         template <typename TArg0>
         inline void addMainThreadTask(Delegate<void> const& _delegate, TArg0 const& _arg0)
         {
+            MAZE_MUTEX_SCOPED_LOCK(m_mainThreadTasksMutex);
             m_mainThreadTasks.current().emplace_back(
                 new TaskDelegate1<TArg0>{ [_delegate, _arg0]() { _delegate(_arg0); return 0; }, _arg0 });
         }
@@ -107,6 +110,7 @@ namespace Maze
         template <typename TArg0, typename TArg1>
         inline void addMainThreadTask(Delegate<void> const& _delegate, TArg0 const& _arg0, TArg0 const& _arg1)
         {
+            MAZE_MUTEX_SCOPED_LOCK(m_mainThreadTasksMutex);
             m_mainThreadTasks.current().emplace_back(
                 new TaskDelegate1<TArg0>{ [_delegate, _arg0, _arg1]() { _delegate(_arg0, _arg1); return 0; }, _arg0, _arg1 });
         }
@@ -150,6 +154,7 @@ namespace Maze
 
         static TaskManager* s_instance;
 
+        Mutex m_mainThreadTasksMutex;
         SwitchableContainer<FastVector<SharedPtr<TaskDelegate>>> m_mainThreadTasks;
         List<DelayedTask> m_delayedMainThreadTasks;
 

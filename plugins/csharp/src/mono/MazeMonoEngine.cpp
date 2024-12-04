@@ -230,7 +230,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool MonoEngine::Reload()
+    bool MonoEngine::ReloadAssemblies()
     {
         ShutdownMono();
         if (!InitializeMono())

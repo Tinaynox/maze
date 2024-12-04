@@ -71,7 +71,7 @@ set_target_properties(${PROJECT_NAME}
 
 
 ##########################################
-#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#    "${OUTPUT_DIRECTORY}/Assembly-CSharp.dll"
-#    "${CMAKE_CURRENT_SOURCE_DIR}/../Library/ScriptAssemblies/Assembly-CSharp.dll")
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    "${OUTPUT_DIRECTORY}/Assembly-CSharp.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../Library/ScriptAssemblies/Assembly-CSharp.dll")

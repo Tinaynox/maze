@@ -59,7 +59,7 @@ namespace Maze
         static bool Shutdown();
 
         //////////////////////////////////////////
-        static bool Reload();
+        static bool ReloadAssemblies();
 
         
 
