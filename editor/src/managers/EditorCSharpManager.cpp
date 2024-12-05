@@ -50,6 +50,38 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    U32 CalculateCSharpScriptsHash(Path _path)
+    {
+        U32 hash = 0u;
+        Vector<Path> files = FileHelper::GetRegularFileNamesInPath(_path);
+        for (Path const& path : files)
+        {
+            Path subPath = _path + Path("/") + path;
+            if (FileHelper::IsDirectory(subPath))
+            {
+                U32 directoryHash = CalculateCSharpScriptsHash(subPath);
+                if (directoryHash != 0u)
+                    hash ^= directoryHash;
+            }
+            else
+            if (FileHelper::GetFileExtension(path) == "cs")
+            {
+                U32 fileHash = Hash::CalculateFNV1((CString)subPath.c_str(), subPath.size() * sizeof(Path::CharType));
+                hash ^= fileHash;
+            }
+        }
+        return hash;
+    }
+
+
+    //////////////////////////////////////////
+    U32 CalculateCSharpScriptsHash()
+    {
+        return CalculateCSharpScriptsHash(EditorHelper::GetProjectAssetsFolder());
+    }
+
+
+    //////////////////////////////////////////
     // Class EditorCSharpManager
     //
     //////////////////////////////////////////
@@ -129,7 +161,10 @@ namespace Maze
             {
                 if (EditorCSharpManager::GetInstancePtr())
                 {
-                    EditorCSharpManager::GetInstancePtr()->generateCSharpAssembly();
+                    U32 csharpScriptsHash = CalculateCSharpScriptsHash();
+                    if (csharpScriptsHash != EditorCSharpManager::GetInstancePtr()->m_csharpScriptsHash)
+                        EditorCSharpManager::GetInstancePtr()->generateCSharpAssembly();
+                    
                     EditorCSharpManager::GetInstancePtr()->compileCSharpAssembly();
                     EditorCSharpManager::GetInstancePtr()->reloadCSharpScripts();
                 }
@@ -155,12 +190,19 @@ namespace Maze
     //////////////////////////////////////////
     void EditorCSharpManager::update(F32 _dt)
     {
-        if (m_scriptReloadingBlockedUntil < UpdateManager::GetInstancePtr()->getAppTime())
+        if (m_scriptActionsBlockedUntil < UpdateManager::GetInstancePtr()->getAppTime())
         {
             if (Editor::GetInstancePtr()->getMainRenderWindow() &&
                 Editor::GetInstancePtr()->getMainRenderWindow()->getWindow() &&
                 Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->getFocused())
             {
+                if (m_csharpScriptsChanged)
+                {
+                    U32 csharpScriptsHash = CalculateCSharpScriptsHash();
+                    if (csharpScriptsHash != m_csharpScriptsHash)
+                        generateCSharpAssembly();
+                }
+
                 if (m_csharpScriptsRecompileRequired)
                 {
                     m_csharpScriptsRecompileRequired = false;
@@ -266,6 +308,8 @@ namespace Maze
 
         Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharp";
 
+        m_csharpScriptsHash = CalculateCSharpScriptsHash();
+
 #if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
         Path generateAssemblyPath = csharpPath + "/generate.bat";
 
@@ -311,20 +355,21 @@ namespace Maze
     void EditorCSharpManager::processScriptAssembliesModified()
     {
         m_scriptAssembliesReloadRequired = true;
-        m_scriptReloadingBlockedUntil = UpdateManager::GetInstancePtr()->getAppTime() + 0.1f;
+        m_scriptActionsBlockedUntil = UpdateManager::GetInstancePtr()->getAppTime() + 0.1f;
     }
 
     //////////////////////////////////////////
     void EditorCSharpManager::processCSharpScriptsModified()
     {
         m_csharpScriptsRecompileRequired = true;
-        m_scriptReloadingBlockedUntil = UpdateManager::GetInstancePtr()->getAppTime() + 0.1f;
+        m_scriptActionsBlockedUntil = UpdateManager::GetInstancePtr()->getAppTime() + 0.1f;
     }
 
     //////////////////////////////////////////
     void EditorCSharpManager::processCSharpScriptsChanged()
     {
-        // TODO: Compare cs assets
+        m_csharpScriptsChanged = true;
+        m_scriptActionsBlockedUntil = UpdateManager::GetInstancePtr()->getAppTime() + 0.1f;
     }
 
     //////////////////////////////////////////

@@ -149,12 +149,16 @@ namespace Maze
     protected:
         static EditorCSharpManager* s_instance;
 
+        F32 m_scriptActionsBlockedUntil = 0.0f;
+
         UniquePtr<MazeFileWatch> m_scriptAssembliesWatch;
         bool m_scriptAssembliesReloadRequired = false;
-        F32 m_scriptReloadingBlockedUntil = 0.0f;
 
         UniquePtr<MazeFileWatch> m_csharpScriptsWatch;
         bool m_csharpScriptsRecompileRequired = false;
+
+        bool m_csharpScriptsChanged = false;
+        U32 m_csharpScriptsHash = 0u;
     };
 
 

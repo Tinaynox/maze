@@ -153,7 +153,6 @@ namespace Maze
                                 (ComponentSystemEventHandler::Func)&MonoBehaviourOnCreate,
                                 systemTags,
                                 systemOrder));
-                        Debug::Log("%s registered.", systemName.c_str());
                     }
 
                     if (scriptClass->getOnUpdateMethod())
@@ -172,7 +171,6 @@ namespace Maze
                                 (ComponentSystemEventHandler::Func)&MonoBehaviourOnUpdate,
                                 systemTags,
                                 systemOrder));
-                        Debug::Log("%s registered.", systemName.c_str());
                     }
                 }
                 else
