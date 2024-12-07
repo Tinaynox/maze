@@ -162,13 +162,21 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        template <typename ...TComponents>
+        template <typename... TComponents>
         inline static void ExpandComponentIds(Vector<ComponentId>& _result)
         {
+#if 1
             ComponentId ids[] = { GetStaticComponentId<TComponents>()... };
             for (S32 i = 0, n = sizeof(ids) / sizeof(ids[0]); i < n; i++)
                 _result.push_back(ids[i]);
+#elif 0     
+            auto expand = [&_result](ComponentId id) { _result.push_back(id); };
+            (void)std::initializer_list<int>{(expand(GetStaticComponentId<TComponents>()), 0)...};
+#else
+            MAZE_NOT_IMPLEMENTED
+#endif
         }
+
 
         //////////////////////////////////////////
         template <typename ...TComponents>

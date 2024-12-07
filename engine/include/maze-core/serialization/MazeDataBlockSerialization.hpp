@@ -507,7 +507,7 @@ namespace Maze
         DataBlock const& _data)
     {
         MAZE_CONSTEXPR DataBlockParamType dataBlockParamType = DataBlock::TypeOf<TValue>::type;
-        if MAZE_CONSTEXPR14(dataBlockParamType != DataBlockParamType::None)
+        if MAZE_CONSTEXPR17 (dataBlockParamType != DataBlockParamType::None)
         {
             for (DataBlock::ParamIndex i = 0; i < _data.getParamsCount(); ++i)
             {

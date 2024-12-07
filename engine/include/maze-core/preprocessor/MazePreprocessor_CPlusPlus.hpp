@@ -59,7 +59,7 @@
 #    define MAZE_CPP_STANDARD         MAZE_CPP_STANDARD_CPP11
 #    define MAZE_CPP_STANDARD_NAME    "C++11"
 #else
-#   define MAZE_CPP_STANDARD         MAZE_CPP_STANDARD_CPP03
+#    define MAZE_CPP_STANDARD         MAZE_CPP_STANDARD_CPP03
 #    define MAZE_CPP_STANDARD_NAME    "C++03"
 #endif
 
@@ -72,15 +72,23 @@
 #define MAZE_FINAL                                           final
 #define MAZE_ABSTRACT                                        = 0
 #define MAZE_STATIC_ASSERT(__expression, __message)          static_assert(__expression, __message)
+
 #if __cpp_constexpr
 #    define MAZE_CONSTEXPR                                   constexpr 
 #else
 #    define MAZE_CONSTEXPR
 #endif
-#if (__cplusplus >= 201402L)
+
+#if (MAZE_CPP_STANDARD >= MAZE_CPP_STANDARD_CPP14)
 #    define MAZE_CONSTEXPR14                                 MAZE_CONSTEXPR
 #else
 #    define MAZE_CONSTEXPR14
+#endif
+
+#if (MAZE_CPP_STANDARD >= MAZE_CPP_STANDARD_CPP17)
+#    define MAZE_CONSTEXPR17                                 MAZE_CONSTEXPR
+#else
+#    define MAZE_CONSTEXPR17
 #endif
 
 //////////////////////////////////////////

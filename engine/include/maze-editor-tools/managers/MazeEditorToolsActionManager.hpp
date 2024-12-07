@@ -38,6 +38,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/utils/MazeObservableValue.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorAction.hpp"
 
 
 //////////////////////////////////////////

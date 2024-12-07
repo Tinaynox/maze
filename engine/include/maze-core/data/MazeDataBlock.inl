@@ -126,7 +126,7 @@ namespace Maze
             return _defaultValue;
         }
 
-        if MAZE_CONSTEXPR14 (sizeof(TValue) <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE)
+        if MAZE_CONSTEXPR17 (sizeof(TValue) <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE)
             return castParamValue<TValue, ParamValue>(value);
 
         return castParamValue<TValue>(getDataBufferDataRO(getParamsUsedSize() + value));

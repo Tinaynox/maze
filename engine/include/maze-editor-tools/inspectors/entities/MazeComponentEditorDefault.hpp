@@ -83,7 +83,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             ComponentId _componentId,
-            MetaClass* _componentMetaClass);
+            MetaClass* _componentMetaClass) MAZE_OVERRIDE;
 
 
     protected:

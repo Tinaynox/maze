@@ -74,7 +74,7 @@ namespace Maze
         inline PathWin(ParentClass::CharType const* _path) : ParentClass(_path) {}
 
         //////////////////////////////////////////
-        inline PathWin(ParentClass::CharType _char) : ParentClass(_char) {}
+        inline explicit PathWin(ParentClass::CharType _char) : ParentClass(_char) {}
 
         //////////////////////////////////////////
         PathWin(String const& _value);

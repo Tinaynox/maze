@@ -73,7 +73,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual HashedCString getSceneName() const { return getName(); }
+        virtual HashedCString getSceneName() const MAZE_OVERRIDE { return getName(); }
 
 
         //////////////////////////////////////////
@@ -103,7 +103,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual EcsWorld* assignWorld() MAZE_OVERRIDE { return m_world; }
 
-    private:
+    protected:
 
         //////////////////////////////////////////
         using EcsRenderScene::init;

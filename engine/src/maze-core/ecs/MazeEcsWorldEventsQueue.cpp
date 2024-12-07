@@ -92,7 +92,8 @@ namespace Maze
                     invokeRemovingFromSampleEntityEvent();
                     break;
                 }
-                break;
+                default:
+                    break;
             }
         }
 

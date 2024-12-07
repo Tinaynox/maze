@@ -239,7 +239,7 @@ function(maze_setup_stdlib TARGET)
     if(MAZE_TARGET_PLATFORM_IS_EMSCRIPTEN)
 
         # target_compile_definitions(${TARGET} PRIVATE "-stdlib=libc++ -std=c++11")
-        target_compile_options(${TARGET} PRIVATE "-std=c++11")
+        target_compile_options(${TARGET} PRIVATE "-std=c++14")
 
     endif()
 

@@ -91,7 +91,7 @@ namespace Maze
         //////////////////////////////////////////
         bool init(RenderTargetPtr const& _renderTarget);
 
-    private:
+    protected:
 
         //////////////////////////////////////////
         using EcsScene::init;

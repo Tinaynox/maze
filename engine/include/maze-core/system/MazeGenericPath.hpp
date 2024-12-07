@@ -76,7 +76,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline GenericPath(CharType _char)
+        inline explicit GenericPath(CharType _char)
         {
             m_path.push_back(_char);
         }

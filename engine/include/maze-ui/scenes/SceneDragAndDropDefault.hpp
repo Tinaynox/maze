@@ -75,7 +75,7 @@ namespace Maze
         SceneDragAndDropDefault();
 
         //////////////////////////////////////////
-        virtual bool init(RenderTargetPtr const& _renderTarget);
+        virtual bool init(RenderTargetPtr const& _renderTarget) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual EcsWorld* assignWorld() MAZE_OVERRIDE;

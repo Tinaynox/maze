@@ -74,7 +74,7 @@ namespace Maze
         inline PathUnix(ParentClass::CharType const* _path) : ParentClass(_path) {}
 
         //////////////////////////////////////////
-        inline PathUnix(ParentClass::CharType _char) : ParentClass(_char) {}
+        inline explicit PathUnix(ParentClass::CharType _char) : ParentClass(_char) {}
 
 
         //////////////////////////////////////////

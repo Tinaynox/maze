@@ -30,7 +30,7 @@ namespace Maze
     template <typename TValue>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, TValue const& _value)
     {
-        if MAZE_CONSTEXPR14 (HasValueToDataBlock<TValue>::value)
+        if MAZE_CONSTEXPR17 (HasValueToDataBlock<TValue>::value)
         {
             DataBlock* childBlock = _dataBlock.addNewDataBlock(_name);
             if (!childBlock)

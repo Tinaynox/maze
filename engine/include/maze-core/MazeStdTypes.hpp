@@ -145,7 +145,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class _Ty, typename ...Args>
-    inline UniquePtr<_Ty> MakeUnique(Args&& ..._args) { return std::make_unique<_Ty>(std::forward<Args>(_args)...); }
+    inline UniquePtr<_Ty> MakeUnique(Args&& ..._args) { return UniquePtr<_Ty>(std::forward<Args>(_args)...); }
     
     //////////////////////////////////////////
     template <class _Ty>

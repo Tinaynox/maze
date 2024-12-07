@@ -104,13 +104,13 @@ namespace Maze
             TProperty value = m_drawer->getValue();
 
 #if 1
-            if (MetaClassHelper::IsValueEqual(value, m_metaProperty, m_metaInstances))
+            if (MetaClassHelper::IsValueEqual(value, this->m_metaProperty, this->m_metaInstances))
                 return;
 
-            if (m_useEditorActions && EditorToolsActionManager::GetInstancePtr())
-                EditorActionHelper::SetValue(value, m_metaProperty, m_metaInstances);
+            if (this->m_useEditorActions && EditorToolsActionManager::GetInstancePtr())
+                EditorActionHelper::SetValue(value, this->m_metaProperty, this->m_metaInstances);
             else
-                MetaClassHelper::SetValue(value, m_metaProperty, m_metaInstances);
+                MetaClassHelper::SetValue(value, this->m_metaProperty, this->m_metaInstances);
 #else
             for (MetaInstance const& metaInstance : this->m_metaInstances)
                 this->m_metaProperty->setValue(metaInstance, &value);
