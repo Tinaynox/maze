@@ -65,6 +65,9 @@ namespace Maze
         MAZE_CORE_API Path GetFileExtension(Path const& _fileFullPath);
 
         //////////////////////////////////////////
+        MAZE_CORE_API Path GetPathWithoutExtension(Path const& _fileFullPath);
+
+        //////////////////////////////////////////
         MAZE_CORE_API Path GetFileNameWithoutExtension(Path const& _fileFullPath);
 
         //////////////////////////////////////////

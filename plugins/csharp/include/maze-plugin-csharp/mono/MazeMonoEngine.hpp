@@ -113,7 +113,9 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        static MonoAssembly* LoadMonoAssembly(ByteBuffer const& _csharpFile);
+        static MonoAssembly* LoadMonoAssembly(
+            ByteBuffer const& _csharpFile,
+            ByteBufferPtr const& _csharpPdb);
 
         //////////////////////////////////////////
         static MonoAssembly* LoadMonoAssembly(AssetFilePtr const& _csharpFile);

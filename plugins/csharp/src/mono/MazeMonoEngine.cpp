@@ -36,6 +36,7 @@
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -55,7 +56,7 @@ namespace Maze
         ScriptClassPtr ecsUtilsClass;
         StringKeyMap<ScriptClassPtr> nativeComponentSubClasses;
 
-        UnorderedMap<MonoType*, ComponentId> monoTypePerComponentId;
+        UnorderedMap<MonoType*, ComponentId> monoTypePerComponentId;        
     };
 
 
@@ -72,6 +73,8 @@ namespace Maze
         HashedString appAssemblyFilePath;
         MonoAssembly* appAssembly = nullptr;
         MonoImage* appAssemblyImage = nullptr;
+
+        bool debugEnabled = true;
 
         MonoEcsData ecsData;
     };
@@ -268,12 +271,29 @@ namespace Maze
         // Store the root domain pointer
         g_monoEngineData->monoDomain = rootDomain;
 
+        if (g_monoEngineData->debugEnabled)
+            mono_debug_domain_create(g_monoEngineData->monoDomain);
+
+        mono_thread_set_main(mono_thread_current());
+
         return true;
     }
 
     //////////////////////////////////////////
     bool MonoEngine::InitializeMono()
     {
+        if (g_monoEngineData->debugEnabled)
+        {
+            CString argv[2] =
+            {
+                "--debugger-agent=transport=dt_socket,address=127.0.0.1:2550,server=y,suspend=n,loglevel=3,logfile=MonoDebugger.log",
+                "--soft-breakpoints"
+            };
+
+            mono_jit_parse_options(2, (Char**)argv);
+            mono_debug_init(MONO_DEBUG_FORMAT_MONO);
+        }
+
         g_monoEngineData->appDomain = mono_domain_create_appdomain("MazeCSharpRuntime", nullptr);
         MAZE_ERROR_RETURN_VALUE_IF(!g_monoEngineData->appDomain, false, "Failed to create app domain!");
         mono_domain_set(g_monoEngineData->appDomain, true);
@@ -307,7 +327,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MonoAssembly* MonoEngine::LoadMonoAssembly(ByteBuffer const& _csharpFile)
+    MonoAssembly* MonoEngine::LoadMonoAssembly(
+        ByteBuffer const& _csharpFile,
+        ByteBufferPtr const& _csharpPdb)
     {
         // NOTE: We can't use this image for anything other than loading the assembly
         // because this image doesn't have a reference to the assembly
@@ -323,6 +345,14 @@ namespace Maze
             CString errorMessage = mono_image_strerror(status);
             Debug::LogError(errorMessage);
             return nullptr;
+        }
+
+        if (_csharpPdb)
+        {
+            mono_debug_open_image_from_memory(
+                image,
+                _csharpPdb->getDataRO(),
+                _csharpPdb->getSize());
         }
 
         MonoAssembly* assembly = mono_assembly_load_from_full(image, "", &status, 0);
@@ -341,7 +371,22 @@ namespace Maze
         if (!byteBuffer)
             return nullptr;
 
-        return LoadMonoAssembly(*byteBuffer.get());
+        ByteBufferPtr pdbBuffer;
+        if (g_monoEngineData->debugEnabled)
+        {
+            Path pdbPath = FileHelper::GetPathWithoutExtension(_csharpFile->getFullPath()) + ".pdb";
+            AssetFilePtr const& csharpPdbFile = AssetManager::GetInstancePtr()->getAssetFileByFullPath(pdbPath);
+            if (csharpPdbFile)
+                pdbBuffer = csharpPdbFile->readAsByteBuffer();
+        }
+
+        MonoAssembly* assembly = LoadMonoAssembly(
+            *byteBuffer.get(),
+            pdbBuffer);
+        if (!assembly)
+            return nullptr;
+
+        return assembly;
     }
 
     //////////////////////////////////////////

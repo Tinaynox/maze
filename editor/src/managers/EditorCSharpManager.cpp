@@ -291,14 +291,26 @@ namespace Maze
     {
         Debug::Log("Updating Library folder...");
 
-        AssetFilePtr const& csharpCoreLib = AssetManager::GetInstancePtr()->getAssetFileByFileName(MAZE_HCS("maze-csharp-core-lib.dll"));
-        MAZE_ERROR_RETURN_IF(!csharpCoreLib || csharpCoreLib->getClassUID() != ClassInfo<AssetRegularFile>::UID(), "CSharp core lib is not found");
+        {
+            AssetFilePtr const& csharpCoreLib = AssetManager::GetInstancePtr()->getAssetFileByFileName(MAZE_HCS("maze-csharp-core-lib.dll"));
+            MAZE_ERROR_RETURN_IF(!csharpCoreLib || csharpCoreLib->getClassUID() != ClassInfo<AssetRegularFile>::UID(), "CSharp core lib is not found");
 
-        Path const& csharpCoreLibPath = csharpCoreLib->getFullPath();
-        Path csharpDestPath = EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies";
-        FileHelper::CreateDirectoryRecursive(csharpDestPath);
+            Path const& csharpCoreLibPath = csharpCoreLib->getFullPath();
+            Path csharpDestPath = EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies";
+            FileHelper::CreateDirectoryRecursive(csharpDestPath);
+            FileHelper::CopyRegularFile(csharpCoreLibPath, csharpDestPath + "/" + csharpCoreLib->getFileName());
+        }
 
-        FileHelper::CopyRegularFile(csharpCoreLibPath, csharpDestPath + "/" + csharpCoreLib->getFileName());
+        {
+            AssetFilePtr const& csharpCoreLibPdb = AssetManager::GetInstancePtr()->getAssetFileByFileName(MAZE_HCS("maze-csharp-core-lib.pdb"));
+            if (csharpCoreLibPdb && csharpCoreLibPdb->getClassUID() == ClassInfo<AssetRegularFile>::UID())
+            {
+                Path const& csharpCoreLibPath = csharpCoreLibPdb->getFullPath();
+                Path csharpDestPath = EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies";
+                FileHelper::CreateDirectoryRecursive(csharpDestPath);
+                FileHelper::CopyRegularFile(csharpCoreLibPath, csharpDestPath + "/" + csharpCoreLibPdb->getFileName());
+            }
+        }
     }
 
     //////////////////////////////////////////
@@ -329,7 +341,7 @@ namespace Maze
         Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharp";
 
 #if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
-        Path compileAssemblyPath = csharpPath + "/compile.bat";
+        Path compileAssemblyPath = csharpPath + "/compile_debug.bat";
 
         MAZE_ERROR_RETURN_IF(!SystemHelper::ExecuteSync(compileAssemblyPath, csharpPath), "Failed to compile charp assembly!");
 #else

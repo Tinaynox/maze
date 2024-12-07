@@ -125,6 +125,16 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_CORE_API Path GetPathWithoutExtension(Path const& _fileFullPath)
+        {
+            Size position = _fileFullPath.getPath().find_last_of('.');
+            if (position == Path::StringType::npos)
+                return _fileFullPath;
+
+            return _fileFullPath.getPath().substr(0, position);
+        }
+
+        //////////////////////////////////////////
         MAZE_CORE_API Path GetFileNameWithoutExtension(Path const& _fileFullPath)
         {
             Path fileName;
