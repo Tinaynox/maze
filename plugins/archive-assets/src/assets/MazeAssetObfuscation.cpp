@@ -80,7 +80,7 @@ namespace Maze
 
                 S32 result = zipOpenNewFileInZip3(
                     zf,
-                    (_path + '/' + fileName).toUTF8().c_str(),
+                    (_path + Path('/') + fileName).toUTF8().c_str(),
                     nullptr,
                     nullptr,
                     0,
