@@ -83,7 +83,7 @@ namespace Maze
         PathWin(Char const* _value);
 
         //////////////////////////////////////////
-        PathWin(Char _value);
+        explicit PathWin(Char _value);
 
 
         //////////////////////////////////////////

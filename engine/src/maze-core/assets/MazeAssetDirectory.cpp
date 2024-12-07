@@ -105,7 +105,7 @@ namespace Maze
 
         for (Size i = 0, c = fileNames.size(); i < c; ++i)
         {
-            Path const fileFullPath = FileHelper::ConvertLocalPathToFullPath(m_fullPath + '/' + fileNames[i]);
+            Path const fileFullPath = FileHelper::ConvertLocalPathToFullPath(m_fullPath + Path('/') + fileNames[i]);
 
             confirmedFileFullPathes.emplace(fileFullPath);
 

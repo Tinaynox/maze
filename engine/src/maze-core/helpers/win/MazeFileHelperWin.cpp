@@ -290,11 +290,11 @@ namespace Maze
 
             Path srcDirectory = NormalizedFilePath(_sourceFullPath);
             if (srcDirectory.back() != '/')
-                srcDirectory += '/';
+                srcDirectory += Path('/');
 
             Path destDirectory = NormalizedFilePath(_destFullPath);
             if (destDirectory.back() != '/')
-                destDirectory += '/';
+                destDirectory += Path('/');
         
 
 
@@ -442,11 +442,11 @@ namespace Maze
 
             Path srcDirectory = NormalizedFilePath(_sourceFullPath);
             if (srcDirectory.back() != '/')
-                srcDirectory += '/';
+                srcDirectory += Path('/');
 
             Path destDirectory = NormalizedFilePath(_destFullPath);
             if (destDirectory.back() != '/')
-                destDirectory += '/';
+                destDirectory += Path('/');
 
             wcscpy_s(temp1, srcDirectory.c_str());
             wcscat_s(temp1, L"/*.*");
