@@ -429,7 +429,13 @@ namespace Maze
     MonoAssembly* MonoEngine::LoadAppAssembly(HashedCString _csharpFile)
     {
         g_monoEngineData->appAssemblyFilePath = _csharpFile;
-        g_monoEngineData->appAssembly = LoadMonoAssembly(_csharpFile);
+
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_csharpFile);
+        if (!assetFile)
+            return nullptr;
+
+        g_monoEngineData->appAssembly = LoadMonoAssembly(assetFile);
+        MAZE_ERROR_RETURN_VALUE_IF(!g_monoEngineData->appAssembly, nullptr, "Failed to load mono assembly: %s!");
         g_monoEngineData->appAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
 
         LoadAssemblyClasses(g_monoEngineData->appAssembly);

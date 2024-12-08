@@ -394,7 +394,12 @@ namespace Maze
             line->eventLineClick.subscribe(this, &AssetsController::notifyAssetTreeLineClick);
             line->eventLineDoubleClick.subscribe(this, &AssetsController::notifyAssetTreeLineDoubleClick);
 
+            bool selectedFolder = StringHelper::IsStartsWith(
+                m_selectedAssetFolder.getPath(),
+                assetFile->getFullPath().getPath());
+
             line->setSelected(m_selectedAssetFolder == assetFile->getFullPath());
+            line->setExpanded(selectedFolder);
             notifyAssetTreeLineExpandedChanged(line.get(), getAssetFileExpanded(assetFile));
 
             ContextMenu2DPtr const& lineContextMenu = line->getContextMenu();
@@ -595,6 +600,29 @@ namespace Maze
         if (SelectionManager::GetInstancePtr()->getSelectionType() == SelectionType::Objects)
         {
             updateSelectedAssetsFolderSelection();
+
+            Set<AssetFilePtr> const& assetFiles = SelectionManager::GetInstancePtr()->getSelectedAssetFiles();
+
+            for (auto const& assetTreeLineData : m_assetsTreeLines)
+            {
+                auto const& assetTreeLineDataPath = assetTreeLineData.second->getAssetFile()->getFullPath().getPath();
+
+                AssetFilePtr selectedAssetFile;
+                for (AssetFilePtr const& assetFile : assetFiles)
+                {
+                    auto const& assetFilePath = assetFile->getFullPath().getPath();
+                    if (StringHelper::IsStartsWith(
+                        assetFilePath,
+                        assetTreeLineDataPath))
+                    {
+                        selectedAssetFile = assetFile;
+                        break;
+                    }
+                }
+
+                if (selectedAssetFile)
+                    setSelectedAssetFolder(FileHelper::GetParentDirectoryInPath(selectedAssetFile->getFullPath()));
+            }
         }
     }
     
