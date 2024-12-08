@@ -352,7 +352,14 @@ namespace Maze
                         "Add Child/3D/Light/Directional",
                         [](String const& _text)
                         {
-                            EntityPtr child = EditorHelper::CreateDirectionalLight("Directional Light");
+                            EditorHelper::CreateDirectionalLight("Directional Light");
+                        });
+
+                    _menuListTree->addItem(
+                        "Add Child/3D/Camera 3D",
+                        [](String const& _text)
+                        {
+                            EditorHelper::CreateCamera3D("Camera");
                         });
 
                     for (BuiltinRenderMeshType meshType = BuiltinRenderMeshType(1); meshType != BuiltinRenderMeshType::MAX; ++meshType)
@@ -469,20 +476,7 @@ namespace Maze
         }
 
         
-        {
-            EntityPtr previewCanvasEntity = createEntity();
-            m_previewCanvas = previewCanvasEntity->createComponent<Canvas>();
-            m_previewCanvas->setClearColorFlag(false);
-            m_previewCanvas->setClearColor(ColorU32::c_zero);
-            Rect2F previewCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport);
-            m_previewCanvas->setViewport(previewCanvasViewport);
-            m_previewCanvas->setRenderTarget(m_renderTarget);
-            m_previewCanvas->setSortOrder(-1000000);
-
-            EntityPtr previewControllerEntity = createEntity();
-            PreviewControllerPtr previewController = PreviewController::Create(m_previewCanvas.get());
-            previewControllerEntity->addComponent(previewController);
-        }
+        createPreviewController();
 
         {
             EntityPtr topBarCanvasEntity = createEntity();
@@ -573,6 +567,8 @@ namespace Maze
 
         if (!_value)
             EditorEntityManager::GetInstancePtr()->getWorkspaceWorld()->update(0.0f);
+
+        updatePreviewController();
     }
 
     //////////////////////////////////////////
@@ -618,6 +614,54 @@ namespace Maze
                 m_sceneModeController = EditorSceneModeControllerNone::Create();
                 break;
             }
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneEditor::updatePreviewController()
+    {
+        bool playtestModeEnabled = EditorManager::GetInstancePtr()->getPlaytestModeEnabled();
+
+        if (playtestModeEnabled && m_previewController)
+            destroyPreviewController();
+        else
+        if (!playtestModeEnabled && !m_previewController)
+            createPreviewController();
+
+    }
+
+    //////////////////////////////////////////
+    void SceneEditor::createPreviewController()
+    {
+        destroyPreviewController();
+
+        EntityPtr previewCanvasEntity = createEntity();
+        m_previewCanvas = previewCanvasEntity->createComponent<Canvas>();
+        m_previewCanvas->setClearColorFlag(false);
+        m_previewCanvas->setClearColor(ColorU32::c_zero);
+        Rect2F previewCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport);
+        m_previewCanvas->setViewport(previewCanvasViewport);
+        m_previewCanvas->setRenderTarget(m_renderTarget);
+        m_previewCanvas->setSortOrder(-1000000);
+
+        EntityPtr previewControllerEntity = createEntity();
+        m_previewController = PreviewController::Create(m_previewCanvas.get());
+        previewControllerEntity->addComponent(m_previewController);
+    }
+
+    //////////////////////////////////////////
+    void SceneEditor::destroyPreviewController()
+    {
+        if (m_previewCanvas)
+        {
+            m_previewCanvas->getEntityRaw()->removeFromEcsWorld();
+            m_previewCanvas.reset();
+        }
+
+        if (m_previewController)
+        {
+            m_previewController->getEntityRaw()->removeFromEcsWorld();
+            m_previewController.reset();
         }
     }
 

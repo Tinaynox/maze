@@ -58,6 +58,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EditorSceneModeController);
     MAZE_USING_SHARED_PTR(MeshRenderer);
     MAZE_USING_SHARED_PTR(DebugGridRenderer);
+    MAZE_USING_SHARED_PTR(PreviewController);
     
 
     //////////////////////////////////////////
@@ -124,6 +125,16 @@ namespace Maze
         //////////////////////////////////////////
         void createSceneModeController();
 
+
+        //////////////////////////////////////////
+        void updatePreviewController();
+
+        //////////////////////////////////////////
+        void createPreviewController();
+
+        //////////////////////////////////////////
+        void destroyPreviewController();
+
     protected:
         EditorSceneModeControllerPtr m_sceneModeController;
 
@@ -140,6 +151,7 @@ namespace Maze
         CanvasPtr m_topBarCanvas;
 
         AssetsControllerPtr m_assetsController;
+        PreviewControllerPtr m_previewController;
     };
 
 

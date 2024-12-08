@@ -218,7 +218,7 @@ namespace Maze
         void notifyAssetFileRemoved(AssetFilePtr const& _file);
 
     protected:
-        bool m_inspectorsDirty = false;
+        bool m_inspectorsDirty = true;
 
         Canvas* m_canvas;
 

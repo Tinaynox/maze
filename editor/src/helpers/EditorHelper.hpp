@@ -100,6 +100,12 @@ namespace Maze
             bool _select = true);
 
         //////////////////////////////////////////
+        EntityPtr CreateCamera3D(
+            CString _entityName,
+            Transform3DPtr const& _parent = nullptr,
+            bool _select = true);
+
+        //////////////////////////////////////////
         EntityPtr CreateNewParticleSystem3D(
             CString _entityName,
             Transform3DPtr const& _parent = nullptr,

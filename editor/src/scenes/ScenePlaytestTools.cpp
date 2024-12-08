@@ -159,7 +159,7 @@ namespace Maze
         m_camera3D->setClearColor(ColorU32(99, 101, 140, 255));
         m_camera3D->getEntityRaw()->ensureComponent<Name>("Camera");
         m_camera3D->setRenderMask(m_camera3D->getRenderMask() | (S32)DefaultRenderMask::Gizmos);
-        m_camera3D->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport));
+        m_camera3D->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport));
         GizmosManager::GetInstancePtr()->setCamera(m_camera3D);
 
         // DebugGrid
@@ -181,7 +181,7 @@ namespace Maze
             m_mainCanvas->setClearColor(ColorU32::c_zero);
             m_mainCanvas->setRenderTarget(m_renderTarget);
             m_mainCanvas->setSortOrder(-1000000);
-            m_mainCanvas->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport));
+            m_mainCanvas->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport));
             GizmosManager::GetInstancePtr()->setCanvas(m_mainCanvas);
 
             EntityPtr mainCanvasControllerEntity = createEntity();
@@ -341,13 +341,14 @@ namespace Maze
     //////////////////////////////////////////
     void ScenePlaytestTools::notifyMainRenderWindowResized(RenderTarget* _renderTarget)
     {
-        Rect2F rect = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
+        Rect2F cameraRect = EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport);
+        Rect2F sceneRect = EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport);
 
         if (m_camera3D)
-            m_camera3D->setViewport(rect);
+            m_camera3D->setViewport(cameraRect);
 
         if (m_mainCanvas)
-            m_mainCanvas->setViewport(rect);
+            m_mainCanvas->setViewport(sceneRect);
     }
 
     //////////////////////////////////////////

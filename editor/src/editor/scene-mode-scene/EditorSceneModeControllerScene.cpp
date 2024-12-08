@@ -271,22 +271,23 @@ namespace Maze
                 });
                 updateSaveButtonEnabled();
             }
+
+            ClickButton2DPtr closeButton = UIHelper::CreateDefaultClickButton(
+                "X",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                Vec2F32(18.0f, 18.0f),
+                Vec2F32(-2.0f, -2.0f),
+                m_topBarRightLayout->getTransform(),
+                scene.get(),
+                Vec2F32(1.0f, 1.0f),
+                Vec2F32(1.0f, 1.0f));
+            closeButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+            {
+                EditorManager::GetInstancePtr()->clearMode();
+            });
         }
 
-        ClickButton2DPtr closeButton = UIHelper::CreateDefaultClickButton(
-            "X",
-            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
-            Vec2F32(18.0f, 18.0f),
-            Vec2F32(-2.0f, -2.0f),
-            m_topBarRightLayout->getTransform(),
-            scene.get(),
-            Vec2F32(1.0f, 1.0f),
-            Vec2F32(1.0f, 1.0f));
-        closeButton->eventClick.subscribe(
-            [](Button2D* _button, CursorInputEvent const& _event)
-        {
-            EditorManager::GetInstancePtr()->clearMode();
-        });
 
         EditorSceneManager::GetInstancePtr()->getSceneAssetFileSaveEnabledChangedEvent().subscribe(
             this, &EditorSceneModeControllerScene::notifyPrefabAssetFileSaveEnabledChanged);

@@ -166,6 +166,18 @@ namespace Maze
                 EditorManager::GetInstancePtr()->getSceneMain()->getRenderTarget(),
                 EditorManager::GetInstancePtr()->getMainEcsWorld());
             scene->setName(HashedString(name.toUTF8()));
+
+            EntityPtr lightEntity = scene->createEntity("Light");
+            Light3DPtr light3D = lightEntity->ensureComponent<Light3D>();
+            light3D->setLightType(Light3DType::Directional);
+            light3D->setColor(ColorU32(255, 244, 214));
+            light3D->getTransform()->setLocalRotationDegrees(50.0f, -30.0f, 0.0f);
+            light3D->getTransform()->setLocalY(3.0f);
+
+            EntityPtr cameraEntity = scene->createEntity("Camera");
+            Camera3DPtr camera3D = cameraEntity->ensureComponent<Camera3D>();
+            camera3D->getTransform()->setLocalZ(-10.0f);
+
             // EntityPtr entity = EditorManager::GetInstancePtr()->getSceneMain()->createEntity(name);
             // EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(entity, newPrefabFullPath);
 

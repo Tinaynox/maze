@@ -281,12 +281,29 @@ namespace Maze
             Light3DPtr light3D = gameObject->ensureComponent<Light3D>();
             light3D->setLightType(Light3DType::Directional);
             light3D->setColor(ColorU32(255, 244, 214));
-            light3D->getTransform()->setLocalDirection(0.377f, -0.777f, 0.577f);
-
-            light3D->getTransform()->setLocalY(5.0f);
 
             if (_parent)
                 light3D->getTransform()->setParent(_parent);
+
+            ProcessEditorActionsForCreatedEntity(gameObject, _select);
+
+            return gameObject;
+        }
+
+        //////////////////////////////////////////
+        EntityPtr CreateCamera3D(
+            CString _entityName,
+            Transform3DPtr const& _parent,
+            bool _select)
+        {
+            EntityPtr gameObject = CreateEntity3D(_entityName);
+            if (!gameObject)
+                return EntityPtr();
+
+            Camera3DPtr camera3D = gameObject->ensureComponent<Camera3D>();
+
+            if (_parent)
+                camera3D->getTransform()->setParent(_parent);
 
             ProcessEditorActionsForCreatedEntity(gameObject, _select);
 
