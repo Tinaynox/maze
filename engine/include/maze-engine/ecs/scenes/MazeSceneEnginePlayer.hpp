@@ -25,56 +25,55 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_ScenePlaytest_hpp_))
-#define _ScenePlaytest_hpp_
+#if (!defined(_SceneEnginePlayer_hpp_))
+#define _SceneEnginePlayer_hpp_
 
 
 //////////////////////////////////////////
+#include "maze-engine/MazeEngineHeader.hpp"
 #include "maze-core/ecs/MazeEcsScene.hpp"
-#include "maze-core/MazeBaseTypes.hpp"
-#include "maze-core/ecs/components/MazeTransform2D.hpp"
-#include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/math/MazeQuaternion.hpp"
-#include "maze-graphics/MazeMesh.hpp"
-#include "maze-graphics/MazeShader.hpp"
-#include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/MazeMaterial.hpp"
-#include "maze-graphics/MazeRenderPass.hpp"
-#include "maze-graphics/MazeRenderTarget.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
-#include "scenes/SceneMain.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ScenePlaytest);
     MAZE_USING_SHARED_PTR(SceneEnginePlayer);
+    MAZE_USING_SHARED_PTR(Camera3D);
+    MAZE_USING_SHARED_PTR(EnginePlayer);
 
 
     //////////////////////////////////////////
-    // Class ScenePlaytest
+    // Struct SceneEnginePlayerInitConfig
     //
     //////////////////////////////////////////
-    class ScenePlaytest
-        : public SceneMain
+    struct SceneEnginePlayerInitConfig
+    {
+        RenderTargetPtr renderTarget;
+        Camera3DPtr currentCamera3D;
+    };
+
+
+    //////////////////////////////////////////
+    // Class SceneEnginePlayer
+    //
+    //////////////////////////////////////////
+    class MAZE_ENGINE_API SceneEnginePlayer
+        : public EcsRenderScene
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(ScenePlaytest, SceneMain);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneEnginePlayer, EcsRenderScene);
 
     public:
 
         //////////////////////////////////////////
-        static ScenePlaytestPtr Create();
+        static SceneEnginePlayerPtr Create(SceneEnginePlayerInitConfig const& _config);
     
         //////////////////////////////////////////
-        virtual ~ScenePlaytest();
+        virtual ~SceneEnginePlayer();
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
@@ -83,18 +82,14 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        ScenePlaytest();
+        SceneEnginePlayer();
 
         //////////////////////////////////////////
-        virtual bool init() MAZE_OVERRIDE;
+        virtual bool init(SceneEnginePlayerInitConfig const& _config);
 
-
-        //////////////////////////////////////////
-        virtual EcsWorld* assignWorld() MAZE_OVERRIDE;
 
     protected:
-        SceneEnginePlayerPtr m_sceneEnginePlayer;
-        
+        EnginePlayerPtr m_enginePlayer;
     };
 
 
@@ -102,5 +97,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _ScenePlaytest_hpp_
+#endif // _SceneEnginePlayer_hpp_
 //////////////////////////////////////////

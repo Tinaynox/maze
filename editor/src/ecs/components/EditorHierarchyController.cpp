@@ -66,6 +66,7 @@
 #include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionEntityRemove.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionEntityAdd.hpp"
+#include "maze-engine/ecs/scenes/MazeSceneEnginePlayer.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
@@ -815,7 +816,8 @@ namespace Maze
         {
             if (!_entity->getEcsScene() ||
                 (_entity->getEcsScene()->getClassUID() != ClassInfo<SceneWorkspace>::UID() &&
-                _entity->getEcsScene()->getClassUID() != ClassInfo<ScenePlaytest>::UID()))
+                _entity->getEcsScene()->getClassUID() != ClassInfo<ScenePlaytest>::UID() &&
+                _entity->getEcsScene()->getClassUID() != ClassInfo<SceneEnginePlayer>::UID()))
                 return;
         }
 

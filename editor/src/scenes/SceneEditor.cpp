@@ -114,6 +114,7 @@
 #include "editor/scene-mode-prefab/EditorSceneModeControllerPrefab.hpp"
 #include "editor/scene-mode-scene/EditorSceneModeControllerScene.hpp"
 #include "scenes/SceneWorkspaceTools.hpp"
+#include "scenes/ScenePlaytest.hpp"
 #include "scenes/ScenePlaytestTools.hpp"
 #include "settings/MazeEditorSettings.hpp"
 
@@ -435,6 +436,7 @@ namespace Maze
             hierarchyController->addIgnoreScene(SceneTexturePicker::GetMetaClass()->getClassUID());
             hierarchyController->addIgnoreScene(SceneWorkspace::GetMetaClass()->getClassUID());
             hierarchyController->addIgnoreScene(SceneWorkspaceTools::GetMetaClass()->getClassUID());
+            hierarchyController->addIgnoreScene(ScenePlaytest::GetMetaClass()->getClassUID());
             hierarchyController->addIgnoreScene(ScenePlaytestTools::GetMetaClass()->getClassUID());
         }
 
@@ -621,11 +623,14 @@ namespace Maze
     void SceneEditor::updatePreviewController()
     {
         bool playtestModeEnabled = EditorManager::GetInstancePtr()->getPlaytestModeEnabled();
+        bool isSceneMode = (EditorManager::GetInstancePtr()->getSceneMode() == EditorSceneMode::Scene);
 
-        if (playtestModeEnabled && m_previewController)
+        bool previewRequired = !playtestModeEnabled || !isSceneMode;
+
+        if (!previewRequired && m_previewController)
             destroyPreviewController();
         else
-        if (!playtestModeEnabled && !m_previewController)
+        if (previewRequired && !m_previewController)
             createPreviewController();
 
     }

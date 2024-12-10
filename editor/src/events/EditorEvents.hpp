@@ -41,7 +41,7 @@ namespace Maze
     // Class EditorProjectWillBeClosedEvent
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API EditorProjectWillBeClosedEvent
+    class EditorProjectWillBeClosedEvent
         : public GenericEvent<EditorProjectWillBeClosedEvent>
     {
     public:
@@ -54,7 +54,7 @@ namespace Maze
     // Class EditorProjectOpenedEvent
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API EditorProjectOpenedEvent
+    class EditorProjectOpenedEvent
         : public GenericEvent<EditorProjectOpenedEvent>
     {
     public:

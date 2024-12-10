@@ -39,9 +39,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditorSceneSettings, Settings,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, debugLightEnabled, true, getDebugLightEnabled, setDebugLightEnabled),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, debugAxesEnabled, true, getDebugAxesEnabled, setDebugAxesEnabled),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, debugGridEnabled, true, getDebugGridEnabled, setDebugGridEnabled));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, prefabDebugLightEnabled, true, getPrefabDebugLightEnabled, setPrefabDebugLightEnabled),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, prefabDebugAxesEnabled, true, getPrefabDebugAxesEnabled, setPrefabDebugAxesEnabled),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, prefabDebugGridEnabled, true, getPrefabDebugGridEnabled, setPrefabDebugGridEnabled),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, sceneDebugLightEnabled, false, getSceneDebugLightEnabled, setSceneDebugLightEnabled),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, sceneDebugAxesEnabled, true, getSceneDebugAxesEnabled, setSceneDebugAxesEnabled),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, sceneDebugGridEnabled, true, getSceneDebugGridEnabled, setSceneDebugGridEnabled));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(EditorSceneSettings);

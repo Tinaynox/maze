@@ -25,76 +25,73 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_ScenePlaytest_hpp_))
-#define _ScenePlaytest_hpp_
+#if (!defined(_EditorPlaytestTools_hpp_))
+#define _EditorPlaytestTools_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/ecs/MazeEcsScene.hpp"
-#include "maze-core/MazeBaseTypes.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
+#include "maze-ui/MazeUIHeader.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
-#include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/math/MazeQuaternion.hpp"
-#include "maze-graphics/MazeMesh.hpp"
-#include "maze-graphics/MazeShader.hpp"
-#include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/MazeMaterial.hpp"
-#include "maze-graphics/MazeRenderPass.hpp"
-#include "maze-graphics/MazeRenderTarget.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
-#include "scenes/SceneMain.hpp"
+#include "maze-ui/MazeCursorInputEvent.hpp"
+#include "maze-ui/ecs/components/MazeLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
+#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
+#include "maze-editor-tools/inspectors/MazeInspector.hpp"
+#include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ScenePlaytest);
-    MAZE_USING_SHARED_PTR(SceneEnginePlayer);
+    MAZE_USING_SHARED_PTR(EditorPlaytestTools);
 
 
     //////////////////////////////////////////
-    // Class ScenePlaytest
+    // Class EditorPlaytestTools
     //
     //////////////////////////////////////////
-    class ScenePlaytest
-        : public SceneMain
+    class EditorPlaytestTools
+        : public Component
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(ScenePlaytest, SceneMain);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorPlaytestTools, Component);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(EditorPlaytestTools);
+
+        //////////////////////////////////////////
+        friend class Entity;
+
 
     public:
 
         //////////////////////////////////////////
-        static ScenePlaytestPtr Create();
-    
-        //////////////////////////////////////////
-        virtual ~ScenePlaytest();
+        virtual ~EditorPlaytestTools();
 
         //////////////////////////////////////////
-        virtual void update(F32 _dt) MAZE_OVERRIDE;
+        static EditorPlaytestToolsPtr Create();
 
 
     protected:
 
         //////////////////////////////////////////
-        ScenePlaytest();
+        EditorPlaytestTools();
 
         //////////////////////////////////////////
-        virtual bool init() MAZE_OVERRIDE;
-
-
-        //////////////////////////////////////////
-        virtual EcsWorld* assignWorld() MAZE_OVERRIDE;
-
-    protected:
-        SceneEnginePlayerPtr m_sceneEnginePlayer;
+        using Component::init;
         
+        //////////////////////////////////////////
+        bool init();
+
+    protected:
     };
 
 
@@ -102,5 +99,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _ScenePlaytest_hpp_
+#endif // _EditorPlaytestTools_hpp_
 //////////////////////////////////////////

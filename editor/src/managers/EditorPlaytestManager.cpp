@@ -138,7 +138,8 @@ namespace Maze
     {
         destroyScenes();
 
-        if (EditorManager::GetInstancePtr()->getSceneMode() == EditorSceneMode::Prefab)
+        if (EditorManager::GetInstancePtr()->getSceneMode() == EditorSceneMode::Prefab ||
+            EditorManager::GetInstancePtr()->getSceneMode() == EditorSceneMode::Scene)
             m_scenePlaytest = Editor::GetInstancePtr()->getSceneManager()->loadScene<ScenePlaytest>();
 
         m_scenePlaytestTools = Editor::GetInstancePtr()->getSceneManager()->loadScene<ScenePlaytestTools>();

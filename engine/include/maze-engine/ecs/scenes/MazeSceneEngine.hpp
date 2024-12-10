@@ -44,7 +44,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderController);
     MAZE_USING_SHARED_PTR(ParticlesDrawerController);
     MAZE_USING_SHARED_PTR(InputSystem2D);
-    MAZE_USING_SHARED_PTR(GizmosController);
+    MAZE_USING_SHARED_PTR(GizmosController);    
 
 
     //////////////////////////////////////////

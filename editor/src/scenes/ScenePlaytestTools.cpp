@@ -46,6 +46,7 @@
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -81,6 +82,7 @@
 #include "managers/EditorPlaytestManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "Editor.hpp"
+#include "editor/scene-mode-scene/EditorPlaytestTools.hpp"
 #include "layout/EditorLayout.hpp"
 #include "ecs/components/EditorMainCanvasController.hpp"
 
@@ -114,6 +116,9 @@ namespace Maze
         {
             Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.unsubscribe(this);
         }
+
+        if (m_editorPlaytestTools && m_editorPlaytestTools->getEntityRaw())
+            m_editorPlaytestTools->getEntityRaw()->removeFromEcsWorld();
     }
 
     //////////////////////////////////////////
@@ -159,12 +164,13 @@ namespace Maze
         m_camera3D->setClearColor(ColorU32(99, 101, 140, 255));
         m_camera3D->getEntityRaw()->ensureComponent<Name>("Camera");
         m_camera3D->setRenderMask(m_camera3D->getRenderMask() | (S32)DefaultRenderMask::Gizmos);
-        m_camera3D->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport));
+        m_camera3D->setViewport(getPlaytestViewport());
         GizmosManager::GetInstancePtr()->setCamera(m_camera3D);
 
         // DebugGrid
         EntityPtr debugGridRendererEntity = createEntity();
         m_debugGridRenderer = debugGridRendererEntity->createComponent<DebugGridRenderer>(m_camera3D);
+        debugGridRendererEntity->ensureComponent<RenderMask>()->setMask(DefaultRenderMask::Gizmos);
 
         // Axes
         EntityPtr axesMeshRendererEntity = createEntity();
@@ -181,13 +187,18 @@ namespace Maze
             m_mainCanvas->setClearColor(ColorU32::c_zero);
             m_mainCanvas->setRenderTarget(m_renderTarget);
             m_mainCanvas->setSortOrder(-1000000);
-            m_mainCanvas->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport));
+            m_mainCanvas->setViewport(getPlaytestViewport());
             GizmosManager::GetInstancePtr()->setCanvas(m_mainCanvas);
 
             EntityPtr mainCanvasControllerEntity = createEntity();
             EditorMainCanvasControllerPtr mainCanvasController = EditorMainCanvasController::Create(m_mainCanvas.get());
             mainCanvasControllerEntity->addComponent(mainCanvasController);
         }
+
+
+        EntityPtr editorPlaytestToolsEntity = EcsWorld::GetDefaultWorldRaw()->createEntity();
+        editorPlaytestToolsEntity->ensureComponent<StaticName>("EditorPlaytestTools");
+        m_editorPlaytestTools = editorPlaytestToolsEntity->createComponent<EditorPlaytestTools>();
 
         return true;
     }
@@ -341,14 +352,23 @@ namespace Maze
     //////////////////////////////////////////
     void ScenePlaytestTools::notifyMainRenderWindowResized(RenderTarget* _renderTarget)
     {
-        Rect2F cameraRect = EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport);
-        Rect2F sceneRect = EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport);
+        updateViewports();
+    }
+
+    //////////////////////////////////////////
+    void ScenePlaytestTools::updateViewports()
+    {
+        Rect2F cameraRect = getPlaytestViewport();
+        Rect2F sceneRect = getPlaytestViewport();
 
         if (m_camera3D)
             m_camera3D->setViewport(cameraRect);
 
         if (m_mainCanvas)
             m_mainCanvas->setViewport(sceneRect);
+
+        if (m_playtestCamera)
+            m_playtestCamera->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport));
     }
 
     //////////////////////////////////////////
@@ -364,6 +384,33 @@ namespace Maze
         }
 
     }
+
+    //////////////////////////////////////////
+    Rect2F ScenePlaytestTools::getPlaytestViewport() const
+    {
+        bool isSceneMode = (EditorManager::GetInstancePtr()->getSceneMode() == EditorSceneMode::Scene);
+
+        if (isSceneMode)
+            return EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport);
+        else
+            return EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
+    }
+
+    //////////////////////////////////////////
+    void ScenePlaytestTools::setPlaytestCamera(Camera3DPtr const& _playtestCamera)
+    {
+        if (m_playtestCamera == _playtestCamera)
+            return;
+
+        m_playtestCamera = _playtestCamera;
+
+        if (m_playtestCamera)
+        {
+            m_playtestCamera->setRenderTarget(m_renderTarget);
+            updateViewports();
+        }
+    }
+    
 
 
 } // namespace Maze

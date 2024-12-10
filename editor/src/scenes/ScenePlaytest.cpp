@@ -36,6 +36,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeAnimationCurve.hpp"
+#include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -70,6 +71,7 @@
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-editor-tools/managers/MazeColorPickerManager.hpp"
+#include "maze-engine/ecs/scenes/MazeSceneEnginePlayer.hpp"
 #include "maze-ui/ecs/components/MazeExperimental.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
@@ -97,6 +99,11 @@ namespace Maze
     //////////////////////////////////////////
     ScenePlaytest::~ScenePlaytest()
     {
+        if (m_sceneEnginePlayer)
+        {
+            SceneManager::GetInstancePtr()->destroyScene(m_sceneEnginePlayer);
+            m_sceneEnginePlayer.reset();
+        }
     }
 
     //////////////////////////////////////////
@@ -114,9 +121,12 @@ namespace Maze
         if (!SceneMain::init(renderWindow))
             return false;
 
-        RenderMeshManagerPtr const& renderMeshManager = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getRenderMeshManager();
-
         makeMainScene();
+
+        SceneEnginePlayerInitConfig config;
+        config.renderTarget = Editor::GetInstancePtr()->getMainRenderWindow();
+        m_sceneEnginePlayer = SceneManager::GetInstancePtr()->loadScene<SceneEnginePlayer>(true, config);
+
 
         return true;
     }

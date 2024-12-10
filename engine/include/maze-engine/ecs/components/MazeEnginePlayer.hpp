@@ -25,100 +25,100 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_ScenePlaytestTools_hpp_))
-#define _ScenePlaytestTools_hpp_
+#if (!defined(_MazeEnginePlayer_hpp_))
+#define _MazeEnginePlayer_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/ecs/MazeEcsScene.hpp"
-#include "maze-core/MazeBaseTypes.hpp"
-#include "maze-core/ecs/components/MazeTransform2D.hpp"
-#include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/math/MazeQuaternion.hpp"
-#include "maze-graphics/MazeMesh.hpp"
-#include "maze-graphics/MazeShader.hpp"
-#include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/MazeMaterial.hpp"
-#include "maze-graphics/MazeRenderPass.hpp"
-#include "maze-graphics/MazeRenderTarget.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
-#include "scenes/SceneMainTools.hpp"
+#include "maze-engine/MazeEngineHeader.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/ecs/MazeEntitiesSample.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ScenePlaytestTools);
-    MAZE_USING_SHARED_PTR(MeshRenderer);
-    MAZE_USING_SHARED_PTR(DebugGridRenderer);
+    MAZE_USING_SHARED_PTR(EnginePlayer);
     MAZE_USING_SHARED_PTR(Camera3D);
-    MAZE_USING_SHARED_PTR(EditorPlaytestTools);
 
 
     //////////////////////////////////////////
-    // Class ScenePlaytestTools
+    // Class EnginePlayerCurrentCameraChangedEvent
     //
     //////////////////////////////////////////
-    class ScenePlaytestTools
-        : public SceneMainTools
+    class MAZE_ENGINE_API EnginePlayerCurrentCameraChangedEvent
+        : public GenericEvent<EnginePlayerCurrentCameraChangedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EnginePlayerCurrentCameraChangedEvent, Event);
+
+        //////////////////////////////////////////
+        EnginePlayerCurrentCameraChangedEvent(EntityId _cameraEid = c_invalidEntityId)
+            : cameraEid(_cameraEid)
+        {}
+
+        EntityId cameraEid;
+    };
+
+
+    //////////////////////////////////////////
+    // Class EnginePlayer
+    //
+    //////////////////////////////////////////
+    class MAZE_ENGINE_API EnginePlayer
+        : public Component
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(ScenePlaytestTools, SceneMainTools);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EnginePlayer, Component);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(EnginePlayer);
+
+        //////////////////////////////////////////
+        friend class Entity;
 
     public:
 
         //////////////////////////////////////////
-        static ScenePlaytestToolsPtr Create();
-    
-        //////////////////////////////////////////
-        virtual ~ScenePlaytestTools();
+        virtual ~EnginePlayer();
 
         //////////////////////////////////////////
-        virtual void update(F32 _dt) MAZE_OVERRIDE;
+        static EnginePlayerPtr Create();
 
 
         //////////////////////////////////////////
-        void setPlaytestCamera(Camera3DPtr const& _playtestCamera);
+        void setCurrentCamera3D(Camera3DPtr const& _camera);
+
+        //////////////////////////////////////////
+        inline Camera3DPtr const& getCurrentCamera3D() const { return m_currentCamera3D; }
+
+
+
+        //////////////////////////////////////////
+        void processOnCreate();
+
+        //////////////////////////////////////////
+        void processUpdate(F32 _dt);
 
     protected:
 
         //////////////////////////////////////////
-        ScenePlaytestTools();
+        EnginePlayer();
 
         //////////////////////////////////////////
-        virtual bool init() MAZE_OVERRIDE;
+        using Component::init;
 
         //////////////////////////////////////////
-        void notifyMouse(InputEventMouseData const& _data);
+        bool init();
 
-
-        //////////////////////////////////////////
-        virtual EcsWorld* assignWorld() MAZE_OVERRIDE;
-
-
-        //////////////////////////////////////////
-        void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
-
-        //////////////////////////////////////////
-        virtual void processSceneStateChanged(EcsSceneState _state) MAZE_OVERRIDE;
-
-
-        //////////////////////////////////////////
-        void updateViewports();
-
-        
-        //////////////////////////////////////////
-        Rect2F getPlaytestViewport() const;
 
     protected:
-        Camera3DPtr m_playtestCamera;
-        EditorPlaytestToolsPtr m_editorPlaytestTools;
+        Camera3DPtr m_currentCamera3D;
+        SharedPtr<GenericInclusiveEntitiesSample<Camera3D>> m_cameras3DSample;
     };
 
 
@@ -126,5 +126,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _ScenePlaytestTools_hpp_
+#endif // _MazeEnginePlayer_hpp_
 //////////////////////////////////////////

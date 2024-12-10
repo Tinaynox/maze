@@ -69,49 +69,93 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setDebugLightEnabled(bool _value) { m_debugLightEnabled = _value; }
+        void setPrefabDebugLightEnabled(bool _value) { m_prefabDebugLightEnabled = _value; }
 
         //////////////////////////////////////////
-        inline bool getDebugLightEnabled() const { return m_debugLightEnabled.getValue(); }
+        inline bool getPrefabDebugLightEnabled() const { return m_prefabDebugLightEnabled.getValue(); }
 
         //////////////////////////////////////////
-        inline MultiDelegate<bool const&>& getDebugLightEnabledChangedEvent() { return m_debugLightEnabled.eventValueChanged; }
+        inline MultiDelegate<bool const&>& getPrefabDebugLightEnabledChangedEvent() { return m_prefabDebugLightEnabled.eventValueChanged; }
 
         //////////////////////////////////////////
-        inline void switchDebugLightEnabled() { setDebugLightEnabled(!getDebugLightEnabled()); }
-
-
-        //////////////////////////////////////////
-        void setDebugAxesEnabled(bool _value) { m_debugAxesEnabled = _value; }
-
-        //////////////////////////////////////////
-        inline bool getDebugAxesEnabled() const { return m_debugAxesEnabled.getValue(); }
-
-        //////////////////////////////////////////
-        inline MultiDelegate<bool const&>& getDebugAxesEnabledChangedEvent() { return m_debugAxesEnabled.eventValueChanged; }
-
-        //////////////////////////////////////////
-        inline void switchDebugAxesEnabled() { setDebugAxesEnabled(!getDebugAxesEnabled()); }
+        inline void switchPrefabDebugLightEnabled() { setPrefabDebugLightEnabled(!getPrefabDebugLightEnabled()); }
 
 
         //////////////////////////////////////////
-        void setDebugGridEnabled(bool _value) { m_debugGridEnabled = _value; }
+        void setPrefabDebugAxesEnabled(bool _value) { m_prefabDebugAxesEnabled = _value; }
 
         //////////////////////////////////////////
-        inline bool getDebugGridEnabled() const { return m_debugGridEnabled.getValue(); }
+        inline bool getPrefabDebugAxesEnabled() const { return m_prefabDebugAxesEnabled.getValue(); }
 
         //////////////////////////////////////////
-        inline MultiDelegate<bool const&>& getDebugGridEnabledChangedEvent() { return m_debugGridEnabled.eventValueChanged; }
+        inline MultiDelegate<bool const&>& getPrefabDebugAxesEnabledChangedEvent() { return m_prefabDebugAxesEnabled.eventValueChanged; }
 
         //////////////////////////////////////////
-        inline void switchDebugGridEnabled() { setDebugGridEnabled(!getDebugGridEnabled()); }
+        inline void switchPrefabDebugAxesEnabled() { setPrefabDebugAxesEnabled(!getPrefabDebugAxesEnabled()); }
+
+
+        //////////////////////////////////////////
+        void setPrefabDebugGridEnabled(bool _value) { m_prefabDebugGridEnabled = _value; }
+
+        //////////////////////////////////////////
+        inline bool getPrefabDebugGridEnabled() const { return m_prefabDebugGridEnabled.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<bool const&>& getPrefabDebugGridEnabledChangedEvent() { return m_prefabDebugGridEnabled.eventValueChanged; }
+
+        //////////////////////////////////////////
+        inline void switchPrefabDebugGridEnabled() { setPrefabDebugGridEnabled(!getPrefabDebugGridEnabled()); }
+
+
+
+
+        //////////////////////////////////////////
+        void setSceneDebugLightEnabled(bool _value) { m_sceneDebugLightEnabled = _value; }
+
+        //////////////////////////////////////////
+        inline bool getSceneDebugLightEnabled() const { return m_sceneDebugLightEnabled.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<bool const&>& getSceneDebugLightEnabledChangedEvent() { return m_sceneDebugLightEnabled.eventValueChanged; }
+
+        //////////////////////////////////////////
+        inline void switchSceneDebugLightEnabled() { setSceneDebugLightEnabled(!getSceneDebugLightEnabled()); }
+
+
+        //////////////////////////////////////////
+        void setSceneDebugAxesEnabled(bool _value) { m_sceneDebugAxesEnabled = _value; }
+
+        //////////////////////////////////////////
+        inline bool getSceneDebugAxesEnabled() const { return m_sceneDebugAxesEnabled.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<bool const&>& getSceneDebugAxesEnabledChangedEvent() { return m_sceneDebugAxesEnabled.eventValueChanged; }
+
+        //////////////////////////////////////////
+        inline void switchSceneDebugAxesEnabled() { setSceneDebugAxesEnabled(!getSceneDebugAxesEnabled()); }
+
+
+        //////////////////////////////////////////
+        void setSceneDebugGridEnabled(bool _value) { m_sceneDebugGridEnabled = _value; }
+
+        //////////////////////////////////////////
+        inline bool getSceneDebugGridEnabled() const { return m_sceneDebugGridEnabled.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<bool const&>& getSceneDebugGridEnabledChangedEvent() { return m_sceneDebugGridEnabled.eventValueChanged; }
+
+        //////////////////////////////////////////
+        inline void switchSceneDebugGridEnabled() { setSceneDebugGridEnabled(!getSceneDebugGridEnabled()); }
 
 
     protected:
 
-        ObservableValue<bool> m_debugLightEnabled = true;
-        ObservableValue<bool> m_debugAxesEnabled = true;
-        ObservableValue<bool> m_debugGridEnabled = true;
+        ObservableValue<bool> m_prefabDebugLightEnabled = true;
+        ObservableValue<bool> m_prefabDebugAxesEnabled = true;
+        ObservableValue<bool> m_prefabDebugGridEnabled = true;
+        ObservableValue<bool> m_sceneDebugLightEnabled = false;
+        ObservableValue<bool> m_sceneDebugAxesEnabled = true;
+        ObservableValue<bool> m_sceneDebugGridEnabled = true;
     };
 
 

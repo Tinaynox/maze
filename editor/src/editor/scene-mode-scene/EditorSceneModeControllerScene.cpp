@@ -114,9 +114,9 @@ namespace Maze
         if (SettingsManager::GetInstancePtr())
         {
             EditorSceneSettings* editorSceneSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>();
-            editorSceneSettings->getDebugLightEnabledChangedEvent().unsubscribe(this);
-            editorSceneSettings->getDebugAxesEnabledChangedEvent().unsubscribe(this);
-            editorSceneSettings->getDebugGridEnabledChangedEvent().unsubscribe(this);
+            editorSceneSettings->getSceneDebugLightEnabledChangedEvent().unsubscribe(this);
+            editorSceneSettings->getSceneDebugAxesEnabledChangedEvent().unsubscribe(this);
+            editorSceneSettings->getSceneDebugGridEnabledChangedEvent().unsubscribe(this);
         }
     }
 
@@ -198,11 +198,11 @@ namespace Maze
         m_lightButton->eventClick.subscribe(
             [this](Button2D* _button, CursorInputEvent const& _event)
         {
-            SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchDebugLightEnabled();
+            SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchSceneDebugLightEnabled();
             SettingsManager::GetInstancePtr()->saveSettings();
         });
         updateDebugLight();
-        SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugLightEnabledChangedEvent().subscribe(
+        SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getSceneDebugLightEnabledChangedEvent().subscribe(
             this, &EditorSceneModeControllerScene::notifyDebugLightEnabledChanged);
 
         m_axesButton = createBarButton(
@@ -213,11 +213,11 @@ namespace Maze
         m_axesButton->eventClick.subscribe(
             [this](Button2D* _button, CursorInputEvent const& _event)
         {
-            SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchDebugAxesEnabled();
+            SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchSceneDebugAxesEnabled();
             SettingsManager::GetInstancePtr()->saveSettings();
         });
         updateDebugAxes();
-        SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugAxesEnabledChangedEvent().subscribe(
+        SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getSceneDebugAxesEnabledChangedEvent().subscribe(
             this, &EditorSceneModeControllerScene::notifyDebugAxesEnabledChanged);
 
         m_gridButton = createBarButton(
@@ -228,11 +228,11 @@ namespace Maze
         m_gridButton->eventClick.subscribe(
             [this](Button2D* _button, CursorInputEvent const& _event)
         {
-            SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchDebugGridEnabled();
+            SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchSceneDebugGridEnabled();
             SettingsManager::GetInstancePtr()->saveSettings();
         });
         updateDebugGrid();
-        SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugGridEnabledChangedEvent().subscribe(
+        SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getSceneDebugGridEnabledChangedEvent().subscribe(
             this, &EditorSceneModeControllerScene::notifyDebugGridEnabledChanged);
 
 
@@ -333,7 +333,7 @@ namespace Maze
     //////////////////////////////////////////
     void EditorSceneModeControllerScene::updateDebugLight()
     {
-        bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugLightEnabled();
+        bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getSceneDebugLightEnabled();
         m_debugLight->getEntityRaw()->setActiveSelf(value);
         m_lightButton->setChecked(value);
     }
@@ -343,7 +343,7 @@ namespace Maze
     {
         SceneMainToolsPtr const& scene = EditorManager::GetInstancePtr()->getSceneMainTools();
 
-        bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugAxesEnabled();
+        bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getSceneDebugAxesEnabled();
         scene->getDebugAxesRenderer()->getEntityRaw()->setActiveSelf(value);
         m_axesButton->setChecked(value);
     }
@@ -353,7 +353,7 @@ namespace Maze
     {
         SceneMainToolsPtr const& scene = EditorManager::GetInstancePtr()->getSceneMainTools();
 
-        bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugGridEnabled();
+        bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getSceneDebugGridEnabled();
         scene->getDebugGridRenderer()->getEntityRaw()->setActiveSelf(value);
         m_gridButton->setChecked(value);
     }
