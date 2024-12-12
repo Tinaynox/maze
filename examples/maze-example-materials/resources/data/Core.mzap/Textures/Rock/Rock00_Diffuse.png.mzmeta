@@ -1,0 +1,8 @@
+assetUnits
+{
+  texture2d
+  {
+    minFilter:String = LinearMipmapLinear
+    magFilter:String = Linear
+  }
+}
