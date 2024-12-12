@@ -257,7 +257,7 @@ namespace Maze
         m_meshData.back().renderer->getRenderMask()->setMask((S32)DefaultRenderMask::UserMask0);
 
         /*
-        addMeshPreview("TorusKnotNM.fbx", "Snow.mzmaterial", "Snow", torusKnotScale);
+        addMeshPreview("TorusKnot.fbx", "Snow.mzmaterial", "Snow", torusKnotScale);
         addMeshPreviewSpace();
         */
         

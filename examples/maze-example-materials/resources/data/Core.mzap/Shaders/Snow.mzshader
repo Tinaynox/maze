@@ -52,18 +52,6 @@ uniform
   value:String = "White"
 }
 
-feature
-{
-  name:String = "NORMAL_MAP"
-}
-
-uniform
-{
-  name:String = "u_normalMap"
-  type:String = "UniformTexture2D"
-  value:String = "White"
-}
-
 uniform
 {
   name:String = "u_normalScale"

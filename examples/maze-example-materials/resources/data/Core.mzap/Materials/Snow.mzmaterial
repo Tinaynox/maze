@@ -1,45 +1,23 @@
-uniform
-{
-  name:String = "u_baseMap"
-  type:String = "UniformTexture2D"
-  value:String = "Rock00_Diffuse.png"
-}
-
-uniform
-{
-  name:String = "u_normalMap"
-  type:String = "UniformTexture2D"
-  value:String = "Rock00_Normal.png"
-}
-
-uniform
-{
-  name:String = "u_specularMap"
-  type:String = "UniformTexture2D"
-  value:String = "Rock00_Specular.png"
-}
-
-
 
 uniform
 {
   name:String = "u_color"
   type:String = "UniformColorF128"
-  value:Vec4F = 1.000000,1.000000,1.000000,1.000000
+  value:Vec4F = 0.160784,0.390523,0.533333,1.000000
 }
 
 uniform
 {
   name:String = "u_ambientLightColor"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.235294,0.235294,0.235294,1.000000
+  value:Vec4F = 0.174902,0.133333,0.341176,1.000000
 }
 
 uniform
 {
   name:String = "u_shininess"
   type:String = "UniformF32"
-  value:F32 = 0.075
+  value:F32 = 0.01
 }
 
 uniform
@@ -53,16 +31,8 @@ uniform
 {
   name:String = "u_specularColor"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.886275,0.898170,0.941176,1.000000
+  value:Vec4F = 0.019608,0.576471,0.548627,1.000000
 }
-
-uniform
-{
-  name:String = "u_emissionColor"
-  type:String = "UniformColorF128"
-  value:Vec4F = 14.449275,0.453311,0.000000,1.000000
-}
-
 
 
 renderPass
