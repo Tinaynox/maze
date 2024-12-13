@@ -3,14 +3,14 @@ uniform
 {
   name:String = "u_color"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.160784,0.390523,0.533333,1.000000
+  value:Vec4F = 0.000000,0.546536,0.886275,1.000000
 }
 
 uniform
 {
   name:String = "u_ambientLightColor"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.174902,0.133333,0.341176,1.000000
+  value:Vec4F = 0.231373,0.196078,0.196078,1.000000
 }
 
 uniform
@@ -31,7 +31,49 @@ uniform
 {
   name:String = "u_specularColor"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.019608,0.576471,0.548627,1.000000
+  value:Vec4F = 0.164706,0.140915,0.137255,1.000000
+}
+
+uniform
+{
+  name:String = "u_snowNormalMap"
+  type:String = "UniformTexture2D"
+  value:String = "Snow_Normal.png"
+}
+
+uniform
+{
+  name:String = "u_snowNormalScale"
+  type:String = "UniformF32"
+  value:F32 = 10.0
+}
+
+uniform
+{
+  name:String = "u_snowColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.800000,0.882353,0.882353,1.000000
+}
+
+uniform
+{
+  name:String = "u_snowDirection"
+  type:String = "UniformVec3F32"
+  value:Vec3F = 0.0, 1.0, 0.0
+}
+
+uniform
+{
+  name:String = "u_snowFadeRange"
+  type:String = "UniformF32"
+  value:F32 = 0.2
+}
+
+uniform
+{
+  name:String = "u_snowAmount"
+  type:String = "UniformF32"
+  value:F32 = 0.6
 }
 
 

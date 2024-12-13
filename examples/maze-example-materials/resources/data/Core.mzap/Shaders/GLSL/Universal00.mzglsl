@@ -130,6 +130,14 @@ uniform float u_normalScale;
 // LAMBERT_THRESHOLD
 uniform float u_lambertThreshold;
 
+// SNOW
+uniform sampler2D u_snowNormalMap;
+uniform float u_snowNormalScale;
+uniform vec4 u_snowColor;
+uniform vec3 u_snowDirection;
+uniform float u_snowAmount;
+uniform float u_snowFadeRange;
+
 
 //////////////////////////////////////////
 IN vec3 v_positionOS;
@@ -225,9 +233,22 @@ void main()
     
     // Albedo
     vec4 albedo = MAZE_GET_TEXEL2D(u_baseMap, v_uv0) * u_color;
-    
+        
     // Diffuse color
     vec3 diffuseColor = albedo.rgb;
+    
+    // Snow
+#if defined(SNOW) && (SNOW)    
+    vec2 snowNormalUV = v_positionOS.xz * u_snowNormalScale;
+    float snowDot = dot(v_normalWS, u_snowDirection);
+    snowDot = clamp(smoothstep(1.0 - u_snowAmount - u_snowFadeRange, 1.0 - u_snowAmount, snowDot), 0.0, 1.0);
+    
+    vec3 snowNormalTS = SampleNormalTS(u_snowNormalMap, snowNormalUV, 0.5);
+    vec3 snowNormalWS = normalize(TransformTangentToWorld(snowNormalTS, tangentToWorld));
+    
+    diffuseColor = mix(diffuseColor, u_snowColor.xyz, snowDot);
+    normalWS = normalize(mix(normalWS, snowNormalWS, snowDot));
+#endif
         
     // Linear color
     vec3 linearColor = diffuseColor * ambientLightColor;
