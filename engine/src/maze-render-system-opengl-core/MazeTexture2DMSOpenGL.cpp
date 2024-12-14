@@ -210,7 +210,7 @@ namespace Maze
         }
         else
         {
-            MAZE_ERROR_RETURN_VALUE(false, "There is no way to create Texture2DMS!");
+            MAZE_WARNING_RETURN_VALUE(false, "Texture2DMS is not supported!");
         }
     
 #if (MAZE_DEBUG_GL)
