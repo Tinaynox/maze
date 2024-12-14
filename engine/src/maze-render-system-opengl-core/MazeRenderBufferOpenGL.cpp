@@ -367,10 +367,14 @@ namespace Maze
             MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_READ_FRAMEBUFFER, _srcBuffer->castRaw<RenderBufferOpenGL>()->m_frameBufferId));
             MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_DRAW_FRAMEBUFFER, m_frameBufferId));
 
+            MZGLbitfield mask = MAZE_GL_COLOR_BUFFER_BIT;
+            if (getDepthTexture() && _srcBuffer->getDepthTexture())
+                mask |= MAZE_GL_DEPTH_BUFFER_BIT;
+
             MAZE_GL_CALL(mzglBlitFramebuffer(
                 0, 0, srcColorTextureSize.x, srcColorTextureSize.y,
                 0, 0, destColorTextureSize.x, destColorTextureSize.y,
-                MAZE_GL_COLOR_BUFFER_BIT, MAZE_GL_NEAREST));
+                mask, MAZE_GL_NEAREST));
         }
     }
 

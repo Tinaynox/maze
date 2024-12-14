@@ -107,6 +107,7 @@ void main()
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Fragment.mzglsl"
 #include "Utils/Core.mzglsl"
+#include "Utils/Math.mzglsl"
 
 
 //////////////////////////////////////////
@@ -137,6 +138,8 @@ uniform vec4 u_snowColor;
 uniform vec3 u_snowDirection;
 uniform float u_snowAmount;
 uniform float u_snowFadeRange;
+uniform float u_snowNoiseScale;
+uniform float u_snowNoiseStrength;
 
 
 //////////////////////////////////////////
@@ -241,6 +244,10 @@ void main()
 #if defined(SNOW) && (SNOW)    
     vec2 snowNormalUV = v_positionOS.xz * u_snowNormalScale;
     float snowDot = dot(v_normalWS, u_snowDirection);
+    
+    float snowNoise = MazeNoise3D(v_positionOS * u_snowNoiseScale) * u_snowNoiseStrength;
+    snowDot += snowNoise;
+    
     snowDot = clamp(smoothstep(1.0 - u_snowAmount - u_snowFadeRange, 1.0 - u_snowAmount, snowDot), 0.0, 1.0);
     
     vec3 snowNormalTS = SampleNormalTS(u_snowNormalMap, snowNormalUV, 0.5);

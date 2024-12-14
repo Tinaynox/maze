@@ -252,9 +252,17 @@ namespace Maze
         addMeshPreview("TorusKnot.fbx", "Dissolve00.mzmaterial", "Dissolve", torusKnotScale);
         addMeshPreviewSpace();
 
-        addMeshPreview("TorusKnot.fbx", "Distortion00.mzmaterial", "Distortion", torusKnotScale);
-        addMeshPreviewSpace();
-        m_meshData.back().renderer->getRenderMask()->setMask((S32)DefaultRenderMask::UserMask0);
+        {
+            EntityPtr objectEntity = addMeshPreview("TorusKnot.fbx", "Distortion00.mzmaterial", "Distortion", torusKnotScale);
+            addMeshPreviewSpace();
+            m_meshData.back().renderer->getRenderMask()->setMask((S32)DefaultRenderMask::UserMask0);
+
+            Texture2DPtr depthTexture = m_renderBuffer->getDepthTexture()->cast<Texture2D>();
+
+            MeshRenderer* meshRenderer = objectEntity->getComponentRaw<MeshRenderer>();
+            meshRenderer->getMaterial()->setUniform(
+                MAZE_HCS("u_depthMap"), depthTexture);
+        }
 
         addMeshPreview("TorusKnot.fbx", "Snow.mzmaterial", "Snow", torusKnotScale);
         addMeshPreviewSpace();

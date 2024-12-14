@@ -19,6 +19,13 @@ uniform
   value:F32 = 2.0
 }
 
+uniform
+{
+  name:String = "u_depthMap"
+  type:String = "UniformTexture2D"
+  value:String = "White"
+}
+
 renderPass
 {
   passType:String = "Default"

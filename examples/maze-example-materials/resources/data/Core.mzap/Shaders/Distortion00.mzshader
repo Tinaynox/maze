@@ -19,6 +19,13 @@ uniform
   value:F32 = 0.05
 }
 
+uniform
+{
+  name:String = "u_depthMap"
+  type:String = "UniformTexture2D"
+  value:String = "White"
+}
+
 GLSL
 {
   shader:String = "Distortion00.mzglsl"

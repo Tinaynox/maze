@@ -3,7 +3,7 @@ uniform
 {
   name:String = "u_color"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.000000,0.546536,0.886275,1.000000
+  value:Vec4F = 0.531765,0.000000,0.886275,1.000000
 }
 
 uniform
@@ -66,14 +66,28 @@ uniform
 {
   name:String = "u_snowFadeRange"
   type:String = "UniformF32"
-  value:F32 = 0.2
+  value:F32 = 0.14
 }
 
 uniform
 {
   name:String = "u_snowAmount"
   type:String = "UniformF32"
-  value:F32 = 0.6
+  value:F32 = 0.4
+}
+
+uniform
+{
+  name:String = "u_snowNoiseScale"
+  type:String = "UniformF32"
+  value:F32 = 400.0
+}
+
+uniform
+{
+  name:String = "u_snowNoiseStrength"
+  type:String = "UniformF32"
+  value:F32 = 0.3
 }
 
 

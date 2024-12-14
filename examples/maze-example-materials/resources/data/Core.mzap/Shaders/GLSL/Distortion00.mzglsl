@@ -90,6 +90,7 @@ void main()
 uniform vec4 u_color;
 uniform float u_refractionIndex; 
 uniform float u_refractionFactor;
+uniform sampler2D u_depthMap;
 
 
 //////////////////////////////////////////
@@ -114,6 +115,14 @@ void main()
 {
     MAZE_CLIP_DISTANCE_FRAGMENT;    
     
+    // Check depth buffer
+    vec2 screenUV = (v_positionCS.xy / v_positionCS.w) * 0.5 + 0.5;
+    float depth0 = MAZE_GET_TEXEL2D(u_depthMap, screenUV).r;
+    float depth1 = (v_positionCS.z / v_positionCS.w) * 0.5 + 0.5;
+        
+    if (depth1 >= depth0)
+        discard;
+
     // View direction
     vec3 viewToFragmentDirection = -normalize(v_viewDirWS);
     
