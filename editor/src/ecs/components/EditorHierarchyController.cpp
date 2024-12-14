@@ -635,13 +635,20 @@ namespace Maze
                 else
                 if (hierarchyLine->getType() == HierarchyLineType::Scene)
                 {
-                    EcsScene* ecsScene = static_cast<EcsScene*>(hierarchyLine->getUserData());
+                    EcsSceneId ecsSceneId = (EcsSceneId)((S32)reinterpret_cast<Size>(hierarchyLine->getUserData()));
+                    EcsScenePtr const& scene = SceneManager::GetInstancePtr()->getScene(ecsSceneId);
+                    if (!scene)
+                        return;
 
                     _menuListTree->addItem(
                         "Add Child/3D/Empty",
-                        [ecsScene](String const& _text)
+                        [ecsSceneId](String const& _text)
                     {
-                        EntityPtr newEntity = ecsScene->createEntity("Entity");
+                        EcsScenePtr const& scene = SceneManager::GetInstancePtr()->getScene(ecsSceneId);
+                        if (!scene)
+                            return;
+
+                        EntityPtr newEntity = scene->createEntity("Entity");
                         newEntity->ensureComponent<Transform3D>();
 
                         if (EditorToolsActionManager::GetInstancePtr())
@@ -651,9 +658,13 @@ namespace Maze
 
                     _menuListTree->addItem(
                         "Add Child/2D/Empty",
-                        [ecsScene](String const& _text)
+                        [ecsSceneId](String const& _text)
                     {
-                        EntityPtr newEntity = ecsScene->createEntity("Entity");
+                        EcsScenePtr const& scene = SceneManager::GetInstancePtr()->getScene(ecsSceneId);
+                        if (!scene)
+                            return;
+
+                        EntityPtr newEntity = scene->createEntity("Entity");
                         newEntity->ensureComponent<Transform2D>();
 
                         if (EditorToolsActionManager::GetInstancePtr())
@@ -661,7 +672,7 @@ namespace Maze
                                 EditorActionEntityAdd::Create(newEntity));
                     });
 
-                    EditorToolsManager::GetInstancePtr()->eventHierarchyLineSceneContextMenu(_menuListTree, ecsScene);
+                    EditorToolsManager::GetInstancePtr()->eventHierarchyLineSceneContextMenu(_menuListTree, scene.get());
                 }
             });
 

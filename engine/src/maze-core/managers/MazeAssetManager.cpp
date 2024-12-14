@@ -309,6 +309,8 @@ namespace Maze
             m_assetDirectoryPathes.find(_assetFile->getFullPath()) != m_assetDirectoryPathes.end(),
             "It's forbidden to move root asset directories!");
 
+        bool moved = false;
+
         Vector<Pair<Path, AssetFilePtr>> movedFiles;
         if (_assetFile->move(_newFullPath, movedFiles))
         {
@@ -324,6 +326,40 @@ namespace Maze
 
                 m_assetFilesByFileName[assetFile->getFileName()] = assetFile;
                 m_assetFilesByFullPath[assetFile->getFullPath()] = assetFile;
+            }
+
+            moved = true;
+        }
+
+        if (moved)
+        {
+            for (auto movedFileData : movedFiles)
+            {
+                if (movedFileData.second->getExtension() == Path("mzmeta"))
+                    continue;
+
+                Path const& fullPath = movedFileData.first;
+                AssetFilePtr const& metaAssetFile = getAssetFileByFullPath(fullPath + ".mzmeta");
+                if (metaAssetFile)
+                {
+                    Vector<Pair<Path, AssetFilePtr>> movedMetaFiles;
+                    if (metaAssetFile->move(movedFileData.second->getFullPath() + ".mzmeta", movedMetaFiles))
+                    {
+                        for (auto movedMetaFileData : movedMetaFiles)
+                        {
+                            Path const& fullPath = movedMetaFileData.first;
+                            Path fileName = FileHelper::GetFileNameInPath(fullPath);
+
+                            AssetFilePtr const& assetFile = movedMetaFileData.second;
+
+                            m_assetFilesByFileName.erase(fileName);
+                            m_assetFilesByFullPath.erase(fullPath);
+
+                            m_assetFilesByFileName[assetFile->getFileName()] = assetFile;
+                            m_assetFilesByFullPath[assetFile->getFullPath()] = assetFile;
+                        }
+                    }
+                }
             }
 
             for (auto movedFileData : movedFiles)
