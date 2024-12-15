@@ -298,6 +298,20 @@ namespace Maze
                 if (!parentTransform3D)
                     return false;
 
+                bool parentIsValid = true;
+                Transform3DPtr parentOfParent = parentTransform3D;
+                while (parentOfParent = parentOfParent->getParent())
+                {
+                    if (parentOfParent == transform3D)
+                    {
+                        parentIsValid = false;
+                        break;
+                    }
+                }
+
+                if (!parentIsValid)
+                    return false;
+
                 transform3D->setParent(parentTransform3D);
                 return true;
             }
@@ -313,6 +327,20 @@ namespace Maze
 
                 Transform2DPtr const& parentTransform2D = newParentEntity->getComponent<Transform2D>();
                 if (!parentTransform2D)
+                    return false;
+
+                bool parentIsValid = true;
+                Transform2DPtr parentOfParent = parentTransform2D;
+                while (parentOfParent = parentOfParent->getParent())
+                {
+                    if (parentOfParent == transform2D)
+                    {
+                        parentIsValid = false;
+                        break;
+                    }
+                }
+
+                if (!parentIsValid)
                     return false;
 
                 transform2D->setParent(parentTransform2D);

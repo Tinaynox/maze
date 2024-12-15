@@ -361,6 +361,10 @@ namespace Maze
             m_flags |= ChildrenOrderDirty;
             m_orderOfArrival = s_globalOrderOfArrival++;
 
+            if (m_parent->getEntityRaw() && m_parent->getEntityRaw()->getEcsWorld())
+                m_parent->getEntityRaw()->getEcsWorld()->sendEvent<EcsChildAddedEvent>(
+                    m_parent->getEntityId(), getEntityId());
+
             if (m_parent->getEntityRaw())
             {
                 if (getEntityRaw())
