@@ -37,6 +37,7 @@
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -77,6 +78,7 @@
 #include "managers/EditorPrefabManager.hpp"
 #include "managers/EditorSceneManager.hpp"
 #include "managers/EditorEntityManager.hpp"
+#include "ecs/components/EditorHierarchyControllerAgent.hpp"
 
 
 //////////////////////////////////////////
@@ -274,6 +276,13 @@ namespace Maze
         if (m_world == _world)
             return;
 
+        if (m_agent)
+        {
+            if (m_agent->getEntityRaw())
+                m_agent->getEntityRaw()->removeFromEcsWorld();
+            m_agent.reset();
+        }
+
         if (m_world)
         {
             m_world->eventEntityAdded.unsubscribe(this);
@@ -327,6 +336,10 @@ namespace Maze
                 for (SceneManager::SceneData const& sceneData : SceneManager::GetInstancePtr()->getScenes())
                     if (sceneData.scene && sceneData.scene->getState() != EcsSceneState::Destroy)
                         addEcsScene(sceneData.scene);
+
+            EntityPtr agentEntity = m_world->createEntity();
+            agentEntity->createComponent<StaticName>("EditorHierarchyController");
+            m_agent = agentEntity->createComponent<EditorHierarchyControllerAgent>(this);
         }
     }
 
@@ -934,6 +947,53 @@ namespace Maze
         m_hierarchyMode = _mode;
 
         updateMode();
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::processEntityParentChanged(
+        EntityId _entityId,
+        EntityId _prevParentEntityId,
+        EntityId _newParentEntityId)
+    {
+        auto entityIt = m_entityLines.find(_entityId);
+        if (entityIt == m_entityLines.end())
+            return;
+
+        EntityPtr const& entity = m_world->getEntity(_entityId);
+
+        if (_newParentEntityId == c_invalidEntityId && entity->getEcsScene())
+        {
+            auto sceneIt = m_sceneLines.find(entity->getEcsScene()->getId());
+            if (sceneIt != m_sceneLines.end())
+            {
+                sceneIt->second->addChild(entityIt->second);
+                sceneIt->second->setExpanded(true);
+            }
+            else
+            {
+                MAZE_ERROR("Scene is not found!");
+            }
+        }
+        else
+        {
+            auto newParentEntityIt = m_entityLines.find(_newParentEntityId);
+            if (newParentEntityIt != m_entityLines.end())
+            {
+                newParentEntityIt->second->addChild(entityIt->second);
+                newParentEntityIt->second->setExpanded(true);
+            }
+            else
+            {
+                MAZE_ERROR("Parent is not found!");
+                entityIt->second->getTransform()->setParent(m_hierarchyMainLayoutEntity);
+            }
+        }
+
+        auto prevParentEntityIt = m_entityLines.find(_prevParentEntityId);
+        if (prevParentEntityIt != m_entityLines.end())
+        {
+            prevParentEntityIt->second->updateDropDownRenderer();
+        }
     }
 
 

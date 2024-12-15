@@ -256,6 +256,8 @@ namespace Maze
         if (m_parent == _parent)
             return;
 
+        EntityId prevParentEntityId = m_parent ? m_parent->getEntityId() : c_invalidEntityId;
+
         if (m_parent)
             m_parent->m_children.erase(
                 std::find(
@@ -275,6 +277,15 @@ namespace Maze
             Flags::WorldTransformDirty | 
             Flags::WorldTransformChangedCurrentFrame |
             Flags::HierarchyChangedCurrentFrame);
+
+        if (getEntityRaw() && getEntityRaw()->getEcsWorld())
+        {
+            getEntityRaw()->getEcsWorld()->broadcastEvent<EntityParentChangedEvent>(
+                getEntityId(),
+                prevParentEntityId,
+                m_parent ? m_parent->getEntityId() : c_invalidEntityId);
+            
+        }
 
         if (m_parent)
         {

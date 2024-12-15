@@ -58,6 +58,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(ContextMenu2D);
     MAZE_USING_SHARED_PTR(HierarchyController);
+    MAZE_USING_SHARED_PTR(DragAndDropZone);
 
 
     //////////////////////////////////////////
@@ -194,6 +195,10 @@ namespace Maze
         //////////////////////////////////////////
         void processReleased();
 
+
+        //////////////////////////////////////////
+        void updateDropDownRenderer();
+
     public:
 
         /////////////////////////////////////////
@@ -246,8 +251,7 @@ namespace Maze
         void notifyLineFocusChanged(Button2D* _button, bool _value);
 
 
-        //////////////////////////////////////////
-        void updateDropDownRenderer();
+        
 
     protected:
         EcsWorld* m_world = nullptr;
@@ -265,6 +269,9 @@ namespace Maze
 
         ClickButton2DPtr m_backgroundButton;
         ContextMenu2DPtr m_contextMenu;
+
+        SpriteRenderer2DPtr m_dragAndDropFrame;
+        DragAndDropZonePtr m_dragAndDropZone;
 
         S32 m_indent = 0;
         F32 m_indentWidth = 12.0f;

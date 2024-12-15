@@ -87,6 +87,12 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API String GetNameWithoutExtension(String const& _name);
 
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API bool ChangeEntityParent(
+            EcsWorld* _world,
+            EntityId _entityId,
+            EntityId _newParentEntityId);
+
 
     } // namespace EditorToolsHelper
     //////////////////////////////////////////

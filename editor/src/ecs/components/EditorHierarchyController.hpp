@@ -53,6 +53,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(HierarchyLinePool);
     MAZE_USING_SHARED_PTR(HierarchyLine);
     MAZE_USING_SHARED_PTR(EcsAssetScene);
+    MAZE_USING_SHARED_PTR(EditorHierarchyControllerAgent);
 
 
     //////////////////////////////////////////
@@ -114,6 +115,13 @@ namespace Maze
         void processEcsSceneStateChanged(
             EcsSceneId _sceneId,
             EcsSceneState _state);
+
+
+        //////////////////////////////////////////
+        void processEntityParentChanged(
+            EntityId _entityId,
+            EntityId _prevParentEntityId,
+            EntityId _newParentEntityId);
 
     protected:
 
@@ -243,6 +251,7 @@ namespace Maze
 
         Set<ClassUID> m_ignoreScenes;
 
+        EditorHierarchyControllerAgentPtr m_agent;
 
 
         UnorderedMap<EcsSceneId, HierarchyLinePtr> m_sceneLines;

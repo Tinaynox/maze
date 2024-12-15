@@ -273,6 +273,55 @@ namespace Maze
             return _name.substr(0, position);
         }
 
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API bool ChangeEntityParent(
+            EcsWorld* _world,
+            EntityId _entityId,
+            EntityId _newParentEntityId)
+        {
+            EntityPtr const& entity = _world->getEntity(_entityId);
+            if (!entity)
+                return false;
+
+            EntityPtr const& newParentEntity = _world->getEntity(_newParentEntityId);
+
+            Transform3DPtr const& transform3D = entity->getComponent<Transform3D>();
+            if (transform3D)
+            {
+                if (!newParentEntity)
+                {
+                    transform3D->setParent(Transform3DPtr());
+                    return true;
+                }
+
+                Transform3DPtr const& parentTransform3D = newParentEntity->getComponent<Transform3D>();
+                if (!parentTransform3D)
+                    return false;
+
+                transform3D->setParent(parentTransform3D);
+                return true;
+            }
+
+            Transform2DPtr const& transform2D = entity->getComponent<Transform2D>();
+            if (transform3D)
+            {
+                if (!newParentEntity)
+                {
+                    transform2D->setParent(Transform3DPtr());
+                    return true;
+                }
+
+                Transform2DPtr const& parentTransform2D = newParentEntity->getComponent<Transform2D>();
+                if (!parentTransform2D)
+                    return false;
+
+                transform2D->setParent(parentTransform2D);
+                return true;
+            }
+
+            return false;
+        }
+
     } // namespace EditorToolsHelper
     //////////////////////////////////////////
     

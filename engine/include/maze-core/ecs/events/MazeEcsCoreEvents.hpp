@@ -329,6 +329,35 @@ namespace Maze
         MAZE_DECLARE_METACLASS_WITH_PARENT(EcsWorldWillBeDestroyedEvent, Event);
     };
 
+
+    //////////////////////////////////////////
+    // Class EntityParentChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API EntityParentChangedEvent
+        : public GenericEvent<EntityParentChangedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EntityParentChangedEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        EntityParentChangedEvent(
+            EntityId _entityId = c_invalidEntityId,
+            EntityId _prevParentEntityId = c_invalidEntityId,
+            EntityId _newParentEntityId = c_invalidEntityId)
+            : entityId(_entityId)
+            , prevParentEntityId(_prevParentEntityId)
+            , newParentEntityId(_newParentEntityId)
+        {}
+
+        EntityId entityId = c_invalidEntityId;
+        EntityId prevParentEntityId = c_invalidEntityId;
+        EntityId newParentEntityId = c_invalidEntityId;
+    };
+
 } // namespace Maze
 //////////////////////////////////////////
 

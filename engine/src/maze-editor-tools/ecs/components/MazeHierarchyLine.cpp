@@ -66,6 +66,7 @@
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/components/MazeUIDragElement2D.hpp"
 #include "maze-ui/ecs/components/MazeDragAndDropController.hpp"
+#include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
 #include "maze-ui/events/MazeUIEvents.hpp"
 #include "maze-ui/scenes/SceneDragAndDrop.hpp"
 
@@ -259,6 +260,101 @@ namespace Maze
         {
             m_contextMenu = m_backgroundButton->getEntityRaw()->ensureComponent<ContextMenu2D>();
         }
+
+
+        m_dragAndDropFrame = SpriteHelper::CreateSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
+            m_backgroundButton->getTransform()->getSize(),
+            Vec2F::c_zero,
+            nullptr,
+            m_backgroundButton->getTransform(),
+            getEntityRaw()->getEcsScene());
+        m_dragAndDropFrame->setColor(255, 200, 40);
+        m_dragAndDropFrame->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        m_dragAndDropFrame->getMeshRenderer()->setEnabled(false);
+
+        m_dragAndDropZone = m_backgroundButton->getEntityRaw()->ensureComponent<DragAndDropZone>();
+        m_dragAndDropZone->getUIElement()->setCaptureCursorHits(true);
+        m_dragAndDropZone->eventDragAndDropValidate.subscribe(
+            [this](DataBlock const& _data, EntityId _viewEid, bool& _outDropAllowed)
+        {
+            if (m_type == HierarchyLineType::Entity)
+            {
+                EntityId lineEntityId = (EntityId)((S32)reinterpret_cast<Size>(getUserData()));
+
+                if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("entity"))
+                {
+                    EntityId eid(_data.getS32(MAZE_HCS("eid")));
+                    if (eid == c_invalidEntityId || eid == lineEntityId)
+                        return;
+
+                    EcsWorldId worldId(_data.getS8(MAZE_HCS("world")));
+                    EcsWorld* world = EcsWorld::GetEcsWorld(worldId);
+                    if (!world)
+                        return;
+
+                    EntityPtr const& entity = world->getEntity(eid);
+                    if (!entity)
+                        return;
+
+                    _outDropAllowed = true;
+                }
+            }
+            else
+            if (m_type == HierarchyLineType::Scene)
+            {
+                if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("entity"))
+                {
+                    _outDropAllowed = true;
+                }
+            }
+        });
+        m_dragAndDropZone->eventDragAndDrop.subscribe(
+            [this](DataBlock const& _data, EntityId _viewEid)
+            {
+                if (m_type == HierarchyLineType::Entity)
+                {
+                    EntityId lineEntityId = (EntityId)((S32)reinterpret_cast<Size>(getUserData()));
+
+                    if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("entity"))
+                    {
+                        EntityId eid(_data.getS32(MAZE_HCS("eid")));
+                        if (eid == c_invalidEntityId || eid == lineEntityId)
+                            return;
+
+                        EcsWorldId worldId(_data.getS8(MAZE_HCS("world")));
+                        EcsWorld* world = EcsWorld::GetEcsWorld(worldId);
+                        if (!world)
+                            return;
+
+                        EditorToolsHelper::ChangeEntityParent(
+                            world, eid, lineEntityId);
+                    }
+                }
+                else
+                if (m_type == HierarchyLineType::Scene)
+                {
+                    if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("entity"))
+                    {
+                        EntityId eid(_data.getS32(MAZE_HCS("eid")));
+                        if (eid == c_invalidEntityId)
+                            return;
+
+                        EcsWorldId worldId(_data.getS8(MAZE_HCS("world")));
+                        EcsWorld* world = EcsWorld::GetEcsWorld(worldId);
+                        if (!world)
+                            return;
+
+                        EditorToolsHelper::ChangeEntityParent(
+                            world, eid, c_invalidEntityId);
+                    }
+                }
+            });
+        m_dragAndDropZone->eventDragAndDropZoneOnDragAndDropCurrentZoneChanged.subscribe(
+            [this](bool _active)
+            {
+                this->m_dragAndDropFrame->getMeshRenderer()->setEnabled(_active);
+            });
 
         {
             m_nodeContainer = SpriteHelper::CreateTransform2D(
