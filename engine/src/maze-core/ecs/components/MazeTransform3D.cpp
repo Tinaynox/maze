@@ -210,7 +210,7 @@ namespace Maze
     {
         if (m_parent)
         {
-            TMat localTransform = m_parent->getWorldTransform().inversed() * _transform;
+            TMat localTransform = _transform * m_parent->getWorldTransform().inversed();
             setLocalTransform(localTransform);
         }
         else

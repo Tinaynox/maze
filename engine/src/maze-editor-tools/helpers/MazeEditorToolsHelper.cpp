@@ -74,6 +74,8 @@
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionTransform3DChangeParent.hpp"
 
 
 //////////////////////////////////////////
@@ -290,7 +292,8 @@ namespace Maze
             {
                 if (!newParentEntity)
                 {
-                    transform3D->setParent(Transform3DPtr());
+                    EditorToolsActionManager::GetInstancePtr()->applyAction(
+                        EditorActionTransform3DChangeParent::Create(entity, newParentEntity));
                     return true;
                 }
 
@@ -312,16 +315,19 @@ namespace Maze
                 if (!parentIsValid)
                     return false;
 
-                transform3D->setParent(parentTransform3D);
+                EditorToolsActionManager::GetInstancePtr()->applyAction(
+                    EditorActionTransform3DChangeParent::Create(entity, newParentEntity));
                 return true;
             }
 
             Transform2DPtr const& transform2D = entity->getComponent<Transform2D>();
-            if (transform3D)
+            if (transform2D)
             {
+                MAZE_TODO; // Actions
+
                 if (!newParentEntity)
                 {
-                    transform2D->setParent(Transform3DPtr());
+                    transform2D->setParent(Transform2DPtr());
                     return true;
                 }
 
