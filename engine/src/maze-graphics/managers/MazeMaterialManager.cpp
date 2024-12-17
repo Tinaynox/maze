@@ -665,7 +665,9 @@ namespace Maze
             StringKeyMap<MaterialLibraryData>::iterator it = m_materialsLibrary.find(prevMaterialName);
             if (it != m_materialsLibrary.end())
             {
-                m_materialsLibrary.insert(_assetFile->getFileName(), it->second);
+                String newMaterialName = _assetFile->getFileName().toUTF8();
+                it->second.material->setName(HashedString(newMaterialName));
+                m_materialsLibrary.insert(newMaterialName, it->second);
                 m_materialsLibrary.erase(it);
             }
         }
