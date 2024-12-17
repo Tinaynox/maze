@@ -234,6 +234,9 @@ namespace Maze
         //////////////////////////////////////////
         void notifyShaderSystemInited();
 
+        //////////////////////////////////////////
+        void notifyAssetFileMoved(AssetFilePtr const& _assetFile, Path const& _prevPath);
+
     protected:
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;

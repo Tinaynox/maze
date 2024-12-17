@@ -33,6 +33,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
@@ -69,6 +70,9 @@ namespace Maze
             if (m_renderSystemRaw->getShaderSystem())
                 m_renderSystemRaw->getShaderSystem()->eventSystemInited.unsubscribe(this);
         }
+
+        if (AssetManager::GetInstancePtr())
+            AssetManager::GetInstancePtr()->eventAssetFileMoved.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -127,6 +131,7 @@ namespace Maze
                             _assetFile->addAssetUnit(AssetUnitMaterial::Create(_assetFile));
                     }
                 });
+            AssetManager::GetInstancePtr()->eventAssetFileMoved.subscribe(this, &MaterialManager::notifyAssetFileMoved);
         }
 
         return true;
@@ -649,6 +654,21 @@ namespace Maze
 
         for (std::function<void(bool)> const& unloadCallback : unloadCallbacks)
             unloadCallback(true);
+    }
+
+    //////////////////////////////////////////
+    void MaterialManager::notifyAssetFileMoved(AssetFilePtr const& _assetFile, Path const& _prevPath)
+    {
+        if (_assetFile->getExtension() == Path("mzmaterial"))
+        {
+            String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
+            StringKeyMap<MaterialLibraryData>::iterator it = m_materialsLibrary.find(prevMaterialName);
+            if (it != m_materialsLibrary.end())
+            {
+                m_materialsLibrary.insert(_assetFile->getFileName(), it->second);
+                m_materialsLibrary.erase(it);
+            }
+        }
     }
     
 } // namespace Maze
