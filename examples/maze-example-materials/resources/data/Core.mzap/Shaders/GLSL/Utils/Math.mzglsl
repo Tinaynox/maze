@@ -8,6 +8,12 @@ float MazeRemap(
 }
 
 //////////////////////////////////////////
+float MazeRandom(float x) 
+{
+    return fract(sin(x * 12.9898 + 78.233) * 43758.5453123);
+}
+
+//////////////////////////////////////////
 float MazeRandom(vec2 st) 
 {
     return fract(

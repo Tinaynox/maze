@@ -1,0 +1,68 @@
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.141176,3.000000,1.141764,1.000000
+}
+
+uniform
+{
+  name:String = "u_fresnelPower"
+  type:String = "UniformF32"
+  value:F32 = 0.9
+}
+
+uniform
+{
+  name:String = "u_hologramLines1"
+  type:String = "UniformF32"
+  value:F32 = 160.0
+}
+
+uniform
+{
+  name:String = "u_hologramLines2"
+  type:String = "UniformF32"
+  value:F32 = 70.0
+}
+
+uniform
+{
+  name:String = "u_hologramDistortionSpeed"
+  type:String = "UniformF32"
+  value:F32 = 1.0
+}
+
+uniform
+{
+  name:String = "u_hologramDistortionYFactor"
+  type:String = "UniformF32"
+  value:F32 = 300.0
+}
+
+uniform
+{
+  name:String = "u_hologramDistortionValue"
+  type:String = "UniformF32"
+  value:F32 = 0.15
+}
+
+uniform
+{
+  name:String = "u_hologramDistortionGradientSpeed"
+  type:String = "UniformF32"
+  value:F32 = 8.0
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 3000
+  shader:String = "Hologram00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "One"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:Bool = false
+  cullMode:String = "Back"
+}

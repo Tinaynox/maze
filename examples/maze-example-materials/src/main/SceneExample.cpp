@@ -266,6 +266,9 @@ namespace Maze
 
         addMeshPreview("TorusKnot.fbx", "Snow.mzmaterial", "Snow", torusKnotScale);
         addMeshPreviewSpace();
+
+        addMeshPreview("TorusKnot.fbx", "Hologram00.mzmaterial", "Hologram", torusKnotScale);
+        addMeshPreviewSpace();
         
 
         return true;
@@ -317,7 +320,7 @@ namespace Maze
         
         meshData.rotor = rotor;
         
-        F32 x = ((S32)m_meshData.size() - 12) * 2.0f + m_meshesOffset;
+        F32 x = ((S32)m_meshData.size() - 16) * 2.0f + m_meshesOffset;
         transform->setLocalPosition(x, 2.0f, 8.0f);
 
 
