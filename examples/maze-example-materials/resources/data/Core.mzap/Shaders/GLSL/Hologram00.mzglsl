@@ -60,8 +60,8 @@ void main()
     vec4 positionWS = modelMatrix * positionOS;
     
     vec3 cameraXAxisWS = normalize(inverse(viewMatrix)[0].xyz);
-    float distortionValue = sin(u_time.x * u_hologramDistortionSpeed + positionOS.y * u_hologramDistortionYFactor) * u_hologramDistortionValue;
-    float randTime = MazeGradientNoise(vec2(u_time.x * u_hologramDistortionGradientSpeed, 0.0));
+    float distortionValue = sin(u_time * u_hologramDistortionSpeed + positionOS.y * u_hologramDistortionYFactor) * u_hologramDistortionValue;
+    float randTime = MazeGradientNoise(vec2(u_time * u_hologramDistortionGradientSpeed, 0.0));
     v_distortionPower = pow((randTime + 1.0) * 0.5, 3.0);
     positionWS.xyz += cameraXAxisWS * distortionValue * v_distortionPower;
     
@@ -186,7 +186,7 @@ void main()
     
     
     // Noise
-    float noise = MazeRandom(screenUV * u_time.x);
+    float noise = MazeRandom(screenUV * u_time);
     
     // Lines 1
     vec2 igrid = floor(screenUV * u_hologramLines1);
@@ -195,7 +195,7 @@ void main()
     
     // Lines 2
     vec2 uv2 = screenUV;
-    uv2.y += u_time.x * 0.06;
+    uv2.y += u_time * 0.06;
     vec2 igrid2 = floor(uv2 * u_hologramLines2);
     float l2 = MazeRandom(igrid2.y);
     l2 = step(0.2, l2);
