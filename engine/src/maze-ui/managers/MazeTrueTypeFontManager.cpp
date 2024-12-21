@@ -37,6 +37,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-ui/fonts/MazeTrueTypeFont.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-ui/assets/MazeAssetUnitTrueTypeFont.hpp"
 
 
@@ -101,6 +102,27 @@ namespace Maze
                             _assetFile->addAssetUnit(AssetUnitTrueTypeFont::Create(_assetFile));
                     }
                 });
+
+            AssetManager::GetInstancePtr()->eventAssetFileMoved.subscribe(
+                [](AssetFilePtr const& _assetFile, Path const& _prevPath)
+            {
+                if (_assetFile->getExtension() == Path("ttf"))
+                {
+                    if (!TrueTypeFontManager::GetInstancePtr())
+                        return;
+
+                    StringKeyMap<TrueTypeFontLibraryData>& trueTypeFontsLibrary = TrueTypeFontManager::GetInstancePtr()->m_trueTypeFontsLibrary;
+                    String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
+                    StringKeyMap<TrueTypeFontLibraryData>::iterator it = trueTypeFontsLibrary.find(prevMaterialName);
+                    if (it != trueTypeFontsLibrary.end())
+                    {
+                        String newAssetName = _assetFile->getFileName().toUTF8();
+                        it->second.trueTypeFont->setName(HashedString(newAssetName));
+                        trueTypeFontsLibrary.insert(newAssetName, it->second);
+                        trueTypeFontsLibrary.erase(it);
+                    }
+                }
+            });
         }
         
         return true;

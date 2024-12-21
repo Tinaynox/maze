@@ -33,6 +33,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/assets/MazeAssetUnitShader.hpp"
 
 
@@ -92,6 +93,27 @@ namespace Maze
                     {
                         if (!_assetFile->getAssetUnit<AssetUnitShader>())
                             _assetFile->addAssetUnit(AssetUnitShader::Create(_assetFile));
+                    }
+                });
+
+            AssetManager::GetInstancePtr()->eventAssetFileMoved.subscribe(
+                [](AssetFilePtr const& _assetFile, Path const& _prevPath)
+                {
+                    if (_assetFile->getExtension() == Path("mzshader"))
+                    {
+                        if (!ShaderSystem::GetCurrentInstancePtr())
+                            return;
+
+                        StringKeyMap<ShaderLibraryData>& shadersLibrary = ShaderSystem::GetCurrentInstancePtr()->m_shadersLibrary;
+                        String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
+                        StringKeyMap<ShaderLibraryData>::iterator it = shadersLibrary.find(prevMaterialName);
+                        if (it != shadersLibrary.end())
+                        {
+                            String newAssetName = _assetFile->getFileName().toUTF8();
+                            it->second.shader->setName(HashedString(newAssetName));
+                            shadersLibrary.insert(newAssetName, it->second);
+                            shadersLibrary.erase(it);
+                        }
                     }
                 });
         }

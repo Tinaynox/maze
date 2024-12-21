@@ -33,6 +33,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -136,17 +137,55 @@ namespace Maze
         {
             AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(
                 [](AssetFilePtr const& _assetFile, HashedString const& _extension)
-            {
-                if (TextureManager::GetCurrentInstancePtr()->hasTextureLoader(_extension))
                 {
-                    if (!_assetFile->getAssetUnit<AssetUnitTexture2D>())
-                        _assetFile->addAssetUnit(AssetUnitTexture2D::Create(_assetFile));
+                    if (TextureManager::GetCurrentInstancePtr()->hasTextureLoader(_extension))
+                    {
+                        if (!_assetFile->getAssetUnit<AssetUnitTexture2D>())
+                            _assetFile->addAssetUnit(AssetUnitTexture2D::Create(_assetFile));
+                    }
+                    else
+                    if (_extension == MAZE_HCS("mzcubemap"))
+                    {
+                        if (!_assetFile->getAssetUnit<AssetUnitTextureCube>())
+                            _assetFile->addAssetUnit(AssetUnitTextureCube::Create(_assetFile));
+                    }
+                });
+
+            AssetManager::GetInstancePtr()->eventAssetFileMoved.subscribe(
+                [](AssetFilePtr const& _assetFile, Path const& _prevPath)
+            {
+                if (TextureManager::GetCurrentInstancePtr()->hasTextureLoader(HashedString(_assetFile->getExtension().toUTF8())))
+                {
+                    if (!TextureManager::GetCurrentInstancePtr())
+                        return;
+
+                    StringKeyMap<Texture2DLibraryData>& textures2DLibrary = TextureManager::GetCurrentInstancePtr()->m_textures2DLibrary;
+                    String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
+                    StringKeyMap<Texture2DLibraryData>::iterator it = textures2DLibrary.find(prevMaterialName);
+                    if (it != textures2DLibrary.end())
+                    {
+                        String newAssetName = _assetFile->getFileName().toUTF8();
+                        it->second.texture->setName(HashedString(newAssetName));
+                        textures2DLibrary.insert(newAssetName, it->second);
+                        textures2DLibrary.erase(it);
+                    }
                 }
                 else
-                if (_extension == MAZE_HCS("mzcubemap"))
+                if (_assetFile->getExtension() == Path("mzcubemap"))
                 {
-                    if (!_assetFile->getAssetUnit<AssetUnitTextureCube>())
-                        _assetFile->addAssetUnit(AssetUnitTextureCube::Create(_assetFile));
+                    if (!TextureManager::GetCurrentInstancePtr())
+                        return;
+
+                    StringKeyMap<TextureCubeLibraryData>& texturesCubeLibrary = TextureManager::GetCurrentInstancePtr()->m_texturesCubeLibrary;
+                    String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
+                    StringKeyMap<TextureCubeLibraryData>::iterator it = texturesCubeLibrary.find(prevMaterialName);
+                    if (it != texturesCubeLibrary.end())
+                    {
+                        String newAssetName = _assetFile->getFileName().toUTF8();
+                        it->second.texture->setName(HashedString(newAssetName));
+                        texturesCubeLibrary.insert(newAssetName, it->second);
+                        texturesCubeLibrary.erase(it);
+                    }
                 }
             });
         }

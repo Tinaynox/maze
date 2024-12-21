@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-sound/MazeSound.hpp"
 #include "maze-sound/loaders/MazeLoaderWAV.hpp"
 #include "maze-sound/assets/MazeAssetUnitSound.hpp"
@@ -109,6 +110,27 @@ namespace Maze
                 {
                     if (!_assetFile->getAssetUnit<AssetUnitSound>())
                         _assetFile->addAssetUnit(AssetUnitSound::Create(_assetFile));
+                }
+            });
+
+            AssetManager::GetInstancePtr()->eventAssetFileMoved.subscribe(
+                [](AssetFilePtr const& _assetFile, Path const& _prevPath)
+            {
+                if (SoundManager::GetInstancePtr()->hasSoundLoader(HashedString(_assetFile->getExtension().toUTF8())))
+                {
+                    if (!SoundManager::GetInstancePtr())
+                        return;
+
+                    StringKeyMap<SoundLibraryData>& soundsLibrary = SoundManager::GetInstancePtr()->m_soundsLibrary;
+                    String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
+                    StringKeyMap<SoundLibraryData>::iterator it = soundsLibrary.find(prevMaterialName);
+                    if (it != soundsLibrary.end())
+                    {
+                        String newAssetName = _assetFile->getFileName().toUTF8();
+                        it->second.sound->setName(HashedString(newAssetName));
+                        soundsLibrary.insert(newAssetName, it->second);
+                        soundsLibrary.erase(it);
+                    }
                 }
             });
         }

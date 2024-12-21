@@ -70,9 +70,6 @@ namespace Maze
             if (m_renderSystemRaw->getShaderSystem())
                 m_renderSystemRaw->getShaderSystem()->eventSystemInited.unsubscribe(this);
         }
-
-        if (AssetManager::GetInstancePtr())
-            AssetManager::GetInstancePtr()->eventAssetFileMoved.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -131,7 +128,27 @@ namespace Maze
                             _assetFile->addAssetUnit(AssetUnitMaterial::Create(_assetFile));
                     }
                 });
-            AssetManager::GetInstancePtr()->eventAssetFileMoved.subscribe(this, &MaterialManager::notifyAssetFileMoved);
+
+            AssetManager::GetInstancePtr()->eventAssetFileMoved.subscribe(
+                [](AssetFilePtr const& _assetFile, Path const& _prevPath)
+                {
+                    if (_assetFile->getExtension() == Path("mzmaterial"))
+                    {
+                        if (!MaterialManager::GetCurrentInstance())
+                            return;
+
+                        StringKeyMap<MaterialLibraryData>& materialsLibrary = MaterialManager::GetCurrentInstance()->m_materialsLibrary;
+                        String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
+                        StringKeyMap<MaterialLibraryData>::iterator it = materialsLibrary.find(prevMaterialName);
+                        if (it != materialsLibrary.end())
+                        {
+                            String newAssetName = _assetFile->getFileName().toUTF8();
+                            it->second.material->setName(HashedString(newAssetName));
+                            materialsLibrary.insert(newAssetName, it->second);
+                            materialsLibrary.erase(it);
+                        }
+                    }
+                });
         }
 
         return true;
@@ -656,22 +673,6 @@ namespace Maze
             unloadCallback(true);
     }
 
-    //////////////////////////////////////////
-    void MaterialManager::notifyAssetFileMoved(AssetFilePtr const& _assetFile, Path const& _prevPath)
-    {
-        if (_assetFile->getExtension() == Path("mzmaterial"))
-        {
-            String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
-            StringKeyMap<MaterialLibraryData>::iterator it = m_materialsLibrary.find(prevMaterialName);
-            if (it != m_materialsLibrary.end())
-            {
-                String newMaterialName = _assetFile->getFileName().toUTF8();
-                it->second.material->setName(HashedString(newMaterialName));
-                m_materialsLibrary.insert(newMaterialName, it->second);
-                m_materialsLibrary.erase(it);
-            }
-        }
-    }
     
 } // namespace Maze
 //////////////////////////////////////////

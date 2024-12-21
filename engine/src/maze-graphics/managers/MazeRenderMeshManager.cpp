@@ -34,6 +34,7 @@
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -118,6 +119,27 @@ namespace Maze
                     {
                         if (!_assetFile->getAssetUnit<AssetUnitRenderMesh>())
                             _assetFile->addAssetUnit(AssetUnitRenderMesh::Create(_assetFile));
+                    }
+                });
+
+            AssetManager::GetInstancePtr()->eventAssetFileMoved.subscribe(
+                [](AssetFilePtr const& _assetFile, Path const& _prevPath)
+                {
+                    if (MeshManager::GetInstancePtr()->hasMeshLoader(HashedString(_assetFile->getExtension().toUTF8())))
+                    {
+                        if (!RenderMeshManager::GetCurrentInstancePtr())
+                            return;
+
+                        StringKeyMap<RenderMeshLibraryData>& renderMeshesLibrary = RenderMeshManager::GetCurrentInstancePtr()->m_renderMeshesLibrary;
+                        String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
+                        StringKeyMap<RenderMeshLibraryData>::iterator it = renderMeshesLibrary.find(prevMaterialName);
+                        if (it != renderMeshesLibrary.end())
+                        {
+                            String newAssetName = _assetFile->getFileName().toUTF8();
+                            it->second.renderMesh->setName(HashedString(newAssetName));
+                            renderMeshesLibrary.insert(newAssetName, it->second);
+                            renderMeshesLibrary.erase(it);
+                        }
                     }
                 });
         }

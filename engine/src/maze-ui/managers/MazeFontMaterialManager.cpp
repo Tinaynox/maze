@@ -36,6 +36,7 @@
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-ui/fonts/MazeFontMaterial.hpp"
 #include "maze-ui/assets/MazeAssetUnitFontMaterial.hpp"
 
@@ -98,6 +99,27 @@ namespace Maze
                             _assetFile->addAssetUnit(AssetUnitFontMaterial::Create(_assetFile));
                     }
                 });
+
+            AssetManager::GetInstancePtr()->eventAssetFileMoved.subscribe(
+                [](AssetFilePtr const& _assetFile, Path const& _prevPath)
+            {
+                if (_assetFile->getExtension() == Path("mzfontmaterial"))
+                {
+                    if (!FontMaterialManager::GetInstancePtr())
+                        return;
+
+                    StringKeyMap<FontMaterialLibraryData>& fontMaterialsLibrary = FontMaterialManager::GetInstancePtr()->m_fontMaterialsLibrary;
+                    String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
+                    StringKeyMap<FontMaterialLibraryData>::iterator it = fontMaterialsLibrary.find(prevMaterialName);
+                    if (it != fontMaterialsLibrary.end())
+                    {
+                        String newAssetName = _assetFile->getFileName().toUTF8();
+                        it->second.fontMaterial->setName(HashedString(newAssetName));
+                        fontMaterialsLibrary.insert(newAssetName, it->second);
+                        fontMaterialsLibrary.erase(it);
+                    }
+                }
+            });
         }
         
         return true;

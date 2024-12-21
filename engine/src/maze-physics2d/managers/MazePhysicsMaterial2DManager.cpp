@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
 #include "maze-physics2d/physics/MazePhysicsMaterial2D.hpp"
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
@@ -97,6 +98,27 @@ namespace Maze
                     {
                         if (!_assetFile->getAssetUnit<AssetUnitPhysicsMaterial2D>())
                             _assetFile->addAssetUnit(AssetUnitPhysicsMaterial2D::Create(_assetFile));
+                    }
+                });
+
+            AssetManager::GetInstancePtr()->eventAssetFileMoved.subscribe(
+                [](AssetFilePtr const& _assetFile, Path const& _prevPath)
+                {
+                    if (_assetFile->getExtension() == Path("mzphysicsMaterial2D"))
+                    {
+                        if (!PhysicsMaterial2DManager::GetInstancePtr())
+                            return;
+
+                        StringKeyMap<PhysicsMaterial2DLibraryData>& materialsLibrary = PhysicsMaterial2DManager::GetInstancePtr()->m_materialsLibrary;
+                        String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
+                        StringKeyMap<PhysicsMaterial2DLibraryData>::iterator it = materialsLibrary.find(prevMaterialName);
+                        if (it != materialsLibrary.end())
+                        {
+                            String newAssetName = _assetFile->getFileName().toUTF8();
+                            it->second.physicsMaterial2D->setName(HashedString(newAssetName));
+                            materialsLibrary.insert(newAssetName, it->second);
+                            materialsLibrary.erase(it);
+                        }
                     }
                 });
         }
