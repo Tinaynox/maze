@@ -27,6 +27,7 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/managers/MazeEntityPrefabManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/assets/MazeAssetUnitEntityPrefab.hpp"
@@ -67,6 +68,16 @@ namespace Maze
     //////////////////////////////////////////
     bool EntityPrefabManager::init(DataBlock const& _config)
     {
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitManager::GetInstancePtr()->registerAssetUnitProcessor(
+                AssetUnitEntityPrefab::GetDataBlockId(),
+                [](AssetFilePtr const& _file, DataBlock const& _data)
+            {
+                return AssetUnitEntityPrefab::Create(_file, _data);
+            });
+        }
+
         if (AssetManager::GetInstancePtr())
         {
             AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(
@@ -87,9 +98,9 @@ namespace Maze
                     if (!EntityPrefabManager::GetInstancePtr())
                         return;
 
-                    StringKeyMap<EntityPrefabLibraryData>& entityPrefabsLibrary = EntityPrefabManager::GetInstancePtr()->m_entityPrefabsLibrary;
+                    StringKeyMap<SharedPtr<EntityPrefabLibraryData>>& entityPrefabsLibrary = EntityPrefabManager::GetInstancePtr()->m_entityPrefabsLibrary;
                     String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
-                    StringKeyMap<EntityPrefabLibraryData>::iterator it = entityPrefabsLibrary.find(prevMaterialName);
+                    StringKeyMap<SharedPtr<EntityPrefabLibraryData>>::iterator it = entityPrefabsLibrary.find(prevMaterialName);
                     if (it != entityPrefabsLibrary.end())
                     {
                         String newAssetName = _assetFile->getFileName().toUTF8();
@@ -106,9 +117,9 @@ namespace Maze
     //////////////////////////////////////////
     EntityPrefabLibraryData const* EntityPrefabManager::getEntityPrefabLibraryData(HashedCString _name)
     {
-        StringKeyMap<EntityPrefabLibraryData>::const_iterator it = m_entityPrefabsLibrary.find(_name);
+        StringKeyMap<SharedPtr<EntityPrefabLibraryData>>::const_iterator it = m_entityPrefabsLibrary.find(_name);
         if (it != m_entityPrefabsLibrary.end())
-            return &it->second;
+            return it->second.get();
         return nullptr;
     }
 
@@ -149,17 +160,29 @@ namespace Maze
         EntityPrefabLibraryDataCallbacks const& _callbacks,
         DataBlock const& _info)
     {
-        auto it2 = m_entityPrefabsLibrary.insert(
-            _name,
-            { _entity, _callbacks, _info });
+        SharedPtr<EntityPrefabLibraryData> data = MakeShared<EntityPrefabLibraryData>(_entity, _callbacks, _info);
 
-        return it2;
+        auto it = m_entityPrefabsLibrary.insert(_name, data);
+
+        AssetUnitId auid = _info.getS32(MAZE_HCS("auid"), c_invalidAssetUnitId);
+        if (auid != c_invalidAssetUnitId)
+            m_entityPrefabsByAssetUnitId.emplace(auid, data);
+
+        return it->get();
     }
 
     //////////////////////////////////////////
     void EntityPrefabManager::removeEntityPrefabFromLibrary(HashedCString _name)
     {
-        m_entityPrefabsLibrary.erase(_name);
+        auto it = m_entityPrefabsLibrary.find(_name);
+        if (it != m_entityPrefabsLibrary.end())
+        {
+            AssetUnitId auid = it->second->data.getS32(MAZE_HCS("auid"), c_invalidAssetUnitId);
+            if (auid != c_invalidAssetUnitId)
+                m_entityPrefabsByAssetUnitId.erase(auid);
+
+            m_entityPrefabsLibrary.erase(it);
+        }
     }
 
     //////////////////////////////////////////

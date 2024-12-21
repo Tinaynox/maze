@@ -34,6 +34,7 @@
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-core/assets/MazeAssetUnitId.hpp"
 
 
 //////////////////////////////////////////
@@ -155,7 +156,8 @@ namespace Maze
     protected:
         static EntityPrefabManager* s_instance;
 
-        StringKeyMap<EntityPrefabLibraryData> m_entityPrefabsLibrary;
+        StringKeyMap<SharedPtr<EntityPrefabLibraryData>> m_entityPrefabsLibrary;
+        UnorderedMap<AssetUnitId, SharedPtr<EntityPrefabLibraryData>> m_entityPrefabsByAssetUnitId;
     };
 
 
