@@ -27,6 +27,7 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
+#include "maze-core/managers/MazeEntityPrefabManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
@@ -116,6 +117,10 @@ namespace Maze
 
         EntitySerializationManager::Initialize(m_entitySerializationManager);
         if (!m_entitySerializationManager)
+            return false;
+
+        EntityPrefabManager::Initialize(m_entityPrefabManager);
+        if (!m_entityPrefabManager)
             return false;
 
         return true;

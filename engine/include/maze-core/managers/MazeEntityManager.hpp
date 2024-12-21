@@ -47,6 +47,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(ComponentFactory);
     MAZE_USING_SHARED_PTR(EntitySerializationManager);
+    MAZE_USING_SHARED_PTR(EntityPrefabManager);
 
 
     //////////////////////////////////////////
@@ -127,6 +128,7 @@ namespace Maze
         ComponentFactoryPtr m_componentFactory;
 
         EntitySerializationManagerPtr m_entitySerializationManager;
+        EntityPrefabManagerPtr m_entityPrefabManager;
     };
 
 
