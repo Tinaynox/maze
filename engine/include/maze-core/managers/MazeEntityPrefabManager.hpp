@@ -119,6 +119,16 @@ namespace Maze
         //////////////////////////////////////////
         EntityPtr const& getOrLoadEntityPrefab(HashedCString _name);
 
+        //////////////////////////////////////////
+        EntityPtr const& getOrLoadEntityPrefab(String const& _name) { return getOrLoadEntityPrefab(MAZE_HASHED_CSTRING(_name.c_str())); }
+
+        //////////////////////////////////////////
+        EntityPtr const& getOrLoadEntityPrefab(CString _name) { return getOrLoadEntityPrefab(MAZE_HASHED_CSTRING(_name)); }
+
+
+        //////////////////////////////////////////
+        HashedCString getEntityPrefabName(Entity const* _entity);
+
 
         //////////////////////////////////////////
         EntityPrefabLibraryData* addEntityPrefabToLibrary(

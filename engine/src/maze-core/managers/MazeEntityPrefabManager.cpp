@@ -154,6 +154,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    HashedCString EntityPrefabManager::getEntityPrefabName(Entity const* _entity)
+    {
+        for (StringKeyMap<SharedPtr<EntityPrefabLibraryData>>::iterator it = m_entityPrefabsLibrary.begin(),
+                                                                        end = m_entityPrefabsLibrary.end();
+                                                                        it != end;
+                                                                        ++it)
+        {
+            if (it->second->prefab.get() == _entity)
+                return it.key();
+        }
+
+        return HashedCString();
+    }
+
+    //////////////////////////////////////////
     EntityPrefabLibraryData* EntityPrefabManager::addEntityPrefabToLibrary(
         HashedCString _name,
         EntityPtr const& _entity,
