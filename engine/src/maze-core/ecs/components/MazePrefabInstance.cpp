@@ -38,7 +38,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PrefabInstance, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, prefabName, String(), getPrefabName, setPrefabName));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(AssetUnitId, assetUnitId, c_invalidAssetUnitId, getAssetUnitId, setAssetUnitId));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PrefabInstance);
@@ -54,17 +54,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PrefabInstancePtr PrefabInstance::Create(String const& _name)
+    PrefabInstancePtr PrefabInstance::Create(AssetUnitId _assetUnitId)
     {
         PrefabInstancePtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PrefabInstance, object, init(_name));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PrefabInstance, object, init(_assetUnitId));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PrefabInstance::init(String const& _name)
+    bool PrefabInstance::init(AssetUnitId _assetUnitId)
     {
-        setPrefabName(_name);
+        setAssetUnitId(_assetUnitId);
 
         return true;
     }

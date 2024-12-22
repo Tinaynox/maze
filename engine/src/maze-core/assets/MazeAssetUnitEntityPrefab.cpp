@@ -30,6 +30,7 @@
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeEntityPrefabManager.hpp"
+#include "maze-core/ecs/components/MazePrefabInstance.hpp"
 
 
 //////////////////////////////////////////
@@ -126,6 +127,8 @@ namespace Maze
         m_prefab = EntitySerializationManager::GetInstancePtr()->loadPrefab(
             assetFile,
             EntityManager::GetInstancePtr()->getLibraryWorldRaw());
+
+        m_prefab->createComponent<PrefabInstance>(getAssetUnitId());
         
         if (EntityPrefabManager::GetInstancePtr())
         {

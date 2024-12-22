@@ -124,8 +124,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntityPtr const& EntityPrefabManager::getOrLoadEntityPrefab(
-        HashedCString _name)
+    EntityPrefabLibraryData const* EntityPrefabManager::getEntityPrefabLibraryData(AssetUnitId _auid)
+    {
+        auto it = m_entityPrefabsByAssetUnitId.find(_auid);
+        if (it != m_entityPrefabsByAssetUnitId.end())
+            return it->second.get();
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
+    EntityPtr const& EntityPrefabManager::getOrLoadEntityPrefab(HashedCString _name)
     {
         static EntityPtr const nullPointer;
 
@@ -149,6 +157,30 @@ namespace Maze
         EntityPrefabLibraryData* data = addEntityPrefabToLibrary(_name, prefab);
         if (data)
             return data->prefab;
+
+        return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    EntityPtr const& EntityPrefabManager::getOrLoadEntityPrefab(AssetUnitId _auid)
+    {
+        static EntityPtr const nullPointer;
+
+        EntityPrefabLibraryData const* libraryData = getEntityPrefabLibraryData(_auid);
+        if (libraryData)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(true);
+
+            return libraryData->prefab;
+        }
+
+        AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(_auid);
+        if (!assetUnit)
+            return nullPointer;
+
+        if (assetUnit->getClassUID() == ClassInfo<AssetUnitEntityPrefab>::UID())
+            return assetUnit->castRaw<AssetUnitEntityPrefab>()->loadPrefab();
 
         return nullPointer;
     }
@@ -202,6 +234,19 @@ namespace Maze
 
     //////////////////////////////////////////
     EntityPtr EntityPrefabManager::instantiatePrefab(
+        EntityPtr const& _entity,
+        EcsWorld* _world,
+        EcsScene* _scene)
+    {
+        EntityCopyData copyData;
+        copyData.setWorld(_world);
+        copyData.setScene(_scene);
+
+        return _entity->createCopy(copyData);
+    }
+
+    //////////////////////////////////////////
+    EntityPtr EntityPrefabManager::instantiatePrefab(
         HashedCString _name,
         EcsWorld* _world,
         EcsScene* _scene)
@@ -210,11 +255,7 @@ namespace Maze
         if (!prefab)
             return nullptr;
 
-        EntityCopyData copyData;
-        copyData.setWorld(_world);
-        copyData.setScene(_scene);
-
-        return prefab->createCopy(copyData);
+        return instantiatePrefab(prefab, _world, _scene);
     }
 
 

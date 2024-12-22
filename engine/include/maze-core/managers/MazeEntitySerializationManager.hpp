@@ -36,6 +36,7 @@
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
+#include "maze-core/assets/MazeAssetUnitId.hpp"
 #include <tinyxml2/tinyxml2.h>
 
 
@@ -154,7 +155,7 @@ namespace Maze
             Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
             Vector<PrefabInstance*> const& _prefabs,
             Map<void*, S32>& _pointerIndices,
-            Map<String, EntityPtr>& _identityPrefabs,
+            Map<AssetUnitId, EntityPtr>& _identityPrefabs,
             DataBlock& _dataBlock) const;
 
         //////////////////////////////////////////

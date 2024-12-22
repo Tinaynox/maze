@@ -34,6 +34,7 @@
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
+#include "maze-core/assets/MazeAssetUnitId.hpp"
 
 
 //////////////////////////////////////////
@@ -67,14 +68,14 @@ namespace Maze
         virtual ~PrefabInstance();
 
         //////////////////////////////////////////
-        static PrefabInstancePtr Create(String const& _prefab = String());
+        static PrefabInstancePtr Create(AssetUnitId _assetUnitId = c_invalidAssetUnitId);
 
 
         //////////////////////////////////////////
-        inline String const& getPrefabName() const { return m_prefabName; }
+        inline AssetUnitId getAssetUnitId() const { return m_assetUnitId; }
 
         //////////////////////////////////////////
-        inline void setPrefabName(String const& _prefabName) { m_prefabName = _prefabName; }
+        inline void setAssetUnitId(AssetUnitId _assetUnitId) { m_assetUnitId = _assetUnitId; }
 
     protected:
 
@@ -85,10 +86,10 @@ namespace Maze
         using Component::init;
         
         //////////////////////////////////////////
-        bool init(String const& _name);
+        bool init(AssetUnitId _assetUnitId = c_invalidAssetUnitId);
 
     protected:
-        String m_prefabName;
+        AssetUnitId m_assetUnitId = c_invalidAssetUnitId;
     };
 
 

@@ -33,6 +33,8 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeEntityPrefabManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
@@ -47,6 +49,7 @@
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/assets/MazeAssetUnitId.hpp"
 
 
 
@@ -95,7 +98,7 @@ namespace Maze
         Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
         Vector<PrefabInstance*> const& _prefabs,
         Map<void*, S32>& _outPointerIndices,
-        Map<String, EntityPtr>& _outIdentityPrefabs,
+        Map<AssetUnitId, EntityPtr>& _outIdentityPrefabs,
         EcsWorldPtr& _outIdentityPrefabsWorld)
     {
         S32 indexCounter = 0;
@@ -120,16 +123,19 @@ namespace Maze
         {
             _outPointerIndices[prefabInstance->getEntityRaw()] = ++indexCounter;
 
-            auto it = _outIdentityPrefabs.find(prefabInstance->getPrefabName());
+            auto it = _outIdentityPrefabs.find(prefabInstance->getAssetUnitId());
             if (it == _outIdentityPrefabs.end())
             {
+                HashedString const& prefabName = AssetUnitManager::GetInstancePtr()->getAssetUnitName(
+                    prefabInstance->getAssetUnitId());
+
                 EntityPtr identityPrefab = EntitySerializationManager::GetInstancePtr()->loadPrefab(
-                    prefabInstance->getPrefabName(),
+                    prefabName.getString(),
                     _outIdentityPrefabsWorld.get());
 
                 _outIdentityPrefabs.emplace(
                     std::piecewise_construct,
-                    std::forward_as_tuple(prefabInstance->getPrefabName()),
+                    std::forward_as_tuple(prefabInstance->getAssetUnitId()),
                     std::forward_as_tuple(identityPrefab));
             }
         }
@@ -140,7 +146,7 @@ namespace Maze
         Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
         Vector<PrefabInstance*> const& _prefabs,
         Map<void*, S32>& _pointerIndices,
-        Map<String, EntityPtr>& _identityPrefabs,
+        Map<AssetUnitId, EntityPtr>& _identityPrefabs,
         DataBlock& _dataBlock) const
     {
         auto saveComponentFunc =
@@ -268,11 +274,11 @@ namespace Maze
         for (PrefabInstance* prefabInstance : _prefabs)
         {
             EntityPtr const& prefabEntity = prefabInstance->getEntity();
-            EntityPtr const& identityPrefabEntity = _identityPrefabs[prefabInstance->getPrefabName()];
+            EntityPtr const& identityPrefabEntity = _identityPrefabs[prefabInstance->getAssetUnitId()];
 
             DataBlock* entityBlock = _dataBlock.addNewDataBlock(MAZE_HCS("prefabInstance"));
             entityBlock->setS32(MAZE_HCS("_i"), _pointerIndices[prefabEntity.get()]);
-            entityBlock->setString(MAZE_HCS("source"), prefabInstance->getPrefabName());
+            entityBlock->setU32(MAZE_HCS("source"), (U32)prefabInstance->getAssetUnitId());
 
             if (!prefabEntity->getActiveSelf())
                 entityBlock->setBool(MAZE_HCS("active"), prefabEntity->getActiveSelf());
@@ -432,7 +438,7 @@ namespace Maze
 
 
         Map<void*, S32> pointerIndices;
-        Map<String, EntityPtr> identityPrefabs;
+        Map<AssetUnitId, EntityPtr> identityPrefabs;
         EcsWorldPtr identityPrefabsWorld;
         PrepareEntitiesToSerialize(entityComponents, prefabs, pointerIndices, identityPrefabs, identityPrefabsWorld);
 
@@ -455,7 +461,7 @@ namespace Maze
 
 
         Map<void*, S32> pointerIndices;
-        Map<String, EntityPtr> identityPrefabs;
+        Map<AssetUnitId, EntityPtr> identityPrefabs;
         EcsWorldPtr identityPrefabsWorld;
         PrepareEntitiesToSerialize(entityComponents, prefabs, pointerIndices, identityPrefabs, identityPrefabsWorld);
 
@@ -1022,17 +1028,26 @@ namespace Maze
                     if (entityIndex == 0)
                         entityIndex = --autoEntityIndexCounter;
 
-                    CString prefabName = subBlock->getCString(MAZE_HCS("source"));
-
-                    if (prefabName)
+                    EntityPtr prefab;
+                    AssetUnitId prefabAssetUnitId = subBlock->getU32(MAZE_HCS("source"), (U32)c_invalidAssetUnitId);
+                    if (prefabAssetUnitId == c_invalidAssetUnitId)
                     {
-                        EntityPtr entity = loadPrefab(prefabName, world, scene);
+                        CString prefabName = subBlock->getCString(MAZE_HCS("source"));
+                        if (prefabName)
+                            prefab = EntityPrefabManager::GetInstancePtr()->getOrLoadEntityPrefab(prefabName);
+                    }
+                    else
+                        prefab = EntityPrefabManager::GetInstancePtr()->getOrLoadEntityPrefab(prefabAssetUnitId);
+                    
+
+                    if (prefab)
+                    {                       
+                        EntityPtr entity = EntityPrefabManager::GetInstancePtr()->instantiatePrefab(prefab, world, scene);
                         if (entity == nullptr)
                         {
                             MAZE_ERROR("Entity is nullptr!");
                             continue;
                         }
-                        entity->createComponent<PrefabInstance>(prefabName);
 
                         _outEntities[entityIndex] = entity;
 

@@ -115,6 +115,9 @@ namespace Maze
         //////////////////////////////////////////
         EntityPrefabLibraryData const* getEntityPrefabLibraryData(CString _assetFileName) { return getEntityPrefabLibraryData(MAZE_HASHED_CSTRING(_assetFileName)); }
 
+        //////////////////////////////////////////
+        EntityPrefabLibraryData const* getEntityPrefabLibraryData(AssetUnitId _auid);
+
 
         //////////////////////////////////////////
         EntityPtr const& getOrLoadEntityPrefab(HashedCString _name);
@@ -124,6 +127,9 @@ namespace Maze
 
         //////////////////////////////////////////
         EntityPtr const& getOrLoadEntityPrefab(CString _name) { return getOrLoadEntityPrefab(MAZE_HASHED_CSTRING(_name)); }
+
+        //////////////////////////////////////////
+        EntityPtr const& getOrLoadEntityPrefab(AssetUnitId _auid);
 
 
         //////////////////////////////////////////
@@ -147,6 +153,11 @@ namespace Maze
         inline void removeEntityPrefabFromLibrary(String const& _name) { removeEntityPrefabFromLibrary(HashedCString(_name.c_str())); }
         
 
+        //////////////////////////////////////////
+        EntityPtr instantiatePrefab(
+            EntityPtr const& _entity,
+            EcsWorld* _world,
+            EcsScene* _scene);
 
         //////////////////////////////////////////
         EntityPtr instantiatePrefab(
