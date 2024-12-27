@@ -269,6 +269,11 @@ namespace Maze
 
         addMeshPreview("TorusKnot.fbx", "Hologram00.mzmaterial", "Hologram", torusKnotScale);
         addMeshPreviewSpace();
+
+        /*
+        addMeshPreview("TorusKnot.fbx", "Gem00.mzmaterial", "Gem", torusKnotScale);
+        addMeshPreviewSpace();
+        */
         
 
         return true;
