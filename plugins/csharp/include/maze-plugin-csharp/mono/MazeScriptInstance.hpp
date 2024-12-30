@@ -276,6 +276,15 @@ namespace Maze
             return true;
         }
 
+        //////////////////////////////////////////
+        template <>
+        inline bool getFieldValue(ScriptFieldPtr const& _field, MonoObject*& _value) const
+        {
+            MAZE_DEBUG_ASSERT(_field->getMonoClassField());
+            mono_field_get_value(m_instance, _field->getMonoClassField(), &_value);
+            return true;
+        }
+
 
 
         //////////////////////////////////////////
