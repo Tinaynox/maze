@@ -74,7 +74,7 @@ namespace Maze
         MonoAssembly* appAssembly = nullptr;
         MonoImage* appAssemblyImage = nullptr;
 
-        bool debugEnabled = true;
+        bool debugEnabled = false;
 
         MonoEcsData ecsData;
     };

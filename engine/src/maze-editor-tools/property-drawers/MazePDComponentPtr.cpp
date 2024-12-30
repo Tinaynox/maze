@@ -196,7 +196,8 @@ namespace Maze
         m_dragAndDropZone->eventDragAndDropZoneOnDragAndDropCurrentZoneChanged.subscribe(
             [this](bool _active)
         {
-            this->m_dragAndDropFrame->getMeshRenderer()->setEnabled(_active);
+            if (this->m_dragAndDropFrame->getMeshRenderer())
+                this->m_dragAndDropFrame->getMeshRenderer()->setEnabled(_active);
         });
 
         m_text = EditorToolsUIHelper::CreateText(

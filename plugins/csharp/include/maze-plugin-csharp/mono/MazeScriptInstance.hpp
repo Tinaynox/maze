@@ -183,6 +183,7 @@ namespace Maze
             if (!result)
                 return false;
 
+            MAZE_ERROR_RETURN_VALUE_IF(!MonoHelper::IsValueType(result), false, "%s is not value type", _property->getTypeName().c_str());
             _value = *(TValue*)mono_object_unbox(result);
             return true;
         }
@@ -200,6 +201,19 @@ namespace Maze
             _value = cstr;
             mono_free(cstr);
 
+            return true;
+        }
+
+        //////////////////////////////////////////
+        template <>
+        inline bool getPropertyValue(ScriptPropertyPtr const& _property, MonoObject*& _value) const
+        {
+            MAZE_DEBUG_ASSERT(_property->getMonoProperty());
+            MonoObject* result = mono_property_get_value(_property->getMonoProperty(), m_instance, nullptr, nullptr);
+            if (!result)
+                return false;
+
+            _value = result;
             return true;
         }
 

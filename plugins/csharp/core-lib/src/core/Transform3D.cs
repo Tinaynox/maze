@@ -4,11 +4,22 @@ namespace Maze.Core
 {
     public class Transform3D : NativeComponent
     {
-        public Vec3F position
+        public Vec3F Position
         {
             get { InternalCalls.Transform3DGetPosition(NativeComponentPtr, out Vec3F pos); return pos; }
             set { InternalCalls.Transform3DSetPosition(NativeComponentPtr, value); }
         }
+
+        public float X { get => Position.X; set { Vec3F v = Position; v.X = value; Position = v; } }
+        public float Y { get => Position.Y; set { Vec3F v = Position; v.Y = value; Position = v; } }
+        public float Z { get => Position.Z; set { Vec3F v = Position; v.Z = value; Position = v; } }
+
+        public Vec3F Scale
+        {
+            get { InternalCalls.Transform3DGetScale(NativeComponentPtr, out Vec3F scale); return scale; }
+            set { InternalCalls.Transform3DSetScale(NativeComponentPtr, value); }
+        }
+
 
         public Transform3D(NativePtr _nativeComponentPtr)
             : base(_nativeComponentPtr)

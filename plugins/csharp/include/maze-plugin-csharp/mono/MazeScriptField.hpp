@@ -50,7 +50,8 @@ namespace Maze
     enum class MAZE_PLUGIN_CSHARP_API ScriptFieldFlags : U8
     {
         Public = MAZE_BIT(0),
-        Serializable = MAZE_BIT(1)
+        Serializable = MAZE_BIT(1),
+        Static = MAZE_BIT(2),
     };
 
 
@@ -102,6 +103,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool isSerializable() const { return m_flags & (U8)ScriptFieldFlags::Serializable; }
+
+        //////////////////////////////////////////
+        inline bool isStatic() const { return m_flags & (U8)ScriptFieldFlags::Static; }
 
 
         //////////////////////////////////////////

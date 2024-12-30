@@ -417,6 +417,9 @@ namespace Maze
             MenuListTree2D::ItemValidateCallback const& _validate = nullptr);
 
         //////////////////////////////////////////
+        void removeAddComponentCallback(String const& _menuName);
+
+        //////////////////////////////////////////
         inline Vector<AddComponentCallback> const& getExtraAddComponentCallbacks() const { return m_extraAddComponentCallbacks; }
 
     public:

@@ -52,6 +52,8 @@ namespace Maze
         PublicGetter = MAZE_BIT(0),
         PublicSetter = MAZE_BIT(1),
         Serializable = MAZE_BIT(2),
+        StaticGetter = MAZE_BIT(3),
+        StaticSetter = MAZE_BIT(4),
     };
 
 
@@ -109,6 +111,12 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool isSerializable() const { return m_flags & (U8)ScriptPropertyFlags::Serializable; }
+
+        //////////////////////////////////////////
+        inline bool isStaticGetter() const { return m_flags & (U8)ScriptPropertyFlags::StaticGetter; }
+
+        //////////////////////////////////////////
+        inline bool isStaticSetter() const { return m_flags & (U8)ScriptPropertyFlags::StaticSetter; }
 
 
         //////////////////////////////////////////

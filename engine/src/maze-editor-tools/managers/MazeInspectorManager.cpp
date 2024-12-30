@@ -324,6 +324,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void InspectorManager::removeAddComponentCallback(String const& _menuName)
+    {
+        auto it = std::find_if(
+            m_extraAddComponentCallbacks.begin(),
+            m_extraAddComponentCallbacks.end(),
+            [&](AddComponentCallback const& _callback)
+            {
+                return (_callback.menuName == _menuName);
+            });
+
+        if (it != m_extraAddComponentCallbacks.end())
+            m_extraAddComponentCallbacks.erase(it);
+    }
+
+    //////////////////////////////////////////
     ComponentEditorPtr InspectorManager::createComponentEditor(
         ComponentId _componentId,
         MetaClass* _metaClass)

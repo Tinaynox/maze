@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorProjectModeHelper_hpp_))
-#define _EditorProjectModeHelper_hpp_
+#if (!defined(_EditorProjectHelper_hpp_))
+#define _EditorProjectHelper_hpp_
 
 
 //////////////////////////////////////////
@@ -85,5 +85,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorProjectModeHelper_hpp_
+#endif // _EditorProjectHelper_hpp_
 //////////////////////////////////////////

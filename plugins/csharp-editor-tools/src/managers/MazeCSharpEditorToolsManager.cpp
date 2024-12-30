@@ -621,6 +621,13 @@ namespace Maze
         {
             MonoObject* componentInstance = nullptr;
             _instance.getPropertyValue(_property, componentInstance);
+
+            if (!componentInstance)
+            {
+                _drawer->setValue(nullptr);
+                return;
+            }
+
             MonoProperty* componentPtrProperty = MonoEngine::GetNativeComponentPtrProperty()->getMonoProperty();
 
             MonoObject* result = mono_property_get_value(componentPtrProperty, componentInstance, nullptr, nullptr);
@@ -650,6 +657,13 @@ namespace Maze
         {
             MonoObject* componentInstance = nullptr;
             _instance.getFieldValue(_field, componentInstance);
+
+            if (!componentInstance)
+            {
+                _drawer->setValue(nullptr);
+                return;
+            }
+
             MonoProperty* componentPtrProperty = MonoEngine::GetNativeComponentPtrProperty()->getMonoProperty();
 
             MonoObject* result = mono_property_get_value(componentPtrProperty, componentInstance, nullptr, nullptr);

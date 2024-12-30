@@ -194,6 +194,17 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API bool IsMethodStatic(MonoMethod* _method)
+        {
+            if (_method == nullptr)
+                return false;
+
+            uint32_t flags = mono_method_get_flags(_method, nullptr);
+
+            return flags & MONO_METHOD_ATTR_STATIC;
+        }
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void IterateSerializableProperties(
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptPropertyPtr const&)> const& _cb)
@@ -207,6 +218,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void IterateAllProperties(
+            ScriptClassPtr const& _scriptClass,
+            std::function<void(ScriptPropertyPtr const&)> const& _cb)
+        {
+            for (auto const& data : _scriptClass->getProperties())
+            {
+                ScriptPropertyPtr const& prop = data.second;
+                _cb(prop);
+            }
+        }
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void IterateSerializableFields(
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptFieldPtr const&)> const& _cb)
@@ -216,6 +239,18 @@ namespace Maze
                 ScriptFieldPtr const& field = data.second;
                 if (field->isPublic() || field->isSerializable())
                     _cb(field);
+            }
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void IterateAllFields(
+            ScriptClassPtr const& _scriptClass,
+            std::function<void(ScriptFieldPtr const&)> const& _cb)
+        {
+            for (auto const& data : _scriptClass->getFields())
+            {
+                ScriptFieldPtr const& field = data.second;
+                _cb(field);
             }
         }
 
@@ -273,6 +308,16 @@ namespace Maze
                 StringHelper::FormatString(buffer, sizeof(buffer), "%s:Component", _name);
                 _dataBlock.removeDataBlock(HashedCString(buffer));
             }
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool IsValueType(MonoObject* _obj)
+        {
+            if (!_obj)
+                return false;
+
+            MonoClass* klass = mono_object_get_class(_obj);
+            return mono_class_is_valuetype(klass);
         }
 
 

@@ -308,7 +308,6 @@ namespace Maze
                 }
             }
 
-            _menuListTree->rebuildItems();
         });
     }
 

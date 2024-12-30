@@ -66,10 +66,16 @@ namespace Maze.Core
         public extern static void Transform3DRotate(NativePtr _nativeComponentPtr, Vec3F _axis, float _angle);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetPosition(NativePtr _nativeComponentPtr, out Vec3F _delta);
+        public extern static void Transform3DGetPosition(NativePtr _nativeComponentPtr, out Vec3F _outPosition);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetPosition(NativePtr _nativeComponentPtr, Vec3F _delta);
+        public extern static void Transform3DSetPosition(NativePtr _nativeComponentPtr, Vec3F _pos);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform3DGetScale(NativePtr _nativeComponentPtr, out Vec3F _outScale);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform3DSetScale(NativePtr _nativeComponentPtr, Vec3F _scale);
         #endregion
     }
 }

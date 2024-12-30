@@ -176,7 +176,7 @@ namespace Maze
         void assignPublicProperties();
 
         //////////////////////////////////////////
-        void assignPublicFields();
+        void assignFields();
 
         //////////////////////////////////////////
         HashedString buildFullName() const;

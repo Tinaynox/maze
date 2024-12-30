@@ -57,6 +57,9 @@ namespace Maze
         if (flags & MONO_FIELD_ATTR_PUBLIC)
             m_flags |= (U8)ScriptFieldFlags::Public;
 
+        if (flags & MONO_FIELD_ATTR_STATIC)
+            m_flags |= (U8)ScriptFieldFlags::Static;
+
         m_monoType = mono_field_get_type(m_monoField);
 
         m_name = mono_field_get_name(m_monoField);

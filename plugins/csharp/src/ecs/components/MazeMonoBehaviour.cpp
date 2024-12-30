@@ -44,7 +44,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(MonoBehaviour, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(DataBlock, data, DataBlock(), getData, setData));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(DataBlock, data, DataBlock(), getSerializableData, setSerializableData));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MonoBehaviour);
@@ -152,7 +152,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MonoBehaviour::setData(DataBlock const& _dataBlock)
+    void MonoBehaviour::setSerializableData(DataBlock const& _dataBlock)
     {
         if (m_monoClass && m_monoInstance)
         {
@@ -179,7 +179,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    DataBlock MonoBehaviour::getData() const
+    DataBlock MonoBehaviour::getSerializableData() const
     {
         DataBlock db;
         
@@ -204,6 +204,78 @@ namespace Maze
                         _prop,
                         db);
                 });
+        }
+
+
+        return std::move(db);
+    }
+
+
+    //////////////////////////////////////////
+    void MonoBehaviour::setData(DataBlock const& _dataBlock)
+    {
+        if (m_monoClass && m_monoInstance)
+        {
+            MonoHelper::IterateAllFields(m_monoClass,
+                [&](ScriptFieldPtr const& _field)
+            {
+                if (_field->isStatic())
+                    return;
+
+                MonoSerializationManager::GetInstancePtr()->loadFieldFromDataBlock(
+                    getEntityRaw()->getEcsWorld(),
+                    *m_monoInstance,
+                    _field,
+                    _dataBlock);
+            });
+
+            MonoHelper::IterateSerializableProperties(m_monoClass,
+                [&](ScriptPropertyPtr const& _prop)
+            {
+                if (_prop->isStaticGetter())
+                    return;
+
+                MonoSerializationManager::GetInstancePtr()->loadPropertyFromDataBlock(
+                    getEntityRaw()->getEcsWorld(),
+                    *m_monoInstance,
+                    _prop,
+                    _dataBlock);
+            });
+        }
+    }
+
+    //////////////////////////////////////////
+    DataBlock MonoBehaviour::getData() const
+    {
+        DataBlock db;
+
+        if (m_monoClass && m_monoInstance)
+        {
+            MonoHelper::IterateAllFields(m_monoClass,
+                [&](ScriptFieldPtr const& _field)
+            {
+                if (_field->isStatic())
+                    return;
+
+                MonoSerializationManager::GetInstancePtr()->saveFieldToDataBlock(
+                    getEntityRaw()->getEcsWorld(),
+                    *m_monoInstance,
+                    _field,
+                    db);
+            });
+
+            MonoHelper::IterateSerializableProperties(m_monoClass,
+                [&](ScriptPropertyPtr const& _prop)
+            {
+                if (_prop->isStaticGetter())
+                    return;
+
+                MonoSerializationManager::GetInstancePtr()->savePropertyToDataBlock(
+                    getEntityRaw()->getEcsWorld(),
+                    *m_monoInstance,
+                    _prop,
+                    db);
+            });
         }
 
 

@@ -55,11 +55,23 @@ namespace Maze
         m_getterMethod = mono_property_get_get_method(m_monoProperty);
         m_setterMethod = mono_property_get_set_method(m_monoProperty);
 
-        if (m_getterMethod && MonoHelper::IsMethodPublic(m_getterMethod))
-            m_flags |= (U8)ScriptPropertyFlags::PublicGetter;
+        if (m_getterMethod)
+        {
+            if (MonoHelper::IsMethodPublic(m_getterMethod))
+                m_flags |= (U8)ScriptPropertyFlags::PublicGetter;
+            
+            if (MonoHelper::IsMethodStatic(m_getterMethod))
+                m_flags |= (U8)ScriptPropertyFlags::StaticGetter;
+        }
 
-        if (m_setterMethod && MonoHelper::IsMethodPublic(m_setterMethod))
-            m_flags |= (U8)ScriptPropertyFlags::PublicSetter;
+        if (m_setterMethod)
+        {
+            if (MonoHelper::IsMethodPublic(m_setterMethod))
+                m_flags |= (U8)ScriptPropertyFlags::PublicSetter;
+            
+            if (MonoHelper::IsMethodStatic(m_setterMethod))
+                m_flags |= (U8)ScriptPropertyFlags::StaticSetter;
+        }
 
         MonoMethodSignature* signature = mono_method_signature(m_getterMethod);
         m_monoType = mono_signature_get_return_type(signature);

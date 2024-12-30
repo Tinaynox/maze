@@ -187,6 +187,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void Transform3DGetScale(Component* _component, Vec3F& _outScale)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        _outScale = _component->castRaw<Transform3D>()->getLocalScale();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform3DSetScale(Component* _component, Vec3F _scale)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        _component->castRaw<Transform3D>()->setLocalScale(_scale);
+    }
+
+    //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsCore()
     {
         // Log
@@ -218,6 +232,8 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(Transform3DRotate);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetPosition);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetPosition);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DGetScale);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DSetScale);
     }
 
 } // namespace Maze

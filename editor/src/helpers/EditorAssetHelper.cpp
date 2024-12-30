@@ -196,6 +196,45 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        void CreateScript(AssetsController* _controller, Path const& _fullPath)
+        {
+            String dir = FileHelper::GetDirectoryInPath(_fullPath);
+            
+            String newScriptFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/Script.cs");
+
+            std::ofstream outFile(newScriptFullPath.c_str());
+            outFile <<
+"using Maze;\n"
+"using Maze.Core;\n"
+"\n"
+"public class Script : MonoBehaviour\n"
+"{\n"
+"\n"
+"   [EntitySystem]\n"
+"   public void OnCreate()\n"
+"   {\n"
+"\n"
+"   }\n"
+"\n"
+"   [EntitySystem]\n"
+"   public void OnUpdate(float _dt)\n"
+"   {\n"
+"\n"
+"   }\n"
+"}\n";
+            outFile.close();
+
+            AssetManager::GetInstancePtr()->updateAssets();
+
+            AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(newScriptFullPath);
+            if (assetFile && MaterialManager::GetCurrentInstance()->getOrLoadMaterial(assetFile))
+            {
+                SelectionManager::GetInstancePtr()->selectObject(assetFile);
+                _controller->setAssetFileRename(assetFile, true);
+            }
+        }
+
+        //////////////////////////////////////////
         void Rename(AssetsController* _controller, Path const& _fullPath)
         {
             AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);

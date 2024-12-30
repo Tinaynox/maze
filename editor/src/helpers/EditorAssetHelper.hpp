@@ -75,6 +75,9 @@ namespace Maze
         void CreateScene(AssetsController* _controller, Path const& _fullPath);
 
         //////////////////////////////////////////
+        void CreateScript(AssetsController* _controller, Path const& _fullPath);
+
+        //////////////////////////////////////////
         void Rename(AssetsController* _controller, Path const& _fullPath);
 
         //////////////////////////////////////////

@@ -271,7 +271,7 @@ namespace Maze
                     MonoClass* baseClass = data.first;
                     if (mono_class_is_subclass_of(monoClass, baseClass, false))
                     {
-                        it->second.propToDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
+                        data.second.propToDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
                         return true;
                     }
                 }
@@ -304,7 +304,7 @@ namespace Maze
                     MonoClass* baseClass = data.first;
                     if (mono_class_is_subclass_of(monoClass, baseClass, false))
                     {
-                        it->second.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
+                        data.second.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
                         return true;
                     }
                 }

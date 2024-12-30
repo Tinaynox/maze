@@ -266,6 +266,8 @@ namespace Maze
     {
         for (auto callback : m_assetFileContextMenuCallbacks)
             callback(_controller, _fullPath, _menuListTree);
+
+        _menuListTree->rebuildItems();
     }
 
     //////////////////////////////////////////

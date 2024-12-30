@@ -173,7 +173,7 @@ namespace Maze
     {
         assignDefaultMethods();
         assignPublicProperties();
-        assignPublicFields();
+        assignFields();
     }
 
     //////////////////////////////////////////
@@ -196,16 +196,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ScriptClass::assignPublicFields()
+    void ScriptClass::assignFields()
     {
         ScriptClassPtr thisShared = shared_from_this();
         void* propIt = nullptr;
         while (MonoClassField* field = mono_class_get_fields(m_monoClass, &propIt))
         {
             ScriptFieldPtr scriptField = MakeShared<ScriptField>(thisShared, field);
-            if (!scriptField->isPublic() && !scriptField->isSerializable())
-                continue;
-            
             m_fields.emplace(scriptField->getName(), scriptField);
         }
 

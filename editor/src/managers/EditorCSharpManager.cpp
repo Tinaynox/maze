@@ -38,6 +38,7 @@
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
+#include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "events/EditorEvents.hpp"
 #include "helpers/EditorProjectHelper.hpp"
 #include "helpers/EditorAssetHelper.hpp"
@@ -184,6 +185,16 @@ namespace Maze
                 SystemHelper::ExecuteShell(devenv, params);
             });
 
+        AssetEditorToolsManager::GetInstancePtr()->registerAssetFileContextMenuCallback(
+            [](AssetsController* _controller, Path const& _fullPath, MenuListTree2DPtr const& _menuListTree)
+            {
+                _menuListTree->addItem(
+                    "Create/Script",
+                    [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateScript(_controller, _fullPath); },
+                    nullptr,
+                    false);
+            });
+
         return true;
     }
 
@@ -267,6 +278,15 @@ namespace Maze
                         _entity->createComponent<MonoBehaviour>(
                             data.second->getFullName().asHashedCString());
                     });
+            }
+        }
+        else
+        if (_eventUID == ClassInfo<MonoPreShutdownEvent>::UID())
+        {
+            StringKeyMap<ScriptClassPtr> const& monoBehaviourSubClasses = MonoEngine::GetMonoBehaviourSubClasses();
+            for (auto const& data : monoBehaviourSubClasses)
+            {
+                // InspectorManager::GetInstancePtr()->remove
             }
         }
     }

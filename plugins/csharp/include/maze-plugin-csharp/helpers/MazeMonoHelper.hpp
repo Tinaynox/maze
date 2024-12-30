@@ -74,12 +74,25 @@ namespace Maze
         MAZE_PLUGIN_CSHARP_API bool IsMethodPublic(MonoMethod* _method);
 
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API bool IsMethodStatic(MonoMethod* _method);
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void IterateSerializableProperties(
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptPropertyPtr const&)> const& _cb);
 
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void IterateAllProperties(
+            ScriptClassPtr const& _scriptClass,
+            std::function<void(ScriptPropertyPtr const&)> const& _cb);
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void IterateSerializableFields(
+            ScriptClassPtr const& _scriptClass,
+            std::function<void(ScriptFieldPtr const&)> const& _cb);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void IterateAllFields(
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptFieldPtr const&)> const& _cb);
 
@@ -100,6 +113,9 @@ namespace Maze
             DataBlock& _dataBlock,
             CString _name,
             MonoObject* _componentInstance);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool IsValueType(MonoObject* _obj);
 
     } // namespace MonoHelper
     //////////////////////////////////////////
