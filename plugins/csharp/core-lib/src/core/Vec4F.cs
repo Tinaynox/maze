@@ -20,5 +20,45 @@ namespace Maze.Core
             Z = _z;
             W = _w;
         }
+
+        public static Vec4F operator +(Vec4F _vec0, float _value)
+        {
+            return new Vec4F(_vec0.X + _value, _vec0.Y + _value, _vec0.Z + _value, _vec0.W + _value);
+        }
+
+        public static Vec4F operator +(Vec4F _vec0, Vec4F _vec1)
+        {
+            return new Vec4F(_vec0.X + _vec1.X, _vec0.Y + _vec1.Y, _vec0.Z + _vec1.Z, _vec0.W + _vec1.W);
+        }
+
+        public static Vec4F operator -(Vec4F _vec0, float _value)
+        {
+            return new Vec4F(_vec0.X - _value, _vec0.Y - _value, _vec0.Z - _value, _vec0.W - _value);
+        }
+
+        public static Vec4F operator -(Vec4F _vec0, Vec4F _vec1)
+        {
+            return new Vec4F(_vec0.X - _vec1.X, _vec0.Y - _vec1.Y, _vec0.Z - _vec1.Z, _vec0.W - _vec1.W);
+        }
+
+        public static Vec4F operator *(Vec4F _vec0, float _value)
+        {
+            return new Vec4F(_vec0.X * _value, _vec0.Y * _value, _vec0.Z * _value, _vec0.W * _value);
+        }
+
+        public static Vec4F operator *(Vec4F _vec0, Vec4F _vec1)
+        {
+            return new Vec4F(_vec0.X * _vec1.X, _vec0.Y * _vec1.Y, _vec0.Z * _vec1.Z, _vec0.W * _vec1.W);
+        }
+
+        public static Vec4F operator /(Vec4F _vec0, float _value)
+        {
+            return new Vec4F(_vec0.X / _value, _vec0.Y / _value, _vec0.Z / _value, _vec0.W / _value);
+        }
+
+        public static Vec4F operator /(Vec4F _vec0, Vec4F _vec1)
+        {
+            return new Vec4F(_vec0.X / _vec1.X, _vec0.Y / _vec1.Y, _vec0.Z / _vec1.Z, _vec0.W / _vec1.W);
+        }
     }
 }
