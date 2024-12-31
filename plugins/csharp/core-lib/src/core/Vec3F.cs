@@ -8,6 +8,8 @@ namespace Maze.Core
         public float Y;
         public float Z;
 
+        public Vec2F XY => new Vec2F(X, Y);
+
         public Vec3F(
             float _x = 0.0f,
             float _y = 0.0f,
@@ -16,6 +18,20 @@ namespace Maze.Core
             X = _x;
             Y = _y;
             Z = _z;
+        }
+
+        public Vec3F(
+            Vec2F _vec,
+            float _z = 0.0f)
+        {
+            X = _vec.X;
+            Y = _vec.Y;
+            Z = _z;
+        }
+
+        public static Vec3F operator -(Vec3F _vec0)
+        {
+            return new Vec3F(-_vec0.X, -_vec0.Y, -_vec0.Z);
         }
 
         public static Vec3F operator +(Vec3F _vec0, float _value)

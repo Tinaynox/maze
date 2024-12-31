@@ -9,6 +9,10 @@ namespace Maze.Core
         public float Z;
         public float W;
 
+        public Vec2F XY => new Vec2F(X, Y);
+        public Vec3F XYZ => new Vec3F(X, Y, Z);
+
+
         public Vec4F(
             float _x = 0.0f,
             float _y = 0.0f,
@@ -19,6 +23,33 @@ namespace Maze.Core
             Y = _y;
             Z = _z;
             W = _w;
+        }
+
+        public Vec4F(
+            Vec3F _vec,
+            float _w = 0.0f)
+        {
+            X = _vec.X;
+            Y = _vec.Y;
+            Z = _vec.Z;
+            W = _w;
+        }
+
+        public Vec4F(
+            Vec2F _vec,
+            float _z = 0.0f,
+            float _w = 0.0f)
+        {
+            X = _vec.X;
+            Y = _vec.Y;
+            Z = _z;
+            W = _w;
+        }
+
+
+        public static Vec4F operator -(Vec4F _vec0)
+        {
+            return new Vec4F(-_vec0.X, -_vec0.Y, -_vec0.Z, -_vec0.W);
         }
 
         public static Vec4F operator +(Vec4F _vec0, float _value)
