@@ -125,6 +125,53 @@ namespace Maze
             MAZE_MONO_SERIALIZATION_TYPE("System.Single", F32);
             MAZE_MONO_SERIALIZATION_TYPE("System.Double", F64);
 
+
+            // System.Collections
+            registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("System.Collections.Generic.List"),
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+                {
+                    MAZE_WARNING("NOT IMPLEMENTED");
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+                {
+                    MAZE_WARNING("NOT IMPLEMENTED");
+                },
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+                {
+                    MAZE_WARNING("NOT IMPLEMENTED");
+
+                    MonoObject* listMonoObject = nullptr;
+                    _instance.getFieldValue(_field, listMonoObject);
+                    if (listMonoObject)
+                    {
+                        MonoClass* listMonoClass = mono_object_get_class(listMonoObject);
+                        MonoMethod* getEnumeratorMethod = mono_class_get_method_from_name(listMonoClass, "GetEnumerator", 0);
+                        MonoObject* enumerator = mono_runtime_invoke(getEnumeratorMethod, listMonoObject, nullptr, nullptr);
+                        if (enumerator)
+                        {
+                            MonoClass* enumeratorClass = mono_object_get_class(enumerator);
+                            MonoMethod* moveNextMethod = mono_class_get_method_from_name(enumeratorClass, "MoveNext", 0);
+                            MonoMethod* getCurrentMethod = mono_class_get_method_from_name(enumeratorClass, "get_Current", 0);
+
+                            // #TODO:
+                            /*
+                            while (mono_runtime_invoke(moveNextMethod, enumerator, nullptr, nullptr))
+                            {
+                                MonoObject* current = mono_runtime_invoke(getCurrentMethod, enumerator, nullptr, nullptr);
+                                if (current)
+                                {
+                                    
+                                }
+                            }
+                            */
+                        }
+                    }
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+                {
+                    MAZE_WARNING("NOT IMPLEMENTED");
+                });
+
             // Core
             registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("Maze.Core.Entity"),
                 [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
@@ -343,24 +390,42 @@ namespace Maze
         ScriptFieldPtr const& _field,
         DataBlock& _dataBlock)
     {
-        auto it = m_fieldDataBlockSerializationData.find(_field->getTypeName());
-        if (it != m_fieldDataBlockSerializationData.end())
+        if (_field->isGenericType())
         {
+            Size genericSubTypeIndex = _field->getTypeName().getString().find('<');
+            if (genericSubTypeIndex == String::npos)
+                return false;
+
+            HashedString genericBaseType = HashedString(_field->getTypeName().getString().substr(0, genericSubTypeIndex));
+
+            auto it = m_fieldDataBlockSerializationData.find(genericBaseType);
+            if (it == m_fieldDataBlockSerializationData.end())
+                return false;
+            
             it->second.propToDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
             return true;
         }
         else
         {
-            MonoClass* monoClass = mono_class_from_mono_type(_field->getMonoType());
-            if (monoClass)
+            auto it = m_fieldDataBlockSerializationData.find(_field->getTypeName());
+            if (it != m_fieldDataBlockSerializationData.end())
             {
-                for (auto const& data : m_fieldDataBlockSubClassSerializationData)
+                it->second.propToDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
+                return true;
+            }
+            else
+            {
+                MonoClass* monoClass = mono_class_from_mono_type(_field->getMonoType());
+                if (monoClass)
                 {
-                    MonoClass* baseClass = data.first;
-                    if (mono_class_is_subclass_of(monoClass, baseClass, false))
+                    for (auto const& data : m_fieldDataBlockSubClassSerializationData)
                     {
-                        data.second.propToDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
-                        return true;
+                        MonoClass* baseClass = data.first;
+                        if (mono_class_is_subclass_of(monoClass, baseClass, false))
+                        {
+                            data.second.propToDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
+                            return true;
+                        }
                     }
                 }
             }

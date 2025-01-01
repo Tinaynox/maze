@@ -95,9 +95,16 @@ namespace Maze
         //////////////////////////////////////////
         inline MonoClass* getMonoClass() const { return m_monoClass; }
 
+        //////////////////////////////////////////
+        inline ScriptClassPtr const& getSuperClass() const { return m_superClass; }
+
 
         //////////////////////////////////////////
         ScriptInstancePtr instantiate();
+
+        //////////////////////////////////////////
+        void postInit();
+
 
         //////////////////////////////////////////
         MonoMethod* getMethod(CString _name, S32 _paramCount = 0);
@@ -196,6 +203,8 @@ namespace Maze
 
         StringKeyMap<ScriptPropertyPtr> m_properties;
         StringKeyMap<ScriptFieldPtr> m_fields;
+
+        ScriptClassPtr m_superClass;
     };
 
 } // namespace Maze

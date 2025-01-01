@@ -40,6 +40,16 @@ namespace Maze
     {
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API HashedString BuildMonoClassFullName(
+            MonoClass* _class)
+        {
+            CString className = mono_class_get_name(_class);
+            CString classNamespace = mono_class_get_namespace(_class);
+
+            return BuildMonoClassFullName(classNamespace, className);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API HashedString BuildMonoClassFullName(
             CString _namespace,
             CString _className)
         {
@@ -209,6 +219,9 @@ namespace Maze
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptPropertyPtr const&)> const& _cb)
         {
+            if (_scriptClass->getSuperClass())
+                IterateSerializableProperties(_scriptClass->getSuperClass(), _cb);
+
             for (auto const& data : _scriptClass->getProperties())
             {
                 ScriptPropertyPtr const& prop = data.second;
@@ -222,6 +235,9 @@ namespace Maze
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptPropertyPtr const&)> const& _cb)
         {
+            if (_scriptClass->getSuperClass())
+                IterateAllProperties(_scriptClass->getSuperClass(), _cb);
+
             for (auto const& data : _scriptClass->getProperties())
             {
                 ScriptPropertyPtr const& prop = data.second;
@@ -234,6 +250,9 @@ namespace Maze
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptFieldPtr const&)> const& _cb)
         {
+            if (_scriptClass->getSuperClass())
+                IterateSerializableFields(_scriptClass->getSuperClass(), _cb);
+
             for (auto const& data : _scriptClass->getFields())
             {
                 ScriptFieldPtr const& field = data.second;
@@ -247,6 +266,9 @@ namespace Maze
             ScriptClassPtr const& _scriptClass,
             std::function<void(ScriptFieldPtr const&)> const& _cb)
         {
+            if (_scriptClass->getSuperClass())
+                IterateAllFields(_scriptClass->getSuperClass(), _cb);
+
             for (auto const& data : _scriptClass->getFields())
             {
                 ScriptFieldPtr const& field = data.second;

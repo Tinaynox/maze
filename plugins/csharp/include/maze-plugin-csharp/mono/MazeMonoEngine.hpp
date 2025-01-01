@@ -89,6 +89,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        static ScriptClassPtr const& GetScriptClass(HashedCString _name);
+
+
+        //////////////////////////////////////////
         static ScriptClassPtr const& GetMonoBehaviourSubClass(HashedCString _name);
 
         //////////////////////////////////////////
@@ -109,6 +113,18 @@ namespace Maze
         //////////////////////////////////////////
         static MonoAssembly* LoadAppAssembly(HashedCString _csharpFile);
 
+
+        //////////////////////////////////////////
+        static ScriptClassPtr CreateScriptClass(
+            String const& _namespace,
+            String const& _className,
+            MonoClass* _monoClass);
+
+        //////////////////////////////////////////
+        static ScriptClassPtr CreateScriptClass(
+            String const& _namespace,
+            String const& _className,
+            MonoImage* _monoImage);
 
     protected:
 

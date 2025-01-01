@@ -52,6 +52,7 @@ namespace Maze
         Public = MAZE_BIT(0),
         Serializable = MAZE_BIT(1),
         Static = MAZE_BIT(2),
+        GenericType = MAZE_BIT(3),
     };
 
 
@@ -106,6 +107,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool isStatic() const { return m_flags & (U8)ScriptFieldFlags::Static; }
+
+        //////////////////////////////////////////
+        inline bool isGenericType() const { return m_flags & (U8)ScriptFieldFlags::GenericType; }
 
 
         //////////////////////////////////////////

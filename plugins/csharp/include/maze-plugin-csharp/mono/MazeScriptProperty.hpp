@@ -54,6 +54,7 @@ namespace Maze
         Serializable = MAZE_BIT(2),
         StaticGetter = MAZE_BIT(3),
         StaticSetter = MAZE_BIT(4),
+        GenericType = MAZE_BIT(5),
     };
 
 
@@ -117,6 +118,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool isStaticSetter() const { return m_flags & (U8)ScriptPropertyFlags::StaticSetter; }
+
+        //////////////////////////////////////////
+        inline bool isGenericType() const { return m_flags & (U8)ScriptPropertyFlags::GenericType; }
 
 
         //////////////////////////////////////////

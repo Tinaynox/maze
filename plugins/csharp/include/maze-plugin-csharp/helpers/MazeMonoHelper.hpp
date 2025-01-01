@@ -52,6 +52,10 @@ namespace Maze
     {
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API HashedString BuildMonoClassFullName(
+            MonoClass* _class);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API HashedString BuildMonoClassFullName(
             CString _namespace,
             CString _className);
 

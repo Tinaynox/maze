@@ -45,6 +45,8 @@ namespace Maze
     //////////////////////////////////////////
     struct MAZE_PLUGIN_CSHARP_API MonoEcsData
     {
+        StringKeyMap<ScriptClassPtr> scriptClasses;
+
         ScriptClassPtr monoBehaviourClass;
         StringKeyMap<ScriptClassPtr> monoBehaviourSubClasses;
         UnorderedMap<ComponentId, ScriptClassPtr> monoBehaviourSubClassesByComponentId;
@@ -87,6 +89,8 @@ namespace Maze
     //////////////////////////////////////////
     void LoadAssemblyClasses(MonoAssembly* _assembly)
     {
+        Vector<ScriptClassPtr> loadedScriptClasses;
+
         MonoImage* image = mono_assembly_get_image(_assembly);
         MonoTableInfo const* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
         S32 numTypes = mono_table_info_get_rows(typeDefinitionsTable);
@@ -120,8 +124,14 @@ namespace Maze
                 if (mono_class_is_subclass_of(monoClass, MonoEngine::GetMonoBehaviourClass()->getMonoClass(), false) &&
                     monoClass != MonoEngine::GetMonoBehaviourClass()->getMonoClass())
                 {
-                    ScriptClassPtr scriptClass = ScriptClass::Create(fullNamespace, typeName, monoClass);
+                    ScriptClassPtr scriptClass = MonoEngine::CreateScriptClass(fullNamespace, typeName, monoClass);
                     scriptClass->assignPrivateProperty(MAZE_HCS("NativeComponentPtr"));
+
+                    loadedScriptClasses.push_back(scriptClass);
+
+                    g_monoEngineData->ecsData.scriptClasses.insert(
+                        HashedCString(fullName.c_str()),
+                        scriptClass);
 
                     g_monoEngineData->ecsData.monoBehaviourSubClasses.insert(
                         HashedCString(fullName.c_str()),
@@ -181,8 +191,10 @@ namespace Maze
                 if (mono_class_is_subclass_of(monoClass, MonoEngine::GetNativeComponentClass()->getMonoClass(), false) &&
                     monoClass != MonoEngine::GetNativeComponentClass()->getMonoClass())
                 {
-                    ScriptClassPtr scriptClass = ScriptClass::Create(fullNamespace, typeName, monoClass);
+                    ScriptClassPtr scriptClass = MonoEngine::CreateScriptClass(fullNamespace, typeName, monoClass);
                     scriptClass->assignPrivateProperty(MAZE_HCS("NativeComponentPtr"));
+
+                    loadedScriptClasses.push_back(scriptClass);
 
                     g_monoEngineData->ecsData.nativeComponentSubClasses.insert(
                         HashedCString(fullName.c_str()),
@@ -193,6 +205,9 @@ namespace Maze
                 }
             }
         }
+
+        for (ScriptClassPtr const& scriptClass : loadedScriptClasses)
+            scriptClass->postInit();
     }
 
 
@@ -407,15 +422,15 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!g_monoEngineData->coreAssembly, nullptr, "Failed to load core assembly - %s", _csharpFile.str);
 
         g_monoEngineData->coreAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
-        g_monoEngineData->ecsData.monoBehaviourClass = ScriptClass::Create(
+        g_monoEngineData->ecsData.monoBehaviourClass = MonoEngine::CreateScriptClass(
             "Maze.Core", "MonoBehaviour", g_monoEngineData->coreAssemblyImage);
-        g_monoEngineData->ecsData.componentClass = ScriptClass::Create(
+        g_monoEngineData->ecsData.componentClass = MonoEngine::CreateScriptClass(
             "Maze.Core", "Component", g_monoEngineData->coreAssemblyImage);
         g_monoEngineData->ecsData.nativeComponentPtrProperty = g_monoEngineData->ecsData.componentClass->getProperty(
             MAZE_HCS("NativeComponentPtr"));
-        g_monoEngineData->ecsData.nativeComponentClass = ScriptClass::Create(
+        g_monoEngineData->ecsData.nativeComponentClass = MonoEngine::CreateScriptClass(
             "Maze.Core", "NativeComponent", g_monoEngineData->coreAssemblyImage);
-        g_monoEngineData->ecsData.ecsUtilsClass = ScriptClass::Create(
+        g_monoEngineData->ecsData.ecsUtilsClass = MonoEngine::CreateScriptClass(
             "Maze.Core", "EcsUtils", g_monoEngineData->coreAssemblyImage);
 
         LoadAssemblyClasses(g_monoEngineData->coreAssembly);
@@ -494,6 +509,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ScriptClassPtr const& MonoEngine::GetScriptClass(HashedCString _name)
+    {
+        static ScriptClassPtr const nullPointer;
+
+        auto it = g_monoEngineData->ecsData.scriptClasses.find(_name);
+        if (it != g_monoEngineData->ecsData.scriptClasses.end())
+            return it->second;
+        else
+            return nullPointer;
+    }
+
+    //////////////////////////////////////////
     ScriptClassPtr const& MonoEngine::GetMonoBehaviourSubClass(HashedCString _name)
     {
         static ScriptClassPtr const nullPointer;
@@ -540,6 +567,36 @@ namespace Maze
         mono_runtime_object_init(instance);
 
         return instance;
+    }
+
+    //////////////////////////////////////////
+    ScriptClassPtr MonoEngine::CreateScriptClass(
+        String const& _namespace,
+        String const& _className,
+        MonoClass* _monoClass)
+    {
+        ScriptClassPtr scriptClass = ScriptClass::Create(_namespace, _className, _monoClass);
+
+        g_monoEngineData->ecsData.scriptClasses.insert(
+            scriptClass->getFullName(),
+            scriptClass);
+
+        return scriptClass;
+    }
+
+    //////////////////////////////////////////
+    ScriptClassPtr MonoEngine::CreateScriptClass(
+        String const& _namespace,
+        String const& _className,
+        MonoImage* _monoImage)
+    {
+        ScriptClassPtr scriptClass = ScriptClass::Create(_namespace, _className, _monoImage);
+
+        g_monoEngineData->ecsData.scriptClasses.insert(
+            scriptClass->getFullName(),
+            scriptClass);
+
+        return scriptClass;
     }
 
 } // namespace Maze

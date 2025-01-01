@@ -177,6 +177,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ScriptClass::postInit()
+    {
+        MonoClass* superClass = mono_class_get_parent(m_monoClass);
+        if (superClass)
+        {
+            HashedString superClassFullName = MonoHelper::BuildMonoClassFullName(superClass);
+            m_superClass = MonoEngine::GetScriptClass(superClassFullName);
+        }
+    }
+
+    //////////////////////////////////////////
     void ScriptClass::assignDefaultMethods()
     {
         m_onCreateMethod = getMethod("OnCreate");
