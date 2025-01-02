@@ -107,6 +107,11 @@ namespace Maze
         //////////////////////////////////////////
         ScriptInstancePtr const& getMonoInstance() const { return m_monoInstance; }
 
+        //////////////////////////////////////////
+        ScriptInstancePtr const& ensureMonoInstance();
+
+        //////////////////////////////////////////
+        void destroyMonoInstance();
 
     protected:
 
@@ -119,9 +124,13 @@ namespace Maze
         //////////////////////////////////////////
         bool init(HashedCString _scriptClass);
 
-
         //////////////////////////////////////////
-        void destroyMonoInstance();
+        virtual bool init(
+            Component* _component,
+            EntityCopyData _copyData);
+
+
+        
 
         //////////////////////////////////////////
         void createMonoInstance();
@@ -147,6 +156,12 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnUpdate(
         UpdateEvent const& _event,
+        Entity* _entity,
+        MonoBehaviour* _monoBehaviour);
+
+    //////////////////////////////////////////
+    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnDestroy(
+        EntityRemovedFromSampleEvent const& _event,
         Entity* _entity,
         MonoBehaviour* _monoBehaviour);
 

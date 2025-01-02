@@ -83,6 +83,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool MonoBehaviour::init(
+        Component* _component,
+        EntityCopyData _copyData)
+    {
+        ScriptClassPtr const& scriptClass = _component->castRaw<MonoBehaviour>()->getMonoClass();
+        if (scriptClass)
+            setMonoClass(scriptClass);
+
+        if (!Component::init(_component, _copyData))
+            return false;
+
+        return true;
+    }
+
+
+    //////////////////////////////////////////
     void MonoBehaviour::notifyEvent(ClassUID _eventUID, Event* _event)
     {
         if (_eventUID == ClassInfo<MonoPreShutdownEvent>::UID())
@@ -103,6 +119,15 @@ namespace Maze
             setData(m_cachedData);
             m_cachedData.clear();
         }
+    }
+
+    //////////////////////////////////////////
+    ScriptInstancePtr const& MonoBehaviour::ensureMonoInstance()
+    {
+        if (!m_monoInstance && m_monoClass && m_monoClass->isValid())
+            createMonoInstance();
+
+        return m_monoInstance;
     }
 
     //////////////////////////////////////////
@@ -154,6 +179,9 @@ namespace Maze
     //////////////////////////////////////////
     void MonoBehaviour::setSerializableData(DataBlock const& _dataBlock)
     {
+        if (!getEntityRaw())
+            return;
+
         if (m_monoClass && m_monoInstance)
         {
             MonoHelper::IterateSerializableFields(m_monoClass,
@@ -290,14 +318,15 @@ namespace Maze
         MonoBehaviour* _monoBehaviour)
     {
         ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
-        ScriptInstancePtr const& scriptInstance = _monoBehaviour->getMonoInstance();
-
-        if (!scriptClass || !scriptInstance || !scriptInstance->isValid())
+        if (!scriptClass)
             return;
 
-        if (scriptClass->getOnCreateMethod())
-            scriptInstance->invokeMethod(
-                scriptClass->getOnCreateMethod());
+        if (ScriptInstancePtr const& scriptInstance = _monoBehaviour->ensureMonoInstance())
+        {
+            if (scriptClass->getOnCreateMethod())
+                scriptInstance->invokeMethod(
+                    scriptClass->getOnCreateMethod());
+        }
     }
 
     //////////////////////////////////////////
@@ -317,6 +346,26 @@ namespace Maze
                 scriptClass->getOnUpdateMethod(),
                 _event.getDt());
     }
+
+    //////////////////////////////////////////
+    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnDestroy(
+        EntityRemovedFromSampleEvent const& _event,
+        Entity* _entity,
+        MonoBehaviour* _monoBehaviour)
+    {
+        ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
+        ScriptInstancePtr const& scriptInstance = _monoBehaviour->getMonoInstance();
+
+        if (scriptClass && scriptInstance && scriptInstance->isValid())
+        {
+            if (scriptClass->getOnDestroyMethod())
+                scriptInstance->invokeMethod(
+                    scriptClass->getOnDestroyMethod());
+        }
+
+        _monoBehaviour->destroyMonoInstance();
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

@@ -185,6 +185,30 @@ namespace Maze
                                 systemTags,
                                 systemOrder));
                     }
+
+                    
+                    {
+                        HashedString systemName(fullName + "::OnDestroy");
+
+                        if (scriptClass->getOnDestroyMethod())
+                            MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnDestroyMethod(), systemTags, systemOrder);
+                        else
+                        {
+                            systemTags.clear();
+                            systemOrder = ComponentSystemOrder();
+                        }
+
+                        systemTags.insert(MAZE_HS("default"));
+
+                        g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
+                            MakeShared<CustomComponentSystemHolder>(
+                                systemName,
+                                ClassInfo<EntityRemovedFromSampleEvent>::UID(),
+                                [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnDestroy,
+                                systemTags,
+                                systemOrder));
+                    }
                 }
                 else
                 // NativeComponent subclasses

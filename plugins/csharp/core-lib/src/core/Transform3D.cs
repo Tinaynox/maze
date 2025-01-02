@@ -35,5 +35,10 @@ namespace Maze.Core
         {
             InternalCalls.Transform3DRotate(NativeComponentPtr, _axis, _angle);
         }
+
+        public void SetParent(Transform3D _parent)
+        {
+            InternalCalls.Transform3DSetParent(NativeComponentPtr, _parent.NativeComponentPtr);
+        }
     }
 }

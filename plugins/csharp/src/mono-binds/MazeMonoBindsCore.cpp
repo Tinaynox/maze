@@ -36,6 +36,8 @@
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/services/MazeLogService.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeEntityPrefabManager.hpp"
+#include "maze-core/assets/MazeAssetUnitId.hpp"
 
 
 
@@ -82,6 +84,20 @@ namespace Maze
         return id;
     }
 
+    //////////////////////////////////////////
+    inline Entity* InstantiateEntity(Component* _component, AssetUnitId _auid)
+    {
+        if (!EntityPrefabManager::GetInstancePtr())
+            return nullptr;
+
+        EcsWorld* ecsWorld = _component->getEntityRaw()->getEcsWorld();
+        EcsScene* ecsScene = _component->getEntityRaw()->getEcsScene();
+        EntityPtr newEntity = EntityPrefabManager::GetInstancePtr()->instantiatePrefab(_auid, ecsWorld, ecsScene);
+        if (!newEntity)
+            return nullptr;
+
+        return newEntity.get();
+    }
 
     //////////////////////////////////////////
     inline S32 EntityGetEntityId(Entity* _entity) { return (S32)_entity->getId(); }
@@ -108,6 +124,12 @@ namespace Maze
 
         MAZE_ERROR_RETURN_VALUE_IF(component->getClassUID() != ClassInfo<MonoBehaviour>::UID(), nullptr, "Component is not MonoBehaviour!");
         return component->castRaw<MonoBehaviour>()->getMonoInstance()->getInstance();
+    }
+
+    //////////////////////////////////////////
+    inline void EntityRemoveFromEcsWorld(Entity* _entity)
+    {
+        _entity->removeFromEcsWorld();
     }
 
 
@@ -173,6 +195,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void Transform3DSetParent(Component* _component, Component* _parent)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        MAZE_ERROR_RETURN_IF(_parent->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        _component->castRaw<Transform3D>()->setParent(_parent ? _parent->cast<Transform3D>() : nullptr);
+    }
+
+    //////////////////////////////////////////
     inline void Transform3DGetPosition(Component* _component, Vec3F& _outPosition)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
@@ -213,11 +243,13 @@ namespace Maze
 
         // Ecs
         MAZE_CORE_MONO_BIND_FUNC(GetComponentIdByMonoType);
+        MAZE_CORE_MONO_BIND_FUNC(InstantiateEntity);
 
         // Entity
         MAZE_CORE_MONO_BIND_FUNC(EntityGetEntityId);
         MAZE_CORE_MONO_BIND_FUNC(EntityGetComponent);
         MAZE_CORE_MONO_BIND_FUNC(EntityGetMonoBehaviourComponentObject);
+        MAZE_CORE_MONO_BIND_FUNC(EntityRemoveFromEcsWorld);
 
         // Component
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetFrameNumber);
@@ -230,6 +262,7 @@ namespace Maze
         // Transform3D
         MAZE_CORE_MONO_BIND_FUNC(Transform3DTranslate);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DRotate);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DSetParent);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetPosition);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetPosition);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetScale);

@@ -41,6 +41,7 @@
 #include "maze-editor-tools/property-drawers/MazePDColorF128.hpp"
 #include "maze-editor-tools/property-drawers/MazePDEntityPtr.hpp"
 #include "maze-editor-tools/property-drawers/MazePDComponentPtr.hpp"
+#include "maze-editor-tools/property-drawers/MazePDAssetUnitId.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
@@ -572,6 +573,24 @@ namespace Maze
             Rect2F value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
         },
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerRect2F const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerAssetUnitId>(MAZE_HCS("Maze.Core.AssetUnitId"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerAssetUnitId* _drawer)
+        {
+            AssetUnitId value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerAssetUnitId const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerAssetUnitId* _drawer)
+        {
+            AssetUnitId value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerAssetUnitId const* _drawer)
         {
             _instance.setFieldValue(_field, _drawer->getValue());
         });

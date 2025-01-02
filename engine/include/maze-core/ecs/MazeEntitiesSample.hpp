@@ -690,7 +690,7 @@ namespace Maze
             else
             if (it != m_entityIndices.end() && !intersects)
             {
-                eventEntityWillBeRemoved(_entity);
+                 eventEntityWillBeRemoved(_entity);
 
                 Size index = it->second;
                 EntityData entityData = m_entitiesData[index];

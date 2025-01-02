@@ -165,6 +165,12 @@ namespace Maze
             EcsWorld* _world,
             EcsScene* _scene);
 
+        //////////////////////////////////////////
+        EntityPtr instantiatePrefab(
+            AssetUnitId _auid,
+            EcsWorld* _world,
+            EcsScene* _scene);
+
     protected:
 
         //////////////////////////////////////////

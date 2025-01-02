@@ -121,6 +121,7 @@ namespace Maze
             m_monoClass = nullptr;
             m_onCreateMethod = nullptr;
             m_onUpdateMethod = nullptr;
+            m_onDestroyMethod = nullptr;
         }
     }
 
@@ -192,6 +193,7 @@ namespace Maze
     {
         m_onCreateMethod = getMethod("OnCreate");
         m_onUpdateMethod = getMethod("OnUpdate", 1);
+        m_onDestroyMethod = getMethod("OnDestroy");
     }
 
     //////////////////////////////////////////

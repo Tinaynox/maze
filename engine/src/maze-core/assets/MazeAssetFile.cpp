@@ -277,6 +277,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    AssetUnitId AssetFile::getFirstAssetUnit() const
+    {
+        if (m_assetUnits.empty())
+            return c_invalidAssetUnitId;
+
+        return (*m_assetUnits.begin())->getAssetUnitId();
+    }
+
+    //////////////////////////////////////////
     void AssetFile::addAssetUnit(AssetUnitPtr const& _assetUnit)
     {
         if (_assetUnit->getAssetUnitId() == c_invalidAssetUnitId && AssetUnitManager::GetInstancePtr()->getGenerateIdsForNewAssetUnits())

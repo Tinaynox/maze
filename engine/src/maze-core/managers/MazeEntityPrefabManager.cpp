@@ -211,7 +211,7 @@ namespace Maze
 
         auto it = m_entityPrefabsLibrary.insert(_name, data);
 
-        AssetUnitId auid = _info.getS32(MAZE_HCS("auid"), c_invalidAssetUnitId);
+        AssetUnitId auid = _info.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
         if (auid != c_invalidAssetUnitId)
             m_entityPrefabsByAssetUnitId.emplace(auid, data);
 
@@ -224,7 +224,7 @@ namespace Maze
         auto it = m_entityPrefabsLibrary.find(_name);
         if (it != m_entityPrefabsLibrary.end())
         {
-            AssetUnitId auid = it->second->data.getS32(MAZE_HCS("auid"), c_invalidAssetUnitId);
+            AssetUnitId auid = it->second->data.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
             if (auid != c_invalidAssetUnitId)
                 m_entityPrefabsByAssetUnitId.erase(auid);
 
@@ -252,6 +252,19 @@ namespace Maze
         EcsScene* _scene)
     {
         EntityPtr const& prefab = getOrLoadEntityPrefab(_name);
+        if (!prefab)
+            return nullptr;
+
+        return instantiatePrefab(prefab, _world, _scene);
+    }
+
+    //////////////////////////////////////////
+    EntityPtr EntityPrefabManager::instantiatePrefab(
+        AssetUnitId _auid,
+        EcsWorld* _world,
+        EcsScene* _scene)
+    {
+        EntityPtr const& prefab = getOrLoadEntityPrefab(_auid);
         if (!prefab)
             return nullptr;
 

@@ -146,7 +146,7 @@ namespace Maze
                     {
                         MonoClass* listMonoClass = mono_object_get_class(listMonoObject);
                         MonoMethod* getEnumeratorMethod = mono_class_get_method_from_name(listMonoClass, "GetEnumerator", 0);
-                        MonoObject* enumerator = mono_runtime_invoke(getEnumeratorMethod, listMonoObject, nullptr, nullptr);
+                        MonoObject* enumerator = MonoHelper::InvokeMethod(listMonoObject, getEnumeratorMethod, nullptr);
                         if (enumerator)
                         {
                             MonoClass* enumeratorClass = mono_object_get_class(enumerator);
@@ -155,9 +155,9 @@ namespace Maze
 
                             // #TODO:
                             /*
-                            while (mono_runtime_invoke(moveNextMethod, enumerator, nullptr, nullptr))
+                            while (MonoHelper::InvokeMethod(enumerator, moveNextMethod, nullptr))
                             {
-                                MonoObject* current = mono_runtime_invoke(getCurrentMethod, enumerator, nullptr, nullptr);
+                                MonoObject* current = MonoHelper::InvokeMethod(enumerator, getCurrentMethod, nullptr);
                                 if (current)
                                 {
                                     
@@ -218,6 +218,7 @@ namespace Maze
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.Mat4F", Mat4F);
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.TMat", TMat);
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.Rect2F", Vec4F);
+            MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.AssetUnitId", U32);
 
             // Graphics
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Graphics.ColorU32", Vec4U8);

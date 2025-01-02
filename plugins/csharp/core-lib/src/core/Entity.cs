@@ -39,5 +39,10 @@ namespace Maze.Core
             // Not supported type
             return default(T);
         }
+
+        public void Destroy()
+        {
+            InternalCalls.EntityRemoveFromEcsWorld(NativeEntityPtr);
+        }
     }
 }

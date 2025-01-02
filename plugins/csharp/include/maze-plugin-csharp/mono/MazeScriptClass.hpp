@@ -134,6 +134,9 @@ namespace Maze
         //////////////////////////////////////////
         inline MonoMethod* getOnUpdateMethod() const { return m_onUpdateMethod; }
 
+        //////////////////////////////////////////
+        inline MonoMethod* getOnDestroyMethod() const { return m_onDestroyMethod; }
+
 
         //////////////////////////////////////////
         inline String const& getNamespace() const { return m_namespace; }
@@ -200,6 +203,7 @@ namespace Maze
 
         MonoMethod* m_onCreateMethod = nullptr;
         MonoMethod* m_onUpdateMethod = nullptr;
+        MonoMethod* m_onDestroyMethod = nullptr;
 
         StringKeyMap<ScriptPropertyPtr> m_properties;
         StringKeyMap<ScriptFieldPtr> m_fields;

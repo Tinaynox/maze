@@ -174,6 +174,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        AssetUnitId getFirstAssetUnit() const;
+
+        //////////////////////////////////////////
         void addAssetUnit(AssetUnitPtr const& _assetUnit);
 
 

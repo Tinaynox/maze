@@ -24,6 +24,9 @@ namespace Maze.Core
         #region Ecs
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int GetComponentIdByMonoType(Type _type);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static NativePtr InstantiateEntity(NativePtr _nativeComponentPtr, AssetUnitId _auid);
         #endregion
 
         #region Entity
@@ -35,6 +38,9 @@ namespace Maze.Core
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static MonoBehaviour EntityGetMonoBehaviourComponentObject(NativePtr _nativeEntityPtr, int _componentId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void EntityRemoveFromEcsWorld(NativePtr _nativeEntityPtr);
         #endregion
 
         #region Component
@@ -76,6 +82,9 @@ namespace Maze.Core
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform3DSetScale(NativePtr _nativeComponentPtr, Vec3F _scale);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform3DSetParent(NativePtr _nativeComponentPtr, NativePtr _parentPtr);
         #endregion
     }
 }
