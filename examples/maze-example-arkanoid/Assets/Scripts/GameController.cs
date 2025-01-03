@@ -10,17 +10,21 @@ public class GameController : MonoBehaviour
     public Vec2F FieldSize => m_FieldSize;
 
     [SerializeField]
-    Paddle m_Paddle;
+    float m_PaddleSpeed = 4.0f;
 
     [SerializeField]
-    float m_PaddleSpeed = 4.0f;
-    
+    AssetUnitId m_PaddlePrefab;
+
+    [SerializeField]
+    AssetUnitId m_BallPrefab;
+
     [SerializeField]
     AssetUnitId m_BrickPrefab;
 
     Transform3D m_RootTransform;
     List<GameObject> m_GameObjects = new List<GameObject>();
 
+    Paddle m_Paddle;
 
     static GameController s_instance;
     public static GameController Instance => s_instance;
@@ -36,7 +40,20 @@ public class GameController : MonoBehaviour
     {
         m_RootTransform = GetComponent<Transform3D>();
 
+        // Create Paddle
+        Entity paddle = InstantiateEntity(m_PaddlePrefab);
+        Transform3D paddleTransform = paddle.GetComponent<Transform3D>();
+        m_Paddle = paddle.GetComponent<Paddle>();
+        paddleTransform.SetParent(m_RootTransform);
+        paddleTransform.Y = 0.3f;
 
+        // Create Ball
+        Entity ball = InstantiateEntity(m_BallPrefab);
+        Transform3D ballTransform = ball.GetComponent<Transform3D>();
+        m_Paddle.AttachedBall = ball.GetComponent<Ball>();
+        ballTransform.SetParent(m_RootTransform);
+
+        // Create Bricks
         const float blockWidth = 0.66f + 0.1f;
         const float blockHeight = 0.33f + 0.1f;
 

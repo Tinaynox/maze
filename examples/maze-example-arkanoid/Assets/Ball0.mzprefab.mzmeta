@@ -1,0 +1,10 @@
+afid:U32 = 1483051274
+
+assetUnits
+{
+  prefab
+  {
+    auid:U32 = 3778615069
+    name:String = "Ball0.mzprefab"
+  }
+}

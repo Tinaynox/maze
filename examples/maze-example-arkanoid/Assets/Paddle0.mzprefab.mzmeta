@@ -1,0 +1,10 @@
+afid:U32 = 641948344
+
+assetUnits
+{
+  prefab
+  {
+    auid:U32 = 623027746
+    name:String = "Paddle0.mzprefab"
+  }
+}

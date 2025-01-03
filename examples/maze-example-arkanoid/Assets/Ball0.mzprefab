@@ -1,0 +1,70 @@
+_rootIndex:S32 = 1
+_version:S32 = 1
+
+entity
+{
+  _i:S32 = 1
+
+  component
+  {
+    _i:S32 = 2
+    _t:String = "Name"
+
+    name
+    {
+      value:String = "Ball0"
+    }
+  }
+
+  component
+  {
+    _i:S32 = 3
+    _t:String = "MeshRenderer"
+    enabled:Bool = true
+
+    renderMesh
+    {
+      value:String = "Sphere"
+    }
+
+    materials
+    {
+      item
+      {
+        value:U32 = 4070559727
+      }
+    }
+  }
+
+  component
+  {
+    _i:S32 = 4
+    _t:String = "RenderMask"
+    mask:S32 = 1
+  }
+
+  component
+  {
+    _i:S32 = 5
+    _t:String = "MonoBehaviour"
+    _ct:String = "Ball"
+
+    data
+    {
+      m_Speed:F32 = 7.5
+    }
+  }
+
+  component
+  {
+    _i:S32 = 6
+    _t:String = "Transform3D"
+    localPosition:Vec3F = 0, 0, 0
+    localScale:Vec3F = 0.33, 0.33, 0.33
+
+    localRotation
+    {
+      value:Vec4F = 0, 0, 0, 1
+    }
+  }
+}

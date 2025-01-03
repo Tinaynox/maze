@@ -245,9 +245,10 @@ namespace Maze
         if (_value && m_componentId != c_invalidComponentId && _value->getComponentId() != m_componentId)
             return;
 
-        m_worldId = _value ? _value->getEntityRaw()->getEcsWorld()->getId() : EcsWorldId(0);
-        m_entityId = _value ? _value->getEntityRaw()->getId() : c_invalidEntityId;
-        CString name = _value ? EcsHelper::GetName(_value->getEntityRaw()) : "None";
+        bool isValid = _value && _value->getEntityRaw() && _value && _value->getEntityRaw()->getEcsWorld();
+        m_worldId = isValid ? _value->getEntityRaw()->getEcsWorld()->getId() : EcsWorldId(0);
+        m_entityId = isValid ? _value->getEntityRaw()->getId() : c_invalidEntityId;
+        CString name = isValid ? EcsHelper::GetName(_value->getEntityRaw()) : "None";
 
         m_text->setTextFormatted("%s [%d]", name, (S32)m_entityId);
     }

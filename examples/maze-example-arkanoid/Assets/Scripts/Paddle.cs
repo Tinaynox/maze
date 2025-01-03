@@ -3,9 +3,8 @@ using Maze.Core;
 
 public class Paddle : GameObject
 {
-    [SerializeField]
     Ball m_AttachedBall;
-    public Ball AttachedBall => m_AttachedBall;
+    public Ball AttachedBall { get => m_AttachedBall; set => m_AttachedBall = value; }
 
 
     public override GameObjectType GetGameObjectType() => GameObjectType.Paddle;
