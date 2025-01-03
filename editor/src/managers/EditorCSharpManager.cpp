@@ -362,7 +362,11 @@ namespace Maze
         Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharp";
 
 #if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
+#   if MAZE_DEBUG
         Path compileAssemblyPath = csharpPath + "/compile_debug.bat";
+#   else
+        Path compileAssemblyPath = csharpPath + "/compile_release.bat";
+#   endif
 
         MAZE_ERROR_RETURN_IF(!SystemHelper::ExecuteSync(compileAssemblyPath, csharpPath), "Failed to compile charp assembly!");
 #else
