@@ -40,7 +40,7 @@ public class GameController : MonoBehaviour
         const float blockWidth = 0.66f + 0.1f;
         const float blockHeight = 0.33f + 0.1f;
 
-        const int rowsCount = 11;
+        const int rowsCount = 11; 
         const int columnCount = 10;
 
         const float lineWidth = blockWidth * columnCount;

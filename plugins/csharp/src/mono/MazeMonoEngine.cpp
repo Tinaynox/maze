@@ -161,7 +161,7 @@ namespace Maze
                         g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                             MakeShared<CustomComponentSystemHolder>(
                                 systemName,
-                                ClassInfo<EntityAddedToSampleEvent>::UID(),
+                                ClassInfo<EntityAddedEvent>::UID(),
                                 [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
                                 (ComponentSystemEventHandler::Func)&MonoBehaviourOnCreate,
                                 systemTags,
@@ -203,7 +203,7 @@ namespace Maze
                         g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                             MakeShared<CustomComponentSystemHolder>(
                                 systemName,
-                                ClassInfo<EntityRemovedFromSampleEvent>::UID(),
+                                ClassInfo<EntityRemovedEvent>::UID(),
                                 [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
                                 (ComponentSystemEventHandler::Func)&MonoBehaviourOnDestroy,
                                 systemTags,

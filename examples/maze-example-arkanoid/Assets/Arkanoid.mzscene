@@ -527,61 +527,13 @@ entities
 
       name
       {
-        value:String = "Directional Light"
-      }
-    }
-
-    component
-    {
-      _i:S32 = 43
-      _t:String = "RenderMask"
-      mask:S32 = 1
-    }
-
-    component
-    {
-      _i:S32 = 44
-      _t:String = "Light3D"
-      lightType:String = "Directional"
-
-      color
-      {
-        value:Vec4F = 1, 0.956863, 0.839216, 1
-      }
-    }
-
-    component
-    {
-      _i:S32 = 45
-      _t:String = "Transform3D"
-      localPosition:Vec3F = 0, 3, 0
-      localScale:Vec3F = 1, 1, 1
-
-      localRotation
-      {
-        value:Vec4F = 0.5, 0, 0, 0.866025
-      }
-    }
-  }
-
-  entity
-  {
-    _i:S32 = 46
-
-    component
-    {
-      _i:S32 = 47
-      _t:String = "Name"
-
-      name
-      {
         value:String = "Floor"
       }
     }
 
     component
     {
-      _i:S32 = 48
+      _i:S32 = 43
       _t:String = "MeshRenderer"
       enabled:Bool = true
 
@@ -601,14 +553,14 @@ entities
 
     component
     {
-      _i:S32 = 49
+      _i:S32 = 44
       _t:String = "RenderMask"
       mask:S32 = 1
     }
 
     component
     {
-      _i:S32 = 50
+      _i:S32 = 45
       _t:String = "Transform3D"
       localPosition:Vec3F = 0, 0, 0
       localScale:Vec3F = 100, 0.0001, 100
@@ -621,6 +573,54 @@ entities
       "parent:Component"
       {
         value:S32 = 8
+      }
+    }
+  }
+
+  entity
+  {
+    _i:S32 = 46
+
+    component
+    {
+      _i:S32 = 47
+      _t:String = "Name"
+
+      name
+      {
+        value:String = "Directional Light"
+      }
+    }
+
+    component
+    {
+      _i:S32 = 48
+      _t:String = "RenderMask"
+      mask:S32 = 1
+    }
+
+    component
+    {
+      _i:S32 = 49
+      _t:String = "Light3D"
+      lightType:String = "Directional"
+
+      color
+      {
+        value:Vec4F = 1, 0.956863, 0.839216, 1
+      }
+    }
+
+    component
+    {
+      _i:S32 = 50
+      _t:String = "Transform3D"
+      localPosition:Vec3F = 0, 3, 0
+      localScale:Vec3F = 1, 1, 1
+
+      localRotation
+      {
+        value:Vec4F = 0.5, 0, 0, 0.866025
       }
     }
   }

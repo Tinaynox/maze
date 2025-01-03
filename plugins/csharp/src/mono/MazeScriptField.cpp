@@ -54,7 +54,9 @@ namespace Maze
 
         U32 flags = mono_field_get_flags(m_monoField);
 
-        if (flags & MONO_FIELD_ATTR_PUBLIC)
+        if (flags & MONO_FIELD_ATTR_PUBLIC &&
+            !(flags & MONO_FIELD_ATTR_FAMILY) &&
+            !(flags & MONO_FIELD_ATTR_PRIVATE))
             m_flags |= (U8)ScriptFieldFlags::Public;
 
         if (flags & MONO_FIELD_ATTR_STATIC)
