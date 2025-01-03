@@ -40,6 +40,62 @@ public class GameController : MonoBehaviour
     {
         m_RootTransform = GetComponent<Transform3D>();
 
+        LoadLevel();
+    }
+
+    [EntitySystem]
+    public void OnUpdate(float _dt)
+    {
+        if (Input.GetKeyState(KeyCode.R))
+        {
+            LoadLevel();
+            return;
+        }
+
+        if (m_Paddle == null || m_Paddle.Transform == null)
+            return;
+
+        Vec3F paddleSize = m_Paddle.Transform.Scale;
+
+        if (Input.GetKeyState(KeyCode.Left) || Input.GetKeyState(KeyCode.A))
+        {
+            m_Paddle.Transform.Translate(new Vec3F(-m_PaddleSpeed * _dt, 0.0f, 0.0f));
+
+            float leftPosition = -m_FieldSize.X * 0.5f + paddleSize.X * 0.5f;
+            if (m_Paddle.Transform.X < leftPosition)
+                m_Paddle.Transform.X = leftPosition;
+        }
+
+        if (Input.GetKeyState(KeyCode.Right) || Input.GetKeyState(KeyCode.D))
+        {
+            m_Paddle.Transform.Translate(new Vec3F(m_PaddleSpeed * _dt, 0.0f, 0.0f));
+
+            float rightPosition = m_FieldSize.X * 0.5f - paddleSize.X * 0.5f;
+            if (m_Paddle.Transform.X > rightPosition)
+                m_Paddle.Transform.X = rightPosition;
+        }
+
+        if (Input.GetKeyState(KeyCode.Space))
+        {
+            if (m_Paddle.AttachedBall != null)
+            {
+                m_Paddle.LaunchBall();
+            }
+        }
+    }
+
+    void ClearLevel()
+    {
+        foreach (GameObject obj in m_GameObjects)
+            obj.GetEntity().Destroy();
+        m_GameObjects.Clear();
+        m_Paddle = null;
+    }
+
+    public void LoadLevel()
+    {
+        ClearLevel();
+
         // Create Paddle
         Entity paddle = InstantiateEntity(m_PaddlePrefab);
         Transform3D paddleTransform = paddle.GetComponent<Transform3D>();
@@ -78,48 +134,13 @@ public class GameController : MonoBehaviour
                 if (r == 0 || Math.Abs(newBrickTransform.X) < 1.0f)
                     brick.SetHealth(3);
                 else
-                if (r <= rowsCount/3)
+                if (r <= rowsCount / 3)
                     brick.SetHealth(1);
                 else
                 if (r <= 2 * rowsCount / 3)
                     brick.SetHealth(2);
                 else
                     brick.SetHealth(3);
-            }
-        }
-    }
-
-    [EntitySystem]
-    public void OnUpdate(float _dt)
-    {
-        if (m_Paddle == null || m_Paddle.Transform == null)
-            return;
-
-        Vec3F paddleSize = m_Paddle.Transform.Scale;
-
-        if (Input.GetKeyState(KeyCode.Left) || Input.GetKeyState(KeyCode.A))
-        {
-            m_Paddle.Transform.Translate(new Vec3F(-m_PaddleSpeed * _dt, 0.0f, 0.0f));
-
-            float leftPosition = -m_FieldSize.X * 0.5f + paddleSize.X * 0.5f;
-            if (m_Paddle.Transform.X < leftPosition)
-                m_Paddle.Transform.X = leftPosition;
-        }
-
-        if (Input.GetKeyState(KeyCode.Right) || Input.GetKeyState(KeyCode.D))
-        {
-            m_Paddle.Transform.Translate(new Vec3F(m_PaddleSpeed * _dt, 0.0f, 0.0f));
-
-            float rightPosition = m_FieldSize.X * 0.5f - paddleSize.X * 0.5f;
-            if (m_Paddle.Transform.X > rightPosition)
-                m_Paddle.Transform.X = rightPosition;
-        }
-
-        if (Input.GetKeyState(KeyCode.Space))
-        {
-            if (m_Paddle.AttachedBall != null)
-            {
-                m_Paddle.LaunchBall();
             }
         }
     }

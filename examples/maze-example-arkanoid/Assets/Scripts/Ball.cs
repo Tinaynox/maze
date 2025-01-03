@@ -38,9 +38,8 @@ public class Ball : GameObject
 
             if (Transform.Y < Transform.Scale.Y * 0.5f)
             {
-                Transform.Y = Transform.Scale.Y * 0.5f;
-                m_Direction = m_Direction.Reflect(new Vec2F(0.0f, 1.0f));
-                // return;
+                GameController.Instance.LoadLevel();
+                return;
             }
             else
             if (Transform.Y > GameController.Instance.FieldSize.Y - Transform.Scale.Y * 0.5f)
