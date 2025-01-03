@@ -209,6 +209,7 @@ namespace Maze
             {
                 if (m_csharpScriptsChanged)
                 {
+                    m_csharpScriptsChanged = false;
                     U32 csharpScriptsHash = CalculateCSharpScriptsHash();
                     if (csharpScriptsHash != m_csharpScriptsHash)
                         generateCSharpAssembly();
