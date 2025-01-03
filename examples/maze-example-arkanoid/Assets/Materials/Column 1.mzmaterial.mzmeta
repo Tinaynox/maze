@@ -1,0 +1,10 @@
+afid:U32 = 3886745827
+
+assetUnits
+{
+  material
+  {
+    auid:U32 = 1345414199
+    name:String = "Column 1.mzmaterial"
+  }
+}

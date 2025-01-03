@@ -1,0 +1,60 @@
+_version:S32 = 1
+
+uniform
+{
+  name:String = "u_baseMapST"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 1, 1, 0, 0
+}
+
+uniform
+{
+  name:String = "u_baseMap"
+  type:String = "UniformTexture2D"
+  value:String = "White"
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.788235, 0.788235, 0.788235, 1
+}
+
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.141176, 0.361176, 0.529412, 1
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:F32 = 0.4
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.278431, 0.690065, 0.803922, 1
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 2000
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:Bool = true
+  cullMode:String = "Back"
+
+  shader
+  {
+    value:String = "Specular"
+  }
+}

@@ -1,0 +1,10 @@
+afid:U32 = 2923534224
+
+assetUnits
+{
+  prefab
+  {
+    auid:U32 = 2363711479
+    name:String = "Brick0.mzprefab"
+  }
+}

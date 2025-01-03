@@ -1,0 +1,10 @@
+afid:U32 = 2002733652
+
+assetUnits
+{
+  material
+  {
+    auid:U32 = 2101124059
+    name:String = "Floor.mzmaterial"
+  }
+}

@@ -12,6 +12,8 @@ engine/bin/
 examples/bin/log.log
 examples/bin/*.dll
 examples/bin/*.app
+CSharp/
+Library/
 
 # =============== #
 # Generated Files #

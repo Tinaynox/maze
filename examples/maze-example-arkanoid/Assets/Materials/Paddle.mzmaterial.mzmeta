@@ -1,0 +1,10 @@
+afid:U32 = 1299523191
+
+assetUnits
+{
+  material
+  {
+    auid:U32 = 3092941070
+    name:String = "Brick 1.mzmaterial"
+  }
+}
