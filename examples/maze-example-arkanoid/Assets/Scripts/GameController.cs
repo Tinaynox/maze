@@ -44,7 +44,7 @@ public class GameController : MonoBehaviour
         const int columnCount = 10;
 
         const float lineWidth = blockWidth * columnCount;
-        const float lineHeight = blockHeight * rowsCount;
+        // const float lineHeight = blockHeight * rowsCount;
 
         for (int r = 0; r < rowsCount; ++r)
         {
@@ -53,8 +53,21 @@ public class GameController : MonoBehaviour
                 Entity newBrick = InstantiateEntity(m_BrickPrefab);
                 Transform3D newBrickTransform = newBrick.GetComponent<Transform3D>();
                 newBrickTransform.SetParent(m_RootTransform);
-                newBrickTransform.X = blockWidth * 0.5f + blockWidth * (float)c - lineWidth * 0.5f;
+                newBrickTransform.X = blockWidth * 0.5f + blockWidth * c - lineWidth * 0.5f;
                 newBrickTransform.Y = 3.5f + blockHeight * r;
+
+                Brick brick = newBrick.GetComponent<Brick>();
+
+                if (r == 0 || Math.Abs(newBrickTransform.X) < 1.0f)
+                    brick.SetHealth(3);
+                else
+                if (r <= rowsCount/3)
+                    brick.SetHealth(1);
+                else
+                if (r <= 2 * rowsCount / 3)
+                    brick.SetHealth(2);
+                else
+                    brick.SetHealth(3);
             }
         }
     }

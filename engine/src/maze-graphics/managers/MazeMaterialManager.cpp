@@ -137,13 +137,13 @@ namespace Maze
                         if (!MaterialManager::GetCurrentInstance())
                             return;
 
-                        StringKeyMap<MaterialLibraryData>& materialsLibrary = MaterialManager::GetCurrentInstance()->m_materialsLibrary;
+                        StringKeyMap<SharedPtr<MaterialLibraryData>>& materialsLibrary = MaterialManager::GetCurrentInstance()->m_materialsLibrary;
                         String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
-                        StringKeyMap<MaterialLibraryData>::iterator it = materialsLibrary.find(prevMaterialName);
+                        StringKeyMap<SharedPtr<MaterialLibraryData>>::iterator it = materialsLibrary.find(prevMaterialName);
                         if (it != materialsLibrary.end())
                         {
                             String newAssetName = _assetFile->getFileName().toUTF8();
-                            it->second.material->setName(HashedString(newAssetName));
+                            it->second->material->setName(HashedString(newAssetName));
                             materialsLibrary.insert(newAssetName, it->second);
                             materialsLibrary.erase(it);
                         }
@@ -171,9 +171,18 @@ namespace Maze
     //////////////////////////////////////////
     MaterialLibraryData const* MaterialManager::getMaterialLibraryData(HashedCString _materialName)
     {
-        StringKeyMap<MaterialLibraryData>::const_iterator it = m_materialsLibrary.find(_materialName);
+        StringKeyMap<SharedPtr<MaterialLibraryData>>::const_iterator it = m_materialsLibrary.find(_materialName);
         if (it != m_materialsLibrary.end())
-            return &it->second;
+            return it->second.get();
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
+    MaterialLibraryData const* MaterialManager::getMaterialLibraryData(AssetUnitId _auid)
+    {
+        auto it = m_materialsByAssetUnitId.find(_auid);
+        if (it != m_materialsByAssetUnitId.end())
+            return it->second.get();
         return nullptr;
     }
 
@@ -258,14 +267,38 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    MaterialPtr const& MaterialManager::getOrLoadMaterial(AssetUnitId _auid, bool _syncLoad)
+    {
+        static MaterialPtr const nullPointer;
+
+        MaterialLibraryData const* libraryData = getMaterialLibraryData(_auid);
+        if (libraryData)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(_syncLoad);
+
+            return libraryData->material;
+        }
+
+        AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(_auid);
+        if (!assetUnit)
+            return nullPointer;
+
+        if (assetUnit->getClassUID() == ClassInfo<AssetUnitMaterial>::UID())
+            return assetUnit->castRaw<AssetUnitMaterial>()->loadMaterial();
+
+        return nullPointer;
+    }
+
+    //////////////////////////////////////////
     HashedCString MaterialManager::getMaterialName(Material const* _material)
     {
-        for (StringKeyMap<MaterialLibraryData>::iterator it = m_materialsLibrary.begin(),
-                                                         end = m_materialsLibrary.end();
-                                                         it != end;
-                                                         ++it)
+        for (StringKeyMap<SharedPtr<MaterialLibraryData>>::iterator it = m_materialsLibrary.begin(),
+                                                                         end = m_materialsLibrary.end();
+                                                                         it != end;
+                                                                         ++it)
         {
-            if (it->second.material.get() == _material)
+            if (it->second->material.get() == _material)
                 return it.key();
         }
 
@@ -610,10 +643,15 @@ namespace Maze
         MaterialLibraryDataCallbacks const& _callbacks,
         DataBlock const& _info)
     {
-        auto it2 = m_materialsLibrary.insert(
-            _material->getName(),
-            { _material, _callbacks, _info });
-        return it2;
+        SharedPtr<MaterialLibraryData> data = MakeShared<MaterialLibraryData>(_material, _callbacks, _info);
+
+        auto it = m_materialsLibrary.insert(_material->getName(), data);
+
+        AssetUnitId auid = _info.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
+        if (auid != c_invalidAssetUnitId)
+            m_materialsByAssetUnitId.emplace(auid, data);
+
+        return it->get();
     }
 
     //////////////////////////////////////////
@@ -628,7 +666,7 @@ namespace Maze
         Vector<MaterialPtr> result;
 
         for (auto const& value : m_materialsLibrary)
-            result.emplace_back(value.second.material);
+            result.emplace_back(value.second->material);
 
         std::sort(
             result.begin(),
@@ -661,10 +699,10 @@ namespace Maze
         Vector<std::function<void(bool)>> unloadCallbacks;
 
         m_materialsLibrary.iterate(
-            [&](HashedCString _name, MaterialLibraryData const& _data)
+            [&](HashedCString _name, SharedPtr<MaterialLibraryData> const& _data)
             {
-                if (_data.callbacks.hasAnyOfTags && _data.callbacks.hasAnyOfTags(_tags) && _data.callbacks.requestUnload)
-                    unloadCallbacks.push_back(_data.callbacks.requestUnload);
+                if (_data->callbacks.hasAnyOfTags && _data->callbacks.hasAnyOfTags(_tags) && _data->callbacks.requestUnload)
+                    unloadCallbacks.push_back(_data->callbacks.requestUnload);
 
                 return true;
             });

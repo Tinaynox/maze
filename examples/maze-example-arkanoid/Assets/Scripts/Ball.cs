@@ -79,8 +79,8 @@ public class Ball : GameObject
                 {
                     case GameObjectType.Paddle:
                     {
-                        if (Transform.Y < testResult.obj.Transform.Y)
-                            Transform.Y = testResult.obj.Transform.Y + 0.1f;
+                        if (Transform.Y < testResult.obj.Transform.Y + testResult.obj.Transform.Scale.Y * 0.5f + Transform.Scale.Y * 0.5f)
+                            Transform.Y = testResult.obj.Transform.Y + testResult.obj.Transform.Scale.Y * 0.5f + Transform.Scale.Y * 0.5f;
 
                         Vec2F toPaddle = testResult.obj.Transform.Position.XY - Transform.Position.XY;
                         toPaddle.Normalize();
@@ -115,7 +115,7 @@ public class Ball : GameObject
                             }
                         }
 
-                        GameController.Instance.DestroyBrick(testResult.obj);
+                        ((Brick)testResult.obj).Damage();
                         break;
                     }
                     case GameObjectType.Ball:

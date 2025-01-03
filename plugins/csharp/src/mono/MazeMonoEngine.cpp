@@ -30,6 +30,7 @@
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/ecs/MazeCustomComponentSystemHolder.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsCore.hpp"
+#include "maze-plugin-csharp/mono-binds/MazeMonoBindsGraphics.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
@@ -338,6 +339,7 @@ namespace Maze
         mono_domain_set(g_monoEngineData->appDomain, true);
 
         BindCppFunctionsCore();
+        BindCppFunctionsGraphics();
 
         return true;
     }

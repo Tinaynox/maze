@@ -29,8 +29,10 @@ include_directories(MONO_INCLUDE_DIR)
 
 if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
     if(${MAZE_ARCH_SUFFIX} STREQUAL "x64")
-        set(MONO_LIB "${CMAKE_CURRENT_LIST_DIR}/mono/msvc/build/sgen/x64/lib/Release/mono-2.0-sgen.lib" CACHE PATH "mono-2.0-sgen" FORCE)
+        set(MONO_ARCH_TYPE "x64")
     else()
-        set(MONO_LIB "${CMAKE_CURRENT_LIST_DIR}/mono/msvc/build/sgen/Win32/lib/Release/mono-2.0-sgen.lib" CACHE PATH "mono-2.0-sgen" FORCE)
+        set(MONO_ARCH_TYPE "Win32")
     endif()
+    
+    set(MONO_LIB "${CMAKE_CURRENT_LIST_DIR}/mono/msvc/build/sgen/${MONO_ARCH_TYPE}/lib/$<CONFIG>/mono-2.0-sgen.lib" CACHE PATH "mono-2.0-sgen" FORCE)
 endif()

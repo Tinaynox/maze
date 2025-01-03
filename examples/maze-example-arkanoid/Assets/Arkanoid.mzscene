@@ -20,39 +20,52 @@ entities
 
       name
       {
-        value:String = "Directional Light"
+        value:String = "Bottom"
       }
     }
 
     component
     {
       _i:S32 = 3
+      _t:String = "MeshRenderer"
+      enabled:Bool = true
+
+      renderMesh
+      {
+        value:String = "Cube"
+      }
+
+      materials
+      {
+        item
+        {
+          value:U32 = 2561220474
+        }
+      }
+    }
+
+    component
+    {
+      _i:S32 = 4
       _t:String = "RenderMask"
       mask:S32 = 1
     }
 
     component
     {
-      _i:S32 = 4
-      _t:String = "Light3D"
-      lightType:String = "Directional"
-
-      color
-      {
-        value:Vec4F = 1, 0.956863, 0.839216, 1
-      }
-    }
-
-    component
-    {
       _i:S32 = 5
       _t:String = "Transform3D"
-      localPosition:Vec3F = 0, 3, 0
-      localScale:Vec3F = 1, 1, 1
+      localPosition:Vec3F = 0, 0.0125, 0
+      localScale:Vec3F = 9, 0.025, 1
 
       localRotation
       {
-        value:Vec4F = 0.5, 0, 0, 0.866025
+        value:Vec4F = 0, 0, 0, 1
+      }
+
+      "parent:Component"
+      {
+        value:S32 = 34
       }
     }
   }
@@ -68,124 +81,103 @@ entities
 
       name
       {
-        value:String = "Paddle"
+        value:String = "Directional Light"
       }
     }
 
     component
     {
       _i:S32 = 8
-      _t:String = "MeshRenderer"
-      enabled:Bool = true
-
-      renderMesh
-      {
-        value:String = "Cube"
-      }
-
-      materials
-      {
-        item
-        {
-          value:String = "Paddle.mzmaterial"
-        }
-      }
+      _t:String = "RenderMask"
+      mask:S32 = 1
     }
 
     component
     {
       _i:S32 = 9
-      _t:String = "MonoBehaviour"
-      _ct:String = "Paddle"
+      _t:String = "Light3D"
+      lightType:String = "Directional"
 
-      data
+      color
       {
-        "m_AttachedBall:Component"
-        {
-          class:String = "Ball"
-
-          "eid:EntityId"
-          {
-            value:S32 = 40
-          }
-        }
+        value:Vec4F = 1, 0.956863, 0.839216, 1
       }
     }
 
     component
     {
       _i:S32 = 10
-      _t:String = "RenderMask"
-      mask:S32 = 1
-    }
-
-    component
-    {
-      _i:S32 = 11
       _t:String = "Transform3D"
-      localPosition:Vec3F = 0, 0.3, 0
-      localScale:Vec3F = 1.5, 0.25, 1
+      localPosition:Vec3F = 0, 3, 0
+      localScale:Vec3F = 1, 1, 1
 
       localRotation
       {
-        value:Vec4F = 0, 0, 0, 1
-      }
-
-      "parent:Component"
-      {
-        value:S32 = 30
+        value:Vec4F = 0.5, 0, 0, 0.866025
       }
     }
   }
 
   entity
   {
-    _i:S32 = 12
+    _i:S32 = 11
 
     component
     {
-      _i:S32 = 13
+      _i:S32 = 12
       _t:String = "Name"
 
       name
       {
-        value:String = "Top"
+        value:String = "Ball"
       }
     }
 
     component
     {
-      _i:S32 = 14
+      _i:S32 = 13
       _t:String = "MeshRenderer"
       enabled:Bool = true
 
       renderMesh
       {
-        value:String = "Cube"
+        value:String = "Sphere"
       }
 
       materials
       {
         item
         {
-          value:U32 = 1839016571
+          value:U32 = 4070559727
         }
       }
     }
 
     component
     {
-      _i:S32 = 15
+      _i:S32 = 14
       _t:String = "RenderMask"
       mask:S32 = 1
     }
 
     component
     {
+      _i:S32 = 15
+      _t:String = "MonoBehaviour"
+      _ct:String = "Ball"
+
+      data
+      {
+        m_Speed:F32 = 7.5
+      }
+    }
+
+    component
+    {
       _i:S32 = 16
       _t:String = "Transform3D"
-      localPosition:Vec3F = 0, 9.5, 0
-      localScale:Vec3F = 9, 1, 1
+      localPosition:Vec3F = 0, 0.8, 0
+      localScale:Vec3F = 0.33, 0.33, 0.33
 
       localRotation
       {
@@ -194,7 +186,7 @@ entities
 
       "parent:Component"
       {
-        value:S32 = 30
+        value:S32 = 34
       }
     }
   }
@@ -255,7 +247,7 @@ entities
 
       "parent:Component"
       {
-        value:S32 = 30
+        value:S32 = 34
       }
     }
   }
@@ -271,127 +263,13 @@ entities
 
       name
       {
-        value:String = "Bottom"
-      }
-    }
-
-    component
-    {
-      _i:S32 = 24
-      _t:String = "MeshRenderer"
-      enabled:Bool = true
-
-      renderMesh
-      {
-        value:String = "Cube"
-      }
-
-      materials
-      {
-        item
-        {
-          value:U32 = 2561220474
-        }
-      }
-    }
-
-    component
-    {
-      _i:S32 = 25
-      _t:String = "RenderMask"
-      mask:S32 = 1
-    }
-
-    component
-    {
-      _i:S32 = 26
-      _t:String = "Transform3D"
-      localPosition:Vec3F = 0, 0.0125, 0
-      localScale:Vec3F = 9, 0.025, 1
-
-      localRotation
-      {
-        value:Vec4F = 0, 0, 0, 1
-      }
-
-      "parent:Component"
-      {
-        value:S32 = 30
-      }
-    }
-  }
-
-  entity
-  {
-    _i:S32 = 27
-
-    component
-    {
-      _i:S32 = 28
-      _t:String = "Name"
-
-      name
-      {
-        value:String = "Root"
-      }
-    }
-
-    component
-    {
-      _i:S32 = 29
-      _t:String = "MonoBehaviour"
-      _ct:String = "GameController"
-
-      data
-      {
-        m_FieldSize:Vec2F = 9, 9
-        m_BrickPrefab:U32 = 2363711479
-        m_PaddleSpeed:F32 = 10
-
-        "m_Paddle:Component"
-        {
-          class:String = "Paddle"
-
-          "eid:EntityId"
-          {
-            value:S32 = 6
-          }
-        }
-      }
-    }
-
-    component
-    {
-      _i:S32 = 30
-      _t:String = "Transform3D"
-      localPosition:Vec3F = 0, -4, 0
-      localScale:Vec3F = 1, 1, 1
-
-      localRotation
-      {
-        value:Vec4F = 0, 0, 0, 1
-      }
-    }
-  }
-
-  entity
-  {
-    _i:S32 = 31
-
-    component
-    {
-      _i:S32 = 32
-      _t:String = "Name"
-
-      name
-      {
         value:String = "ArkanoidCamera"
       }
     }
 
     component
     {
-      _i:S32 = 33
+      _i:S32 = 24
       _t:String = "Camera3D"
       fov:F32 = 0.523599
       nearZ:F32 = 0.01
@@ -418,7 +296,7 @@ entities
 
     component
     {
-      _i:S32 = 34
+      _i:S32 = 25
       _t:String = "Transform3D"
       localPosition:Vec3F = 5e-06, -3.86169, -18.8749
       localScale:Vec3F = 1, 1, 1
@@ -432,11 +310,11 @@ entities
 
   entity
   {
-    _i:S32 = 35
+    _i:S32 = 26
 
     component
     {
-      _i:S32 = 36
+      _i:S32 = 27
       _t:String = "Name"
 
       name
@@ -447,7 +325,7 @@ entities
 
     component
     {
-      _i:S32 = 37
+      _i:S32 = 28
       _t:String = "MeshRenderer"
       enabled:Bool = true
 
@@ -467,14 +345,14 @@ entities
 
     component
     {
-      _i:S32 = 38
+      _i:S32 = 29
       _t:String = "RenderMask"
       mask:S32 = 1
     }
 
     component
     {
-      _i:S32 = 39
+      _i:S32 = 30
       _t:String = "Transform3D"
       localPosition:Vec3F = -5, 5, 0
       localScale:Vec3F = 1, 10, 1
@@ -486,71 +364,132 @@ entities
 
       "parent:Component"
       {
-        value:S32 = 30
+        value:S32 = 34
       }
     }
   }
 
   entity
   {
-    _i:S32 = 40
+    _i:S32 = 31
 
     component
     {
-      _i:S32 = 41
+      _i:S32 = 32
       _t:String = "Name"
 
       name
       {
-        value:String = "Ball"
+        value:String = "Root"
       }
     }
 
     component
     {
-      _i:S32 = 42
-      _t:String = "MeshRenderer"
-      enabled:Bool = true
+      _i:S32 = 33
+      _t:String = "MonoBehaviour"
+      _ct:String = "GameController"
 
-      renderMesh
+      data
       {
-        value:String = "Sphere"
-      }
+        m_FieldSize:Vec2F = 9, 9
+        m_BrickPrefab:U32 = 2363711479
+        m_PaddleSpeed:F32 = 10
 
-      materials
-      {
-        item
+        "m_Paddle:Component"
         {
-          value:U32 = 4070559727
+          class:String = "Paddle"
+
+          "eid:EntityId"
+          {
+            value:S32 = 35
+          }
         }
       }
     }
 
     component
     {
-      _i:S32 = 43
+      _i:S32 = 34
+      _t:String = "Transform3D"
+      localPosition:Vec3F = 0, -4, 0
+      localScale:Vec3F = 1, 1, 1
+
+      localRotation
+      {
+        value:Vec4F = 0, 0, 0, 1
+      }
+    }
+  }
+
+  entity
+  {
+    _i:S32 = 35
+
+    component
+    {
+      _i:S32 = 36
+      _t:String = "Name"
+
+      name
+      {
+        value:String = "Paddle"
+      }
+    }
+
+    component
+    {
+      _i:S32 = 37
+      _t:String = "MeshRenderer"
+      enabled:Bool = true
+
+      renderMesh
+      {
+        value:String = "Cube"
+      }
+
+      materials
+      {
+        item
+        {
+          value:String = "Paddle.mzmaterial"
+        }
+      }
+    }
+
+    component
+    {
+      _i:S32 = 38
+      _t:String = "MonoBehaviour"
+      _ct:String = "Paddle"
+
+      data
+      {
+        "m_AttachedBall:Component"
+        {
+          class:String = "Ball"
+
+          "eid:EntityId"
+          {
+            value:S32 = 11
+          }
+        }
+      }
+    }
+
+    component
+    {
+      _i:S32 = 39
       _t:String = "RenderMask"
       mask:S32 = 1
     }
 
     component
     {
-      _i:S32 = 44
-      _t:String = "MonoBehaviour"
-      _ct:String = "Ball"
-
-      data
-      {
-        m_Speed:F32 = 7.5
-      }
-    }
-
-    component
-    {
-      _i:S32 = 45
+      _i:S32 = 40
       _t:String = "Transform3D"
-      localPosition:Vec3F = 0, 0.8, 0
-      localScale:Vec3F = 0.33, 0.33, 0.33
+      localPosition:Vec3F = 0, 0.3, 0
+      localScale:Vec3F = 1.5, 0.25, 1
 
       localRotation
       {
@@ -559,7 +498,68 @@ entities
 
       "parent:Component"
       {
-        value:S32 = 30
+        value:S32 = 34
+      }
+    }
+  }
+
+  entity
+  {
+    _i:S32 = 41
+
+    component
+    {
+      _i:S32 = 42
+      _t:String = "Name"
+
+      name
+      {
+        value:String = "Right Column"
+      }
+    }
+
+    component
+    {
+      _i:S32 = 43
+      _t:String = "MeshRenderer"
+      enabled:Bool = true
+
+      renderMesh
+      {
+        value:String = "Cube"
+      }
+
+      materials
+      {
+        item
+        {
+          value:U32 = 1839016571
+        }
+      }
+    }
+
+    component
+    {
+      _i:S32 = 44
+      _t:String = "RenderMask"
+      mask:S32 = 1
+    }
+
+    component
+    {
+      _i:S32 = 45
+      _t:String = "Transform3D"
+      localPosition:Vec3F = 5, 5, 0
+      localScale:Vec3F = 1, 10, 1
+
+      localRotation
+      {
+        value:Vec4F = 0, 0, 0, 1
+      }
+
+      "parent:Component"
+      {
+        value:S32 = 34
       }
     }
   }
@@ -575,7 +575,7 @@ entities
 
       name
       {
-        value:String = "Right Column"
+        value:String = "Top"
       }
     }
 
@@ -610,8 +610,8 @@ entities
     {
       _i:S32 = 50
       _t:String = "Transform3D"
-      localPosition:Vec3F = 5, 5, 0
-      localScale:Vec3F = 1, 10, 1
+      localPosition:Vec3F = 0, 9.5, 0
+      localScale:Vec3F = 9, 1, 1
 
       localRotation
       {
@@ -620,7 +620,7 @@ entities
 
       "parent:Component"
       {
-        value:S32 = 30
+        value:S32 = 34
       }
     }
   }

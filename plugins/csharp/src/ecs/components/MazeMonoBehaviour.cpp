@@ -87,12 +87,66 @@ namespace Maze
         Component* _component,
         EntityCopyData _copyData)
     {
-        ScriptClassPtr const& scriptClass = _component->castRaw<MonoBehaviour>()->getMonoClass();
+        MonoBehaviour* other = _component->castRaw<MonoBehaviour>();
+        ScriptClassPtr const& scriptClass = other->getMonoClass();
         if (scriptClass)
             setMonoClass(scriptClass);
 
         if (!Component::init(_component, _copyData))
             return false;
+
+
+        // Copy fields and properties from other behaviour
+        if (m_monoClass && m_monoInstance && other->m_monoClass && other->m_monoInstance)
+        {
+            DataBlock db;
+
+            MonoHelper::IterateAllFields(other->m_monoClass,
+                [&](ScriptFieldPtr const& _prop)
+                {
+                    MonoSerializationManager::GetInstancePtr()->saveFieldToDataBlock(
+                        _copyData.getWorld(),
+                        *other->m_monoInstance,
+                        _prop,
+                        db);
+                });
+
+            MonoHelper::IterateSerializableProperties(other->m_monoClass,
+                [&](ScriptPropertyPtr const& _prop)
+                {
+                    MonoSerializationManager::GetInstancePtr()->savePropertyToDataBlock(
+                        _copyData.getWorld(),
+                        *other->m_monoInstance,
+                        _prop,
+                        db);
+                });
+
+            MonoHelper::IterateAllFields(m_monoClass,
+                [&](ScriptFieldPtr const& _field)
+                {
+                    if (_field->isStatic())
+                        return;
+
+                    MonoSerializationManager::GetInstancePtr()->loadFieldFromDataBlock(
+                        _copyData.getWorld(),
+                        *m_monoInstance,
+                        _field,
+                        db);
+                });
+
+            MonoHelper::IterateSerializableProperties(m_monoClass,
+                [&](ScriptPropertyPtr const& _prop)
+                {
+                    if (_prop->isStaticGetter())
+                        return;
+
+                    MonoSerializationManager::GetInstancePtr()->loadPropertyFromDataBlock(
+                        _copyData.getWorld(),
+                        *m_monoInstance,
+                        _prop,
+                        db);
+                });
+        }
 
         return true;
     }

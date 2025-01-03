@@ -24,14 +24,14 @@ entity
 
     renderMesh
     {
-      value:String = "Cube"
+      value:String = "Cylinder"
     }
 
     materials
     {
       item
       {
-        value:String = "Brick.mzmaterial"
+        value:String = "Brick1.mzmaterial"
       }
     }
   }
@@ -49,7 +49,12 @@ entity
     _t:String = "MonoBehaviour"
     _ct:String = "Brick"
 
-    data{}
+    data
+    {
+      m_BrickMaterial1:U32 = 3513274801
+      m_BrickMaterial2:U32 = 1789413373
+      m_BrickMaterial3:U32 = 2985122201
+    }
   }
 
   component

@@ -38,6 +38,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-core/assets/MazeAssetUnitId.hpp"
 
 
 //////////////////////////////////////////
@@ -133,7 +134,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline StringKeyMap<MaterialLibraryData> const& getMaterialsLibrary() const { return m_materialsLibrary; }
+        inline StringKeyMap<SharedPtr<MaterialLibraryData>> const& getMaterialsLibrary() const { return m_materialsLibrary; }
 
 
         //////////////////////////////////////////
@@ -144,6 +145,9 @@ namespace Maze
 
         //////////////////////////////////////////
         MaterialLibraryData const* getMaterialLibraryData(CString _assetFileName) { return getMaterialLibraryData(MAZE_HASHED_CSTRING(_assetFileName)); }
+
+        //////////////////////////////////////////
+        MaterialLibraryData const* getMaterialLibraryData(AssetUnitId _auid);
 
         //////////////////////////////////////////
         MaterialPtr const& getOrLoadMaterial(
@@ -158,6 +162,9 @@ namespace Maze
 
         //////////////////////////////////////////
         MaterialPtr const& getOrLoadMaterial(AssetFilePtr const& _assetFile, bool _syncLoad = true);
+
+        //////////////////////////////////////////
+        MaterialPtr const& getOrLoadMaterial(AssetUnitId _auid, bool _syncLoad = true);
 
         //////////////////////////////////////////
         HashedCString getMaterialName(Material const* _material);
@@ -239,7 +246,8 @@ namespace Maze
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
 
-        StringKeyMap<MaterialLibraryData> m_materialsLibrary;
+        StringKeyMap<SharedPtr<MaterialLibraryData>> m_materialsLibrary;
+        UnorderedMap<AssetUnitId, SharedPtr<MaterialLibraryData>> m_materialsByAssetUnitId;
 
         MaterialPtr m_builtinMaterials[BuiltinMaterialType::MAX];
     };
