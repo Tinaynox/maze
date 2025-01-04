@@ -1,0 +1,10 @@
+afid:U32 = 3400864213
+
+assetUnits
+{
+  renderMesh
+  {
+    auid:U32 = 170814064
+    name:String = "Frame.fbx"
+  }
+}

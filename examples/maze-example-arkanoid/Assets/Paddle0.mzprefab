@@ -24,7 +24,7 @@ entity
 
     renderMesh
     {
-      value:String = "Cube"
+      value:U32 = 3064878609
     }
 
     materials

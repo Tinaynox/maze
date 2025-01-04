@@ -1,0 +1,10 @@
+afid:U32 = 650428456
+
+assetUnits
+{
+  renderMesh
+  {
+    auid:U32 = 3064878609
+    name:String = "Brick0.fbx"
+  }
+}
