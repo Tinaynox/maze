@@ -26,6 +26,8 @@ public class GameController : MonoBehaviour
 
     Paddle m_Paddle;
 
+    int m_BricksCount = 0;
+
     static GameController s_instance;
     public static GameController Instance => s_instance;
 
@@ -90,6 +92,7 @@ public class GameController : MonoBehaviour
             obj.GetEntity().Destroy();
         m_GameObjects.Clear();
         m_Paddle = null;
+        m_BricksCount = 0;
     }
 
     public void LoadLevel()
@@ -113,7 +116,7 @@ public class GameController : MonoBehaviour
         const float blockWidth = 0.66f + 0.1f;
         const float blockHeight = 0.33f + 0.1f;
 
-        const int rowsCount = 11;
+        const int rowsCount = 1;
         const int columnCount = 10;
 
         const float lineWidth = blockWidth * columnCount;
@@ -130,6 +133,8 @@ public class GameController : MonoBehaviour
                 newBrickTransform.Y = 3.5f + blockHeight * r;
 
                 Brick brick = newBrick.GetComponent<Brick>();
+
+                ++m_BricksCount;
 
                 if (r == 0 || Math.Abs(newBrickTransform.X) < 1.0f)
                     brick.SetHealth(3);
@@ -159,6 +164,9 @@ public class GameController : MonoBehaviour
     {
         RemoveGameObject(_obj);
         _obj.GetEntity().Destroy();
+
+        if (--m_BricksCount <= 0)
+            LoadLevel();
     }
 
     public bool OverlapTest(GameObject _obj, out CollisionTestResult _result)
