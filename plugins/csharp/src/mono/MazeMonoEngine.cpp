@@ -590,7 +590,11 @@ namespace Maze
     MonoObject* MonoEngine::InstantiateClass(MonoClass* _monoClass)
     {
         MonoObject* instance = mono_object_new(g_monoEngineData->appDomain, _monoClass);
+        MAZE_ERROR_RETURN_VALUE_IF(!instance, nullptr, "Failed to instatiate class!");
         mono_runtime_object_init(instance);
+
+        MAZE_ERROR_RETURN_VALUE_IF(mono_object_get_class(instance) == nullptr, nullptr, "Instance is not instantiated!");
+        
 
         return instance;
     }

@@ -50,7 +50,11 @@ namespace Maze
         : m_scriptClass(_scriptClass)
         , m_instance(_instance)
     {
+        MAZE_DEBUG_ASSERT(m_instance);
+
         EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &ScriptInstance::notifyEvent);
+
+        m_gcHandle = mono_gchandle_new(m_instance, true);
     }
 
     //////////////////////////////////////////
@@ -83,6 +87,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ScriptInstance::invokeMethod(MonoMethod* _method)
     {
+        MAZE_DEBUG_ERROR_RETURN_VALUE_IF(!isValid(), false, "Instance is not valid!");
+
         MonoHelper::InvokeMethod(m_instance, _method);
         return true;
     }
@@ -104,6 +110,11 @@ namespace Maze
             return;
 
         m_instance = nullptr;
+        if (m_gcHandle != 0u)
+        {
+            mono_gchandle_free(m_gcHandle);
+            m_gcHandle = 0u;
+        }
     }
     
 

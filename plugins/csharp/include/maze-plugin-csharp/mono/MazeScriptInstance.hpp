@@ -291,7 +291,7 @@ namespace Maze
         void destroy();
 
         //////////////////////////////////////////
-        inline bool isValid() const { return m_instance != nullptr; }
+        inline bool isValid() const { return m_instance != nullptr && mono_object_get_class(m_instance) != nullptr; }
 
 
     private:
@@ -302,6 +302,7 @@ namespace Maze
     private:
         ScriptClassWPtr m_scriptClass;
         MonoObject* m_instance = nullptr;
+        U32 m_gcHandle = 0u;
     };
 
 } // namespace Maze

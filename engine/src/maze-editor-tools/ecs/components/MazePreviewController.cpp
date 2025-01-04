@@ -115,9 +115,12 @@ namespace Maze
             m_scene.reset();
         }
 
-        m_bodyBackgroundElement->eventCursorPressIn.unsubscribe(this);
-        m_bodyBackgroundElement->eventCursorDrag.unsubscribe(this);
-        m_bodyBackgroundElement->eventCursorWheel.unsubscribe(this);
+        if (m_bodyBackgroundElement)
+        {
+            m_bodyBackgroundElement->eventCursorPressIn.unsubscribe(this);
+            m_bodyBackgroundElement->eventCursorDrag.unsubscribe(this);
+            m_bodyBackgroundElement->eventCursorWheel.unsubscribe(this);
+        }
     }
 
     //////////////////////////////////////////

@@ -60,6 +60,8 @@ namespace Maze
     //////////////////////////////////////////
     MonoBehaviour::~MonoBehaviour()
     {
+        destroyMonoInstance();
+
         EventManager::GetInstancePtr()->unsubscribeEvent<MonoPreShutdownEvent>(this);
         EventManager::GetInstancePtr()->unsubscribeEvent<MonoPreReloadEvent>(this);
         EventManager::GetInstancePtr()->unsubscribeEvent<MonoReloadEvent>(this);
@@ -187,7 +189,7 @@ namespace Maze
     //////////////////////////////////////////
     void MonoBehaviour::destroyMonoInstance()
     {
-        if (!m_monoInstance || !m_monoInstance->isValid())
+        if (!m_monoInstance)
             return;
 
         m_monoInstance->destroy();
