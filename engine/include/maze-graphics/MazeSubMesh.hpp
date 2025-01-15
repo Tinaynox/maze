@@ -196,6 +196,24 @@ namespace Maze
             setTexCoords(_uvIndex, &_data[0], _data.size());
         }
 
+        //////////////////////////////////////////
+        void setBlendWeights(Vec4F const* _blendWeights, Size _count);
+
+        //////////////////////////////////////////
+        inline void setBlendWeights(Vector<Vec4F> const& _blendWeights)
+        {
+            setBlendWeights(&_blendWeights[0], _blendWeights.size());
+        }
+
+        //////////////////////////////////////////
+        void setBlendIndices(Vec4S const* _blendIndices, Size _count);
+
+        //////////////////////////////////////////
+        inline void setBlendIndices(Vector<Vec4S> const& _blendIndices)
+        {
+            setBlendIndices(&_blendIndices[0], _blendIndices.size());
+        }
+
 
         //////////////////////////////////////////
         U8 const* getIndicesData() const { return m_indicesBuffer->getDataRW(); }

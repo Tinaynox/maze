@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeMesh_hpp_))
-#define _MazeMesh_hpp_
+#if (!defined(_MazeMeshSkeleton_hpp_))
+#define _MazeMeshSkeleton_hpp_
 
 
 //////////////////////////////////////////
@@ -40,34 +40,54 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/containers/MazeFastVector.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Mesh);
-    MAZE_USING_SHARED_PTR(SubMesh);
     MAZE_USING_SHARED_PTR(MeshSkeleton);
+    MAZE_USING_SHARED_PTR(MeshSkeletonAnimation);
     
 
     //////////////////////////////////////////
-    // Class Mesh
+    // Class MeshSkeleton
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API Mesh
-        : public SharedObject<Mesh>
+    class MAZE_GRAPHICS_API MeshSkeleton
+        : public SharedObject<MeshSkeleton>
     {
     public:
 
         //////////////////////////////////////////
-        static MeshPtr Create();
+        using BoneIndex = S32;
 
         //////////////////////////////////////////
-        static MeshPtr Create(SubMeshPtr const& _subMesh);
+        struct Bone
+        {
+            //////////////////////////////////////////
+            Bone(
+                String const& _name = String(),
+                TMat const& _transform = TMat::c_identity,
+                BoneIndex _parentBoneIndex = -1)
+                : name(_name)
+                , transform(_transform)
+                , parentBoneIndex(_parentBoneIndex)
+            {}
+
+            String name;
+            TMat transform;
+            BoneIndex parentBoneIndex = -1;
+        };
+
+    public:
 
         //////////////////////////////////////////
-        virtual ~Mesh();
+        static MeshSkeletonPtr Create();
+
+        //////////////////////////////////////////
+        virtual ~MeshSkeleton();
 
 
         //////////////////////////////////////////
@@ -75,71 +95,49 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setRenderDrawTopology(RenderDrawTopology _renderDrawTopology);
+        BoneIndex addBone(
+            String const& _name,
+            TMat const& _transform = TMat::c_identity,
+            BoneIndex _parentBoneIndex = -1);
 
         //////////////////////////////////////////
-        void setIndices(U16* _indices, Size _count);
+        Bone& getBone(BoneIndex _index) { return m_bones[_index]; }
 
         //////////////////////////////////////////
-        void setPositions(Vec3F* _positions, Size _count);
+        BoneIndex findBoneIndex(HashedCString _name);
 
         //////////////////////////////////////////
-        void setNormals(Vec3F* _normals, Size _count);
+        Bone* findBone(HashedCString _name);
 
         //////////////////////////////////////////
-        void setColors(Vec4F* _colors, Size _count);
-        
-        //////////////////////////////////////////
-        void setTexCoords(S32 _uvIndex, Vec2F* _data, Size _count);
+        BoneIndex ensureBoneIndex(HashedCString _name);
 
         //////////////////////////////////////////
-        void setTexCoords(S32 _uvIndex, Vec4F* _data, Size _count);
-
-
-        //////////////////////////////////////////
-        SubMeshPtr const& getSubMesh(Size _index) const;
-
-        //////////////////////////////////////////
-        inline Size getSubMeshesCount() const { return m_subMeshes.size(); }
+        Bone& ensureBone(HashedCString _name);
 
 
         //////////////////////////////////////////
-        void addSubMesh(SubMeshPtr const& _subMesh);
-
-
-        //////////////////////////////////////////
-        void scale(F32 _scale);
-
-        //////////////////////////////////////////
-        void mergeSubMeshes();
-
-
-        //////////////////////////////////////////
-        MeshSkeletonPtr const& getSkeleton() const { return m_skeleton; }
-
-        //////////////////////////////////////////
-        MeshSkeletonPtr const& ensureSkeleton();
+        MeshSkeletonAnimationPtr const& ensureAnimation(String const& _name);
 
     protected:
 
         //////////////////////////////////////////
-        Mesh();
+        MeshSkeleton();
 
         //////////////////////////////////////////
         virtual bool init();    
     
 
-        //////////////////////////////////////////
-        SubMeshPtr const& ensureSubMesh();
-
     protected:
-        FastVector<SubMeshPtr> m_subMeshes;
-        MeshSkeletonPtr m_skeleton;
+        FastVector<Bone> m_bones;
+        StringKeyMap<BoneIndex> m_boneIndicesByName;
+
+        StringKeyMap<MeshSkeletonAnimationPtr> m_animations;
     };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeMesh_hpp_
+#endif // _MazeMeshSkeleton_hpp_
 //////////////////////////////////////////

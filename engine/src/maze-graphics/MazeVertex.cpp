@@ -50,6 +50,8 @@ namespace Maze
             case VertexAttributeSemantic::TexCoords5:    return "a_texCoords5";
             case VertexAttributeSemantic::TexCoords6:    return "a_texCoords6";
             case VertexAttributeSemantic::TexCoords7:    return "a_texCoords7";
+            case VertexAttributeSemantic::BlendWeights:  return "a_blendWeights";
+            case VertexAttributeSemantic::BlendIndices:  return "a_blendIndices";
             default:
             {
                 MAZE_ERROR("Unsupported VertexAttributeSemantic: %d", (S32)_semantic);

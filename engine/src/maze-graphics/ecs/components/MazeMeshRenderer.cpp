@@ -130,6 +130,14 @@ namespace Maze
         setMaterial(material);
     }
 
+    //////////////////////////////////////////
+    void MeshRenderer::setMaterials(Vector<String> const& _materialNames)
+    {
+        Vector<MaterialAssetRef> materials;
+        for (String const& materialName : _materialNames)
+            materials.push_back(m_renderSystem->getMaterialManager()->getOrLoadMaterial(materialName));
+        setMaterialRefs(materials);
+    }
 
     //////////////////////////////////////////
     void MeshRenderer::addMaterial(MaterialPtr const& _material)

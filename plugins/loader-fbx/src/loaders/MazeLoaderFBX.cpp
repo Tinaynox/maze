@@ -30,6 +30,8 @@
 #include "maze-graphics/MazePixelFormat.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/helpers/MazeSubMeshHelper.hpp"
+#include "maze-graphics/MazeMeshSkeleton.hpp"
+#include "maze-graphics/MazeMeshSkeletonAnimation.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 
 #undef VOID
@@ -51,19 +53,20 @@ namespace Maze
         ofbx::LoadFlags flags =
             ofbx::LoadFlags::TRIANGULATE |
             // ofbx::LoadFlags::IGNORE_MODELS |
-            ofbx::LoadFlags::IGNORE_BLEND_SHAPES |
+            // ofbx::LoadFlags::IGNORE_BLEND_SHAPES |
             ofbx::LoadFlags::IGNORE_CAMERAS |
             ofbx::LoadFlags::IGNORE_LIGHTS |
             ofbx::LoadFlags::IGNORE_TEXTURES |
-            ofbx::LoadFlags::IGNORE_SKIN |
-            ofbx::LoadFlags::IGNORE_BONES |
+            // ofbx::LoadFlags::IGNORE_SKIN |
+            // ofbx::LoadFlags::IGNORE_BONES |
             ofbx::LoadFlags::IGNORE_PIVOTS |
             ofbx::LoadFlags::IGNORE_MATERIALS |
-            ofbx::LoadFlags::IGNORE_POSES |
+            // ofbx::LoadFlags::IGNORE_POSES |
             ofbx::LoadFlags::IGNORE_VIDEOS |
-            ofbx::LoadFlags::IGNORE_LIMBS |
-            // ofbx::LoadFlags::IGNORE_MESHES |
-            ofbx::LoadFlags::IGNORE_ANIMATIONS;
+            ofbx::LoadFlags::IGNORE_LIMBS
+            // ofbx::LoadFlags::IGNORE_MESHES
+            // ofbx::LoadFlags::IGNORE_ANIMATIONS
+            ;
         return (ofbx::u16)flags;
     }
 
@@ -75,6 +78,68 @@ namespace Maze
             (F32)_mat.m[4], (F32)_mat.m[5], (F32)_mat.m[6],
             (F32)_mat.m[8], (F32)_mat.m[9], (F32)_mat.m[10],
             (F32)_mat.m[12], (F32)_mat.m[13], (F32)_mat.m[14]);
+    }
+
+    //////////////////////////////////////////
+    inline MeshSkeletonAnimationCurve ConvertAnimationCurveToMeshSkeletonAnimationCurve(ofbx::AnimationCurve const* _curve)
+    {
+        if (!_curve || _curve->getKeyCount() == 0)
+            return MeshSkeletonAnimationCurve();
+
+        FastVector<F32> times;
+        FastVector<F32> values;
+
+        Size keyCount = Size(_curve->getKeyCount());
+        times.resize(keyCount);
+        values.resize(keyCount);
+
+        memcpy(&values[0], _curve->getKeyValue(), sizeof(F32) * keyCount);
+        for (Size i = 0; i < keyCount; ++i)
+            values[i] = (F32)ofbx::fbxTimeToSeconds(_curve->getKeyTime()[i]);
+
+        return MeshSkeletonAnimationCurve(std::move(times), std::move(values));
+    }
+
+    //////////////////////////////////////////
+    inline void ProcessBoneForVertex(
+        Vec4F& _blendWeights,
+        Vec4S& _blendIndices,
+        S32 _boneIndex,
+        F32 _weight)
+    {
+        for (S32 i = 0; i < 4; ++i)
+        {
+            if (_blendWeights[i] == 0.0f)
+            {
+                _blendIndices[i] = _boneIndex;
+                _blendWeights[i] = _weight;
+                return;
+            }
+        }
+
+        // If more than 4 bones influence the vertex, find the smallest weight and replace it
+        S32 smallestIndex = 0;
+        for (S32 i = 1; i < 4; ++i)
+            if (_blendWeights[i] < _blendWeights[smallestIndex])
+                smallestIndex = i;
+
+        if (_weight > _blendWeights[smallestIndex])
+        {
+            _blendIndices[smallestIndex] = _boneIndex;
+            _blendWeights[smallestIndex] = _weight;
+        }
+    }
+
+    //////////////////////////////////////////
+    inline void NormalizeBlendWeights(Vector<Vec4F>& _blendWeights)
+    {
+        for (auto& blendWeight : _blendWeights)
+        {
+            F32 totalWeight = blendWeight.x + blendWeight.y + blendWeight.z + blendWeight.w;
+
+            if (totalWeight > 0.0f)
+                blendWeight /= totalWeight;
+        }
     }
 
     //////////////////////////////////////////
@@ -96,7 +161,11 @@ namespace Maze
         Vector<Vec4F> colors;
         Vector<Vec3F> normals;
         Vector<Vec3F> tangents;
+        Vector<Vec4F> blendWeights;
+        Vector<Vec4S> blendIndices;
         String meshName;
+
+        Vector<ofbx::Object const*> bones;
 
         auto processCreateSubMesh =
             [&]()
@@ -162,6 +231,15 @@ namespace Maze
                 }
             }
 
+            if (!blendWeights.empty())
+            {
+                NormalizeBlendWeights(blendWeights);
+                subMesh->setBlendWeights(&blendWeights[0], blendWeights.size());
+            }
+
+            if (!blendIndices.empty())
+                subMesh->setBlendIndices(&blendIndices[0], blendIndices.size());
+
             _mesh.addSubMesh(subMesh);
 
             // Cleanup
@@ -170,6 +248,8 @@ namespace Maze
             normals.clear();
             tangents.clear();
             colors.clear();
+            blendWeights.clear();
+            blendIndices.clear();
             indices.clear();
         };
 
@@ -189,9 +269,9 @@ namespace Maze
         S32 indicesOffset = 0;
 
         S32 meshCount = _scene->getMeshCount();
-        for (S32 i = 0; i < meshCount; ++i)
+        for (S32 meshI = 0; meshI < meshCount; ++meshI)
         {
-            ofbx::Mesh const& mesh = *_scene->getMesh(i);
+            ofbx::Mesh const& mesh = *_scene->getMesh(meshI);
             ofbx::Geometry const& geom = *mesh.getGeometry();
 
             ofbx::Matrix meshGeometricTransform = mesh.getGeometricMatrix();
@@ -281,10 +361,132 @@ namespace Maze
                     colors.push_back(Vec4F((F32)colorsPtr[i].x, (F32)colorsPtr[i].y, (F32)colorsPtr[i].z, (F32)colorsPtr[i].w));
             }
 
+            // Skin
+            ofbx::Skin const* skin = geom.getSkin();
+            if (skin)
+            {
+                MeshSkeletonPtr const& meshSkeleton = _mesh.ensureSkeleton();
+
+                blendWeights.resize(blendWeights.size() + vertexCount, Vec4F(0.0f));
+                blendIndices.resize(blendIndices.size() + vertexCount, Vec4S(0));
+
+                S32 const clusterCount = skin->getClusterCount();
+
+                for (S32 clusterIndex = 0; clusterIndex < clusterCount; ++clusterIndex)
+                {
+                    ofbx::Cluster const* cluster = skin->getCluster(clusterIndex);
+                    ofbx::Object const* bone = cluster->getLink(); // Bone corresponding to this cluster
+                    if (!bone)
+                        continue;
+
+                    CString boneName = bone->name;
+
+                    auto meshSkeletonBoneIndex = meshSkeleton->ensureBoneIndex(HashedCString(boneName));
+
+                    MeshSkeleton::BoneIndex parentBoneIndex = -1;
+                    if (bone->getParent())
+                        parentBoneIndex = meshSkeleton->ensureBoneIndex(HashedCString(bone->getParent()->name));
+
+                    auto& meshSkeletonBone = meshSkeleton->getBone(meshSkeletonBoneIndex);
+                    meshSkeletonBone.parentBoneIndex = parentBoneIndex;
+
+                    ofbx::Matrix transform = bone->getLocalTransform();
+                    meshSkeletonBone.transform = ConvertOpenFBXMatrixToTMat(transform);
+
+                    if (meshSkeletonBoneIndex >= S32(bones.size()))
+                        bones.resize((Size)meshSkeletonBoneIndex + 1);
+                    bones[meshSkeletonBoneIndex] = bone;
+                        
+
+                    S32 const vertexCount = cluster->getIndicesCount();
+                    if (vertexCount)
+                    {
+                        // Retrieve vertices influenced by this bone
+                        S32 const* indices = cluster->getIndices(); // Indices of vertices affected by this bone
+                        F64 const* weights = cluster->getWeights(); // Corresponding weights for each vertex
+
+                        for (S32 i = 0; i < vertexCount; ++i)
+                        {
+                            S32 vertexIndex = indices[i]; // Vertex index in the mesh
+                            MAZE_DEBUG_ASSERT(vertexIndex >= 0);
+                            MAZE_DEBUG_ASSERT(vertexIndex < blendWeights.size());
+                            MAZE_DEBUG_ASSERT(vertexIndex < blendIndices.size());
+
+                            F32 weight = static_cast<F32>(weights[i]);
+
+                            ProcessBoneForVertex(
+                                blendWeights[vertexIndex],
+                                blendIndices[vertexIndex],
+                                S32(bone->id),
+                                weight);
+                        }
+                    }
+
+                }
+            }
+
             if (!_props.mergeSubMeshes)
                 processCreateSubMesh();
             else
                 indicesOffset += indexCount;
+        }
+
+        if (_mesh.getSkeleton())
+        {
+            // Load animations
+            S32 animationsCount = _scene->getAnimationStackCount();
+            for (S32 i = 0; i < animationsCount; ++i)
+            {
+                ofbx::AnimationStack const* animStack = _scene->getAnimationStack(i);
+                if (animStack)
+                {
+                    CString animName = animStack->name;
+
+                    ofbx::TakeInfo const* takeInfo = _scene->getTakeInfo(animName);
+
+                    // Take animations from layer 0 only
+                    ofbx::AnimationLayer const* animLayer = animStack->getLayer(0);
+                    if (animLayer && takeInfo)
+                    {
+                        F32 animationTime = F32(takeInfo->local_time_to - takeInfo->local_time_from);
+
+                        MeshSkeletonAnimationPtr const& meshSkeletonAnimation = _mesh.getSkeleton()->ensureAnimation(animName);
+
+                        Vector<MeshSkeletonAnimationBone> meshSkeletonAnimationBones;
+
+                        S32 bonesCount = S32(bones.size());
+                        for (MeshSkeleton::BoneIndex boneIndex = 0; boneIndex < bonesCount; ++boneIndex)
+                        {
+                            MeshSkeletonAnimationBone meshSkeletonAnimationBone;
+
+                            ofbx::Object const* bone = bones[boneIndex];
+
+                            ofbx::AnimationCurveNode const* translation = animLayer->getCurveNode(*bone, "Lcl Translation");
+                            ofbx::AnimationCurveNode const* rotation = animLayer->getCurveNode(*bone, "Lcl Rotation");
+                            ofbx::AnimationCurveNode const* scaling = animLayer->getCurveNode(*bone, "Lcl Scaling");
+
+                            for (S32 axis = 0; axis < 3; ++axis)
+                            {
+                                if (translation)
+                                    meshSkeletonAnimationBone.translation[axis] = 
+                                        ConvertAnimationCurveToMeshSkeletonAnimationCurve(translation->getCurve(axis));
+
+                                if (rotation)
+                                    meshSkeletonAnimationBone.rotation[axis] =
+                                        ConvertAnimationCurveToMeshSkeletonAnimationCurve(rotation->getCurve(axis));
+
+                                if (scaling)
+                                    meshSkeletonAnimationBone.scale[axis] =
+                                        ConvertAnimationCurveToMeshSkeletonAnimationCurve(scaling->getCurve(axis));
+                            }
+                            
+                            meshSkeletonAnimationBones.emplace_back(std::move(meshSkeletonAnimationBone));
+                        }
+
+                        meshSkeletonAnimation->setBoneAnimations(std::move(meshSkeletonAnimationBones));
+                    }
+                }
+            }
         }
 
         if (_props.mergeSubMeshes)

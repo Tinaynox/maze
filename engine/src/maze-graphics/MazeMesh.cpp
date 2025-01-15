@@ -29,6 +29,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
+#include "maze-graphics/MazeMeshSkeleton.hpp"
 
 
 //////////////////////////////////////////
@@ -87,6 +88,7 @@ namespace Maze
     void Mesh::clear()
     {
         m_subMeshes.clear();
+        m_skeleton.reset();
     }
 
     //////////////////////////////////////////
@@ -183,6 +185,15 @@ namespace Maze
                 }
             }
         }
+    }
+
+    //////////////////////////////////////////
+    MeshSkeletonPtr const& Mesh::ensureSkeleton()
+    {
+        if (!m_skeleton)
+            m_skeleton = MeshSkeleton::Create();
+
+        return m_skeleton;
     }
 
 } // namespace Maze

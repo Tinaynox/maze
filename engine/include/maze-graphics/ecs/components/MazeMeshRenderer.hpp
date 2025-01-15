@@ -130,6 +130,9 @@ namespace Maze
         void setMaterial(String const& _materialName);
 
         //////////////////////////////////////////
+        void setMaterials(Vector<String> const& _materialNames);
+
+        //////////////////////////////////////////
         void addMaterial(MaterialPtr const& _material);
 
         //////////////////////////////////////////

@@ -248,6 +248,30 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void SubMesh::setBlendWeights(Vec4F const* _blendWeights, Size _count)
+    {
+        ByteBufferPtr const& buffer = allocateVertexAttributes(
+            VertexAttributeSemantic::BlendWeights,
+            VertexAttributeType::F32,
+            4,
+            _count,
+            false);
+        buffer->copyFrom((U8 const*)_blendWeights, buffer->getSize());
+    }
+
+    //////////////////////////////////////////
+    void SubMesh::setBlendIndices(Vec4S const* _blendIndices, Size _count)
+    {
+        ByteBufferPtr const& buffer = allocateVertexAttributes(
+            VertexAttributeSemantic::BlendIndices,
+            VertexAttributeType::S32,
+            4,
+            _count,
+            false);
+        buffer->copyFrom((U8 const*)_blendIndices, buffer->getSize());
+    }
+
+    //////////////////////////////////////////
     void SubMesh::scale(F32 _scale)
     {
         MeshVertexAttributeDescription const& data = m_vertexData[(Size)VertexAttributeSemantic::Position];

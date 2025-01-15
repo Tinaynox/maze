@@ -100,6 +100,15 @@ namespace Maze
                 new (&m_data[i]) T(_copy.m_data[i]);
             }
         }
+
+        //////////////////////////////////////////
+        inline FastVector(FastVector<T>&& _value)
+            : m_data(nullptr)
+            , m_size(_value.m_size)
+            , m_capacity(_value.m_capacity)
+        {
+            std::swap(m_data, _value.m_data);
+        }
         
         //////////////////////////////////////////
         FastVector(Size _reserveAmount) 

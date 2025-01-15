@@ -184,7 +184,11 @@ namespace Maze
         skinTestTransform->setLocalZ(5.0f);
         MeshRendererPtr skinTestMeshRenderer = skinTest->createComponent<MeshRenderer>();
         skinTestMeshRenderer->setRenderMesh("SkinTest.fbx");
-        skinTestMeshRenderer->setMaterial("SkinTest.mzmaterial");
+        skinTestMeshRenderer->setMaterials(
+            {
+                "SkinTest1.mzmaterial",
+                "SkinTest0.mzmaterial"
+            });
 
         return true;
     }

@@ -61,6 +61,8 @@ namespace Maze
         TexCoords5,
         TexCoords6,
         TexCoords7,
+        BlendWeights,
+        BlendIndices,
 
         MAX
     };

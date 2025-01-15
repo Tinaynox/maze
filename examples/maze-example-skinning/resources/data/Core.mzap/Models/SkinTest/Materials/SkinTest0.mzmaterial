@@ -4,7 +4,7 @@ uniform
 {
   name:String = "u_baseMap"
   type:String = "UniformTexture2D"
-  value:String = "SkinTest.png"
+  value:String = "SkinTest0_Diffuse.png"
 }
 
 uniform
