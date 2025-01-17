@@ -35,6 +35,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -52,6 +53,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API MeshRenderer
         : public Component
+        , public IRenderUnitDrawer
     {
     public:
 
@@ -170,15 +172,21 @@ namespace Maze
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
 
+        //////////////////////////////////////////
+        virtual void drawDefaultPass(
+            RenderQueuePtr const& _renderQueue,
+            DefaultPassParams const& _params,
+            RenderUnit const& _renderUnit) MAZE_OVERRIDE;
+
     protected:
-        RenderSystem* m_renderSystem;
+        RenderSystem* m_renderSystem = nullptr;
 
         RenderMeshAssetRef m_renderMeshRef;
         Vector<MaterialAssetRef> m_materialRefs;
         
         RenderMaskPtr m_renderMask;
 
-        bool m_enabled;
+        bool m_enabled = true;
     };
 
 

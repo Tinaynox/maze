@@ -451,6 +451,7 @@ namespace Maze
                         F32 animationTime = F32(takeInfo->local_time_to - takeInfo->local_time_from);
 
                         MeshSkeletonAnimationPtr const& meshSkeletonAnimation = _mesh.getSkeleton()->ensureAnimation(animName);
+                        meshSkeletonAnimation->setAnimationTime(animationTime);
 
                         Vector<MeshSkeletonAnimationBone> meshSkeletonAnimationBones;
 

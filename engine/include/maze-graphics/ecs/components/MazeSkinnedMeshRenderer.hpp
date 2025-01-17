@@ -25,18 +25,16 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeLineRenderer3D_hpp_))
-#define _MazeLineRenderer3D_hpp_
+#if (!defined(_MazeSkinnedMeshRenderer_hpp_))
+#define _MazeSkinnedMeshRenderer_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-graphics/MazeColorGradient.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/MazeColorF128.hpp"
-#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 
 
@@ -45,41 +43,41 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(LineRenderer3D);
+    MAZE_USING_SHARED_PTR(SkinnedMeshRenderer);
     MAZE_USING_SHARED_PTR(RenderMask);
-    MAZE_USING_SHARED_PTR(Transform3D);
-    MAZE_USING_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(VertexArrayObject);
+    MAZE_USING_SHARED_PTR(MeshSkeletonAnimator);
 
 
     //////////////////////////////////////////
-    // Class LineRenderer3D
+    // Class SkinnedMeshRenderer
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API LineRenderer3D
+    class MAZE_GRAPHICS_API SkinnedMeshRenderer
         : public Component
         , public IRenderUnitDrawer
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(LineRenderer3D, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SkinnedMeshRenderer, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(LineRenderer3D);
+        MAZE_DECLARE_MEMORY_ALLOCATION(SkinnedMeshRenderer);
 
         //////////////////////////////////////////
         friend class Entity;
-        friend void LineRenderer3DEntityRemoved(EntityRemovedEvent const&, Entity*, LineRenderer3D*);
-        friend void LineRenderer3DOnEcsWorldWillBeDestroyed(EcsWorldWillBeDestroyedEvent const&, Entity*, LineRenderer3D*);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~LineRenderer3D();
+        virtual ~SkinnedMeshRenderer();
 
         //////////////////////////////////////////
-        static LineRenderer3DPtr Create(RenderSystem* _renderSystem = nullptr);
+        static SkinnedMeshRendererPtr Create(RenderSystem* _renderSystem = nullptr);
+
+
+        //////////////////////////////////////////
+        void processEntityRemoved();
 
 
         //////////////////////////////////////////
@@ -87,14 +85,46 @@ namespace Maze
 
         
         //////////////////////////////////////////
-        RenderMeshPtr const& getRenderMesh() const { return m_renderMesh; }
+        inline RenderMeshAssetRef const& getRenderMeshRef() const { return m_renderMeshRef; }
+
+        //////////////////////////////////////////
+        inline void setRenderMeshRef(RenderMeshAssetRef const& _renderMesh) { m_renderMeshRef.setRenderMesh(_renderMesh.getRenderMesh()); }
+
+        //////////////////////////////////////////
+        inline RenderMeshPtr const& getRenderMesh() const { return m_renderMeshRef.getRenderMesh(); }
+
+        //////////////////////////////////////////
+        void setRenderMesh(RenderMeshPtr const& _renderMesh);
+
+        //////////////////////////////////////////
+        void setRenderMesh(String const& _renderMeshName);
+
+        //////////////////////////////////////////
+        void setMesh(MeshPtr const& _mesh);
+
+        //////////////////////////////////////////
+        void clearMesh();
 
 
         //////////////////////////////////////////
         inline Vector<MaterialAssetRef> const& getMaterialRefs() const { return m_materialRefs; }
 
         //////////////////////////////////////////
-        inline void setMaterialRefs(Vector<MaterialAssetRef> const& _materials) { m_materialRefs = _materials; }
+        inline MaterialPtr const& getMaterial() const
+        {
+            static MaterialPtr const nullPointer;
+
+            if (!m_materialRefs.empty())
+                return m_materialRefs.front().getMaterial();
+            
+            return nullPointer;
+        }
+
+        //////////////////////////////////////////
+        inline MaterialPtr const& getMaterial(Size _i) const { return m_materialRefs[_i].getMaterial(); }
+
+        //////////////////////////////////////////
+        inline void setMaterialRefs(Vector<MaterialAssetRef> const& _materialRefs) { m_materialRefs = _materialRefs; }
 
         //////////////////////////////////////////
         void setMaterial(MaterialPtr const& _material);
@@ -102,48 +132,30 @@ namespace Maze
         //////////////////////////////////////////
         void setMaterial(String const& _materialName);
 
+        //////////////////////////////////////////
+        void setMaterials(Vector<String> const& _materialNames);
 
         //////////////////////////////////////////
-        inline void setWidth(F32 _width) { m_width = _width; rebuildMesh(); }
+        void addMaterial(MaterialPtr const& _material);
 
         //////////////////////////////////////////
-        inline F32 getWidth() const { return m_width; }
-
-
-        //////////////////////////////////////////
-        inline void setColor(ColorF128 const& _color)
-        {
-            setColor(ColorGradient(0.0f, _color.toVec3F32()));
-        }
-
-        //////////////////////////////////////////
-        inline void setColor(ColorGradient const& _color) { m_color = _color; rebuildMesh(); }
-
-        //////////////////////////////////////////
-        inline ColorGradient const& getColor() const { return m_color; }
+        void addMaterial(String const& _materialName);
 
 
         //////////////////////////////////////////
-        inline void setPositions(Vector<Vec3F> const& _positions) { m_positions = _positions; rebuildMesh(); }
-
-        //////////////////////////////////////////
-        inline Vector<Vec3F> const& getPositions() const { return m_positions; }
+        inline RenderMaskPtr const& getRenderMask() const { return m_renderMask; }
 
 
         //////////////////////////////////////////
-        Transform3DPtr const& getTransform() const { return m_transform; }
+        inline void setEnabled(bool _enabled) { m_enabled = _enabled; }
 
         //////////////////////////////////////////
-        RenderMaskPtr const& getRenderMask() const { return m_renderMask; }
-
-        //////////////////////////////////////////
-        void clear();
-
+        inline bool getEnabled() const { return m_enabled; }
 
     protected:
 
         //////////////////////////////////////////
-        LineRenderer3D();
+        SkinnedMeshRenderer();
 
         //////////////////////////////////////////
         using Component::init;
@@ -151,28 +163,14 @@ namespace Maze
         //////////////////////////////////////////
         bool init(RenderSystem* _renderSystem = nullptr);
 
+
         //////////////////////////////////////////
         virtual bool init(
             Component* _component,
-            EntityCopyData _copyData) MAZE_OVERRIDE;
-
+            EntityCopyData _copyData = EntityCopyData()) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        void processEntityRemoved();
-
-        //////////////////////////////////////////
-        virtual void processSceneSet() MAZE_OVERRIDE;
-
-        
-
-        //////////////////////////////////////////
-        void rebuildMesh();
-
-        //////////////////////////////////////////
-        F32 getTrailWidth(F32 _progress);
 
 
         //////////////////////////////////////////
@@ -182,25 +180,15 @@ namespace Maze
             RenderUnit const& _renderUnit) MAZE_OVERRIDE;
 
     protected:
-        RenderSystem* m_renderSystem;
+        RenderSystem* m_renderSystem = nullptr;
 
-        RenderMaskPtr m_renderMask;
-        Transform3DPtr m_transform;
-
+        RenderMeshAssetRef m_renderMeshRef;
         Vector<MaterialAssetRef> m_materialRefs;
+        
+        RenderMaskPtr m_renderMask;
+        MeshSkeletonAnimatorPtr m_animator;
 
-        F32 m_width;
-        ColorGradient m_color;
-
-        VertexArrayObjectPtr m_vao;
-        RenderMeshPtr m_renderMesh;
-
-        Vector<Vec3F> m_positions;
-
-        FastVector<Vec3F> m_vertices;
-        FastVector<Vec2F> m_uvs;
-        FastVector<Vec4F> m_colors;
-        FastVector<U16> m_indices;
+        bool m_enabled = true;
     };
 
 
@@ -208,5 +196,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeLineRenderer3D_hpp_
+#endif // _MazeSkinnedMeshRenderer_hpp_
 //////////////////////////////////////////

@@ -92,6 +92,33 @@ namespace Maze
         m_particleSystem3DSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<ParticleSystem3D>();
     }
 
+    //////////////////////////////////////////
+    void ParticlesDrawerController::drawDefaultPass(
+        RenderQueuePtr const& _renderQueue,
+        DefaultPassParams const& _params,
+        RenderUnit const& _renderUnit)
+    {
+        ParticleSystem3D const* particleSystem = reinterpret_cast<ParticleSystem3D const*>(_renderUnit.userData);
+
+        RenderMesh const* renderMesh = particleSystem->getRendererModule().getRenderMesh().get();
+        if (!renderMesh)
+        {
+            RenderMeshPtr const& quad = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getDefaultQuadMesh();
+            renderMesh = quad.get();
+        }
+
+        Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX];
+        memset(uvStreams, 0, sizeof(uvStreams));
+        uvStreams[0] = particleSystem->getRenderUVs();
+
+        _renderQueue->addDrawVAOInstancedCommand(
+            renderMesh->getVertexArrayObject().get(),
+            particleSystem->getAliveParticles(),
+            particleSystem->getRenderTransforms(),
+            particleSystem->getRenderColors(),
+            (Vec4F const**)uvStreams);
+    }
+
 
 
     //////////////////////////////////////////
@@ -112,7 +139,7 @@ namespace Maze
 
 
         _particlesDrawerController->getParticleSystem3DSample()->query(
-            [renderTarget, &_event, &cameraPosition, &cameraForward, &cameraUp](Entity* _entity, ParticleSystem3D* _particleSystem)
+            [renderTarget, &_event, &cameraPosition, &cameraForward, &cameraUp, _particlesDrawerController](Entity* _entity, ParticleSystem3D* _particleSystem)
         {
             if (!(_particleSystem->getRenderMask()->getMask() & _event.getPassParams()->renderMask))
                 return;
@@ -128,29 +155,17 @@ namespace Maze
             else
                 material = &_particleSystem->getRendererModule().getMaterial();
 
-            RenderMesh const* renderMesh = _particleSystem->getRendererModule().getRenderMesh().get();
-            if (!renderMesh)
-            {
-                RenderMeshPtr const& quad = renderTarget->getRenderSystem()->getRenderMeshManager()->getDefaultQuadMesh();
-                renderMesh = quad.get();
-            }
-
             _particleSystem->prepareToRender(
                 cameraPosition,
                 cameraForward,
                 cameraUp);
 
             _event.getRenderUnits()->emplace_back(
-                RenderUnit
-                {
-                    (*material)->getFirstRenderPass(),
-                    renderMesh->getVertexArrayObject(),
-                    _particleSystem->getTransform()->getWorldPosition(),
-                    aliveParticles,
-                    _particleSystem->getRenderTransforms(),
-                    _particleSystem->getRenderColors(),
-                    _particleSystem->getRenderUVs()
-                });
+                (*material)->getFirstRenderPass(),
+                _particleSystem->getTransform()->getWorldPosition(),
+                _particlesDrawerController,
+                -1,
+                reinterpret_cast<U64>(_particleSystem));
         });
     }
     

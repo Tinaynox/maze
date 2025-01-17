@@ -239,16 +239,12 @@ namespace Maze
                     MAZE_PROFILE_EVENT("3D Preparation Render Queue");
                     for (S32 i = 0; i < renderDataSize; ++i)
                     {
-                        RenderUnit const& data = renderData[indices[i]];
+                        RenderUnit const& renderUnit = renderData[indices[i]];
 
-                        RenderPassPtr const& renderPass = data.renderPass;
+                        RenderPassPtr const& renderPass = renderUnit.renderPass;
                         ShaderPtr const& shader = renderPass->getShader();
 
                         S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
-
-                        VertexArrayObjectPtr const& vao = data.vao;
-
-                        MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null!");
 
                         if (shader->getMainLightColorUniform())
                             shader->getMainLightColorUniform()->set(mainLightColor);
@@ -258,14 +254,20 @@ namespace Maze
 
 
                         renderQueue->addSelectRenderPassCommand(renderPass);
+                        
+                        renderUnit.drawer->drawDefaultPass(renderQueue, _params, renderUnit);
 
-
+                        // #TODO:
+                        /*
+                        VertexArrayObjectPtr const& vao = data.vao;
+                        MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null!");
                         renderQueue->addDrawVAOInstancedCommand(
                             vao.get(),
                             data.count,
                             data.modelMatricies,
                             data.colorStream,
                             (Vec4F const**)data.uvStreams);
+                        */
 
                         prevRenderQueueIndex = currentRenderQueueIndex;
                     }

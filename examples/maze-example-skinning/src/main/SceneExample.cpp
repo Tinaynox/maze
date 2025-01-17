@@ -72,6 +72,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer3D.hpp"
+#include "maze-graphics/ecs/components/MazeSkinnedMeshRenderer.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderMZMESH.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
@@ -182,7 +183,7 @@ namespace Maze
         Transform3DPtr skinTestTransform = skinTest->createComponent<Transform3D>();
         skinTestTransform->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
         skinTestTransform->setLocalZ(5.0f);
-        MeshRendererPtr skinTestMeshRenderer = skinTest->createComponent<MeshRenderer>();
+        SkinnedMeshRendererPtr skinTestMeshRenderer = skinTest->createComponent<SkinnedMeshRenderer>();
         skinTestMeshRenderer->setRenderMesh("SkinTest.fbx");
         skinTestMeshRenderer->setMaterials(
             {

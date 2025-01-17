@@ -78,7 +78,6 @@
 #include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include "maze-plugin-particles-editor-tools/MazeParticlesEditorToolsPlugin.hpp"
-#include "main/LevelBloomController.hpp"
 #include "Example.hpp"
 
 
@@ -150,74 +149,11 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneExample::init()
     {
-        if (!EcsRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
+        if (!BaseSceneExample::init(Vec2F(100.0f, 30.0f)))
             return false;
 
-        Vec2U32 renderBufferSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
-        m_renderBuffer = RenderBuffer::Create(
-            {
-                renderBufferSize,
-                PixelFormat::RGBA_F16,
-                PixelFormat::DEPTH_U24
-            });
-        m_renderBuffer->getColorTexture()->castRaw<Texture2D>()->setMinFilter(TextureFilter::Linear);
-        m_renderBuffer->getColorTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Linear);
-
-
-
-        EntityPtr canvasEntity = createEntity("Canvas");
-        m_canvas = canvasEntity->createComponent<Canvas>();
-        m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
-        m_canvas->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
-        m_canvas->setClearColorFlag(false);
-        m_canvas->setClearColor(ColorU32::c_zero);
-
-        CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
-        canvasScaler->setScaleMode(CanvasScalerScaleMode::ScaleWithViewportSize);
-        canvasScaler->setScreenMatchMode(CanvasScalerScreenMatchMode::MatchWidthOrHeight);
-        canvasScaler->setMatchWidthOrHeight(1.0f);
-        canvasScaler->updateCanvasScale();
-
-
-        MaterialPtr const& postFXMaterial = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("PostFX00.mzmaterial");
-        m_renderColorSprite = SpriteHelper::CreateSprite(
-            Sprite::Create(m_renderBuffer->getColorTexture()->cast<Texture2D>()),
-            m_canvas->getTransform()->getSize(),
-            Vec2F32::c_zero,
-            postFXMaterial,
-            m_canvas->getTransform(),
-            this);
-        m_renderColorSprite->getTransform()->setZ(1000);
-        m_renderColorSprite->getEntityRaw()->ensureComponent<Name>("RenderColorSprite");
-        m_renderColorSprite->getEntityRaw()->ensureComponent<SizePolicy2D>();
-
-        Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.subscribe(this, &SceneExample::notifyMainRenderWindowViewportChanged);
-        Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneExample::notifyRenderTargetResized);
-
-
-        // Light
-        EntityPtr lightEntity = createEntity();
-        Light3DPtr mainLight3D = lightEntity->createComponent<Light3D>();
-        mainLight3D->setColor(ColorU32(255, 244, 214));
-        mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
-        mainLight3D->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
-        lightEntity->ensureComponent<Name>("Light");
-
-
-        // Camera
-        EntityPtr cameraEntity = createEntity();
-        m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3D->getTransform()->setLocalPosition(Vec3F32(0.0f, 0.5f, -18.0f));
-        m_camera3D->setFOV(Math::DegreesToRadians(30));
-        m_camera3D->setClearColor(ColorU32(20, 20, 20));
-        m_camera3D->setRenderTarget(m_renderBuffer);
-        m_camera3D->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::Gizmos);
-        m_camera3D->getEntityRaw()->ensureComponent<Name>("Camera");
-        m_camera3D->setNearZ(0.01f);
-        m_camera3D->setFarZ(100.0f);
-
-        m_bloomController = LevelBloomController::Create(this);
-
+        m_camera3D->setClearColor(ColorU32::c_blackSoft);
+        m_camera3D->setClearColorFlag(true);
 
         createParticleSystem();
 
@@ -225,35 +161,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
-    {
-        if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
-            return;
-
-        m_canvas->setViewport(_mainRenderWindowViewport);
-
-        m_renderBuffer->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
-    }
-
-    //////////////////////////////////////////
-    void SceneExample::notifyRenderTargetResized(RenderTarget* _renderTarget)
-    {
-        if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
-            return;
-
-        m_renderBuffer->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
-    }
-
-    //////////////////////////////////////////
     void SceneExample::update(F32 _dt)
     {
-        EcsRenderScene::update(_dt);
+        BaseSceneExample::update(_dt);
 
-        m_bloomController->update(_dt);
-        m_renderColorSprite->getMaterial()->ensureUniform(
-            MAZE_HCS("u_bloomMap"),
-            ShaderUniformType::UniformTexture2D)->set(
-                m_bloomController->getBloomRenderBuffer()->getColorTexture()->castRaw<Texture2D>());
     }
 
     //////////////////////////////////////////
@@ -262,6 +173,8 @@ namespace Maze
         // Particle System
         EntityPtr psEntity = createEntity();
         ParticleSystem3DPtr ps = psEntity->ensureComponent<ParticleSystem3D>();
+        ps->getTransform()->setLocalY(0.66f);
+        ps->getTransform()->setLocalZ(-6.0f);
         ps->getTransform()->rotate(Vec3F32::c_unitX, -Math::c_halfPi);
 
         ps->getMainModule().setTransformPolicy(ParticleSystemSimulationSpace::World);
@@ -272,7 +185,7 @@ namespace Maze
         ps->getMainModule().getSize().setRandomBetweenConstants(2.0f, 3.0f);
         ps->getMainModule().getRotationOverLifetime().enabled = true;
 
-        MaterialPtr material = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("Fireball00.mzmaterial");
+        MaterialPtr material = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getOrLoadMaterial("Fireball00.mzmaterial");
 
         ps->getRendererModule().getTextureSheetAnimation().enabled = true;
         ps->getRendererModule().getTextureSheetAnimation().tiles = Vec2S32(7, 7);

@@ -45,6 +45,7 @@
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
+#include "maze-graphics/MazeRenderQueue.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
@@ -66,8 +67,6 @@ namespace Maze
 
     //////////////////////////////////////////
     MeshRenderer::MeshRenderer()
-        : m_renderSystem(nullptr)
-        , m_enabled(true)
     {
         
     }
@@ -209,6 +208,25 @@ namespace Maze
     {
         //m_renderMeshRef.setRenderMesh(nullptr);
     }
+
+    //////////////////////////////////////////
+    void MeshRenderer::drawDefaultPass(
+        RenderQueuePtr const& _renderQueue,
+        DefaultPassParams const& _params,
+        RenderUnit const& _renderUnit)
+    {
+        Vector<VertexArrayObjectPtr> const& vaos = getRenderMesh()->getVertexArrayObjects();
+        VertexArrayObjectPtr const& vao = vaos[_renderUnit.index % vaos.size()];
+
+        MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
+
+        TMat const* tm = reinterpret_cast<TMat const*>(_renderUnit.userData);
+
+        _renderQueue->addDrawVAOInstancedCommand(
+            vao.get(),
+            1,
+            tm);
+    }
     
 
 
@@ -234,14 +252,10 @@ namespace Maze
                 if (vaos.empty())
                     return;
 
-                Size c = Math::Max(vaos.size(), materials.size());
+                S32 c = (S32)Math::Max(vaos.size(), materials.size());
 
-                for (Size i = 0, in = c; i < in; ++i)
+                for (S32 i = 0, in = c; i < in; ++i)
                 {
-                    VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
-
-                    MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
-
                     MaterialPtr const* material = nullptr;
                     if (!materials.empty())
                         material = &materials[i % materials.size()].getMaterial();
@@ -257,17 +271,12 @@ namespace Maze
                         return;
                     }
 #endif
-
                     _event.getRenderUnits()->emplace_back(
-                        RenderUnit
-                        {
-                            firstRenderPass,
-                            vao,
-                            _transform3D->getWorldPosition(),
-                            1,
-                            &_transform3D->getWorldTransform()
-                        });
-
+                        firstRenderPass,
+                        _transform3D->getWorldPosition(),
+                        _meshRenderer,
+                        i,
+                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()));
                 }
             }
         }

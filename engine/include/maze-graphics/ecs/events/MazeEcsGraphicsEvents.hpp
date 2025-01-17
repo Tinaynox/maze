@@ -68,11 +68,16 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    class MAZE_GRAPHICS_API IRenderUnitDrawer;
+
+
+    //////////////////////////////////////////
     // Struct RenderUnit
     //
     //////////////////////////////////////////
     struct MAZE_GRAPHICS_API RenderUnit
     {
+        /*
         //////////////////////////////////////////
         RenderUnit()
         {
@@ -117,16 +122,50 @@ namespace Maze
             memset(uvStreams, 0, sizeof(uvStreams));
             uvStreams[0] = _uv0;
         }
+        */
+
+        //////////////////////////////////////////
+        RenderUnit(
+            RenderPassPtr const& _renderPass = RenderPassPtr(),
+            Vec3F const& _worldPosition = Vec3F::c_zero,
+            IRenderUnitDrawer* _drawer = nullptr,
+            S32 _index = -1,
+            U64 _userData = 0u)
+            : renderPass(_renderPass)
+            , worldPosition(_worldPosition)
+            , drawer(_drawer)
+            , index(_index)
+            , userData(_userData)
+        {}
 
         RenderPassPtr renderPass;
-        VertexArrayObjectPtr vao;
         Vec3F worldPosition;
+        IRenderUnitDrawer* drawer = nullptr;
+        S32 index = 0;
+        U64 userData = 0u;
+
+        F32 sqrDistanceToCamera = 0.0f;
+
+        /*
+        VertexArrayObjectPtr vao;
         S32 count = 0;
         TMat const* modelMatricies = nullptr;
         Vec4F const* colorStream = nullptr;
         Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX] = { nullptr };
+        */
+    };
 
-        F32 sqrDistanceToCamera;
+
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API IRenderUnitDrawer
+    {
+    public:
+
+        //////////////////////////////////////////
+        virtual void drawDefaultPass(
+            RenderQueuePtr const& _renderQueue,
+            DefaultPassParams const& _params,
+            RenderUnit const& _renderUnit) MAZE_ABSTRACT;
     };
 
 

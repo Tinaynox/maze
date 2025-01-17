@@ -43,6 +43,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
+#include "BaseSceneExample.hpp"
 
 
 //////////////////////////////////////////
@@ -55,7 +56,6 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(Rigidbody2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
-    MAZE_USING_SHARED_PTR(LevelBloomController);
 
 
     //////////////////////////////////////////
@@ -63,7 +63,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class SceneExample
-        : public EcsRenderScene
+        : public BaseSceneExample
     {
     public:
 
@@ -93,25 +93,11 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        void notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport);
-
-        //////////////////////////////////////////
-        void notifyRenderTargetResized(RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
         void createParticleSystem();
 
     protected:
-        CanvasPtr m_canvas;
-        Camera3DPtr m_camera3D;
-
-        SpriteRenderer2DPtr m_renderColorSprite;
-        SpriteRenderer2DPtr m_renderDepthSprite;
-
-        RenderBufferPtr m_renderBuffer;
-
-        LevelBloomControllerPtr m_bloomController;
     };
 
 

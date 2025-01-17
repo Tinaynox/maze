@@ -44,6 +44,7 @@
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
+#include "maze-graphics/MazeRenderQueue.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
@@ -348,6 +349,24 @@ namespace Maze
             m_vao->clear();        
     }
 
+    //////////////////////////////////////////
+    void LineRenderer3D::drawDefaultPass(
+        RenderQueuePtr const& _renderQueue,
+        DefaultPassParams const& _params,
+        RenderUnit const& _renderUnit)
+    {
+        Vector<VertexArrayObjectPtr> const& vaos = getRenderMesh()->getVertexArrayObjects();
+        VertexArrayObjectPtr const& vao = vaos[_renderUnit.index % vaos.size()];
+
+        MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
+
+        TMat const* tm = reinterpret_cast<TMat const*>(_renderUnit.userData);
+
+        _renderQueue->addDrawVAOInstancedCommand(
+            vao.get(),
+            1,
+            tm);
+    }
 
 
     //////////////////////////////////////////
@@ -369,14 +388,10 @@ namespace Maze
                 if (vaos.empty())
                     return;
 
-                Size c = Math::Max(vaos.size(), materials.size());
+                S32 c = (S32)Math::Max(vaos.size(), materials.size());
 
-                for (Size i = 0, in = c; i < in; ++i)
+                for (S32 i = 0, in = c; i < in; ++i)
                 {
-                    VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
-
-                    MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
-
                     MaterialPtr const* material = nullptr;
                     if (materials.empty() || !materials[i % materials.size()].getMaterial())
                         material = &_lineRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial();
@@ -390,17 +405,12 @@ namespace Maze
                         return;
                     }
 #endif
-
                     _event.getRenderUnits()->emplace_back(
-                        RenderUnit
-                        {
-                            (*material)->getFirstRenderPass(),
-                            vao,
-                            _transform3D->getWorldPosition(),
-                            1,
-                            &_transform3D->getWorldTransform()
-                        });
-
+                        (*material)->getFirstRenderPass(),
+                        _transform3D->getWorldPosition(),
+                        _lineRenderer,
+                        i,
+                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()));
                 }
             }
         }

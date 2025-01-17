@@ -148,6 +148,11 @@ namespace Maze
             MeshPtr const& _mesh,
             RenderTarget* _renderTarget = nullptr);
 
+
+        //////////////////////////////////////////
+        inline MeshPtr const& getMesh() const { return m_mesh; }
+
+
         //////////////////////////////////////////
         void clear();
 
@@ -193,6 +198,7 @@ namespace Maze
         bool m_locked = false;
         RenderSystem* m_renderSystem;
 
+        MeshPtr m_mesh;
         HashedString m_name;
 
         Vector<VertexArrayObjectPtr> m_vertexArrayObjects;

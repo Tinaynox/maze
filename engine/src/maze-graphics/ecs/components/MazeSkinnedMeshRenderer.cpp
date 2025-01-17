@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
+#include "maze-graphics/ecs/components/MazeSkinnedMeshRenderer.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
@@ -45,6 +45,7 @@
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
+#include "maze-graphics/MazeMeshSkeletonAnimator.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
@@ -53,62 +54,60 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class MeshRendererInstanced
+    // Class SkinnedMeshRenderer
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(MeshRendererInstanced, Component,
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SkinnedMeshRenderer, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderMeshAssetRef, renderMesh, RenderMeshAssetRef(), getRenderMeshRef, setRenderMeshRef),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialAssetRef, material, MaterialAssetRef(), getMaterialRef, setMaterialRef),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, true, getEnabled, setEnabled),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<TMat>, modelMatricies, Vector<TMat>(), getModelMatrices, setModelMatrices),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec4F>, colors, Vector<Vec4F>(), getColors, setColors),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec4F>, uv0, Vector<Vec4F>(), getUV0, setUV0),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec4F>, uv1, Vector<Vec4F>(), getUV1, setUV1));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<MaterialAssetRef>, materials, Vector<MaterialAssetRef>(), getMaterialRefs, setMaterialRefs),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, true, getEnabled, setEnabled));
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MeshRendererInstanced);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SkinnedMeshRenderer);
 
 
     //////////////////////////////////////////
-    MeshRendererInstanced::MeshRendererInstanced()
+    SkinnedMeshRenderer::SkinnedMeshRenderer()
     {
         
     }
 
     //////////////////////////////////////////
-    MeshRendererInstanced::~MeshRendererInstanced()
+    SkinnedMeshRenderer::~SkinnedMeshRenderer()
     {
         
     }
 
     //////////////////////////////////////////
-    MeshRendererInstancedPtr MeshRendererInstanced::Create(RenderSystem* _renderSystem)
+    SkinnedMeshRendererPtr SkinnedMeshRenderer::Create(RenderSystem* _renderSystem)
     {
         if (!_renderSystem)
             _renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
 
-        MeshRendererInstancedPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(MeshRendererInstanced, object, init(_renderSystem));
+        SkinnedMeshRendererPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SkinnedMeshRenderer, object, init(_renderSystem));
         return object;
     }
 
     //////////////////////////////////////////
-    bool MeshRendererInstanced::init(RenderSystem* _renderSystem)
+    bool SkinnedMeshRenderer::init(RenderSystem* _renderSystem)
     {
         if (!_renderSystem)
             return false;
 
         m_renderSystem = _renderSystem;
+        m_animator = MeshSkeletonAnimator::Create();
 
         return true;
     }
 
     //////////////////////////////////////////
-    bool MeshRendererInstanced::init(
+    bool SkinnedMeshRenderer::init(
         Component* _component,
         EntityCopyData _copyData)
     {
-        m_renderSystem = _component->castRaw<MeshRendererInstanced>()->m_renderSystem;
+        m_renderSystem = _component->castRaw<SkinnedMeshRenderer>()->m_renderSystem;
+        m_animator = MeshSkeletonAnimator::Create();
 
         if (!Component::init(
             _component,
@@ -119,7 +118,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MeshRendererInstanced::setMaterial(String const& _materialName)
+    void SkinnedMeshRenderer::setMaterial(MaterialPtr const& _material)
+    {
+        Vector<MaterialAssetRef> materials = { MaterialAssetRef(_material) };
+        setMaterialRefs(materials);
+    }
+
+    //////////////////////////////////////////
+    void SkinnedMeshRenderer::setMaterial(String const& _materialName)
     {
         MaterialPtr const& material = m_renderSystem->getMaterialManager()->getOrLoadMaterial(_materialName);
         MAZE_ERROR_IF(!material, "Undefined material: %s", _materialName.c_str());
@@ -127,7 +133,32 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MeshRendererInstanced::setMesh(MeshPtr const& _mesh)
+    void SkinnedMeshRenderer::setMaterials(Vector<String> const& _materialNames)
+    {
+        Vector<MaterialAssetRef> materials;
+        for (String const& materialName : _materialNames)
+            materials.push_back(m_renderSystem->getMaterialManager()->getOrLoadMaterial(materialName));
+        setMaterialRefs(materials);
+    }
+
+    //////////////////////////////////////////
+    void SkinnedMeshRenderer::addMaterial(MaterialPtr const& _material)
+    {
+        Vector<MaterialAssetRef> materials = getMaterialRefs();
+        materials.push_back(MaterialAssetRef(_material));
+        setMaterialRefs(materials);
+    }
+
+    //////////////////////////////////////////
+    void SkinnedMeshRenderer::addMaterial(String const& _materialName)
+    {
+        MaterialPtr const& material = m_renderSystem->getMaterialManager()->getOrLoadMaterial(_materialName);
+        MAZE_ERROR_IF(!material, "Undefined material: %s", _materialName.c_str());
+        addMaterial(material);
+    }
+
+    //////////////////////////////////////////
+    void SkinnedMeshRenderer::setMesh(MeshPtr const& _mesh)
     {
         MAZE_ERROR_RETURN_IF(!m_renderSystem, "Render system is null");
 
@@ -146,22 +177,22 @@ namespace Maze
 
         RenderTargetPtr const& renderTarget = getEntityRaw()->getEcsScene()->castRaw<EcsRenderScene>()->getRenderTarget();
 
-        if (!getRenderMesh())
-            setRenderMesh(renderTarget->createRenderMeshFromPool((S32)_mesh->getSubMeshesCount()));
+        if (!m_renderMeshRef.getRenderMesh())
+            m_renderMeshRef.setRenderMesh(renderTarget->createRenderMeshFromPool((S32)_mesh->getSubMeshesCount()));
 
-        getRenderMesh()->loadFromMesh(
+        m_renderMeshRef.getRenderMesh()->loadFromMesh(
             _mesh,
             renderTarget.get());
     }
 
     //////////////////////////////////////////
-    void MeshRendererInstanced::setRenderMesh(String const& _renderMeshName)
+    void SkinnedMeshRenderer::setRenderMesh(String const& _renderMeshName)
     {
         setRenderMesh(m_renderSystem->getRenderMeshManager()->getOrLoadRenderMesh(_renderMeshName));
     }
 
     //////////////////////////////////////////
-    void MeshRendererInstanced::clearMesh()
+    void SkinnedMeshRenderer::clearMesh()
     {
         if (!getRenderMesh())
             return;
@@ -170,63 +201,60 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MeshRendererInstanced::processEntityAwakened()
+    void SkinnedMeshRenderer::processEntityAwakened()
     {
         m_renderMask = getEntityRaw()->ensureComponent<RenderMask>();
     }
 
     //////////////////////////////////////////
-    void MeshRendererInstanced::processEntityRemoved()
+    void SkinnedMeshRenderer::processEntityRemoved()
     {
-        // setRenderMesh(RenderMeshPtr());
+        //m_renderMeshRef.setRenderMesh(nullptr);
     }
 
     //////////////////////////////////////////
-    void MeshRendererInstanced::resize(S32 _count)
+    void SkinnedMeshRenderer::setRenderMesh(RenderMeshPtr const& _renderMesh)
     {
-        m_modelMatricies.resize(_count);
-        m_colors.resize(_count);
-        m_uv0.resize(_count);
-        m_uv1.resize(_count);
+        m_renderMeshRef.setRenderMesh(_renderMesh);
+
+        if (m_animator)
+        {
+            RenderMeshPtr const& renderMesh = getRenderMesh();
+            if (renderMesh && renderMesh->getMesh() && renderMesh->getMesh()->getSkeleton())
+                m_animator->setSkeleton(renderMesh->getMesh()->getSkeleton());
+            else
+                m_animator->setSkeleton(nullptr);
+        }
     }
 
     //////////////////////////////////////////
-    void MeshRendererInstanced::drawDefaultPass(
+    void SkinnedMeshRenderer::drawDefaultPass(
         RenderQueuePtr const& _renderQueue,
         DefaultPassParams const& _params,
         RenderUnit const& _renderUnit)
     {
         Vector<VertexArrayObjectPtr> const& vaos = getRenderMesh()->getVertexArrayObjects();
-        for (S32 i = 0, in = (S32)vaos.size(); i < in; ++i)
-        {
-            VertexArrayObjectPtr const& vao = vaos[i];
+        VertexArrayObjectPtr const& vao = vaos[_renderUnit.index % vaos.size()];
 
-            MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
+        MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
 
-            Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX];
-            memset(uvStreams, 0, sizeof(uvStreams));
-            uvStreams[0] = getUV0Data();
-            uvStreams[1] = getUV1Data();
+        TMat const* tm = reinterpret_cast<TMat const*>(_renderUnit.userData);
 
-            MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null!");
-            _renderQueue->addDrawVAOInstancedCommand(
-                vao.get(),
-                (S32)getModelMatrices().size(),
-                getModelMatricesData(),
-                getColorsData(),
-                (Vec4F const**)uvStreams);
-        }
+        _renderQueue->addDrawVAOInstancedCommand(
+            vao.get(),
+            1,
+            tm);
     }
-
+    
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererInstancedSystem,
+    COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshRendererSystem,
         MAZE_ECS_TAGS(MAZE_HS("render")),
         {},
         Render3DDefaultPassGatherRenderUnitsEvent& _event,
         Entity* _entity,
-        MeshRendererInstanced* _meshRenderer,
+        SkinnedMeshRenderer* _meshRenderer,
         Transform3D* _transform3D)
     {
         if (!_meshRenderer->getEnabled())
@@ -236,48 +264,62 @@ namespace Maze
         {
             if (_meshRenderer->getRenderMesh())
             {
-                Material const* material = _meshRenderer->getMaterial().get();
-                if (!material)
-                    material = _event.getRenderTarget()->getRenderSystem()->getMaterialManager()->getErrorMaterial().get();
+                Vector<MaterialAssetRef> const& materials = _meshRenderer->getMaterialRefs();
+                Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
 
-#if (MAZE_DEBUG)
-                if (!material->getFirstRenderPass()->getShader())
+                if (vaos.empty())
+                    return;
+
+                S32 c = (S32)Math::Max(vaos.size(), materials.size());
+
+                for (S32 i = 0, in = c; i < in; ++i)
                 {
-                    Debug::LogError("Mesh Instanced(EID: %u): Shader is null!", _entity->getId());
-                    return;
-                }
-#endif
-                if (_meshRenderer->getRenderMesh()->getVertexArrayObjects().empty() ||
-                    _meshRenderer->getModelMatrices().empty())
-                    return;
+                    MaterialPtr const* material = nullptr;
+                    if (!materials.empty())
+                        material = &materials[i % materials.size()].getMaterial();
 
-                _event.getRenderUnits()->emplace_back(
-                    material->getFirstRenderPass(),
-                    _transform3D->getWorldPosition(),
-                    _meshRenderer);
+                    if (!material || !*material)
+                        material = &_meshRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial();
+
+                    RenderPassPtr const& firstRenderPass = (*material)->getFirstRenderPass();
+#if (MAZE_DEBUG)
+                    if (!firstRenderPass || !firstRenderPass->getShader())
+                    {
+                        Debug::LogError("Mesh(EID: %u): Shader is null!", _entity->getId());
+                        return;
+                    }
+#endif
+
+                    _event.getRenderUnits()->emplace_back(
+                        firstRenderPass,
+                        _transform3D->getWorldPosition(),
+                        _meshRenderer,
+                        i,
+                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()));
+                }
             }
         }
     }
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererInstancedEntityRemoved,
+    COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshRendererEntityRemoved,
         MAZE_ECS_TAGS(MAZE_HS("default")),
         {},
         EntityRemovedEvent const& _event,
         Entity* _entity,
-        MeshRendererInstanced* _meshRenderer)
+        SkinnedMeshRenderer* _meshRenderer)
     {
         _meshRenderer->processEntityRemoved();
     }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererInstancedOnEcsWorldWillBeDestroyed,
+    COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshRendererOnEcsWorldWillBeDestroyed,
         {},
         {},
         EcsWorldWillBeDestroyedEvent const& _event,
         Entity* _entity,
-        MeshRendererInstanced* _meshRenderer)
+        SkinnedMeshRenderer* _meshRenderer)
     {
         // Release render mesh before RenderMeshPool will be destroyed
         _meshRenderer->setRenderMesh(RenderMeshPtr());

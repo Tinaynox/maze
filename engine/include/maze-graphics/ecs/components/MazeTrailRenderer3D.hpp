@@ -37,6 +37,7 @@
 #include "maze-graphics/MazeColorF128.hpp"
 #include "maze-graphics/MazeColorGradient.hpp"
 #include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -57,6 +58,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API TrailRenderer3D
         : public Component
+        , public IRenderUnitDrawer
     {
     public:
 
@@ -226,6 +228,13 @@ namespace Maze
 
         //////////////////////////////////////////
         F32 getTrailWidth(F32 _progress);
+
+
+        //////////////////////////////////////////
+        virtual void drawDefaultPass(
+            RenderQueuePtr const& _renderQueue,
+            DefaultPassParams const& _params,
+            RenderUnit const& _renderUnit) MAZE_OVERRIDE;
 
     protected:
         RenderSystem* m_renderSystem;

@@ -185,6 +185,8 @@ namespace Maze
 
         MAZE_ERROR_RETURN_IF(!_mesh, "Mesh is null!");
 
+        m_mesh = _mesh;
+
         Size currentVaoCount = m_vertexArrayObjects.size();
         Size requiredVaoCount = _mesh->getSubMeshesCount();
         m_vertexArrayObjects.resize(requiredVaoCount);
@@ -215,6 +217,7 @@ namespace Maze
         MAZE_FATAL_IF(m_locked, "RenderMesh is locked!");
 
         m_vertexArrayObjects.clear();
+        m_mesh.reset();
     }
 
     //////////////////////////////////////////

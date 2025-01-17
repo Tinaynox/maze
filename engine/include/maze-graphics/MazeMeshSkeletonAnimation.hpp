@@ -185,7 +185,6 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API MeshSkeletonAnimation
-        : public SharedObject<MeshSkeletonAnimation>
     {
     public:
 
@@ -217,6 +216,13 @@ namespace Maze
         //////////////////////////////////////////
         inline void setBoneAnimations(Vector<MeshSkeletonAnimationBone>&& _boneAnimations) { m_boneAnimations = std::move(_boneAnimations); }
 
+
+        //////////////////////////////////////////
+        inline F32 getAnimationTime() const { return m_animationTime; }
+
+        //////////////////////////////////////////
+        inline void setAnimationTime(F32 _value) { m_animationTime = _value; }
+
     protected:
 
         //////////////////////////////////////////
@@ -229,6 +235,7 @@ namespace Maze
     protected:
         String m_name;
         Vector<MeshSkeletonAnimationBone> m_boneAnimations;
+        F32 m_animationTime = 0.0f;
     };
 
 } // namespace Maze

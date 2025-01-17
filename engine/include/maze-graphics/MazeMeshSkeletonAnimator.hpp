@@ -25,14 +25,15 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeMeshSkeleton_hpp_))
-#define _MazeMeshSkeleton_hpp_
+#if (!defined(_MazeMeshSkeletonAnimator_hpp_))
+#define _MazeMeshSkeletonAnimator_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-graphics/MazeRenderDrawTopology.hpp"
+#include "maze-graphics/config/MazeGraphicsConfig.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
@@ -47,96 +48,63 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(MeshSkeletonAnimator);
     MAZE_USING_SHARED_PTR(MeshSkeleton);
-    MAZE_USING_SHARED_PTR(MeshSkeletonAnimation);
     
 
     //////////////////////////////////////////
-    // Class MeshSkeleton
+    // Class MeshSkeletonAnimator
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API MeshSkeleton
+    class MAZE_GRAPHICS_API MeshSkeletonAnimator
     {
     public:
 
         //////////////////////////////////////////
-        using BoneIndex = S32;
-
-        //////////////////////////////////////////
-        struct Bone
+        struct BoneTRS
         {
-            //////////////////////////////////////////
-            Bone(
-                String const& _name = String(),
-                TMat const& _transform = TMat::c_identity,
-                BoneIndex _parentBoneIndex = -1)
-                : name(_name)
-                , transform(_transform)
-                , parentBoneIndex(_parentBoneIndex)
-            {}
-
-            String name;
-            TMat transform;
-            BoneIndex parentBoneIndex = -1;
+            Vec3F translation;
+            Vec3F rotation;
+            Vec3F scale;
         };
 
     public:
 
         //////////////////////////////////////////
-        static MeshSkeletonPtr Create();
+        static MeshSkeletonAnimatorPtr Create();
 
         //////////////////////////////////////////
-        virtual ~MeshSkeleton();
-
-
-        //////////////////////////////////////////
-        void clear();
+        virtual ~MeshSkeletonAnimator();
 
 
         //////////////////////////////////////////
-        BoneIndex addBone(
-            String const& _name,
-            TMat const& _transform = TMat::c_identity,
-            BoneIndex _parentBoneIndex = -1);
+        void setSkeleton(MeshSkeletonPtr const& _skeleton);
 
         //////////////////////////////////////////
-        Bone& getBone(BoneIndex _index) { return m_bones[_index]; }
-
-        //////////////////////////////////////////
-        BoneIndex findBoneIndex(HashedCString _name);
-
-        //////////////////////////////////////////
-        Bone* findBone(HashedCString _name);
-
-        //////////////////////////////////////////
-        BoneIndex ensureBoneIndex(HashedCString _name);
-
-        //////////////////////////////////////////
-        Bone& ensureBone(HashedCString _name);
+        inline MeshSkeletonPtr const& getSkeleton() const { return m_skeleton; }
 
 
         //////////////////////////////////////////
-        MeshSkeletonAnimationPtr const& ensureAnimation(String const& _name);
+        inline BoneTRS const* getBonesTRS() const { return &m_bonesTRS[0]; }
 
     protected:
 
         //////////////////////////////////////////
-        MeshSkeleton();
+        MeshSkeletonAnimator();
 
         //////////////////////////////////////////
         virtual bool init();    
     
 
     protected:
-        FastVector<Bone> m_bones;
-        StringKeyMap<BoneIndex> m_boneIndicesByName;
+        MeshSkeletonPtr m_skeleton;
 
-        StringKeyMap<MeshSkeletonAnimationPtr> m_animations;
+        BoneTRS m_bonesTRS[MAZE_SKELETON_BONES_MAX];
     };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeMeshSkeleton_hpp_
+#endif // _MazeMeshSkeletonAnimator_hpp_
 //////////////////////////////////////////

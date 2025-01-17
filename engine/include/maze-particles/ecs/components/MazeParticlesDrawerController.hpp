@@ -36,6 +36,7 @@
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -55,6 +56,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PARTICLES_API ParticlesDrawerController
         : public Component
+        , public IRenderUnitDrawer
         , public MultiDelegateCallbackReceiver
     {
     public:
@@ -91,6 +93,12 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        virtual void drawDefaultPass(
+            RenderQueuePtr const& _renderQueue,
+            DefaultPassParams const& _params,
+            RenderUnit const& _renderUnit) MAZE_OVERRIDE;
 
     protected:
         RenderSystemPtr m_renderSystem;
