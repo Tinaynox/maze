@@ -40,7 +40,7 @@ renderPass
 {
   passType:String = "Default"
   renderQueueIndex:S32 = 2000
-  shader:String = "GameObject00.mzshader"
+  shader:String = "SkinnedGameObject00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"
   blendDestFactor:String = "Zero"

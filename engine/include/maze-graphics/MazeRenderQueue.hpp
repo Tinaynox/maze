@@ -297,6 +297,23 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        #define MAZE_IMPLEMENT_ADD_UPLOAD_SHADER_UNIFORM_COMMAND(DType)                                                 \
+        inline void addUploadShaderUniformCommand(HashedCString _name, DType const* _pointer, U16 _count)               \
+        {                                                                                                               \
+            m_lastDrawVAOInstancedCommand = nullptr;                                                                    \
+            m_renderCommandsBuffer.createCommand<RenderCommandUploadShaderUniform ## DType>(_name, _pointer, _count);   \
+        }
+
+        //////////////////////////////////////////
+        MAZE_IMPLEMENT_ADD_UPLOAD_SHADER_UNIFORM_COMMAND(Vec2F);
+        MAZE_IMPLEMENT_ADD_UPLOAD_SHADER_UNIFORM_COMMAND(Vec3F);
+        MAZE_IMPLEMENT_ADD_UPLOAD_SHADER_UNIFORM_COMMAND(Vec4F);
+        MAZE_IMPLEMENT_ADD_UPLOAD_SHADER_UNIFORM_COMMAND(Mat3F);
+        MAZE_IMPLEMENT_ADD_UPLOAD_SHADER_UNIFORM_COMMAND(Mat4F);
+        MAZE_IMPLEMENT_ADD_UPLOAD_SHADER_UNIFORM_COMMAND(TMat);
+
+
+        //////////////////////////////////////////
         virtual void draw() MAZE_ABSTRACT;
 
 

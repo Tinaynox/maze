@@ -417,7 +417,7 @@ namespace Maze
                             ProcessBoneForVertex(
                                 blendWeights[vertexIndex],
                                 blendIndices[vertexIndex],
-                                S32(bone->id),
+                                S32(meshSkeletonBoneIndex),
                                 weight);
                         }
                     }

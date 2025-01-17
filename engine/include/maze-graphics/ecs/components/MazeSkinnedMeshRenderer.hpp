@@ -77,6 +77,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void update(F32 _dt);
+
+
+        //////////////////////////////////////////
         void processEntityRemoved();
 
 

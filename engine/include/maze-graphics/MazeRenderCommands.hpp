@@ -202,6 +202,38 @@ namespace Maze
     };
     
 
+    //////////////////////////////////////////
+    // Struct RenderCommandUploadShaderUniform
+    //
+    //////////////////////////////////////////
+    #define MAZE_IMPLEMENT_RENDER_COMMAND_UPLOAD_SHADER_UNIFORM(DType)                      \
+    struct MAZE_GRAPHICS_API RenderCommandUploadShaderUniform ## DType                      \
+        : public RenderCommand                                                              \
+    {                                                                                       \
+    public:                                                                                 \
+        inline RenderCommandUploadShaderUniform ## DType(                                   \
+            HashedCString _name,                                                            \
+            DType const* _pointer,                                                          \
+            U16 _count)                                                                     \
+            : RenderCommand(RenderCommandType::UploadShaderUniform ## DType)                \
+            , name(_name)                                                                   \
+            , pointer(_pointer)                                                             \
+            , count(_count)                                                                 \
+        {}                                                                                  \
+    public:                                                                                 \
+        U16 count = 0u;                                                                     \
+        DType const* pointer;                                                               \
+        HashedCString name;                                                                 \
+    };
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_RENDER_COMMAND_UPLOAD_SHADER_UNIFORM(Vec2F);
+    MAZE_IMPLEMENT_RENDER_COMMAND_UPLOAD_SHADER_UNIFORM(Vec3F);
+    MAZE_IMPLEMENT_RENDER_COMMAND_UPLOAD_SHADER_UNIFORM(Vec4F);
+    MAZE_IMPLEMENT_RENDER_COMMAND_UPLOAD_SHADER_UNIFORM(Mat3F);
+    MAZE_IMPLEMENT_RENDER_COMMAND_UPLOAD_SHADER_UNIFORM(Mat4F);
+    MAZE_IMPLEMENT_RENDER_COMMAND_UPLOAD_SHADER_UNIFORM(TMat);
+
 } // namespace Maze
 //////////////////////////////////////////
 

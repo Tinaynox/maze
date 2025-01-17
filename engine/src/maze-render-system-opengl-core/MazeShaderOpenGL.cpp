@@ -40,6 +40,7 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/MazeVertex.hpp"
+#include "maze-graphics/config/MazeGraphicsConfig.hpp"
 #include "maze-render-system-opengl-core/MazeShaderUniformVariantOpenGL.hpp"
 
 
@@ -385,6 +386,9 @@ namespace Maze
 
         shaderVersion += "\n#define MAZE_INSTANCE_STREAM_VIA_TEXTURE ";
         shaderVersion += (currentContext->getModelMatricesArchitecture() == ModelMatricesArchitectureOpenGL::UniformTexture) ? "(1)" : "(0)";
+
+        shaderVersion += "\n#define MAZE_SKELETON_BONES_MAX ";
+        shaderVersion += StringHelper::ToString(MAZE_SKELETON_BONES_MAX);
 
 
         String shaderFeatures = 

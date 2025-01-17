@@ -257,18 +257,6 @@ namespace Maze
                         
                         renderUnit.drawer->drawDefaultPass(renderQueue, _params, renderUnit);
 
-                        // #TODO:
-                        /*
-                        VertexArrayObjectPtr const& vao = data.vao;
-                        MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null!");
-                        renderQueue->addDrawVAOInstancedCommand(
-                            vao.get(),
-                            data.count,
-                            data.modelMatricies,
-                            data.colorStream,
-                            (Vec4F const**)data.uvStreams);
-                        */
-
                         prevRenderQueueIndex = currentRenderQueueIndex;
                     }
                 }

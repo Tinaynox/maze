@@ -78,6 +78,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void update(F32 _dt);
+
+
+        //////////////////////////////////////////
         void setSkeleton(MeshSkeletonPtr const& _skeleton);
 
         //////////////////////////////////////////
@@ -86,6 +90,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline BoneTRS const* getBonesTRS() const { return &m_bonesTRS[0]; }
+
+        //////////////////////////////////////////
+        inline Size getBonesCount() const { return m_bonesCount; }
 
     protected:
 
@@ -100,6 +107,7 @@ namespace Maze
         MeshSkeletonPtr m_skeleton;
 
         BoneTRS m_bonesTRS[MAZE_SKELETON_BONES_MAX];
+        Size m_bonesCount = 0u;
     };
 
 } // namespace Maze

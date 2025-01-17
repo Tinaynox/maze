@@ -310,6 +310,60 @@ namespace Maze
 
                         break;
                     }
+                    case RenderCommandType::UploadShaderUniformVec2F:
+                    {
+                        RenderCommandUploadShaderUniformVec2F* command = static_cast<RenderCommandUploadShaderUniformVec2F*>(_command);
+                        ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
+                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        MAZE_DEBUG_ASSERT(uniform);
+                        uniform->upload(command->pointer, (Size)command->count);
+                        break;
+                    }
+                    case RenderCommandType::UploadShaderUniformVec3F:
+                    {
+                        RenderCommandUploadShaderUniformVec3F* command = static_cast<RenderCommandUploadShaderUniformVec3F*>(_command);
+                        ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
+                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        MAZE_DEBUG_ASSERT(uniform);
+                        uniform->upload(command->pointer, (Size)command->count);
+                        break;
+                    }
+                    case RenderCommandType::UploadShaderUniformVec4F:
+                    {
+                        RenderCommandUploadShaderUniformVec4F* command = static_cast<RenderCommandUploadShaderUniformVec4F*>(_command);
+                        ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
+                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        MAZE_DEBUG_ASSERT(uniform);
+                        uniform->upload(command->pointer, (Size)command->count);
+                        break;
+                    }
+                    case RenderCommandType::UploadShaderUniformMat3F:
+                    {
+                        RenderCommandUploadShaderUniformMat3F* command = static_cast<RenderCommandUploadShaderUniformMat3F*>(_command);
+                        ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
+                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        MAZE_DEBUG_ASSERT(uniform);
+                        uniform->upload(command->pointer, (Size)command->count);
+                        break;
+                    }
+                    case RenderCommandType::UploadShaderUniformMat4F:
+                    {
+                        RenderCommandUploadShaderUniformMat4F* command = static_cast<RenderCommandUploadShaderUniformMat4F*>(_command);
+                        ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
+                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        MAZE_DEBUG_ASSERT(uniform);
+                        uniform->upload(command->pointer, (Size)command->count);
+                        break;
+                    }
+                    case RenderCommandType::UploadShaderUniformTMat:
+                    {
+                        RenderCommandUploadShaderUniformTMat* command = static_cast<RenderCommandUploadShaderUniformTMat*>(_command);
+                        ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
+                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        MAZE_DEBUG_ASSERT(uniform);
+                        uniform->upload(command->pointer, (Size)command->count);
+                        break;
+                    }
                     default:
                     {
                         Debug::LogError("Unsupported RenderCommand: %d", (S32)_command->type);

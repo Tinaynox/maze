@@ -63,15 +63,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void MeshSkeletonAnimator::update(F32 _dt)
+    {
+        m_bonesCount = 2;
+        for (S32 i = 0; i < MAZE_SKELETON_BONES_MAX; ++i)
+        {
+            //m_bonesTRS[i].translation.x += _dt * 0.5f;
+            // m_bonesTRS[i].rotation.y += _dt * 1.0f;
+            m_bonesTRS[i].scale = Vec3F(1.0f);
+        }
+    }
+
+    //////////////////////////////////////////
     void MeshSkeletonAnimator::setSkeleton(MeshSkeletonPtr const& _skeleton)
     {
         m_skeleton = _skeleton;
-
-        for (S32 i = 0; i < MAZE_SKELETON_BONES_MAX; ++i)
-        {
-            m_bonesTRS[i].translation.y = 2.0f;
-            m_bonesTRS[i].scale = Vec3F(1.0f);
-        }
     }
 
 

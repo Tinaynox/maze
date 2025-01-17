@@ -47,6 +47,7 @@
 #include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-graphics/MazeMeshSkeletonAnimator.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
+#include "maze-graphics/MazeRenderCommands.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
@@ -115,6 +116,12 @@ namespace Maze
             return false;
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void SkinnedMeshRenderer::update(F32 _dt)
+    {
+        m_animator->update(_dt);
     }
 
     //////////////////////////////////////////
@@ -240,12 +247,29 @@ namespace Maze
 
         TMat const* tm = reinterpret_cast<TMat const*>(_renderUnit.userData);
 
+        _renderQueue->addUploadShaderUniformCommand(
+            MAZE_HCS("u_boneTRS"),
+            (Vec3F*)m_animator->getBonesTRS(),
+            (U16)(m_animator->getBonesCount() * 3));
+
         _renderQueue->addDrawVAOInstancedCommand(
             vao.get(),
             1,
             tm);
     }
     
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshUpdateSystem,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
+        UpdateEvent const& _event,
+        Entity* _entity,
+        SkinnedMeshRenderer* _meshRenderer)
+    {
+        _meshRenderer->update(_event.getDt());
+    }
 
 
     //////////////////////////////////////////
