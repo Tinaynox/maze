@@ -81,10 +81,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline TMat const* getBonesGlobalTransforms() const { return &m_bonesGlobalTransforms[0]; }
+        inline Vector<TMat> const& getBonesGlobalTransforms() const { return m_bonesGlobalTransforms; }
 
         //////////////////////////////////////////
-        inline TMat const* getBonesSkinningTransforms() const { return &m_bonesSkinningTransforms[0]; }
+        inline Vector<TMat> const& getBonesSkinningTransforms() const { return m_bonesSkinningTransforms; }
 
         //////////////////////////////////////////
         inline Size getBonesCount() const { return m_bonesSkinningTransforms.size(); }

@@ -78,7 +78,9 @@ namespace Maze
         for (MeshSkeleton::BoneIndex i = 0, in = (MeshSkeleton::BoneIndex)m_bonesSkinningTransforms.size(); i < in; ++i)
         {
             auto& bone = m_skeleton->getBone(i);
+            TMat bindPose = bone.inverseBindPoseTransform.inversed();
             m_bonesSkinningTransforms[i] = m_bonesGlobalTransforms[i].transform(bone.inverseBindPoseTransform);
+            int a = 0;
         }
     }
 
@@ -103,8 +105,6 @@ namespace Maze
             m_bonesSkinningTransforms.clear();
             m_bonesTransformsDirty.clear();
         }
-
-        playAnimation(MAZE_HCS("Action0"));
     }
 
     //////////////////////////////////////////
@@ -114,8 +114,7 @@ namespace Maze
             return false;
 
         MeshSkeletonAnimationPtr const& animation = m_skeleton->getAnimation(_name);
-        if (!animation)
-            return false;
+        MAZE_ERROR_RETURN_VALUE_IF(!animation, false, "Undefined animation - %s!", _name.str);
 
         m_player->play(animation);
         return true;
@@ -196,7 +195,8 @@ namespace Maze
     //////////////////////////////////////////
     void MeshSkeletonAnimatorPlayer::rewindToEnd()
     {
-        m_currentTime = m_animation->getAnimationTime();
+        if (m_animation)
+            m_currentTime = m_animation->getAnimationTime();
     }
 
     //////////////////////////////////////////

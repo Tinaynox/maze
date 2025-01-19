@@ -119,6 +119,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        bool isBoneIndexValid(BoneIndex _index) const;
+
+        //////////////////////////////////////////
+        bool isBoneHaveChildren(BoneIndex _index) const;
+
+
+        //////////////////////////////////////////
         MeshSkeletonAnimationPtr const& ensureAnimation(String const& _name);
 
         //////////////////////////////////////////

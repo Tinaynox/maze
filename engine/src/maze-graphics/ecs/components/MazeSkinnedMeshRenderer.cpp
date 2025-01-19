@@ -125,6 +125,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void SkinnedMeshRenderer::playAnimation(HashedCString _animationName)
+    {
+        if (m_animator)
+            m_animator->playAnimation(_animationName);
+    }
+
+    //////////////////////////////////////////
     void SkinnedMeshRenderer::setMaterial(MaterialPtr const& _material)
     {
         Vector<MaterialAssetRef> materials = { MaterialAssetRef(_material) };
@@ -195,7 +202,9 @@ namespace Maze
     //////////////////////////////////////////
     void SkinnedMeshRenderer::setRenderMesh(String const& _renderMeshName)
     {
-        setRenderMesh(m_renderSystem->getRenderMeshManager()->getOrLoadRenderMesh(_renderMeshName));
+        RenderMeshPtr const& renderMesh = m_renderSystem->getRenderMeshManager()->getOrLoadRenderMesh(_renderMeshName);
+        MAZE_ERROR_RETURN_IF(!renderMesh, "Udefined render mesh - %s!", _renderMeshName.c_str());
+        setRenderMesh(renderMesh);
     }
 
     //////////////////////////////////////////
@@ -249,7 +258,7 @@ namespace Maze
         
         _renderQueue->addUploadShaderUniformCommand(
             MAZE_HCS("u_boneSkinningTransforms"),
-            (TMat const*)m_animator->getBonesSkinningTransforms(),
+            (TMat const*)&m_animator->getBonesSkinningTransforms()[0],
             (U16)(m_animator->getBonesCount()));
         
         _renderQueue->addDrawVAOInstancedCommand(

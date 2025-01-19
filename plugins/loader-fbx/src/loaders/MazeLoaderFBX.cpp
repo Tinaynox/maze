@@ -108,8 +108,7 @@ namespace Maze
 
     //////////////////////////////////////////
     inline MeshSkeletonRotationCurve ConvertRotationToMeshSkeletonRotationCurve(
-        ofbx::AnimationCurveNode const* _rotation,
-        Vec3F const& _parentEuler)
+        ofbx::AnimationCurveNode const* _rotation)
     {
         MeshSkeletonRotationCurve curve;
 
@@ -134,17 +133,17 @@ namespace Maze
             ofbx::Vec3 euler = _rotation->getNodeLocalTransform(time);
             
             Vec3F animationEuler = Vec3F(
-                Math::DegreesToRadians((F32)euler.x) + _parentEuler.x,
-                -(Math::DegreesToRadians((F32)euler.y) + _parentEuler.y),
-                -(Math::DegreesToRadians((F32)euler.z) + _parentEuler.z));
+                Math::DegreesToRadians((F32)euler.x),
+                -(Math::DegreesToRadians((F32)euler.y)),
+                -(Math::DegreesToRadians((F32)euler.z)));
 
-            auto animationQuat = Quaternion::FromEuler(animationEuler);
-            auto inverseArmatureQuat = Quaternion::FromEuler(-_parentEuler);
-
-            auto v = animationQuat * inverseArmatureQuat;
+            auto animationQuat =
+                Quaternion::FromEuler(0.0f, 0.0f, animationEuler.z) *
+                Quaternion::FromEuler(0.0f, animationEuler.y, 0.0f) *
+                Quaternion::FromEuler(animationEuler.x, 0.0f, 0.0f);
 
             times.push_back((F32)time);
-            values.push_back(v);
+            values.push_back(animationQuat);
         }
 
         curve.setValues(
@@ -452,7 +451,7 @@ namespace Maze
                     auto& meshSkeletonBone = meshSkeleton->getBone(meshSkeletonBoneIndex);
                     meshSkeletonBone.parentBoneIndex = parentBoneIndex;
 
-                    //ofbx::Matrix transform = bone->getLocalTransform();
+                    //TMat boneLocalTransform = ConvertOpenFBXMatrixToTMat(bone->getLocalTransform());
                     TMat bindPoseTransformGlobal = ConvertOpenFBXMatrixToTMat(cluster->getTransformLinkMatrix());
                     meshSkeletonBone.inverseBindPoseTransform = bindPoseTransformGlobal.inversed();
 
@@ -522,11 +521,8 @@ namespace Maze
                     TMat armatureGlobalTransformMat = ConvertOpenFBXMatrixToTMat(armature->getGlobalTransform());
                     Quaternion armatureGlobalTransformQuat = Quaternion(armatureGlobalTransformMat);
                     armatureEuler = armatureGlobalTransformQuat.getEuler();
-                    // Vec3F euler = Quaternion(armatureGlobalTransformMat).getEuler();
                     _mesh.getSkeleton()->setRootTransform(
                         armatureGlobalTransformMat * armatureInvScaleMat);
-                    
-                    //_mesh.getSkeleton()->setRootTransform(Quaternion::FromEuler(armatureEuler).toRotationMatrix());
                 }
             }
 
@@ -534,7 +530,17 @@ namespace Maze
             for (MeshSkeleton::BoneIndex boneIndex = 0; boneIndex < bonesCount; ++boneIndex)
             {
                 MeshSkeleton::Bone& bone = _mesh.getSkeleton()->getBone(boneIndex);
-                bone.inverseBindPoseTransform = (bonesData[boneIndex].bindPoseMat * armatureInvScaleMat).inversed();
+
+                TMat bindPoseTransform = bonesData[boneIndex].bindPoseMat * armatureInvScaleMat;
+
+                // Flip bind pose X
+                Quaternion bindPoseQuaternion(bindPoseTransform);
+                bindPoseQuaternion.y = -bindPoseQuaternion.y;
+                bindPoseQuaternion.z = -bindPoseQuaternion.z;
+                TMat newBindPoseTransformGlobal = bindPoseQuaternion.toRotationMatrix();
+                newBindPoseTransformGlobal[3] = Vec3F(-bindPoseTransform[3].x, bindPoseTransform[3].y, bindPoseTransform[3].z);
+
+                bone.inverseBindPoseTransform = newBindPoseTransformGlobal.inversed();
             }
 
             // Load animations
@@ -598,12 +604,8 @@ namespace Maze
 
                             if (rotation)
                             {
-                                if (meshSkeletonBone.parentBoneIndex == -1)
-                                    meshSkeletonAnimationBone.rotation =
-                                        ConvertRotationToMeshSkeletonRotationCurve(rotation, armatureEuler);
-                                else
-                                    meshSkeletonAnimationBone.rotation =
-                                        ConvertRotationToMeshSkeletonRotationCurve(rotation, Vec3F::c_zero);
+                                meshSkeletonAnimationBone.rotation =
+                                    ConvertRotationToMeshSkeletonRotationCurve(rotation);
                             }
                             
                             meshSkeletonAnimationBones.emplace_back(std::move(meshSkeletonAnimationBone));

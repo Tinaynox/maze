@@ -81,6 +81,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void playAnimation(HashedCString _animationName);
+
+
+        //////////////////////////////////////////
         void processEntityRemoved();
 
 
@@ -155,6 +159,10 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool getEnabled() const { return m_enabled; }
+
+
+        //////////////////////////////////////////
+        inline MeshSkeletonAnimatorPtr const& getAnimator() const { return m_animator; }
 
     protected:
 

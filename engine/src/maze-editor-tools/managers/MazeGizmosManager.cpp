@@ -35,11 +35,13 @@
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeSkinnedMeshRenderer.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeLight3DGizmos.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeCamera3DGizmos.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeMeshRendererGizmos.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeSkinnedMeshRendererGizmos.hpp"
 #include "maze-editor-tools/managers/MazeGizmoToolsManager.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 
@@ -94,6 +96,7 @@ namespace Maze
         registerGizmos<Light3D, Light3DGizmos>();
         registerGizmos<Camera3D, Camera3DGizmos>();
         registerGizmos<MeshRenderer, MeshRendererGizmos>();
+        registerGizmos<SkinnedMeshRenderer, SkinnedMeshRendererGizmos>();
 
         return true;
     }

@@ -125,6 +125,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool MeshSkeleton::isBoneIndexValid(BoneIndex _index) const
+    {
+        return (_index >= 0 && _index < (BoneIndex)m_bones.size());
+    }
+
+    //////////////////////////////////////////
+    bool MeshSkeleton::isBoneHaveChildren(BoneIndex _index) const
+    {
+        if (!isBoneIndexValid(_index))
+            return false;
+
+        for (MeshSkeleton::Bone const& bone : m_bones)
+            if (bone.parentBoneIndex == _index)
+                return true;
+
+        return false;
+    }
+
+    //////////////////////////////////////////
     MeshSkeletonAnimationPtr const& MeshSkeleton::ensureAnimation(String const& _name)
     {
         auto it = m_animations.find(_name);

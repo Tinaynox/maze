@@ -165,7 +165,10 @@ namespace Maze
 
         m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
         m_fpsController->setYawAngle(Math::DegreesToRadians(180.0f));
-        m_mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
+        //m_mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
+        m_mainLight3D->getTransform()->setLocalPosition(-3.822013f, 1.546563f, 5.639657f);
+        m_mainLight3D->getTransform()->setLocalRotation(0.540104f, 0.459414f, 0.682045f, -0.179000f);
+
 
         m_fpsController->setPosition(Vec3F(0.0f, 0.0f, 5.0f));
 
@@ -193,13 +196,34 @@ namespace Maze
                 "SkinTest0.mzmaterial"
             });
         */
-        EntityPtr skinTest2 = createEntity("SkinTest2");
+
+        /*
+        EntityPtr skinTest2 = createEntity("SkinTest");
         Transform3DPtr skinTest2Transform = skinTest2->createComponent<Transform3D>();
         skinTest2Transform->setLocalZ(0.0f);
         SkinnedMeshRendererPtr skinTest2MeshRenderer = skinTest2->createComponent<SkinnedMeshRenderer>();
         skinTest2MeshRenderer->setRenderMesh("SkinTest2.fbx");
         skinTest2MeshRenderer->setMaterial("SkinTest1.mzmaterial");
-
+        skinTest2MeshRenderer->playAnimation(MAZE_HCS("Action2"));
+        */
+        
+        EntityPtr skinTest2 = createEntity("Buckethead");
+        Transform3DPtr skinTest2Transform = skinTest2->createComponent<Transform3D>();
+        skinTest2Transform->setLocalZ(0.0f);
+        SkinnedMeshRendererPtr skinTest2MeshRenderer = skinTest2->createComponent<SkinnedMeshRenderer>();
+        skinTest2MeshRenderer->setRenderMesh("Buckethead.fbx");
+        skinTest2MeshRenderer->setMaterial("Buckethead.mzmaterial");
+        skinTest2MeshRenderer->playAnimation(MAZE_HCS("Run"));
+        
+        /*
+        EntityPtr skinTest2 = createEntity("SkinTest");
+        Transform3DPtr skinTest2Transform = skinTest2->createComponent<Transform3D>();
+        skinTest2Transform->setLocalZ(0.0f);
+        SkinnedMeshRendererPtr skinTest2MeshRenderer = skinTest2->createComponent<SkinnedMeshRenderer>();
+        skinTest2MeshRenderer->setRenderMesh("SkinTest3.fbx");
+        skinTest2MeshRenderer->setMaterial("SkinTest1.mzmaterial");
+        skinTest2MeshRenderer->playAnimation(MAZE_HCS("Bind"));
+        */
         return true;
     }
 
