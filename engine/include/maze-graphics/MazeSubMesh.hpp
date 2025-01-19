@@ -206,10 +206,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void setBlendIndices(Vec4S const* _blendIndices, Size _count);
+        void setBlendIndices(Vec4F const* _blendIndices, Size _count);
 
         //////////////////////////////////////////
-        inline void setBlendIndices(Vector<Vec4S> const& _blendIndices)
+        inline void setBlendIndices(Vector<Vec4F> const& _blendIndices)
         {
             setBlendIndices(&_blendIndices[0], _blendIndices.size());
         }

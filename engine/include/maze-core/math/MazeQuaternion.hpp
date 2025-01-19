@@ -180,9 +180,9 @@ namespace Maze
         void toRotationMatrix(TMat& _rotationMatrix) const;
 
         //////////////////////////////////////////
-        inline Mat4F toRotationMatrix() const
+        inline TMat toRotationMatrix() const
         {
-            Mat4F result;
+            TMat result;
             toRotationMatrix(result);
             return result;
         }

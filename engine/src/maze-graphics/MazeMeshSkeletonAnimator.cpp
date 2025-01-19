@@ -28,6 +28,8 @@
 #include "maze-graphics/MazeMeshSkeletonAnimator.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/MazeMeshSkeleton.hpp"
+#include "maze-graphics/MazeMeshSkeletonAnimation.hpp"
 
 
 //////////////////////////////////////////
@@ -39,12 +41,6 @@ namespace Maze
     //
     //////////////////////////////////////////
     MeshSkeletonAnimator::MeshSkeletonAnimator()
-    {
-        memset(m_bonesTRS, 0, sizeof(BoneTRS) * MAZE_SKELETON_BONES_MAX);
-    }
-
-    //////////////////////////////////////////
-    MeshSkeletonAnimator::~MeshSkeletonAnimator()
     {
     }
 
@@ -59,18 +55,30 @@ namespace Maze
     //////////////////////////////////////////
     bool MeshSkeletonAnimator::init()
     {
+        m_player = MeshSkeletonAnimatorPlayer::Create();
+
         return true;
     }
 
     //////////////////////////////////////////
     void MeshSkeletonAnimator::update(F32 _dt)
     {
-        m_bonesCount = 2;
-        for (S32 i = 0; i < MAZE_SKELETON_BONES_MAX; ++i)
+        m_player->update(_dt);
+
+        // Test
+        // m_player->rewindToEnd();
+
+
+        for (auto& boneTransformsDirty : m_bonesTransformsDirty)
+            boneTransformsDirty = true;
+            
+        for (MeshSkeleton::BoneIndex i = 0, in = (MeshSkeleton::BoneIndex)m_bonesGlobalTransforms.size(); i < in; ++i)
+            m_bonesGlobalTransforms[i] = calculateBoneGlobalTransform(i);
+
+        for (MeshSkeleton::BoneIndex i = 0, in = (MeshSkeleton::BoneIndex)m_bonesSkinningTransforms.size(); i < in; ++i)
         {
-            //m_bonesTRS[i].translation.x += _dt * 0.5f;
-            // m_bonesTRS[i].rotation.y += _dt * 1.0f;
-            m_bonesTRS[i].scale = Vec3F(1.0f);
+            auto& bone = m_skeleton->getBone(i);
+            m_bonesSkinningTransforms[i] = m_bonesGlobalTransforms[i].transform(bone.inverseBindPoseTransform);
         }
     }
 
@@ -78,6 +86,144 @@ namespace Maze
     void MeshSkeletonAnimator::setSkeleton(MeshSkeletonPtr const& _skeleton)
     {
         m_skeleton = _skeleton;
+
+        if (m_skeleton)
+        {
+            m_bonesGlobalTransforms.resize(m_skeleton->getBonesCount());
+            memset(&m_bonesGlobalTransforms[0], 0, sizeof(TMat) * m_bonesGlobalTransforms.size());
+
+            m_bonesSkinningTransforms.resize(m_skeleton->getBonesCount());
+            memset(&m_bonesSkinningTransforms[0], 0, sizeof(TMat) * m_bonesSkinningTransforms.size());
+
+            m_bonesTransformsDirty.resize(m_skeleton->getBonesCount());
+        }
+        else
+        {
+            m_bonesGlobalTransforms.clear();
+            m_bonesSkinningTransforms.clear();
+            m_bonesTransformsDirty.clear();
+        }
+
+        playAnimation(MAZE_HCS("Action0"));
+    }
+
+    //////////////////////////////////////////
+    bool MeshSkeletonAnimator::playAnimation(HashedCString _name)
+    {
+        if (!m_skeleton)
+            return false;
+
+        MeshSkeletonAnimationPtr const& animation = m_skeleton->getAnimation(_name);
+        if (!animation)
+            return false;
+
+        m_player->play(animation);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    TMat const& MeshSkeletonAnimator::calculateBoneGlobalTransform(MeshSkeleton::BoneIndex _i)
+    {
+        if (m_bonesTransformsDirty[_i])
+        {
+            MeshSkeleton::Bone& bone = m_skeleton->getBone(_i);
+
+            TMat boneRotationMatrix = TMat::c_identity;
+            Vec3F boneTranslation;
+            Quaternion boneRotation;
+            Vec3F boneScale;
+
+            m_player->evaluateBoneTransform(
+                _i,
+                boneTranslation,
+                boneRotation,
+                boneScale);
+
+            boneRotation.toRotationMatrix(boneRotationMatrix);
+
+            m_bonesGlobalTransforms[_i] = TMat::CreateTranslation(boneTranslation).transform(
+                boneRotationMatrix).transform(
+                    TMat::CreateScale(boneScale));
+
+            if (bone.parentBoneIndex != -1)
+            {
+                m_bonesGlobalTransforms[_i] = calculateBoneGlobalTransform(bone.parentBoneIndex).transform(m_bonesGlobalTransforms[_i]);
+            }
+            else
+                m_bonesGlobalTransforms[_i] = m_skeleton->getRootTransform().transform(m_bonesGlobalTransforms[_i]);
+
+            m_bonesTransformsDirty[_i] = false;
+        }
+
+        return m_bonesGlobalTransforms[_i];
+    };
+
+
+    //////////////////////////////////////////
+    // Class MeshSkeletonAnimatorPlayer
+    //
+    //////////////////////////////////////////
+    MeshSkeletonAnimatorPlayer::MeshSkeletonAnimatorPlayer()
+    {
+        
+    }
+
+    //////////////////////////////////////////
+    MeshSkeletonAnimatorPlayerPtr MeshSkeletonAnimatorPlayer::Create()
+    {
+        MeshSkeletonAnimatorPlayerPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(MeshSkeletonAnimatorPlayer, object, init());
+        return object;
+    }
+
+    //////////////////////////////////////////
+    bool MeshSkeletonAnimatorPlayer::init()
+    {
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void MeshSkeletonAnimatorPlayer::update(F32 _dt)
+    {
+        if (!m_animation)
+            return;
+
+        m_currentTime += _dt;
+        if (m_currentTime >= m_animation->getAnimationTime())
+            m_currentTime = 0.0f;
+    }
+
+    //////////////////////////////////////////
+    void MeshSkeletonAnimatorPlayer::rewindToEnd()
+    {
+        m_currentTime = m_animation->getAnimationTime();
+    }
+
+    //////////////////////////////////////////
+    void MeshSkeletonAnimatorPlayer::play(MeshSkeletonAnimationPtr const& _animation)
+    {
+        if (m_animation == _animation)
+            return;
+
+        m_animation = _animation;
+    }
+
+    //////////////////////////////////////////
+    void MeshSkeletonAnimatorPlayer::evaluateBoneTransform(
+        MeshSkeleton::BoneIndex _i,
+        Vec3F& _outTranslation,
+        Quaternion& _outRotation,
+        Vec3F& _outScale)
+    {
+        if (!m_animation)
+            return;
+
+        m_animation->evaluateBoneTransform(
+            _i,
+            m_currentTime,
+            _outTranslation,
+            _outRotation,
+            _outScale);
     }
 
 

@@ -260,11 +260,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SubMesh::setBlendIndices(Vec4S const* _blendIndices, Size _count)
+    void SubMesh::setBlendIndices(Vec4F const* _blendIndices, Size _count)
     {
         ByteBufferPtr const& buffer = allocateVertexAttributes(
             VertexAttributeSemantic::BlendIndices,
-            VertexAttributeType::S32,
+            VertexAttributeType::F32,
             4,
             _count,
             false);

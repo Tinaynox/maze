@@ -33,6 +33,7 @@
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-graphics/MazeRenderDrawTopology.hpp"
+#include "maze-graphics/MazeMeshSkeleton.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
@@ -122,6 +123,39 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline void modifyValues(std::function<void(F32&)> const& _cb)
+        {
+            for (F32& value : m_values)
+                _cb(value);
+        }
+
+        //////////////////////////////////////////
+        inline F32 evaluate(F32 _time) const
+        {
+            S32 count = (S32)m_values.size();
+            if (count == 0)
+                return 0.0f;
+
+            if (_time <= m_times[0])
+                return m_values[0];
+
+            if (_time >= m_times[count - 1])
+                return m_values[count - 1];
+
+            for (S32 i = 1; i < count; ++i)
+            {
+                if (m_times[i] >= _time)
+                {
+                    F32 t = (_time - m_times[i - 1]) / (m_times[i] - m_times[i - 1]);
+                    return m_values[i - 1] * (1 - t) + m_values[i] * t;
+                }
+            }
+
+            MAZE_ERROR("Unexpected skeleton curve state!");
+            return 0.0f;
+        }
+
+        //////////////////////////////////////////
         FastVector<F32> const& getTimes() const { return m_times; }
 
         //////////////////////////////////////////
@@ -130,6 +164,122 @@ namespace Maze
     private:
         FastVector<F32> m_times;
         FastVector<F32> m_values;
+    };
+
+
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API MeshSkeletonRotationCurve
+    {
+    public:
+
+        //////////////////////////////////////////
+        inline MeshSkeletonRotationCurve(
+            FastVector<F32> const& _times = FastVector<F32>(),
+            FastVector<Quaternion> const& _values = FastVector<Quaternion>())
+            : m_times(_times)
+            , m_values(_values)
+        {
+            MAZE_DEBUG_ASSERT(m_times.size() == m_values.size());
+        }
+
+        //////////////////////////////////////////
+        inline MeshSkeletonRotationCurve(
+            FastVector<F32>&& _times,
+            FastVector<Quaternion>&& _values)
+            : m_times(std::move(_times))
+            , m_values(std::move(_values))
+        {
+            MAZE_DEBUG_ASSERT(m_times.size() == m_values.size());
+        }
+
+        //////////////////////////////////////////
+        inline MeshSkeletonRotationCurve(MeshSkeletonRotationCurve const& _value) = default;
+
+        //////////////////////////////////////////
+        inline MeshSkeletonRotationCurve(MeshSkeletonRotationCurve&& _value)
+            : m_times(std::move(_value.m_times))
+            , m_values(std::move(_value.m_values))
+        {}
+
+        //////////////////////////////////////////
+        inline MeshSkeletonRotationCurve& operator=(MeshSkeletonRotationCurve const& _value)
+        {
+            m_times = _value.m_times;
+            m_values = _value.m_values;
+
+            return *this;
+        }
+
+        //////////////////////////////////////////
+        inline MeshSkeletonRotationCurve& operator=(MeshSkeletonRotationCurve&& _value)
+        {
+            m_times = std::move(_value.m_times);
+            m_values = std::move(_value.m_values);
+
+            return *this;
+        }
+
+
+        //////////////////////////////////////////
+        inline void setValues(
+            FastVector<F32> const& _times,
+            FastVector<Quaternion> const& _values)
+        {
+            m_times = _times;
+            m_values = _values;
+        }
+
+        //////////////////////////////////////////
+        inline void setValues(
+            FastVector<F32>&& _times,
+            FastVector<Quaternion>&& _values)
+        {
+            m_times = std::move(_times);
+            m_values = std::move(_values);
+        }
+
+        //////////////////////////////////////////
+        inline void modifyValues(std::function<void(Quaternion&)> const& _cb)
+        {
+            for (Quaternion& value : m_values)
+                _cb(value);
+        }
+
+        //////////////////////////////////////////
+        inline Quaternion evaluate(F32 _time) const
+        {
+            S32 count = (S32)m_values.size();
+            if (count == 0)
+                return Quaternion::c_identity;
+
+            if (_time <= m_times[0])
+                return m_values[0];
+
+            if (_time >= m_times[count - 1])
+                return m_values[count - 1];
+
+            for (S32 i = 1; i < count; ++i)
+            {
+                if (m_times[i] >= _time)
+                {
+                    F32 t = (_time - m_times[i - 1]) / (m_times[i] - m_times[i - 1]);
+                    return Quaternion::Slerp(t, m_values[i - 1], m_values[i]);
+                }
+            }
+
+            MAZE_ERROR("Unexpected skeleton curve state!");
+            return Quaternion::c_identity;
+        }
+
+        //////////////////////////////////////////
+        FastVector<F32> const& getTimes() const { return m_times; }
+
+        //////////////////////////////////////////
+        FastVector<Quaternion> const& getValues() const { return m_values; }
+
+    private:
+        FastVector<F32> m_times;
+        FastVector<Quaternion> m_values;
     };
 
 
@@ -154,9 +304,9 @@ namespace Maze
             for (S32 i = 0; i < 3; ++i)
             {
                 translation[i] = _value.translation[i];
-                rotation[i] = _value.rotation[i];
                 scale[i] = _value.scale[i];
             }
+            rotation = _value.rotation;
 
             return *this;
         }
@@ -167,15 +317,22 @@ namespace Maze
             for (S32 i = 0; i < 3; ++i)
             {
                 translation[i] = std::move(_value.translation[i]);
-                rotation[i] = std::move(_value.rotation[i]);
                 scale[i] = std::move(_value.scale[i]);
             }
+            rotation = std::move(_value.rotation);
 
             return *this;
         }
 
+        //////////////////////////////////////////
+        void evaluateBoneTransform(
+            F32 _time,
+            Vec3F& _outTranslation,
+            Quaternion& _outRotation,
+            Vec3F& _outScale) const;
+
         MeshSkeletonAnimationCurve translation[3];
-        MeshSkeletonAnimationCurve rotation[3];
+        MeshSkeletonRotationCurve rotation;
         MeshSkeletonAnimationCurve scale[3];
     };
 
@@ -192,7 +349,7 @@ namespace Maze
         static MeshSkeletonAnimationPtr Create();
 
         //////////////////////////////////////////
-        virtual ~MeshSkeletonAnimation();
+        ~MeshSkeletonAnimation();
 
 
         //////////////////////////////////////////
@@ -223,13 +380,22 @@ namespace Maze
         //////////////////////////////////////////
         inline void setAnimationTime(F32 _value) { m_animationTime = _value; }
 
+
+        //////////////////////////////////////////
+        void evaluateBoneTransform(
+            MeshSkeleton::BoneIndex _i,
+            F32 _time,
+            Vec3F& _outTranslation,
+            Quaternion& _outRotation,
+            Vec3F& _outScale) const;
+
     protected:
 
         //////////////////////////////////////////
         MeshSkeletonAnimation();
 
         //////////////////////////////////////////
-        virtual bool init();    
+        bool init();    
     
 
     protected:

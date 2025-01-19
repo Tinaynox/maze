@@ -18,7 +18,7 @@ uniform
 {
   name:String = "u_ambientLightColor"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.200000, 0.200000, 0.200000, 1.000000
+  value:Vec4F = 0.900000, 0.900000, 0.900000, 1.000000
 }
 
 uniform

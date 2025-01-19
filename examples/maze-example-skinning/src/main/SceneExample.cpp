@@ -163,9 +163,11 @@ namespace Maze
         if (!BaseSceneExample::init(Vec2F(100.0f, 30.0f)))
             return false;
 
-        m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 0.0f, 0.0f);
-        m_fpsController->setYawAngle(Math::DegreesToRadians(0.0f));
+        m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
+        m_fpsController->setYawAngle(Math::DegreesToRadians(180.0f));
         m_mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
+
+        m_fpsController->setPosition(Vec3F(0.0f, 0.0f, 5.0f));
 
         InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &SceneExample::notifyKeyboard);
 
@@ -178,11 +180,11 @@ namespace Maze
             m_fpsController->getLevelSize(),
             m_simpleLevelConfig);
 
-
+        /*
         EntityPtr skinTest = createEntity("SkinTest");
         Transform3DPtr skinTestTransform = skinTest->createComponent<Transform3D>();
-        skinTestTransform->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
-        skinTestTransform->setLocalZ(5.0f);
+        // skinTestTransform->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
+        skinTestTransform->setLocalZ(0.0f);
         SkinnedMeshRendererPtr skinTestMeshRenderer = skinTest->createComponent<SkinnedMeshRenderer>();
         skinTestMeshRenderer->setRenderMesh("SkinTest.fbx");
         skinTestMeshRenderer->setMaterials(
@@ -190,6 +192,13 @@ namespace Maze
                 "SkinTest1.mzmaterial",
                 "SkinTest0.mzmaterial"
             });
+        */
+        EntityPtr skinTest2 = createEntity("SkinTest2");
+        Transform3DPtr skinTest2Transform = skinTest2->createComponent<Transform3D>();
+        skinTest2Transform->setLocalZ(0.0f);
+        SkinnedMeshRendererPtr skinTest2MeshRenderer = skinTest2->createComponent<SkinnedMeshRenderer>();
+        skinTest2MeshRenderer->setRenderMesh("SkinTest2.fbx");
+        skinTest2MeshRenderer->setMaterial("SkinTest1.mzmaterial");
 
         return true;
     }

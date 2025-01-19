@@ -35,6 +35,28 @@ namespace Maze
 {
 
     //////////////////////////////////////////
+    // Struct MeshSkeletonAnimationBone
+    //
+    //////////////////////////////////////////
+    void MeshSkeletonAnimationBone::evaluateBoneTransform(
+        F32 _time,
+        Vec3F& _outTranslation,
+        Quaternion& _outRotation,
+        Vec3F& _outScale) const
+    {
+        _outTranslation.x = translation[0].evaluate(_time);
+        _outTranslation.y = translation[1].evaluate(_time);
+        _outTranslation.z = translation[2].evaluate(_time);
+
+        _outRotation = rotation.evaluate(_time);
+
+        _outScale.x = scale[0].evaluate(_time);
+        _outScale.y = scale[1].evaluate(_time);
+        _outScale.z = scale[2].evaluate(_time);
+    }
+
+
+    //////////////////////////////////////////
     // Class MeshSkeletonAnimation
     //
     //////////////////////////////////////////
@@ -65,6 +87,25 @@ namespace Maze
     void MeshSkeletonAnimation::clear()
     {
         m_boneAnimations.clear();
+    }
+
+    //////////////////////////////////////////
+    void MeshSkeletonAnimation::evaluateBoneTransform(
+        MeshSkeleton::BoneIndex _i,
+        F32 _time,
+        Vec3F& _outTranslation,
+        Quaternion& _outRotation,
+        Vec3F& _outScale) const
+    {
+        MAZE_DEBUG_ASSERT(_i >= 0 && _i < (MeshSkeleton::BoneIndex)m_boneAnimations.size());
+
+        MeshSkeletonAnimationBone const& animationBone = m_boneAnimations[_i];
+
+        animationBone.evaluateBoneTransform(
+            _time,
+            _outTranslation,
+            _outRotation,
+            _outScale);
     }
 
 

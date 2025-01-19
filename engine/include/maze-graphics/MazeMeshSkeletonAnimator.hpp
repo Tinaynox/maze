@@ -34,6 +34,7 @@
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-graphics/MazeRenderDrawTopology.hpp"
 #include "maze-graphics/config/MazeGraphicsConfig.hpp"
+#include "maze-graphics/MazeMeshSkeleton.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
@@ -49,7 +50,9 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(MeshSkeletonAnimator);
+    MAZE_USING_SHARED_PTR(MeshSkeletonAnimatorPlayer);
     MAZE_USING_SHARED_PTR(MeshSkeleton);
+    MAZE_USING_SHARED_PTR(MeshSkeletonAnimation);
     
 
     //////////////////////////////////////////
@@ -60,21 +63,10 @@ namespace Maze
     {
     public:
 
-        //////////////////////////////////////////
-        struct BoneTRS
-        {
-            Vec3F translation;
-            Vec3F rotation;
-            Vec3F scale;
-        };
-
     public:
 
         //////////////////////////////////////////
         static MeshSkeletonAnimatorPtr Create();
-
-        //////////////////////////////////////////
-        virtual ~MeshSkeletonAnimator();
 
 
         //////////////////////////////////////////
@@ -89,10 +81,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline BoneTRS const* getBonesTRS() const { return &m_bonesTRS[0]; }
+        inline TMat const* getBonesGlobalTransforms() const { return &m_bonesGlobalTransforms[0]; }
 
         //////////////////////////////////////////
-        inline Size getBonesCount() const { return m_bonesCount; }
+        inline TMat const* getBonesSkinningTransforms() const { return &m_bonesSkinningTransforms[0]; }
+
+        //////////////////////////////////////////
+        inline Size getBonesCount() const { return m_bonesSkinningTransforms.size(); }
+
+
+        //////////////////////////////////////////
+        bool playAnimation(HashedCString _name);
 
     protected:
 
@@ -100,14 +99,63 @@ namespace Maze
         MeshSkeletonAnimator();
 
         //////////////////////////////////////////
-        virtual bool init();    
+        bool init();    
     
+        //////////////////////////////////////////
+        TMat const& calculateBoneGlobalTransform(MeshSkeleton::BoneIndex _i);
 
     protected:
         MeshSkeletonPtr m_skeleton;
 
-        BoneTRS m_bonesTRS[MAZE_SKELETON_BONES_MAX];
-        Size m_bonesCount = 0u;
+        Vector<TMat> m_bonesGlobalTransforms;
+        Vector<TMat> m_bonesSkinningTransforms;
+        Vector<bool> m_bonesTransformsDirty;
+
+        MeshSkeletonAnimatorPlayerPtr m_player;
+    };
+
+
+    //////////////////////////////////////////
+    // Class MeshSkeletonAnimatorPlayer
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API MeshSkeletonAnimatorPlayer
+    {
+    public:
+
+        //////////////////////////////////////////
+        static MeshSkeletonAnimatorPlayerPtr Create();
+
+
+        //////////////////////////////////////////
+        void update(F32 _dt);
+
+        //////////////////////////////////////////
+        void rewindToEnd();
+
+
+        //////////////////////////////////////////
+        void play(MeshSkeletonAnimationPtr const& _animation);
+
+        //////////////////////////////////////////
+        void evaluateBoneTransform(
+            MeshSkeleton::BoneIndex _i,
+            Vec3F& _outTranslation,
+            Quaternion& _outRotation,
+            Vec3F& _outScale);
+
+    protected:
+
+        //////////////////////////////////////////
+        MeshSkeletonAnimatorPlayer();
+
+        //////////////////////////////////////////
+        bool init();
+
+
+    protected:
+        MeshSkeletonAnimationPtr m_animation;
+        F32 m_currentTime = 0.0f;
     };
 
 } // namespace Maze

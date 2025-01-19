@@ -71,6 +71,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline Vec3F ConvertOpenFBXVec3ToVec3F(ofbx::Vec3 const& _value)
+    {
+        return Vec3F((F32)_value.x, (F32)_value.y, (F32)_value.z);
+    }
+
+    //////////////////////////////////////////
     inline TMat ConvertOpenFBXMatrixToTMat(ofbx::Matrix const& _mat)
     {
         return TMat(
@@ -95,15 +101,63 @@ namespace Maze
 
         memcpy(&values[0], _curve->getKeyValue(), sizeof(F32) * keyCount);
         for (Size i = 0; i < keyCount; ++i)
-            values[i] = (F32)ofbx::fbxTimeToSeconds(_curve->getKeyTime()[i]);
+            times[i] = (F32)ofbx::fbxTimeToSeconds(_curve->getKeyTime()[i]);
 
         return MeshSkeletonAnimationCurve(std::move(times), std::move(values));
     }
 
     //////////////////////////////////////////
+    inline MeshSkeletonRotationCurve ConvertRotationToMeshSkeletonRotationCurve(
+        ofbx::AnimationCurveNode const* _rotation,
+        Vec3F const& _parentEuler)
+    {
+        MeshSkeletonRotationCurve curve;
+
+        Set<ofbx::i64> keyframes;
+        for (S32 axis = 0; axis < 3; ++axis)
+        {
+            ofbx::AnimationCurve const* curve = _rotation->getCurve(axis);
+            if (curve)
+            {
+                S32 count = curve->getKeyCount();
+                for (S32 i = 0; i < count; ++i)
+                    keyframes.insert(curve->getKeyTime()[i]);
+            }
+        }
+
+        FastVector<F32> times;
+        FastVector<Quaternion> values;
+
+        for (ofbx::i64 keyTime : keyframes)
+        {
+            auto time = ofbx::fbxTimeToSeconds(keyTime);
+            ofbx::Vec3 euler = _rotation->getNodeLocalTransform(time);
+            
+            Vec3F animationEuler = Vec3F(
+                Math::DegreesToRadians((F32)euler.x) + _parentEuler.x,
+                -(Math::DegreesToRadians((F32)euler.y) + _parentEuler.y),
+                -(Math::DegreesToRadians((F32)euler.z) + _parentEuler.z));
+
+            auto animationQuat = Quaternion::FromEuler(animationEuler);
+            auto inverseArmatureQuat = Quaternion::FromEuler(-_parentEuler);
+
+            auto v = animationQuat * inverseArmatureQuat;
+
+            times.push_back((F32)time);
+            values.push_back(v);
+        }
+
+        curve.setValues(
+            std::move(times),
+            std::move(values));
+
+        return std::move(curve);
+    }
+
+    //////////////////////////////////////////
     inline void ProcessBoneForVertex(
         Vec4F& _blendWeights,
-        Vec4S& _blendIndices,
+        Vec4F& _blendIndices,
         S32 _boneIndex,
         F32 _weight)
     {
@@ -111,7 +165,7 @@ namespace Maze
         {
             if (_blendWeights[i] == 0.0f)
             {
-                _blendIndices[i] = _boneIndex;
+                _blendIndices[i] = F32(_boneIndex);
                 _blendWeights[i] = _weight;
                 return;
             }
@@ -125,7 +179,7 @@ namespace Maze
 
         if (_weight > _blendWeights[smallestIndex])
         {
-            _blendIndices[smallestIndex] = _boneIndex;
+            _blendIndices[smallestIndex] = F32(_boneIndex);
             _blendWeights[smallestIndex] = _weight;
         }
     }
@@ -162,10 +216,16 @@ namespace Maze
         Vector<Vec3F> normals;
         Vector<Vec3F> tangents;
         Vector<Vec4F> blendWeights;
-        Vector<Vec4S> blendIndices;
+        Vector<Vec4F> blendIndices;
         String meshName;
 
-        Vector<ofbx::Object const*> bones;
+        struct BoneTempData
+        {
+            ofbx::Object const* object;
+            TMat bindPoseMat;
+        };
+
+        Vector<BoneTempData> bonesData;
 
         auto processCreateSubMesh =
             [&]()
@@ -272,20 +332,18 @@ namespace Maze
         for (S32 meshI = 0; meshI < meshCount; ++meshI)
         {
             ofbx::Mesh const& mesh = *_scene->getMesh(meshI);
+            meshName = mesh.name;
+
             ofbx::Geometry const& geom = *mesh.getGeometry();
 
-            ofbx::Matrix meshGeometricTransform = mesh.getGeometricMatrix();
-            ofbx::Matrix meshGlobalTransform = mesh.getGlobalTransform();
-
-            TMat meshGeometricTransformMat = ConvertOpenFBXMatrixToTMat(meshGeometricTransform);
-            TMat meshGlobalTransformMat = ConvertOpenFBXMatrixToTMat(meshGlobalTransform);
-
+            TMat meshGeometricTransformMat = ConvertOpenFBXMatrixToTMat(mesh.getGeometricMatrix());
+            TMat meshLocalTransformMat = ConvertOpenFBXMatrixToTMat(mesh.getLocalTransform());
+            TMat meshGlobalTransformMat = ConvertOpenFBXMatrixToTMat(mesh.getGlobalTransform());
+            
             TMat transformMat = fixOrientationMat.transform(meshGeometricTransformMat).transform(meshGlobalTransformMat);
-
-
             
 
-            meshName = mesh.name;
+            
 
             // Indices
             S32 indexCount = geom.getIndexCount();
@@ -368,7 +426,7 @@ namespace Maze
                 MeshSkeletonPtr const& meshSkeleton = _mesh.ensureSkeleton();
 
                 blendWeights.resize(blendWeights.size() + vertexCount, Vec4F(0.0f));
-                blendIndices.resize(blendIndices.size() + vertexCount, Vec4S(0));
+                blendIndices.resize(blendIndices.size() + vertexCount, Vec4F(0.0f));
 
                 S32 const clusterCount = skin->getClusterCount();
 
@@ -384,18 +442,24 @@ namespace Maze
                     auto meshSkeletonBoneIndex = meshSkeleton->ensureBoneIndex(HashedCString(boneName));
 
                     MeshSkeleton::BoneIndex parentBoneIndex = -1;
-                    if (bone->getParent())
+                    if (bone->getParent() &&
+                        bone->getParent()->getParent() &&
+                        bone->getParent()->getParent()->getType() == ofbx::Object::Type::NULL_NODE)
+                    {
                         parentBoneIndex = meshSkeleton->ensureBoneIndex(HashedCString(bone->getParent()->name));
-
+                    }
+                    
                     auto& meshSkeletonBone = meshSkeleton->getBone(meshSkeletonBoneIndex);
                     meshSkeletonBone.parentBoneIndex = parentBoneIndex;
 
-                    ofbx::Matrix transform = bone->getLocalTransform();
-                    meshSkeletonBone.transform = ConvertOpenFBXMatrixToTMat(transform);
+                    //ofbx::Matrix transform = bone->getLocalTransform();
+                    TMat bindPoseTransformGlobal = ConvertOpenFBXMatrixToTMat(cluster->getTransformLinkMatrix());
+                    meshSkeletonBone.inverseBindPoseTransform = bindPoseTransformGlobal.inversed();
 
-                    if (meshSkeletonBoneIndex >= S32(bones.size()))
-                        bones.resize((Size)meshSkeletonBoneIndex + 1);
-                    bones[meshSkeletonBoneIndex] = bone;
+                    if (meshSkeletonBoneIndex >= S32(bonesData.size()))
+                        bonesData.resize((Size)meshSkeletonBoneIndex + 1);
+                    bonesData[meshSkeletonBoneIndex].object = bone;
+                    bonesData[meshSkeletonBoneIndex].bindPoseMat = bindPoseTransformGlobal;
                         
 
                     S32 const vertexCount = cluster->getIndicesCount();
@@ -433,6 +497,46 @@ namespace Maze
 
         if (_mesh.getSkeleton())
         {
+            Vec3F armatureEuler = Vec3F::c_zero;
+            Vec3F armatureScale = Vec3F::c_one;
+
+            TMat armatureInvScaleMat = TMat::c_identity;
+
+            S32 bonesCount = S32(bonesData.size());
+            for (MeshSkeleton::BoneIndex boneIndex = 0; boneIndex < bonesCount; ++boneIndex)
+            {
+                ofbx::Object const* bone = bonesData[boneIndex].object;
+
+                // Find armature
+                if (bone->getParent() &&
+                    bone->getParent()->getParent() &&
+                    bone->getParent()->getParent()->getType() == ofbx::Object::Type::ROOT)
+                {
+                    ofbx::Object const* armature = bone->getParent();
+
+                    armatureScale = ConvertOpenFBXVec3ToVec3F(armature->getLocalScaling());
+                    armatureEuler = ConvertOpenFBXVec3ToVec3F(armature->getLocalRotation());
+
+                    armatureInvScaleMat = TMat::CreateScale(1.0f / armatureScale);
+
+                    TMat armatureGlobalTransformMat = ConvertOpenFBXMatrixToTMat(armature->getGlobalTransform());
+                    Quaternion armatureGlobalTransformQuat = Quaternion(armatureGlobalTransformMat);
+                    armatureEuler = armatureGlobalTransformQuat.getEuler();
+                    // Vec3F euler = Quaternion(armatureGlobalTransformMat).getEuler();
+                    _mesh.getSkeleton()->setRootTransform(
+                        armatureGlobalTransformMat * armatureInvScaleMat);
+                    
+                    //_mesh.getSkeleton()->setRootTransform(Quaternion::FromEuler(armatureEuler).toRotationMatrix());
+                }
+            }
+
+            // Fix bone bind pose scaling
+            for (MeshSkeleton::BoneIndex boneIndex = 0; boneIndex < bonesCount; ++boneIndex)
+            {
+                MeshSkeleton::Bone& bone = _mesh.getSkeleton()->getBone(boneIndex);
+                bone.inverseBindPoseTransform = (bonesData[boneIndex].bindPoseMat * armatureInvScaleMat).inversed();
+            }
+
             // Load animations
             S32 animationsCount = _scene->getAnimationStackCount();
             for (S32 i = 0; i < animationsCount; ++i)
@@ -450,17 +554,22 @@ namespace Maze
                     {
                         F32 animationTime = F32(takeInfo->local_time_to - takeInfo->local_time_from);
 
-                        MeshSkeletonAnimationPtr const& meshSkeletonAnimation = _mesh.getSkeleton()->ensureAnimation(animName);
+                        String meshSkeletonAnimationName = animName;
+                        Size meshSkeletonAnimationNamePrefixIndex = meshSkeletonAnimationName.find_last_of('|');
+                        if (meshSkeletonAnimationNamePrefixIndex != String::npos)
+                            meshSkeletonAnimationName = meshSkeletonAnimationName.substr(meshSkeletonAnimationNamePrefixIndex + 1);
+
+                        MeshSkeletonAnimationPtr const& meshSkeletonAnimation = _mesh.getSkeleton()->ensureAnimation(meshSkeletonAnimationName);
                         meshSkeletonAnimation->setAnimationTime(animationTime);
 
                         Vector<MeshSkeletonAnimationBone> meshSkeletonAnimationBones;
 
-                        S32 bonesCount = S32(bones.size());
                         for (MeshSkeleton::BoneIndex boneIndex = 0; boneIndex < bonesCount; ++boneIndex)
                         {
                             MeshSkeletonAnimationBone meshSkeletonAnimationBone;
 
-                            ofbx::Object const* bone = bones[boneIndex];
+                            ofbx::Object const* bone = bonesData[boneIndex].object;
+                            auto& meshSkeletonBone = _mesh.getSkeleton()->getBone(boneIndex);
 
                             ofbx::AnimationCurveNode const* translation = animLayer->getCurveNode(*bone, "Lcl Translation");
                             ofbx::AnimationCurveNode const* rotation = animLayer->getCurveNode(*bone, "Lcl Rotation");
@@ -469,16 +578,32 @@ namespace Maze
                             for (S32 axis = 0; axis < 3; ++axis)
                             {
                                 if (translation)
-                                    meshSkeletonAnimationBone.translation[axis] = 
+                                {
+                                    meshSkeletonAnimationBone.translation[axis] =
                                         ConvertAnimationCurveToMeshSkeletonAnimationCurve(translation->getCurve(axis));
 
-                                if (rotation)
-                                    meshSkeletonAnimationBone.rotation[axis] =
-                                        ConvertAnimationCurveToMeshSkeletonAnimationCurve(rotation->getCurve(axis));
+                                    // Flip X
+                                    if (axis == 0)
+                                        meshSkeletonAnimationBone.translation[axis].modifyValues(
+                                            [](F32& _value) { _value = -_value; });
+                                }
+
 
                                 if (scaling)
+                                {
                                     meshSkeletonAnimationBone.scale[axis] =
                                         ConvertAnimationCurveToMeshSkeletonAnimationCurve(scaling->getCurve(axis));
+                                }
+                            }
+
+                            if (rotation)
+                            {
+                                if (meshSkeletonBone.parentBoneIndex == -1)
+                                    meshSkeletonAnimationBone.rotation =
+                                        ConvertRotationToMeshSkeletonRotationCurve(rotation, armatureEuler);
+                                else
+                                    meshSkeletonAnimationBone.rotation =
+                                        ConvertRotationToMeshSkeletonRotationCurve(rotation, Vec3F::c_zero);
                             }
                             
                             meshSkeletonAnimationBones.emplace_back(std::move(meshSkeletonAnimationBone));

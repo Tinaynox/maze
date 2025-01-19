@@ -193,7 +193,7 @@ namespace Maze
         inline Vec3<ValueType> getForward() const;
 
         //////////////////////////////////////////
-        inline ValueType* operator[](Size _row) const;
+        inline Vec3F& operator[](Size _row) const;
 
         //////////////////////////////////////////
         inline Vec4<ValueType> getColumn(Size _column) const;

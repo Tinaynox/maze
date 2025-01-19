@@ -246,12 +246,12 @@ namespace Maze
         MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
 
         TMat const* tm = reinterpret_cast<TMat const*>(_renderUnit.userData);
-
+        
         _renderQueue->addUploadShaderUniformCommand(
-            MAZE_HCS("u_boneTRS"),
-            (Vec3F*)m_animator->getBonesTRS(),
-            (U16)(m_animator->getBonesCount() * 3));
-
+            MAZE_HCS("u_boneSkinningTransforms"),
+            (TMat const*)m_animator->getBonesSkinningTransforms(),
+            (U16)(m_animator->getBonesCount()));
+        
         _renderQueue->addDrawVAOInstancedCommand(
             vao.get(),
             1,

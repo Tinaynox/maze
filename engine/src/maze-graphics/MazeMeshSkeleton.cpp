@@ -71,11 +71,14 @@ namespace Maze
     //////////////////////////////////////////
     MeshSkeleton::BoneIndex MeshSkeleton::addBone(
         String const& _name,
-        TMat const& _transform,
+        TMat const& _inverseBindPoseTransform,
         BoneIndex _parentBoneIndex)
     {
         BoneIndex index = (BoneIndex)m_bones.size();
-        m_bones.emplace_back(_name, _transform, _parentBoneIndex);
+        m_bones.emplace_back(
+            _name,
+            _inverseBindPoseTransform,
+            _parentBoneIndex);
         m_boneIndicesByName.insert(_name, index);
         return index;
     }
@@ -131,6 +134,18 @@ namespace Maze
             animation->setName(_name);
             return *m_animations.insert(_name, animation);
         }
+
+        return it->second;
+    }
+
+    //////////////////////////////////////////
+    MeshSkeletonAnimationPtr const& MeshSkeleton::getAnimation(HashedCString _name)
+    {
+        static MeshSkeletonAnimationPtr nullPointer;
+
+        auto it = m_animations.find(_name);
+        if (it == m_animations.end())
+            return nullPointer;
 
         return it->second;
     }

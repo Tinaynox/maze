@@ -68,15 +68,15 @@ namespace Maze
             //////////////////////////////////////////
             Bone(
                 String const& _name = String(),
-                TMat const& _transform = TMat::c_identity,
+                TMat const& _inverseBindPoseTransform = TMat::c_identity,
                 BoneIndex _parentBoneIndex = -1)
                 : name(_name)
-                , transform(_transform)
+                , inverseBindPoseTransform(_inverseBindPoseTransform)
                 , parentBoneIndex(_parentBoneIndex)
             {}
 
             String name;
-            TMat transform;
+            TMat inverseBindPoseTransform;
             BoneIndex parentBoneIndex = -1;
         };
 
@@ -86,7 +86,7 @@ namespace Maze
         static MeshSkeletonPtr Create();
 
         //////////////////////////////////////////
-        virtual ~MeshSkeleton();
+        ~MeshSkeleton();
 
 
         //////////////////////////////////////////
@@ -96,7 +96,7 @@ namespace Maze
         //////////////////////////////////////////
         BoneIndex addBone(
             String const& _name,
-            TMat const& _transform = TMat::c_identity,
+            TMat const& _inverseBindPoseTransform = TMat::c_identity,
             BoneIndex _parentBoneIndex = -1);
 
         //////////////////////////////////////////
@@ -114,9 +114,22 @@ namespace Maze
         //////////////////////////////////////////
         Bone& ensureBone(HashedCString _name);
 
+        //////////////////////////////////////////
+        inline Size getBonesCount() const { return m_bones.size(); }
+
 
         //////////////////////////////////////////
         MeshSkeletonAnimationPtr const& ensureAnimation(String const& _name);
+
+        //////////////////////////////////////////
+        MeshSkeletonAnimationPtr const& getAnimation(HashedCString _name);
+
+
+        //////////////////////////////////////////
+        inline TMat const& getRootTransform() const { return m_rootTransform; }
+
+        //////////////////////////////////////////
+        inline void setRootTransform(TMat const& _value) { m_rootTransform = _value; }
 
     protected:
 
@@ -124,7 +137,7 @@ namespace Maze
         MeshSkeleton();
 
         //////////////////////////////////////////
-        virtual bool init();    
+        bool init();    
     
 
     protected:
@@ -132,6 +145,7 @@ namespace Maze
         StringKeyMap<BoneIndex> m_boneIndicesByName;
 
         StringKeyMap<MeshSkeletonAnimationPtr> m_animations;
+        TMat m_rootTransform = TMat::c_identity;
     };
 
 } // namespace Maze
