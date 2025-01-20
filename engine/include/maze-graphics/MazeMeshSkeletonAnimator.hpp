@@ -53,6 +53,10 @@ namespace Maze
     MAZE_USING_SHARED_PTR(MeshSkeletonAnimatorPlayer);
     MAZE_USING_SHARED_PTR(MeshSkeleton);
     MAZE_USING_SHARED_PTR(MeshSkeletonAnimation);
+
+
+    //////////////////////////////////////////
+    #define MESH_SKELETON_ANIMATOR_PLAYERS_COUNT (3)
     
 
     //////////////////////////////////////////
@@ -93,6 +97,16 @@ namespace Maze
         //////////////////////////////////////////
         bool playAnimation(HashedCString _name);
 
+        //////////////////////////////////////////
+        MeshSkeletonAnimatorPlayerPtr const& getCurrentAnimation();
+
+
+        //////////////////////////////////////////
+        inline void setAnimationSpeed(F32 _animationSpeed) { m_animationSpeed = _animationSpeed; }
+
+        //////////////////////////////////////////
+        inline F32 getAnimationSpeed() const { return m_animationSpeed; }
+
     protected:
 
         //////////////////////////////////////////
@@ -104,14 +118,23 @@ namespace Maze
         //////////////////////////////////////////
         TMat const& calculateBoneGlobalTransform(MeshSkeleton::BoneIndex _i);
 
+        //////////////////////////////////////////
+        MeshSkeletonAnimatorPlayerPtr const& findPlayerForNewAnimation(
+            MeshSkeletonAnimationPtr const& _animation);
+
+        //////////////////////////////////////////
+        MeshSkeletonAnimatorPlayerPtr const& findPlayerWith();
+
     protected:
         MeshSkeletonPtr m_skeleton;
+        F32 m_animationSpeed = 1.0f;
 
         Vector<TMat> m_bonesGlobalTransforms;
         Vector<TMat> m_bonesSkinningTransforms;
         Vector<bool> m_bonesTransformsDirty;
 
-        MeshSkeletonAnimatorPlayerPtr m_player;
+        MeshSkeletonAnimatorPlayerPtr m_players[MESH_SKELETON_ANIMATOR_PLAYERS_COUNT];
+        F32 m_playersBlendWeights[MESH_SKELETON_ANIMATOR_PLAYERS_COUNT];
     };
 
 
@@ -124,6 +147,18 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        enum class State
+        {
+            None = 0,
+            In,
+            Active,
+            Out
+        };
+
+
+    public:
+
+        //////////////////////////////////////////
         static MeshSkeletonAnimatorPlayerPtr Create();
 
 
@@ -133,9 +168,18 @@ namespace Maze
         //////////////////////////////////////////
         void rewindToEnd();
 
+        //////////////////////////////////////////
+        void rewindToRandom();
+
 
         //////////////////////////////////////////
         void play(MeshSkeletonAnimationPtr const& _animation);
+
+        //////////////////////////////////////////
+        void stop();
+
+        //////////////////////////////////////////
+        inline MeshSkeletonAnimationPtr const& getAnimation() const { return m_animation; }
 
         //////////////////////////////////////////
         void evaluateBoneTransform(
@@ -143,6 +187,17 @@ namespace Maze
             Vec3F& _outTranslation,
             Quaternion& _outRotation,
             Vec3F& _outScale);
+
+
+        //////////////////////////////////////////
+        inline F32 getCurrentWeight() const { return m_currentWeight; }
+
+        //////////////////////////////////////////
+        inline void setCurrentWeight(F32 _value) { m_currentWeight = _value; }
+
+
+        //////////////////////////////////////////
+        inline bool isActive() const { return m_state != State::None && m_state != State::Out; }
 
     protected:
 
@@ -152,10 +207,18 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
+        //////////////////////////////////////////
+        void setState(State _state);
 
     protected:
         MeshSkeletonAnimationPtr m_animation;
         F32 m_currentTime = 0.0f;
+        
+        bool m_looped = true;
+
+        F32 m_currentWeight = 0.0f;
+        F32 m_weightSpeed = 5.0f;
+        State m_state = State::None;
     };
 
 } // namespace Maze

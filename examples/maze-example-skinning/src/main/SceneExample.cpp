@@ -44,6 +44,7 @@
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/MazeMeshSkeletonAnimator.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
@@ -100,7 +101,7 @@ namespace Maze
     //////////////////////////////////////////
     String GetExampleName()
     {
-        return "Meshes and Textures";
+        return "Skinning Animation";
     }
 
     //////////////////////////////////////////
@@ -160,17 +161,18 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneExample::init()
     {
-        if (!BaseSceneExample::init(Vec2F(100.0f, 30.0f)))
+        if (!BaseSceneExample::init(Vec2F(20.0f, 20.0f)))
             return false;
 
         m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
         m_fpsController->setYawAngle(Math::DegreesToRadians(180.0f));
+        m_fpsController->setPitchAngle(Math::DegreesToRadians(15.0f));
         //m_mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
         m_mainLight3D->getTransform()->setLocalPosition(-3.822013f, 1.546563f, 5.639657f);
         m_mainLight3D->getTransform()->setLocalRotation(0.540104f, 0.459414f, 0.682045f, -0.179000f);
 
 
-        m_fpsController->setPosition(Vec3F(0.0f, 0.0f, 5.0f));
+        m_fpsController->setPosition(Vec3F(0.0f, 0.0f, 2.1f));
 
         InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &SceneExample::notifyKeyboard);
 
@@ -197,23 +199,34 @@ namespace Maze
             });
         */
 
-        /*
-        EntityPtr skinTest2 = createEntity("SkinTest");
-        Transform3DPtr skinTest2Transform = skinTest2->createComponent<Transform3D>();
-        skinTest2Transform->setLocalZ(0.0f);
-        SkinnedMeshRendererPtr skinTest2MeshRenderer = skinTest2->createComponent<SkinnedMeshRenderer>();
-        skinTest2MeshRenderer->setRenderMesh("SkinTest2.fbx");
-        skinTest2MeshRenderer->setMaterial("SkinTest1.mzmaterial");
-        skinTest2MeshRenderer->playAnimation(MAZE_HCS("Action2"));
-        */
+        for (S32 i = 0; i < 2; ++i)
+        {
+            EntityPtr skinTest2 = createEntity("SkinTest");
+            Transform3DPtr skinTest2Transform = skinTest2->createComponent<Transform3D>();
+            skinTest2Transform->setLocalZ(5.0f);
+            skinTest2Transform->setLocalX(i == 0 ? 5.0f : -5.0f);
+            skinTest2Transform->setLocalRotationDegrees(0.0f, i == 0 ? 0.0f : 180.0f, 0.0f);
+            skinTest2Transform->setLocalScale(0.66f);
+            SkinnedMeshRendererPtr skinTest2MeshRenderer = skinTest2->createComponent<SkinnedMeshRenderer>();
+            skinTest2MeshRenderer->setRenderMesh("SkinTest2.fbx");
+            skinTest2MeshRenderer->setMaterial("SkinTest1.mzmaterial");
+            skinTest2MeshRenderer->playAnimation(MAZE_HCS("Action0"));
+            skinTest2MeshRenderer->getAnimator()->setAnimationSpeed(0.75f);
+            skinTest2MeshRenderer->getAnimator()->getCurrentAnimation()->rewindToRandom();
+        }
         
-        EntityPtr skinTest2 = createEntity("Buckethead");
-        Transform3DPtr skinTest2Transform = skinTest2->createComponent<Transform3D>();
-        skinTest2Transform->setLocalZ(0.0f);
-        SkinnedMeshRendererPtr skinTest2MeshRenderer = skinTest2->createComponent<SkinnedMeshRenderer>();
-        skinTest2MeshRenderer->setRenderMesh("Buckethead.fbx");
-        skinTest2MeshRenderer->setMaterial("Buckethead.mzmaterial");
-        skinTest2MeshRenderer->playAnimation(MAZE_HCS("Run"));
+
+        EntityPtr skinnedMeshEntity = createEntity("Buckethead");
+        Transform3DPtr skinnedMeshTransform = skinnedMeshEntity->createComponent<Transform3D>();
+        skinnedMeshTransform->setLocalZ(0.0f);
+        skinnedMeshTransform->setLocalScale(0.2f);
+        skinnedMeshTransform->setLocalX(0.0f);
+        m_skinnedMeshRenderer = skinnedMeshEntity->createComponent<SkinnedMeshRenderer>();
+        m_skinnedMeshRenderer->setRenderMesh("Buckethead.fbx");
+        m_skinnedMeshRenderer->setMaterial("Buckethead.mzmaterial");
+        m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Run"));
+        m_skinnedMeshRenderer->getAnimator()->getCurrentAnimation()->rewindToRandom();
+
         
         /*
         EntityPtr skinTest2 = createEntity("SkinTest");
@@ -239,13 +252,37 @@ namespace Maze
         m_hintText->setTextFormatted(
             "[CONTROLS]\n"
             "Movement - WASD, Jump - Space, Camera - RMB (Hold)\n"
+            "Change animation - 1, 2, 3\n"
         );
     }
 
     //////////////////////////////////////////
     void SceneExample::notifyKeyboard(InputEventKeyboardData const& _data)
     {
+        switch (_data.type)
+        {
+            case InputEventKeyboardType::KeyDown:
+            {
+                if (_data.keyCode == KeyCode::Number1)
+                {
+                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Bind"));
+                }
+                else
+                if (_data.keyCode == KeyCode::Number2)
+                {
+                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Idle"));
+                }
+                else
+                if (_data.keyCode == KeyCode::Number3)
+                {
+                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Run"));
+                }
 
+                break;
+            }
+            default:
+                break;
+        }
     }
 
 

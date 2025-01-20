@@ -55,7 +55,8 @@ namespace Maze
     //////////////////////////////////////////
     bool MeshSkeletonAnimator::init()
     {
-        m_player = MeshSkeletonAnimatorPlayer::Create();
+        for (S32 i = 0; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
+            m_players[i] = MeshSkeletonAnimatorPlayer::Create();
 
         return true;
     }
@@ -63,24 +64,45 @@ namespace Maze
     //////////////////////////////////////////
     void MeshSkeletonAnimator::update(F32 _dt)
     {
-        m_player->update(_dt);
+        _dt *= m_animationSpeed;
 
-        // Test
-        // m_player->rewindToEnd();
+        F32 totalWeight = 0.0f;
+        for (MeshSkeletonAnimatorPlayerPtr const& player : m_players)
+        {
+            player->update(_dt);
 
+            if (player->getAnimation())
+                totalWeight += player->getCurrentWeight();
+        }
 
-        for (auto& boneTransformsDirty : m_bonesTransformsDirty)
-            boneTransformsDirty = true;
-            
-        for (MeshSkeleton::BoneIndex i = 0, in = (MeshSkeleton::BoneIndex)m_bonesGlobalTransforms.size(); i < in; ++i)
-            m_bonesGlobalTransforms[i] = calculateBoneGlobalTransform(i);
+        if (totalWeight > 0.0f)
+        {
+            for (S32 i = 0; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
+                m_playersBlendWeights[i] = m_players[i]->getCurrentWeight() / totalWeight;
+
+            for (auto& boneTransformsDirty : m_bonesTransformsDirty)
+                boneTransformsDirty = true;
+
+            for (MeshSkeleton::BoneIndex i = 0, in = (MeshSkeleton::BoneIndex)m_bonesGlobalTransforms.size(); i < in; ++i)
+                m_bonesGlobalTransforms[i] = calculateBoneGlobalTransform(i);
+        }
+        else
+        {
+            for (S32 i = 0; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
+                m_playersBlendWeights[i] = 0.0f;
+
+            for (auto& boneTransformsDirty : m_bonesTransformsDirty)
+                boneTransformsDirty = false;
+
+            for (MeshSkeleton::BoneIndex i = 0, in = (MeshSkeleton::BoneIndex)m_bonesGlobalTransforms.size(); i < in; ++i)
+                m_bonesGlobalTransforms[i] = m_skeleton->getBone(i).inverseBindPoseTransform.inversed();
+        }
+       
 
         for (MeshSkeleton::BoneIndex i = 0, in = (MeshSkeleton::BoneIndex)m_bonesSkinningTransforms.size(); i < in; ++i)
         {
             auto& bone = m_skeleton->getBone(i);
-            TMat bindPose = bone.inverseBindPoseTransform.inversed();
             m_bonesSkinningTransforms[i] = m_bonesGlobalTransforms[i].transform(bone.inverseBindPoseTransform);
-            int a = 0;
         }
     }
 
@@ -116,8 +138,44 @@ namespace Maze
         MeshSkeletonAnimationPtr const& animation = m_skeleton->getAnimation(_name);
         MAZE_ERROR_RETURN_VALUE_IF(!animation, false, "Undefined animation - %s!", _name.str);
 
-        m_player->play(animation);
+        MeshSkeletonAnimatorPlayerPtr const& player = findPlayerForNewAnimation(animation);
+        player->play(animation);
+
+        for (S32 i = 0; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
+            if (m_players[i] != player && m_players[i]->isActive())
+                m_players[i]->stop();
+
         return true;
+    }
+
+    //////////////////////////////////////////
+    MeshSkeletonAnimatorPlayerPtr const& MeshSkeletonAnimator::getCurrentAnimation()
+    {
+        static MeshSkeletonAnimatorPlayerPtr nullPointer;
+
+        S32 playerIndex = 0;
+        F32 bestWeight = m_players[playerIndex]->getCurrentWeight();
+        if (m_players[playerIndex]->isActive() && bestWeight == 1.0f)
+            return m_players[playerIndex];
+
+        // Find best active player
+        for (S32 i = 1; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
+        {
+            if ((!m_players[playerIndex]->isActive() && m_players[i]->isActive()) ||
+                m_players[i]->getCurrentWeight() > bestWeight)
+            {
+                playerIndex = i;
+                bestWeight = m_players[i]->getCurrentWeight();
+
+                if (m_players[playerIndex]->isActive() && bestWeight == 1.0f)
+                    return m_players[playerIndex];
+            }
+        }
+
+        if (!m_players[playerIndex]->isActive())
+            return nullPointer;
+
+        return m_players[playerIndex];
     }
 
     //////////////////////////////////////////
@@ -128,21 +186,37 @@ namespace Maze
             MeshSkeleton::Bone& bone = m_skeleton->getBone(_i);
 
             TMat boneRotationMatrix = TMat::c_identity;
-            Vec3F boneTranslation;
-            Quaternion boneRotation;
-            Vec3F boneScale;
 
-            m_player->evaluateBoneTransform(
-                _i,
-                boneTranslation,
-                boneRotation,
-                boneScale);
+            
+            Vec3F boneTranslationFinal = Vec3F::c_zero;
+            Quaternion boneRotationFinal(0.0f, 0.0f, 0.0f, 0.0f);
+            Vec3F boneScaleFinal = Vec3F::c_zero;
 
-            boneRotation.toRotationMatrix(boneRotationMatrix);
+            for (S32 i = 0; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
+            {
+                if (m_players[i]->getCurrentWeight() == 0.0f)
+                    continue;
 
-            m_bonesGlobalTransforms[_i] = TMat::CreateTranslation(boneTranslation).transform(
+                Vec3F boneTranslation;
+                Quaternion boneRotation(0.0f, 0.0f, 0.0f, 0.0f);
+                Vec3F boneScale;
+
+                m_players[i]->evaluateBoneTransform(
+                    _i,
+                    boneTranslation,
+                    boneRotation,
+                    boneScale);
+
+                boneTranslationFinal += boneTranslation * m_playersBlendWeights[i];
+                boneRotationFinal = boneRotationFinal + boneRotation * m_playersBlendWeights[i];
+                boneScaleFinal += boneScale * m_playersBlendWeights[i];
+            }
+
+            boneRotationFinal.toRotationMatrix(boneRotationMatrix);
+
+            m_bonesGlobalTransforms[_i] = TMat::CreateTranslation(boneTranslationFinal).transform(
                 boneRotationMatrix).transform(
-                    TMat::CreateScale(boneScale));
+                    TMat::CreateScale(boneScaleFinal));
 
             if (bone.parentBoneIndex != -1)
             {
@@ -156,6 +230,34 @@ namespace Maze
 
         return m_bonesGlobalTransforms[_i];
     };
+
+    //////////////////////////////////////////
+    MeshSkeletonAnimatorPlayerPtr const& MeshSkeletonAnimator::findPlayerForNewAnimation(
+        MeshSkeletonAnimationPtr const& _animation)
+    {
+        S32 playerIndex = 0;
+        F32 bestWeight = m_players[playerIndex]->getCurrentWeight();
+        if (_animation == m_players[playerIndex]->getAnimation() || (!m_players[playerIndex]->isActive() && bestWeight == 0.0f))
+            return m_players[playerIndex];
+
+        // Find best inactive player or player with lowest current weight
+        for (S32 i = 1; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
+        {
+            if (_animation == m_players[playerIndex]->getAnimation() ||
+                (m_players[playerIndex]->isActive() && !m_players[i]->isActive()) ||
+                m_players[i]->getCurrentWeight() < bestWeight)
+            {
+                playerIndex = i;
+                bestWeight = m_players[i]->getCurrentWeight();
+
+                if (!m_players[playerIndex]->isActive() && bestWeight == 0.0f)
+                    return m_players[playerIndex];
+            }
+        }
+
+        return m_players[playerIndex];
+    }
+
 
 
     //////////////////////////////////////////
@@ -187,9 +289,45 @@ namespace Maze
         if (!m_animation)
             return;
 
-        m_currentTime += _dt;
-        if (m_currentTime >= m_animation->getAnimationTime())
-            m_currentTime = 0.0f;
+        switch (m_state)
+        {
+            case State::In:
+            {
+                m_currentWeight += m_weightSpeed * _dt;
+                if (m_currentWeight >= 1.0f)
+                {
+                    m_currentWeight = 1.0f;
+                    setState(State::Active);
+                }
+
+                break;
+            }
+            case State::Out:
+            {
+                m_currentWeight -= m_weightSpeed * _dt;
+                if (m_currentWeight <= 0.0f)
+                {
+                    m_currentWeight = 0.0f;
+                    setState(State::None);
+                }
+
+                break;
+            }
+            default:
+                break;
+        }
+
+        if (m_state != State::None)
+        {
+            m_currentTime += _dt;
+            if (m_currentTime >= m_animation->getAnimationTime())
+            {
+                if (m_looped)
+                    m_currentTime = 0.0f;
+                else
+                    m_currentTime = m_animation->getAnimationTime();
+            }
+        }
     }
 
     //////////////////////////////////////////
@@ -200,12 +338,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void MeshSkeletonAnimatorPlayer::rewindToRandom()
+    {
+        if (m_animation)
+            m_currentTime = Random::UnitRandom() * m_animation->getAnimationTime();
+    }
+
+    //////////////////////////////////////////
     void MeshSkeletonAnimatorPlayer::play(MeshSkeletonAnimationPtr const& _animation)
     {
-        if (m_animation == _animation)
-            return;
+        if (m_state != State::Active)
+            setState(State::In);
+
+        if (m_animation != _animation)
+            m_currentTime = 0.0f;
 
         m_animation = _animation;
+    }
+
+    //////////////////////////////////////////
+    void MeshSkeletonAnimatorPlayer::stop()
+    {
+        if (m_state != State::None)
+            setState(State::Out);
     }
 
     //////////////////////////////////////////
@@ -225,6 +380,29 @@ namespace Maze
             _outRotation,
             _outScale);
     }
+
+    //////////////////////////////////////////
+    void MeshSkeletonAnimatorPlayer::setState(State _state)
+    {
+        if (m_state == _state)
+            return;
+
+        m_state = _state;
+
+        switch (m_state)
+        {
+            case State::None:
+            {
+                m_currentWeight = 0.0f;
+                m_animation.reset();
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+
 
 
 } // namespace Maze
