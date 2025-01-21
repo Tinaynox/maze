@@ -55,7 +55,7 @@ void main()
     vec4 tangentOS = vec4(a_tangent, 1.0);
     vec4 bitangentOS = vec4(a_bitangent, 1.0);
     
-    mat3 normalMatrix = mat3(MAZE_INVERSE(modelMatrix));
+    mat3 normalMatrix = mat3(modelMatrix);
         
 #if (MAZE_LHCS)
     positionCS.z = -positionCS.z;
@@ -65,11 +65,11 @@ void main()
     v_positionWS = positionWS.xyz;
     v_positionVS = positionVS.xyz;
     
-    vec3 normalWS = normalize(normalOS.xyz * normalMatrix).xyz;
+    vec3 normalWS = normalize(normalMatrix * normalOS.xyz).xyz;
     
 #if defined(NORMAL_MAP) && (NORMAL_MAP)
-    vec3 tangentWS = normalize(tangentOS.xyz * normalMatrix).xyz;
-    vec3 bitangentWS = normalize(bitangentOS.xyz * normalMatrix).xyz;
+    vec3 tangentWS = normalize(normalMatrix * tangentOS.xyz).xyz;
+    vec3 bitangentWS = normalize(normalMatrix * bitangentOS.xyz).xyz;
     
     v_tangentWS = tangentWS.xyz;
     v_bitangentWS = bitangentWS.xyz;

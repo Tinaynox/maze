@@ -50,7 +50,7 @@ void main()
     
     vec4 normalOS = vec4(a_normal, 1.0);
     
-    mat3 normalMatrix = mat3(MAZE_INVERSE(modelMatrix));
+    mat3 normalMatrix = mat3(modelMatrix);
         
 #if (MAZE_LHCS)
     positionCS.z = -positionCS.z;
@@ -61,7 +61,7 @@ void main()
     v_positionVS = positionVS.xyz;
     v_positionCS = positionCS;
     
-    vec3 normalWS = normalize(normalOS.xyz * normalMatrix).xyz;
+    vec3 normalWS = normalize(normalMatrix * normalOS.xyz).xyz;
     
     v_normalOS = normalOS.xyz;
     v_normalWS = normalWS.xyz;

@@ -174,8 +174,8 @@ namespace Maze
 
 
         getLightingSettings()->setSkyBoxMaterial("Skybox00.mzmaterial");
-        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Terrain00.mzmaterial");
-        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Wall00.mzmaterial");
+        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Terrain00.mzmaterial");
+        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Wall00.mzmaterial");
         m_simpleLevelConfig.copyMaterial = true;
         ExampleHelper::BuildSimpleLevel(
             this,
@@ -256,7 +256,7 @@ namespace Maze
         material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
 
         U32 timerStart = timer.getMilliseconds();
-        Texture2DPtr const& texture2D = TextureManager::GetCurrentInstancePtr()->getTexture2D(_textureName);
+        Texture2DPtr const& texture2D = TextureManager::GetCurrentInstancePtr()->getOrLoadTexture2D(_textureName);
         U32 loadTime = timer.getMilliseconds() - timerStart;
 
         material->setUniform(MAZE_HS("u_baseMap"), texture2D);

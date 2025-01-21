@@ -131,7 +131,7 @@ namespace Maze
 
         Vector<TMat> m_bonesGlobalTransforms;
         Vector<TMat> m_bonesSkinningTransforms;
-        Vector<bool> m_bonesTransformsDirty;
+        FastVector<bool> m_bonesTransformsDirty;
 
         MeshSkeletonAnimatorPlayerPtr m_players[MESH_SKELETON_ANIMATOR_PLAYERS_COUNT];
         F32 m_playersBlendWeights[MESH_SKELETON_ANIMATOR_PLAYERS_COUNT];
