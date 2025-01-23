@@ -1029,15 +1029,21 @@ namespace Maze
                         entityIndex = --autoEntityIndexCounter;
 
                     EntityPtr prefab;
-                    AssetUnitId prefabAssetUnitId = subBlock->getU32(MAZE_HCS("source"), (U32)c_invalidAssetUnitId);
-                    if (prefabAssetUnitId == c_invalidAssetUnitId)
+                    auto sourceParamIndex = subBlock->findParamIndex(MAZE_HCS("source"));
+                    auto sourceParamType = subBlock->getParamType(sourceParamIndex);
+                    
+                    if (sourceParamType == DataBlockParamType::ParamU32)
+                    {
+                        AssetUnitId prefabAssetUnitId = subBlock->getU32(sourceParamIndex);
+                        prefab = EntityPrefabManager::GetInstancePtr()->getOrLoadEntityPrefab(prefabAssetUnitId);
+                    }
+                    else
                     {
                         CString prefabName = subBlock->getCString(MAZE_HCS("source"));
                         if (prefabName)
                             prefab = EntityPrefabManager::GetInstancePtr()->getOrLoadEntityPrefab(prefabName);
+                        
                     }
-                    else
-                        prefab = EntityPrefabManager::GetInstancePtr()->getOrLoadEntityPrefab(prefabAssetUnitId);
                     
 
                     if (prefab)

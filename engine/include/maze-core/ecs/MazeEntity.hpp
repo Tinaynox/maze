@@ -131,6 +131,15 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline EntityPtr createCopy(
+            EcsWorld* _ecsWorld)
+        {
+            EntityCopyData copyData;
+            copyData.setWorld(_ecsWorld);
+            return Create(this, copyData);
+        }
+
+        //////////////////////////////////////////
         virtual void processEvent(Event* _event) MAZE_OVERRIDE;
 
         //////////////////////////////////////////

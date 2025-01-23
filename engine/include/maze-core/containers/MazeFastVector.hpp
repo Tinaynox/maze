@@ -104,10 +104,12 @@ namespace Maze
         //////////////////////////////////////////
         inline FastVector(FastVector<T>&& _value)
             : m_data(nullptr)
-            , m_size(_value.m_size)
-            , m_capacity(_value.m_capacity)
+            , m_size(0)
+            , m_capacity(0)
         {
             std::swap(m_data, _value.m_data);
+            std::swap(m_size, _value.m_size);
+            std::swap(m_capacity, _value.m_capacity);
         }
         
         //////////////////////////////////////////
