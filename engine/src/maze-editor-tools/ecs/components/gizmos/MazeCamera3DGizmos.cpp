@@ -113,45 +113,80 @@ namespace Maze
         Transform3DPtr const& transform3D = camera3D->getTransform();
 
         TMat mat = transform3D->getWorldTransform();
-        mat.setTranslation(Vec3F(0.0f, 0.0f, 0.0f));
 
         _drawer->setColor(ColorF128::c_lightGray);
 
         F32 aspectRatio = camera3D->getAspectRatio();
-        F32 halfFOVY = camera3D->getFOV() * 0.5f;
-        F32 halfFOVX = atan(aspectRatio * tan(halfFOVY));
+        if (camera3D->getProjectionMode() == CameraProjectionMode::Perspective)
+        {
+            F32 halfFOVY = camera3D->getFOV() * 0.5f;
+            F32 halfFOVX = atan(aspectRatio * tan(halfFOVY));
 
-        F32 tanHalfFOVY = tanf(halfFOVY);
-        F32 tanHalfFOVX = tanf(halfFOVX);
+            F32 tanHalfFOVY = tanf(halfFOVY);
+            F32 tanHalfFOVX = tanf(halfFOVX);
 
-        F32 halfNearH = tanHalfFOVY * camera3D->getNearZ();
-        F32 halfNearW = tanHalfFOVX * camera3D->getNearZ();
-        Vec3F nearLB = transform3D->getWorldTransform().transform(Vec3F(-halfNearW, -halfNearH, camera3D->getNearZ()));
-        Vec3F nearLT = transform3D->getWorldTransform().transform(Vec3F(-halfNearW, +halfNearH, camera3D->getNearZ()));
-        Vec3F nearRT = transform3D->getWorldTransform().transform(Vec3F(+halfNearW, +halfNearH, camera3D->getNearZ()));
-        Vec3F nearRB = transform3D->getWorldTransform().transform(Vec3F(+halfNearW, -halfNearH, camera3D->getNearZ()));
+            F32 halfNearH = tanHalfFOVY * camera3D->getNearZ();
+            F32 halfNearW = tanHalfFOVX * camera3D->getNearZ();
+            Vec3F nearLB = transform3D->getWorldTransform().transform(Vec3F(-halfNearW, -halfNearH, camera3D->getNearZ()));
+            Vec3F nearLT = transform3D->getWorldTransform().transform(Vec3F(-halfNearW, +halfNearH, camera3D->getNearZ()));
+            Vec3F nearRT = transform3D->getWorldTransform().transform(Vec3F(+halfNearW, +halfNearH, camera3D->getNearZ()));
+            Vec3F nearRB = transform3D->getWorldTransform().transform(Vec3F(+halfNearW, -halfNearH, camera3D->getNearZ()));
 
-        F32 halfFarH = tanHalfFOVY * camera3D->getFarZ();
-        F32 halfFarW = tanHalfFOVX * camera3D->getFarZ();
-        Vec3F farLB = transform3D->getWorldTransform().transform(Vec3F(-halfFarW, -halfFarH, camera3D->getFarZ()));
-        Vec3F farLT = transform3D->getWorldTransform().transform(Vec3F(-halfFarW, +halfFarH, camera3D->getFarZ()));
-        Vec3F farRT = transform3D->getWorldTransform().transform(Vec3F(+halfFarW, +halfFarH, camera3D->getFarZ()));
-        Vec3F farRB = transform3D->getWorldTransform().transform(Vec3F(+halfFarW, -halfFarH, camera3D->getFarZ()));
+            F32 halfFarH = tanHalfFOVY * camera3D->getFarZ();
+            F32 halfFarW = tanHalfFOVX * camera3D->getFarZ();
+            Vec3F farLB = transform3D->getWorldTransform().transform(Vec3F(-halfFarW, -halfFarH, camera3D->getFarZ()));
+            Vec3F farLT = transform3D->getWorldTransform().transform(Vec3F(-halfFarW, +halfFarH, camera3D->getFarZ()));
+            Vec3F farRT = transform3D->getWorldTransform().transform(Vec3F(+halfFarW, +halfFarH, camera3D->getFarZ()));
+            Vec3F farRB = transform3D->getWorldTransform().transform(Vec3F(+halfFarW, -halfFarH, camera3D->getFarZ()));
 
-        _drawer->drawLine(nearLB, nearLT);
-        _drawer->drawLine(nearLT, nearRT);
-        _drawer->drawLine(nearRT, nearRB);
-        _drawer->drawLine(nearRB, nearLB);
+            _drawer->drawLine(nearLB, nearLT);
+            _drawer->drawLine(nearLT, nearRT);
+            _drawer->drawLine(nearRT, nearRB);
+            _drawer->drawLine(nearRB, nearLB);
 
-        _drawer->drawLine(farLB, farLT);
-        _drawer->drawLine(farLT, farRT);
-        _drawer->drawLine(farRT, farRB);
-        _drawer->drawLine(farRB, farLB);
+            _drawer->drawLine(farLB, farLT);
+            _drawer->drawLine(farLT, farRT);
+            _drawer->drawLine(farRT, farRB);
+            _drawer->drawLine(farRB, farLB);
 
-        _drawer->drawLine(nearLB, farLB);
-        _drawer->drawLine(nearLT, farLT);
-        _drawer->drawLine(nearRT, farRT);
-        _drawer->drawLine(nearRB, farRB);
+            _drawer->drawLine(nearLB, farLB);
+            _drawer->drawLine(nearLT, farLT);
+            _drawer->drawLine(nearRT, farRT);
+            _drawer->drawLine(nearRB, farRB);
+        }
+        else
+        if (camera3D->getProjectionMode() == CameraProjectionMode::Orthographic)
+        {
+            F32 top = camera3D->getOrthographicSize();
+            F32 bottom = -top;
+            F32 right = camera3D->getOrthographicSize() * aspectRatio;
+            F32 left = -right;
+
+            F32 farZ = camera3D->getFarZ();
+            F32 nearZ = camera3D->getNearZ();
+
+            Vec3F rt = mat[3] + mat[0] * right + mat[1] * top;
+            Vec3F lt = mat[3] + mat[0] * left + mat[1] * top;
+            Vec3F rb = mat[3] + mat[0] * right + mat[1] * bottom;
+            Vec3F lb = mat[3] + mat[0] * left + mat[1] * bottom;
+
+            Vec3F nearOffset = mat[2] * nearZ;
+            _drawer->drawLine(rt + nearOffset, lt + nearOffset);
+            _drawer->drawLine(rt + nearOffset, rb + nearOffset);
+            _drawer->drawLine(rb + nearOffset, lb + nearOffset);
+            _drawer->drawLine(lb + nearOffset, lt + nearOffset);
+
+            Vec3F farOffset = mat[2] * farZ;
+            _drawer->drawLine(rt + farOffset, lt + farOffset);
+            _drawer->drawLine(rt + farOffset, rb + farOffset);
+            _drawer->drawLine(rb + farOffset, lb + farOffset);
+            _drawer->drawLine(lb + farOffset, lt + farOffset);
+
+            _drawer->drawLine(rt + nearOffset, rt + farOffset);
+            _drawer->drawLine(lt + nearOffset, lt + farOffset);
+            _drawer->drawLine(rb + nearOffset, rb + farOffset);
+            _drawer->drawLine(lb + nearOffset, lb + farOffset);
+        }
     }
 
 } // namespace Maze

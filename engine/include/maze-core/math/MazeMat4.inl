@@ -356,6 +356,39 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
+    inline Mat4<TValue> Mat4<TValue>::CreateProjectionOrthographicLHMatrix(
+        F32 _left,
+        F32 _right,
+        F32 _bottom,
+        F32 _top,
+        F32 _nearZ,
+        F32 _farZ)
+    {
+        F32 width = _right - _left;
+        F32 height = _top - _bottom;
+        F32 depth = _farZ - _nearZ;
+
+        F32 invWidth = 1.0f / (_right - _left);
+        F32 invHeight = 1.0f / (_top - _bottom);
+        F32 invDepth = 1.0f / (_farZ - _nearZ);
+
+        F32 s0 = 2.0f * invWidth;
+        F32 s1 = 2.0f * invHeight;
+        F32 s2 = -2.0f * invDepth;
+
+        F32 o0 = -(_right + _left) * invWidth;
+        F32 o1 = -(_top + _bottom) * invHeight;
+        F32 o2 = _nearZ * invDepth;
+
+        return Mat4F(
+            s0, 0, 0, o0,
+            0, s1, 0, o1,
+            0, 0, s2, o2,
+            0, 0, 0, 1);
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
     inline Mat4<TValue> Mat4<TValue>::CreateProjection2DMatrix(
         F32 _x,
         F32 _y,

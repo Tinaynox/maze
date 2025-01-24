@@ -40,12 +40,18 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(CameraProjectionMode);
+
+
+    //////////////////////////////////////////
     // Class Camera3D
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Camera3D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Rect2F, viewport, Rect2F(0.0f, 0.0f, 1.0f, 1.0f), getViewport, setViewport),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CameraProjectionMode, projectionMode, CameraProjectionMode::Perspective, getProjectionMode, setProjectionMode),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, fov, Maze::Math::DegreesToRadians(60), getFOV, setFOV),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, orthographicSize, 1.0f, getOrthographicSize, setOrthographicSize),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, nearZ, 0.01f, getNearZ, setNearZ),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, farZ, 200.0f, getFarZ, setFarZ),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clearColorFlag, true, getClearColorFlag, setClearColorFlag),
@@ -86,6 +92,15 @@ namespace Maze
             
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void Camera3D::setProjectionMode(CameraProjectionMode _value)
+    {
+        if (m_projectionMode == _value)
+            return;
+
+        m_projectionMode = _value;
     }
 
     //////////////////////////////////////////
@@ -201,13 +216,42 @@ namespace Maze
 
         F32 aspectRatio = (getViewport().size.x * (F32)renderTargetSize.x) / (getViewport().size.y * (F32)renderTargetSize.y);
 
-        Mat4F projectionMatrix = Mat4F::CreateProjectionPerspectiveLHMatrix(
-            getFOV(),
-            aspectRatio,
-            getNearZ(),
-            getFarZ());
+        switch (m_projectionMode)
+        {
+            case CameraProjectionMode::Perspective:
+            {
+                Mat4F projectionMatrix = Mat4F::CreateProjectionPerspectiveLHMatrix(
+                    getFOV(),
+                    aspectRatio,
+                    getNearZ(),
+                    getFarZ());
 
-        return projectionMatrix;    
+                return projectionMatrix;
+            }
+            case CameraProjectionMode::Orthographic:
+            {
+                F32 top = m_orthographicSize;
+                F32 bottom = -top;
+                F32 right = m_orthographicSize * aspectRatio;
+                F32 left = -right;
+
+                F32 farZ = getFarZ();
+                F32 nearZ = getNearZ();
+
+                Mat4F orthographicMatrix = Mat4F::CreateProjectionOrthographicLHMatrix(
+                    left,
+                    right,
+                    bottom,
+                    top,
+                    getNearZ(),
+                    getFarZ());
+                return orthographicMatrix;
+            }
+            default:
+                Debug::LogError("Unsupported CameraProjectionMode - %s!", m_projectionMode.toCString());
+                return Mat4F::c_identity;
+        }
+          
     }
     
     

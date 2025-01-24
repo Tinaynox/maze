@@ -177,6 +177,15 @@ namespace Maze
             F32 _nearZ,
             F32 _farZ);
 
+        //////////////////////////////////////////        
+        static inline Mat4<TValue> CreateProjectionOrthographicLHMatrix(
+            F32 _left,
+            F32 _right,
+            F32 _bottom,
+            F32 _top,
+            F32 _nearZ,
+            F32 _farZ);
+
         //////////////////////////////////////////
         static inline Mat4<TValue> CreateProjection2DMatrix(
             F32 _x,

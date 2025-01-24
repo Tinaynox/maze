@@ -50,6 +50,12 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_GRAPHICS_API, CameraProjectionMode,
+        Perspective,
+        Orthographic);
+
+
+    //////////////////////////////////////////
     // Class Camera3D
     //
     //////////////////////////////////////////
@@ -94,11 +100,26 @@ namespace Maze
         inline RenderTargetPtr const& getRenderTarget() const { return m_renderTarget; }
 
 
+
+        //////////////////////////////////////////
+        void setProjectionMode(CameraProjectionMode _value);
+
+        //////////////////////////////////////////
+        inline CameraProjectionMode getProjectionMode() const { return m_projectionMode; }
+
+
         //////////////////////////////////////////
         inline void setFOV(F32 _value) { m_fieldOfViewY = _value; }
 
         //////////////////////////////////////////
         inline F32 getFOV() const { return m_fieldOfViewY; }
+
+
+        //////////////////////////////////////////
+        inline void setOrthographicSize(F32 _value) { m_orthographicSize = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getOrthographicSize() const { return m_orthographicSize; }
 
 
         //////////////////////////////////////////
@@ -224,7 +245,14 @@ namespace Maze
         RenderTargetPtr m_renderTarget;
         Rect2F m_viewport = { 0.0f, 0.0f, 1.0f, 1.0f };
 
+        CameraProjectionMode m_projectionMode = CameraProjectionMode::Perspective;
+
+        // Perspective
         F32 m_fieldOfViewY = Math::DegreesToRadians(60);
+
+        // Orthographic
+        F32 m_orthographicSize = 1.0f;
+
         F32 m_nearZ = 0.01f;
         F32 m_farZ = 200.0f;
             
