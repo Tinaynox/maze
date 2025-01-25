@@ -88,6 +88,9 @@ namespace Maze
             F32 _dt,
             bool _draw = true);
 
+        //////////////////////////////////////////
+        void clear();
+
 
         //////////////////////////////////////////
         inline GizmosDrawerPtr const& getDrawer() const { return m_drawer; }

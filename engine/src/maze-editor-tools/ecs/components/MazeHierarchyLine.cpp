@@ -53,9 +53,11 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
@@ -282,7 +284,8 @@ namespace Maze
             {
                 EntityId lineEntityId = (EntityId)((S32)reinterpret_cast<Size>(getUserData()));
 
-                if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("entity"))
+                HashedCString type = _data.getHashedCString(MAZE_HCS("type"));
+                if (type == MAZE_HCS("entity"))
                 {
                     EntityId eid(_data.getS32(MAZE_HCS("eid")));
                     if (eid == c_invalidEntityId || eid == lineEntityId)
@@ -298,6 +301,18 @@ namespace Maze
                         return;
 
                     _outDropAllowed = true;
+                }
+                else
+                if (type == MAZE_HCS("assetFile"))
+                {
+                    AssetFileId afid = _data.getS32(MAZE_HCS("afid"));
+                    AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(afid);
+                    if (!assetFile)
+                        return;
+
+                    RenderMeshPtr const& renderMesh = RenderMeshManager::GetCurrentInstancePtr()->getOrLoadRenderMesh(assetFile);
+                    if (renderMesh)
+                        _outDropAllowed = true;
                 }
             }
             else
@@ -316,7 +331,8 @@ namespace Maze
                 {
                     EntityId lineEntityId = (EntityId)((S32)reinterpret_cast<Size>(getUserData()));
 
-                    if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("entity"))
+                    HashedCString type = _data.getHashedCString(MAZE_HCS("type"));
+                    if (type == MAZE_HCS("entity"))
                     {
                         EntityId eid(_data.getS32(MAZE_HCS("eid")));
                         if (eid == c_invalidEntityId || eid == lineEntityId)
@@ -329,6 +345,33 @@ namespace Maze
 
                         EditorToolsHelper::ChangeEntityParent(
                             world, eid, lineEntityId);
+                    }
+                    else
+                    if (type == MAZE_HCS("assetFile"))
+                    {
+                        AssetFileId afid = _data.getS32(MAZE_HCS("afid"));
+                        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(afid);
+                        if (!assetFile)
+                            return;
+
+                        RenderMeshPtr const& renderMesh = RenderMeshManager::GetCurrentInstancePtr()->getOrLoadRenderMesh(assetFile);
+                        if (renderMesh)
+                        {
+                            auto entity = getWorld()->getEntity(lineEntityId);
+                            if (!entity)
+                                return;
+
+                            // #TODO: History actions
+                            Transform3DPtr entityParent = entity->getComponent<Transform3D>();
+
+                            EntityPtr newEntity = EditorToolsHelper::CreateEntity3D(
+                                renderMesh->getName().c_str(),
+                                entity->getEcsScene());
+                            newEntity->ensureComponent<Transform3D>()->setParent(entityParent);
+                            MeshRendererPtr const& meshRenderer = newEntity->ensureComponent<MeshRenderer>();
+                            meshRenderer->setRenderMesh(renderMesh);
+                            meshRenderer->setMaterial("Specular");
+                        }
                     }
                 }
                 else

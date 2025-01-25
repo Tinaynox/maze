@@ -137,7 +137,7 @@ namespace Maze
         if (!m_drawer)
             return;
 
-        m_drawer->clear();
+        // m_drawer->clear();
 
         if (_draw)
         {
@@ -157,6 +157,12 @@ namespace Maze
         }
 
         m_drawer->update(_dt);
+    }
+
+    //////////////////////////////////////////
+    void GizmosController::clear()
+    {
+        m_drawer->clear();
     }
 
     //////////////////////////////////////////
@@ -204,6 +210,19 @@ namespace Maze
             });
 
         _gizmosController->drawGizmos(_event.getDt(), haveGizmosMask);
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(GizmosSystemPostRender,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        MAZE_ECS_ORDER(
+            MAZE_ECS_ORDER_AFTER(MAZE_HS("RenderControllerSystem")),
+            MAZE_ECS_ORDER_BEFORE()),
+        PostUpdateEvent const& _event,
+        Entity* _entity,
+        GizmosController* _gizmosController)
+    {
+        _gizmosController->clear();
     }
 
     //////////////////////////////////////////
