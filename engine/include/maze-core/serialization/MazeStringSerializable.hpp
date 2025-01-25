@@ -47,9 +47,6 @@ namespace Maze
     class MAZE_CORE_API IStringSerializable
     {
     public:
-        
-        //////////////////////////////////////////
-        virtual ~IStringSerializable() = default; 
 
         //////////////////////////////////////////
         virtual String toString() const MAZE_ABSTRACT;

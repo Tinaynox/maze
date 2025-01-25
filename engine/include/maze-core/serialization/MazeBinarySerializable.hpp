@@ -48,10 +48,6 @@ namespace Maze
     class MAZE_CORE_API IBinarySerializable
     {
     public:
-        
-        //////////////////////////////////////////
-        virtual ~IBinarySerializable() = default;
-
 
         //////////////////////////////////////////
         virtual U32 getValueSerializationSize() const MAZE_ABSTRACT;

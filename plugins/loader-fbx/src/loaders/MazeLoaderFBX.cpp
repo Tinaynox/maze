@@ -495,11 +495,10 @@ namespace Maze
                 indicesOffset += indexCount;
         }
 
-        MAZE_ERROR_IF(
-            bonesData.size() > MAZE_SKELETON_BONES_MAX,
-            "Bones count overflow - %d/%d",
-            (S32)bonesData.size(),
-            MAZE_SKELETON_BONES_MAX);
+        if(bonesData.size() > MAZE_SKELETON_BONES_MAX)
+            Debug::LogError("Bones count overflow - %d/%d",
+                (S32)bonesData.size(),
+                MAZE_SKELETON_BONES_MAX);
 
         if (_mesh.getSkeleton())
         {

@@ -74,7 +74,7 @@ namespace Maze
         };
 
         //////////////////////////////////////////
-        struct BufferedLine
+        struct TimedBufferedLine
         {
             F32 timer;
             Vec3F point0;
@@ -84,7 +84,7 @@ namespace Maze
         };
 
         //////////////////////////////////////////
-        struct BufferedTriangle
+        struct TimedBufferedTriangle
         {
             F32 timer;
             Vec3F point0;
@@ -621,8 +621,8 @@ namespace Maze
         MeshData m_lines[(Size)MeshRenderMode::MAX];
         MeshData m_triangles[(Size)MeshRenderMode::MAX];
 
-        List<BufferedLine> m_bufferedLines;
-        List<BufferedTriangle> m_bufferedTriangles;
+        List<TimedBufferedLine> m_timedBufferedLines;
+        List<TimedBufferedTriangle> m_timedBufferedTriangles;
 
         UniquePtr<SharedObjectPool<GizmoBillboard3D>> m_gizmoBillboardPool;
         Vector<BillboardData> m_billboardsData;

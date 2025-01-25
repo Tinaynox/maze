@@ -268,14 +268,14 @@ namespace Maze
         F32 _duration,
         MeshRenderMode _renderMode)
     {
-        if (_duration < 0.0f)
+        if (_duration <= 0.0f)
         {
             drawLine(_point0, _point1, _renderMode);
             return;
         }
 
-        m_bufferedLines.emplace_back(
-            BufferedLine{ _duration, transformPoint(_point0), transformPoint(_point1), getColor(), _renderMode });
+        m_timedBufferedLines.emplace_back(
+            TimedBufferedLine{ _duration, transformPoint(_point0), transformPoint(_point1), getColor(), _renderMode });
     }
 
     //////////////////////////////////////////
@@ -767,14 +767,14 @@ namespace Maze
         F32 _duration,
         MeshRenderMode _renderMode)
     {
-        if (_duration < 0.0f)
+        if (_duration <= 0.0f)
         {
             drawTriangle(_point0, _point1, _point2, _renderMode);
             return;
         }
 
-        m_bufferedTriangles.emplace_back(
-            BufferedTriangle
+        m_timedBufferedTriangles.emplace_back(
+            TimedBufferedTriangle
             {
                 _duration,
                 transformPoint(_point0),
@@ -988,27 +988,27 @@ namespace Maze
     void GizmosDrawer::update(F32 _dt)
     {
         // Buffered lines
-        for (auto it = m_bufferedLines.begin(), end = m_bufferedLines.end(); it != end;)
+        for (auto it = m_timedBufferedLines.begin(), end = m_timedBufferedLines.end(); it != end;)
         {
             setColor(it->color);
             drawLine(it->point0, it->point1, it->renderMode);
 
             it->timer -= _dt;
             if (it->timer <= 0.0f)
-                it = m_bufferedLines.erase(it);
+                it = m_timedBufferedLines.erase(it);
             else
                 ++it;
         }
 
         // Buffered triangles
-        for (auto it = m_bufferedTriangles.begin(), end = m_bufferedTriangles.end(); it != end;)
+        for (auto it = m_timedBufferedTriangles.begin(), end = m_timedBufferedTriangles.end(); it != end;)
         {
             setColor(it->color);
             drawTriangle(it->point0, it->point1, it->point2, it->renderMode);
 
             it->timer -= _dt;
             if (it->timer <= 0.0f)
-                it = m_bufferedTriangles.erase(it);
+                it = m_timedBufferedTriangles.erase(it);
             else
                 ++it;
         }
