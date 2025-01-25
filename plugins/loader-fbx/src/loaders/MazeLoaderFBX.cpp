@@ -34,6 +34,7 @@
 #include "maze-graphics/MazeMeshSkeletonAnimation.hpp"
 #include "maze-graphics/config/MazeGraphicsConfig.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/system/MazeTimer.hpp"
 
 #undef VOID
 #include <ofbx.h>
@@ -262,6 +263,7 @@ namespace Maze
             if (!colors.empty())
                 subMesh->setColors(&colors[0], colors.size());
 
+#if 0
             if (!tangents.empty())
             {
                 subMesh->setTangents(&tangents[0], tangents.size());
@@ -273,8 +275,12 @@ namespace Maze
                 subMesh->setBitangents(&tangents[0], tangents.size());
             }
             else
+#endif
             if (!normals.empty() && !uvs.empty())
             {
+                Debug::LogWarning("SubMesh is not containing tangents info. Calculating...");
+                Timer timer;
+
                 // Generate tangents and bitangents
                 if (SubMeshHelper::GenerateTangentsAndBitangents(
                     &indices[0],
@@ -289,6 +295,9 @@ namespace Maze
                     subMesh->setTangents(&tangents[0], tangents.size());
                     subMesh->setBitangents(&bitangents[0], bitangents.size());
                 }
+
+                F32 msTime = F32(timer.getMicroseconds()) / 1000.0f;
+                Debug::LogWarning("Calculation is taken % .1fms", msTime);
             }
 
             if (!blendWeights.empty())
