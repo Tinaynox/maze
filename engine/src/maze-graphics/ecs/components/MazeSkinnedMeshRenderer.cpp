@@ -229,9 +229,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SkinnedMeshRenderer::setRenderMesh(RenderMeshPtr const& _renderMesh)
+    void SkinnedMeshRenderer::setRenderMeshRef(RenderMeshAssetRef const& _renderMesh)
     {
-        m_renderMeshRef.setRenderMesh(_renderMesh);
+        m_renderMeshRef.setRenderMesh(_renderMesh.getRenderMesh());
 
         if (m_animator)
         {
@@ -241,6 +241,12 @@ namespace Maze
             else
                 m_animator->setSkeleton(nullptr);
         }
+    }
+
+    //////////////////////////////////////////
+    void SkinnedMeshRenderer::setRenderMesh(RenderMeshPtr const& _renderMesh)
+    {
+        setRenderMeshRef(_renderMesh);
     }
 
     //////////////////////////////////////////
@@ -256,10 +262,11 @@ namespace Maze
 
         TMat const* tm = reinterpret_cast<TMat const*>(_renderUnit.userData);
         
+        U16 bonesCount = Math::Min((U16)MAZE_SKELETON_BONES_MAX, (U16)m_animator->getBonesCount());
         _renderQueue->addUploadShaderUniformCommand(
             MAZE_HCS("u_boneSkinningTransforms"),
             (TMat const*)&m_animator->getBonesSkinningTransforms()[0],
-            (U16)(m_animator->getBonesCount()));
+            bonesCount);
         
         _renderQueue->addDrawVAOInstancedCommand(
             vao.get(),
@@ -295,6 +302,9 @@ namespace Maze
 
         if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
         {
+            if (!_meshRenderer->getAnimator() || _meshRenderer->getAnimator()->getBonesSkinningTransforms().empty())
+                return;
+
             if (_meshRenderer->getRenderMesh())
             {
                 Vector<MaterialAssetRef> const& materials = _meshRenderer->getMaterialRefs();

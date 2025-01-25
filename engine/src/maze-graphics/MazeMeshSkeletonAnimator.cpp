@@ -120,6 +120,11 @@ namespace Maze
             memset(&m_bonesSkinningTransforms[0], 0, sizeof(TMat) * m_bonesSkinningTransforms.size());
 
             m_bonesTransformsDirty.resize(m_skeleton->getBonesCount());
+
+            // Initial animation
+            StringKeyMap<MeshSkeletonAnimationPtr> const& animations = m_skeleton->getAnimations();
+            if (animations.size() > 0)
+                playAnimation(HashedCString(animations.begin()->first.c_str()));
         }
         else
         {

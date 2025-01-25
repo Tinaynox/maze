@@ -96,7 +96,7 @@ namespace Maze
         inline RenderMeshAssetRef const& getRenderMeshRef() const { return m_renderMeshRef; }
 
         //////////////////////////////////////////
-        inline void setRenderMeshRef(RenderMeshAssetRef const& _renderMesh) { m_renderMeshRef.setRenderMesh(_renderMesh.getRenderMesh()); }
+        void setRenderMeshRef(RenderMeshAssetRef const& _renderMesh);
 
         //////////////////////////////////////////
         inline RenderMeshPtr const& getRenderMesh() const { return m_renderMeshRef.getRenderMesh(); }

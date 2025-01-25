@@ -248,8 +248,8 @@ namespace Maze
     {
         MeshData& lines = m_lines[(S32)_renderMode];
 
-        U16 index0 = (U16)lines.vertices.size();
-        U16 index1 = index0 + 1;
+        U32 index0 = (U32)lines.vertices.size();
+        U32 index1 = index0 + 1;
 
         lines.indices.emplace_back(index0);
         lines.indices.emplace_back(index1);
@@ -742,9 +742,9 @@ namespace Maze
     {
         MeshData& triangles = m_triangles[(S32)_renderMode];
 
-        U16 index0 = (U16)triangles.vertices.size();
-        U16 index1 = index0 + 1;
-        U16 index2 = index1 + 1;
+        U32 index0 = (U32)triangles.vertices.size();
+        U32 index1 = index0 + 1;
+        U32 index2 = index1 + 1;
 
         triangles.indices.emplace_back(index0);
         triangles.indices.emplace_back(index1);
@@ -799,6 +799,7 @@ namespace Maze
         {
             SubMeshPtr const& subMesh = _mesh->getSubMesh(s);
             S32 indicesCount = (S32)subMesh->getIndicesCount();
+            MAZE_DEBUG_ASSERT(subMesh->getIndicesType() == VertexAttributeType::U16);
             for (S32 i = 0; i < indicesCount; i += 3)
             {
                 U16* indices = (U16*)subMesh->getIndicesData();
@@ -1047,7 +1048,7 @@ namespace Maze
             {
                 lines.vao->setVerticesData((U8 const*)&lines.vertices[0], c_positionDescription, lines.vertices.size());
                 lines.vao->setVerticesData((U8 const*)&lines.colors[0], c_colorDescription, lines.colors.size());
-                lines.vao->setIndices((U8 const*)&lines.indices[0], VertexAttributeType::U16, lines.indices.size());
+                lines.vao->setIndices((U8 const*)&lines.indices[0], VertexAttributeType::U32, lines.indices.size());
             }
 
             MeshData& triangles = m_triangles[(S32)renderMode];
@@ -1055,7 +1056,7 @@ namespace Maze
             {
                 triangles.vao->setVerticesData((U8 const*)&triangles.vertices[0], c_positionDescription, triangles.vertices.size());
                 triangles.vao->setVerticesData((U8 const*)&triangles.colors[0], c_colorDescription, triangles.colors.size());
-                triangles.vao->setIndices((U8 const*)&triangles.indices[0], VertexAttributeType::U16, triangles.indices.size());
+                triangles.vao->setIndices((U8 const*)&triangles.indices[0], VertexAttributeType::U32, triangles.indices.size());
             }
         }
 

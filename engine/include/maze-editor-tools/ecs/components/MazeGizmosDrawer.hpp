@@ -103,7 +103,7 @@ namespace Maze
             MeshRendererPtr meshRenderer;
             FastVector<Vec3F> vertices;
             FastVector<Vec4F> colors;
-            FastVector<U16> indices;
+            FastVector<U32> indices;
         };
 
         //////////////////////////////////////////

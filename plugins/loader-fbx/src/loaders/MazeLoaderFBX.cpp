@@ -32,6 +32,7 @@
 #include "maze-graphics/helpers/MazeSubMeshHelper.hpp"
 #include "maze-graphics/MazeMeshSkeleton.hpp"
 #include "maze-graphics/MazeMeshSkeletonAnimation.hpp"
+#include "maze-graphics/config/MazeGraphicsConfig.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 
 #undef VOID
@@ -493,6 +494,12 @@ namespace Maze
             else
                 indicesOffset += indexCount;
         }
+
+        MAZE_ERROR_IF(
+            bonesData.size() > MAZE_SKELETON_BONES_MAX,
+            "Bones count overflow - %d/%d",
+            (S32)bonesData.size(),
+            MAZE_SKELETON_BONES_MAX);
 
         if (_mesh.getSkeleton())
         {

@@ -267,13 +267,13 @@ namespace Maze
         if (m_camera3D)
         {
             m_camera3D->getTransform()->setLocalPosition(
-                Math::Lerp(
+                Math::ClampLerp(
                     m_camera3D->getTransform()->getLocalPosition(),
                     m_camera3DTargetPosition,
                     _dt * 16.0f));
 
             Quaternion q = Quaternion::Slerp(
-                36.0f * _dt,
+                Math::Clamp01(36.0f * _dt),
                 m_camera3D->getTransform()->getLocalRotation(),
                 Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
             m_camera3D->getTransform()->setLocalRotation(q);

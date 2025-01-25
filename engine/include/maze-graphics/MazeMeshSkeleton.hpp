@@ -131,6 +131,9 @@ namespace Maze
         //////////////////////////////////////////
         MeshSkeletonAnimationPtr const& getAnimation(HashedCString _name);
 
+        //////////////////////////////////////////
+        inline StringKeyMap<MeshSkeletonAnimationPtr> const& getAnimations() const { return m_animations; }
+
 
         //////////////////////////////////////////
         inline TMat const& getRootTransform() const { return m_rootTransform; }
