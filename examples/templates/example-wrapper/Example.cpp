@@ -482,10 +482,7 @@ namespace Maze
         if (!getMainRenderWindow())
             return false;
 
-        if (!getMainRenderWindow()->getWindow()->isOpened())
-            return false;
-
-        if (getMainRenderWindow()->getWindow()->getMinimized())
+        if (!getMainRenderWindow()->isReadyToRender())
             return false;
 
         return true;

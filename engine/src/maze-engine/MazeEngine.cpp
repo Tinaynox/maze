@@ -34,6 +34,7 @@
 #include "maze-core/helpers/MazePlatformHelper.hpp"
 #include "maze-core/helpers/MazeDateTimeHelper.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/managers/MazeTaskManager.hpp"
@@ -46,6 +47,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-gamepad/managers/MazeGamepadManager.hpp"
@@ -57,6 +59,7 @@
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-engine/ecs/scenes/MazeSceneEngine.hpp"
+#include "settings/MazePlayerSettings.hpp"
 
 
 //////////////////////////////////////////
@@ -259,6 +262,7 @@ namespace Maze
             m_config.params.getDataBlock(MAZE_HCS("settingsConfig"), DataBlock::c_empty));
         if (!m_settingsManager)
             return false;
+        m_settingsManager->registerSettings<PlayerSettings>();
 
         EventManager::Initialize(
             m_eventManager,
@@ -370,6 +374,38 @@ namespace Maze
     {
         return m_sceneManager->loadScene<SceneEngine>(true, _config);
     }
+
+    //////////////////////////////////////////
+    EcsAssetScenePtr Engine::loadAssetScene(
+        Path const& _sceneName,
+        RenderTargetPtr const& _renderTarget,
+        bool _additive)
+    {
+        AssetFilePtr const& file = AssetManager::GetInstancePtr()->getAssetFile(_sceneName);
+        if (!file)
+            return nullptr;
+
+        DataBlock dataBlock = file->readAsDataBlock();
+
+        EcsAssetScenePtr scene = EcsAssetScene::Create(
+            _renderTarget,
+            m_entityManager->getDefaultWorldRaw());
+
+        scene->setName(
+            HashedString(
+                FileHelper::GetFileNameWithoutExtension(
+                    file->getFileName()).toUTF8()));
+
+        if (!EntitySerializationManager::GetInstancePtr()->loadSceneFromDataBlock(
+            scene,
+            dataBlock))
+            return nullptr;
+
+        SceneManager::GetInstancePtr()->loadScene(scene, _additive);
+
+        return scene;
+    }
+    
 
 } // namespace Maze
 //////////////////////////////////////////

@@ -36,6 +36,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-engine/ecs/scenes/MazeSceneEngine.hpp"
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
+#include "maze-graphics/ecs/MazeEcsAssetScene.hpp"
 
 
 //////////////////////////////////////////
@@ -148,6 +149,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool getRunning() const { return m_running; }
+
+
+        //////////////////////////////////////////
+        EcsAssetScenePtr loadAssetScene(
+            Path const& _sceneName,
+            RenderTargetPtr const& _renderTarget,
+            bool _additive = true);
 
 
         //////////////////////////////////////////

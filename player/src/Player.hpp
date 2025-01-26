@@ -25,109 +25,121 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeEnginePlayer_hpp_))
-#define _MazeEnginePlayer_hpp_
+#if (!defined(_Player_hpp_))
+#define _Player_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-engine/MazeEngineHeader.hpp"
-#include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/ecs/MazeEntitiesSample.hpp"
+#include "maze-engine/MazeEngine.hpp"
+#include "maze-graphics/MazeRenderWindow.hpp"
+#include "maze-core/system/MazeInputEvent.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-    //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EnginePlayer);
-    MAZE_USING_SHARED_PTR(Camera3D);
-
 
     //////////////////////////////////////////
-    // Class EnginePlayerCurrentCameraChangedEvent
-    //
+    MAZE_USING_SHARED_PTR(Player);
+    MAZE_USING_SHARED_PTR(UIManager);
+    MAZE_USING_SHARED_PTR(PlayerManager);
+    MAZE_USING_SHARED_PTR(PlayerConfigManager);
+    
+
     //////////////////////////////////////////
-    class MAZE_ENGINE_API EnginePlayerCurrentCameraChangedEvent
-        : public GenericEvent<EnginePlayerCurrentCameraChangedEvent>
+    enum class PlayerMainRenderWindowState
     {
-    public:
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(EnginePlayerCurrentCameraChangedEvent, Event);
-
-        //////////////////////////////////////////
-        EnginePlayerCurrentCameraChangedEvent(EntityId _cameraEid = c_invalidEntityId)
-            : cameraEid(_cameraEid)
-        {}
-
-        EntityId cameraEid;
+        None = 0,
+        ReadyToCreate,
+        Created,
+        Error
     };
 
 
     //////////////////////////////////////////
-    // Class EnginePlayer
+    // Class Player
     //
     //////////////////////////////////////////
-    class MAZE_ENGINE_API EnginePlayer
-        : public Component
+    class Player 
+        : public Engine
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(EnginePlayer, Component);
+        virtual ~Player();
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(EnginePlayer);
+        static PlayerPtr Create(EngineConfig const& _config);
+
+    
+        //////////////////////////////////////////
+        RenderWindowPtr const& getMainRenderWindow() const { return m_mainRenderWindow;}
+
+
 
         //////////////////////////////////////////
-        friend class Entity;
+        static inline Player* GetInstancePtr() { return s_instance; }
+
+        //////////////////////////////////////////
+        static inline Player& GetInstance() { return *s_instance; }
+
+
+        //////////////////////////////////////////
+        inline PlayerManagerPtr const& getPlayerManager() const { return m_playerManager; }
 
     public:
 
         //////////////////////////////////////////
-        virtual ~EnginePlayer();
-
-        //////////////////////////////////////////
-        static EnginePlayerPtr Create();
-
-
-        //////////////////////////////////////////
-        void setCurrentCamera3D(Camera3DPtr const& _camera);
-
-        //////////////////////////////////////////
-        inline Camera3DPtr const& getCurrentCamera3D() const { return m_currentCamera3D; }
-
-
-        //////////////////////////////////////////
-        inline void setAutoDetectCurrentCamera(bool _value) { m_autoDetectCurrentCamera = _value; }
-
-
-        //////////////////////////////////////////
-        void processOnCreate();
-
-        //////////////////////////////////////////
-        void processUpdate(F32 _dt);
-
-
-    public:
-        MultiDelegate<Camera3DPtr const&> eventEnginePlayerCurrentCameraChanged;
+        MultiDelegate<> eventMainRenderWindowCreated;
+        MultiDelegate<> eventCorePlayerResourcesLoaded;
 
     protected:
 
         //////////////////////////////////////////
-        EnginePlayer();
+        Player();
 
         //////////////////////////////////////////
-        using Component::init;
+        bool init(EngineConfig const& _config);
 
         //////////////////////////////////////////
-        bool init();
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        void notifyFrame();
+
+        //////////////////////////////////////////
+        bool createMainRenderWindow();
+
+        //////////////////////////////////////////
+        bool createMainRenderWindowAndGoToFirstSceneNow();
+
+        //////////////////////////////////////////
+        void processReadyToCreateWindowAndGoToSplash();
+
+        //////////////////////////////////////////
+        virtual bool initMainManagers() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        bool initPlayerManagers();
+
+        //////////////////////////////////////////
+        bool loadPlugins();
+
+
+        //////////////////////////////////////////
+        void notifyKeyboard(InputEventKeyboardData const& _data);
+
+        //////////////////////////////////////////
+        void notifyCorePlayerResourcesLoaded();
 
     protected:
-        Camera3DPtr m_currentCamera3D;
-        SharedPtr<GenericInclusiveEntitiesSample<Camera3D>> m_cameras3DSample;
+        static Player* s_instance;
 
-        bool m_autoDetectCurrentCamera = true;
+        PlayerMainRenderWindowState m_mainRenderWindowState;
+        RenderWindowPtr m_mainRenderWindow;
+
+        
+        PlayerManagerPtr m_playerManager;
     };
 
 
@@ -135,5 +147,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeEnginePlayer_hpp_
+#endif // _Player_hpp_
 //////////////////////////////////////////

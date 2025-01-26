@@ -83,6 +83,9 @@ namespace Maze
         virtual void setVSync(int _vsync) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
+        virtual bool isReadyToRender() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         virtual void endDraw() MAZE_OVERRIDE;
 
 

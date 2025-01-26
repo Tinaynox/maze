@@ -82,12 +82,13 @@ namespace Maze
     //////////////////////////////////////////
     void EnginePlayer::processUpdate(F32 _dt)
     {
-        if (!m_currentCamera3D)
+        if (!m_currentCamera3D && m_autoDetectCurrentCamera)
         {
             m_cameras3DSample->findQuery(
                 [&](Entity* _entity, Camera3D* _camera)
                 {
-                    if (_camera->getRenderMask() & (S32)DefaultRenderMask::Gizmos)
+                    if (_camera->getRenderMask() & (S32)DefaultRenderMask::Gizmos ||
+                        !(_camera->getRenderMask() & (S32)DefaultRenderMask::Default))
                         return false;
 
                     setCurrentCamera3D(_camera->cast<Camera3D>());
@@ -106,6 +107,8 @@ namespace Maze
 
         m_entityRaw->getEcsWorld()->broadcastEvent<EnginePlayerCurrentCameraChangedEvent>(
             m_currentCamera3D ? m_currentCamera3D->getEntityId() : c_invalidEntityId);
+
+        eventEnginePlayerCurrentCameraChanged(m_currentCamera3D);
     }
 
 

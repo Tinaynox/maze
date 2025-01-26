@@ -134,6 +134,9 @@ namespace Maze
         inline void setClearDepth(F32 _clearDepth) { m_clearDepth = _clearDepth; }
 
         //////////////////////////////////////////
+        virtual bool isReadyToRender() const { return true; }
+
+        //////////////////////////////////////////
         virtual bool beginDraw();
 
         //////////////////////////////////////////

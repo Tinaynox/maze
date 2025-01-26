@@ -172,6 +172,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool RenderWindow::isReadyToRender() const
+    {
+        if (!getWindow()->isOpened())
+            return false;
+
+        if (getWindow()->getMinimized())
+            return false;
+
+        return true;
+    }
+
+    //////////////////////////////////////////
     void RenderWindow::endDraw()
     {
         
