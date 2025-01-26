@@ -249,25 +249,19 @@ namespace Maze
         //////////////////////////////////////////
         inline Vec3F getWorldForwardDirection()
         {
-            TMat mat = getWorldTransform();
-            mat.setTranslation(Vec3F::c_zero);
-            return (mat.transform(Vec3F::c_unitZ)).normalizedCopy();
+            return getWorldTransform()[2].normalizedCopy();
         } 
 
         //////////////////////////////////////////
         inline Vec3F getWorldUpDirection()
         {
-            TMat mat = getWorldTransform();
-            mat.setTranslation(Vec3F::c_zero);
-            return (mat.transform(Vec3F::c_unitY)).normalizedCopy();
+            return getWorldTransform()[1].normalizedCopy();
         }
 
         //////////////////////////////////////////
         inline Vec3F getWorldRightDirection()
         {
-            TMat mat = getWorldTransform();
-            mat.setTranslation(Vec3F::c_zero);
-            return (mat.transform(Vec3F::c_unitX)).normalizedCopy();
+            return getWorldTransform()[0].normalizedCopy();
         }
 
 

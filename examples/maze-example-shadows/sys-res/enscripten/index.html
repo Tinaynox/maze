@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Emscripten-Generated Code</title>
+        <style>
+html,body {	width: 100%; height: 100%; }
+body { font-family: arial; margin: 0; padding: 0; background: #000; }
+td {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+div.emscripten_border { border: none; }
+
+/* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+canvas.emscripten { border: 0px none; background-color: black; }
+        </style>
+  </head>
+  <body>
+    <table style="width:100%; height:100%">
+    <tr><td style="text-align: center; valigne:middle; color:#FFFFFF">Loading...</td></tr>
+    <table>
+    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+    <script type='text/javascript'>
+      var Module = {
+        preRun: [],
+        postRun: [],
+        canvas: (function() {
+          var canvas = document.getElementById('canvas');
+          canvas.width = document.body.clientWidth;
+          canvas.height = document.body.clientHeight;
+          
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+          return canvas;
+        })(),
+      };
+      window.addEventListener('resize', function(event){
+        Module.canvas.width = document.body.clientWidth;
+        Module.canvas.height = document.body.clientHeight;
+      });
+
+    </script>
+    <script async type="text/javascript" src="maze-example-shadows.js"></script>
+  </body>
+</html>
+
+

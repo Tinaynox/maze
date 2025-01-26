@@ -1,0 +1,2 @@
+//////////////////////////////////////////
+uniform vec3 u_boneSkinningTransforms[MAZE_SKELETON_BONES_MAX * 4]; // vec3 * 4

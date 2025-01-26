@@ -82,6 +82,8 @@ namespace Maze
             EcsWorldPtr const& _world,
             RenderSystemPtr const& _renderSystem);
 
+        //////////////////////////////////////////
+        void preRender();
 
         //////////////////////////////////////////
         void drawDefaultPass(
@@ -91,6 +93,11 @@ namespace Maze
             std::function<void(RenderQueuePtr const&)> _beginDrawCallback = nullptr,
             std::function<void(RenderQueuePtr const&)> _endDrawCallback = nullptr,
             std::function<void(RenderQueuePtr const&)> _endRenderQueueCallback = nullptr);
+
+        //////////////////////////////////////////
+        void drawShadowPass(
+            RenderBuffer* _shadowBuffer,
+            ShadowPassParams const& _params);
 
         //////////////////////////////////////////
         void draw(RenderTarget* _renderTarget);

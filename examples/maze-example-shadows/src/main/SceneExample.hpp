@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_BaseSceneExample_hpp_))
-#define _BaseSceneExample_hpp_
+#if (!defined(_SceneExample_hpp_))
+#define _SceneExample_hpp_
 
 
 //////////////////////////////////////////
@@ -46,40 +46,43 @@
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "ExampleHelper.hpp"
+#include "BaseSceneExample.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(BaseSceneExample);
+    MAZE_USING_SHARED_PTR(SceneExample);
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(Rigidbody2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(ExampleFPSCameraController);
     MAZE_USING_SHARED_PTR(Rotor3D);
     MAZE_USING_SHARED_PTR(SystemTextRenderer3D);
-    MAZE_USING_SHARED_PTR(LevelBloomController);
-    MAZE_USING_SHARED_PTR(SpriteRenderer2D);
-    MAZE_USING_SHARED_PTR(Light3D);
+    MAZE_USING_SHARED_PTR(SkinnedMeshRenderer);
+
 
 
     //////////////////////////////////////////
-    // Class BaseSceneExample
+    // Class SceneExample
     //
     //////////////////////////////////////////
-    class BaseSceneExample
-        : public EcsRenderScene
+    class SceneExample
+        : public BaseSceneExample
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(BaseSceneExample, EcsRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneExample, BaseSceneExample);
 
     public:
+
+        //////////////////////////////////////////
+        static SceneExamplePtr Create();
     
         //////////////////////////////////////////
-        virtual ~BaseSceneExample();
+        virtual ~SceneExample();
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
@@ -87,77 +90,21 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        BaseSceneExample();
+        SceneExample();
 
         //////////////////////////////////////////
-        bool init(Vec2F const& _levelSize);
+        virtual bool init() MAZE_OVERRIDE;
 
+        
         //////////////////////////////////////////
-        void notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport);
-
-        //////////////////////////////////////////
-        void notifyRenderTargetResized(RenderTarget* _renderTarget);
-
-        //////////////////////////////////////////
-        void processCursorPress(Vec2F32 const& _positionOS, CursorInputEvent const& _event);
-
-        //////////////////////////////////////////
-        void processCursorDrag(Vec2F32 const& _positionOS, CursorInputEvent const& _event);
+        virtual void updateHintText() MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
-        virtual void updateHintText();
-
-
-        //////////////////////////////////////////
-        void notifyExampleCommonSettingsChanged(bool const& _value);
-
-        //////////////////////////////////////////
-        virtual void updateRenderBuffersSize();
-
-        //////////////////////////////////////////
-        void updateRenderTarget();
-
-        //////////////////////////////////////////
-        virtual void updateRenderTargetViewport();
-
-
-        //////////////////////////////////////////
-        virtual Rect2F getMainViewport();
-
-        //////////////////////////////////////////
-        virtual Vec2U32 getMainRenderBufferSize();
+        void notifyKeyboard(InputEventKeyboardData const& _data);
 
     protected:
-        CanvasPtr m_canvas;
-        CanvasPtr m_canvasUI;
-        Camera3DPtr m_camera3D;
-
-        Light3DPtr m_mainLight3D;
-
-        RenderBufferPtr m_distortionRenderBuffer;
-        Camera3DPtr m_distortionCamera3D;
-
-        MaterialPtr m_postFXMaterial;
-
-        SpriteRenderer2DPtr m_renderColorSprite;
-        
-
-        RenderBufferPtr m_renderBuffer;
-        RenderBufferPtr m_renderBufferMSAA;
-        LevelBloomControllerPtr m_bloomController;
-
-        RenderBufferPtr m_shadowBuffer;
-
-        ExampleHelper::SimpleLevelConfig m_simpleLevelConfig;
-
-        SystemTextRenderer2DPtr m_hintText;
-        
-        ExampleFPSCameraControllerPtr m_fpsController;
-
-        Vec2F32 m_cursorPositionLastFrame = Vec2F32::c_zero;
-
-        F32 m_cursorDragDeltaKoef = 0.0065f;
+        SkinnedMeshRendererPtr m_skinnedMeshRenderer;
     };
 
 
@@ -165,5 +112,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _BaseSceneExample_hpp_
+#endif // _SceneExample_hpp_
 //////////////////////////////////////////

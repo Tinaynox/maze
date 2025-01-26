@@ -45,6 +45,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderTarget);
+    MAZE_USING_SHARED_PTR(RenderBuffer);
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(Transform3D);
 
@@ -98,6 +99,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline RenderTargetPtr const& getRenderTarget() const { return m_renderTarget; }
+
+
+        //////////////////////////////////////////
+        inline void setShadowBuffer(RenderBufferPtr const& _shadowBuffer) { m_shadowBuffer = _shadowBuffer; }
+
+        //////////////////////////////////////////
+        inline RenderBufferPtr const& getRenderBuffer() const { return m_shadowBuffer; }
 
 
 
@@ -241,6 +249,8 @@ namespace Maze
 
     protected:
         Transform3DPtr m_transform;
+
+        RenderBufferPtr m_shadowBuffer;
 
         RenderTargetPtr m_renderTarget;
         Rect2F m_viewport = { 0.0f, 0.0f, 1.0f, 1.0f };

@@ -85,8 +85,14 @@ namespace Maze
 
         m_cameras3DSample = _world->requestInclusiveSample<Camera3D>();
         m_lights3DSample = _world->requestInclusiveSample<Light3D>();
-        
+
         return true;
+    }
+
+    //////////////////////////////////////////
+    void RenderControllerModule3D::preRender()
+    {
+
     }
 
     //////////////////////////////////////////
@@ -99,26 +105,6 @@ namespace Maze
         std::function<void(RenderQueuePtr const&)> _endRenderQueueCallback)
     {
         Vec3F cameraPosition = _params.cameraTransform.getTranslation();
-
-        Vector<Light3D*> lights3D;
-        Light3D* mainLight = nullptr;
-        Vec4F mainLightColor = Vec4F::c_zero;
-        Vec3F mainLightDirection = Vec3F::c_unitZ;
-        m_lights3DSample->query(
-            [&](Entity* _entity, Light3D* _light3D)
-            {
-                if (_params.renderMask & _light3D->getRenderMask()->getMask())
-                {
-                    lights3D.emplace_back(_light3D);
-
-                    if (!mainLight && _light3D->getLightType() == Light3DType::Directional)
-                    {
-                        mainLight = _light3D;
-                        mainLightColor = mainLight->getColor().toVec4F32();
-                        mainLightDirection = mainLight->getTransform()->getWorldForwardDirection();
-                    }
-                }
-            });
 
         RenderQueuePtr const& renderQueue = _renderTarget->getRenderQueue();
 
@@ -184,7 +170,7 @@ namespace Maze
                             &skyboxTransform);
                     }
                 }
-            }           
+            }
 
             // Draw render units
             if (_params.drawFlag)
@@ -247,14 +233,14 @@ namespace Maze
                         S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
 
                         if (shader->getMainLightColorUniform())
-                            shader->getMainLightColorUniform()->set(mainLightColor);
+                            shader->getMainLightColorUniform()->set(_params.mainLightColor);
 
                         if (shader->getMainLightDirectionUniform())
-                            shader->getMainLightDirectionUniform()->set(mainLightDirection);
+                            shader->getMainLightDirectionUniform()->set(_params.mainLightDirection);
 
 
                         renderQueue->addSelectRenderPassCommand(renderPass);
-                        
+
                         renderUnit.drawer->drawDefaultPass(renderQueue, _params, renderUnit);
 
                         prevRenderQueueIndex = currentRenderQueueIndex;
@@ -281,11 +267,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void RenderControllerModule3D::drawShadowPass(
+        RenderBuffer* _shadowBuffer,
+        ShadowPassParams const& _params)
+    {
+
+    }
+    
+
+    //////////////////////////////////////////
     void RenderControllerModule3D::draw(RenderTarget* _renderTarget)
     {
         MAZE_PROFILER_SCOPED_LOCK(3D);
         MAZE_PROFILE_EVENT("RenderControllerModule3D::draw");
 
+        // Collect cameras
         Vector<Camera3D*> cameras;
         m_cameras3DSample->query(
             [&](Entity* _entity, Camera3D* _camera3D)
@@ -297,6 +293,7 @@ namespace Maze
             cameras.end(),
             [](Camera3D* _cameraA, Camera3D* _cameraB) { return _cameraA->getSortOrder() < _cameraB->getSortOrder(); });
 
+
         for (Camera3D* camera : cameras)
         {
             RenderTargetPtr const& renderTarget = camera->getRenderTarget();
@@ -304,30 +301,65 @@ namespace Maze
             if (_renderTarget != renderTarget.get())
                 continue;
 
-            DefaultPassParams params;
+            DefaultPassParams defaultParams;
 
-            params.renderMask = camera->getRenderMask();
-            params.cameraTransform = camera->getTransform()->getWorldTransform();
-            params.projectionMatrix = camera->calculateProjectionMatrix(renderTarget);
-            params.viewport = camera->getViewport();
-            params.nearZ = camera->getNearZ();
-            params.farZ = camera->getFarZ();
-            params.fieldOfViewY = camera->getFOV();
-            params.clearColorFlag = camera->getClearColorFlag();
-            params.clearColor = camera->getClearColor();
-            params.clearDepthFlag = camera->getClearDepthFlag();
-            params.clearSkyBoxFlag = camera->getClearSkyBoxFlag();
-            params.drawFlag = camera->getDrawFlag();
-            params.clipViewport = camera->getClipViewport();
-            params.lightingSettings = camera->getLightingSettings();
+            defaultParams.renderMask = camera->getRenderMask();
+            defaultParams.cameraTransform = camera->getTransform()->getWorldTransform();
+            defaultParams.projectionMatrix = camera->calculateProjectionMatrix(renderTarget);
+            defaultParams.viewport = camera->getViewport();
+            defaultParams.nearZ = camera->getNearZ();
+            defaultParams.farZ = camera->getFarZ();
+            defaultParams.fieldOfViewY = camera->getFOV();
+            defaultParams.clearColorFlag = camera->getClearColorFlag();
+            defaultParams.clearColor = camera->getClearColor();
+            defaultParams.clearDepthFlag = camera->getClearDepthFlag();
+            defaultParams.clearSkyBoxFlag = camera->getClearSkyBoxFlag();
+            defaultParams.drawFlag = camera->getDrawFlag();
+            defaultParams.clipViewport = camera->getClipViewport();
+            defaultParams.lightingSettings = camera->getLightingSettings().get();
 
-            m_world->broadcastEventImmediate<Render3DDefaultPrePassEvent>(_renderTarget, &params);
+            // Find main light for this camera
+            // Vector<Light3D*> lights3D;
+            Light3D* mainLight = nullptr;
+            m_lights3DSample->query(
+                [&](Entity* _entity, Light3D* _light3D)
+                {
+                    if (camera->getRenderMask() & _light3D->getRenderMask()->getMask())
+                    {
+                        // lights3D.emplace_back(_light3D);
+
+                        if (!mainLight && _light3D->getLightType() == Light3DType::Directional)
+                        {
+                            mainLight = _light3D;
+                            defaultParams.mainLightColor = mainLight->getColor().toVec4F32();
+                            defaultParams.mainLightDirection = mainLight->getTransform()->getWorldForwardDirection();
+                        }
+                    }
+                });
+
+
+            if (defaultParams.drawFlag)
+            {
+                ShadowPassParams shadowParams;
+                shadowParams.lightTransform = mainLight->getTransform()->getWorldTransform();
+                shadowParams.projectionMatrix = Mat4F::CreateProjectionOrthographicLHMatrix(
+                    -10.0f,
+                    +10.0f,
+                    -10.0f,
+                    +10.0f,
+                    0.01f,
+                    100.0f);
+                shadowParams.mainLightColor = defaultParams.mainLightColor;
+                shadowParams.mainLightDirection = defaultParams.mainLightDirection;
+            }
+
+            m_world->broadcastEventImmediate<Render3DDefaultPrePassEvent>(_renderTarget, &defaultParams);
 
             drawDefaultPass(
                 _renderTarget,
-                params);
+                defaultParams);
 
-            m_world->broadcastEventImmediate<Render3DDefaultPostPassEvent>(_renderTarget, &params);
+            m_world->broadcastEventImmediate<Render3DDefaultPostPassEvent>(_renderTarget, &defaultParams);
                 
         }
     }

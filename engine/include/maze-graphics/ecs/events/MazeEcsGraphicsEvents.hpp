@@ -63,7 +63,21 @@ namespace Maze
         bool clearSkyBoxFlag = false;
         bool drawFlag = true;
         bool clipViewport = true;
-        LightingSettingsPtr lightingSettings;
+        LightingSettings const* lightingSettings = nullptr;
+        Vec4F mainLightColor = Vec4F::c_zero;
+        Vec3F mainLightDirection = Vec3F::c_negativeUnitY;
+    };
+
+    //////////////////////////////////////////
+    // Struct ShadowPassParams
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API ShadowPassParams
+    {
+        TMat lightTransform = TMat::c_identity;
+        Mat4F projectionMatrix = Mat4F::c_identity;
+        Vec4F mainLightColor = Vec4F::c_zero;
+        Vec3F mainLightDirection = Vec3F::c_negativeUnitY;
     };
 
 

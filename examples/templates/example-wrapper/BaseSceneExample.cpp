@@ -95,6 +95,7 @@
 
 //////////////////////////////////////////
 #define DISTORTION_BUFFER_DIV 1u
+#define SHADOW_BUFFER_DIV 2u
 
 
 //////////////////////////////////////////
@@ -187,6 +188,16 @@ namespace Maze
         m_renderBuffer->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
         m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
 
+
+        m_shadowBuffer = RenderBuffer::Create(
+            {
+                renderBufferSize / SHADOW_BUFFER_DIV,
+                PixelFormat::None,
+                PixelFormat::DEPTH_U24
+            });
+        m_shadowBuffer->setName("ShadowBuffer");
+        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setMinFilter(TextureFilter::Linear);
+        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Linear);
                      
         EntityPtr canvasEntity = createEntity("Canvas");
         m_canvas = canvasEntity->createComponent<Canvas>();
@@ -270,6 +281,7 @@ namespace Maze
         m_camera3D = m_fpsController->getCamera3D();
         m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
         m_camera3D->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::UserMask0);
+        m_camera3D->setShadowBuffer(m_shadowBuffer);
 
 
         // Distortion render buffer
@@ -421,6 +433,8 @@ namespace Maze
 
         if (m_renderBufferMSAA)
             m_renderBufferMSAA->setSize(renderWindowSize);
+
+        m_shadowBuffer->setSize(renderWindowSize / SHADOW_BUFFER_DIV);
 
         m_distortionRenderBuffer->setSize(renderWindowSize / DISTORTION_BUFFER_DIV);
     }

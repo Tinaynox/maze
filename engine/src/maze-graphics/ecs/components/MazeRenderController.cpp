@@ -209,6 +209,8 @@ namespace Maze
         if (m_renderTargetsDirty)
             updateRenderTargets();
 
+        m_module3D->preRender();
+
         for (RenderTarget* renderTarget : m_renderTargets)
         {
             m_module3D->draw(renderTarget);

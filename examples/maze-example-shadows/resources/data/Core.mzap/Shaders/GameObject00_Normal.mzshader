@@ -1,0 +1,58 @@
+uniform
+{
+  name:String = "u_baseMapST"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 1.0, 1.0, 0.0, 0.0
+}
+
+uniform
+{
+  name:String = "u_mainLightColor"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 1.0, 0.957, 0.84, 1.0
+}
+
+uniform
+{
+  name:String = "u_mainLightDirection"
+  type:String = "UniformVec3F32"
+  value:Vec3F = 0.577, -0.577, 0.577
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 1.0, 1.0, 1.0, 1.0
+}
+
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformVec4F32"
+  value:Vec4F = 0.1, 0.1, 0.1, 1.0
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:F32 = 1.0
+}
+
+feature
+{
+  name:String = "NORMAL_MAP"
+}
+
+uniform
+{
+  name:String = "u_normalScale"
+  type:String = "UniformF32"
+  value:F32 = 1.0
+}
+
+GLSL
+{
+  shader:String = "Universal00.mzglsl"
+}
