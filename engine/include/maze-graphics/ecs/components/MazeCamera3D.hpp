@@ -105,7 +105,7 @@ namespace Maze
         inline void setShadowBuffer(RenderBufferPtr const& _shadowBuffer) { m_shadowBuffer = _shadowBuffer; }
 
         //////////////////////////////////////////
-        inline RenderBufferPtr const& getRenderBuffer() const { return m_shadowBuffer; }
+        inline RenderBufferPtr const& getShadowBuffer() const { return m_shadowBuffer; }
 
 
 

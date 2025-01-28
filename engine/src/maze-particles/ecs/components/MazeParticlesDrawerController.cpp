@@ -119,6 +119,15 @@ namespace Maze
             (Vec4F const**)uvStreams);
     }
 
+    //////////////////////////////////////////
+    void ParticlesDrawerController::drawShadowPass(
+        RenderQueuePtr const& _renderQueue,
+        ShadowPassParams const& _params,
+        RenderUnit const& _renderUnit)
+    {
+
+    }
+
 
 
     //////////////////////////////////////////

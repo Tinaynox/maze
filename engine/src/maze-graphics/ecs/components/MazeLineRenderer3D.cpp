@@ -368,6 +368,15 @@ namespace Maze
             tm);
     }
 
+    //////////////////////////////////////////
+    void LineRenderer3D::drawShadowPass(
+        RenderQueuePtr const& _renderQueue,
+        ShadowPassParams const& _params,
+        RenderUnit const& _renderUnit)
+    {
+
+    }
+
 
     //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(LineRenderer3DSystem,

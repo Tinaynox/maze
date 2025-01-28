@@ -104,7 +104,6 @@ namespace Maze
         void notifyKeyboard(InputEventKeyboardData const& _data);
 
     protected:
-        SkinnedMeshRendererPtr m_skinnedMeshRenderer;
     };
 
 

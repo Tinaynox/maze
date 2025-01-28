@@ -132,6 +132,9 @@ namespace Maze
         virtual bool setWrapT(TextureWrap _value) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        virtual bool setBorderColor(ColorU32 _value) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         virtual bool setAnisotropyLevel(F32 _value) MAZE_OVERRIDE;
 
         //////////////////////////////////////////

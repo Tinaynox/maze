@@ -660,6 +660,8 @@ namespace Maze
         m_timeUniform = ensureUniform(MAZE_HCS("u_time"));
         m_mainLightColorUniform = ensureUniform(MAZE_HCS("u_mainLightColor"));
         m_mainLightDirectionUniform = ensureUniform(MAZE_HCS("u_mainLightDirection"));
+        m_mainLightViewProjectionMatrixUniform = ensureUniform(MAZE_HCS("u_mainLightViewProjectionMatrix"));
+        m_mainLightShadowMapUniform = ensureUniform(MAZE_HCS("u_mainLightShadowMap"));
     }
 
     //////////////////////////////////////////
@@ -675,6 +677,8 @@ namespace Maze
         m_timeUniform.reset();
         m_mainLightColorUniform.reset();
         m_mainLightDirectionUniform.reset();
+        m_mainLightViewProjectionMatrixUniform.reset();
+        m_mainLightShadowMapUniform.reset();
     }
 
     //////////////////////////////////////////

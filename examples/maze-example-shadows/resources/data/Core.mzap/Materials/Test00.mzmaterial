@@ -43,5 +43,18 @@ renderPass
   blendDestFactor:String = "Zero"
   depthTestCompareFunction:String = "LessEqual"
   depthWriteEnabled:Bool = true
-  cullMode:String = "Off"
+  cullMode:String = "Back"
+}
+
+renderPass
+{
+  passType:String = "Shadow"
+  renderQueueIndex:S32 = 2000
+  shader:String = "ShadowCaster00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:Bool = true
+  cullMode:String = "Front"
 }

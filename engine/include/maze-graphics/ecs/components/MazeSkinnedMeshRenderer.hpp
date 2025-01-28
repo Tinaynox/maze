@@ -191,6 +191,12 @@ namespace Maze
             DefaultPassParams const& _params,
             RenderUnit const& _renderUnit) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual void drawShadowPass(
+            RenderQueuePtr const& _renderQueue,
+            ShadowPassParams const& _params,
+            RenderUnit const& _renderUnit) MAZE_OVERRIDE;
+
     protected:
         RenderSystem* m_renderSystem = nullptr;
 

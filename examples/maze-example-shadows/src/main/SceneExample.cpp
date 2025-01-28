@@ -179,12 +179,20 @@ namespace Maze
 
 
         getLightingSettings()->setSkyBoxMaterial("Skybox00.mzmaterial");
+#if 0
         m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Chessboard00.mzmaterial");
         m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Chessboard00.mzmaterial");
+#else
+        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Test00.mzmaterial");
+        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Test00.mzmaterial");
+#endif
         ExampleHelper::BuildSimpleLevel(
             this,
             m_fpsController->getLevelSize(),
             m_simpleLevelConfig);
+
+        m_mainLight3D->getTransform()->setLocalPosition(0.0f, 3.5f, 0.0f);
+        m_mainLight3D->getTransform()->setLocalRotationDegrees(90.0f, 0.0f, 0.0f);
 
         auto meshEntity = createEntity("Mesh");
         auto meshTransform = meshEntity->createComponent<Transform3D>();
@@ -197,15 +205,18 @@ namespace Maze
             m_shadowBuffer->getDepthTexture()->cast<Texture2D>());
 
        
-        SpriteHelper::CreateSprite(
+        SpriteRenderer2DPtr spriteRenderer = SpriteHelper::CreateSprite(
             shadowSprite,
             Vec2F(256.0f, 256.0f),
             Vec2F::c_zero,
-            nullptr,
+            MaterialManager::GetCurrentInstance()->getOrLoadMaterial("ShadowBuffer00.mzmaterial"),
             m_canvasUI->getTransform(),
             this,
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
+        spriteRenderer->getMaterial()->setUniform(
+            MAZE_HCS("u_depthMap"),
+            m_shadowBuffer->getDepthTexture()->cast<Texture2D>());
 
 
 
@@ -243,17 +254,15 @@ namespace Maze
             {
                 if (_data.keyCode == KeyCode::Number1)
                 {
-                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Bind"));
+                    
                 }
                 else
                 if (_data.keyCode == KeyCode::Number2)
                 {
-                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Idle"));
                 }
                 else
                 if (_data.keyCode == KeyCode::Number3)
                 {
-                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Run"));
                 }
 
                 break;

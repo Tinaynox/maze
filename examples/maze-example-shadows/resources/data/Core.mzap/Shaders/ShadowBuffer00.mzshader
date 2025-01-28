@@ -1,0 +1,4 @@
+GLSL
+{
+  shader:String = "ShadowBuffer00.mzglsl"
+}

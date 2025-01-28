@@ -180,6 +180,7 @@ namespace Maze
         AssignOpenGLFunctionDirect(_renderContext, mzglGenerateMipmap, glGenerateMipmap);
         AssignOpenGLFunctionDirect(_renderContext, mzglTexParameteri, glTexParameteri);
         AssignOpenGLFunctionDirect(_renderContext, mzglTexParameterf, glTexParameterf);
+        AssignOpenGLFunctionDirect(_renderContext, mzglTexParameterfv, glTexParameterfv);
         AssignOpenGLFunctionDirect(_renderContext, mzglCompressedTexImage2D, glCompressedTexImage2D);
         AssignOpenGLFunctionDirect(_renderContext, mzglGetTexLevelParameteriv, nullptr);
         AssignOpenGLFunctionDirect(_renderContext, mzglTexImage2D, glTexImage2D);
@@ -329,6 +330,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglGenerateMipmap, "glGenerateMipmap");
         AssignOpenGLFunction(_renderContext, mzglTexParameteri, "glTexParameteri");
         AssignOpenGLFunction(_renderContext, mzglTexParameterf, "glTexParameterf");
+        AssignOpenGLFunction(_renderContext, mzglTexParameterfv, "glTexParameterfv");
         AssignOpenGLFunction(_renderContext, mzglCompressedTexImage2D, "glCompressedTexImage2D");
         AssignOpenGLFunction(_renderContext, mzglGetTexLevelParameteriv, "glGetTexLevelParameteriv");
         AssignOpenGLFunction(_renderContext, mzglTexImage2D, "glTexImage2D");
@@ -475,6 +477,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglGenerateMipmap, "glGenerateMipmap");
         AssignOpenGLFunction(_renderContext, mzglTexParameteri, "glTexParameteri");
         AssignOpenGLFunction(_renderContext, mzglTexParameterf, "glTexParameterf");
+        AssignOpenGLFunction(_renderContext, mzglTexParameterfv, "glTexParameterfv");
         AssignOpenGLFunction(_renderContext, mzglCompressedTexImage2D, "glCompressedTexImage2D");
         AssignOpenGLFunction(_renderContext, mzglGetTexLevelParameteriv, "glGetTexLevelParameteriv");
         AssignOpenGLFunction(_renderContext, mzglTexImage2D, "glTexImage2D");
@@ -644,6 +647,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglGenerateMipmap, glGenerateMipmapOES);
         AssignOpenGLFunction(_renderContext, mzglTexParameteri, glTexParameteri);
         AssignOpenGLFunction(_renderContext, mzglTexParameterf, glTexParameterf);
+        AssignOpenGLFunction(_renderContext, mzglTexParameterfv, glTexParameterfv);
         AssignOpenGLFunction(_renderContext, mzglCompressedTexImage2D, glCompressedTexImage2D);
         AssignOpenGLFunction(_renderContext, mzglGetTexLevelParameteriv, MAZE_NULL);
         AssignOpenGLFunction(_renderContext, mzglTexImage2D, glTexImage2D);

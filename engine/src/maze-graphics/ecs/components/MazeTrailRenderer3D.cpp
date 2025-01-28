@@ -433,6 +433,15 @@ namespace Maze
             tm);
     }
 
+    //////////////////////////////////////////
+    void TrailRenderer3D::drawShadowPass(
+        RenderQueuePtr const& _renderQueue,
+        ShadowPassParams const& _params,
+        RenderUnit const& _renderUnit)
+    {
+
+    }
+
 
 
     //////////////////////////////////////////

@@ -364,13 +364,13 @@ namespace Maze
         F32 _nearZ,
         F32 _farZ)
     {
-        F32 width = _right - _left;
-        F32 height = _top - _bottom;
+        F32 width = (_right - _left);
+        F32 height = (_top - _bottom);
         F32 depth = _farZ - _nearZ;
 
-        F32 invWidth = 1.0f / (_right - _left);
-        F32 invHeight = 1.0f / (_top - _bottom);
-        F32 invDepth = 1.0f / (_farZ - _nearZ);
+        F32 invWidth = 1.0f / width;
+        F32 invHeight = 1.0f / height;
+        F32 invDepth = 1.0f / depth;
 
         F32 s0 = 2.0f * invWidth;
         F32 s1 = 2.0f * invHeight;
@@ -378,13 +378,13 @@ namespace Maze
 
         F32 o0 = -(_right + _left) * invWidth;
         F32 o1 = -(_top + _bottom) * invHeight;
-        F32 o2 = _nearZ * invDepth;
+        F32 o2 = (_farZ + _nearZ) * invDepth;
 
         return Mat4F(
-            s0, 0, 0, o0,
-            0, s1, 0, o1,
-            0, 0, s2, o2,
-            0, 0, 0, 1);
+            s0, 0, 0, 0,
+            0, s1, 0, 0,
+            0, 0, s2, 0,
+            o0, o1, o2, 1);
     }
 
     //////////////////////////////////////////

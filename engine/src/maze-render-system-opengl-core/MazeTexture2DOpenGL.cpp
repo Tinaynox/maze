@@ -360,6 +360,8 @@ namespace Maze
         MAZE_GL_CALL(mzglTexParameteri(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_MIN_FILTER, GetOpenGLFilter(m_minFilter)));
         MAZE_GL_CALL(mzglTexParameteri(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_WRAP_S, GetOpenGLWrap(m_wrapS)));
         MAZE_GL_CALL(mzglTexParameteri(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_WRAP_T, GetOpenGLWrap(m_wrapT)));
+        Vec4F borderColorVec4F = m_borderColor.toVec4F32();
+        MAZE_GL_CALL(mzglTexParameterfv(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_BORDER_COLOR, (F32 const*)&borderColorVec4F));
     
         generateMipmaps();
 
@@ -439,6 +441,26 @@ namespace Maze
             Texture2DOpenGLScopeBind textureScopedBind(this);
 
             MAZE_GL_CALL(mzglTexParameteri(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_WRAP_T, GetOpenGLWrap(m_wrapT)));
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DOpenGL::setBorderColor(ColorU32 _value)
+    {
+        if (m_borderColor == _value)
+            return true;
+
+        m_borderColor = _value;
+
+        {
+            ContextOpenGLScopeBind contextScopedBind(m_context);
+            MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+            Texture2DOpenGLScopeBind textureScopedBind(this);
+
+            Vec4F borderColorVec4F = m_borderColor.toVec4F32();
+            MAZE_GL_CALL(mzglTexParameterfv(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_BORDER_COLOR, (F32 const*)&borderColorVec4F));
         }
 
         return true;

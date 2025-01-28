@@ -273,6 +273,15 @@ namespace Maze
             1,
             tm);
     }
+
+    //////////////////////////////////////////
+    void SkinnedMeshRenderer::drawShadowPass(
+        RenderQueuePtr const& _renderQueue,
+        ShadowPassParams const& _params,
+        RenderUnit const& _renderUnit)
+    {
+
+    }
     
 
 
@@ -289,7 +298,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshRendererSystem,
+    COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshRendererDefaultPassGatherRenderUnits,
         MAZE_ECS_TAGS(MAZE_HS("render")),
         {},
         Render3DDefaultPassGatherRenderUnitsEvent& _event,

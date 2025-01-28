@@ -255,6 +255,12 @@ namespace Maze
         ShaderUniformPtr const& getMainLightDirectionUniform() const { return m_mainLightDirectionUniform; }
 
         //////////////////////////////////////////
+        ShaderUniformPtr const& getMainLightViewProjectionMatrixUniform() const { return m_mainLightViewProjectionMatrixUniform; }
+
+        //////////////////////////////////////////
+        ShaderUniformPtr const& getMainLightShadowMapUniform() const { return m_mainLightShadowMapUniform; }
+
+        //////////////////////////////////////////
         void addLocalFeature(CString _name, CString _value = "");
 
         //////////////////////////////////////////
@@ -358,6 +364,8 @@ namespace Maze
         ShaderUniformPtr m_timeUniform;
         ShaderUniformPtr m_mainLightColorUniform;
         ShaderUniformPtr m_mainLightDirectionUniform;
+        ShaderUniformPtr m_mainLightViewProjectionMatrixUniform;
+        ShaderUniformPtr m_mainLightShadowMapUniform;
 
         Vector<ShaderUniformVariant> m_cachedUniformVariants;
 

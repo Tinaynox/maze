@@ -1,0 +1,96 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Vertex.mzglsl"
+
+
+//////////////////////////////////////////
+IN vec3 a_position;
+IN vec3 a_normal;
+IN vec3 a_color;
+IN vec2 a_texCoords0;
+
+
+//////////////////////////////////////////
+OUT vec3 v_positionOS;
+OUT vec3 v_positionWS;
+OUT vec3 v_positionVS;
+OUT vec3 v_normalOS;
+OUT vec3 v_normalWS;
+OUT vec3 v_color0;
+OUT vec2 v_uv0;
+
+
+//////////////////////////////////////////
+#include "Utils/Core.mzglsl"
+
+
+//////////////////////////////////////////
+// Main
+void main()
+{
+    
+    int instanceId = gl_InstanceID;
+    
+    mat4 modelMatrix = GetModelMatrix(instanceId);
+    mat4 viewMatrix = GetViewMatrix();
+
+    vec4 positionOS = vec4(a_position, 1.0);
+    vec4 positionWS = modelMatrix * positionOS;
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+    vec4 positionVS = viewMatrix * positionWS;
+    vec4 positionCS = u_projectionMatrix * positionVS;
+    
+    vec4 normalOS = vec4(a_normal, 1.0);
+    vec4 normalWS = normalize(normalOS * MAZE_INVERSE(modelMatrix));
+    
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+    
+    v_positionOS = positionOS.xyz;
+    v_positionWS = positionWS.xyz;
+    v_positionVS = positionVS.xyz;
+    v_normalOS = normalOS.xyz;
+    v_normalWS = normalWS.xyz;
+    v_color0 = a_color;
+    v_uv0 = a_texCoords0;
+
+    gl_Position = positionCS;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Fragment.mzglsl"
+
+
+//////////////////////////////////////////
+uniform sampler2D u_depthMap;
+
+//////////////////////////////////////////
+IN vec2 v_uv0;
+
+
+//////////////////////////////////////////
+MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
+
+
+//////////////////////////////////////////
+// Main
+void main()
+{
+    float depthValue = MAZE_GET_TEXEL2D(u_depthMap, v_uv0).r;
+    out_color = vec4(vec3(depthValue), 1.0);
+}

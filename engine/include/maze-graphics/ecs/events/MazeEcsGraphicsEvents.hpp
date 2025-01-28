@@ -66,6 +66,8 @@ namespace Maze
         LightingSettings const* lightingSettings = nullptr;
         Vec4F mainLightColor = Vec4F::c_zero;
         Vec3F mainLightDirection = Vec3F::c_negativeUnitY;
+        Mat4F mainLightViewProjectionMatrix = Mat4F::c_identity;
+        Texture2DPtr mainLightShadowMap;
     };
 
     //////////////////////////////////////////
@@ -74,10 +76,11 @@ namespace Maze
     //////////////////////////////////////////
     struct MAZE_GRAPHICS_API ShadowPassParams
     {
-        TMat lightTransform = TMat::c_identity;
-        Mat4F projectionMatrix = Mat4F::c_identity;
-        Vec4F mainLightColor = Vec4F::c_zero;
-        Vec3F mainLightDirection = Vec3F::c_negativeUnitY;
+        S32 renderMask = 0;
+        TMat mainLightTransform = TMat::c_identity;
+        Mat4F mainLightProjectionMatrix = Mat4F::c_identity;
+        F32 nearZ = 0.001f;
+        F32 farZ = 100.0f;
     };
 
 
@@ -180,6 +183,12 @@ namespace Maze
             RenderQueuePtr const& _renderQueue,
             DefaultPassParams const& _params,
             RenderUnit const& _renderUnit) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void drawShadowPass(
+            RenderQueuePtr const& _renderQueue,
+            ShadowPassParams const& _params,
+            RenderUnit const& _renderUnit) MAZE_ABSTRACT;
     };
 
 
@@ -251,6 +260,45 @@ namespace Maze
     private:
         RenderTarget* m_renderTarget = nullptr;
         DefaultPassParams const* m_passParams;
+        Vector<RenderUnit>* m_renderUnits;
+    };
+
+
+    //////////////////////////////////////////
+    // Class Render3DShadowPassGatherRenderUnitsEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API Render3DShadowPassGatherRenderUnitsEvent
+        : public GenericEvent<Render3DShadowPassGatherRenderUnitsEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Render3DShadowPassGatherRenderUnitsEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline Render3DShadowPassGatherRenderUnitsEvent(
+            RenderBuffer* _shadowBuffer = nullptr,
+            ShadowPassParams const* _passParams = nullptr,
+            Vector<RenderUnit>* _renderUnits = nullptr)
+            : m_shadowBuffer(_shadowBuffer)
+            , m_passParams(_passParams)
+            , m_renderUnits(_renderUnits)
+        {}
+
+        //////////////////////////////////////////
+        inline RenderBuffer* getShadowBuffer() const { return m_shadowBuffer; }
+
+        //////////////////////////////////////////
+        inline ShadowPassParams const* getPassParams() const { return m_passParams; }
+
+        //////////////////////////////////////////
+        inline Vector<RenderUnit>* getRenderUnits() const { return m_renderUnits; }
+
+    private:
+        RenderBuffer* m_shadowBuffer = nullptr;
+        ShadowPassParams const* m_passParams;
         Vector<RenderUnit>* m_renderUnits;
     };
 

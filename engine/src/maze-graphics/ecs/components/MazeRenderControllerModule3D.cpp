@@ -43,6 +43,7 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
@@ -142,7 +143,6 @@ namespace Maze
             // View position
             _renderTarget->setViewPosition(cameraPosition);
 
-            Vector<RenderUnit> renderData;
 
             // Skybox
             if (_params.clearSkyBoxFlag)
@@ -175,8 +175,10 @@ namespace Maze
             // Draw render units
             if (_params.drawFlag)
             {
+                Vector<RenderUnit> renderData;
+
                 {
-                    MAZE_PROFILE_EVENT("3D GatherRenderUnits");
+                    MAZE_PROFILE_EVENT("3D Default GatherRenderUnits");
                     m_world->broadcastEventImmediate<Render3DDefaultPassGatherRenderUnitsEvent>(_renderTarget, &_params, &renderData);
                 }
 
@@ -222,7 +224,7 @@ namespace Maze
                 S32 prevRenderQueueIndex = -1;
 
                 {
-                    MAZE_PROFILE_EVENT("3D Preparation Render Queue");
+                    MAZE_PROFILE_EVENT("3D Default Render Queue");
                     for (S32 i = 0; i < renderDataSize; ++i)
                     {
                         RenderUnit const& renderUnit = renderData[indices[i]];
@@ -238,6 +240,11 @@ namespace Maze
                         if (shader->getMainLightDirectionUniform())
                             shader->getMainLightDirectionUniform()->set(_params.mainLightDirection);
 
+                        if (shader->getMainLightViewProjectionMatrixUniform())
+                            shader->getMainLightViewProjectionMatrixUniform()->set(_params.mainLightViewProjectionMatrix);
+
+                        if (shader->getMainLightShadowMapUniform())
+                            shader->getMainLightShadowMapUniform()->set(_params.mainLightShadowMap);
 
                         renderQueue->addSelectRenderPassCommand(renderPass);
 
@@ -271,10 +278,68 @@ namespace Maze
         RenderBuffer* _shadowBuffer,
         ShadowPassParams const& _params)
     {
+        Vec3F lightPosition = _params.mainLightTransform.getTranslation();
 
+        RenderQueuePtr const& renderQueue = _shadowBuffer->getRenderQueue();
+
+        if (_shadowBuffer->beginDraw())
+        {
+            renderQueue->clear();
+
+            renderQueue->addClearCurrentRenderTargetCommand(
+                false,
+                true);
+
+            _shadowBuffer->setViewport(0.0f, 0.0f, 1.0f, 1.0f);
+
+            // Projection matrix
+            _shadowBuffer->setProjectionMatrix(_params.mainLightProjectionMatrix);
+            _shadowBuffer->setNear(_params.nearZ);
+            _shadowBuffer->setFar(_params.farZ);
+
+            // View matrix
+            TMat viewMatrix = _params.mainLightTransform.inversed();
+            _shadowBuffer->setViewMatrix(viewMatrix);
+
+            // View position
+            _shadowBuffer->setViewPosition(lightPosition);
+
+
+            Vector<RenderUnit> renderData;
+
+            {
+                MAZE_PROFILE_EVENT("3D Shadow GatherRenderUnits");
+                m_world->broadcastEventImmediate<Render3DShadowPassGatherRenderUnitsEvent>(_shadowBuffer, &_params, &renderData);
+            }
+
+            S32 renderDataSize = (S32)renderData.size();
+
+            {
+                MAZE_PROFILE_EVENT("3D Default Render Queue");
+                for (S32 i = 0; i < renderDataSize; ++i)
+                {
+                    RenderUnit const& renderUnit = renderData[i];
+
+                    RenderPassPtr const& renderPass = renderUnit.renderPass;
+                    ShaderPtr const& shader = renderPass->getShader();
+
+                    S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
+
+                    renderQueue->addSelectRenderPassCommand(renderPass);
+
+                    renderUnit.drawer->drawShadowPass(renderQueue, _params, renderUnit);
+                }
+            }
+
+            {
+                MAZE_PROFILE_EVENT("3D Draw Render Queue");
+                renderQueue->draw();
+            }
+
+            _shadowBuffer->endDraw();
+        }
     }
     
-
     //////////////////////////////////////////
     void RenderControllerModule3D::draw(RenderTarget* _renderTarget)
     {
@@ -338,19 +403,38 @@ namespace Maze
                 });
 
 
-            if (defaultParams.drawFlag)
+            if (defaultParams.drawFlag && mainLight && camera->getShadowBuffer())
             {
                 ShadowPassParams shadowParams;
-                shadowParams.lightTransform = mainLight->getTransform()->getWorldTransform();
-                shadowParams.projectionMatrix = Mat4F::CreateProjectionOrthographicLHMatrix(
-                    -10.0f,
-                    +10.0f,
-                    -10.0f,
-                    +10.0f,
-                    0.01f,
-                    100.0f);
-                shadowParams.mainLightColor = defaultParams.mainLightColor;
-                shadowParams.mainLightDirection = defaultParams.mainLightDirection;
+                shadowParams.renderMask = defaultParams.renderMask;
+                shadowParams.nearZ = 1.0f;
+                shadowParams.farZ = 20.0f;
+
+                shadowParams.mainLightTransform = mainLight->getTransform()->getWorldTransform();
+                shadowParams.mainLightProjectionMatrix = Mat4F::CreateProjectionOrthographicLHMatrix(
+                    -3.0f,
+                    +3.0f,
+                    -3.0f,
+                    +3.0f,
+                    shadowParams.nearZ,
+                    shadowParams.farZ);
+
+                Mat4F mainLightTransformMat4;
+                mainLightTransformMat4.setRow(0, Vec4F(shadowParams.mainLightTransform[0], 0.0f));
+                mainLightTransformMat4.setRow(1, Vec4F(shadowParams.mainLightTransform[1], 0.0f));
+                mainLightTransformMat4.setRow(2, Vec4F(shadowParams.mainLightTransform[2], 0.0f));
+                mainLightTransformMat4.setRow(3, Vec4F(shadowParams.mainLightTransform[3], 1.0f));
+
+                drawShadowPass(
+                    camera->getShadowBuffer().get(),
+                    shadowParams);
+
+                defaultParams.mainLightViewProjectionMatrix = mainLightTransformMat4.inversedAffine() * shadowParams.mainLightProjectionMatrix;
+                defaultParams.mainLightShadowMap = camera->getShadowBuffer()->getDepthTexture()->cast<Texture2D>();
+            }
+            else
+            {
+                defaultParams.mainLightShadowMap = m_renderSystem->getTextureManager()->getWhiteTexture();
             }
 
             m_world->broadcastEventImmediate<Render3DDefaultPrePassEvent>(_renderTarget, &defaultParams);

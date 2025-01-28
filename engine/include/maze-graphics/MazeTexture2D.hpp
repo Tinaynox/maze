@@ -172,6 +172,14 @@ namespace Maze
         //////////////////////////////////////////
         inline TextureWrap getWrapT() const { return m_wrapT; }
 
+
+        //////////////////////////////////////////
+        virtual bool setBorderColor(ColorU32 _value) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        inline ColorU32 getBorderColor() const { return m_borderColor; }
+
+
         //////////////////////////////////////////
         PixelFormat::Enum getInternalPixelFormat() const { return m_internalPixelFormat; }
 
@@ -250,6 +258,7 @@ namespace Maze
         TextureFilter m_minFilter;
         TextureWrap m_wrapS;
         TextureWrap m_wrapT;
+        ColorU32 m_borderColor = ColorU32::c_black;
         F32 m_anisotropyLevel = 0.0f;
 
         PixelFormat::Enum m_internalPixelFormat = PixelFormat::None;

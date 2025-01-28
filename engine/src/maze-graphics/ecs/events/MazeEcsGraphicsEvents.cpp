@@ -39,6 +39,9 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Render3DDefaultPassGatherRenderUnitsEvent, Event);
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Render3DShadowPassGatherRenderUnitsEvent, Event);
+
+    //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Render3DDefaultPostPassEvent, Event);
 
 

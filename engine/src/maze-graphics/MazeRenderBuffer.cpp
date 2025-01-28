@@ -186,7 +186,7 @@ namespace Maze
         if (!RenderTarget::beginDraw())
             return false;
 
-        setViewport(Rect2F(Vec2F::c_zero, getSize()));
+        // setViewport(Rect2F(0.0f, 0.0f, 1.0f, 1.0f));
 
         return true;
     }

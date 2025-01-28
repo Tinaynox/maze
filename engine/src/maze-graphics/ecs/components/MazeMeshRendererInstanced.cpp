@@ -218,6 +218,15 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    void MeshRendererInstanced::drawShadowPass(
+        RenderQueuePtr const& _renderQueue,
+        ShadowPassParams const& _params,
+        RenderUnit const& _renderUnit)
+    {
+
+    }
+
 
 
     //////////////////////////////////////////

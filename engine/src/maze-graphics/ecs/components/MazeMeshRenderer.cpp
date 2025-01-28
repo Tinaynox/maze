@@ -227,11 +227,30 @@ namespace Maze
             1,
             tm);
     }
+
+    //////////////////////////////////////////
+    void MeshRenderer::drawShadowPass(
+        RenderQueuePtr const& _renderQueue,
+        ShadowPassParams const& _params,
+        RenderUnit const& _renderUnit)
+    {
+        Vector<VertexArrayObjectPtr> const& vaos = getRenderMesh()->getVertexArrayObjects();
+        VertexArrayObjectPtr const& vao = vaos[_renderUnit.index % vaos.size()];
+
+        MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
+
+        TMat const* tm = reinterpret_cast<TMat const*>(_renderUnit.userData);
+
+        _renderQueue->addDrawVAOInstancedCommand(
+            vao.get(),
+            1,
+            tm);
+    }
     
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererSystem,
+    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererDefaultPassGatherRenderUnits,
         MAZE_ECS_TAGS(MAZE_HS("render")),
         {},
         Render3DDefaultPassGatherRenderUnitsEvent& _event,
@@ -273,6 +292,60 @@ namespace Maze
 #endif
                     _event.getRenderUnits()->emplace_back(
                         firstRenderPass,
+                        _transform3D->getWorldPosition(),
+                        _meshRenderer,
+                        i,
+                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()));
+                }
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererShadowPassGatherRenderUnits,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
+        Render3DShadowPassGatherRenderUnitsEvent& _event,
+        Entity* _entity,
+        MeshRenderer* _meshRenderer,
+        Transform3D* _transform3D)
+    {
+        if (!_meshRenderer->getEnabled())
+            return;
+
+        if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
+        {
+            if (_meshRenderer->getRenderMesh())
+            {
+                Vector<MaterialAssetRef> const& materials = _meshRenderer->getMaterialRefs();
+                Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+
+                if (vaos.empty())
+                    return;
+
+                S32 c = (S32)Math::Max(vaos.size(), materials.size());
+
+                for (S32 i = 0, in = c; i < in; ++i)
+                {
+                    MaterialPtr const* material = nullptr;
+                    if (!materials.empty())
+                        material = &materials[i % materials.size()].getMaterial();
+
+                    if (!material || !*material)
+                        material = &_meshRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial();
+
+                    RenderPassPtr const& firstShadowRenderPass = (*material)->getFirstRenderPass(RenderPassType::Shadow);
+                    if (!firstShadowRenderPass)
+                        continue;
+#if (MAZE_DEBUG)
+                    if (!firstShadowRenderPass->getShader())
+                    {
+                        Debug::LogError("Mesh(EID: %u): Shader is null!", _entity->getId());
+                        return;
+                    }
+#endif
+                    _event.getRenderUnits()->emplace_back(
+                        firstShadowRenderPass,
                         _transform3D->getWorldPosition(),
                         _meshRenderer,
                         i,
