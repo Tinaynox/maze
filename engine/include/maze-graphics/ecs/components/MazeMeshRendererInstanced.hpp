@@ -76,6 +76,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline RenderSystem* getRenderSystem() const { return m_renderSystem; }
+
+
+        //////////////////////////////////////////
         void processEntityRemoved();
 
         

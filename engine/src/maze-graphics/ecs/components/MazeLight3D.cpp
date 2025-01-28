@@ -54,7 +54,11 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Light3D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Light3DType, lightType, Light3DType::Directional, getLightType, setLightType),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorF128, color, ColorF128::c_white, getColor, setColor));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorF128, color, ColorF128::c_white, getColor, setColor),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, shadowCast, false, getShadowCast, setShadowCast),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, shadowCastSize, 10.0f, getShadowCastSize, setShadowCastSize),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, shadowCastNearZ, 1.0f, getShadowCastNearZ, setShadowCastNearZ),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, shadowCastFarZ, 50.0f, getShadowCastFarZ, setShadowCastFarZ));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Light3D);

@@ -1,0 +1,32 @@
+//////////////////////////////////////////
+float CalculateShadow(
+    vec4 positionMLS,
+    vec3 normalWS,
+    vec3 mainLightDirection,
+    sampler2D shadowMap,
+    vec2 shadowMapTexelSize)
+{
+    vec3 projCoords = positionMLS.xyz / positionMLS.w;
+    projCoords = projCoords * 0.5 + 0.5;
+    if (projCoords.z <= 0.0)
+        return 0.0;
+    
+    float currentDepth = 1.0 - projCoords.z;
+    
+    vec3 fragmentToLightDirection = -mainLightDirection;
+    float NdotL = dot(normalWS, fragmentToLightDirection);
+    float bias = max(0.00001 * (1.0 - abs(NdotL)), 0.00001);
+    
+    float shadow = 0.0;
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float closestDepth = MAZE_GET_TEXEL2D(shadowMap, projCoords.xy + vec2(x, y) * shadowMapTexelSize).r; 
+            shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;        
+        }    
+    }
+    shadow /= 9.0;
+    
+    return shadow;
+}

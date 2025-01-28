@@ -403,19 +403,19 @@ namespace Maze
                 });
 
 
-            if (defaultParams.drawFlag && mainLight && camera->getShadowBuffer())
+            if (defaultParams.drawFlag && camera->getShadowBuffer() && mainLight && mainLight->getShadowCast())
             {
                 ShadowPassParams shadowParams;
                 shadowParams.renderMask = defaultParams.renderMask;
-                shadowParams.nearZ = 1.0f;
-                shadowParams.farZ = 20.0f;
+                shadowParams.nearZ = mainLight->getShadowCastNearZ();
+                shadowParams.farZ = mainLight->getShadowCastFarZ();
 
                 shadowParams.mainLightTransform = mainLight->getTransform()->getWorldTransform();
                 shadowParams.mainLightProjectionMatrix = Mat4F::CreateProjectionOrthographicLHMatrix(
-                    -3.0f,
-                    +3.0f,
-                    -3.0f,
-                    +3.0f,
+                    -mainLight->getShadowCastSize(),
+                    +mainLight->getShadowCastSize(),
+                    -mainLight->getShadowCastSize(),
+                    +mainLight->getShadowCastSize(),
                     shadowParams.nearZ,
                     shadowParams.farZ);
 

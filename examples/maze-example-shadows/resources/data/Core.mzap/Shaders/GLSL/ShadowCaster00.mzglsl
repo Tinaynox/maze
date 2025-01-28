@@ -8,20 +8,21 @@
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Vertex.mzglsl"
 
+#if (SKIN)
+    #include "Utils/Skinning.mzglsl"
+#endif
+
 
 //////////////////////////////////////////
 IN vec3 a_position;
-IN vec3 a_normal;
-IN vec3 a_color;
-IN vec2 a_texCoords0;
+IN vec4 a_blendWeights;
+IN vec4 a_blendIndices;
 
 
 //////////////////////////////////////////
 OUT vec3 v_positionOS;
 OUT vec3 v_positionWS;
 OUT vec3 v_positionVS;
-OUT vec3 v_normalOS;
-OUT vec3 v_normalWS;
 
 
 //////////////////////////////////////////
@@ -39,6 +40,36 @@ void main()
     mat4 viewMatrix = GetViewMatrix();
 
     vec4 positionOS = vec4(a_position, 1.0);
+    
+#if (SKIN)
+#if (SKIN_ZERO_WEIGHT_SUPPORT)
+    if (a_blendWeights.x + a_blendWeights.y + a_blendWeights.z + a_blendWeights.w > 0.0)
+#endif
+    {
+        vec4 skinnedPositionOS = vec4(0.0);
+
+        for (int bone = 0; bone < 4; ++bone)
+        {
+            int boneIndex = int(a_blendIndices[bone]);
+            float boneWeight = a_blendWeights[bone];
+            
+            int boneTransformIndex = boneIndex * 4;
+            vec3 row0 = u_boneSkinningTransforms[boneTransformIndex];
+            vec3 row1 = u_boneSkinningTransforms[boneTransformIndex + 1];
+            vec3 row2 = u_boneSkinningTransforms[boneTransformIndex + 2];
+            vec3 row3 = u_boneSkinningTransforms[boneTransformIndex + 3];
+        
+            mat4 boneMatrix = mat4(
+                vec4(row0, 0.0),
+                vec4(row1, 0.0),
+                vec4(row2, 0.0),
+                vec4(row3, 1.0));
+            skinnedPositionOS += (boneMatrix * vec4(a_position, 1.0)) * boneWeight;
+        }
+        positionOS = vec4(skinnedPositionOS.xyz, 1.0);
+    }
+#endif
+    
     vec4 positionWS = modelMatrix * positionOS;
     MAZE_CLIP_DISTANCE_VERTEX(positionWS);
     vec4 positionVS = viewMatrix * positionWS;

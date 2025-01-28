@@ -9,6 +9,10 @@
 #include "Utils/Vertex.mzglsl"
 
 
+// SHADOW_MAP
+uniform sampler2D u_mainLightShadowMap;
+uniform mat4 u_mainLightViewProjectionMatrix;
+
 
 //////////////////////////////////////////
 IN vec3 a_position;
@@ -32,6 +36,8 @@ OUT vec3 v_bitangentWS;
 OUT vec4 v_color;
 OUT vec2 v_uv0;
 OUT vec3 v_viewDirWS;
+OUT vec4 v_positionMLS;
+OUT vec2 v_mainLightShadowMapTexelSize;
 
 
 //////////////////////////////////////////
@@ -79,6 +85,9 @@ void main()
     v_uv0 = a_texCoords0;
 
     v_viewDirWS = u_viewPosition - v_positionWS;
+    
+    v_positionMLS = u_mainLightViewProjectionMatrix * positionWS;
+    v_mainLightShadowMapTexelSize = 1.0 / textureSize(u_mainLightShadowMap, 0);
 
     gl_Position = positionCS;
 }
@@ -94,6 +103,7 @@ void main()
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Fragment.mzglsl"
 #include "Utils/Core.mzglsl"
+#include "Utils/Lighting.mzglsl"
 
 
 //////////////////////////////////////////
@@ -101,6 +111,10 @@ uniform vec4 u_color;
 uniform vec4 u_ambientLightColor;
 uniform float u_shininess;
 uniform vec4 u_specularColor;
+
+// SHADOW_MAP
+uniform sampler2D u_mainLightShadowMap;
+uniform float u_shadowMult;
 
 // LAMBERT_THRESHOLD
 uniform float u_lambertThreshold;
@@ -126,6 +140,8 @@ IN vec3 v_bitangentWS;
 IN vec4 v_color;
 IN vec2 v_uv0;
 IN vec3 v_viewDirWS;
+IN vec4 v_positionMLS;
+IN vec2 v_mainLightShadowMapTexelSize;
 
 
 //////////////////////////////////////////
@@ -214,7 +230,8 @@ void main()
     vec3 linearColor = diffuseColor * ambientLightColor;
             
     // Main light
-    linearColor += BlinnPhongLighting(diffuseColor, normalWS, fragmentToViewDirection, normalize(u_mainLightDirection), u_mainLightColor.rgb);
+    float mainLightShadow = CalculateShadow(v_positionMLS, normalWS, u_mainLightDirection, u_mainLightShadowMap, v_mainLightShadowMapTexelSize) * u_shadowMult;
+    linearColor += (1.0 - mainLightShadow) * BlinnPhongLighting(diffuseColor, normalWS, fragmentToViewDirection, normalize(u_mainLightDirection), u_mainLightColor.rgb);
     
     // Reset to LDR
     linearColor.r = min(linearColor.r, 1.0);

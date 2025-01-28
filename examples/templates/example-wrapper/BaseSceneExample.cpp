@@ -196,8 +196,8 @@ namespace Maze
                 PixelFormat::DEPTH_U24
             });
         m_shadowBuffer->setName("ShadowBuffer");
-        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setMinFilter(TextureFilter::Nearest);
-        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Nearest);
+        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setMinFilter(TextureFilter::Linear);
+        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Linear);
         m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setWrapS(TextureWrap::ClampToBorder);
         m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setWrapT(TextureWrap::ClampToBorder);
         m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setBorderColor(ColorU32::c_white);

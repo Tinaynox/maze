@@ -138,6 +138,31 @@ namespace Maze
         //////////////////////////////////////////
         inline RenderMaskPtr const& getRenderMask() const { return m_renderMask; }
 
+
+        //////////////////////////////////////////
+        inline void setShadowCast(Bool _value) { m_shadowCast = _value; }
+
+        //////////////////////////////////////////
+        inline Bool getShadowCast() const { return m_shadowCast; }
+
+        //////////////////////////////////////////
+        inline void setShadowCastSize(F32 _value) { m_shadowCastSize = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getShadowCastSize() const { return m_shadowCastSize; }
+
+        //////////////////////////////////////////
+        inline void setShadowCastNearZ(F32 _value) { m_shadowCastNearZ = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getShadowCastNearZ() const { return m_shadowCastNearZ; }
+
+        //////////////////////////////////////////
+        inline void setShadowCastFarZ(F32 _value) { m_shadowCastFarZ = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getShadowCastFarZ() const { return m_shadowCastFarZ; }
+
     protected:
 
         //////////////////////////////////////////
@@ -165,6 +190,11 @@ namespace Maze
 
         Light3DType m_lightType;
         ColorF128 m_color;
+
+        bool m_shadowCast = false;
+        F32 m_shadowCastSize = 10.0f;
+        F32 m_shadowCastNearZ = 1.0f;
+        F32 m_shadowCastFarZ = 50.0f;
     };
 
 

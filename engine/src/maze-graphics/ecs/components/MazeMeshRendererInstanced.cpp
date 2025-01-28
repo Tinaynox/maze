@@ -224,13 +224,25 @@ namespace Maze
         ShadowPassParams const& _params,
         RenderUnit const& _renderUnit)
     {
+        Vector<VertexArrayObjectPtr> const& vaos = getRenderMesh()->getVertexArrayObjects();
+        for (S32 i = 0, in = (S32)vaos.size(); i < in; ++i)
+        {
+            VertexArrayObjectPtr const& vao = vaos[i];
 
+            MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
+
+            MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null!");
+            _renderQueue->addDrawVAOInstancedCommand(
+                vao.get(),
+                (S32)getModelMatrices().size(),
+                getModelMatricesData());
+        }
     }
 
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererInstancedSystem,
+    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererInstancedDefaultPassGatherRenderUnits,
         MAZE_ECS_TAGS(MAZE_HS("render")),
         {},
         Render3DDefaultPassGatherRenderUnitsEvent& _event,
@@ -262,6 +274,43 @@ namespace Maze
 
                 _event.getRenderUnits()->emplace_back(
                     material->getFirstRenderPass(),
+                    _transform3D->getWorldPosition(),
+                    _meshRenderer);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererInstancedShadowPassGatherRenderUnits,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
+        Render3DShadowPassGatherRenderUnitsEvent& _event,
+        Entity* _entity,
+        MeshRendererInstanced* _meshRenderer,
+        Transform3D* _transform3D)
+    {
+        if (!_meshRenderer->getEnabled())
+            return;
+
+        if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
+        {
+            if (_meshRenderer->getRenderMesh())
+            {
+                Material const* material = _meshRenderer->getMaterial().get();
+                if (!material)
+                    material = _meshRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial().get();
+
+
+                if (_meshRenderer->getRenderMesh()->getVertexArrayObjects().empty() ||
+                    _meshRenderer->getModelMatrices().empty())
+                    return;
+
+                RenderPassPtr const& firstShadowRenderPass = material->getFirstRenderPass(RenderPassType::Shadow);
+                if (!firstShadowRenderPass)
+                    return;
+
+                _event.getRenderUnits()->emplace_back(
+                    firstShadowRenderPass,
                     _transform3D->getWorldPosition(),
                     _meshRenderer);
             }

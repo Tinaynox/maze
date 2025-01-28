@@ -28,6 +28,13 @@ uniform
 
 uniform
 {
+  name:String = "u_shadowMult"
+  type:String = "UniformF32"
+  value:F32 = 0.75
+}
+
+uniform
+{
   name:String = "u_checkerScale"
   type:String = "UniformF32"
   value:F32 = 0.5

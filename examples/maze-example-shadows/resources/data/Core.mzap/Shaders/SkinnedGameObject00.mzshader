@@ -50,6 +50,19 @@ feature
   name:String = "SKIN_ZERO_WEIGHT_SUPPORT"
 }
 
+
+feature
+{
+  name:String = "SHADOW_MAP"
+}
+
+uniform
+{
+  name:String = "u_shadowMult"
+  type:String = "UniformF32"
+  value:F32 = 0.75
+}
+
 GLSL
 {
   shader:String = "Universal00.mzglsl"

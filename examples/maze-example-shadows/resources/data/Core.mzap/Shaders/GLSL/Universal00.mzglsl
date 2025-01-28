@@ -15,11 +15,10 @@
 
 //////////////////////////////////////////
 uniform vec4 u_baseMapST;
-uniform mat4 u_mainLightViewProjectionMatrix;
-
 
 // SHADOW_MAP
 uniform sampler2D u_mainLightShadowMap;
+uniform mat4 u_mainLightViewProjectionMatrix;
 
 
 //////////////////////////////////////////
@@ -138,8 +137,10 @@ void main()
 
     v_viewDirWS = u_viewPosition - v_positionWS;
     
+#if defined(SHADOW_MAP) && (SHADOW_MAP)
     v_positionMLS = u_mainLightViewProjectionMatrix * positionWS;
     v_mainLightShadowMapTexelSize = 1.0 / textureSize(u_mainLightShadowMap, 0);
+#endif
 
     gl_Position = positionCS;
 }
@@ -155,6 +156,7 @@ void main()
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Fragment.mzglsl"
 #include "Utils/Core.mzglsl"
+#include "Utils/Lighting.mzglsl"
 
 
 //////////////////////////////////////////
@@ -166,6 +168,7 @@ uniform vec4 u_specularColor;
 
 // SHADOW_MAP
 uniform sampler2D u_mainLightShadowMap;
+uniform float u_shadowMult;
 
 // EMISSION_MAP
 uniform sampler2D u_emissionMap;
@@ -260,39 +263,6 @@ vec3 BlinnPhongLighting(
         specularColor * lightColorFinal;
 }
 
-//////////////////////////////////////////
-float CalculateShadow(
-    vec4 positionMLS,
-    vec3 normalWS,
-    vec3 mainLightDirection,
-    sampler2D shadowMap,
-    vec2 shadowMapTexelSize)
-{
-    vec3 projCoords = positionMLS.xyz / positionMLS.w;
-    projCoords = projCoords * 0.5 + 0.5;
-    if (projCoords.z <= 0.0)
-        return 0.0;
-    
-    float currentDepth = 1.0 - projCoords.z;
-    
-    vec3 fragmentToLightDirection = -mainLightDirection;
-    float NdotL = dot(normalWS, fragmentToLightDirection);
-    float bias = max(0.001 * (1.0 - NdotL), 0.00001);
-    
-    float shadow = 0.0;
-    for(int x = -1; x <= 1; ++x)
-    {
-        for(int y = -1; y <= 1; ++y)
-        {
-            float closestDepth = MAZE_GET_TEXEL2D(shadowMap, projCoords.xy + vec2(x, y) * shadowMapTexelSize).r; 
-            shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;        
-        }    
-    }
-    shadow /= 9.0;
-    
-    return shadow;
-}
-
 
 //////////////////////////////////////////
 // Main
@@ -346,7 +316,11 @@ void main()
     vec3 linearColor = diffuseColor * ambientLightColor;
             
     // Main light
-    float mainLightShadow = CalculateShadow(v_positionMLS, normalWS, u_mainLightDirection, u_mainLightShadowMap, v_mainLightShadowMapTexelSize);
+#if defined(SHADOW_MAP) && (SHADOW_MAP)
+    float mainLightShadow = CalculateShadow(v_positionMLS, normalWS, u_mainLightDirection, u_mainLightShadowMap, v_mainLightShadowMapTexelSize) * u_shadowMult;
+#else
+    float mainLightShadow = 0.0;
+#endif
     linearColor += (1.0 - mainLightShadow) * BlinnPhongLighting(diffuseColor, normalWS, fragmentToViewDirection, u_mainLightDirection, u_mainLightColor.rgb);
    
     

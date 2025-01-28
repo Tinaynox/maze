@@ -1,0 +1,9 @@
+feature
+{
+  name:String = "SKIN"
+}
+
+GLSL
+{
+  shader:String = "ShadowCaster00.mzglsl"
+}

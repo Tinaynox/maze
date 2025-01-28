@@ -280,7 +280,23 @@ namespace Maze
         ShadowPassParams const& _params,
         RenderUnit const& _renderUnit)
     {
+        Vector<VertexArrayObjectPtr> const& vaos = getRenderMesh()->getVertexArrayObjects();
+        VertexArrayObjectPtr const& vao = vaos[_renderUnit.index % vaos.size()];
 
+        MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
+
+        TMat const* tm = reinterpret_cast<TMat const*>(_renderUnit.userData);
+
+        U16 bonesCount = Math::Min((U16)MAZE_SKELETON_BONES_MAX, (U16)m_animator->getBonesCount());
+        _renderQueue->addUploadShaderUniformCommand(
+            MAZE_HCS("u_boneSkinningTransforms"),
+            (TMat const*)&m_animator->getBonesSkinningTransforms()[0],
+            bonesCount);
+
+        _renderQueue->addDrawVAOInstancedCommand(
+            vao.get(),
+            1,
+            tm);
     }
     
 
@@ -344,6 +360,57 @@ namespace Maze
 
                     _event.getRenderUnits()->emplace_back(
                         firstRenderPass,
+                        _transform3D->getWorldPosition(),
+                        _meshRenderer,
+                        i,
+                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()));
+                }
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshRendererShadowPassGatherRenderUnits,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
+        Render3DShadowPassGatherRenderUnitsEvent& _event,
+        Entity* _entity,
+        SkinnedMeshRenderer* _meshRenderer,
+        Transform3D* _transform3D)
+    {
+        if (!_meshRenderer->getEnabled())
+            return;
+
+        if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
+        {
+            if (!_meshRenderer->getAnimator() || _meshRenderer->getAnimator()->getBonesSkinningTransforms().empty())
+                return;
+
+            if (_meshRenderer->getRenderMesh())
+            {
+                Vector<MaterialAssetRef> const& materials = _meshRenderer->getMaterialRefs();
+                Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+
+                if (vaos.empty())
+                    return;
+
+                S32 c = (S32)Math::Max(vaos.size(), materials.size());
+
+                for (S32 i = 0, in = c; i < in; ++i)
+                {
+                    MaterialPtr const* material = nullptr;
+                    if (!materials.empty())
+                        material = &materials[i % materials.size()].getMaterial();
+
+                    if (!material || !*material)
+                        material = &_meshRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial();
+
+                    RenderPassPtr const& firstShadowRenderPass = (*material)->getFirstRenderPass(RenderPassType::Shadow);
+                    if (!firstShadowRenderPass)
+                        continue;
+
+                    _event.getRenderUnits()->emplace_back(
+                        firstShadowRenderPass,
                         _transform3D->getWorldPosition(),
                         _meshRenderer,
                         i,

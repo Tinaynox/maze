@@ -171,6 +171,8 @@ namespace Maze
         //m_mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
         m_mainLight3D->getTransform()->setLocalPosition(-3.822013f, 1.546563f, 5.639657f);
         m_mainLight3D->getTransform()->setLocalRotation(0.540104f, 0.459414f, 0.682045f, -0.179000f);
+        m_mainLight3D->setShadowCastSize(5.0f);
+        m_mainLight3D->setShadowCast(true);
 
 
         m_fpsController->setPosition(Vec3F(0.0f, 0.0f, 2.1f));
@@ -179,13 +181,9 @@ namespace Maze
 
 
         getLightingSettings()->setSkyBoxMaterial("Skybox00.mzmaterial");
-#if 0
         m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Chessboard00.mzmaterial");
         m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Chessboard00.mzmaterial");
-#else
-        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Test00.mzmaterial");
-        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Test00.mzmaterial");
-#endif
+
         ExampleHelper::BuildSimpleLevel(
             this,
             m_fpsController->getLevelSize(),
@@ -201,6 +199,19 @@ namespace Maze
         meshRenderer->setRenderMesh("Cube");
         meshRenderer->setMaterial("Test00.mzmaterial");
 
+        {
+            EntityPtr skinnedMeshEntity = createEntity("Buckethead");
+            Transform3DPtr skinnedMeshTransform = skinnedMeshEntity->createComponent<Transform3D>();
+            skinnedMeshTransform->setLocalZ(0.0f);
+            skinnedMeshTransform->setLocalScale(0.2f);
+            skinnedMeshTransform->setLocalX(3.0f);
+            auto skinnedMeshRenderer = skinnedMeshEntity->createComponent<SkinnedMeshRenderer>();
+            skinnedMeshRenderer->setRenderMesh("Buckethead.fbx");
+            skinnedMeshRenderer->setMaterial("Buckethead.mzmaterial");
+            skinnedMeshRenderer->playAnimation(MAZE_HCS("Run"));
+            skinnedMeshRenderer->getAnimator()->getCurrentAnimation()->rewindToRandom();
+        }
+
         SpritePtr shadowSprite = Sprite::Create(
             m_shadowBuffer->getDepthTexture()->cast<Texture2D>());
 
@@ -212,19 +223,20 @@ namespace Maze
             MaterialManager::GetCurrentInstance()->getOrLoadMaterial("ShadowBuffer00.mzmaterial"),
             m_canvasUI->getTransform(),
             this,
-            Vec2F(0.0f, 1.0f),
-            Vec2F(0.0f, 1.0f));
+            Vec2F(1.0f, 1.0f),
+            Vec2F(1.0f, 1.0f));
         spriteRenderer->getMaterial()->setUniform(
             MAZE_HCS("u_depthMap"),
             m_shadowBuffer->getDepthTexture()->cast<Texture2D>());
 
 
-
+#if 0
         U8 pixels[128 * 128];
         for (U8& pixel : pixels)
             pixel = rand() % 255;
         m_shadowBuffer->getDepthTexture()->cast<Texture2D>()->copyImageFrom(
             (U8 const*)pixels, PixelFormat::R_U8, 128, 128, 0, 0);
+#endif
 
         return true;
     }
