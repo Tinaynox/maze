@@ -94,6 +94,7 @@
 
 //////////////////////////////////////////
 #define DISTORTION_BUFFER_DIV 1u
+// #define SHADOW_BUFFER_DIV 1u
 
 
 //////////////////////////////////////////
@@ -194,6 +195,18 @@ namespace Maze
         m_renderBuffer->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
         m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
 
+        /*m_shadowBuffer = RenderBuffer::Create(
+            {
+                renderBufferSize / SHADOW_BUFFER_DIV,
+                PixelFormat::None,
+                PixelFormat::DEPTH_U24
+            });
+        m_shadowBuffer->setName("ShadowBuffer");
+        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setMinFilter(TextureFilter::Linear);
+        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Linear);
+        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setWrapS(TextureWrap::ClampToBorder);
+        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setWrapT(TextureWrap::ClampToBorder);
+        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setBorderColor(ColorU32::c_white);*/
                      
         EntityPtr canvasEntity = createEntity("Canvas");
         m_canvas = canvasEntity->createComponent<Canvas>();
@@ -343,6 +356,9 @@ namespace Maze
             m_renderBufferMSAA->setSize(renderWindowSize);
 
         m_distortionRenderBuffer->setSize(renderWindowSize / DISTORTION_BUFFER_DIV);
+
+        /*if (m_shadowBuffer)
+            m_shadowBuffer->setSize(renderWindowSize / SHADOW_BUFFER_DIV);*/
     }
 
     //////////////////////////////////////////
@@ -350,6 +366,8 @@ namespace Maze
     {
         if (!m_enginePlayer->getCurrentCamera3D())
             return;
+
+        //m_enginePlayer->getCurrentCamera3D()->setShadowBuffer(m_shadowBuffer);
 
         PlayerSettings* playerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<PlayerSettings>();
 

@@ -36,6 +36,7 @@
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/managers/MazeMeshManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/components/MazeCamera3DShadowBuffer.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
@@ -114,6 +115,7 @@ namespace Maze
 
         // 3D
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Camera3D>("3D");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Camera3DShadowBuffer>("3D");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<GizmoBillboard3D>("3D");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Light3D>("3D");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<TrailRenderer3D>("3D");

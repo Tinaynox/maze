@@ -152,6 +152,8 @@ namespace Maze
         RenderBufferPtr m_distortionRenderBuffer;
         Camera3DPtr m_distortionCamera3D;
 
+        // RenderBufferPtr m_shadowBuffer;
+
         MaterialPtr m_postFXMaterial;
 
         SpriteRenderer2DPtr m_renderColorSprite;

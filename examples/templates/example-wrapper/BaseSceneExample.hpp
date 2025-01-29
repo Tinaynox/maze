@@ -147,7 +147,7 @@ namespace Maze
         RenderBufferPtr m_renderBufferMSAA;
         LevelBloomControllerPtr m_bloomController;
 
-        RenderBufferPtr m_shadowBuffer;
+        // RenderBufferPtr m_shadowBuffer;
 
         ExampleHelper::SimpleLevelConfig m_simpleLevelConfig;
 

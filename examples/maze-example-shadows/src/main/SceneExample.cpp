@@ -72,6 +72,7 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/components/MazeCamera3DShadowBuffer.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer3D.hpp"
 #include "maze-graphics/ecs/components/MazeSkinnedMeshRenderer.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderMZMESH.hpp"
@@ -212,8 +213,8 @@ namespace Maze
             skinnedMeshRenderer->getAnimator()->getCurrentAnimation()->rewindToRandom();
         }
 
-        SpritePtr shadowSprite = Sprite::Create(
-            m_shadowBuffer->getDepthTexture()->cast<Texture2D>());
+        auto depthBufferTexture = m_camera3D->getEntityRaw()->getComponent<Camera3DShadowBuffer>()->getShadowBuffer()->getDepthTexture()->cast<Texture2D>();
+        SpritePtr shadowSprite = Sprite::Create(depthBufferTexture);
 
        
         SpriteRenderer2DPtr spriteRenderer = SpriteHelper::CreateSprite(
@@ -227,7 +228,7 @@ namespace Maze
             Vec2F(1.0f, 1.0f));
         spriteRenderer->getMaterial()->setUniform(
             MAZE_HCS("u_depthMap"),
-            m_shadowBuffer->getDepthTexture()->cast<Texture2D>());
+            depthBufferTexture);
 
 
 #if 0

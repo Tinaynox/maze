@@ -38,6 +38,7 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeAnimationCurve.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/components/MazeCamera3DShadowBuffer.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
@@ -165,6 +166,7 @@ namespace Maze
         m_camera3D->getEntityRaw()->ensureComponent<Name>("Camera");
         m_camera3D->setRenderMask(m_camera3D->getRenderMask() | (S32)DefaultRenderMask::Gizmos);
         m_camera3D->setViewport(getPlaytestViewport());
+        m_camera3D->getEntityRaw()->ensureComponent<Camera3DShadowBuffer>();
         GizmosManager::GetInstancePtr()->setCamera(m_camera3D);
 
         // DebugGrid

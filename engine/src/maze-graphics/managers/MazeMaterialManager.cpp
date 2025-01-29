@@ -538,20 +538,29 @@ namespace Maze
             case BuiltinMaterialType::Specular:
             {
                 material = Material::Create(m_renderSystemRaw);
-                RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Specular));
-                renderPass->setBlendSrcFactor(BlendFactor::One);
-                renderPass->setBlendDestFactor(BlendFactor::Zero);
-                renderPass->setDepthWriteEnabled(true);
-                renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
-                renderPass->setCullMode(CullMode::Back);
-                renderPass->setRenderQueueIndex(2000);
+                RenderPassPtr defaultRenderPass = material->createRenderPass();
+                defaultRenderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Specular));
+                defaultRenderPass->setBlendSrcFactor(BlendFactor::One);
+                defaultRenderPass->setBlendDestFactor(BlendFactor::Zero);
+                defaultRenderPass->setDepthWriteEnabled(true);
+                defaultRenderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                defaultRenderPass->setCullMode(CullMode::Back);
+                defaultRenderPass->setRenderQueueIndex(2000);
                 material->setUniform(MAZE_HCS("u_baseMapST"), Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
                 material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
                 material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 material->setUniform(MAZE_HCS("u_ambientLightColor"), ColorF128(0.1f, 0.1f, 0.1f, 1.0f));
                 material->setUniform(MAZE_HCS("u_shininess"), 0.65f);
                 material->setUniform(MAZE_HCS("u_specularColor"), ColorF128(0.3f, 0.3f, 0.3f, 1.0f));
+
+                RenderPassPtr shadowRenderPass = material->createRenderPass(RenderPassType::Shadow);
+                shadowRenderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::ShadowCaster));
+                shadowRenderPass->setBlendSrcFactor(BlendFactor::One);
+                shadowRenderPass->setBlendDestFactor(BlendFactor::Zero);
+                shadowRenderPass->setDepthWriteEnabled(true);
+                shadowRenderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                shadowRenderPass->setCullMode(CullMode::Back);
+                shadowRenderPass->setRenderQueueIndex(2000);
                 break;
             }
             case BuiltinMaterialType::SpecularDS:

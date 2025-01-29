@@ -73,6 +73,7 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/components/MazeCamera3DShadowBuffer.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer3D.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderMZMESH.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
@@ -95,7 +96,7 @@
 
 //////////////////////////////////////////
 #define DISTORTION_BUFFER_DIV 1u
-#define SHADOW_BUFFER_DIV 1u
+// #define SHADOW_BUFFER_DIV 1u
 
 
 //////////////////////////////////////////
@@ -166,7 +167,7 @@ namespace Maze
                     [&](RenderBuffer* _renderBuffer)
                 {
                     MAZE_PROFILE_EVENT("RenderBufferMSAA end draw");
-                    
+
                     m_renderBuffer->blit(m_renderBufferMSAA);
                     m_renderBuffer->eventRenderBufferEndDraw(m_renderBuffer.get());
                 });
@@ -189,7 +190,7 @@ namespace Maze
         m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
 
 
-        m_shadowBuffer = RenderBuffer::Create(
+        /*m_shadowBuffer = RenderBuffer::Create(
             {
                 renderBufferSize / SHADOW_BUFFER_DIV,
                 PixelFormat::None,
@@ -200,8 +201,8 @@ namespace Maze
         m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Linear);
         m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setWrapS(TextureWrap::ClampToBorder);
         m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setWrapT(TextureWrap::ClampToBorder);
-        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setBorderColor(ColorU32::c_white);
-                     
+        m_shadowBuffer->getDepthTexture()->castRaw<Texture2D>()->setBorderColor(ColorU32::c_white);*/
+
         EntityPtr canvasEntity = createEntity("Canvas");
         m_canvas = canvasEntity->createComponent<Canvas>();
         m_canvas->setViewport(getMainViewport());
@@ -255,7 +256,7 @@ namespace Maze
         m_hintText->getTransform()->setZ(2000);
         m_hintText->setColor(ColorU32(255, 255, 255, 220));
         m_hintText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getBuiltinSystemFont(BuiltinSystemFontType::DefaultOutlined));
-        
+
 
         Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.subscribe(this, &BaseSceneExample::notifyMainRenderWindowViewportChanged);
         Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &BaseSceneExample::notifyRenderTargetResized);
@@ -265,10 +266,10 @@ namespace Maze
         EntityPtr lightEntity = createEntity();
         m_mainLight3D = lightEntity->createComponent<Light3D>();
         m_mainLight3D->setColor(ColorU32(255, 244, 214));
-        
+
         m_mainLight3D->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
         m_mainLight3D->getTransform()->setLocalRotation(0.408979f, 0.906161f, -0.068055f, -0.083529f);
-        
+
         lightEntity->ensureComponent<Name>("Light");
 
 
@@ -284,7 +285,8 @@ namespace Maze
         m_camera3D = m_fpsController->getCamera3D();
         m_camera3D->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
         m_camera3D->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::UserMask0);
-        m_camera3D->setShadowBuffer(m_shadowBuffer);
+        m_camera3D->getEntityRaw()->ensureComponent<Camera3DShadowBuffer>();
+        // m_camera3D->setShadowBuffer(m_shadowBuffer);
 
 
         // Distortion render buffer
@@ -316,10 +318,10 @@ namespace Maze
         m_distortionCamera3D->setSortOrder(m_camera3D->getSortOrder() + 100);
         m_distortionCamera3D->setRenderTarget(m_distortionRenderBuffer);
 
-        
+
         m_bloomController = LevelBloomController::Create(m_renderBuffer);
 
-        updateRenderTarget();        
+        updateRenderTarget();
         updateHintText();
 
         return true;
@@ -437,7 +439,7 @@ namespace Maze
         if (m_renderBufferMSAA)
             m_renderBufferMSAA->setSize(renderWindowSize);
 
-        m_shadowBuffer->setSize(renderWindowSize / SHADOW_BUFFER_DIV);
+        // m_shadowBuffer->setSize(renderWindowSize / SHADOW_BUFFER_DIV);
 
         m_distortionRenderBuffer->setSize(renderWindowSize / DISTORTION_BUFFER_DIV);
     }

@@ -1,0 +1,56 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+)"
+#include "MazePrecisionHigh.mzglsl"
+#include "MazeVertex.mzglsl"
+R"(
+
+    //////////////////////////////////////////
+    IN vec3 a_position;
+
+    //////////////////////////////////////////
+    OUT vec3 v_positionOS;
+    OUT vec3 v_positionWS;
+    OUT vec3 v_positionVS;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        int instanceId = gl_InstanceID;
+    
+        mat4 modelMatrix = GetModelMatrix(instanceId);
+		mat4 viewMatrix = GetViewMatrix();
+
+        vec4 positionOS = vec4(a_position, 1.0);
+        vec4 positionWS = modelMatrix * positionOS;
+		MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+        vec4 positionVS = viewMatrix * positionWS;
+        vec4 positionCS = u_projectionMatrix * positionVS;
+        
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+    
+        v_positionOS = positionOS.xyz;
+        v_positionWS = positionWS.xyz;
+        v_positionVS = positionVS.xyz;
+
+        gl_Position = positionCS;
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+)"
+#include "MazePrecisionHigh.mzglsl"
+#include "MazeFragment.mzglsl"
+R"(
+
+    //////////////////////////////////////////
+    void main()
+    {
+
+    }
+)"
