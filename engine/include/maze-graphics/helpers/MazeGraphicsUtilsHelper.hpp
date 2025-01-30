@@ -39,6 +39,9 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(Mesh);
+
+    //////////////////////////////////////////
     namespace GraphicsUtilsHelper
     {
         //////////////////////////////////////////
@@ -63,6 +66,16 @@ namespace Maze
             S8 charWidth,
             S8 charHeight,
             ColorU32 const& _outlineColor);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API bool SaveRenderMeshTangentsToFile(
+            MeshPtr const& _mesh,
+            Path const& _filePath);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API bool LoadRenderMeshTangentsFromFile(
+            MeshPtr const& _mesh,
+            Path const& _filePath);
 
     } // namespace GraphicsUtilsHelper
     //////////////////////////////////////////

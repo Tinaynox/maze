@@ -90,6 +90,7 @@
 #include "maze-editor-tools/inspectors/asset-materials/MazeMaterialsInspector.hpp"
 #include "maze-editor-tools/inspectors/asset-materials/MazeTexture2DsInspector.hpp"
 #include "Editor.hpp"
+#include "managers/EditorUIManager.hpp"
 #include "events/EditorEvents.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "helpers/EditorAssetHelper.hpp"
@@ -188,6 +189,16 @@ namespace Maze
             this, &EditorAssetsManager::notifyEvent);
 
         registerAssetFileCallbacks();
+
+
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Assets",
+            "Mesh/Precalculate Tangents",
+            [](String const& _text)
+            {
+                EditorAssetHelper::PrecalculateTangentsForAllAssetFiles();
+            },
+            []() { return true; });
 
         return true;
     }

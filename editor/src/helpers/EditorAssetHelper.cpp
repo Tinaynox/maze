@@ -281,6 +281,42 @@ namespace Maze
             if (extension == "mzscene")
                 EditorManager::GetInstancePtr()->openScene(assetFile);
         }
+
+        //////////////////////////////////////////
+        void PrecalculateTangentsForAllAssetFiles()
+        {
+            S32 processed = 0;
+            S32 skipped = 0;
+            S32 failed = 0;
+
+            Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtension(Path("fbx"));
+            for (AssetFilePtr const& assetFile : assetFiles)
+            {
+                Path tangentsFilePath = assetFile->getFullPath() + ".mztangents";
+                if (FileHelper::IsFileExists(tangentsFilePath))
+                {
+                    ++skipped;
+                    continue;
+                }
+
+                RenderMeshPtr const& renderMesh = RenderMeshManager::GetCurrentInstancePtr()->getOrLoadRenderMesh(assetFile);
+                if (!renderMesh)
+                {
+                    ++failed;
+                    continue;
+                }
+
+                MeshPtr const& mesh = renderMesh->getMesh();
+                MAZE_ERROR_CONTINUE_IF(!mesh, "RenderMesh mesh is null!", tangentsFilePath.toUTF8().c_str());
+
+                if (GraphicsUtilsHelper::SaveRenderMeshTangentsToFile(mesh, tangentsFilePath))
+                    ++processed;
+                else
+                    ++failed;
+            }
+
+            Debug::Log("Calculation finished. Processed: %d, skipped: %d, failed: %d", processed, skipped, failed);
+        }
     };
 
 } // namespace Maze

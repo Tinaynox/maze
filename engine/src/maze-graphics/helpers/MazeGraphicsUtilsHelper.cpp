@@ -28,6 +28,9 @@
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-graphics/MazePixelFormat.hpp"
 #include "maze-graphics/MazePixelSheet2D.hpp"
+#include "maze-graphics/MazeRenderMesh.hpp"
+#include "maze-graphics/MazeMesh.hpp"
+#include "maze-graphics/MazeSubMesh.hpp"
 
 
 //////////////////////////////////////////
@@ -295,6 +298,127 @@ namespace Maze
             }
 
             return systemFontSheet;
+        }
+
+        //////////////////////////////////////////
+        bool SaveRenderMeshTangentsToFile(
+            MeshPtr const& _mesh,
+            Path const& _filePath)
+        {
+            std::ofstream outputFile(_filePath.c_str(), std::ios::binary);
+            MAZE_ERROR_RETURN_VALUE_IF(!outputFile, false, "Failed to open file - %s", _filePath.toUTF8().c_str());
+
+            U32 subMeshesCount = (U32)_mesh->getSubMeshesCount();
+            outputFile.write((S8 const*)&subMeshesCount, sizeof(subMeshesCount));
+
+            for (Size i = 0; i < Size(subMeshesCount); ++i)
+            {
+                SubMeshPtr const& subMesh = _mesh->getSubMesh(i);
+
+                auto writeSubMeshVertexAttribute = 
+                    [](
+                        std::ofstream& _outputFile,
+                        VertexAttributeSemantic _semantic,
+                        VertexAttributeType _type,
+                        U8 _count,
+                        U8 const* _elementsData,
+                        U32 _elementsCount)
+                    {
+                        if (_elementsCount == 0)
+                            return true;
+
+                        _outputFile.write((S8 const*)&_semantic, sizeof(_semantic));
+                        _outputFile.write((S8 const*)&_type, sizeof(_type));
+                        _outputFile.write((S8 const*)&_count, sizeof(_count));
+                        _outputFile.write((S8 const*)&_elementsCount, sizeof(_elementsCount));
+                        _outputFile.write((S8 const*)_elementsData, _elementsCount * _count * GetVertexAttributeTypeSize(_type));
+
+                        return true;
+                    };
+
+                // Write tangents
+                {
+                    VertexAttributeDescription const& desc = subMesh->getVertexDescription(VertexAttributeSemantic::Tangent);
+                    writeSubMeshVertexAttribute(
+                        outputFile,
+                        VertexAttributeSemantic::Tangent,
+                        desc.type,
+                        (U8)desc.count,
+                        subMesh->getVertexData(VertexAttributeSemantic::Tangent),
+                        (U32)subMesh->getVerticesCount(VertexAttributeSemantic::Tangent));
+                }
+
+                // Write bitangents
+                {
+                    VertexAttributeDescription const& desc = subMesh->getVertexDescription(VertexAttributeSemantic::Bitangent);
+                    writeSubMeshVertexAttribute(
+                        outputFile,
+                        VertexAttributeSemantic::Bitangent,
+                        desc.type,
+                        (U8)desc.count,
+                        subMesh->getVertexData(VertexAttributeSemantic::Bitangent),
+                        (U32)subMesh->getVerticesCount(VertexAttributeSemantic::Bitangent));
+                }
+            }
+
+            outputFile.close();
+            return true;
+        }
+
+        //////////////////////////////////////////
+        bool LoadRenderMeshTangentsFromFile(
+            MeshPtr const& _mesh,
+            Path const& _filePath)
+        {
+            std::ifstream outputFile(_filePath.c_str(), std::ios::binary);
+            MAZE_ERROR_RETURN_VALUE_IF(!outputFile, false, "Failed to open file - %s", _filePath.toUTF8().c_str());
+
+            U32 subMeshesCount = 0u;
+            outputFile.read((S8*)&subMeshesCount, sizeof(subMeshesCount));
+
+            if (subMeshesCount != _mesh->getSubMeshesCount())
+                return false;
+
+            for (Size i = 0; i < Size(subMeshesCount); ++i)
+            {
+                SubMeshPtr const& subMesh = _mesh->getSubMesh(i);
+
+                auto loadSubMeshVertexAttribute =
+                    [&](VertexAttributeSemantic _semantic)
+                    {
+                        VertexAttributeSemantic semantic = VertexAttributeSemantic::Position;
+                        outputFile.read((S8*)&semantic, sizeof(semantic));
+
+                        if (_semantic != semantic)
+                            return false;
+
+                        VertexAttributeType type = VertexAttributeType::S8;
+                        outputFile.read((S8*)&type, sizeof(type));
+                        U8 attributesCount = 0u;
+                        outputFile.read((S8*)&attributesCount, sizeof(attributesCount));
+                        U32 elementsCount = 0u;
+                        outputFile.read((S8*)&elementsCount, sizeof(elementsCount));
+
+                        ByteBufferPtr const& buffer = subMesh->allocateVertexAttributes(
+                            semantic,
+                            type,
+                            attributesCount,
+                            elementsCount,
+                            false);
+                        outputFile.read((S8*)buffer->getDataRW(), U32(elementsCount * attributesCount * GetVertexAttributeTypeSize(type)));
+
+                        return true;
+                    };
+
+                if (!loadSubMeshVertexAttribute(VertexAttributeSemantic::Tangent))
+                    return false;
+
+                if (!loadSubMeshVertexAttribute(VertexAttributeSemantic::Bitangent))
+                    return false;
+            }
+            
+
+            return true;
         }
 
 

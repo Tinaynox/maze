@@ -91,6 +91,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void Edit(Path const& _fullPath);
+
+        //////////////////////////////////////////
+        void PrecalculateTangentsForAllAssetFiles();
     };
 
 
