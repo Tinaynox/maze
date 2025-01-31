@@ -38,6 +38,7 @@
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeStaticName.hpp"
+#include "maze-core/ecs/components/MazePrefabInstance.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -503,14 +504,26 @@ namespace Maze
 
     //////////////////////////////////////////
     void EditorHierarchyController::updateEntity(
-        HierarchyLinePtr const& hierarchyLine,
+        HierarchyLinePtr const& _hierarchyLine,
         EntityPtr const& _entity)
     {
-        hierarchyLine->setSelected(
+        _hierarchyLine->setSelected(
             SelectionManager::GetInstancePtr()->isObjectSelected(_entity));
 
-        hierarchyLine->setActive(
+        _hierarchyLine->setActive(
             _entity->getActiveInHierarchy());
+
+        SpritePtr sprite = UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::EntityObject3D);
+        ColorU32 color = ColorU32::c_black;
+
+        if (_entity->getComponentRaw<PrefabInstance>())
+        {
+            sprite = UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Prefab);
+            color = ColorU32::c_white;
+        }
+
+        _hierarchyLine->getIconRenderer()->setSprite(sprite);
+        _hierarchyLine->getIconRenderer()->setColor(color);
     }
 
     //////////////////////////////////////////

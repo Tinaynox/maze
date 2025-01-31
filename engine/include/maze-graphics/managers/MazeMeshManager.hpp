@@ -71,6 +71,7 @@ namespace Maze
     {
         F32 scale = 1.0f;
         bool mergeSubMeshes = false;
+        ByteBufferPtr tangentsData;
     };
 
 

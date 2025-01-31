@@ -33,6 +33,7 @@
 #include "maze-render-system-opengl-core/MazeTextureOpenGL.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/system/MazeTimer.hpp"
 
 
 //////////////////////////////////////////
@@ -891,8 +892,13 @@ namespace Maze
                 MAZE_PROFILE_EVENT("mzglGenerateMipmap");
 
                 Debug::log << "Texture2DOpenGL<" << getName() << ">: mzglGenerateMipmap started..." << endl;
+                Timer timer;
+
                 MAZE_GL_CALL(mzglGenerateMipmap(MAZE_GL_TEXTURE_2D));
-                Debug::log << "Texture2DOpenGL<" << getName() << ">: mzglGenerateMipmap finished." << endl;
+
+                F32 msTime = F32(timer.getMicroseconds()) / 1000.0f;
+                Debug::log << "Texture2DOpenGL<" << getName() << ">: mzglGenerateMipmap finished (" <<
+                    std::fixed << std::setprecision(1) << msTime << "ms)" << endl;
             }
             else
             {

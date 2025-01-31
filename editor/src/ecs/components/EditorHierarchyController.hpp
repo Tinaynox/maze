@@ -162,7 +162,6 @@ namespace Maze
         void updateEntityName(EntityPtr const& _entity);
 
 
-
         //////////////////////////////////////////
         HierarchyLinePtr createHierarchyLine(HierarchyLineType _type);
 

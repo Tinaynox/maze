@@ -31,6 +31,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/ecs/components/MazePrefabInstance.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
@@ -224,6 +225,11 @@ namespace Maze
         InspectorManager* inspectorManager = InspectorManager::GetInstancePtr();
 
         UnorderedMap<ComponentId, MetaClass*> componentMetaClasses = EditorToolsHelper::CollectIntersectingComponentMetaClasses(m_entities);
+
+
+        // Ignored components
+        componentMetaClasses.erase(ClassInfo<PrefabInstance>::UID());
+
 
         // Remove unnecessary editors
         for (Map<ComponentId, ComponentEditorPtr>::iterator it = m_componentEditors.begin(),

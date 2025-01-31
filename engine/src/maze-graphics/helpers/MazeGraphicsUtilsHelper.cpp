@@ -301,19 +301,19 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        bool SaveRenderMeshTangentsToFile(
-            MeshPtr const& _mesh,
+        bool SaveMeshTangentsToFile(
+            Mesh const& _mesh,
             Path const& _filePath)
         {
             std::ofstream outputFile(_filePath.c_str(), std::ios::binary);
             MAZE_ERROR_RETURN_VALUE_IF(!outputFile, false, "Failed to open file - %s", _filePath.toUTF8().c_str());
 
-            U32 subMeshesCount = (U32)_mesh->getSubMeshesCount();
+            U32 subMeshesCount = (U32)_mesh.getSubMeshesCount();
             outputFile.write((S8 const*)&subMeshesCount, sizeof(subMeshesCount));
 
             for (Size i = 0; i < Size(subMeshesCount); ++i)
             {
-                SubMeshPtr const& subMesh = _mesh->getSubMesh(i);
+                SubMeshPtr const& subMesh = _mesh.getSubMesh(i);
 
                 auto writeSubMeshVertexAttribute = 
                     [](
@@ -366,8 +366,8 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        bool LoadRenderMeshTangentsFromFile(
-            MeshPtr const& _mesh,
+        bool LoadMeshTangentsFromFile(
+            MeshPtr& _mesh,
             Path const& _filePath)
         {
             std::ifstream outputFile(_filePath.c_str(), std::ios::binary);
@@ -417,6 +417,60 @@ namespace Maze
                     return false;
             }
             
+
+            return true;
+        }
+
+
+        //////////////////////////////////////////
+        bool LoadMeshTangentsFromBuffer(
+            Mesh& _mesh,
+            ByteBuffer const& _byteBuffer)
+        {
+            U32 subMeshesCount = 0u;
+            U32 bytesRead = _byteBuffer.read(0u, (S8*)&subMeshesCount, sizeof(subMeshesCount));
+
+            if (subMeshesCount != _mesh.getSubMeshesCount())
+                return false;
+
+            for (Size i = 0; i < Size(subMeshesCount); ++i)
+            {
+                SubMeshPtr const& subMesh = _mesh.getSubMesh(i);
+
+                auto loadSubMeshVertexAttribute =
+                    [&](VertexAttributeSemantic _semantic)
+                {
+                    VertexAttributeSemantic semantic = VertexAttributeSemantic::Position;
+                    bytesRead += _byteBuffer.read(bytesRead, (S8*)&semantic, sizeof(semantic));
+
+                    if (_semantic != semantic)
+                        return false;
+
+                    VertexAttributeType type = VertexAttributeType::S8;
+                    bytesRead += _byteBuffer.read(bytesRead, (S8*)&type, sizeof(type));
+                    U8 attributesCount = 0u;
+                    bytesRead += _byteBuffer.read(bytesRead, (S8*)&attributesCount, sizeof(attributesCount));
+                    U32 elementsCount = 0u;
+                    bytesRead += _byteBuffer.read(bytesRead, (S8*)&elementsCount, sizeof(elementsCount));
+
+                    ByteBufferPtr const& buffer = subMesh->allocateVertexAttributes(
+                        semantic,
+                        type,
+                        attributesCount,
+                        elementsCount,
+                        false);
+                    bytesRead += _byteBuffer.read(bytesRead, (S8*)buffer->getDataRW(), U32(elementsCount * attributesCount * GetVertexAttributeTypeSize(type)));
+
+                    return true;
+                };
+
+                if (!loadSubMeshVertexAttribute(VertexAttributeSemantic::Tangent))
+                    return false;
+
+                if (!loadSubMeshVertexAttribute(VertexAttributeSemantic::Bitangent))
+                    return false;
+            }
+
 
             return true;
         }

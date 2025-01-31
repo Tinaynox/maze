@@ -33,12 +33,14 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
+#include "maze-core/managers/MazeEntityPrefabManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
 #include "maze-core/ecs/components/MazeSinMovement3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
+#include "maze-core/assets/MazeAssetUnitEntityPrefab.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -187,6 +189,14 @@ namespace Maze
             m_prefabEntity, m_prefabAssetFile->getFullPath());
 
         m_prefabAssetFileSaveTimestamp = EditorAction::GetCurrentTimestamp();
+
+        AssetUnitEntityPrefabPtr assetUnit = m_prefabAssetFile->getAssetUnit<AssetUnitEntityPrefab>();
+        if (assetUnit)
+        {
+            EntityPrefabManager::GetInstancePtr()->removeEntityPrefabFromLibrary(
+                assetUnit->getAssetUnitId());
+            assetUnit->unloadNow();
+        }
     }
 
     //////////////////////////////////////////

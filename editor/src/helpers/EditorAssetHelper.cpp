@@ -309,7 +309,7 @@ namespace Maze
                 MeshPtr const& mesh = renderMesh->getMesh();
                 MAZE_ERROR_CONTINUE_IF(!mesh, "RenderMesh mesh is null!", tangentsFilePath.toUTF8().c_str());
 
-                if (GraphicsUtilsHelper::SaveRenderMeshTangentsToFile(mesh, tangentsFilePath))
+                if (GraphicsUtilsHelper::SaveMeshTangentsToFile(*mesh.get(), tangentsFilePath))
                     ++processed;
                 else
                     ++failed;

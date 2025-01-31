@@ -206,6 +206,11 @@ namespace Maze
         if (metaData.isParamExists(MAZE_HCS("mergeSubMeshes")))
             loaderProps.mergeSubMeshes = metaData.getBool(MAZE_HCS("mergeSubMeshes"));
 
+        Path tangentsFilePath = _assetFile->getFullPath() + ".mztangents";
+        AssetFilePtr tangentsAsset = AssetManager::GetInstancePtr()->getAssetFileByFullPath(tangentsFilePath);
+        if (tangentsAsset)
+            loaderProps.tangentsData = tangentsAsset->readAsByteBuffer();
+
         if (metaData.isEmpty() || !metaData.isParamExists(MAZE_HCS("ext")))
         {
             String assetFileExtension = _assetFile->getExtension().toUTF8();

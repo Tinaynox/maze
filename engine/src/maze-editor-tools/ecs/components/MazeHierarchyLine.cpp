@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
+#include "maze-core/managers/MazeEntityPrefabManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
@@ -42,6 +43,7 @@
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/assets/MazeAssetUnitEntityPrefab.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -222,8 +224,8 @@ namespace Maze
                 m_backgroundRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectBackgroundColorDefault());
         }
 
-        if (m_iconRenderer)
-            m_iconRenderer->setColor(m_textRenderer->getColor());
+        //if (m_iconRenderer)
+        //    m_iconRenderer->setColor(m_textRenderer->getColor());
     }
 
     //////////////////////////////////////////
@@ -310,6 +312,11 @@ namespace Maze
                     if (!assetFile)
                         return;
 
+                    if (assetFile->getExtension() == MAZE_HCS("mzprefab"))
+                    {
+                        _outDropAllowed = true;
+                    }
+
                     RenderMeshPtr const& renderMesh = RenderMeshManager::GetCurrentInstancePtr()->getOrLoadRenderMesh(assetFile);
                     if (renderMesh)
                         _outDropAllowed = true;
@@ -318,9 +325,28 @@ namespace Maze
             else
             if (m_type == HierarchyLineType::Scene)
             {
-                if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("entity"))
+                HashedCString type = _data.getHashedCString(MAZE_HCS("type"));
+                if (type == MAZE_HCS("entity"))
                 {
                     _outDropAllowed = true;
+                }
+                else
+                if (type == MAZE_HCS("assetFile"))
+                {
+                    AssetFileId afid = _data.getS32(MAZE_HCS("afid"));
+                    AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(afid);
+                    if (!assetFile)
+                        return;
+
+                    if (assetFile->getExtension() == MAZE_HCS("mzprefab"))
+                    {
+                        _outDropAllowed = true;
+                        return;
+                    }
+
+                    RenderMeshPtr const& renderMesh = RenderMeshManager::GetCurrentInstancePtr()->getOrLoadRenderMesh(assetFile);
+                    if (renderMesh)
+                        _outDropAllowed = true;
                 }
             }
         });
@@ -354,6 +380,27 @@ namespace Maze
                         if (!assetFile)
                             return;
 
+                        if (assetFile->getExtension() == MAZE_HCS("mzprefab"))
+                        {
+                            auto entity = getWorld()->getEntity(lineEntityId);
+                            if (!entity)
+                                return;
+
+                            auto assetUnit = assetFile->getAssetUnit<AssetUnitEntityPrefab>();
+                            if (!assetUnit)
+                                return;
+
+                            // #TODO: History actions
+                            Transform3DPtr entityParent = entity->getComponent<Transform3D>();
+
+                            EntityPtr newEntity = EntityPrefabManager::GetInstancePtr()->instantiatePrefab(
+                                assetUnit->getAssetUnitId(),
+                                entity->getEcsWorld(),
+                                entity->getEcsScene());
+                            newEntity->ensureComponent<Transform3D>()->setParent(entityParent);
+                            return;
+                        }
+
                         RenderMeshPtr const& renderMesh = RenderMeshManager::GetCurrentInstancePtr()->getOrLoadRenderMesh(assetFile);
                         if (renderMesh)
                         {
@@ -377,7 +424,13 @@ namespace Maze
                 else
                 if (m_type == HierarchyLineType::Scene)
                 {
-                    if (_data.getHashedCString(MAZE_HCS("type")) == MAZE_HCS("entity"))
+                    EcsSceneId sceneId = (EntityId)((S32)reinterpret_cast<Size>(getUserData()));
+                    EcsScenePtr const& scene = SceneManager::GetInstancePtr()->getScene(sceneId);
+                    if (!scene)
+                        return;
+
+                    HashedCString type = _data.getHashedCString(MAZE_HCS("type"));
+                    if (type == MAZE_HCS("entity"))
                     {
                         EntityId eid(_data.getS32(MAZE_HCS("eid")));
                         if (eid == c_invalidEntityId)
@@ -390,6 +443,42 @@ namespace Maze
 
                         EditorToolsHelper::ChangeEntityParent(
                             world, eid, c_invalidEntityId);
+                    }
+                    else
+                    if (type == MAZE_HCS("assetFile"))
+                    {
+                        AssetFileId afid = _data.getS32(MAZE_HCS("afid"));
+                        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(afid);
+                        if (!assetFile)
+                            return;
+
+                        if (assetFile->getExtension() == MAZE_HCS("mzprefab"))
+                        {
+                            auto assetUnit = assetFile->getAssetUnit<AssetUnitEntityPrefab>();
+                            if (!assetUnit)
+                                return;
+
+                            // #TODO: History actions
+                            EntityPtr newEntity = EntityPrefabManager::GetInstancePtr()->instantiatePrefab(
+                                assetUnit->getAssetUnitId(),
+                                scene->getWorld(),
+                                scene.get());
+                            newEntity->ensureComponent<Transform3D>()->setParent(Transform3DPtr());
+                            return;
+                        }
+
+                        RenderMeshPtr const& renderMesh = RenderMeshManager::GetCurrentInstancePtr()->getOrLoadRenderMesh(assetFile);
+                        if (renderMesh)
+                        {
+                            // #TODO: History actions
+                            EntityPtr newEntity = EditorToolsHelper::CreateEntity3D(
+                                renderMesh->getName().c_str(),
+                                scene.get());
+                            newEntity->ensureComponent<Transform3D>()->setParent(Transform3DPtr());
+                            MeshRendererPtr const& meshRenderer = newEntity->ensureComponent<MeshRenderer>();
+                            meshRenderer->setRenderMesh(renderMesh);
+                            meshRenderer->setMaterial("Specular");
+                        }
                     }
                 }
             });

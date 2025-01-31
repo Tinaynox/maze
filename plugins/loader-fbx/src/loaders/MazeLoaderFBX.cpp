@@ -33,6 +33,7 @@
 #include "maze-graphics/MazeMeshSkeleton.hpp"
 #include "maze-graphics/MazeMeshSkeletonAnimation.hpp"
 #include "maze-graphics/config/MazeGraphicsConfig.hpp"
+#include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/system/MazeTimer.hpp"
 
@@ -263,41 +264,44 @@ namespace Maze
             if (!colors.empty())
                 subMesh->setColors(&colors[0], colors.size());
 
+            if (!_props.tangentsData)
+            {
 #if 0
-            if (!tangents.empty())
-            {
-                subMesh->setTangents(&tangents[0], tangents.size());
-
-                bitangents.resize(tangents.size());
-                for (S32 i = 0, in = (S32)bitangents.size(); i != in; ++i)
-                    bitangents[i] = normals[i].crossProduct(tangents[i]);
-
-                subMesh->setBitangents(&tangents[0], tangents.size());
-            }
-            else
-#endif
-            if (!normals.empty() && !uvs.empty())
-            {
-                Debug::LogWarning("SubMesh is not containing tangents info. Calculating...");
-                Timer timer;
-
-                // Generate tangents and bitangents
-                if (SubMeshHelper::GenerateTangentsAndBitangents(
-                    &indices[0],
-                    indices.size(),
-                    &positions[0],
-                    &uvs[0],
-                    &normals[0],
-                    positions.size(),
-                    tangents,
-                    bitangents))
+                if (!tangents.empty())
                 {
                     subMesh->setTangents(&tangents[0], tangents.size());
-                    subMesh->setBitangents(&bitangents[0], bitangents.size());
-                }
 
-                F32 msTime = F32(timer.getMicroseconds()) / 1000.0f;
-                Debug::LogWarning("Calculation is taken % .1fms", msTime);
+                    bitangents.resize(tangents.size());
+                    for (S32 i = 0, in = (S32)bitangents.size(); i != in; ++i)
+                        bitangents[i] = normals[i].crossProduct(tangents[i]);
+
+                    subMesh->setBitangents(&tangents[0], tangents.size());
+                }
+                else
+#endif
+                if (!normals.empty() && !uvs.empty())
+                {
+                    Debug::LogWarning("SubMesh is not containing tangents info. Calculating...");
+                    Timer timer;
+
+                    // Generate tangents and bitangents
+                    if (SubMeshHelper::GenerateTangentsAndBitangents(
+                        &indices[0],
+                        indices.size(),
+                        &positions[0],
+                        &uvs[0],
+                        &normals[0],
+                        positions.size(),
+                        tangents,
+                        bitangents))
+                    {
+                        subMesh->setTangents(&tangents[0], tangents.size());
+                        subMesh->setBitangents(&bitangents[0], bitangents.size());
+                    }
+
+                    F32 msTime = F32(timer.getMicroseconds()) / 1000.0f;
+                    Debug::LogWarning("Calculation is taken %.1fms", msTime);
+                }
             }
 
             if (!blendWeights.empty())
@@ -392,16 +396,19 @@ namespace Maze
             }
 
             // Tangents
-            bool hasTangents = geom.getTangents() != nullptr;
-            if (hasTangents)
+            if (!_props.tangentsData)
             {
-                ofbx::Vec3 const* tangentsPtr = geom.getTangents();
-                tangents.reserve(tangents.capacity() + vertexCount);
-                for (S32 i = 0; i < vertexCount; ++i)
+                bool hasTangents = geom.getTangents() != nullptr;
+                if (hasTangents)
                 {
-                    Vec3F tangent = Vec3F((F32)tangentsPtr[i].x, (F32)tangentsPtr[i].y, (F32)tangentsPtr[i].z);
-                    tangent = transformMat.transform(tangent);
-                    tangents.push_back(tangent.normalizedCopy());
+                    ofbx::Vec3 const* tangentsPtr = geom.getTangents();
+                    tangents.reserve(tangents.capacity() + vertexCount);
+                    for (S32 i = 0; i < vertexCount; ++i)
+                    {
+                        Vec3F tangent = Vec3F((F32)tangentsPtr[i].x, (F32)tangentsPtr[i].y, (F32)tangentsPtr[i].z);
+                        tangent = transformMat.transform(tangent);
+                        tangents.push_back(tangent.normalizedCopy());
+                    }
                 }
             }
 
@@ -503,6 +510,15 @@ namespace Maze
             else
                 indicesOffset += indexCount;
         }
+
+        // Precalculated tangents
+        if (_props.tangentsData)
+        {
+            MAZE_ERROR_IF(
+                !GraphicsUtilsHelper::LoadMeshTangentsFromBuffer(_mesh, *_props.tangentsData.get()),
+                "Failed to load tangents data for mesh!");
+        }
+
 
         if(bonesData.size() > MAZE_SKELETON_BONES_MAX)
             Debug::LogError("Bones count overflow - %d/%d",

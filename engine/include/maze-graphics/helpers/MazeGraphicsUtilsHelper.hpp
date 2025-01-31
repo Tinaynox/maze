@@ -68,14 +68,19 @@ namespace Maze
             ColorU32 const& _outlineColor);
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API bool SaveRenderMeshTangentsToFile(
-            MeshPtr const& _mesh,
+        MAZE_GRAPHICS_API bool SaveMeshTangentsToFile(
+            Mesh const& _mesh,
             Path const& _filePath);
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API bool LoadRenderMeshTangentsFromFile(
-            MeshPtr const& _mesh,
+        MAZE_GRAPHICS_API bool LoadMeshTangentsFromFile(
+            Mesh& _mesh,
             Path const& _filePath);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API bool LoadMeshTangentsFromBuffer(
+            Mesh& _mesh,
+            ByteBuffer const& _byteBuffer);
 
     } // namespace GraphicsUtilsHelper
     //////////////////////////////////////////
