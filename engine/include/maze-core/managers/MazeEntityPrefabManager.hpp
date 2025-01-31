@@ -152,6 +152,9 @@ namespace Maze
         //////////////////////////////////////////
         inline void removeEntityPrefabFromLibrary(String const& _name) { removeEntityPrefabFromLibrary(HashedCString(_name.c_str())); }
         
+        //////////////////////////////////////////
+        void removeEntityPrefabFromLibrary(AssetUnitId _auid);
+
 
         //////////////////////////////////////////
         EntityPtr instantiatePrefab(

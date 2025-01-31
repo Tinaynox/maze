@@ -233,6 +233,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EntityPrefabManager::removeEntityPrefabFromLibrary(AssetUnitId _auid)
+    {
+        auto it = m_entityPrefabsByAssetUnitId.find(_auid);
+        if (it != m_entityPrefabsByAssetUnitId.end())
+        {
+            for (auto it2 = m_entityPrefabsLibrary.begin(), end2 = m_entityPrefabsLibrary.end(); it2 != end2; ++it2)
+            {
+                if (it2.value() == it->second)
+                {
+                    m_entityPrefabsLibrary.erase(it2);
+                    break;
+                }
+            }
+            m_entityPrefabsByAssetUnitId.erase(it);
+        }
+    }
+
+    //////////////////////////////////////////
     EntityPtr EntityPrefabManager::instantiatePrefab(
         EntityPtr const& _entity,
         EcsWorld* _world,
