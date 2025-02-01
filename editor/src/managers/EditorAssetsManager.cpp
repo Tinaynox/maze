@@ -394,6 +394,9 @@ namespace Maze
     //////////////////////////////////////////
     void EditorAssetsManager::fixAssetFilesNow()
     {
+        if (m_assetFilessToFix.empty())
+            return;
+
         for (AssetFilePtr const& assetFile : m_assetFilessToFix)
             fixAssetFileNow(assetFile);
         m_assetFilessToFix.clear();
