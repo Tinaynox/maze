@@ -349,6 +349,8 @@ namespace Maze
 
             ofbx::Geometry const& geom = *mesh.getGeometry();
 
+            MAZE_ERROR_RETURN_VALUE_IF(geom.getVertexCount() >= 65535, false, "Vertices count is over 65535 - %d!", geom.getVertexCount());
+
             TMat meshGeometricTransformMat = ConvertOpenFBXMatrixToTMat(mesh.getGeometricMatrix());
             TMat meshLocalTransformMat = ConvertOpenFBXMatrixToTMat(mesh.getLocalTransform());
             TMat meshGlobalTransformMat = ConvertOpenFBXMatrixToTMat(mesh.getGlobalTransform());
