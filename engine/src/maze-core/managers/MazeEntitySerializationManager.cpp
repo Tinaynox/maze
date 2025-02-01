@@ -276,6 +276,14 @@ namespace Maze
             EntityPtr const& prefabEntity = prefabInstance->getEntity();
             EntityPtr const& identityPrefabEntity = _identityPrefabs[prefabInstance->getAssetUnitId()];
 
+            MAZE_ERROR_CONTINUE_IF(
+                !identityPrefabEntity,
+                "Failed to find identity prefab for entity!\n"
+                "prefab auid=%u\n"
+                "entity name=%s",
+                prefabInstance->getAssetUnitId(),
+                EcsHelper::GetName(prefabEntity.get()));
+
             DataBlock* entityBlock = _dataBlock.addNewDataBlock(MAZE_HCS("prefabInstance"));
             entityBlock->setS32(MAZE_HCS("_i"), _pointerIndices[prefabEntity.get()]);
             entityBlock->setU32(MAZE_HCS("source"), (U32)prefabInstance->getAssetUnitId());

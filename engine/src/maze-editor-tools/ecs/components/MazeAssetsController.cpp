@@ -545,6 +545,10 @@ namespace Maze
             if (assetFile->getExtension() == "mzmeta")
                 continue;
 
+            // TODO: Ignored extensions
+            if (assetFile->getExtension() == "mztangents")
+                continue;
+
             Transform2DPtr lineParent = m_selectedAssetsFolderLayoutTransform;
 
             EntityPtr assetLineObject = getEntityRaw()->getEcsScene()->createEntity();
