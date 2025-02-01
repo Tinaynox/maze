@@ -328,6 +328,7 @@ namespace Maze
 
 
         bool m_generateIdsForNewAssetFiles = false;
+        bool m_clearSingleMetaFiles = false;
     };
 
 

@@ -85,6 +85,9 @@ namespace Maze
         m_generateIdsForNewAssetFiles =
             _config.getBool(MAZE_HCS("generateIdsForNewAssetFiles"), m_generateIdsForNewAssetFiles);
 
+        m_clearSingleMetaFiles =
+            _config.getBool(MAZE_HCS("clearSingleMetaFiles"), m_clearSingleMetaFiles);
+
         AssetUnitManager::Initialize(
             m_assetUnitManager,
             _config.getDataBlock(MAZE_HCS("assetUnitConfig"), DataBlock::c_empty));
@@ -187,8 +190,29 @@ namespace Maze
         if (!directory->updateChildrenAssets(_recursive, &addedFiles, &removedFiles))
             return false;
 
-        for (AssetFilePtr const& addFile : addedFiles)
+        for (auto it = addedFiles.begin(), end = addedFiles.end(); it != end;)
+        {
+            AssetFilePtr const& addFile = (*it);
+            if (m_clearSingleMetaFiles)
+            {
+                if (addFile->getClassUID() == ClassInfo<AssetRegularFile>::UID() &&
+                    StringHelper::IsEndsWith(addFile->getFullPath().getPath(), Path(".mzmeta").getPath()))
+                {
+                    auto filePath = Path(addFile->getFullPath().getPath().substr(0, addFile->getFullPath().getPath().length() - Path(".mzmeta").size()));
+                    if (!FileHelper::IsFileExists(filePath))
+                    {
+                        MAZE_WARNING("Cleaning single meta file: %s", addFile->getFullPath().toUTF8());
+                        FileHelper::DeleteRegularFile(addFile->getFullPath());
+                        it = addedFiles.erase(it);
+                        end = addedFiles.end();
+                        continue;
+                    }
+                }
+            }
+
             processAddFile(addFile);
+            ++it;
+        }
 
         for (AssetFilePtr const& addFile : addedFiles)
         {
@@ -196,6 +220,7 @@ namespace Maze
 
             if (extension != MAZE_HCS("mzmeta"))
                 loadAndUpdateFileMetaData(addFile);
+
             eventAssetFileAdded(addFile, extension);
         }
 
@@ -295,7 +320,8 @@ namespace Maze
         if (!_assetFile)
             return;
 
-        FileHelper::Delete(_assetFile->getFullPath().c_str());
+        FileHelper::Delete(_assetFile->getFullPath());
+        FileHelper::Delete(_assetFile->getFullPath() + Path(".mzmeta"));
         updateAssets();
     }
 

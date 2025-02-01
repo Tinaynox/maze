@@ -397,6 +397,8 @@ namespace Maze
         for (AssetFilePtr const& assetFile : m_assetFilessToFix)
             fixAssetFileNow(assetFile);
         m_assetFilessToFix.clear();
+
+        AssetManager::GetInstancePtr()->updateAssets();
     }
 
 } // namespace Maze
