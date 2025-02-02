@@ -1223,9 +1223,9 @@ namespace Maze
         {
             Vec2S sheetPos(4, 3);
             Vec2S startPos = startPosFunc(sheetPos);
-            ColorU32 color0(14, 109, 203);
-            ColorU32 color1(97, 174, 254);
-            ColorU32 color2(62, 143, 225);
+            ColorU32 color0(14, 123, 14);
+            ColorU32 color1(97, 254, 97);
+            ColorU32 color2(32, 195, 32);
 
             S8 const image[32][32 + 1] =
             {
