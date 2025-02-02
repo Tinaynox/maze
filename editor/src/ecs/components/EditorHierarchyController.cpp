@@ -68,6 +68,7 @@
 #include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionEntityRemove.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionEntityAdd.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionSelectEntities.hpp"
 #include "maze-engine/ecs/scenes/MazeSceneEnginePlayer.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
@@ -616,8 +617,9 @@ namespace Maze
                                     entity->ensureComponent<Transform3D>()->getParent());
 
                                 if (EditorToolsActionManager::GetInstancePtr())
-                                    EditorToolsActionManager::GetInstancePtr()->applyAction(
-                                        EditorActionEntityAdd::Create(entity));
+                                    EditorToolsActionManager::GetInstancePtr()->applyActions(
+                                        EditorActionEntityAdd::Create(entityCopy),
+                                        EditorActionSelectEntities::Create(true, entityCopy));
                             }
                         });
 
@@ -631,8 +633,9 @@ namespace Maze
                             newEntityTransform->setParent(transform3D->cast<Transform3D>());
 
                             if (EditorToolsActionManager::GetInstancePtr())
-                                EditorToolsActionManager::GetInstancePtr()->applyAction(
-                                    EditorActionEntityAdd::Create(newEntity));
+                                EditorToolsActionManager::GetInstancePtr()->applyActions(
+                                    EditorActionEntityAdd::Create(newEntity),
+                                    EditorActionSelectEntities::Create(true, newEntity));
                         });
                     }
                     else
@@ -650,8 +653,9 @@ namespace Maze
                                 newEntityTransform->setParent(transform2D->cast<Transform2D>());
 
                                 if (EditorToolsActionManager::GetInstancePtr())
-                                    EditorToolsActionManager::GetInstancePtr()->applyAction(
-                                        EditorActionEntityAdd::Create(newEntity));
+                                    EditorToolsActionManager::GetInstancePtr()->applyActions(
+                                        EditorActionEntityAdd::Create(newEntity),
+                                        EditorActionSelectEntities::Create(true, newEntity));
                             });
                         }
                     }
@@ -678,8 +682,9 @@ namespace Maze
                         newEntity->ensureComponent<Transform3D>();
 
                         if (EditorToolsActionManager::GetInstancePtr())
-                            EditorToolsActionManager::GetInstancePtr()->applyAction(
-                                EditorActionEntityAdd::Create(newEntity));
+                            EditorToolsActionManager::GetInstancePtr()->applyActions(
+                                EditorActionEntityAdd::Create(newEntity),
+                                EditorActionSelectEntities::Create(true, newEntity));
                     });
 
                     _menuListTree->addItem(
@@ -694,8 +699,9 @@ namespace Maze
                         newEntity->ensureComponent<Transform2D>();
 
                         if (EditorToolsActionManager::GetInstancePtr())
-                            EditorToolsActionManager::GetInstancePtr()->applyAction(
-                                EditorActionEntityAdd::Create(newEntity));
+                            EditorToolsActionManager::GetInstancePtr()->applyActions(
+                                EditorActionEntityAdd::Create(newEntity),
+                                EditorActionSelectEntities::Create(true, newEntity));
                     });
 
                     EditorToolsManager::GetInstancePtr()->eventHierarchyLineSceneContextMenu(_menuListTree, scene.get());

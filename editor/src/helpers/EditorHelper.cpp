@@ -201,7 +201,7 @@ namespace Maze
 
                     EntityPtr entity = EditorToolsHelper::CreateEntity2D(
                         _entityName,
-                        EditorManager::GetInstancePtr()->getSceneMain().get());
+                        EditorManager::GetInstancePtr()->getActiveScene().get());
                     entity->getComponent<Transform2D>()->setParent(prefabTransform);
                     return entity;
                 }
@@ -234,7 +234,7 @@ namespace Maze
 
                     EntityPtr entity = EditorToolsHelper::CreateEntity3D(
                         _entityName,
-                        EditorManager::GetInstancePtr()->getSceneMain().get());
+                        EditorManager::GetInstancePtr()->getActiveScene().get());
                     entity->getComponent<Transform3D>()->setParent(prefabTransform);
                     return entity;
                 }

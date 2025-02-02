@@ -27,6 +27,7 @@
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorAction.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionActionsGroup.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 
 
@@ -127,6 +128,30 @@ namespace Maze
 
         m_history.push_back(_action);
         setCurrentHistoryIndex((S32)m_history.size() - 1);
+    }
+
+    //////////////////////////////////////////
+    void EditorToolsActionManager::applyActions(
+        EditorActionPtr const& _action0,
+        EditorActionPtr const& _action1)
+    {
+        EditorActionActionsGroupPtr group = EditorActionActionsGroup::Create();
+        group->addAction(_action0);
+        group->addAction(_action1);
+        applyAction(group);
+    }
+
+    //////////////////////////////////////////
+    void EditorToolsActionManager::applyActions(
+        EditorActionPtr const& _action0,
+        EditorActionPtr const& _action1,
+        EditorActionPtr const& _action2)
+    {
+        EditorActionActionsGroupPtr group = EditorActionActionsGroup::Create();
+        group->addAction(_action0);
+        group->addAction(_action1);
+        group->addAction(_action2);
+        applyAction(group);
     }
 
     //////////////////////////////////////////

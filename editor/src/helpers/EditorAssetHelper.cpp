@@ -139,7 +139,8 @@ namespace Maze
             Path newPrefabFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/New Prefab.mzprefab");
 
             Path name = FileHelper::GetFileNameWithoutExtension(newPrefabFullPath);
-            EntityPtr entity = EditorManager::GetInstancePtr()->getSceneMain()->createEntity(name);
+            EntityPtr entity = EditorManager::GetInstancePtr()->getActiveScene()->createEntity(name);
+            entity->createComponent<Transform3D>();
             EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(entity, newPrefabFullPath);
             AssetManager::GetInstancePtr()->updateAssets();
 
@@ -163,7 +164,7 @@ namespace Maze
             Path name = FileHelper::GetFileNameWithoutExtension(newPrefabFullPath);
 
             EcsAssetScenePtr scene = EcsAssetScene::Create(
-                EditorManager::GetInstancePtr()->getSceneMain()->getRenderTarget(),
+                EditorManager::GetInstancePtr()->getActiveScene()->getRenderTarget(),
                 EditorManager::GetInstancePtr()->getMainEcsWorld());
             scene->setName(HashedString(name.toUTF8()));
 
@@ -178,7 +179,7 @@ namespace Maze
             Camera3DPtr camera3D = cameraEntity->ensureComponent<Camera3D>();
             camera3D->getTransform()->setLocalZ(-10.0f);
 
-            // EntityPtr entity = EditorManager::GetInstancePtr()->getSceneMain()->createEntity(name);
+            // EntityPtr entity = EditorManager::GetInstancePtr()->getActiveScene()->createEntity(name);
             // EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(entity, newPrefabFullPath);
 
             EntitySerializationManager::GetInstancePtr()->saveSceneToDataBlockFile(scene, newPrefabFullPath);

@@ -33,6 +33,7 @@
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -216,6 +217,8 @@ namespace Maze
 
         resetAssets();
 
+        SceneManager::GetInstancePtr()->setMainScene(getActiveScene());
+
         setWindowTitle(Editor::GetInstancePtr()->getConfig().projectName);
     }
 
@@ -227,6 +230,19 @@ namespace Maze
 
         resetAssets();
         m_editorPrefabManager->setPrefabEntity(_value);
+
+        if (m_editorPrefabManager->getPrefabEntity())
+        {
+            TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
+                10,
+                [&]()
+            {
+                SelectionManager::GetInstancePtr()->selectObject(
+                    m_editorPrefabManager->getPrefabEntity());
+            });
+        }
+
+        SceneManager::GetInstancePtr()->setMainScene(getActiveScene());
 
         setWindowTitle("Editor - New Prefab");
     }
@@ -244,6 +260,18 @@ namespace Maze
         resetAssets();
         m_editorPrefabManager->setPrefabAssetFile(_value);
 
+        if (m_editorPrefabManager->getPrefabEntity())
+        {
+            TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
+                10,
+                [&]()
+                {
+                    SelectionManager::GetInstancePtr()->selectObject(
+                        m_editorPrefabManager->getPrefabEntity());
+                });
+        }
+
+        SceneManager::GetInstancePtr()->setMainScene(getActiveScene());
 
         setWindowTitle("Editor - %s", _value->getFileName().toUTF8().c_str());
     }
@@ -265,6 +293,8 @@ namespace Maze
         resetAssets();
         m_editorSceneManager->setScene(_scene);
 
+        SceneManager::GetInstancePtr()->setMainScene(getActiveScene());
+
         setWindowTitle("Editor - %s", _scene->getSceneName().str);
     }
 
@@ -281,6 +311,9 @@ namespace Maze
         resetAssets();
         m_editorSceneManager->setSceneAssetFile(_value);
 
+
+        SceneManager::GetInstancePtr()->setMainScene(getActiveScene());
+          
         setWindowTitle("Editor - %s", _value->getFileName().toUTF8().c_str());
     }
 
@@ -359,6 +392,16 @@ namespace Maze
         getSceneMainTools()->setPitchAngle(pitchAngle);
 
         eventPlaytestModeEnabledChanged(m_playtestModeEnabled);
+    }
+
+    //////////////////////////////////////////
+    EcsRenderScenePtr EditorManager::getActiveScene() const
+    {
+        if (m_sceneMode == EditorSceneMode::Scene)
+            if (m_editorSceneManager->getScene())
+                return m_editorSceneManager->getScene();
+
+        return getSceneMain();
     }
 
     //////////////////////////////////////////

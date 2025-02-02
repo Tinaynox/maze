@@ -79,6 +79,17 @@ namespace Maze
         void applyAction(EditorActionPtr const& _action);
 
         //////////////////////////////////////////
+        void applyActions(
+            EditorActionPtr const& _action0,
+            EditorActionPtr const& _action1);
+
+        //////////////////////////////////////////
+        void applyActions(
+            EditorActionPtr const& _action0,
+            EditorActionPtr const& _action1,
+            EditorActionPtr const& _action2);
+
+        //////////////////////////////////////////
         void undoAction();
 
         //////////////////////////////////////////
