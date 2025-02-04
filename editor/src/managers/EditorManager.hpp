@@ -188,6 +188,9 @@ namespace Maze
         //////////////////////////////////////////
         void resetAssets();
 
+        //////////////////////////////////////////
+        void updateMainScene();
+
     protected:
         static EditorManager* s_instance;
 

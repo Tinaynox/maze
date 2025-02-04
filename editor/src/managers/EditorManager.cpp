@@ -217,7 +217,7 @@ namespace Maze
 
         resetAssets();
 
-        SceneManager::GetInstancePtr()->setMainScene(getActiveScene());
+        updateMainScene();
 
         setWindowTitle(Editor::GetInstancePtr()->getConfig().projectName);
     }
@@ -242,7 +242,7 @@ namespace Maze
             });
         }
 
-        SceneManager::GetInstancePtr()->setMainScene(getActiveScene());
+        updateMainScene();
 
         setWindowTitle("Editor - New Prefab");
     }
@@ -271,7 +271,7 @@ namespace Maze
                 });
         }
 
-        SceneManager::GetInstancePtr()->setMainScene(getActiveScene());
+        updateMainScene();
 
         setWindowTitle("Editor - %s", _value->getFileName().toUTF8().c_str());
     }
@@ -293,7 +293,7 @@ namespace Maze
         resetAssets();
         m_editorSceneManager->setScene(_scene);
 
-        SceneManager::GetInstancePtr()->setMainScene(getActiveScene());
+        updateMainScene();
 
         setWindowTitle("Editor - %s", _scene->getSceneName().str);
     }
@@ -312,7 +312,7 @@ namespace Maze
         m_editorSceneManager->setSceneAssetFile(_value);
 
 
-        SceneManager::GetInstancePtr()->setMainScene(getActiveScene());
+        updateMainScene();
           
         setWindowTitle("Editor - %s", _value->getFileName().toUTF8().c_str());
     }
@@ -324,7 +324,7 @@ namespace Maze
         m_editorPlaytestManager->start();
         m_editorEntityManager->start();
 
-        SceneManager::GetInstancePtr()->setMainScene(getSceneMain());
+        updateMainScene();
     }
 
     //////////////////////////////////////////
@@ -379,8 +379,6 @@ namespace Maze
                 return true;
             });
 
-        SceneManager::GetInstancePtr()->setMainScene(getSceneMain());
-
         if (m_editorPrefabManager->getPrefabAssetFile())
             m_editorPrefabManager->updatePrefabAssetFile();
         if (m_editorSceneManager->getSceneAssetFile())
@@ -390,6 +388,8 @@ namespace Maze
         getSceneMainTools()->setCamera3DTargetPosition(cameraTargetPosition);
         getSceneMainTools()->setYawAngle(yawAngle);
         getSceneMainTools()->setPitchAngle(pitchAngle);
+
+        updateMainScene();
 
         eventPlaytestModeEnabledChanged(m_playtestModeEnabled);
     }
@@ -430,6 +430,17 @@ namespace Maze
         else
             return EditorEntityManager::GetInstancePtr()->getWorkspaceWorld().get();
     }
+
+    //////////////////////////////////////////
+    void EditorManager::updateMainScene()
+    {
+        EcsRenderScenePtr activeScene = getActiveScene();
+        if (SceneManager::GetInstancePtr()->getMainScene() == activeScene)
+            return;
+
+        SceneManager::GetInstancePtr()->setMainScene(activeScene);
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////
