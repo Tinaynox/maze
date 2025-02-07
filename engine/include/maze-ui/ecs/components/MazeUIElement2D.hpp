@@ -97,7 +97,9 @@ namespace Maze
         void processCursorDoubleClick(CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void processCursorRelease(CursorInputEvent const& _inputEvent);
+        void processCursorRelease(
+            CursorInputEvent const& _inputEvent,
+            bool _forceOut = false);
 
         //////////////////////////////////////////
         bool processCursorTrace(CursorInputEvent const& _inputEvent);

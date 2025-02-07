@@ -35,6 +35,7 @@
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
@@ -85,7 +86,7 @@ namespace Maze
     };
 
 
-#define INPUT_SYSTEM2D_ELEMENTS_LOCK() InputSystem2DSimpleBoolMutex elementsLock(m_sortedUIElements2DLocked)
+#define INPUT_SYSTEM2D_ELEMENTS_LOCK() InputSystem2DSimpleBoolMutex elementsLock(m_sortedCanvasDataLocked)
 
 
 
@@ -109,6 +110,134 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    inline Vector<InputSystem2D::UIElementData>::const_iterator ProcessUIElementData(
+        Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
+        Vector<InputSystem2D::UIElementData>::const_iterator const& _it,
+        Vector<InputSystem2D::UIElementData>::const_iterator& _end,
+        CursorInputEvent const& _cursorInputEvent,
+        std::function<void(UIElement2D*)> _cb)
+    {
+        InputSystem2D::UIElementData const& elementData = *_it;
+
+        Vector<InputSystem2D::UIElementData>::const_iterator nextIt = _it + elementData.childrenCount + 1;
+
+        if (elementData.scissorMask && !elementData.scissorMask->getScissorBounds().contains(_cursorInputEvent.position))
+            return nextIt;
+
+        // Process children first
+        if (elementData.childrenCount > 0)
+        {
+            for (Vector<InputSystem2D::UIElementData>::const_iterator it2 = _it + 1,
+                                                                      end2 = nextIt;
+                                                                      it2 != end2;)
+            {
+                it2 = ProcessUIElementData(_sortedUIElements2D, it2, end2, _cursorInputEvent, _cb);
+            }
+        }
+
+        if (_cursorInputEvent.isCaptured())
+        {
+            // Stop
+            _end = nextIt;
+            return nextIt;
+        }
+        
+        _cb(elementData.element);
+
+        if (_cursorInputEvent.isCaptured())
+        {
+            // Stop
+            _end = nextIt;
+            return nextIt;
+        }
+
+        return nextIt;
+    }
+
+
+    //////////////////////////////////////////
+    inline void ProcessUIElementsInput(
+        Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
+        CursorInputEvent const& _cursorInputEvent,
+        std::function<void(UIElement2D*)> _cb)
+    {
+        if (_cursorInputEvent.isCaptured())
+            return;
+
+        for (Vector<InputSystem2D::UIElementData>::const_iterator it = _sortedUIElements2D.begin(),
+            end = _sortedUIElements2D.end();
+            it != end;)
+        {
+            it = ProcessUIElementData(_sortedUIElements2D, it, end, _cursorInputEvent, _cb);
+        }
+    }
+
+    //////////////////////////////////////////
+    inline Vector<InputSystem2D::UIElementData>::const_iterator ProcessUIElementDataMoveEvent(
+        Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
+        Vector<InputSystem2D::UIElementData>::const_iterator const& _it,
+        Vector<InputSystem2D::UIElementData>::const_iterator& _end,
+        CursorInputEvent const& _cursorInputEvent,
+        std::function<void(UIElement2D*)> _cbValid,
+        std::function<void(UIElement2D*)> _cbInvalid)
+    {
+        InputSystem2D::UIElementData const& elementData = *_it;
+
+        Vector<InputSystem2D::UIElementData>::const_iterator nextIt = _it + elementData.childrenCount + 1;
+
+        bool isBoundsValid = !elementData.scissorMask || elementData.scissorMask->getScissorBounds().contains(_cursorInputEvent.position);
+
+        // Process children first
+        if (elementData.childrenCount > 0)
+        {
+            if (isBoundsValid)
+            {
+                for (Vector<InputSystem2D::UIElementData>::const_iterator it2 = _it + 1,
+                    end2 = nextIt;
+                    it2 != end2;)
+                {
+                    it2 = ProcessUIElementDataMoveEvent(_sortedUIElements2D, it2, end2, _cursorInputEvent, _cbValid, _cbInvalid);
+                }
+            }
+            else
+            {
+                for (Vector<InputSystem2D::UIElementData>::const_iterator it2 = _it + 1,
+                    end2 = nextIt;
+                    it2 != end2;
+                    ++it2)
+                {
+                    _cbInvalid(it2->element);
+                }
+            }
+        }
+
+        if (!_cursorInputEvent.isCaptured() && isBoundsValid)
+            _cbValid(elementData.element);
+        else
+            _cbInvalid(elementData.element);
+
+
+
+        return nextIt;
+    }
+
+    //////////////////////////////////////////
+    inline void ProcessUIElementsMoveInput(
+        Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
+        CursorInputEvent const& _cursorInputEvent,
+        std::function<void(UIElement2D*)> _cbValid,
+        std::function<void(UIElement2D*)> _cbInvalid)
+    {
+        for (Vector<InputSystem2D::UIElementData>::const_iterator it = _sortedUIElements2D.begin(),
+            end = _sortedUIElements2D.end();
+            it != end;)
+        {
+            it = ProcessUIElementDataMoveEvent(_sortedUIElements2D, it, end, _cursorInputEvent, _cbValid, _cbInvalid);
+        }
+    }
+
+
+    //////////////////////////////////////////
     // Class InputSystem2D
     //
     //////////////////////////////////////////
@@ -119,7 +248,7 @@ namespace Maze
 
     //////////////////////////////////////////
     InputSystem2D::InputSystem2D()
-        : m_sortedUIElements2DDirty(false)
+        : m_sortedCanvasDataDirty(false)
     {
     }
 
@@ -308,7 +437,7 @@ namespace Maze
         if (!window)
             window = WindowManager::GetInstancePtr()->getFirstOpenedWindow();
 
-        if (!m_sortedUIElements2DLocked)
+        if (!m_sortedCanvasDataLocked)
             updateSortedUIElements2DList();
 
         CursorInputEvent cursorInputEvent(
@@ -319,8 +448,8 @@ namespace Maze
             _traceParams.inputSource,
             window);
 
-        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
-                                                        end = m_sortedUIElements2D.rend();
+        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
+                                                        end = m_sortedCanvasData.rend();
                                                         it != end;
                                                         ++it)
         {
@@ -334,22 +463,29 @@ namespace Maze
                     continue;
             }
 
-            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+            Vector<UIElementData> const& sortedUIElements2D = canvasData.sortedUIElements2D;
             SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
-            for (Vector<UIElement2D*>::const_reverse_iterator it2 = sortedUIElements2D.rbegin(),
-                end2 = sortedUIElements2D.rend();
-                it2 != end2;
-                ++it2)
+            for (Vector<UIElementData>::const_iterator it2 = sortedUIElements2D.begin(),
+                                                             end2 = sortedUIElements2D.end();
+                                                             it2 != end2;
+                                                             ++it2)
             {
-                UIElement2D* element = *it2;
+                UIElementData const& elementData = *it2;
 
-                if (_traceParams.ignoreElements.count(element->getEntityId()))
+                if (_traceParams.ignoreElements.count(elementData.element->getEntityId()))
                     continue;
 
-                bool traceResult = element->processCursorTrace(cursorInputEvent);
+                if (elementData.scissorMask && !elementData.scissorMask->getScissorBounds().contains(cursorInputEvent.position))
+                {
+                    // Skip children
+                    it2 += elementData.childrenCount;
+                    continue;
+                }
 
-                if (element == _element)
+                bool traceResult = elementData.element->processCursorTrace(cursorInputEvent);
+
+                if (elementData.element == _element)
                     return traceResult;
 
                 if (cursorInputEvent.isCaptured())
@@ -378,13 +514,13 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::processUIElement2DEntityAdded(Entity* _entity)
     {
-        m_sortedUIElements2DDirty = true;
+        m_sortedCanvasDataDirty = true;
     }
 
     //////////////////////////////////////////
     void InputSystem2D::processUIElement2DEntityRemoved(Entity* _entity)
     {
-        m_sortedUIElements2DDirty = true;
+        m_sortedCanvasDataDirty = true;
     }
 
     //////////////////////////////////////////
@@ -405,7 +541,7 @@ namespace Maze
                 return _canvas0->getSortOrder() < _canvas1->getSortOrder();
             });
 
-        m_sortedUIElements2DDirty = true;
+        m_sortedCanvasDataDirty = true;
     }
 
     //////////////////////////////////////////
@@ -533,8 +669,8 @@ namespace Maze
                 _inputSource,
                 _window);
 
-            for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
-                end = m_sortedUIElements2D.rend();
+            for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
+                end = m_sortedCanvasData.rend();
                 it != end;
                 ++it)
             {
@@ -548,21 +684,16 @@ namespace Maze
                         continue;
                 }
 
-                Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+                Vector<UIElementData> const& sortedUIElements2D = canvasData.sortedUIElements2D;
                 SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
-                for (Vector<UIElement2D*>::const_reverse_iterator   it2 = sortedUIElements2D.rbegin(),
-                    end2 = sortedUIElements2D.rend();
-                    it2 != end2;
-                    ++it2)
-                {
-                    UIElement2D* element = *it2;
-
-                    element->processCursorPress(cursorInputEvent);
-
-                    if (cursorInputEvent.isCaptured())
-                        break;
-                }
+                ProcessUIElementsInput(
+                    sortedUIElements2D,
+                    cursorInputEvent,
+                    [&](UIElement2D* _element)
+                    {
+                        _element->processCursorPress(cursorInputEvent);
+                    });
 
                 if (cursorInputEvent.isCaptured())
                     break;
@@ -607,8 +738,8 @@ namespace Maze
             _inputSource,
             _window);
 
-        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
-            end = m_sortedUIElements2D.rend();
+        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
+            end = m_sortedCanvasData.rend();
             it != end;
             ++it)
         {
@@ -622,21 +753,16 @@ namespace Maze
                     continue;
             }
 
-            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+            Vector<UIElementData> const& sortedUIElements2D = canvasData.sortedUIElements2D;
             SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
-            for (Vector<UIElement2D*>::const_reverse_iterator it2 = sortedUIElements2D.rbegin(),
-                end2 = sortedUIElements2D.rend();
-                it2 != end2;
-                ++it2)
-            {
-                UIElement2D* element = *it2;
-
-                element->processCursorClick(cursorInputEvent);
-
-                if (cursorInputEvent.isCaptured())
-                    break;
-            }
+            ProcessUIElementsInput(
+                sortedUIElements2D,
+                cursorInputEvent,
+                [&](UIElement2D* _element)
+                {
+                    _element->processCursorClick(cursorInputEvent);
+                });
 
             if (cursorInputEvent.isCaptured())
                 break;
@@ -662,8 +788,8 @@ namespace Maze
             _inputSource,
             _window);
 
-        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
-            end = m_sortedUIElements2D.rend();
+        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
+            end = m_sortedCanvasData.rend();
             it != end;
             ++it)
         {
@@ -677,21 +803,16 @@ namespace Maze
                     continue;
             }
 
-            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+            Vector<UIElementData> const& sortedUIElements2D = canvasData.sortedUIElements2D;
             SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
-            for (Vector<UIElement2D*>::const_reverse_iterator   it2 = sortedUIElements2D.rbegin(),
-                end2 = sortedUIElements2D.rend();
-                it2 != end2;
-                ++it2)
-            {
-                UIElement2D* element = *it2;
-
-                element->processCursorDoubleClick(cursorInputEvent);
-
-                if (cursorInputEvent.isCaptured())
-                    break;
-            }
+            ProcessUIElementsInput(
+                sortedUIElements2D,
+                cursorInputEvent,
+                [&](UIElement2D* _element)
+                {
+                    _element->processCursorDoubleClick(cursorInputEvent);
+                });
 
             if (cursorInputEvent.isCaptured())
                 break;
@@ -717,8 +838,8 @@ namespace Maze
             _inputSource,
             _window);
 
-        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
-            end = m_sortedUIElements2D.rend();
+        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
+            end = m_sortedCanvasData.rend();
             it != end;
             ++it)
         {
@@ -732,24 +853,32 @@ namespace Maze
                     continue;
             }
 
-            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+            Vector<UIElementData> const& sortedUIElements2D = canvasData.sortedUIElements2D;
             SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
-            for (Vector<UIElement2D*>::const_reverse_iterator    it2 = sortedUIElements2D.rbegin(),
-                                                                end2 = sortedUIElements2D.rend();
-                                                                it2 != end2;
-                                                                ++it2)
-            {
-                UIElement2D* element = *it2;
-
-                element->processCursorRelease(cursorInputEvent);
-
-                if (_inputSource == CursorInputSource::Touch)
+            ProcessUIElementsMoveInput(
+                sortedUIElements2D,
+                cursorInputEvent,
+                [&](UIElement2D* _element)
                 {
-                    if (element->getFocused() && (element->getCursorIndex() == _cursorIndex || element->getCursorIndex() == -1))
-                        element->setFocused(false);
-                }
-            }
+                    _element->processCursorRelease(cursorInputEvent, false);
+
+                    if (_inputSource == CursorInputSource::Touch)
+                    {
+                        if (_element->getFocused() && (_element->getCursorIndex() == _cursorIndex || _element->getCursorIndex() == -1))
+                            _element->setFocused(false);
+                    }
+                },
+                [&](UIElement2D* _element)
+                {
+                    _element->processCursorRelease(cursorInputEvent, true);
+
+                    if (_inputSource == CursorInputSource::Touch)
+                    {
+                        if (_element->getFocused() && (_element->getCursorIndex() == _cursorIndex || _element->getCursorIndex() == -1))
+                            _element->setFocused(false);
+                    }
+                });
         }
 
         if (_cursorIndex == 0 && _buttonIndex == 0)
@@ -783,8 +912,8 @@ namespace Maze
             _inputSource,
             _window);
 
-        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
-                                                        end = m_sortedUIElements2D.rend();
+        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
+                                                        end = m_sortedCanvasData.rend();
                                                         it != end;
                                                         ++it)
         {
@@ -798,25 +927,23 @@ namespace Maze
                     continue;
             }
 
-            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+            Vector<UIElementData> const& sortedUIElements2D = canvasData.sortedUIElements2D;
             SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
-            for (Vector<UIElement2D*>::const_reverse_iterator it2 = sortedUIElements2D.rbegin(),
-                                                              end2 = sortedUIElements2D.rend();
-                                                              it2 != end2;
-                                                              ++it2)
-            {
-                UIElement2D* element = *it2;
-
-                if (!cursorInputEvent.isCaptured())
-                    element->processCursorMove(cursorInputEvent);
-                else
+            ProcessUIElementsMoveInput(
+                sortedUIElements2D,
+                cursorInputEvent,
+                [&](UIElement2D* _element)
                 {
-                    if (    (element->getFocused())
-                        &&  (element->getCursorIndex() == _cursorIndex || element->getCursorIndex() == -1))
-                        element->setFocused(false);
-                }
-            }
+                    _element->processCursorMove(cursorInputEvent);
+                },
+                [&](UIElement2D* _element)
+                {
+                    if (_element->getFocused() &&
+                        (_element->getCursorIndex() == _cursorIndex || _element->getCursorIndex() == -1))
+                        _element->setFocused(false);
+                });
+
         }
     }
 
@@ -839,8 +966,8 @@ namespace Maze
             _inputSource,
             _window);
 
-        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
-                                                        end = m_sortedUIElements2D.rend();
+        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
+                                                        end = m_sortedCanvasData.rend();
                                                         it != end;
                                                         ++it)
         {
@@ -854,25 +981,22 @@ namespace Maze
                     continue;
             }
 
-            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+            Vector<UIElementData> const& sortedUIElements2D = canvasData.sortedUIElements2D;
             SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
-            for (Vector<UIElement2D*>::const_reverse_iterator it2 = sortedUIElements2D.rbegin(),
-                                                              end2 = sortedUIElements2D.rend();
-                                                              it2 != end2;
-                                                              ++it2)
-            {
-                UIElement2D* element = *it2;
-
-                if (!cursorInputEvent.isCaptured())
-                    element->processCursorDrag(cursorInputEvent);
-                else
+            ProcessUIElementsMoveInput(
+                sortedUIElements2D,
+                cursorInputEvent,
+                [&](UIElement2D* _element)
                 {
-                    if (   (element->getFocused())
-                        && (element->getCursorIndex() == _cursorIndex || element->getCursorIndex() == -1))
-                        element->setFocused(false);
-                }
-            }
+                    _element->processCursorDrag(cursorInputEvent);
+                },
+                [&](UIElement2D* _element)
+                {
+                    if (_element->getFocused() &&
+                        (_element->getCursorIndex() == _cursorIndex || _element->getCursorIndex() == -1))
+                        _element->setFocused(false);
+                });
         }
     }
 
@@ -892,8 +1016,8 @@ namespace Maze
             _deltaWheel,
             _window);
 
-        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
-                                                        end = m_sortedUIElements2D.rend();
+        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
+                                                        end = m_sortedCanvasData.rend();
                                                         it != end;
                                                         ++it)
         {
@@ -907,7 +1031,7 @@ namespace Maze
                     continue;
             }
 
-            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+            Vector<UIElementData> const& sortedUIElements2D = canvasData.sortedUIElements2D;
             cursorInputEvent.canvas = canvasData.canvas;
             cursorInputEvent.rootCanvas = canvasData.rootCanvas;
 
@@ -918,17 +1042,27 @@ namespace Maze
             else
                 cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
 
-            for (Vector<UIElement2D*>::const_reverse_iterator it2 = sortedUIElements2D.rbegin(),
-                                                              end2 = sortedUIElements2D.rend();
-                                                              it2 != end2;
-                                                              ++it2)
+            for (Vector<UIElementData>::const_iterator it2 = sortedUIElements2D.begin(),
+                                                             end2 = sortedUIElements2D.end();
+                                                             it2 != end2;
+                                                             ++it2)
             {
-                UIElement2D* element = *it2;
+                UIElementData const& elementData = *it2;
 
-                element->processCursorWheel(cursorInputEvent);
+                if (elementData.scissorMask && !elementData.scissorMask->getScissorBounds().contains(cursorInputEvent.position))
+                {
+                    // Skip children
+                    it2 += elementData.childrenCount;
+                    continue;
+                }
+
+                elementData.element->processCursorWheel(cursorInputEvent);
 
                 if (cursorInputEvent.isCaptured())
-                    break;
+                {
+                    // Limit for children only
+                    end2 = it2 + elementData.childrenCount + 1;
+                }
             }
 
             if (cursorInputEvent.isCaptured())
@@ -939,10 +1073,10 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::updateSortedUIElements2DList()
     {
-        if (!m_sortedUIElements2DDirty)
+        if (!m_sortedCanvasDataDirty)
             return;
 
-        m_sortedUIElements2D.clear();
+        m_sortedCanvasData.clear();
 
         for (Canvas* _canvas : m_sortedCanvases)
         {
@@ -968,23 +1102,39 @@ namespace Maze
                                 return;
                         }
 
+                        S32 elementIndex = -1;
+
                         UIElement2D* element = entity->getComponentRaw<UIElement2D>();
                         if (element && element->getEntityRaw())
                         {
-                            canvasData.sortedUIElements2D.emplace_back(element);
+                            elementIndex = (S32)canvasData.sortedUIElements2D.size();
+
+                            UIElementData data;
+                            data.element = element;
+                            data.scissorMask = entity->getComponentRaw<ScissorMask2D>();
+                            canvasData.sortedUIElements2D.emplace_back(data);
                         }
 
-                        for (Transform2D* _child : _transform->getChildren())
-                            processElementFunc(_child);
+                        for (auto it = _transform->getChildren().rbegin(),
+                                  end = _transform->getChildren().rend();
+                                  it != end;
+                                  ++it)
+                            processElementFunc(*it);
+
+                        if (elementIndex != -1)
+                        {
+                            S32 currentElementSize = (S32)canvasData.sortedUIElements2D.size();
+                            canvasData.sortedUIElements2D[elementIndex].childrenCount = Size(currentElementSize - elementIndex - 1);
+                        }
                     }
                 };
 
             processElementFunc(_canvas->getTransform().get());
 
-            m_sortedUIElements2D.emplace_back(canvasData);
+            m_sortedCanvasData.emplace_back(canvasData);
         }
 
-        m_sortedUIElements2DDirty = false;
+        m_sortedCanvasDataDirty = false;
     }
     
 

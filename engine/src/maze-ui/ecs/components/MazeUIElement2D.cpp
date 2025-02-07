@@ -34,12 +34,14 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
+#include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 
 
 //////////////////////////////////////////
@@ -191,7 +193,8 @@ namespace Maze
 
     //////////////////////////////////////////
     void UIElement2D::processCursorRelease(
-        CursorInputEvent const& _inputEvent)
+        CursorInputEvent const& _inputEvent,
+        bool _forceOut)
     {
         if (m_cursorIndex != -1 && m_cursorIndex != _inputEvent.index)
             return;
@@ -215,7 +218,8 @@ namespace Maze
             Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
-                positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
+                positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y ||
+                _forceOut)
             {
                 eventCursorReleaseOut(_inputEvent);
             }
@@ -399,6 +403,18 @@ namespace Maze
         eventPressedChanged(m_pressed);
     }
     
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(AddUIElement2DOnScissorMask2DAppear,
+        {},
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        ScissorMask2D* _scissorMask2D)
+    {
+        _entity->ensureComponent<UIElement2D>();
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

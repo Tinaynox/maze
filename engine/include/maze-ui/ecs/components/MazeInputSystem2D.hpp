@@ -61,6 +61,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(HorizontalLayout2D);
     MAZE_USING_SHARED_PTR(VerticalLayout2D);
     MAZE_USING_SHARED_PTR(SizePolicy2D);
+    MAZE_USING_SHARED_PTR(ScissorMask2D);
 
 
     //////////////////////////////////////////
@@ -95,11 +96,19 @@ namespace Maze
         friend class Entity;
 
         //////////////////////////////////////////
+        struct UIElementData
+        {
+            UIElement2D* element = nullptr;
+            ScissorMask2D* scissorMask = nullptr;
+            Size childrenCount = 0u;
+        };
+
+        //////////////////////////////////////////
         struct CanvasData
         {
-            Canvas* canvas;
-            Canvas* rootCanvas;
-            Vector<UIElement2D*> sortedUIElements2D;
+            Canvas* canvas = nullptr;
+            Canvas* rootCanvas = nullptr;
+            Vector<UIElementData> sortedUIElements2D;
         };
 
     protected:
@@ -260,8 +269,8 @@ namespace Maze
 
         Vector<Canvas*> m_sortedCanvases;
 
-        bool m_sortedUIElements2DDirty;
-        Vector<CanvasData> m_sortedUIElements2D;
+        bool m_sortedCanvasDataDirty;
+        Vector<CanvasData> m_sortedCanvasData;
 
         std::function<Vec2F(Vec2F const&)> m_coordsConverter = DefaultCoordsConverter;
 
@@ -272,7 +281,7 @@ namespace Maze
         bool m_processClick = false;
 
     private:
-        bool m_sortedUIElements2DLocked = false;
+        bool m_sortedCanvasDataLocked = false;
     };
 
 

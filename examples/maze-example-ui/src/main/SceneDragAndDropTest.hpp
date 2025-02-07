@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneDragAndDrop_hpp_))
-#define _SceneDragAndDrop_hpp_
+#if (!defined(_SceneDragAndDropTest_hpp_))
+#define _SceneDragAndDropTest_hpp_
 
 
 //////////////////////////////////////////
@@ -51,7 +51,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneDragAndDrop);
+    MAZE_USING_SHARED_PTR(SceneDragAndDropTest);
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(Canvas);
     MAZE_USING_SHARED_PTR(MenuListTree2D);
@@ -65,24 +65,24 @@ namespace Maze
     
 
     //////////////////////////////////////////
-    // Class SceneDragAndDrop
+    // Class SceneDragAndDropTest
     //
     //////////////////////////////////////////
-    class SceneDragAndDrop
+    class SceneDragAndDropTest
         : public EcsRenderScene
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneDragAndDrop, EcsRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneDragAndDropTest, EcsRenderScene);
 
     public:
 
         //////////////////////////////////////////
-        static SceneDragAndDropPtr Create();
+        static SceneDragAndDropTestPtr Create();
     
         //////////////////////////////////////////
-        virtual ~SceneDragAndDrop();
+        virtual ~SceneDragAndDropTest();
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
@@ -90,7 +90,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        SceneDragAndDrop();
+        SceneDragAndDropTest();
 
         //////////////////////////////////////////
         virtual bool init() MAZE_OVERRIDE;
@@ -125,5 +125,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneDragAndDrop_hpp_
+#endif // _SceneDragAndDropTest_hpp_
 //////////////////////////////////////////

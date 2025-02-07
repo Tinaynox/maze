@@ -24,10 +24,11 @@
 
 
 //////////////////////////////////////////
-#include "SceneDragAndDrop.hpp"
+#include "SceneTest.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -39,6 +40,7 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
+#include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
@@ -58,7 +60,6 @@
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -84,9 +85,6 @@
 #include "maze-ui/fonts/MazeFontMaterial.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
-#include "maze-ui/scenes/SceneDragAndDropDefault.hpp"
-#include "main/components/InventorySlot.hpp"
-#include "main/components/InventoryItem.hpp"
 #include "Example.hpp"
 
 
@@ -94,18 +92,18 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class SceneDragAndDrop
+    // Class SceneTest
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneDragAndDrop, EcsRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneTest, EcsRenderScene);
 
     //////////////////////////////////////////
-    SceneDragAndDrop::SceneDragAndDrop()
+    SceneTest::SceneTest()
     {
     }
 
     //////////////////////////////////////////
-    SceneDragAndDrop::~SceneDragAndDrop()
+    SceneTest::~SceneTest()
     {
         InputManager* inputManager = InputManager::GetInstancePtr();
         if (inputManager)
@@ -117,59 +115,51 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SceneDragAndDropPtr SceneDragAndDrop::Create()
+    SceneTestPtr SceneTest::Create()
     {
-        SceneDragAndDropPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneDragAndDrop, object, init());
+        SceneTestPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneTest, object, init());
         return object;
     }
 
     //////////////////////////////////////////
-    bool SceneDragAndDrop::init()
+    bool SceneTest::init()
     {
         if (!EcsRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
 
-        create3D();
         create2D();
+
+        m_inputSystemSample = m_world->requestInclusiveSample<InputSystem2D>();
 
         return true;
     }
 
     //////////////////////////////////////////
-    void SceneDragAndDrop::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
+    void SceneTest::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
     {
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
     }
 
     //////////////////////////////////////////
-    void SceneDragAndDrop::update(F32 _dt)
+    void SceneTest::update(F32 _dt)
     {
         EcsRenderScene::update(_dt);
 
+        m_inputSystemSample->query(
+            [&](Entity*, InputSystem2D* _inputSystem)
+        {
+            Vec2F renderTargetCursorPos = InputManager::GetInstancePtr()->getCursorPosition(0);
+            bool traced = _inputSystem->traceElement(
+                m_traceTest->getEntityRaw()->getComponentRaw<UIElement2D>(),
+                renderTargetCursorPos);
+
+            m_traceTest->setColor(traced ? ColorU32::c_yellow : ColorU32::c_red);
+        });
     }
 
     //////////////////////////////////////////
-    void SceneDragAndDrop::create3D()
-    {
-        InputManager* inputManager = InputManager::GetInstancePtr();
-
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
-        SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
-        RenderMeshManagerPtr const& renderMeshManager = renderSystem->getRenderMeshManager();
-        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
-
-        EntityManager* entityManager = EntityManager::GetInstancePtr();
-        EcsWorldPtr const& world = entityManager->getDefaultWorld();
-
-        RenderWindowPtr const& renderTarget = Example::GetInstancePtr()->getMainRenderWindow();
-        Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.subscribe(this, &SceneDragAndDrop::notifyMainRenderWindowViewportChanged);
-
-    }
-
-    //////////////////////////////////////////
-    void SceneDragAndDrop::create2D()
+    void SceneTest::create2D()
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
@@ -185,9 +175,12 @@ namespace Maze
         m_canvas = canvasEntity->createComponent<Maze::Canvas>();
         m_canvas->setRenderTarget(renderTarget);
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
-        m_canvas->setClearColor(ColorU32::c_blackSoft);
+        m_canvas->setClearColor(ColorU32::c_darkGray);
         m_canvas->setClearColorFlag(true);
 
+        Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.subscribe(this, &SceneTest::notifyMainRenderWindowViewportChanged);
+
+        /*
         SpriteRenderer2DPtr square = SpriteHelper::CreateSprite(
             ColorU32::c_gray,
             Vec2F32(800.0f, 600.0f),
@@ -195,62 +188,77 @@ namespace Maze
             nullptr,
             m_canvas->getTransform(),
             this);
+        */
 
-
-        InventorySlotPtr leftSlot = createSlot(Vec2F(-32.0f, 0.0f));
-        InventorySlotPtr rightSlot = createSlot(Vec2F(32.0f, 0.0f));
-        InventorySlotPtr rightSlot2 = createSlot(Vec2F(96.0f, 0.0f));
-
-        Debug::Log("leftSlot=%d", (S32)leftSlot->getEntityId());
-        Debug::Log("rightSlot=%d", (S32)rightSlot->getEntityId());
-
-        m_item = createItem();
-
-        rightSlot->setItem(m_item);
-    }
-
-    //////////////////////////////////////////
-    InventorySlotPtr SceneDragAndDrop::createSlot(Vec2F const& _pos)
-    {
-        ClickButton2DPtr button = UIHelper::CreateClickButton(
-            SpriteManager::GetCurrentInstance()->getOrLoadSprite(MAZE_HCS("cell00.png")),
-            Vec2F32(64.0f, 64.0f),
-            _pos,
+        /*
+        UIHelper::CreateClickButton(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+            Vec2F(100.0f),
+            Vec2F::c_zero,
             m_canvas->getTransform(),
             this);
-        button->setNormalColor(ColorU32{ 245, 245, 245 });
-        button->setFocusedColor(ColorU32{ 163, 181, 248 });
-        button->setPressedColor(ColorU32{ 255, 160, 0 });
-        
+        */
 
-        SpriteRenderer2DPtr glow = SpriteHelper::CreateSprite(
-            MAZE_HCS("cell00_glow.png"),
-            Vec2F(64.0f, 64.0f) * (255.0f / 166.0f),
-            Vec2F::c_zero,
-            button->getTransform(),
-            this);
-        glow->setColor(ColorU32(30, 30, 30, 255));
-        glow->setMaterial(
-            MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::SpriteAdditivePA));
-        glow->getMeshRenderer()->setEnabled(false);
-
-        InventorySlotPtr inventorySlot = button->getEntityRaw()->ensureComponent<InventorySlot>();
-        inventorySlot->setGlow(glow);
-        return inventorySlot;
-    }
-
-    //////////////////////////////////////////
-    InventoryItemPtr SceneDragAndDrop::createItem()
-    {
-        SpriteRenderer2DPtr sprite = SpriteHelper::CreateSprite(
-            MAZE_HCS("item_gun00.png"),
-            Vec2F(64.0f, 64.0f) * 0.8f,
-            Vec2F::c_zero,
+        SpriteRenderer2DPtr back = SpriteHelper::CreateSprite(
+            ColorU32::c_green,
+            Vec2F32(150.0f, 150.0f),
+            Vec2F32::c_zero,
             nullptr,
+            m_canvas->getTransform(),
             this);
+        back->getEntityRaw()->ensureComponent<ScissorMask2D>();
 
-        InventoryItemPtr inventoryItem = sprite->getEntityRaw()->ensureComponent<InventoryItem>();
-        return inventoryItem;
+        EntityPtr buttonEntity = createEntity();
+        buttonEntity->ensureComponent<StaticName>("ClickButton");
+
+        ClickButton2DPtr clickButton = buttonEntity->createComponent<ClickButton2D>();
+        clickButton->setNormalColor(ColorU32{ 245, 245, 245 });
+        clickButton->setFocusedColor(ColorU32{ 255, 160, 0 });
+        clickButton->setSelectedColor(ColorU32{ 0, 220, 240 });
+        clickButton->setPressedColor(ColorU32{ 213, 0, 0 });
+
+        Transform2DPtr const& transform = clickButton->getTransform();
+        transform->setParent(back->getTransform());
+        transform->setLocalY(75.0f);
+        transform->setSize(Vec2F(100.0f));
+
+        Maze::SpriteRenderer2DPtr spriteRenderer = buttonEntity->createComponent<Maze::SpriteRenderer2D>();
+        spriteRenderer->setSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
+        spriteRenderer->setMaterialCopy(SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
+
+        clickButton->setTransitionSprite(spriteRenderer);
+
+        {
+            m_traceTest = SpriteHelper::CreateSprite(
+                ColorU32::c_red,
+                Vec2F32(20.0f, 120.0f),
+                Vec2F32(10.0f, 25.0f),
+                nullptr,
+                back->getTransform(),
+                this);
+            m_traceTest->getEntityRaw()->ensureComponent<UIElement2D>()->setCaptureCursorHits(true);
+        }
+
+        {
+            auto btn0 = UIHelper::CreateClickButton(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+                Vec2F(100.0f),
+                Vec2F(60.0f, 0.0f),
+                back->getTransform(),
+                this);
+            btn0->setPressedColor(ColorU32{ 213, 160, 0 });
+            btn0->getEntity()->ensureComponent<StaticName>()->setStaticName("btn0");
+
+            auto btn1 = UIHelper::CreateClickButton(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
+                Vec2F(50.0f),
+                Vec2F(0.0f),
+                btn0->getTransform(),
+                this);
+            btn1->setPressedColor(ColorU32{ 0, 0, 255 });
+            btn1->getEntity()->ensureComponent<StaticName>()->setStaticName("btn1");
+        }
     }
 
 } // namespace Maze

@@ -40,6 +40,7 @@
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
@@ -251,6 +252,7 @@ namespace Maze
                 getEntityRaw()->getEcsScene());
             SizePolicy2DPtr backgroundRendererSizePolicy = m_backgroundRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
             backgroundRendererSizePolicy->setFlag(SizePolicy2D::Height, false);
+            m_backgroundRenderer->getEntityRaw()->ensureComponent<StaticName>("HierarchyLineBackground");
         }
 
         {

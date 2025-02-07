@@ -80,7 +80,8 @@
 #include "main/SceneCanvasTest.hpp"
 #include "main/SceneExample.hpp"
 #include "main/SceneEditorToolsTest.hpp"
-#include "main/SceneDragAndDrop.hpp"
+#include "main/SceneDragAndDropTest.hpp"
+#include "main/SceneTest.hpp"
 #include "Example.hpp"
 
 
@@ -97,8 +98,8 @@ namespace Maze
     void LoadFirstExampleScene(SceneManager* _sceneManager)
     {
         Example::GetInstancePtr()->loadCoreGameAssets();
-        if (!_sceneManager->getScene<SceneDragAndDrop>())
-            _sceneManager->loadScene<SceneDragAndDrop>();
+        if (!_sceneManager->getScene<SceneTest>())
+            _sceneManager->loadScene<SceneTest>();
     }
     
     //////////////////////////////////////////
