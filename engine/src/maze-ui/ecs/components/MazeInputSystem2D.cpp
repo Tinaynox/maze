@@ -238,6 +238,91 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    inline Vector<InputSystem2D::UIElementData>::const_iterator TraceUIElementData(
+        Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
+        Vector<InputSystem2D::UIElementData>::const_iterator const& _it,
+        Vector<InputSystem2D::UIElementData>::const_iterator& _end,
+        CursorInputEvent const& _cursorInputEvent,
+        UIElement2D const* _element,
+        CursorElementTraceParams const& _traceParams,
+        bool& _outResult)
+    {
+        InputSystem2D::UIElementData const& elementData = *_it;
+
+        Vector<InputSystem2D::UIElementData>::const_iterator nextIt = _it + elementData.childrenCount + 1;
+
+        if (_traceParams.ignoreElements.count(elementData.element->getEntityId()))
+            return nextIt;
+
+        if (elementData.scissorMask && !elementData.scissorMask->getScissorBounds().contains(_cursorInputEvent.position))
+            return nextIt;
+
+        // Process children first
+        if (elementData.childrenCount > 0)
+        {
+            for (Vector<InputSystem2D::UIElementData>::const_iterator it2 = _it + 1,
+                end2 = nextIt;
+                it2 != end2;)
+            {
+                it2 = TraceUIElementData(_sortedUIElements2D, it2, end2, _cursorInputEvent, _element, _traceParams, _outResult);
+                if (_outResult)
+                    break;
+            }
+        }
+
+        if (_outResult || _cursorInputEvent.isCaptured())
+        {
+            // Stop
+            _end = nextIt;
+            return nextIt;
+        }
+
+        bool traceResult = elementData.element->processCursorTrace(_cursorInputEvent);
+
+        if (_element == elementData.element)
+        {
+            // Stop
+            _outResult = traceResult;
+            _end = nextIt;
+            return nextIt;
+        }
+
+        if (_cursorInputEvent.isCaptured())
+        {
+            // Stop
+            _end = nextIt;
+            return nextIt;
+        }
+
+        return nextIt;
+    }
+
+
+    //////////////////////////////////////////
+    inline bool TraceUIElement(
+        Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
+        CursorInputEvent const& _cursorInputEvent,
+        UIElement2D const* _element,
+        CursorElementTraceParams const& _traceParams)
+    {
+        if (_cursorInputEvent.isCaptured())
+            return false;
+
+        bool result = false;
+        for (Vector<InputSystem2D::UIElementData>::const_iterator it = _sortedUIElements2D.begin(),
+            end = _sortedUIElements2D.end();
+            it != end;)
+        {
+            it = TraceUIElementData(_sortedUIElements2D, it, end, _cursorInputEvent, _element, _traceParams, result);
+            if (result)
+                break;
+        }
+
+        return result;
+    }
+
+
+    //////////////////////////////////////////
     // Class InputSystem2D
     //
     //////////////////////////////////////////
@@ -466,31 +551,8 @@ namespace Maze
             Vector<UIElementData> const& sortedUIElements2D = canvasData.sortedUIElements2D;
             SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
-            for (Vector<UIElementData>::const_iterator it2 = sortedUIElements2D.begin(),
-                                                             end2 = sortedUIElements2D.end();
-                                                             it2 != end2;
-                                                             ++it2)
-            {
-                UIElementData const& elementData = *it2;
-
-                if (_traceParams.ignoreElements.count(elementData.element->getEntityId()))
-                    continue;
-
-                if (elementData.scissorMask && !elementData.scissorMask->getScissorBounds().contains(cursorInputEvent.position))
-                {
-                    // Skip children
-                    it2 += elementData.childrenCount;
-                    continue;
-                }
-
-                bool traceResult = elementData.element->processCursorTrace(cursorInputEvent);
-
-                if (elementData.element == _element)
-                    return traceResult;
-
-                if (cursorInputEvent.isCaptured())
-                    return false;
-            }
+            if (TraceUIElement(sortedUIElements2D, cursorInputEvent, _element, _traceParams))
+                return true;
 
             if (cursorInputEvent.isCaptured())
                 return false;
