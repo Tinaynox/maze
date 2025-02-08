@@ -78,6 +78,12 @@ namespace Maze.Core
         public extern static void Transform3DSetPosition(NativePtr _nativeComponentPtr, Vec3F _pos);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform3DGetRotation(NativePtr _nativeComponentPtr, out Quaternion _outPosition);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform3DSetRotation(NativePtr _nativeComponentPtr, Quaternion _pos);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform3DGetScale(NativePtr _nativeComponentPtr, out Vec3F _outScale);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

@@ -48,6 +48,8 @@ namespace Maze
         static MAZE_CONSTEXPR F32 const c_pi = 3.14159265358979323846f;
         static MAZE_CONSTEXPR F32 const c_twoPi = 2.0f * c_pi;
         static MAZE_CONSTEXPR F32 const c_halfPi = 0.5f * c_pi;
+        static MAZE_CONSTEXPR F32 const c_rad2deg = 180.0f / c_pi;
+        static MAZE_CONSTEXPR F32 const c_deg2rad = c_pi / 180.0f;
 
 
         //////////////////////////////////////////

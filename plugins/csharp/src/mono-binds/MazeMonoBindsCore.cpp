@@ -217,6 +217,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void Transform3DGetRotation(Component* _component, Quaternion& _outRotation)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        _outRotation = _component->castRaw<Transform3D>()->getLocalRotation();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform3DSetRotation(Component* _component, Quaternion _rotation)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        _component->castRaw<Transform3D>()->setLocalRotation(_rotation);
+    }
+
+    //////////////////////////////////////////
     inline void Transform3DGetScale(Component* _component, Vec3F& _outScale)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
@@ -265,6 +279,8 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetParent);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetPosition);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetPosition);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DGetRotation);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DSetRotation);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetScale);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetScale);
     }

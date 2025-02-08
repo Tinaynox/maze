@@ -42,14 +42,6 @@ namespace Maze
     //////////////////////////////////////////
     namespace Math
     {
-
-        //////////////////////////////////////////
-        inline MAZE_CONSTEXPR F32 RadiansToDegrees(F32 _radians) { return 180.0f * _radians / c_pi; }
-
-        //////////////////////////////////////////
-        inline MAZE_CONSTEXPR F32 DegreesToRadians(F32 _degrees) { return c_pi * _degrees / 180.0f; }
-
-
         //////////////////////////////////////////
         inline U32 GetNextPowerOfTwo(U32 _x)
         {

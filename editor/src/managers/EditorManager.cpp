@@ -306,7 +306,8 @@ namespace Maze
             return;
 
         setSceneMode(EditorSceneMode::Scene);
-        getSceneMain()->destroyAllEntities();
+        if (getSceneMain())
+            getSceneMain()->destroyAllEntities();
 
         resetAssets();
         m_editorSceneManager->setSceneAssetFile(_value);

@@ -42,6 +42,12 @@ namespace Maze
     namespace Math
     {
         //////////////////////////////////////////
+        inline MAZE_CONSTEXPR F32 RadiansToDegrees(F32 _radians) { return c_rad2deg * _radians; }
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR F32 DegreesToRadians(F32 _degrees) { return c_deg2rad * _degrees; }
+
+        //////////////////////////////////////////
         inline void NormalizeAnglePI(F32& _angle)
         {
             while (_angle < -c_pi) _angle += c_twoPi;

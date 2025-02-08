@@ -14,6 +14,12 @@ namespace Maze.Core
         public float Y { get => Position.Y; set { Vec3F v = Position; v.Y = value; Position = v; } }
         public float Z { get => Position.Z; set { Vec3F v = Position; v.Z = value; Position = v; } }
 
+        public Quaternion Rotation
+        {
+            get { InternalCalls.Transform3DGetRotation(NativeComponentPtr, out Quaternion rotation); return rotation; }
+            set { InternalCalls.Transform3DSetRotation(NativeComponentPtr, value); }
+        }
+
         public Vec3F Scale
         {
             get { InternalCalls.Transform3DGetScale(NativeComponentPtr, out Vec3F scale); return scale; }
