@@ -266,7 +266,7 @@ namespace Maze
     (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
         m_mainRenderWindow->setVSync(1);
 #else
-        m_mainRenderWindow->setVSync(0);
+        m_mainRenderWindow->setVSync(1);
 #endif
         
         Debug::log << m_windowManager->constructWindowsInfo();
