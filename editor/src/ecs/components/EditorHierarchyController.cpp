@@ -321,7 +321,7 @@ namespace Maze
                 if (hierarchyLine->getEntityRaw())
                     hierarchyLine->release();
                 else
-                    m_entityLines.erase(it);
+                    m_sceneLines.erase(it);
             }
         }
 
