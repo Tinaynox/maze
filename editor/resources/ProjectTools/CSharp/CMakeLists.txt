@@ -77,8 +77,8 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     "${CMAKE_CURRENT_SOURCE_DIR}/../Library/ScriptAssemblies/Assembly-CSharp.dll")
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD    
-    COMMAND ${CMAKE_COMMAND} -E $<IF:$<CONFIG:Debug>,copy,true>
+    COMMAND ${CMAKE_COMMAND} -E copy
     "${OUTPUT_DIRECTORY}/Assembly-CSharp.pdb"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../Library/ScriptAssemblies/Assembly-CSharp.pdb")
+    "${CMAKE_CURRENT_SOURCE_DIR}/../Library/ScriptAssemblies/Assembly-CSharp.pdb" || (exit 0))
 
 

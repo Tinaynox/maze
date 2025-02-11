@@ -32,6 +32,18 @@ namespace Maze.Core
         {  
         }
 
+        public TMat GetLocalTransform()
+        {
+            InternalCalls.Transform3DGetLocalTransform(NativeComponentPtr, out TMat tm);
+            return tm;
+        }
+
+        public TMat GetWorldTransform()
+        {
+            InternalCalls.Transform3DGetWorldTransform(NativeComponentPtr, out TMat tm);
+            return tm;
+        }
+
         public void Translate(Vec3F _delta)
         {
             InternalCalls.Transform3DTranslate(NativeComponentPtr, _delta);

@@ -29,6 +29,21 @@ namespace Maze.Core
             Z = _z;
         }
 
+        public float Normalize()
+        {
+            float length = (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+
+            if (length > 1e-08f)
+            {
+                float invLength = 1.0f / length;
+                X *= invLength;
+                Y *= invLength;
+                Z *= invLength;
+            }
+
+            return length;
+        }
+
         public static Vec3F operator -(Vec3F _vec0)
         {
             return new Vec3F(-_vec0.X, -_vec0.Y, -_vec0.Z);
