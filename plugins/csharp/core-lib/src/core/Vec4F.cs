@@ -9,6 +9,16 @@ namespace Maze.Core
         public float Z;
         public float W;
 
+        public static Vec4F Zero => new Vec4F(0.0f, 0.0f, 0.0f, 1.0f);
+        public static Vec4F One => new Vec4F(1.0f, 1.0f, 1.0f, 1.0f);
+        public static Vec4F NegativeOne => new Vec4F(-1.0f, -1.0f, -1.0f, -1.0f);
+        public static Vec4F UnitX => new Vec4F(1.0f, 0.0f, 0.0f, 1.0f);
+        public static Vec4F UnitY => new Vec4F(0.0f, 1.0f, 0.0f, 1.0f);
+        public static Vec4F UnitZ => new Vec4F(0.0f, 0.0f, 1.0f, 1.0f);
+        public static Vec4F NegativeUnitX => new Vec4F(-1.0f, 0.0f, 0.0f, 1.0f);
+        public static Vec4F NegativeUnitY => new Vec4F(0.0f, -1.0f, 0.0f, 1.0f);
+        public static Vec4F NegativeUnitZ => new Vec4F(0.0f, 0.0f, -1.0f, 1.0f);
+
         public Vec2F XY => new Vec2F(X, Y);
         public Vec3F XYZ => new Vec3F(X, Y, Z);
 

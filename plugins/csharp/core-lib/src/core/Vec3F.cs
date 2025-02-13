@@ -8,6 +8,16 @@ namespace Maze.Core
         public float Y;
         public float Z;
 
+        public static Vec3F Zero => new Vec3F(0.0f, 0.0f, 0.0f);
+        public static Vec3F One => new Vec3F(1.0f, 1.0f, 1.0f);
+        public static Vec3F NegativeOne => new Vec3F(-1.0f, -1.0f, -1.0f);
+        public static Vec3F UnitX => new Vec3F(1.0f, 0.0f, 0.0f);
+        public static Vec3F UnitY => new Vec3F(0.0f, 1.0f, 0.0f);
+        public static Vec3F UnitZ => new Vec3F(0.0f, 0.0f, 1.0f);
+        public static Vec3F NegativeUnitX => new Vec3F(-1.0f, 0.0f, 0.0f);
+        public static Vec3F NegativeUnitY => new Vec3F(0.0f, -1.0f, 0.0f);
+        public static Vec3F NegativeUnitZ => new Vec3F(0.0f, 0.0f, -1.0f);
+
         public Vec2F XY => new Vec2F(X, Y);
 
         public Vec3F(
@@ -29,9 +39,14 @@ namespace Maze.Core
             Z = _z;
         }
 
+        public float Length()
+        {
+            return (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+        }
+
         public float Normalize()
         {
-            float length = (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+            float length = Length();
 
             if (length > 1e-08f)
             {
@@ -42,6 +57,11 @@ namespace Maze.Core
             }
 
             return length;
+        }
+
+        public float Dot(Vec3F vec)
+        {
+            return X * vec.X + Y * vec.Y + Z * vec.Z;
         }
 
         public static Vec3F operator -(Vec3F _vec0)
@@ -70,6 +90,11 @@ namespace Maze.Core
         }
 
         public static Vec3F operator *(Vec3F _vec0, float _value)
+        {
+            return new Vec3F(_vec0.X * _value, _vec0.Y * _value, _vec0.Z * _value);
+        }
+
+        public static Vec3F operator *(float _value, Vec3F _vec0)
         {
             return new Vec3F(_vec0.X * _value, _vec0.Y * _value, _vec0.Z * _value);
         }

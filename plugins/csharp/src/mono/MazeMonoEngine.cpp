@@ -31,6 +31,7 @@
 #include "maze-core/ecs/MazeCustomComponentSystemHolder.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsCore.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsGraphics.hpp"
+#include "maze-plugin-csharp/mono-binds/MazeMonoBindsEditorTools.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
@@ -340,6 +341,7 @@ namespace Maze
 
         BindCppFunctionsCore();
         BindCppFunctionsGraphics();
+        BindCppFunctionsEditorTools();
 
         return true;
     }

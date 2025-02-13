@@ -7,6 +7,14 @@ namespace Maze.Core
         public float X;
         public float Y;
 
+        public static Vec2F Zero => new Vec2F(0.0f, 0.0f);
+        public static Vec2F One => new Vec2F(1.0f, 1.0f);
+        public static Vec2F NegativeOne => new Vec2F(-1.0f, -1.0f);
+        public static Vec2F UnitX => new Vec2F(1.0f, 0.0f);
+        public static Vec2F UnitY => new Vec2F(0.0f, 1.0f);
+        public static Vec2F NegativeUnitX => new Vec2F(-1.0f, 0.0f);
+        public static Vec2F NegativeUnitY => new Vec2F(0.0f, -1.0f);
+
         public Vec2F(
             float _x = 0.0f,
             float _y = 0.0f)
