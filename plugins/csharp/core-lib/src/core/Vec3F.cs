@@ -49,6 +49,15 @@ namespace Maze.Core
             return X * X + Y * Y + Z * Z;
         }
 
+        public float Distance(Vec3F vec)
+        {
+            return (this - vec).Length();
+        }
+
+        public float DistanceSq(Vec3F vec)
+        {
+            return (this - vec).LengthSq();
+        }
         public float Normalize()
         {
             float length = Length();
@@ -64,9 +73,24 @@ namespace Maze.Core
             return length;
         }
 
+        public Vec3F NormalizedCopy()
+        {
+            Vec3F ret = this;
+            ret.Normalize();
+            return ret;
+        }
+
         public float Dot(Vec3F vec)
         {
             return X * vec.X + Y * vec.Y + Z * vec.Z;
+        }
+
+        public Vec3F Cross(Vec3F vec)
+        { 
+           return new Vec3F(
+               Y * vec.Z - Z * vec.Y,
+               Z * vec.X - X * vec.Z,
+               X * vec.Y - Y * vec.X);
         }
 
         public static Vec3F operator -(Vec3F vec0)

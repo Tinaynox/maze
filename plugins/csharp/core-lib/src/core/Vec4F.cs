@@ -66,7 +66,15 @@ namespace Maze.Core
             return X * X + Y * Y + Z * Z + W * W;
         }
 
+        public float Distance(Vec4F vec)
+        {
+            return (this - vec).Length();
+        }
 
+        public float DistanceSq(Vec4F vec)
+        {
+            return (this - vec).LengthSq();
+        }
         public static Vec4F operator -(Vec4F vec0)
         {
             return new Vec4F(-vec0.X, -vec0.Y, -vec0.Z, -vec0.W);
