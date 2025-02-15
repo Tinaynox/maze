@@ -16,61 +16,71 @@ namespace Maze.Core
         public static Vec2F NegativeUnitY => new Vec2F(0.0f, -1.0f);
 
         public Vec2F(
-            float _x = 0.0f,
-            float _y = 0.0f)
+            float x = 0.0f,
+            float y = 0.0f)
         {
-            X = _x;
-            Y = _y;
+            X = x;
+            Y = y;
         }
 
-        public static Vec2F operator -(Vec2F _vec0)
+        public static Vec2F operator -(Vec2F vec0)
         {
-            return new Vec2F(-_vec0.X, -_vec0.Y);
+            return new Vec2F(-vec0.X, -vec0.Y);
         }
 
-        public static Vec2F operator +(Vec2F _vec0, float _value)
+        public static Vec2F operator +(Vec2F vec0, float value)
         {
-            return new Vec2F(_vec0.X + _value, _vec0.Y + _value);
+            return new Vec2F(vec0.X + value, vec0.Y + value);
         }
 
-        public static Vec2F operator +(Vec2F _vec0, Vec2F _vec1)
+        public static Vec2F operator +(Vec2F vec0, Vec2F vec1)
         {
-            return new Vec2F(_vec0.X + _vec1.X, _vec0.Y + _vec1.Y);
+            return new Vec2F(vec0.X + vec1.X, vec0.Y + vec1.Y);
         }
 
-        public static Vec2F operator -(Vec2F _vec0, float _value)
+        public static Vec2F operator -(Vec2F vec0, float value)
         {
-            return new Vec2F(_vec0.X - _value, _vec0.Y - _value);
+            return new Vec2F(vec0.X - value, vec0.Y - value);
         }
 
-        public static Vec2F operator -(Vec2F _vec0, Vec2F _vec1)
+        public static Vec2F operator -(Vec2F vec0, Vec2F vec1)
         {
-            return new Vec2F(_vec0.X - _vec1.X, _vec0.Y - _vec1.Y);
+            return new Vec2F(vec0.X - vec1.X, vec0.Y - vec1.Y);
         }
 
-        public static Vec2F operator*(Vec2F _vec0, float _value)
+        public static Vec2F operator*(Vec2F vec0, float value)
         {
-            return new Vec2F(_vec0.X * _value, _vec0.Y * _value);
+            return new Vec2F(vec0.X * value, vec0.Y * value);
         }
 
-        public static Vec2F operator *(Vec2F _vec0, Vec2F _vec1)
+        public static Vec2F operator *(Vec2F vec0, Vec2F vec1)
         {
-            return new Vec2F(_vec0.X * _vec1.X, _vec0.Y * _vec1.Y);
+            return new Vec2F(vec0.X * vec1.X, vec0.Y * vec1.Y);
         }
 
-        public static Vec2F operator /(Vec2F _vec0, float _value)
+        public static Vec2F operator /(Vec2F vec0, float value)
         {
-            return new Vec2F(_vec0.X / _value, _vec0.Y / _value);
+            return new Vec2F(vec0.X / value, vec0.Y / value);
         }
 
-        public static Vec2F operator /(Vec2F _vec0, Vec2F _vec1)
+        public static Vec2F operator /(Vec2F vec0, Vec2F vec1)
         {
-            return new Vec2F(_vec0.X / _vec1.X, _vec0.Y / _vec1.Y);
+            return new Vec2F(vec0.X / vec1.X, vec0.Y / vec1.Y);
+        }
+
+        public float Length()
+        {
+            return (float)Math.Sqrt(X * X + Y * Y);
+        }
+
+        public float LengthSq()
+        {
+            return X * X + Y * Y;
         }
 
         public float Normalize()
         {
-            float length = (float)Math.Sqrt(X * X + Y * Y);
+            float length = Length();
 
             if (length > 1e-08f)
             {
@@ -82,14 +92,14 @@ namespace Maze.Core
             return length;
         }
 
-        public float Dot(Vec2F _vec)
+        public float Dot(Vec2F vec)
         {
-            return X * _vec.X + Y * _vec.Y;
+            return X * vec.X + Y * vec.Y;
         }
 
-        public Vec2F Reflect(Vec2F _normal)
+        public Vec2F Reflect(Vec2F normal)
         {
-            return this - (_normal * Dot(_normal) * 2.0f);
+            return this - (normal * Dot(normal) * 2.0f);
         }
 
         public Vec2F RandomDirection()

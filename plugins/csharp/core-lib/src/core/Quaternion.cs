@@ -11,82 +11,82 @@ namespace Maze.Core
 
 
         public Quaternion(
-            float _x = 0.0f,
-            float _y = 0.0f,
-            float _z = 0.0f,
-            float _w = 1.0f)
+            float x = 0.0f,
+            float y = 0.0f,
+            float z = 0.0f,
+            float w = 1.0f)
         {
-            X = _x;
-            Y = _y;
-            Z = _z;
-            W = _w;
+            X = x;
+            Y = y;
+            Z = z;
+            W = w;
         }
 
         public Quaternion(
-            Vec3F _vec,
-            float _w = 1.0f)
+            Vec3F vec,
+            float w = 1.0f)
         {
-            X = _vec.X;
-            Y = _vec.Y;
-            Z = _vec.Z;
-            W = _w;
+            X = vec.X;
+            Y = vec.Y;
+            Z = vec.Z;
+            W = w;
         }
 
         public Quaternion(
-            Vec2F _vec,
-            float _z = 0.0f,
-            float _w = 1.0f)
+            Vec2F vec,
+            float z = 0.0f,
+            float w = 1.0f)
         {
-            X = _vec.X;
-            Y = _vec.Y;
-            Z = _z;
-            W = _w;
+            X = vec.X;
+            Y = vec.Y;
+            Z = z;
+            W = w;
         }
 
 
-        public static Quaternion operator -(Quaternion _vec0)
+        public static Quaternion operator -(Quaternion vec0)
         {
-            return new Quaternion(-_vec0.X, -_vec0.Y, -_vec0.Z, -_vec0.W);
+            return new Quaternion(-vec0.X, -vec0.Y, -vec0.Z, -vec0.W);
         }
 
-        public static Quaternion operator +(Quaternion _vec0, float _value)
+        public static Quaternion operator +(Quaternion vec0, float value)
         {
-            return new Quaternion(_vec0.X + _value, _vec0.Y + _value, _vec0.Z + _value, _vec0.W + _value);
+            return new Quaternion(vec0.X + value, vec0.Y + value, vec0.Z + value, vec0.W + value);
         }
 
-        public static Quaternion operator +(Quaternion _vec0, Quaternion _vec1)
+        public static Quaternion operator +(Quaternion vec0, Quaternion vec1)
         {
-            return new Quaternion(_vec0.X + _vec1.X, _vec0.Y + _vec1.Y, _vec0.Z + _vec1.Z, _vec0.W + _vec1.W);
+            return new Quaternion(vec0.X + vec1.X, vec0.Y + vec1.Y, vec0.Z + vec1.Z, vec0.W + vec1.W);
         }
 
-        public static Quaternion operator -(Quaternion _vec0, float _value)
+        public static Quaternion operator -(Quaternion vec0, float value)
         {
-            return new Quaternion(_vec0.X - _value, _vec0.Y - _value, _vec0.Z - _value, _vec0.W - _value);
+            return new Quaternion(vec0.X - value, vec0.Y - value, vec0.Z - value, vec0.W - value);
         }
 
-        public static Quaternion operator -(Quaternion _vec0, Quaternion _vec1)
+        public static Quaternion operator -(Quaternion vec0, Quaternion vec1)
         {
-            return new Quaternion(_vec0.X - _vec1.X, _vec0.Y - _vec1.Y, _vec0.Z - _vec1.Z, _vec0.W - _vec1.W);
+            return new Quaternion(vec0.X - vec1.X, vec0.Y - vec1.Y, vec0.Z - vec1.Z, vec0.W - vec1.W);
         }
 
-        public static Quaternion operator *(Quaternion _vec0, float _value)
+        public static Quaternion operator *(Quaternion vec0, float value)
         {
-            return new Quaternion(_vec0.X * _value, _vec0.Y * _value, _vec0.Z * _value, _vec0.W * _value);
+            return new Quaternion(vec0.X * value, vec0.Y * value, vec0.Z * value, vec0.W * value);
         }
 
-        public static Quaternion operator *(Quaternion _vec0, Quaternion _vec1)
+        public static Quaternion operator *(Quaternion vec0, Quaternion vec1)
         {
-            return new Quaternion(_vec0.X * _vec1.X, _vec0.Y * _vec1.Y, _vec0.Z * _vec1.Z, _vec0.W * _vec1.W);
+            return new Quaternion(vec0.X * vec1.X, vec0.Y * vec1.Y, vec0.Z * vec1.Z, vec0.W * vec1.W);
         }
 
-        public static Quaternion operator /(Quaternion _vec0, float _value)
+        public static Quaternion operator /(Quaternion vec0, float value)
         {
-            return new Quaternion(_vec0.X / _value, _vec0.Y / _value, _vec0.Z / _value, _vec0.W / _value);
+            return new Quaternion(vec0.X / value, vec0.Y / value, vec0.Z / value, vec0.W / value);
         }
 
-        public static Quaternion operator /(Quaternion _vec0, Quaternion _vec1)
+        public static Quaternion operator /(Quaternion vec0, Quaternion vec1)
         {
-            return new Quaternion(_vec0.X / _vec1.X, _vec0.Y / _vec1.Y, _vec0.Z / _vec1.Z, _vec0.W / _vec1.W);
+            return new Quaternion(vec0.X / vec1.X, vec0.Y / vec1.Y, vec0.Z / vec1.Z, vec0.W / vec1.W);
         }
 
         public void setEulerAngles(

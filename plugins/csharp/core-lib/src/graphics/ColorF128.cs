@@ -26,15 +26,15 @@ namespace Maze.Graphics
         public static ColorF128 Yellow => new ColorF128(1.0f, 1.0f, 0, 1.0f);
 
         public ColorF128(
-            float _r = 0.0f,
-            float _g = 0.0f,
-            float _b = 0.0f,
-            float _a = 0.0f)
+            float r = 0.0f,
+            float g = 0.0f,
+            float b = 0.0f,
+            float a = 0.0f)
         {
-            R = _r;
-            G = _g;
-            B = _b;
-            A = _a;
+            R = r;
+            G = g;
+            B = b;
+            A = a;
         }
 
         public Vec4F ToVec4F()

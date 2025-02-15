@@ -9,9 +9,9 @@ namespace Maze.Core
         private IntPtr m_Ptr;
         public IntPtr Ptr { get { return m_Ptr; } }
 
-        public NativePtr(IntPtr _ptr)
+        public NativePtr(IntPtr ptr)
         {
-            m_Ptr = _ptr;
+            m_Ptr = ptr;
         }
 
         public override bool Equals(object obj)
@@ -24,14 +24,14 @@ namespace Maze.Core
             return Ptr.GetHashCode();
         }
 
-        public static bool operator ==(NativePtr value1, NativePtr value2)
+        public static bool operator ==(NativePtr value0, NativePtr value1)
         {
-            return value1.Ptr == value2.Ptr;
+            return value0.Ptr == value1.Ptr;
         }
 
-        public static bool operator !=(NativePtr value1, NativePtr value2)
+        public static bool operator !=(NativePtr value0, NativePtr value1)
         {
-            return value1.Ptr != value2.Ptr;
+            return value0.Ptr != value1.Ptr;
         }
     }
 }

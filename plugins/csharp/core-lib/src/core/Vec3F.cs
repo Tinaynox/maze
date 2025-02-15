@@ -21,27 +21,32 @@ namespace Maze.Core
         public Vec2F XY => new Vec2F(X, Y);
 
         public Vec3F(
-            float _x = 0.0f,
-            float _y = 0.0f,
-            float _z = 0.0f)
+            float x = 0.0f,
+            float y = 0.0f,
+            float z = 0.0f)
         {
-            X = _x;
-            Y = _y;
-            Z = _z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public Vec3F(
-            Vec2F _vec,
-            float _z = 0.0f)
+            Vec2F vec,
+            float z = 0.0f)
         {
-            X = _vec.X;
-            Y = _vec.Y;
-            Z = _z;
+            X = vec.X;
+            Y = vec.Y;
+            Z = z;
         }
 
         public float Length()
         {
             return (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+        }
+
+        public float LengthSq()
+        {
+            return X * X + Y * Y + Z * Z;
         }
 
         public float Normalize()
@@ -64,54 +69,54 @@ namespace Maze.Core
             return X * vec.X + Y * vec.Y + Z * vec.Z;
         }
 
-        public static Vec3F operator -(Vec3F _vec0)
+        public static Vec3F operator -(Vec3F vec0)
         {
-            return new Vec3F(-_vec0.X, -_vec0.Y, -_vec0.Z);
+            return new Vec3F(-vec0.X, -vec0.Y, -vec0.Z);
         }
 
-        public static Vec3F operator +(Vec3F _vec0, float _value)
+        public static Vec3F operator +(Vec3F vec0, float value)
         {
-            return new Vec3F(_vec0.X + _value, _vec0.Y + _value, _vec0.Z + _value);
+            return new Vec3F(vec0.X + value, vec0.Y + value, vec0.Z + value);
         }
 
-        public static Vec3F operator +(Vec3F _vec0, Vec3F _vec1)
+        public static Vec3F operator +(Vec3F vec0, Vec3F vec1)
         {
-            return new Vec3F(_vec0.X + _vec1.X, _vec0.Y + _vec1.Y, _vec0.Z + _vec1.Z);
+            return new Vec3F(vec0.X + vec1.X, vec0.Y + vec1.Y, vec0.Z + vec1.Z);
         }
 
-        public static Vec3F operator -(Vec3F _vec0, float _value)
+        public static Vec3F operator -(Vec3F vec0, float value)
         {
-            return new Vec3F(_vec0.X - _value, _vec0.Y - _value, _vec0.Z - _value);
+            return new Vec3F(vec0.X - value, vec0.Y - value, vec0.Z - value);
         }
 
-        public static Vec3F operator -(Vec3F _vec0, Vec3F _vec1)
+        public static Vec3F operator -(Vec3F vec0, Vec3F vec1)
         {
-            return new Vec3F(_vec0.X - _vec1.X, _vec0.Y - _vec1.Y, _vec0.Z - _vec1.Z);
+            return new Vec3F(vec0.X - vec1.X, vec0.Y - vec1.Y, vec0.Z - vec1.Z);
         }
 
-        public static Vec3F operator *(Vec3F _vec0, float _value)
+        public static Vec3F operator *(Vec3F vec0, float value)
         {
-            return new Vec3F(_vec0.X * _value, _vec0.Y * _value, _vec0.Z * _value);
+            return new Vec3F(vec0.X * value, vec0.Y * value, vec0.Z * value);
         }
 
-        public static Vec3F operator *(float _value, Vec3F _vec0)
+        public static Vec3F operator *(float value, Vec3F vec0)
         {
-            return new Vec3F(_vec0.X * _value, _vec0.Y * _value, _vec0.Z * _value);
+            return new Vec3F(vec0.X * value, vec0.Y * value, vec0.Z * value);
         }
 
-        public static Vec3F operator *(Vec3F _vec0, Vec3F _vec1)
+        public static Vec3F operator *(Vec3F vec0, Vec3F vec1)
         {
-            return new Vec3F(_vec0.X * _vec1.X, _vec0.Y * _vec1.Y, _vec0.Z * _vec1.Z);
+            return new Vec3F(vec0.X * vec1.X, vec0.Y * vec1.Y, vec0.Z * vec1.Z);
         }
 
-        public static Vec3F operator /(Vec3F _vec0, float _value)
+        public static Vec3F operator /(Vec3F vec0, float value)
         {
-            return new Vec3F(_vec0.X / _value, _vec0.Y / _value, _vec0.Z / _value);
+            return new Vec3F(vec0.X / value, vec0.Y / value, vec0.Z / value);
         }
 
-        public static Vec3F operator /(Vec3F _vec0, Vec3F _vec1)
+        public static Vec3F operator /(Vec3F vec0, Vec3F vec1)
         {
-            return new Vec3F(_vec0.X / _vec1.X, _vec0.Y / _vec1.Y, _vec0.Z / _vec1.Z);
+            return new Vec3F(vec0.X / vec1.X, vec0.Y / vec1.Y, vec0.Z / vec1.Z);
         }
     }
 }

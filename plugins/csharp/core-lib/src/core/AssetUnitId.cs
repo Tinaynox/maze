@@ -6,9 +6,9 @@ namespace Maze.Core
     {
         private uint m_Id;
 
-        public AssetUnitId(uint _id)
+        public AssetUnitId(uint id)
         {
-            m_Id = _id;
+            m_Id = id;
         }
 
         public override bool Equals(object obj)
@@ -21,14 +21,14 @@ namespace Maze.Core
             return m_Id.GetHashCode();
         }
 
-        public static bool operator ==(AssetUnitId value1, AssetUnitId value2)
+        public static bool operator ==(AssetUnitId value0, AssetUnitId value1)
         {
-            return value1.m_Id == value2.m_Id;
+            return value0.m_Id == value1.m_Id;
         }
 
-        public static bool operator !=(AssetUnitId value1, AssetUnitId value2)
+        public static bool operator !=(AssetUnitId value0, AssetUnitId value1)
         {
-            return value1.m_Id != value2.m_Id;
+            return value0.m_Id != value1.m_Id;
         }
     }
 }

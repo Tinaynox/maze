@@ -10,15 +10,15 @@ namespace Maze.Graphics
         public byte A;
 
         public ColorU32(
-            byte _r = 0,
-            byte _g = 0,
-            byte _b = 0,
-            byte _a = 0)
+            byte r = 0,
+            byte g = 0,
+            byte b = 0,
+            byte a = 0)
         {
-            R = _r;
-            G = _g;
-            B = _b;
-            A = _a;
+            R = r;
+            G = g;
+            B = b;
+            A = a;
         }
     }
 }

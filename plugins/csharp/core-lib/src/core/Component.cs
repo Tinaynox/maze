@@ -22,29 +22,29 @@ namespace Maze.Core
             return GetComponentByType(typeof(T)) as T;
         }
 
-        public object GetComponentByType(Type _componentType)
+        public object GetComponentByType(Type componentType)
         {
-            return EcsUtils.GetComponentByType(NativeComponentPtr, _componentType);
+            return EcsUtils.GetComponentByType(NativeComponentPtr, componentType);
         }
 
-        public Entity InstantiateEntity(AssetUnitId _auid)
+        public Entity InstantiateEntity(AssetUnitId auid)
         {
-            return new Entity(InternalCalls.InstantiateEntity(NativeComponentPtr, _auid));
+            return new Entity(InternalCalls.InstantiateEntity(NativeComponentPtr, auid));
         }
 
-        public static bool operator !(Component _instance)
+        public static bool operator !(Component instance)
         {
-            return _instance.NativeComponentPtr == NativePtr.Zero;
+            return instance.NativeComponentPtr == NativePtr.Zero;
         }
 
-        public static bool operator true(Component _instance)
+        public static bool operator true(Component instance)
         {
-            return _instance.NativeComponentPtr != NativePtr.Zero;
+            return instance.NativeComponentPtr != NativePtr.Zero;
         }
 
-        public static bool operator false(Component _instance)
+        public static bool operator false(Component instance)
         {
-            return _instance.NativeComponentPtr == NativePtr.Zero;
+            return instance.NativeComponentPtr == NativePtr.Zero;
         }
     }
 }

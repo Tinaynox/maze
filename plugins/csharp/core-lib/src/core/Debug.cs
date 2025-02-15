@@ -4,19 +4,19 @@ namespace Maze.Core
 {
     public class Debug
     {
-        public static void Log(string _text)
+        public static void Log(string text)
         {
-            InternalCalls.MazeLog(_text);
+            InternalCalls.MazeLog(text);
         }
 
-        public static void LogWarning(string _text)
+        public static void LogWarning(string text)
         {
-            InternalCalls.MazeLogWarning(_text);
+            InternalCalls.MazeLogWarning(text);
         }
 
-        public static void LogError(string _text)
+        public static void LogError(string text)
         {
-            InternalCalls.MazeLogError(_text);
+            InternalCalls.MazeLogError(text);
         }
 
     }

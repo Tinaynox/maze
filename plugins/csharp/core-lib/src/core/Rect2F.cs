@@ -10,15 +10,15 @@ namespace Maze.Core
         public float H;
 
         public Rect2F(
-            float _x = 0.0f,
-            float _y = 0.0f,
-            float _w = 0.0f,
-            float _h = 0.0f)
+            float x = 0.0f,
+            float y = 0.0f,
+            float w = 0.0f,
+            float h = 0.0f)
         {
-            X = _x;
-            Y = _y;
-            W = _w;
-            H = _h;
+            X = x;
+            Y = y;
+            W = w;
+            H = h;
         }
     }
 }

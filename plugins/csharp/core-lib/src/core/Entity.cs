@@ -6,9 +6,9 @@ namespace Maze.Core
     {
         public NativePtr NativeEntityPtr { get; private set; }
 
-        public Entity(NativePtr _ptr)
+        public Entity(NativePtr ptr)
         {
-            NativeEntityPtr = _ptr;
+            NativeEntityPtr = ptr;
         }
 
         public int GetEntityId()
