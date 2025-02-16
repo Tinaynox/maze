@@ -64,6 +64,15 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        enum class GizmosMode
+        {
+            Debug = 0,
+            CustomGeometry = 1,
+
+            MAX
+        };
+
+        //////////////////////////////////////////
         enum class MeshRenderMode
         {
             Opaque = 0,
@@ -80,6 +89,7 @@ namespace Maze
             Vec3F point0;
             Vec3F point1;
             ColorF128 color;
+            GizmosMode gizmosMode;
             MeshRenderMode renderMode;
         };
 
@@ -91,6 +101,7 @@ namespace Maze
             Vec3F point1;
             Vec3F point2;
             ColorF128 color;
+            GizmosMode gizmosMode;
             MeshRenderMode renderMode;
         };
 
@@ -133,6 +144,7 @@ namespace Maze
         void drawLine(
             Vec3F const& _point0,
             Vec3F const& _point1,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent);
 
         //////////////////////////////////////////
@@ -140,6 +152,7 @@ namespace Maze
             Vec3F const& _point0,
             Vec3F const& _point1,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent);
 
         //////////////////////////////////////////
@@ -149,9 +162,10 @@ namespace Maze
             F32 _x1,
             F32 _y1,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawLine({ _x0, _y0, 0.0f }, { _x1, _y1, 0.0f }, _duration, _renderMode);
+            drawLine({ _x0, _y0, 0.0f }, { _x1, _y1, 0.0f }, _duration, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -160,9 +174,10 @@ namespace Maze
             F32 _y0,
             F32 _x1,
             F32 _y1,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawLine(_x0, _y0, _x1, _y1, -1.0f, _renderMode);
+            drawLine(_x0, _y0, _x1, _y1, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -170,18 +185,20 @@ namespace Maze
             Vec2F const& _point0,
             Vec2F const& _point1,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawLine({ _point0.x, _point0.y, 0.0f }, { _point1.x, _point1.y, 0.0f }, _duration, _renderMode);
+            drawLine({ _point0.x, _point0.y, 0.0f }, { _point1.x, _point1.y, 0.0f }, _duration, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
         inline void drawLine(
             Vec2F const& _point0,
             Vec2F const& _point1,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawLine(_point0, _point1, -1.0f, _renderMode);
+            drawLine(_point0, _point1, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -193,9 +210,10 @@ namespace Maze
             F32 _y1,
             F32 _z1,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawLine({ _x0, _y0, _z0 }, { _x1, _y1, _z1 }, _duration, _renderMode);
+            drawLine({ _x0, _y0, _z0 }, { _x1, _y1, _z1 }, _duration, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -206,9 +224,10 @@ namespace Maze
             F32 _x1,
             F32 _y1,
             F32 _z1,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawLine(_x0, _y0, _z0, _x1, _y1, _z1, -1.0f, _renderMode);
+            drawLine(_x0, _y0, _z0, _x1, _y1, _z1, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -216,18 +235,20 @@ namespace Maze
             Vec3F const& _point,
             Vec3F const& _delta,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawLine(_point, _point + _delta, _duration, _renderMode);
+            drawLine(_point, _point + _delta, _duration, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
         inline void drawRay(
             Vec3F const& _point,
             Vec3F const& _delta,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawLine(_point, _delta, -1.0f, _renderMode);
+            drawLine(_point, _delta, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -238,6 +259,7 @@ namespace Maze
             Vec2F const& _size,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -246,6 +268,7 @@ namespace Maze
             Vec3F const& _direction,
             F32 _radius,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent);
 
         //////////////////////////////////////////
@@ -253,9 +276,10 @@ namespace Maze
             Vec3F const& _position,
             Vec3F const& _direction,
             F32 _radius,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawWireCircle(_position, _direction, _radius, -1.0f, _renderMode);
+            drawWireCircle(_position, _direction, _radius, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -265,6 +289,7 @@ namespace Maze
             Vec3F const& _up,
             F32 _radius,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent);
 
         //////////////////////////////////////////
@@ -273,9 +298,10 @@ namespace Maze
             Vec3F const& _forward,
             Vec3F const& _up,
             F32 _radius,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawWireHemicircle(_position, _forward, _up, _radius, -1.0f, _renderMode);
+            drawWireHemicircle(_position, _forward, _up, _radius, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -286,6 +312,7 @@ namespace Maze
             Vec3F const& _scale,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -295,9 +322,10 @@ namespace Maze
             Vec3F const& _up,
             Vec3F const& _scale,
             ColorF128 const& _color = ColorF128::c_white,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawWireCube(_position, _forward, _up, _scale, _color, -1.0f, _renderMode);
+            drawWireCube(_position, _forward, _up, _scale, _color, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -306,6 +334,7 @@ namespace Maze
             F32 _radius,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -313,9 +342,10 @@ namespace Maze
             Vec3F const& _position,
             F32 _radius = 1.0f,
             ColorF128 const& _color = ColorF128::c_white,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawWireSphere(_position, _radius, _color, -1.0f, _renderMode);
+            drawWireSphere(_position, _radius, _color, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -325,6 +355,7 @@ namespace Maze
             F32 _radius,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -333,9 +364,10 @@ namespace Maze
             Vec3F const& _direction,
             F32 _radius = 1.0f,
             ColorF128 const& _color = ColorF128::c_white,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawWireHemisphere(_position, _direction, _radius, _color, -1.0f, _renderMode);
+            drawWireHemisphere(_position, _direction, _radius, _color, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -345,6 +377,7 @@ namespace Maze
             F32 _radius,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -353,9 +386,10 @@ namespace Maze
             Vec3F const& _end,
             F32 _radius = 1.0f,
             ColorF128 const& _color = ColorF128::c_white,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawWireCylinder(_start, _end, _radius, _color, -1.0f, _renderMode);
+            drawWireCylinder(_start, _end, _radius, _color, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -365,6 +399,7 @@ namespace Maze
             F32 _angle,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -373,9 +408,10 @@ namespace Maze
             Vec3F const& _direction,
             F32 _angle = Math::DegreesToRadians(45.0f),
             ColorF128 const& _color = ColorF128::c_white,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawWireCone(_position, _direction, _angle, _color, -1.0f, _renderMode);
+            drawWireCone(_position, _direction, _angle, _color, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -386,6 +422,7 @@ namespace Maze
             F32 _angle,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -394,10 +431,11 @@ namespace Maze
             Vec3F const& _direction,
             F32 _radius = 1.0f,
             F32 _angle = Math::DegreesToRadians(45.0f),
-            ColorF128 const& _color = ColorF128::c_white,            
+            ColorF128 const& _color = ColorF128::c_white,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawWireTruncatedCone(_position, _direction, _radius, _angle, _color, -1.0f, _renderMode);
+            drawWireTruncatedCone(_position, _direction, _radius, _angle, _color, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -408,6 +446,7 @@ namespace Maze
             F32 _torusRadius,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -417,9 +456,10 @@ namespace Maze
             F32 _radius = 1.0f,
             F32 _torusRadius = 0.2f,
             ColorF128 const& _color = ColorF128::c_white,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawWireTorus(_position, _direction, _radius, _torusRadius, _color, -1.0f, _renderMode);
+            drawWireTorus(_position, _direction, _radius, _torusRadius, _color, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -428,6 +468,7 @@ namespace Maze
             Vec3F const& _direction,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -435,9 +476,10 @@ namespace Maze
             Vec3F const& _position,
             Vec3F const& _direction,
             ColorF128 const& _color = ColorF128::c_white,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawWireArrow(_position, _direction, _color, -1.0f, _renderMode);
+            drawWireArrow(_position, _direction, _color, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -447,6 +489,7 @@ namespace Maze
             F32 _radius,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -455,37 +498,42 @@ namespace Maze
             Vec3F const& _end,
             F32 _radius = 1.0f,
             ColorF128 const& _color = ColorF128::c_white,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawWireCapsule(_start, _end, _radius, _color, -1.0f, _renderMode);
+            drawWireCapsule(_start, _end, _radius, _color, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
         void drawAABB(
             AABB2D const& _aabb,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
         inline void drawAABB(
             AABB2D const& _aabb,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawAABB(_aabb, -1.0f, _renderMode);
+            drawAABB(_aabb, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
         void drawAABB(
             AABB3D const& _aabb,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
         void drawAABB(
             AABB3D const& _aabb,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawAABB(_aabb, -1.0f, _renderMode);
+            drawAABB(_aabb, -1.0f, _gizmosMode, _renderMode);
         }
 
 
@@ -494,6 +542,7 @@ namespace Maze
             Vec3F const& _point0,
             Vec3F const& _point1,
             Vec3F const& _point2,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
 
@@ -503,6 +552,7 @@ namespace Maze
             Vec3F const& _point1,
             Vec3F const& _point2,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -511,6 +561,7 @@ namespace Maze
             Vec3F const& _position,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -521,6 +572,7 @@ namespace Maze
             Vec2F const& _scale,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -531,6 +583,7 @@ namespace Maze
             Vec3F const& _scale,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -539,6 +592,7 @@ namespace Maze
             F32 _radius,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -550,6 +604,7 @@ namespace Maze
             F32 _height,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -561,6 +616,7 @@ namespace Maze
             F32 _height,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
@@ -570,6 +626,7 @@ namespace Maze
             F32 _radius,
             ColorF128 const& _color,
             F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
 
@@ -618,8 +675,8 @@ namespace Maze
         EcsWorld* m_world = nullptr;
 
         MaterialPtr m_materials[(Size)MeshRenderMode::MAX];
-        MeshData m_lines[(Size)MeshRenderMode::MAX];
-        MeshData m_triangles[(Size)MeshRenderMode::MAX];
+        MeshData m_lines[(Size)GizmosMode::MAX][(Size)MeshRenderMode::MAX];
+        MeshData m_triangles[(Size)GizmosMode::MAX][(Size)MeshRenderMode::MAX];
 
         List<TimedBufferedLine> m_timedBufferedLines;
         List<TimedBufferedTriangle> m_timedBufferedTriangles;

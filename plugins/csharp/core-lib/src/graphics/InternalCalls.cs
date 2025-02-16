@@ -32,6 +32,12 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Camera3DSetFarZ(NativePtr _nativeComponentPtr, float _value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Camera3DGetRenderMask(NativePtr _nativeComponentPtr, out int _outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Camera3DSetRenderMask(NativePtr _nativeComponentPtr, int _value);
         #endregion
     }
 }

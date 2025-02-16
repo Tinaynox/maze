@@ -27,6 +27,12 @@ namespace Maze.Graphics
             set { InternalCalls.Camera3DSetFarZ(NativeComponentPtr, value); }
         }
 
+        public int RenderMask
+        {
+            get { InternalCalls.Camera3DGetRenderMask(NativeComponentPtr, out int value); return value; }
+            set { InternalCalls.Camera3DSetRenderMask(NativeComponentPtr, value); }
+        }
+
         public Camera3D(NativePtr _nativeComponentPtr)
             : base(_nativeComponentPtr)
         {  

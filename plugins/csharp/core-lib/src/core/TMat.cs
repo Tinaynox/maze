@@ -27,6 +27,73 @@ namespace Maze.Core
             M30 = m30; M31 = m31; M32 = m32;
         }
 
+        public static TMat CreateRotationX(float angle)
+        {
+            // CCW rotation around X axis 
+            float c = (float)Math.Cos(angle);
+            float s = (float)Math.Sin(angle);
+            return new TMat(
+                1, 0, 0,
+                0, c, s,
+                0,  -s, c,
+                0, 0, 0);
+        }
+
+        public static TMat CreateRotationY(float angle)
+        {
+            // CCW rotation around Y axis 
+            float c = (float)Math.Cos(angle);
+            float s = (float)Math.Sin(angle);
+            return new TMat(
+                c, 0,  -s,
+                0, 1, 0,
+                s, 0, c,
+                0, 0, 0);
+        }
+
+        public static TMat CreateRotationZ(float angle)
+        {
+            // CCW rotation around Z axis 
+            float c = (float)Math.Cos(angle);
+            float s = (float)Math.Sin(angle);
+            return new TMat(
+                c, s, 0,
+                -s, c, 0,
+                0, 0, 1,
+                0, 0, 0);
+        }
+
+        public static TMat CreateRotation(float angleX, float angleY, float angleZ)
+        {
+            // CCW rotation
+            float cx = (float)Math.Cos(angleX);
+            float sx = (float)Math.Sin(angleX);
+
+            float cy = (float)Math.Cos(angleY);
+            float sy = (float)Math.Sin(angleY);
+
+            float cz = (float)Math.Cos(angleZ);
+            float sz = (float)Math.Sin(angleZ);
+
+            // #TODO: simplify
+            return
+                new TMat(
+                    cy, 0,  -sy,
+                    0, 1, 0,
+                    sy, 0, cy,
+                    0, 0, 0).Transform(
+                    new TMat(
+                        1, 0, 0,
+                        0, cx, sx,
+                        0,  -sx, cx,
+                        0, 0, 0)).Transform(
+                        new TMat(
+                            cz, sz, 0,
+                             -sz, cz, 0,
+                            0, 0, 1,
+                            0, 0, 0));
+        }
+
         public Vec3F this[int index]
         {
             get
@@ -44,25 +111,49 @@ namespace Maze.Core
             }
         }
 
+        //////////////////////////////////////////
+        //
+        // [ mat.M00 mat.M01 mat.M02 0 ]   [ M00 M01 M02 0 ]
+        // | mat.M10 mat.M11 mat.M12 0 | * | M10 M11 M12 0 |
+        // | mat.M20 mat.M21 mat.M22 0 |   | M20 M21 M22 0 |
+        // [ mat.M30 mat.M31 mat.M32 1 ]   [ M30 M31 M32 1 ]
+        // 
+        //////////////////////////////////////////
+        public void Transform(TMat mat, out TMat outMat)
+        {
+            outMat.M00 = mat.M00 * M00 + mat.M01 * M10 + mat.M02 * M20;
+            outMat.M01 = mat.M00 * M01 + mat.M01 * M11 + mat.M02 * M21;
+            outMat.M02 = mat.M00 * M02 + mat.M01 * M12 + mat.M02 * M22;
+
+            outMat.M10 = mat.M10 * M00 + mat.M11 * M10 + mat.M12 * M20;
+            outMat.M11 = mat.M10 * M01 + mat.M11 * M11 + mat.M12 * M21;
+            outMat.M12 = mat.M10 * M02 + mat.M11 * M12 + mat.M12 * M22;
+
+            outMat.M20 = mat.M20 * M00 + mat.M21 * M10 + mat.M22 * M20;
+            outMat.M21 = mat.M20 * M01 + mat.M21 * M11 + mat.M22 * M21;
+            outMat.M22 = mat.M20 * M02 + mat.M21 * M12 + mat.M22 * M22;
+
+            outMat.M30 = mat.M30 * M00 + mat.M31 * M10 + mat.M32 * M20 + M30;
+            outMat.M31 = mat.M30 * M01 + mat.M31 * M11 + mat.M32 * M21 + M31;
+            outMat.M32 = mat.M30 * M02 + mat.M31 * M12 + mat.M32 * M22 + M32;
+        }
+
+        public TMat Transform(TMat mat)
+        {
+            Transform(mat, out TMat res);
+            return res;
+        }
+
+        //////////////////////////////////////////
+        public TMat Multiplied(TMat m)
+        {
+            m.Transform(this, out TMat res);
+            return res;
+        }
+
         public static TMat operator *(TMat left, TMat right)
         {
-            return new TMat(
-                left.M00 * right.M00 + left.M01 * right.M10 + left.M02 * right.M20,
-                left.M00 * right.M01 + left.M01 * right.M11 + left.M02 * right.M21,
-                left.M00 * right.M02 + left.M01 * right.M12 + left.M02 * right.M22,
-
-                left.M10 * right.M00 + left.M11 * right.M10 + left.M12 * right.M20,
-                left.M10 * right.M01 + left.M11 * right.M11 + left.M12 * right.M21,
-                left.M10 * right.M02 + left.M11 * right.M12 + left.M12 * right.M22,
-
-                left.M20 * right.M00 + left.M21 * right.M10 + left.M22 * right.M20,
-                left.M20 * right.M01 + left.M21 * right.M11 + left.M22 * right.M21,
-                left.M20 * right.M02 + left.M21 * right.M12 + left.M22 * right.M22,
-
-                left.M30 * right.M00 + left.M31 * right.M10 + left.M32 * right.M20,
-                left.M30 * right.M01 + left.M31 * right.M11 + left.M32 * right.M21,
-                left.M30 * right.M02 + left.M31 * right.M12 + left.M32 * right.M22
-            );
+            return left.Multiplied(right);
         }
 
         public static Vec3F operator *(TMat matrix, Vec3F vector)

@@ -47,9 +47,9 @@ namespace Maze
     {
         Default = MAZE_BIT(0),
         Gizmos = MAZE_BIT(1),
-        Water = MAZE_BIT(2),
+        CustomGeometry = MAZE_BIT(2),
+        Water = MAZE_BIT(3),
 
-        MazeReserved0 = MAZE_BIT(3),
         MazeReserved1 = MAZE_BIT(4),
         MazeReserved2 = MAZE_BIT(5),
         MazeReserved3 = MAZE_BIT(6),

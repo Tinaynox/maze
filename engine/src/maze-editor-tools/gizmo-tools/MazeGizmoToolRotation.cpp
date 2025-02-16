@@ -82,6 +82,7 @@ namespace Maze
         TMat basisTransform = transform;
         basisTransform.setTranslation(Vec3F::c_zero);
 
+        GizmosDrawer::GizmosMode const gizmosMode = GizmosDrawer::GizmosMode::Debug;
         GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::TransparentTop;
 
         F32 const length = GizmoToolConfig::c_transformGizmoToolLength;
@@ -99,6 +100,7 @@ namespace Maze
                 length,
                 _color,
                 0.0f,
+                gizmosMode,
                 renderMode);
 
             GizmosHelper::DrawWireCircle(
@@ -106,6 +108,7 @@ namespace Maze
                 _axis,
                 GizmoToolConfig::c_transformGizmoToolRotationRadius,
                 0.0f,
+                gizmosMode,
                 renderMode);
         };
 
@@ -121,6 +124,7 @@ namespace Maze
                 scale * GizmoToolConfig::c_transformGizmoToolRotationRadius,
                 ColorF128::c_cyan,
                 0.0f,
+                gizmosMode,
                 renderMode);
             */
             F32 dist = 0.0;

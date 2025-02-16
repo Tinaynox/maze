@@ -82,6 +82,7 @@ namespace Maze
         TMat basisTransform = transform;
         basisTransform.setTranslation(Vec3F::c_zero);
 
+        GizmosDrawer::GizmosMode const gizmosMode = GizmosDrawer::GizmosMode::Debug;
         GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::TransparentTop;
 
         F32 const length = GizmoToolConfig::c_transformGizmoToolLength;
@@ -106,6 +107,7 @@ namespace Maze
                 len - GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize * 0.5f,
                 _color,
                 0.0f,
+                gizmosMode,
                 renderMode);
             GizmosHelper::DrawCube(
                 _axis * (len + GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f),
@@ -114,6 +116,7 @@ namespace Maze
                 Vec3F(GizmoToolConfig::c_transformGizmoToolArrowCubeSize),
                 _color,
                 0.0f,
+                gizmosMode,
                 renderMode);
         };
 
@@ -126,6 +129,7 @@ namespace Maze
                 Vec3F(GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize),
                 _color,
                 0.0f,
+                gizmosMode,
                 renderMode);
         };
 

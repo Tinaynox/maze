@@ -182,6 +182,7 @@ namespace Maze
                         zoneData.torus.radius,
                         zoneData.torus.torusRadius,
                         color,
+                        GizmosDrawer::GizmosMode::Debug,
                         GizmosDrawer::MeshRenderMode::Opaque);
 
                     if (zoneData.torus.radiusThickness > 0.0f && zoneData.torus.radiusThickness < 1.0f)
@@ -196,16 +197,16 @@ namespace Maze
                         _drawer->setColor(radiusThicknessColor);
                         _drawer->drawWireCircle(
                             up * zoneData.torus.radius, right,
-                            radiusThickness, GizmosDrawer::MeshRenderMode::Opaque);
+                            radiusThickness, GizmosDrawer::GizmosMode::Debug, GizmosDrawer::MeshRenderMode::Opaque);
                         _drawer->drawWireCircle(
                             -up * zoneData.torus.radius, right,
-                            radiusThickness, GizmosDrawer::MeshRenderMode::Opaque);
+                            radiusThickness, GizmosDrawer::GizmosMode::Debug, GizmosDrawer::MeshRenderMode::Opaque);
                         _drawer->drawWireCircle(
                             right * zoneData.torus.radius, up,
-                            radiusThickness, GizmosDrawer::MeshRenderMode::Opaque);
+                            radiusThickness, GizmosDrawer::GizmosMode::Debug, GizmosDrawer::MeshRenderMode::Opaque);
                         _drawer->drawWireCircle(
                             -right * zoneData.torus.radius, up,
-                            radiusThickness, GizmosDrawer::MeshRenderMode::Opaque);
+                            radiusThickness, GizmosDrawer::GizmosMode::Debug, GizmosDrawer::MeshRenderMode::Opaque);
                     }
                     _drawer->popTransform();
                     break;
@@ -231,6 +232,7 @@ namespace Maze
                         Vec3F::c_zero,
                         Vec3F::c_unitZ,
                         zoneData.circle.radius,
+                        GizmosDrawer::GizmosMode::Debug,
                         GizmosDrawer::MeshRenderMode::Opaque);
                     _drawer->popTransform();
                     break;

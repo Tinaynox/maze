@@ -82,6 +82,7 @@ namespace Maze
         TMat basisTransform = TMat::CreateBasis(right, up, forward);
         TMat transform = basisTransform * TMat::CreateTranslation(pos);
 
+        GizmosDrawer::GizmosMode const gizmosMode = GizmosDrawer::GizmosMode::Debug;
         GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::TransparentTop;
 
         F32 const length = GizmoToolConfig::c_transformGizmoToolLength;
@@ -99,6 +100,7 @@ namespace Maze
                 scale * length,
                 _color,
                 0.0f,
+                gizmosMode,
                 renderMode);
             GizmosHelper::DrawCone(
                 scale * _axis * length,
@@ -107,6 +109,7 @@ namespace Maze
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight,
                 _color,
                 0.0f,
+                gizmosMode,
                 renderMode);
         };
 
@@ -123,6 +126,7 @@ namespace Maze
                 scale * length,
                 ColorF128::c_cyan,
                 0.0f,
+                gizmosMode,
                 renderMode);
 
             GizmosHelper::DrawCone(
@@ -132,6 +136,7 @@ namespace Maze
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight * 2.0f,
                 ColorF128::c_cyan,
                 0.0f,
+                gizmosMode,
                 renderMode);
 #endif
 

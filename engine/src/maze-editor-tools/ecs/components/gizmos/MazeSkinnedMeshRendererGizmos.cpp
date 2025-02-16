@@ -123,6 +123,7 @@ namespace Maze
                     bone.parentBoneIndex != -1 ? 0.1f : 0.15f,
                     bone.parentBoneIndex != -1 ? ColorF128(0.0f, 1.0f, 0.0f, 0.5f) : ColorF128(1.0f, 0.66f, 0.0f, 1.0f),
                     0.0f,
+                    GizmosDrawer::GizmosMode::Debug,
                     GizmosDrawer::MeshRenderMode::TransparentTop);
 
                 if (bone.parentBoneIndex != -1)
@@ -144,6 +145,7 @@ namespace Maze
                             toChildLen,
                             ColorF128(0.0f, 1.0f, 0.0f, 0.25f),
                             0.0f,
+                            GizmosDrawer::GizmosMode::Debug,
                             GizmosDrawer::MeshRenderMode::TransparentTop);
                     }
                     
@@ -157,6 +159,7 @@ namespace Maze
                             boneWorldTm.getUp().length(),
                             ColorF128(0.0f, 1.0f, 0.0f, 0.25f),
                             0.0f,
+                            GizmosDrawer::GizmosMode::Debug,
                             GizmosDrawer::MeshRenderMode::TransparentTop);
                     }
 
@@ -173,6 +176,7 @@ namespace Maze
                         0.2f,
                         ColorF128(1.0f, 0.0f, 0.0f, 0.5f),
                         0.0f,
+                        GizmosDrawer::GizmosMode::Debug,
                         GizmosDrawer::MeshRenderMode::TransparentTop);
                 }
             }
