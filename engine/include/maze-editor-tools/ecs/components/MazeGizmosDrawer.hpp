@@ -670,7 +670,7 @@ namespace Maze
 
     protected:
         ColorF128 m_color;
-        Stack<TMat> m_transformStack;
+        FastVector<TMat> m_transformStack;
 
         EcsWorld* m_world = nullptr;
 

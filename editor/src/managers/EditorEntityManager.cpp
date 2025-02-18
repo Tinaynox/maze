@@ -74,7 +74,7 @@ namespace Maze
     bool EditorEntityManager::init()
     {
         m_workspaceWorld = EcsWorld::Create(
-            MAZE_HS("Workspace"), true, MAZE_ECS_TAGS(MAZE_HS("render")));
+            MAZE_HS("Workspace"), true, MAZE_ECS_TAGS(MAZE_HS("render"), MAZE_HS("editor")));
 
         RenderSystemPtr renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 

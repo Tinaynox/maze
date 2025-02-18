@@ -30,6 +30,7 @@
 #include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptField.hpp"
 #include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 
 
 //////////////////////////////////////////
@@ -106,20 +107,29 @@ namespace Maze
         {
             MAZE_DEBUG_ASSERT(_method);
 
-            MonoObject* exception = nullptr;
-            MonoObject* result = mono_runtime_invoke(_method, _instance, _params, &exception);
-
-            if (exception)
+            try
             {
-                MonoString* excStr = mono_object_to_string(exception, nullptr);
-                Char* cstr = mono_string_to_utf8(excStr);
-                MAZE_ERROR("MONO runtime error: %s", cstr);
-                mono_free(cstr);
+                MonoObject* exception = nullptr;
+                MonoObject* result = mono_runtime_invoke(_method, _instance, _params, &exception);
 
-                return nullptr;
+                if (exception)
+                {
+                    MonoString* excStr = mono_object_to_string(exception, nullptr);
+                    Char* cstr = mono_string_to_utf8(excStr);
+                    MAZE_ERROR("MONO runtime error: %s", cstr);
+                    mono_free(cstr);
+
+                    return nullptr;
+                }
+
+                return result;
             }
+            catch (const std::exception& ex)
+            {
+                Debug::logerr << "MONO exception caught: " << ex.what() << Maze::endl;
+            };
 
-            return result;
+            return nullptr;
         }
 
         //////////////////////////////////////////

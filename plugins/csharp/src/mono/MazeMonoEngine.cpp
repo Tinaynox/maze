@@ -29,6 +29,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/ecs/MazeCustomComponentSystemHolder.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsCore.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsGraphics.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsEditorTools.hpp"
@@ -152,6 +153,7 @@ namespace Maze
                     Set<HashedString> systemTags;
                     ComponentSystemOrder systemOrder;
 
+                    // OnCreate
                     if (scriptClass->getOnCreateMethod())
                     {
                         HashedString systemName(fullName + "::OnCreate");
@@ -170,6 +172,7 @@ namespace Maze
                                 systemOrder));
                     }
 
+                    // OnUpdate
                     if (scriptClass->getOnUpdateMethod())
                     {
                         HashedString systemName(fullName + "::OnUpdate");
@@ -188,7 +191,7 @@ namespace Maze
                                 systemOrder));
                     }
 
-                    
+                    // OnDestroy
                     {
                         HashedString systemName(fullName + "::OnDestroy");
 
@@ -208,6 +211,71 @@ namespace Maze
                                 ClassInfo<EntityRemovedEvent>::UID(),
                                 [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
                                 (ComponentSystemEventHandler::Func)&MonoBehaviourOnDestroy,
+                                systemTags,
+                                systemOrder));
+                    }
+
+                    // OnEditorCreate
+                    MonoMethod* onEditorCreate = scriptClass->getMethod("OnEditorCreate");
+                    if (onEditorCreate)
+                    {
+                        HashedString systemName(fullName + "::OnEditorCreate");
+
+                        MonoHelper::ParseMonoEntitySystemAttributes(onEditorCreate, systemTags, systemOrder);
+
+                        systemTags.insert(MAZE_HS("editor"));
+
+                        g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
+                            MakeShared<CustomComponentSystemHolder>(
+                                systemName,
+                                ClassInfo<EntityAddedEvent>::UID(),
+                                [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnEditorCreate,
+                                systemTags,
+                                systemOrder));
+                    }
+
+                    // OnEditorUpdate
+                    MonoMethod* onEditorUpdate = scriptClass->getMethod("OnEditorUpdate", 1);
+                    if (onEditorUpdate)
+                    {
+                        HashedString systemName(fullName + "::OnEditorUpdate");
+
+                        MonoHelper::ParseMonoEntitySystemAttributes(onEditorUpdate, systemTags, systemOrder);
+
+                        systemTags.insert(MAZE_HS("editor"));
+
+                        g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
+                            MakeShared<CustomComponentSystemHolder>(
+                                systemName,
+                                ClassInfo<UpdateEvent>::UID(),
+                                [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnEditorUpdate,
+                                systemTags,
+                                systemOrder));
+                    }
+
+                    // OnEditorDestroy
+                    MonoMethod* onEditorDestroy = scriptClass->getMethod("OnEditorDestroy");
+                    {
+                        HashedString systemName(fullName + "::OnEditorDestroy");
+
+                        if (onEditorDestroy)
+                            MonoHelper::ParseMonoEntitySystemAttributes(onEditorDestroy, systemTags, systemOrder);
+                        else
+                        {
+                            systemTags.clear();
+                            systemOrder = ComponentSystemOrder();
+                        }
+
+                        systemTags.insert(MAZE_HS("editor"));
+
+                        g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
+                            MakeShared<CustomComponentSystemHolder>(
+                                systemName,
+                                ClassInfo<EntityRemovedEvent>::UID(),
+                                [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnEditorDestroy,
                                 systemTags,
                                 systemOrder));
                     }
@@ -236,6 +304,40 @@ namespace Maze
             scriptClass->postInit();
     }
 
+    //////////////////////////////////////////
+    static void MonoTraceLogHandler(
+        CString log_domain,
+        CString log_level,
+        CString message,
+        mono_bool fatal,
+        void* user_data)
+    {
+        Debug::logwarn << "[" << log_level << "] " << " " << message << std::endl;
+    }
+
+    //////////////////////////////////////////
+    static void MonoTracePrintHandler(
+        CString string,
+        mono_bool is_stdout)
+    {
+        Debug::logwarn << string;
+    }
+
+    //////////////////////////////////////////
+    static void MonoLogerrHandler(
+        CString string,
+        mono_bool is_stdout)
+    {
+        Debug::logerr << string;
+        MAZE_DEBUG_BP;
+    }
+
+    //////////////////////////////////////////
+    static void MonoUnhandledExceptionHook(
+        MonoObject* exc,
+        void* user_data)
+    {
+    }
 
 
     //////////////////////////////////////////
@@ -306,23 +408,6 @@ namespace Maze
 
         mono_set_assemblies_path(assetLibsDirPathUTF8.c_str());
 
-        MonoDomain* rootDomain = mono_jit_init("MazeJITRuntime");
-        MAZE_ERROR_RETURN_VALUE_IF(!rootDomain, false, "Failed to initialize mono jit!");
-
-        // Store the root domain pointer
-        g_monoEngineData->monoDomain = rootDomain;
-
-        if (g_monoEngineData->debugEnabled)
-            mono_debug_domain_create(g_monoEngineData->monoDomain);
-
-        mono_thread_set_main(mono_thread_current());
-
-        return true;
-    }
-
-    //////////////////////////////////////////
-    bool MonoEngine::InitializeMono()
-    {
         if (g_monoEngineData->debugEnabled)
         {
             CString argv[2] =
@@ -335,6 +420,29 @@ namespace Maze
             mono_debug_init(MONO_DEBUG_FORMAT_MONO);
         }
 
+        MonoDomain* rootDomain = mono_jit_init("MazeJITRuntime");
+        MAZE_ERROR_RETURN_VALUE_IF(!rootDomain, false, "Failed to initialize mono jit!");
+
+        // Store the root domain pointer
+        g_monoEngineData->monoDomain = rootDomain;
+
+        if (g_monoEngineData->debugEnabled)
+            mono_debug_domain_create(g_monoEngineData->monoDomain);
+
+        mono_thread_set_main(mono_thread_current());
+
+        mono_trace_set_log_handler(MonoTraceLogHandler, nullptr);
+        mono_trace_set_print_handler(MonoTracePrintHandler);
+        mono_trace_set_printerr_handler(MonoLogerrHandler);
+
+        mono_install_unhandled_exception_hook(MonoUnhandledExceptionHook, nullptr);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool MonoEngine::InitializeMono()
+    {
         g_monoEngineData->appDomain = mono_domain_create_appdomain("MazeCSharpRuntime", nullptr);
         MAZE_ERROR_RETURN_VALUE_IF(!g_monoEngineData->appDomain, false, "Failed to create app domain!");
         mono_domain_set(g_monoEngineData->appDomain, true);
@@ -591,14 +699,23 @@ namespace Maze
     //////////////////////////////////////////
     MonoObject* MonoEngine::InstantiateClass(MonoClass* _monoClass)
     {
-        MonoObject* instance = mono_object_new(g_monoEngineData->appDomain, _monoClass);
-        MAZE_ERROR_RETURN_VALUE_IF(!instance, nullptr, "Failed to instatiate class!");
-        mono_runtime_object_init(instance);
+        try
+        {
+            MonoObject* instance = mono_object_new(g_monoEngineData->appDomain, _monoClass);
+            MAZE_ERROR_RETURN_VALUE_IF(!instance, nullptr, "Failed to instatiate class!");
+            mono_runtime_object_init(instance);
 
-        MAZE_ERROR_RETURN_VALUE_IF(mono_object_get_class(instance) == nullptr, nullptr, "Instance is not instantiated!");
-        
+            MAZE_ERROR_RETURN_VALUE_IF(mono_object_get_class(instance) == nullptr, nullptr, "Instance is not instantiated!");
 
-        return instance;
+            return instance;
+        }
+        catch (const std::exception& ex)
+        {
+            Debug::logerr << "MONO exception caught: " << ex.what() << Maze::endl;
+        };
+
+
+        return nullptr;
     }
 
     //////////////////////////////////////////

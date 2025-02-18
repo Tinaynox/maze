@@ -1014,16 +1014,16 @@ namespace Maze
     void GizmosDrawer::pushTransform(TMat const& _tm)
     {
         if (!m_transformStack.empty())
-            m_transformStack.push(m_transformStack.top().transform(_tm));
+            m_transformStack.push_back(m_transformStack.back().transform(_tm));
         else
-            m_transformStack.push(_tm);
+            m_transformStack.push_back(_tm);
     }
 
     //////////////////////////////////////////
     void GizmosDrawer::popTransform()
     {
         MAZE_ERROR_RETURN_IF(m_transformStack.empty(), "Transform stack is empty!");
-        m_transformStack.pop();
+        m_transformStack.pop_back();
     }
 
     //////////////////////////////////////////
@@ -1166,7 +1166,7 @@ namespace Maze
         if (m_transformStack.empty())
             return _p;
         else
-            return m_transformStack.top().transform(_p);
+            return m_transformStack.back().transform(_p);
     }
 
     

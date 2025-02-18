@@ -36,6 +36,8 @@
 #include <mono/metadata/attrdefs.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/threads.h>
+#include <mono/metadata/exception.h>
+#include <mono/utils/mono-logger.h>
 
 
 #endif // _MazeMonoHeader_hpp_
