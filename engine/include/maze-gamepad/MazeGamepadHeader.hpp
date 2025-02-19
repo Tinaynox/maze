@@ -44,21 +44,7 @@
 
 
 //////////////////////////////////////////
-#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
-#    ifndef WIN32_LEAN_AND_MEAN
-#        define WIN32_LEAN_AND_MEAN
-#    endif
-#    if !defined(NOMINMAX) && defined(_MSC_VER)
-#        define NOMINMAX
-#    endif
-#    include "Windows.h"
-#    undef far
-#    undef near
-#   undef NEAR
-#   define NEAR
-#   undef FAR
-#   define FAR
-#endif
+#include "maze-core/system/MazeSystemHeader.hpp"
 
 
 #endif // _MazeGamepadHeader_hpp_

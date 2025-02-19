@@ -31,7 +31,7 @@
 #include "maze-core/math/MazeMat3.hpp"
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
-#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRect2.hpp"
 #include "maze-core/system/MazeThread.hpp"
 #include "maze-core/system/std/MazeThread_std.hpp"
 #include "maze-core/system/MazeTimer.hpp"
@@ -105,7 +105,7 @@ S32 main(S32 _argc, S8 const* _argv[])
     AABB2D aabb(a, b);
     Debug::log << aabb << endl;
 
-    Rect2DU rect = aabb.toRect<U32>();
+    Rect2U rect = aabb.toRect<U32>();
     Debug::log << rect << endl;
 
     Debug::log << "Hello, world!" << endl;
