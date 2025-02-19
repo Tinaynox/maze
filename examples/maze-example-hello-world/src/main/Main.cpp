@@ -32,6 +32,7 @@
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/math/MazeRect2.hpp"
+#include "maze-core/utils/MazeSharedPtr.hpp"
 #include "maze-core/system/MazeThread.hpp"
 #include "maze-core/system/std/MazeThread_std.hpp"
 #include "maze-core/system/MazeTimer.hpp"
@@ -120,6 +121,15 @@ S32 main(S32 _argc, S8 const* _argv[])
     MAZE_ERROR("Hello, error! [2]");
 
     std::cin.get();
+
+
+    S32* test = new S32();
+    *test = 42;
+    MazeSharedPtr<S32> some(test);
+
+    bool u = some.unique();
+    S32 useCount = some.useCount();
+    some.setNull();
 
     return 0;
 }
