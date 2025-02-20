@@ -122,14 +122,5 @@ S32 main(S32 _argc, S8 const* _argv[])
 
     std::cin.get();
 
-
-    S32* test = new S32();
-    *test = 42;
-    MazeSharedPtr<S32> some(test);
-
-    bool u = some.unique();
-    S32 useCount = some.useCount();
-    some.setNull();
-
     return 0;
 }
