@@ -193,8 +193,8 @@ namespace Maze
         InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &SceneExample::notifyKeyboard);
 
         getLightingSettings()->setSkyBoxMaterial("Skybox02.mzmaterial");
-        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Chessboard00.mzmaterial");
-        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Chessboard00.mzmaterial");
+        m_simpleLevelConfig.floorMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Chessboard00.mzmaterial");
+        m_simpleLevelConfig.wallMaterial = MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Chessboard00.mzmaterial");
         ExampleHelper::BuildSimpleLevel(
             this,
             m_fpsController->getLevelSize(),
@@ -560,17 +560,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Rect2DF SceneExample::getMainViewport()
+    Rect2F SceneExample::getMainViewport()
     {
-        Rect2DF viewport = Example::GetInstancePtr()->getMainRenderWindowViewport();
+        Rect2F viewport = Example::GetInstancePtr()->getMainRenderWindowViewport();
         viewport.size.x *= 0.65f;
         return viewport;
     }
 
     //////////////////////////////////////////
-    Rect2DF SceneExample::getRedCameraViewport()
+    Rect2F SceneExample::getRedCameraViewport()
     {
-        Rect2DF viewport = Example::GetInstancePtr()->getMainRenderWindowViewport();
+        Rect2F viewport = Example::GetInstancePtr()->getMainRenderWindowViewport();
         viewport.position.x += viewport.size.x * 0.65f;
         viewport.size.x *= 0.35f;
         viewport.size.y *= 0.5f;
@@ -585,9 +585,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Rect2DF SceneExample::getGreenCameraViewport()
+    Rect2F SceneExample::getGreenCameraViewport()
     {
-        Rect2DF viewport = Example::GetInstancePtr()->getMainRenderWindowViewport();
+        Rect2F viewport = Example::GetInstancePtr()->getMainRenderWindowViewport();
         viewport.position.x += viewport.size.x * 0.65f;
         viewport.position.y += viewport.size.y * 0.5f;
         viewport.size.x *= 0.35f;
@@ -682,7 +682,7 @@ namespace Maze
         meshRenderer->setRenderMesh(
             RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadMesh());
 
-        MaterialPtr material = MaterialManager::GetCurrentInstance()->getMaterial(MAZE_HCS("TV00.mzmaterial"))->createCopy();
+        MaterialPtr material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(MAZE_HCS("TV00.mzmaterial"))->createCopy();
         RenderPassPtr const& renderPass = material->getFirstRenderPass();
         renderPass->setDepthWriteEnabled(true);
         renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);

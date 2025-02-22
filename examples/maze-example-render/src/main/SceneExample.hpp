@@ -124,16 +124,16 @@ namespace Maze
         virtual void updateRenderTargetViewport() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual Rect2DF getMainViewport() MAZE_OVERRIDE;
+        virtual Rect2F getMainViewport() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        Rect2DF getRedCameraViewport();
+        Rect2F getRedCameraViewport();
 
         //////////////////////////////////////////
         Vec2U32 getRedRenderBufferSize();
 
         //////////////////////////////////////////
-        Rect2DF getGreenCameraViewport();
+        Rect2F getGreenCameraViewport();
 
         //////////////////////////////////////////
         Vec2U32 getGreenRenderBufferSize();

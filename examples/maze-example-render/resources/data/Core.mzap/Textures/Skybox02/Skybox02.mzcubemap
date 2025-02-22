@@ -1,6 +1,6 @@
-right:String = Skybox02Right.png
-left:String = Skybox02Left.png
-top:String = Skybox02Top.png
-bottom:String = Skybox02Bottom.png
-front:String = Skybox02Front.png
-back:String = Skybox02Back.png
+right:String = Skybox02Right.tga
+left:String = Skybox02Left.tga
+top:String = Skybox02Top.tga
+bottom:String = Skybox02Bottom.tga
+front:String = Skybox02Front.tga
+back:String = Skybox02Back.tga
