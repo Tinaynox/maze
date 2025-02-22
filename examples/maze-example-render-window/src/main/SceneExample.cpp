@@ -343,7 +343,7 @@ void SceneExample::update(Maze::F32 _dt)
         Maze::EntityManager* entityManager = Maze::EntityManager::GetInstancePtr();
         Maze::EcsWorldPtr const& world = entityManager->getDefaultWorld();
         
-        world->requestInclusiveSample<Maze::MeshRenderer, Maze::Transform3D>()->process(
+        world->requestInclusiveSample<Maze::MeshRenderer, Maze::Transform3D>()->query(
             [&](Maze::Entity* _entity, Maze::MeshRenderer* _meshRenderer, Maze::Transform3D* _transform)
             {
                 if (m_meshRenderer.get() == _meshRenderer)

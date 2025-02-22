@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "preprocessor/MazePreprocessor_Memory.hpp"
+#include <atomic>
 
 
 //////////////////////////////////////////
