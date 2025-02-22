@@ -31,20 +31,53 @@ namespace Maze
 {
     //////////////////////////////////////////
     template <typename T>
-    ResourceId IndexedResource<T>::generateNewResourceId()
+    IndexedResource<T>::IndexedResource()
     {
-        if (!m_freeResourceIndices.empty())
+        m_resourceId = GenerateNewResourceId(static_cast<T*>(this));
+    }
+
+    //////////////////////////////////////////
+    template <typename T>
+    IndexedResource<T>::~IndexedResource()
+    {
+        ReleaseResourceId(m_resourceId);
+    }
+
+    //////////////////////////////////////////
+    template <typename T>
+    T* IndexedResource<T>::GetResource(ResourceId _id)
+    {
+        if ((Size)_id.getIndex() >= s_resources.size())
+            return nullptr;
+
+        Size index = (Size)_id.getIndex();
+        return s_resources[index];
+    }
+
+    //////////////////////////////////////////
+    template <typename T>
+    ResourceId IndexedResource<T>::GenerateNewResourceId(T* _ptr)
+    {
+        if (!s_freeResourceIndices.empty())
         {
-            S32 index = m_freeResourceIndices.top();
-            m_freeResourceIndices.pop();
-            MAZE_DEBUG_ASSERT(index < (S32)m_resources.size() && !m_resources[index]);
-            return m_resources[index].id;
+            ResourceId id = s_freeResourceIndices.top();
+            s_freeResourceIndices.pop();
+            s_resources[(Size)id.getIndex()] = _ptr;
+            return id;
         }
 
-        ResourceData resourceData;
-        resourceData.id = ResourceId((S32)m_resources.size(), 0);
-        m_resources.push_back(sceneData);
-        return sceneData.id;
+        ResourceId id((S8)s_resources.size(), 0);
+        s_resources.push_back(_ptr);
+        return id;
+    }
+
+    //////////////////////////////////////////
+    template <typename T>
+    void IndexedResource<T>::ReleaseResourceId(ResourceId _id)
+    {
+        s_resources[(Size)_id.getIndex()] = nullptr;
+        _id.incrementGeneration();
+        s_freeResourceIndices.push(_id);
     }
     
 } // namespace Maze

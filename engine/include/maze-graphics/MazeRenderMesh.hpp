@@ -37,6 +37,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeManagedSharedPtr.hpp"
 #include "maze-core/utils/MazeManagedSharedObject.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
@@ -64,6 +65,7 @@ namespace Maze
     class MAZE_GRAPHICS_API RenderMesh
         : public ManagedSharedObject<RenderMesh>
         , public Object
+        , public IndexedResource<RenderMesh>
         , public IStringSerializable
     {
     public:

@@ -48,6 +48,9 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(RenderMesh, Object);
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(RenderMesh);
+
+    //////////////////////////////////////////
     RenderMesh::RenderMesh()
     {
     }

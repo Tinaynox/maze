@@ -49,42 +49,45 @@ namespace Maze
     template <typename T>
     class IndexedResource
     {
-    private:
-
-        //////////////////////////////////////////
-        struct ResourceData
-        {
-            ResourceId id;
-            T* ptr = nullptr;
-        };
-
     public:
 
         //////////////////////////////////////////
-        IndexedResource()
-        {
-
-        }
+        IndexedResource();
 
         //////////////////////////////////////////
-        ~IndexedResource()
-        {
+        ~IndexedResource();
 
-        }
+        //////////////////////////////////////////
+        inline ResourceId getResourceId() const { return m_resourceId; }
+
+        //////////////////////////////////////////
+        inline T* GetResource(ResourceId _id);
 
     private:
 
         //////////////////////////////////////////
-        ResourceId generateNewResourceId();
+        static ResourceId GenerateNewResourceId(T* _ptr);
+
+        //////////////////////////////////////////
+        static void ReleaseResourceId(ResourceId _id);
 
     private:
-        static FastVector<T*> m_resources;
-        static Stack<S32> m_freeResourceIndices;
+        static FastVector<T*> s_resources;
+        static Stack<ResourceId> s_freeResourceIndices;
+
+    protected:
+        ResourceId m_resourceId;
     };
 
     
 } // namespace Maze
 //////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#define MAZE_IMPLEMENT_INDEXED_RESOURCE(DClass)                               \
+    FastVector<DClass*> DClass::s_resources = FastVector<DClass*>();          \
+    Stack<ResourceId> DClass::s_freeResourceIndices = Stack<ResourceId>();
 
 
 //////////////////////////////////////////
