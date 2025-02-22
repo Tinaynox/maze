@@ -62,8 +62,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderSystem);
     MAZE_USING_SHARED_PTR(ShaderUniform);
     MAZE_USING_SHARED_PTR(Shader);
-    MAZE_USING_SHARED_PTR(Texture2D);
-    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(Texture2D);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
     MAZE_USING_SHARED_PTR(ShaderUniformVariant);
     
 
@@ -237,10 +237,10 @@ namespace Maze
         inline TexturePtr const& getTexture() const { return m_texture; }
 
         //////////////////////////////////////////
-        inline Texture2DPtr getTexture2D() const { return std::static_pointer_cast<Texture2D>(m_texture); }
+        inline Texture2DPtr getTexture2D() const { return Maze::static_pointer_cast<Texture2D>(m_texture); }
 
         //////////////////////////////////////////
-        inline TextureCubePtr getTextureCube() const { return std::static_pointer_cast<TextureCube>(m_texture); }
+        inline TextureCubePtr getTextureCube() const { return Maze::static_pointer_cast<TextureCube>(m_texture); }
 
         //////////////////////////////////////////
         inline Vec4F const& getVecF() const { return m_vectorF; }

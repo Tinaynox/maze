@@ -39,7 +39,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EditorActionCustom);
-    MAZE_USING_SHARED_PTR(Object);
+    MAZE_USING_MANAGED_SHARED_PTR(Object);
 
 
     //////////////////////////////////////////

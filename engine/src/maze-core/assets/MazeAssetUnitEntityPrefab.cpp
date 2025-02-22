@@ -60,7 +60,7 @@ namespace Maze
         DataBlock const& _data)
     {
         AssetUnitEntityPrefabPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(
             AssetUnitEntityPrefab,
             object,
             init(_assetFile, _data));

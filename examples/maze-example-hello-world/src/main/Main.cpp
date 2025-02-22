@@ -32,7 +32,7 @@
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/math/MazeRect2.hpp"
-#include "maze-core/utils/MazeSharedPtr.hpp"
+#include "maze-core/utils/MazeManagedSharedPtr.hpp"
 #include "maze-core/system/MazeThread.hpp"
 #include "maze-core/system/std/MazeThread_std.hpp"
 #include "maze-core/system/MazeTimer.hpp"

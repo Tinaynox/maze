@@ -42,7 +42,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Material);
+    MAZE_USING_MANAGED_SHARED_PTR(Material);
     MAZE_USING_SHARED_PTR(Mesh);
     MAZE_USING_SHARED_PTR(SubMesh);
     MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);

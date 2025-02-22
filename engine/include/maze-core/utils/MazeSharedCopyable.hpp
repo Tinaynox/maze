@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
+#include "maze-core/utils/MazeManagedSharedPtr.hpp"
 
 
 //////////////////////////////////////////
@@ -49,6 +50,20 @@ namespace Maze
         
         //////////////////////////////////////////
         virtual SharedPtr<T> createCopy() MAZE_ABSTRACT;
+    };
+
+
+    //////////////////////////////////////////
+    // Class IManagedSharedCopyable
+    //
+    //////////////////////////////////////////
+    template <typename T>
+    class IManagedSharedCopyable
+    {
+    public:
+
+        //////////////////////////////////////////
+        virtual ManagedSharedPtr<T> createCopy() MAZE_ABSTRACT;
     };
 
     

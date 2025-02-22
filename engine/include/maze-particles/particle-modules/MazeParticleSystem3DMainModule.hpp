@@ -48,7 +48,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(ParticleSystem3DMainModule);
     MAZE_USING_SHARED_PTR(RenderMask);
     

@@ -46,11 +46,11 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(AnimationCurveEdit2D);
     MAZE_USING_SHARED_PTR(UIElement2D);
-    MAZE_USING_SHARED_PTR(Texture2D);
+    MAZE_USING_MANAGED_SHARED_PTR(Texture2D);
 
 
     //////////////////////////////////////////

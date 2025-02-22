@@ -36,6 +36,7 @@
 #include "maze-graphics/MazeShaderUniformVariant.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/utils/MazeManagedSharedObject.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
@@ -53,12 +54,12 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Material);
+    MAZE_USING_MANAGED_SHARED_PTR(Material);
     MAZE_USING_SHARED_PTR(RenderPass);
     MAZE_USING_SHARED_PTR(Shader);
-    MAZE_USING_SHARED_PTR(Texture2D);
-    MAZE_USING_SHARED_PTR(TextureCube);
-    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(Texture2D);
+    MAZE_USING_MANAGED_SHARED_PTR(TextureCube);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
         
 
     //////////////////////////////////////////
@@ -66,12 +67,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API Material
-        : public SharedObject<Material>
+        : public ManagedSharedObject<Material>
         , public IXMLElementSerializable
         , public IDataBlockSerializable
         , public IStringSerializable
         , public MultiDelegateCallbackReceiver
-        , public ISharedCopyable<Material>
+        , public IManagedSharedCopyable<Material>
         , public Object
     {
     public:

@@ -49,7 +49,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(Canvas);
     MAZE_USING_SHARED_PTR(Sprite);
-    MAZE_USING_SHARED_PTR(Texture2D);
+    MAZE_USING_MANAGED_SHARED_PTR(Texture2D);
 
 
     //////////////////////////////////////////

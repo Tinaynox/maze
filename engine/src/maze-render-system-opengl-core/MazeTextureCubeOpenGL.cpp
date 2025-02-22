@@ -104,7 +104,7 @@ namespace Maze
         ContextOpenGL* _contextOpenGL)
     {
         TextureCubeOpenGLPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(TextureCubeOpenGL, object, init(_renderSystem, _contextOpenGL));
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(TextureCubeOpenGL, object, init(_renderSystem, _contextOpenGL));
         return object;
     }
 

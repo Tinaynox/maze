@@ -36,6 +36,7 @@
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/utils/MazeManagedSharedPtr.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 
@@ -46,11 +47,11 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderMeshManager);
     MAZE_USING_SHARED_PTR(RenderSystem);
-    MAZE_USING_SHARED_PTR(Texture);
+    MAZE_USING_MANAGED_SHARED_PTR(Texture);
     MAZE_USING_SHARED_PTR(Mesh);
     MAZE_USING_SHARED_PTR(ByteBuffer);
-    MAZE_USING_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
 
 
     //////////////////////////////////////////

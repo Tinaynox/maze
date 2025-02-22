@@ -59,7 +59,7 @@ namespace Maze
         DataBlock const& _data)
     {
         AssetUnitRenderMeshPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(
             AssetUnitRenderMesh,
             object,
             init(_assetFile, _data));

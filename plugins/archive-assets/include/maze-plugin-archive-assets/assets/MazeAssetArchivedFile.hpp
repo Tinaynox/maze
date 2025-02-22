@@ -50,8 +50,8 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetRegularArchive);
-    MAZE_USING_SHARED_PTR(AssetArchivedFile);   
+    MAZE_USING_MANAGED_SHARED_PTR(AssetRegularArchive);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetArchivedFile);   
 
 
     //////////////////////////////////////////

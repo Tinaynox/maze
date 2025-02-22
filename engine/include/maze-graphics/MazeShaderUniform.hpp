@@ -102,10 +102,10 @@ namespace Maze
         inline TexturePtr const& getTexture() const { return m_value.getTexture(); }
 
         //////////////////////////////////////////
-        inline Texture2DPtr getTexture2D() const { return std::static_pointer_cast<Texture2D>(m_value.getTexture()); }
+        inline Texture2DPtr getTexture2D() const { return Maze::static_pointer_cast<Texture2D>(m_value.getTexture()); }
 
         //////////////////////////////////////////
-        inline TextureCubePtr getTextureCube() const { return std::static_pointer_cast<TextureCube>(m_value.getTexture()); }
+        inline TextureCubePtr getTextureCube() const { return Maze::static_pointer_cast<TextureCube>(m_value.getTexture()); }
 
         //////////////////////////////////////////
         inline Vec4F const& getVecF() const { return m_value.getVecF(); }

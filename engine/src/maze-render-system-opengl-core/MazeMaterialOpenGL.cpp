@@ -61,7 +61,7 @@ namespace Maze
         MaterialDeleter const& _deleter)
     {
         MaterialOpenGLPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR_EX(MaterialOpenGL, object, _deleter, init(_renderSystem, _contextOpenGL));
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR_EX(MaterialOpenGL, object, _deleter, init(_renderSystem, _contextOpenGL));
         return object;
     }
 
@@ -71,7 +71,7 @@ namespace Maze
         MaterialDeleter const& _deleter)
     {
         MaterialOpenGLPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR_EX(MaterialOpenGL, object, _deleter, init(_material));
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR_EX(MaterialOpenGL, object, _deleter, init(_material));
         return object;
     }
 

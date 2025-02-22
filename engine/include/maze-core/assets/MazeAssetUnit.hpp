@@ -42,6 +42,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/utils/MazeManagedSharedObject.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
 #include "maze-core/events/MazeEvent.hpp"
@@ -54,8 +55,8 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetUnit);   
-    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetUnit);   
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
 
 
     //////////////////////////////////////////
@@ -152,7 +153,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_CORE_API AssetUnit
-        : public SharedObject<AssetUnit>
+        : public ManagedSharedObject<AssetUnit>
         , public Object
     {
     public:

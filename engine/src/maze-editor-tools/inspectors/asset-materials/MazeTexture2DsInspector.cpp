@@ -205,7 +205,7 @@ namespace Maze
     {
         Set<Texture2DPtr> textures;
         for (ObjectPtr const& object : _objects)
-            textures.insert(std::static_pointer_cast<Texture2D>(object));
+            textures.insert(Maze::static_pointer_cast<Texture2D>(object));
 
         setTextures(textures);
 

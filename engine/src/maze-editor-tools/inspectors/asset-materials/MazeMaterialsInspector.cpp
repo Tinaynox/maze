@@ -203,7 +203,7 @@ namespace Maze
     {
         Set<MaterialPtr> materials;
         for (ObjectPtr const& object : _objects)
-            materials.insert(std::static_pointer_cast<Material>(object));
+            materials.insert(Maze::static_pointer_cast<Material>(object));
 
         setMaterials(materials);
 

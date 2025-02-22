@@ -49,7 +49,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
 
     //////////////////////////////////////////
     using ObfuscationPasswordFunction = std::function<String(String const&)>;

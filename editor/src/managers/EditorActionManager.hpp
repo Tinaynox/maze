@@ -39,7 +39,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EditorActionManager);
-    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(SceneWorkspace);
 
 

@@ -470,8 +470,8 @@ namespace Maze
             case ShaderUniformType::UniformS32:            return set(_variant.getS32());
             case ShaderUniformType::UniformF32:            return set(_variant.getF32());
             case ShaderUniformType::UniformF64:            return set(_variant.getF64());
-            case ShaderUniformType::UniformTexture2D:      return set(std::static_pointer_cast<Texture2D>(_variant.getTexture()));
-            case ShaderUniformType::UniformTextureCube:    return set(std::static_pointer_cast<TextureCube>(_variant.getTexture()));
+            case ShaderUniformType::UniformTexture2D:      return set(Maze::static_pointer_cast<Texture2D>(_variant.getTexture()));
+            case ShaderUniformType::UniformTextureCube:    return set(Maze::static_pointer_cast<TextureCube>(_variant.getTexture()));
             case ShaderUniformType::UniformTexture2DArray: return set(static_cast<Texture2D**>(_variant.getPtr()), _variant.getCount());
             case ShaderUniformType::UniformVec2S32:         return set(_variant.getVec2S32());
             case ShaderUniformType::UniformVec3S32:         return set(_variant.getVec3S32());

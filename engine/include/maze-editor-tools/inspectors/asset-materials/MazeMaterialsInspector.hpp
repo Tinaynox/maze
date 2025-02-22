@@ -58,8 +58,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ComponentEditor);
     MAZE_USING_SHARED_PTR(ToggleButton2D);
     MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
-    MAZE_USING_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(Material);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(Material);
     MAZE_USING_SHARED_PTR(Shader);
     
 

@@ -57,7 +57,7 @@ namespace Maze
     AssetRegularFilePtr AssetRegularFile::Create(Path const& _fullPath)
     {
         AssetRegularFilePtr result;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(AssetRegularFile, result, init(_fullPath));
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(AssetRegularFile, result, init(_fullPath));
         return result;
     }
 

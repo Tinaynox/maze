@@ -45,11 +45,11 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(MeshManager);
-    MAZE_USING_SHARED_PTR(Texture);
+    MAZE_USING_MANAGED_SHARED_PTR(Texture);
     MAZE_USING_SHARED_PTR(Mesh);
     MAZE_USING_SHARED_PTR(ByteBuffer);
     MAZE_USING_SHARED_PTR(Mesh);
-    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
 
 
     //////////////////////////////////////////

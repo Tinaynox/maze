@@ -49,7 +49,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SoundSource);
     MAZE_USING_SHARED_PTR(SoundGroup);
     MAZE_USING_SHARED_PTR(SoundSystem);
-    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
 
 
     //////////////////////////////////////////

@@ -52,8 +52,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Button2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(Entity);
-    MAZE_USING_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(Object);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(Object);
 
 
     //////////////////////////////////////////

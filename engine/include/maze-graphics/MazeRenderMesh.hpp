@@ -35,6 +35,8 @@
 #include "maze-graphics/MazeRenderDrawTopology.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/utils/MazeManagedSharedPtr.hpp"
+#include "maze-core/utils/MazeManagedSharedObject.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
@@ -49,9 +51,9 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Mesh);
-    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(RenderSystem);
-    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     
 
@@ -60,7 +62,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API RenderMesh
-        : public SharedObject<RenderMesh>
+        : public ManagedSharedObject<RenderMesh>
         , public Object
         , public IStringSerializable
     {

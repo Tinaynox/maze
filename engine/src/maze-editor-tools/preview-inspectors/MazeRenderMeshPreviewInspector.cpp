@@ -261,8 +261,7 @@ namespace Maze
     {
         Set<RenderMeshPtr> renderMeshes;
         for (ObjectPtr const& object : _objects)
-            renderMeshes.insert(std::static_pointer_cast<RenderMesh>(object));
-
+            renderMeshes.insert(Maze::static_pointer_cast<RenderMesh>(object));
         setRenderMeshes(renderMeshes);
 
         return true;

@@ -33,6 +33,7 @@
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/utils/MazeManagedSharedPtr.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "editor/EditorSceneMode.hpp"
@@ -42,7 +43,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(Transform3D);
     MAZE_USING_SHARED_PTR(EditorMainCanvasController);

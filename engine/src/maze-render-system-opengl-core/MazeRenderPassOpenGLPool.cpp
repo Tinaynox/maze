@@ -72,8 +72,7 @@ namespace Maze
 
             RenderPassOpenGLPtr sharedPtr(
                 ptr,
-                deleter,
-                GetDefaultStdMemoryAllocator<RenderPassOpenGL>());
+                deleter);
 
             return sharedPtr;
         }

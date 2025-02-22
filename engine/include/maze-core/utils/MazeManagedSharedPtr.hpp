@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
+#include "preprocessor/MazePreprocessor_Memory.hpp"
 
 
 //////////////////////////////////////////
@@ -40,25 +41,27 @@ namespace Maze
     //////////////////////////////////////////
     template<class T> class ManagedWeakPtr;
     template<class T> class ManagedSharedPtr;
-    template<class T> class ManagedEnableSharedFromThisPtr;
+    template<class T> class EnableManagedSharedFromThis;
 
 
     //////////////////////////////////////////
     // Struct RefCountBlock
     //
     //////////////////////////////////////////
-    struct MAZE_CORE_API RefCountBlock
+    struct RefCountBlock
     {
         std::atomic<S32> weak = 0;
         std::atomic<S32> strong = 1;
+        std::function<void(void*)> deleter;
     };
 
     //////////////////////////////////////////
     template <typename T>
-    void CheckManagedEnableSharedFromThisPtr(RefCountBlock* _refCountBlock, ManagedEnableSharedFromThisPtr<T>* _enableSharedFromThisPtr, T* _ptr);
+    void CheckEnableManagedSharedFromThis(RefCountBlock* _refCountBlock, EnableManagedSharedFromThis<T>* _enableSharedFromThis, T* _ptr);
 
     //////////////////////////////////////////
-    inline void CheckManagedEnableSharedFromThisPtr(RefCountBlock* _refCountBlock, ...) { }
+    template <typename T>
+    inline void CheckEnableManagedSharedFromThis(RefCountBlock* _refCountBlock, ...) { }
 
 
     //////////////////////////////////////////
@@ -70,6 +73,7 @@ namespace Maze
     {
         //////////////////////////////////////////
         friend class ManagedSharedPtr<T>;
+        friend class EnableManagedSharedFromThis<T>;
 
     public:
 
@@ -92,12 +96,21 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline ManagedWeakPtr(ManagedWeakPtr<T> const& _r)
+            : m_ptr(_r.getPtr())
+            , m_refCountBlock(_r.getRefCountBlock())
+        {
+            if (m_refCountBlock)
+                ++m_refCountBlock->weak;
+        }
+
+        //////////////////////////////////////////
         inline ManagedWeakPtr(ManagedWeakPtr&& _other) noexcept
             : m_ptr(_other.m_ptr)
             , m_refCountBlock(_other.m_refCountBlock)
         {
-            other.m_ptr = nullptr;
-            other.m_refCountBlock = nullptr;
+            _other.m_ptr = nullptr;
+            _other.m_refCountBlock = nullptr;
         }
 
 
@@ -115,6 +128,37 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline ManagedWeakPtr& operator=(ManagedWeakPtr const& _other)
+        {
+            if (this != &_other)
+            {
+                release();
+                m_ptr = _other.m_ptr;
+                m_refCountBlock = _other.m_refCountBlock;
+
+                if (m_refCountBlock)
+                    ++m_refCountBlock->weak;
+            }
+
+            return *this;
+        }
+
+        //////////////////////////////////////////
+        inline ManagedWeakPtr& operator=(ManagedWeakPtr&& _other) noexcept
+        {
+            if (this != &_other)
+            {
+                release();
+                m_ptr = _other.m_ptr;
+                m_refCountBlock = _other.m_refCountBlock;
+                _other.m_ptr = nullptr;
+                _other.m_refCountBlock = nullptr;
+            }
+
+            return *this;
+        }
+
+        //////////////////////////////////////////
         inline operator bool() const
         {
             return !isNull() && !expired();
@@ -127,7 +171,7 @@ namespace Maze
         inline S32 useCount() const { assert(m_refCountBlock); return m_refCountBlock->strong; }
 
         //////////////////////////////////////////
-        inline ManagedSharedPtr<T> lock()
+        inline ManagedSharedPtr<T> lock() const
         {
             if (isNull() || expired())
                 return nullptr;
@@ -152,7 +196,7 @@ namespace Maze
         //////////////////////////////////////////
         void bind(T* _ptr, RefCountBlock* _refCountBlock)
         {
-            assert(!m_ptr && !m_refCountBlock)
+            assert(!m_ptr && !m_refCountBlock);
 
             m_ptr = _ptr;
             m_refCountBlock = _refCountBlock;
@@ -173,7 +217,7 @@ namespace Maze
             {
                 if (--m_refCountBlock->weak == 0 && m_refCountBlock->strong == 0)
                 {
-                    delete m_refCountBlock;
+                    MAZE_DELETE(m_refCountBlock);
                     m_refCountBlock = nullptr;
                 }
             }
@@ -199,10 +243,13 @@ namespace Maze
         inline ManagedSharedPtr() = default;
 
         //////////////////////////////////////////
-        inline ManagedSharedPtr(T* _ptr)
+        template <typename TDeleter = std::default_delete<T>>
+        inline ManagedSharedPtr(
+            T* _ptr,
+            std::function<void(T*)> _deleter = TDeleter())
         {
             if (_ptr)
-                bind(_ptr);
+                bind(_ptr, _deleter);
         }
 
         //////////////////////////////////////////
@@ -236,9 +283,24 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename Y>
-        ManagedSharedPtr(ManagedWeakPtr<Y> const& _r)
+        inline ManagedSharedPtr(ManagedWeakPtr<Y> const& _r)
             : m_ptr(_r.getPtr())
             , m_refCountBlock(_r.getRefCountBlock())
+        {
+            if (m_refCountBlock)
+                ++m_refCountBlock->strong;
+        }
+
+        //////////////////////////////////////////
+        inline ManagedSharedPtr(std::nullptr_t) noexcept
+            : m_ptr(nullptr)
+            , m_refCountBlock(nullptr)
+        {}
+
+        //////////////////////////////////////////
+        inline ManagedSharedPtr(T* _ptr, RefCountBlock* _refCountBlock) noexcept
+            : m_ptr(_ptr)
+            , m_refCountBlock(_refCountBlock)
         {
             if (m_refCountBlock)
                 ++m_refCountBlock->strong;
@@ -303,10 +365,10 @@ namespace Maze
             if (this != &_other)
             {
                 release();
-                m_ptr = other.m_ptr;
-                m_refCountBlock = other.m_refCountBlock;
-                other.m_ptr = nullptr;
-                other.m_refCountBlock = nullptr;
+                m_ptr = _other.m_ptr;
+                m_refCountBlock = _other.m_refCountBlock;
+                _other.m_ptr = nullptr;
+                _other.m_refCountBlock = nullptr;
             }
 
             return *this;
@@ -331,14 +393,20 @@ namespace Maze
         MAZE_FORCEINLINE T* get() const { return m_ptr; }
 
         //////////////////////////////////////////
-        void bind(T* _ptr)
+        void bind(
+            T* _ptr,
+            std::function<void(T*)> _deleter = nullptr)
         {
             assert(!m_ptr && !m_refCountBlock);
 
             m_ptr = _ptr;
-            m_refCountBlock = new RefCountBlock();
+            m_refCountBlock = MAZE_NEW(RefCountBlock);
+            if (_deleter == nullptr)
+                m_refCountBlock->deleter = [](void* _p) { MAZE_DELETE(static_cast<T*>(_p)); };
+            else
+                m_refCountBlock->deleter = [_deleter](void* _p) { _deleter(static_cast<T*>(_p)); };
 
-            CheckManagedEnableSharedFromThisPtr(m_refCountBlock, m_ptr, m_ptr);
+            CheckEnableManagedSharedFromThis(m_refCountBlock, m_ptr, m_ptr);
         }
 
         //////////////////////////////////////////
@@ -390,10 +458,10 @@ namespace Maze
             {
                 if (--m_refCountBlock->strong == 0 && m_refCountBlock->weak == 0)
                 {
-                    delete m_ptr;
+                    m_refCountBlock->deleter(m_ptr);
                     m_ptr = nullptr;
 
-                    delete m_refCountBlock;
+                    MAZE_DELETE(m_refCountBlock);
                     m_refCountBlock = nullptr;
                 }
             }
@@ -426,17 +494,38 @@ namespace Maze
         return std::less<void const*>()(_a.get(), _b.get());
     }
 
+    //////////////////////////////////////////
+    template<class T>
+    inline bool operator==(ManagedSharedPtr<T> const& _a, std::nullptr_t)
+    {
+        return _a.get() == nullptr;
+    }
 
     //////////////////////////////////////////
-    // Class ManagedEnableSharedFromThisPtr
+    template<class T>
+    inline bool operator!=(ManagedSharedPtr<T> const& _a, std::nullptr_t)
+    {
+        return _a.get() != nullptr;
+    }
+
+    //////////////////////////////////////////
+    template<class T>
+    inline bool operator<(ManagedSharedPtr<T> const& _a, std::nullptr_t)
+    {
+        return std::less<void const*>()(_a.get(), nullptr);
+    }
+
+
+    //////////////////////////////////////////
+    // Class EnableManagedSharedFromThis
     //
     //////////////////////////////////////////
     template <typename T>
-    class ManagedEnableSharedFromThisPtr
+    class EnableManagedSharedFromThis
     {
     public:
         //////////////////////////////////////////
-        inline ManagedEnableSharedFromThisPtr() = default;
+        inline EnableManagedSharedFromThis() = default;
 
         //////////////////////////////////////////
         inline ManagedWeakPtr<T> const& weakFromThis()
@@ -455,18 +544,51 @@ namespace Maze
         //////////////////////////////////////////
         void enableSharedFromThisPtr(RefCountBlock* _refCountBlock, T* _ptr)
         {
-            m_thisPtr.bind(_ptr, _refCountBlock);
+            if (m_thisPtr.getPtr() != _ptr)
+            {
+                m_thisPtr.reset();
+                m_thisPtr.bind(_ptr, _refCountBlock);
+            }
         }
 
         //////////////////////////////////////////
-        friend void CheckManagedEnableSharedFromThisPtr(RefCountBlock* _refCountBlock, ManagedEnableSharedFromThisPtr<T>* _enableSharedFromThisPtr, T* _ptr)
+        friend void CheckEnableManagedSharedFromThis(RefCountBlock* _refCountBlock, EnableManagedSharedFromThis<T>* _enableSharedFromThis, T* _ptr)
         {
-            _enableSharedFromThisPtr->enableSharedFromThisPtr(_refCountBlock, _ptr);
+            _enableSharedFromThis->enableSharedFromThisPtr(_refCountBlock, _ptr);
         }
 
     private:
         ManagedWeakPtr<T> m_thisPtr;
     };
+
+
+    //////////////////////////////////////////
+    template <typename T, typename U>
+    ManagedSharedPtr<T> static_pointer_cast(ManagedSharedPtr<U> const& _sp) noexcept
+    {
+        T* castedPtr = static_cast<T*>(_sp.get());
+        if (!castedPtr && _sp.get() != nullptr)
+            return ManagedSharedPtr<T>();
+        
+        return ManagedSharedPtr<T>(castedPtr, _sp.getRefCountBlock());
+    }
+
+
+    //////////////////////////////////////////
+    template <class _Ty, typename ...Args>
+    inline ManagedSharedPtr<_Ty> MakeManagedShared(Args&& ..._args) { return ManagedSharedPtr<_Ty>(MAZE_NEW_WITH_ARGS(_Ty, _args...)); }
+
+    //////////////////////////////////////////
+    template <typename>
+    struct IsManagedSharedPtr : std::false_type {};
+    template <class _Ty>
+    struct IsManagedSharedPtr<Maze::ManagedSharedPtr<_Ty>> : std::true_type {};
+
+    //////////////////////////////////////////
+    template <typename>
+    struct IsManagedWeakPtr : std::false_type {};
+    template <class _Ty>
+    struct IsManagedWeakPtr<Maze::ManagedWeakPtr<_Ty>> : std::true_type {};
     
 } // namespace Maze
 //////////////////////////////////////////
@@ -476,10 +598,23 @@ namespace Maze
 // Aliases
 //
 //////////////////////////////////////////
-#define MAZE_USING_MANAGED_SHARED_PTR(__DClass)             using __DClass##Ptr             = Maze::ManagedSharedPtr<class __DClass>; \
-                                                            using __DClass##ConstPtr        = Maze::ManagedSharedPtr<class __DClass const>; \
-                                                            using __DClass##WPtr            = Maze::ManagedWeakPtr<class __DClass>; \
+#define MAZE_USING_MANAGED_SHARED_PTR(__DClass)             using __DClass##Ptr             = Maze::ManagedSharedPtr<class __DClass>;        \
+                                                            using __DClass##ConstPtr        = Maze::ManagedSharedPtr<class __DClass const>;  \
+                                                            using __DClass##WPtr            = Maze::ManagedWeakPtr<class __DClass>;          \
                                                             using __DClass##ConstWPtr       = Maze::ManagedWeakPtr<class __DClass const>;
+
+//////////////////////////////////////////
+#define MAZE_CREATE_MANAGED_SHARED_PTR_EX(__DClass, __deleter)                          Maze::ManagedSharedPtr<__DClass>(MAZE_NEW(__DClass), __deleter)
+#define MAZE_CREATE_MANAGED_SHARED_PTR(__DClass)                                        MAZE_CREATE_MANAGED_SHARED_PTR_EX(__DClass, Maze::DefaultDelete<__DClass>())
+#define MAZE_CREATE_MANAGED_SHARED_PTR_WITH_ARGS_EX(__DClass, __deleter, ...)           Maze::ManagedSharedPtr<__DClass>(MAZE_NEW_WITH_ARGS(__DClass, __VA_ARGS__), __deleter)
+#define MAZE_CREATE_MANAGED_SHARED_PTR_WITH_ARGS(__DClass, ...)                         MAZE_CREATE_MANAGED_SHARED_PTR_WITH_ARGS_EX(__DClass, Maze::DefaultDelete<__DClass>(), __VA_ARGS__)
+
+
+//////////////////////////////////////////
+#define MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR_EX(__DClass, __object, __deleter, __init)       __object = MAZE_CREATE_MANAGED_SHARED_PTR_EX(__DClass, __deleter);     \
+                                                                                                if (!Maze::static_pointer_cast<__DClass>(__object)->__init)            \
+                                                                                                    __object.reset();
+#define MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(__DClass, __object, __init)                     MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR_EX(__DClass, __object, Maze::DefaultDelete<__DClass>(), __init)
 
 
 //////////////////////////////////////////

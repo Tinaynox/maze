@@ -78,8 +78,7 @@ namespace Maze
 
             RenderMeshPtr sharedPtr(
                 ptr,
-                deleter,
-                GetDefaultStdMemoryAllocator<RenderMesh>());
+                deleter);
 
             return sharedPtr;
         }

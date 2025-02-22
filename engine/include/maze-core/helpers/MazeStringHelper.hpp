@@ -39,6 +39,7 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/services/MazeLogService.hpp"
 #include "maze-core/data/MazeSpan.hpp"
+#include "maze-core/utils/MazeManagedSharedPtr.hpp"
 #include <cstring>
 #include <cctype>
 #include <cstdio>
@@ -1553,6 +1554,22 @@ namespace Maze
         //////////////////////////////////////////
         template <typename TClass>
         inline void StringToObjectPtr(SharedPtr<TClass>& _value, String const& _str)
+        {
+            void* ptr;
+            std::stringstream ss;
+            ss << std::hex << _str;
+            ss >> ptr;
+
+            TClass* object = reinterpret_cast<TClass*>(ptr);
+            if (object)
+                _value = object->template cast<TClass>();
+            else
+                _value.reset();
+        }
+
+        //////////////////////////////////////////
+        template <typename TClass>
+        inline void StringToObjectPtr(ManagedSharedPtr<TClass>& _value, String const& _str)
         {
             void* ptr;
             std::stringstream ss;

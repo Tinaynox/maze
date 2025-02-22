@@ -44,11 +44,11 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(LineRenderer3D);
     MAZE_USING_SHARED_PTR(RenderMask);
     MAZE_USING_SHARED_PTR(Transform3D);
-    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(VertexArrayObject);
 
 

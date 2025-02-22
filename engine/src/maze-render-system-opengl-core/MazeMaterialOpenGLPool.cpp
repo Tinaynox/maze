@@ -84,8 +84,7 @@ namespace Maze
 
             MaterialOpenGLPtr sharedPtr(
                 ptr,
-                deleter,
-                GetDefaultStdMemoryAllocator<MaterialOpenGL>());
+                deleter);
 
             return sharedPtr;
         }

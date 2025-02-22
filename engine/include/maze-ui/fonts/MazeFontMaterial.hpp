@@ -46,9 +46,9 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(FontMaterial);
     MAZE_USING_SHARED_PTR(FontMaterialManager);
-    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
     MAZE_USING_SHARED_PTR(Font);
-    MAZE_USING_SHARED_PTR(Material);
+    MAZE_USING_MANAGED_SHARED_PTR(Material);
 
 
     //////////////////////////////////////////

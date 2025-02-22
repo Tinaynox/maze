@@ -42,7 +42,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(TextureCubeOpenGL);
+    MAZE_USING_MANAGED_SHARED_PTR(TextureCubeOpenGL);
     MAZE_USING_SHARED_PTR(ContextOpenGL);
     
 

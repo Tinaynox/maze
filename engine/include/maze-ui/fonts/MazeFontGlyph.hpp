@@ -39,7 +39,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Texture2D);
+    MAZE_USING_MANAGED_SHARED_PTR(Texture2D);
     MAZE_USING_SHARED_PTR(TrueTypeFont);
     
 

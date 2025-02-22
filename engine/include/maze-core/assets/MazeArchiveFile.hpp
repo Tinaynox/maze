@@ -38,6 +38,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/utils/MazeManagedSharedObject.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
@@ -49,7 +50,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ArchiveFile);   
+    MAZE_USING_MANAGED_SHARED_PTR(ArchiveFile);   
 
 
     //////////////////////////////////////////
@@ -57,7 +58,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_CORE_API ArchiveFile
-        : public SharedObject<ArchiveFile>
+        : public ManagedSharedObject<ArchiveFile>
         , public Object
     {
     public:

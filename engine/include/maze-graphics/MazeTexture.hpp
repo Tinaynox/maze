@@ -34,6 +34,7 @@
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/utils/MazeManagedSharedObject.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
@@ -45,7 +46,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Texture);
+    MAZE_USING_MANAGED_SHARED_PTR(Texture);
     
 
     //////////////////////////////////////////
@@ -78,7 +79,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API Texture
-        : public SharedObject<Texture>
+        : public ManagedSharedObject<Texture>
         , public Object
     {
     public:

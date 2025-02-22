@@ -47,8 +47,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderSystem);
     MAZE_USING_SHARED_PTR(SpriteManager);
     MAZE_USING_SHARED_PTR(Sprite);
-    MAZE_USING_SHARED_PTR(Material);
-    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(Material);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
 
 
     //////////////////////////////////////////

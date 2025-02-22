@@ -66,7 +66,7 @@ namespace Maze
             _renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
 
         RenderMeshPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR_EX(RenderMesh, object, _deleter, init(_renderSystem));
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR_EX(RenderMesh, object, _deleter, init(_renderSystem));
         return object;
     }
 

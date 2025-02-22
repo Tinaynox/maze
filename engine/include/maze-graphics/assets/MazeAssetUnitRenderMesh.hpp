@@ -32,15 +32,16 @@
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/assets/MazeAssetUnit.hpp"
+#include "maze-core/utils/MazeManagedSharedPtr.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetUnitRenderMesh);   
-    MAZE_USING_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetUnitRenderMesh);   
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
 
 
     //////////////////////////////////////////

@@ -50,6 +50,7 @@
 #include "maze-core/serialization/MazeStringSerialization.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
 #include "maze-core/helpers/MazeStdHelper.hpp"
+#include "maze-core/utils/MazeManagedSharedPtr.hpp"
 #include <utility>
 
 
@@ -90,6 +91,20 @@ namespace Maze
     template <typename UValue>
     MAZE_FORCEINLINE typename ::std::enable_if<(!StdHelper::HasDefaultConstructor<UValue>::value), void>::type
         ValueFromDataBlock(SharedPtr<UValue>& _value, DataBlock const& _data);
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    MAZE_FORCEINLINE void ValueToDataBlock(ManagedSharedPtr<UValue> const& _value, DataBlock& _data);
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+        ValueFromDataBlock(ManagedSharedPtr<UValue>& _value, DataBlock const& _data);
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+        ValueFromDataBlock(ManagedSharedPtr<UValue>& _value, DataBlock const& _data);
 
 
 
@@ -359,6 +374,26 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Type: ManagedSharedPtr
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsManagedSharedPtr<TValue>::value), void>::type
+        ValueToDataBlock(TValue const& _value, DataBlock& _data)
+    {
+        ValueToDataBlock(_value, _data);
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsManagedSharedPtr<TValue>::value), void>::type
+        ValueFromDataBlock(TValue& _value, DataBlock const& _data)
+    {
+        ValueFromDataBlock(_value, _data);
+    }
+
+
+    //////////////////////////////////////////
     // Type: Container
     //
     //////////////////////////////////////////
@@ -494,6 +529,38 @@ namespace Maze
     template <typename UValue>
     MAZE_FORCEINLINE typename ::std::enable_if<(!StdHelper::HasDefaultConstructor<UValue>::value), void>::type
         ValueFromDataBlock(SharedPtr<UValue>& _value, DataBlock const& _data)
+    {
+        MAZE_ERROR_RETURN_IF(!_value, "%s class has no default constructor to make shared ptr", static_cast<CString>(ClassInfo<UValue>::Name()));
+        TryValueFromDataBlock<UValue>(*_value.get(), _data);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: ManagedSharedPtr
+    //
+    //////////////////////////////////////////
+    template <typename UValue>
+    MAZE_FORCEINLINE void ValueToDataBlock(ManagedSharedPtr<UValue> const& _value, DataBlock& _data)
+    {
+        if (_value)
+            TryValueToDataBlock<UValue>(*_value.get(), _data);
+    }
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+        ValueFromDataBlock(ManagedSharedPtr<UValue>& _value, DataBlock const& _data)
+    {
+        if (!_value)
+            _value = MakeShared<UValue>();
+
+        TryValueFromDataBlock<UValue>(*_value.get(), _data);
+    }
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+        ValueFromDataBlock(ManagedSharedPtr<UValue>& _value, DataBlock const& _data)
     {
         MAZE_ERROR_RETURN_IF(!_value, "%s class has no default constructor to make shared ptr", static_cast<CString>(ClassInfo<UValue>::Name()));
         TryValueFromDataBlock<UValue>(*_value.get(), _data);

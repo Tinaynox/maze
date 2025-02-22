@@ -42,7 +42,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(SkinnedMeshRenderer);
     MAZE_USING_SHARED_PTR(RenderMask);
     MAZE_USING_SHARED_PTR(MeshSkeletonAnimator);

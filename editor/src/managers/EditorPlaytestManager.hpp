@@ -54,7 +54,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EditorPlaytestManager);
-    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(ScenePlaytest);
     MAZE_USING_SHARED_PTR(ScenePlaytestTools);
 

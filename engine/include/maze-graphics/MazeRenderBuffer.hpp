@@ -56,9 +56,9 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderBuffer);
     MAZE_USING_SHARED_PTR(RenderBufferUniform);
-    MAZE_USING_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(Texture);
-    MAZE_USING_SHARED_PTR(Texture2D);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(Texture);
+    MAZE_USING_MANAGED_SHARED_PTR(Texture2D);
   
 
     //////////////////////////////////////////
@@ -130,7 +130,7 @@ namespace Maze
         //////////////////////////////////////////
         inline Texture2DPtr getColorTexture2D(U32 _index = 0) const
         {
-            return std::static_pointer_cast<Texture2D>(m_colorTextures[_index]);
+            return Maze::static_pointer_cast<Texture2D>(m_colorTextures[_index]);
         }
 
         //////////////////////////////////////////

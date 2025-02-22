@@ -40,7 +40,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetRegularFile);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetRegularFile);
 
 
     //////////////////////////////////////////

@@ -42,6 +42,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/utils/MazeManagedSharedObject.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
 #include "maze-core/MazeObject.hpp"
@@ -57,8 +58,8 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(AssetUnit);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetUnit);
 
 
     //////////////////////////////////////////
@@ -99,7 +100,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_CORE_API AssetFile
-        : public SharedObject<AssetFile>
+        : public ManagedSharedObject<AssetFile>
         , public Object
     {
     public:
@@ -164,7 +165,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TAssetUnit>
-        inline SharedPtr<TAssetUnit> getAssetUnit() const
+        inline ManagedSharedPtr<TAssetUnit> getAssetUnit() const
         {
             for (AssetUnitPtr const& assetUnit : m_assetUnits)
                 if (assetUnit->getClassUID() == ClassInfo<TAssetUnit>::UID())

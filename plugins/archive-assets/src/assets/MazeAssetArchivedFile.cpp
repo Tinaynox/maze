@@ -58,7 +58,7 @@ namespace Maze
         Path const& _zipArchiveFilePath)
     {
         AssetArchivedFilePtr result;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(AssetArchivedFile, result, init(_archive, _zipArchiveFilePath));
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(AssetArchivedFile, result, init(_archive, _zipArchiveFilePath));
         return result;
     }
 

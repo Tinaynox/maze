@@ -56,7 +56,7 @@ namespace Maze
     AssetDirectoryPtr AssetDirectory::Create(Path const& _fullPath)
     {
         AssetDirectoryPtr result;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(AssetDirectory, result, initAssetDirectory(_fullPath));
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(AssetDirectory, result, initAssetDirectory(_fullPath));
         return result;
     }
 

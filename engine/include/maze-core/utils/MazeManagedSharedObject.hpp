@@ -25,87 +25,96 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeAssetUnitFontMaterial_hpp_))
-#define _MazeAssetUnitFontMaterial_hpp_
+#if (!defined(_MazeManagedSharedObject_hpp_))
+#define _MazeManagedSharedObject_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-ui/MazeUIHeader.hpp"
-#include "maze-core/assets/MazeAssetUnit.hpp"
+#include "maze-core/MazeCoreHeader.hpp"
+#include "maze-core/MazeStdTypes.hpp"
+#include "maze-core/MazeBaseTypes.hpp"
+#include "maze-core/utils/MazeManagedSharedPtr.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_MANAGED_SHARED_PTR(AssetUnitFontMaterial);   
-    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(FontMaterial);
-
-
-    //////////////////////////////////////////
-    // Class AssetUnitFontMaterial
+    // Class ManagedSharedObject
     //
     //////////////////////////////////////////
-    class MAZE_UI_API AssetUnitFontMaterial
-        : public AssetUnit
+    template <typename T>
+    class ManagedSharedObject
+        : public EnableManagedSharedFromThis<T>
     {
     public:
         
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitFontMaterial, AssetUnit);
+        using TPtr = ManagedSharedPtr<T>;
+        using TWPtr = ManagedWeakPtr<T>;
+        
+    public:
         
         //////////////////////////////////////////
-        MAZE_FORCEINLINE static HashedCString GetDataBlockId() { return MAZE_HCS("fontMaterial"); }
-
-    public:
+        virtual ~ManagedSharedObject() = default;
+        
+        //////////////////////////////////////////
+        ManagedSharedObject(ManagedSharedObject const&) = delete;
+        
+        //////////////////////////////////////////
+        ManagedSharedObject(ManagedSharedObject&&) = delete;
+        
+        //////////////////////////////////////////
+        ManagedSharedObject& operator=(ManagedSharedObject const&) = delete;
+        
+        //////////////////////////////////////////
+        ManagedSharedObject& operator=(ManagedSharedObject&&) = delete;
+        
+        //////////////////////////////////////////
+        template <class U>
+        inline ManagedSharedPtr<U> cast()
+        { 
+            MAZE_DEBUG_BP_IF(!weakFromThis());
+            return Maze::static_pointer_cast<U>(getSharedPtr()); 
+        }
 
         //////////////////////////////////////////
-        virtual ~AssetUnitFontMaterial();
-
+        template <class U>
+        inline ManagedWeakPtr<U> castManagedWeak()
+        {
+            return this->cast<U>();
+        }
+        
         //////////////////////////////////////////
-        virtual HashedCString getDataBlockId() const MAZE_OVERRIDE { return GetDataBlockId(); }
-
+        template <class U>
+        inline const U* castRaw() const
+        { 
+            return static_cast<const U*>(this); 
+        }
+        
         //////////////////////////////////////////
-        static AssetUnitFontMaterialPtr Create(
-            AssetFilePtr const& _assetFile,
-            DataBlock const& _data = DataBlock::c_empty);
-
-
+        template <class U>
+        inline U* castRaw()
+        { 
+            return static_cast<U*>(this); 
+        }
+        
         //////////////////////////////////////////
-        inline FontMaterialPtr const& getFontMaterial() const { return m_fontMaterial; }
-
-        //////////////////////////////////////////
-        FontMaterialPtr const& loadFontMaterial(bool _syncLoad = false);
-
-
-        //////////////////////////////////////////
-        FontMaterialPtr const& initFontMaterial();
-
+        inline TPtr getSharedPtr()
+        {
+            return sharedFromThis();
+        }
+        
     protected:
-
+        
         //////////////////////////////////////////
-        AssetUnitFontMaterial();
-
-        //////////////////////////////////////////
-        virtual bool init(
-            AssetFilePtr const& _assetFile,
-            DataBlock const& _data) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual bool loadNowImpl() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual bool unloadNowImpl() MAZE_OVERRIDE;
-    
-    protected:
-        FontMaterialPtr m_fontMaterial;
+        ManagedSharedObject() = default;
     };
 
-
+    
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeAssetUnitFontMaterial_hpp_
 //////////////////////////////////////////
+#endif // _MazeManagedSharedObject_hpp_

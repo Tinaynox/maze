@@ -73,8 +73,7 @@ namespace Maze
 
             RenderBufferPtr sharedPtr(
                 ptr,
-                deleter,
-                GetDefaultStdMemoryAllocator<RenderBuffer>());
+                deleter);
 
             return sharedPtr;
         }

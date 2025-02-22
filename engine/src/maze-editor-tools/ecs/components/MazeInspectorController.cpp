@@ -289,7 +289,7 @@ namespace Maze
                     {
                         Set<AssetFilePtr> assetFiles;
                         for (ObjectPtr const& object : objects)
-                            assetFiles.insert(std::static_pointer_cast<AssetFile>(object));
+                            assetFiles.insert(Maze::static_pointer_cast<AssetFile>(object));
 
                         String extension = (*assetFiles.begin())->getExtension();
                         bool multiExtension = false;

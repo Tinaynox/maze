@@ -56,9 +56,9 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderPass);
-    MAZE_USING_SHARED_PTR(Material);
+    MAZE_USING_MANAGED_SHARED_PTR(Material);
     MAZE_USING_SHARED_PTR(Shader);
-    MAZE_USING_SHARED_PTR(Texture2D);
+    MAZE_USING_MANAGED_SHARED_PTR(Texture2D);
     
 
     //////////////////////////////////////////

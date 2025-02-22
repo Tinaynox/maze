@@ -123,7 +123,7 @@ namespace Maze
                 if (objectsMetaClass->isInheritedFrom<AssetFile>())
                 {
                     for (ObjectPtr const& object : m_selectedObjects)
-                        assetFiles.insert(std::static_pointer_cast<AssetFile>(object));
+                        assetFiles.insert(Maze::static_pointer_cast<AssetFile>(object));
                 }
             }
         }
