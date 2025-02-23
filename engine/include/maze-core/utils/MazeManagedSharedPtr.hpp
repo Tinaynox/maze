@@ -222,10 +222,11 @@ namespace Maze
                 if (--m_refCountBlock->weak == 0 && m_refCountBlock->strong == 0)
                 {
                     MAZE_DELETE(m_refCountBlock);
-                    m_refCountBlock = nullptr;
                 }
             }
 
+            m_ptr = nullptr;
+            m_refCountBlock = nullptr;
         }
 
     private:
@@ -307,7 +308,10 @@ namespace Maze
             , m_refCountBlock(_refCountBlock)
         {
             if (m_refCountBlock)
+            {
                 ++m_refCountBlock->strong;
+                CheckEnableManagedSharedFromThis(m_refCountBlock, m_ptr, m_ptr);
+            }
         }
 
         //////////////////////////////////////////
@@ -358,7 +362,10 @@ namespace Maze
             m_refCountBlock = _r.getRefCountBlock();
 
             if (m_refCountBlock)
+            {
                 ++m_refCountBlock->strong;
+                CheckEnableManagedSharedFromThis(m_refCountBlock, m_ptr, m_ptr);
+            }
 
             return *this;
         }
@@ -463,15 +470,16 @@ namespace Maze
                 if (--m_refCountBlock->strong == 0)
                 {
                     m_refCountBlock->deleter(m_ptr);
-                    m_ptr = nullptr;
 
                     if (m_refCountBlock->weak == 0)
                     {
                         MAZE_DELETE(m_refCountBlock);
-                        m_refCountBlock = nullptr;
                     }
                 }
             }
+
+            m_ptr = nullptr;
+            m_refCountBlock = nullptr;
         }
 
     private:
@@ -551,7 +559,7 @@ namespace Maze
         //////////////////////////////////////////
         void enableSharedFromThisPtr(RefCountBlock* _refCountBlock, T* _ptr)
         {
-            if (m_thisPtr.getPtr() != _ptr)
+            if (m_thisPtr.getPtr() != _ptr || m_thisPtr.getRefCountBlock() != _refCountBlock)
             {
                 m_thisPtr.reset();
                 m_thisPtr.bind(_ptr, _refCountBlock);
