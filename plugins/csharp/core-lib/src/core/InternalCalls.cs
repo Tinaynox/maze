@@ -7,96 +7,96 @@ namespace Maze.Core
     {
         #region Log
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MazeLog(string _text);
+        public extern static void MazeLog(string text);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MazeLogWarning(string _text);
+        public extern static void MazeLogWarning(string text);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MazeLogError(string _text);
+        public extern static void MazeLogError(string text);
         #endregion
 
         #region Input
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static bool GetKeyState(int _keyCode);
+        public extern static bool GetKeyState(int keyCode);
         #endregion
 
         #region Ecs
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static int GetComponentIdByMonoType(Type _type);
+        public extern static int GetComponentIdByMonoType(Type type);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static NativePtr InstantiateEntity(NativePtr _nativeComponentPtr, AssetUnitId _auid);
+        public extern static NativePtr InstantiateEntity(NativePtr nativeComponentPtr, AssetUnitId auid);
         #endregion
 
         #region Entity
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static int EntityGetEntityId(NativePtr _nativeEntityPtr);
+        public extern static int EntityGetEntityId(NativePtr nativeEntityPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static NativePtr EntityGetComponent(NativePtr _nativeEntityPtr, int _componentId);
+        public extern static NativePtr EntityGetComponent(NativePtr nativeEntityPtr, int componentId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static MonoBehaviour EntityGetMonoBehaviourComponentObject(NativePtr _nativeEntityPtr, int _componentId);
+        public extern static MonoBehaviour EntityGetMonoBehaviourComponentObject(NativePtr nativeEntityPtr, int componentId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void EntityRemoveFromEcsWorld(NativePtr _nativeEntityPtr);
+        public extern static void EntityRemoveFromEcsWorld(NativePtr nativeEntityPtr);
         #endregion
 
         #region Component
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static int ComponentGetFrameNumber(NativePtr _nativeComponentPtr);
+        public extern static int ComponentGetFrameNumber(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static int ComponentGetEntityId(NativePtr _nativeComponentPtr);
+        public extern static int ComponentGetEntityId(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static int ComponentGetComponentId(string _name);
+        public extern static int ComponentGetComponentId(string name);
       
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static NativePtr ComponentGetComponent(NativePtr _nativeComponentPtr, int _componentId);
+        public extern static NativePtr ComponentGetComponent(NativePtr nativeComponentPtr, int componentId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static MonoBehaviour ComponentGetMonoBehaviourComponentObject(NativePtr _nativeComponentPtr, int _componentId);
+        public extern static MonoBehaviour ComponentGetMonoBehaviourComponentObject(NativePtr nativeComponentPtr, int componentId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static NativePtr ComponentGetEntity(NativePtr _nativeComponentPtr);
+        public extern static NativePtr ComponentGetEntity(NativePtr nativeComponentPtr);
         #endregion
 
         #region Transform3D
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DTranslate(NativePtr _nativeComponentPtr, Vec3F _delta);
+        public extern static void Transform3DTranslate(NativePtr nativeComponentPtr, Vec3F delta);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DRotate(NativePtr _nativeComponentPtr, Vec3F _axis, float _angle);
+        public extern static void Transform3DRotate(NativePtr nativeComponentPtr, Vec3F axis, float angle);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetPosition(NativePtr _nativeComponentPtr, out Vec3F _outPosition);
+        public extern static void Transform3DGetPosition(NativePtr nativeComponentPtr, out Vec3F outPosition);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetPosition(NativePtr _nativeComponentPtr, Vec3F _pos);
+        public extern static void Transform3DSetPosition(NativePtr nativeComponentPtr, Vec3F pos);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetRotation(NativePtr _nativeComponentPtr, out Quaternion _outPosition);
+        public extern static void Transform3DGetRotation(NativePtr nativeComponentPtr, out Quaternion outPosition);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetRotation(NativePtr _nativeComponentPtr, Quaternion _pos);
+        public extern static void Transform3DSetRotation(NativePtr nativeComponentPtr, Quaternion pos);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetScale(NativePtr _nativeComponentPtr, out Vec3F _outScale);
+        public extern static void Transform3DGetScale(NativePtr nativeComponentPtr, out Vec3F outScale);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetScale(NativePtr _nativeComponentPtr, Vec3F _scale);
+        public extern static void Transform3DSetScale(NativePtr nativeComponentPtr, Vec3F scale);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetParent(NativePtr _nativeComponentPtr, NativePtr _parentPtr);
+        public extern static void Transform3DSetParent(NativePtr nativeComponentPtr, NativePtr parentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetLocalTransform(NativePtr _nativeComponentPtr, out TMat _outTMat);
+        public extern static void Transform3DGetLocalTransform(NativePtr nativeComponentPtr, out TMat outTMat);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetWorldTransform(NativePtr _nativeComponentPtr, out TMat _outTMat);
+        public extern static void Transform3DGetWorldTransform(NativePtr nativeComponentPtr, out TMat outTMat);
         #endregion
     }
 }

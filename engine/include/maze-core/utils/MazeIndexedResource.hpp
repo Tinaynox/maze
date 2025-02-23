@@ -61,7 +61,7 @@ namespace Maze
         inline ResourceId getResourceId() const { return m_resourceId; }
 
         //////////////////////////////////////////
-        inline T* GetResource(ResourceId _id);
+        inline static T* GetResource(ResourceId _id);
 
     private:
 
