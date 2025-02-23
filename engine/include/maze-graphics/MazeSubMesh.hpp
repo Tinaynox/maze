@@ -40,6 +40,8 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/utils/MazeSharedCopyable.hpp"
+#include "maze-core/utils/MazeManagedSharedObject.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/containers/MazeFastVector.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
@@ -49,9 +51,9 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SubMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(SubMesh);
     MAZE_USING_SHARED_PTR(VertexArrayObject);
-    MAZE_USING_SHARED_PTR(Mesh);
+    MAZE_USING_MANAGED_SHARED_PTR(Mesh);
     
 
     //////////////////////////////////////////
@@ -59,8 +61,9 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API SubMesh
-        : public SharedObject<SubMesh>
-        , public ISharedCopyable<SubMesh>
+        : public ManagedSharedObject<SubMesh>
+        , public IManagedSharedCopyable<SubMesh>
+        , public IndexedResource<SubMesh>
     {
     public:
 

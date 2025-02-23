@@ -51,7 +51,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Mesh);
+    MAZE_USING_MANAGED_SHARED_PTR(Mesh);
     MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(RenderSystem);
     MAZE_USING_MANAGED_SHARED_PTR(AssetFile);

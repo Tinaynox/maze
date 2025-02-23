@@ -40,6 +40,22 @@ namespace Maze.Graphics
         public extern static void Camera3DSetRenderMask(NativePtr nativeComponentPtr, int value);
         #endregion
 
+        #region Mesh
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int CreateMesh();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void DestroyMesh(int resourceId);
+        #endregion
+
+        #region SubMesh
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int CreateSubMesh();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void DestroySubMesh(int resourceId);
+        #endregion
+
         #region RenderMesh
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int CreateRenderMesh();

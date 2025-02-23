@@ -62,7 +62,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteManager);
     MAZE_USING_SHARED_PTR(RenderMeshManager);
     MAZE_USING_SHARED_PTR(SystemFontManager);
-    MAZE_USING_SHARED_PTR(Mesh);
+    MAZE_USING_MANAGED_SHARED_PTR(Mesh);
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     MAZE_USING_SHARED_PTR(VertexBufferObject);
     MAZE_USING_MANAGED_SHARED_PTR(Texture2D);

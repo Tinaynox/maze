@@ -201,6 +201,9 @@ namespace Maze
 
             m_ptr = _ptr;
             m_refCountBlock = _refCountBlock;
+
+            if (m_refCountBlock)
+                ++m_refCountBlock->weak;
         }
 
     private:
@@ -457,13 +460,16 @@ namespace Maze
         {
             if (m_refCountBlock)
             {
-                if (--m_refCountBlock->strong == 0 && m_refCountBlock->weak == 0)
+                if (--m_refCountBlock->strong == 0)
                 {
                     m_refCountBlock->deleter(m_ptr);
                     m_ptr = nullptr;
 
-                    MAZE_DELETE(m_refCountBlock);
-                    m_refCountBlock = nullptr;
+                    if (m_refCountBlock->weak == 0)
+                    {
+                        MAZE_DELETE(m_refCountBlock);
+                        m_refCountBlock = nullptr;
+                    }
                 }
             }
         }

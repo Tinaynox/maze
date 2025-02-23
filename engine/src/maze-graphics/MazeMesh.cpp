@@ -40,6 +40,9 @@ namespace Maze
     // Class Mesh
     //
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(Mesh);
+    
+    //////////////////////////////////////////
     Mesh::Mesh()
     {
     }
@@ -53,7 +56,7 @@ namespace Maze
     MeshPtr Mesh::Create()
     {
         MeshPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(Mesh, object, init());
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(Mesh, object, init());
         return object;
     }
 

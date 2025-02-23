@@ -39,6 +39,9 @@ namespace Maze
     // Class SubMesh
     //
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(SubMesh);
+    
+    //////////////////////////////////////////
     SubMesh::MeshVertexAttributeDescription::MeshVertexAttributeDescription()
         : count(0)
     {
@@ -58,7 +61,7 @@ namespace Maze
     SubMeshPtr SubMesh::Create()
     {
         SubMeshPtr subMesh;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SubMesh, subMesh, init());
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(SubMesh, subMesh, init());
         return subMesh;
     }
 
@@ -66,7 +69,7 @@ namespace Maze
     SubMeshPtr SubMesh::Create(SubMeshPtr const& _subMesh)
     {
         SubMeshPtr subMesh;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SubMesh, subMesh, init(_subMesh));
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(SubMesh, subMesh, init(_subMesh));
         return subMesh;
     }
 

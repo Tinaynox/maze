@@ -27,6 +27,11 @@ namespace Maze.Core
             return EcsUtils.GetComponentByType(NativeComponentPtr, componentType);
         }
 
+        public Entity CreateEntity()
+        {
+            return new Entity(InternalCalls.CreateEntity(NativeComponentPtr));
+        }
+
         public Entity InstantiateEntity(AssetUnitId auid)
         {
             return new Entity(InternalCalls.InstantiateEntity(NativeComponentPtr, auid));

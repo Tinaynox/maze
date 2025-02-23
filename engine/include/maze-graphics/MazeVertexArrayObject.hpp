@@ -49,7 +49,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     MAZE_USING_SHARED_PTR(RenderSystem);
-    MAZE_USING_SHARED_PTR(SubMesh);
+    MAZE_USING_MANAGED_SHARED_PTR(SubMesh);
     
 
     //////////////////////////////////////////

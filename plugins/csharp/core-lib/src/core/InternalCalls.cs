@@ -31,6 +31,9 @@ namespace Maze.Core
 
         #region Entity
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static NativePtr CreateEntity(NativePtr nativeEntityPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int EntityGetEntityId(NativePtr nativeEntityPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

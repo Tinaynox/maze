@@ -100,6 +100,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline Entity* CreateEntity(Component* _component)
+    {
+        if (!EntityPrefabManager::GetInstancePtr())
+            return nullptr;
+
+        EcsWorld* ecsWorld = _component->getEntityRaw()->getEcsWorld();
+        EcsScene* ecsScene = _component->getEntityRaw()->getEcsScene();
+        EntityPtr newEntity = ecsScene->createEntity();
+        if (!newEntity)
+            return nullptr;
+
+        return newEntity.get();
+    }
+
+    //////////////////////////////////////////
     inline S32 EntityGetEntityId(Entity* _entity) { return (S32)_entity->getId(); }
 
     //////////////////////////////////////////
@@ -271,6 +286,7 @@ namespace Maze
 
         // Ecs
         MAZE_CORE_MONO_BIND_FUNC(GetComponentIdByMonoType);
+        MAZE_CORE_MONO_BIND_FUNC(CreateEntity);
         MAZE_CORE_MONO_BIND_FUNC(InstantiateEntity);
 
         // Entity
