@@ -43,6 +43,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     using ResourceId = IdWithGeneration<S32, 8>;
+    ResourceId const c_invalidResourceId = ResourceId(-1);
 
 
     //////////////////////////////////////////

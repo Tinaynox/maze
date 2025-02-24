@@ -9,6 +9,10 @@ namespace Maze.Graphics
         #region MeshRenderer
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void MeshRendererSetMaterial(NativePtr nativeComponentPtr, AssetUnitId material);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
         #endregion
 
         #region Camera3D

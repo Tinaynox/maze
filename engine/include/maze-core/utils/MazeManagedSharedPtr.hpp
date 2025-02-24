@@ -308,10 +308,7 @@ namespace Maze
             , m_refCountBlock(_refCountBlock)
         {
             if (m_refCountBlock)
-            {
                 ++m_refCountBlock->strong;
-                CheckEnableManagedSharedFromThis(m_refCountBlock, m_ptr, m_ptr);
-            }
         }
 
         //////////////////////////////////////////
@@ -362,10 +359,7 @@ namespace Maze
             m_refCountBlock = _r.getRefCountBlock();
 
             if (m_refCountBlock)
-            {
                 ++m_refCountBlock->strong;
-                CheckEnableManagedSharedFromThis(m_refCountBlock, m_ptr, m_ptr);
-            }
 
             return *this;
         }
