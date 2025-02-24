@@ -66,12 +66,12 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_FORCEINLINE IdWithGeneration(IdWithGeneration const& _value)
-            : m_id(_value)
+            : m_id(_value.m_id)
         {}
 
         //////////////////////////////////////////
         MAZE_FORCEINLINE IdWithGeneration(IdWithGeneration&& _value)
-            : m_id(std::move(_value))
+            : m_id(std::move(_value.m_id))
         {}
 
         //////////////////////////////////////////

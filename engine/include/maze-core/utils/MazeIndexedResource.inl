@@ -66,7 +66,7 @@ namespace Maze
             return id;
         }
 
-        ResourceId id((S8)s_resources.size(), 0);
+        ResourceId id((S32)s_resources.size(), 0);
         s_resources.push_back(_ptr);
         return id;
     }
