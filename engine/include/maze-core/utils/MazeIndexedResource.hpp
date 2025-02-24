@@ -67,6 +67,12 @@ namespace Maze
         //////////////////////////////////////////
         inline static T* GetResource(S32 _id) { return GetResource(ResourceId(_id)); }
 
+        //////////////////////////////////////////
+        inline static T* GetResourceUnsafe(ResourceId _id);
+
+        //////////////////////////////////////////
+        inline static T* GetResourceUnsafe(S32 _id) { return GetResourceUnsafe(ResourceId(_id)); }
+
     private:
 
         //////////////////////////////////////////

@@ -47,11 +47,19 @@ namespace Maze
     template <typename T>
     T* IndexedResource<T>::GetResource(ResourceId _id)
     {
-        if ((Size)_id.getIndex() >= s_resources.size())
+        Size index = (Size)_id.getIndex();
+
+        if (index >= s_resources.size())
             return nullptr;
 
-        Size index = (Size)_id.getIndex();
         return s_resources[index];
+    }
+
+    //////////////////////////////////////////
+    template <typename T>
+    static T* IndexedResource<T>::GetResourceUnsafe(ResourceId _id)
+    {
+        return s_resources[(Size)_id.getIndex()];
     }
 
     //////////////////////////////////////////
