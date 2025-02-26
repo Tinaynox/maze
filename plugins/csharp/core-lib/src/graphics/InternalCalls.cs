@@ -49,7 +49,13 @@ namespace Maze.Graphics
         public extern static int CreateMesh();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void DestroyMesh(int resourceId);
+        public extern static void DestroyMesh(int meshId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshAddSubMesh(int meshId, int subMeshId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshClear(int meshId);
         #endregion
 
         #region SubMesh
@@ -57,7 +63,43 @@ namespace Maze.Graphics
         public extern static int CreateSubMesh();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void DestroySubMesh(int resourceId);
+        public extern static void DestroySubMesh(int subMeshId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe void SubMeshSetRenderDrawTopology(int subMeshId, int topology);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe void SubMeshSetIndicesU16(int subMeshId, ushort* indices, int count);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe void SubMeshSetIndicesU32(int subMeshId, uint* indices, int count);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe void SubMeshSetPositions(int subMeshId, Vec3F* positions, int count);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe void SubMeshSetNormals(int subMeshId, Vec3F* normals, int count);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe void SubMeshSetTangents(int subMeshId, Vec3F* tangents, int count);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe void SubMeshSetBitangents(int subMeshId, Vec3F* bitangents, int count);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe void SubMeshSetColors(int subMeshId, Vec4F* colors, int count);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe void SubMeshSetTexCoordsVec2F(int subMeshId, int uvIndex, Vec2F* uvs, int count);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe void SubMeshSetTexCoordsVec4F(int subMeshId, int uvIndex, Vec4F* uvs, int count);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe void SubMeshSetBlendWeights(int subMeshId, Vec4F* blendWeights, int count);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe void SubMeshSetBlendIndices(int subMeshId, Vec4F* blendIndices, int count);
         #endregion
 
         #region RenderMesh
@@ -65,7 +107,10 @@ namespace Maze.Graphics
         public extern static int CreateRenderMesh();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void DestroyRenderMesh(int resourceId);
+        public extern static void DestroyRenderMesh(int renderMeshId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void RenderMeshLoadFromMesh(int renderMeshId, int meshId);
         #endregion
     }
 }

@@ -57,7 +57,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename T>
-    static T* IndexedResource<T>::GetResourceUnsafe(ResourceId _id)
+    T* IndexedResource<T>::GetResourceUnsafe(ResourceId _id)
     {
         return s_resources[(Size)_id.getIndex()];
     }

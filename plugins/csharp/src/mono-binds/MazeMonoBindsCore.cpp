@@ -260,10 +260,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void Transform3DSetLocalTransform(Component* _component, TMat const& _tm)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        _component->castRaw<Transform3D>()->setLocalTransform(_tm);
+    }
+
+    //////////////////////////////////////////
     inline void Transform3DGetWorldTransform(Component* _component, TMat& _outTMat)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
         _outTMat = _component->castRaw<Transform3D>()->getWorldTransform();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform3DSetWorldTransform(Component* _component, TMat const& _tm)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        _component->castRaw<Transform3D>()->setWorldTransform(_tm);
     }
 
     //////////////////////////////////////////
@@ -314,7 +328,9 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetScale);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetScale);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetLocalTransform);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DSetLocalTransform);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetWorldTransform);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DSetWorldTransform);
     }
 
 } // namespace Maze

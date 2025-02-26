@@ -99,7 +99,13 @@ namespace Maze.Core
         public extern static void Transform3DGetLocalTransform(NativePtr nativeComponentPtr, out TMat outTMat);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform3DSetLocalTransform(NativePtr nativeComponentPtr, TMat tm);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform3DGetWorldTransform(NativePtr nativeComponentPtr, out TMat outTMat);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform3DSetWorldTransform(NativePtr nativeComponentPtr, TMat tm);
         #endregion
     }
 }

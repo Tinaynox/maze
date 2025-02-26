@@ -119,15 +119,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SubMesh::setIndices(U16 const* _indices, Size _count)
-    {
-        ByteBufferPtr const& indicesBuffer = allocateIndices(
-            VertexAttributeType::U16,
-            _count);
-        indicesBuffer->copyFrom((U8 const*)_indices, indicesBuffer->getSize());
-    }
-
-    //////////////////////////////////////////
     ByteBufferPtr const& SubMesh::allocateIndices(VertexAttributeType _type, Size _count)
     {
         m_indicesType = _type;
@@ -139,6 +130,24 @@ namespace Maze
         m_indicesCount = _count;
 
         return m_indicesBuffer;
+    }
+
+    //////////////////////////////////////////
+    void SubMesh::setIndices(U16 const* _indices, Size _count)
+    {
+        ByteBufferPtr const& indicesBuffer = allocateIndices(
+            VertexAttributeType::U16,
+            _count);
+        indicesBuffer->copyFrom((U8 const*)_indices, indicesBuffer->getSize());
+    }
+
+    //////////////////////////////////////////
+    void SubMesh::setIndices(U32 const* _indices, Size _count)
+    {
+        ByteBufferPtr const& indicesBuffer = allocateIndices(
+            VertexAttributeType::U32,
+            _count);
+        indicesBuffer->copyFrom((U8 const*)_indices, indicesBuffer->getSize());
     }
 
     //////////////////////////////////////////

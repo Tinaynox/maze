@@ -1,8 +1,10 @@
 using Maze.Core;
 using System;
+using System.Runtime.InteropServices;
 
 namespace Maze.Graphics
 {
+    [StructLayout(LayoutKind.Sequential)]
     public struct ColorF128
     {
         public float R;

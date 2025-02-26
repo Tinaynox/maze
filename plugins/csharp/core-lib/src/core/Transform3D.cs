@@ -26,21 +26,21 @@ namespace Maze.Core
             set { InternalCalls.Transform3DSetScale(NativeComponentPtr, value); }
         }
 
+        public TMat Transform
+        {
+            get { InternalCalls.Transform3DGetLocalTransform(NativeComponentPtr, out TMat tm); return tm; }
+            set { InternalCalls.Transform3DSetLocalTransform(NativeComponentPtr, value); }
+        }
+
+        public TMat WorldTransform
+        {
+            get { InternalCalls.Transform3DGetWorldTransform(NativeComponentPtr, out TMat tm); return tm; }
+            set { InternalCalls.Transform3DSetWorldTransform(NativeComponentPtr, value); }
+        }
+
         public Transform3D(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
         {  
-        }
-
-        public TMat GetLocalTransform()
-        {
-            InternalCalls.Transform3DGetLocalTransform(NativeComponentPtr, out TMat tm);
-            return tm;
-        }
-
-        public TMat GetWorldTransform()
-        {
-            InternalCalls.Transform3DGetWorldTransform(NativeComponentPtr, out TMat tm);
-            return tm;
         }
 
         public void Translate(Vec3F delta)

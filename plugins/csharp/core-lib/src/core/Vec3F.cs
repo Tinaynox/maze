@@ -1,7 +1,9 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace Maze.Core
 {
+    [StructLayout(LayoutKind.Sequential)]
     public struct Vec3F
     {
         public float X;

@@ -115,13 +115,22 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setIndices(U16 const* _indices, Size _count);
-
-        //////////////////////////////////////////
         ByteBufferPtr const& allocateIndices(VertexAttributeType _type, Size _count);
 
         //////////////////////////////////////////
+        void setIndices(U16 const* _indices, Size _count);
+
+        //////////////////////////////////////////
         inline void setIndices(Vector<U16> const& _indices)
+        {
+            setIndices(&_indices[0], _indices.size());
+        }
+
+        //////////////////////////////////////////
+        void setIndices(U32 const* _indices, Size _count);
+
+        //////////////////////////////////////////
+        inline void setIndices(Vector<U32> const& _indices)
         {
             setIndices(&_indices[0], _indices.size());
         }

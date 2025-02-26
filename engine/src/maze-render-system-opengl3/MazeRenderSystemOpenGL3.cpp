@@ -279,6 +279,9 @@ namespace Maze
         bool _colorBuffer,
         bool _depthBuffer)
     {
+        if (!m_currentRenderTarget)
+            return;
+
         MZGLbitfield mask = 0;
 
         if (_colorBuffer)

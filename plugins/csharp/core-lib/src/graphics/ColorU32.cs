@@ -1,7 +1,9 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace Maze.Graphics
 {
+    [StructLayout(LayoutKind.Sequential)]
     public struct ColorU32
     {
         public byte R;

@@ -1,7 +1,10 @@
 using System;
+using System.Runtime.InteropServices;
+
 
 namespace Maze.Core
 {
+    [StructLayout(LayoutKind.Sequential)]
     public struct Rect2F
     {
         public float X;

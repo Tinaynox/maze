@@ -461,10 +461,13 @@ namespace Maze
         {
             if (m_refCountBlock)
             {
-                if (--m_refCountBlock->strong == 0)
+                if (m_refCountBlock->strong > 1)
+                    --m_refCountBlock->strong;
+                else
                 {
                     m_refCountBlock->deleter(m_ptr);
 
+                    --m_refCountBlock->strong;
                     if (m_refCountBlock->weak == 0)
                     {
                         MAZE_DELETE(m_refCountBlock);
