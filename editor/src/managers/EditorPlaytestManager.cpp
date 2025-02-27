@@ -130,7 +130,7 @@ namespace Maze
     {
         Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &EditorPlaytestManager::notifyMainRenderWindowResized);
 
-        createScenes();
+        // createScenes();
     }
 
     //////////////////////////////////////////

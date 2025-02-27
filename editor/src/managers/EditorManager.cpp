@@ -325,6 +325,8 @@ namespace Maze
         m_editorPlaytestManager->start();
         m_editorEntityManager->start();
 
+        m_editorWorkspaceManager->createScenes();
+
         updateMainScene();
     }
 

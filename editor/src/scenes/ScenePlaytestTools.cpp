@@ -163,7 +163,7 @@ namespace Maze
         m_camera3D->setFOV(Math::DegreesToRadians(60));
         m_camera3D->setRenderTarget(m_renderTarget);
         m_camera3D->setClearColor(ColorU32(99, 101, 140, 255));
-        m_camera3D->getEntityRaw()->ensureComponent<Name>("Camera");
+        m_camera3D->getEntityRaw()->ensureComponent<Name>("PlaytestCamera");
         m_camera3D->setRenderMask(m_camera3D->getRenderMask() | (S32)DefaultRenderMask::Gizmos);
         m_camera3D->setViewport(getPlaytestViewport());
         m_camera3D->getEntityRaw()->ensureComponent<Camera3DShadowBuffer>();

@@ -135,7 +135,7 @@ namespace Maze
                 PixelFormat::DEPTH_U24
             });
 
-        createScenes();
+        // createScenes();
     }
 
     //////////////////////////////////////////
