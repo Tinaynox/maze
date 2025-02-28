@@ -607,6 +607,24 @@ namespace Maze
 
 
 //////////////////////////////////////////
+namespace std
+{
+    //////////////////////////////////////////
+    template <typename T>
+    struct hash<Maze::ManagedSharedPtr<T>>
+    {
+        inline size_t operator()(Maze::ManagedSharedPtr<T> const& _ptr) const noexcept
+        {
+            return reinterpret_cast<size_t>(_ptr.getPtr());
+        }
+    };
+
+
+} // namespace std
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
 // Aliases
 //
 //////////////////////////////////////////

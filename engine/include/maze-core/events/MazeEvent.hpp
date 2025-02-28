@@ -65,16 +65,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~Event();
-
-        //////////////////////////////////////////
-        inline void setCaptured(bool _captured) { m_captured = _captured; }
-
-        //////////////////////////////////////////
-        inline bool getCaptured() const { return m_captured; }
-
-        //////////////////////////////////////////
-        inline void capture() { m_captured = true; }
+        virtual ~Event() = default;
 
         //////////////////////////////////////////
         template <typename UEvent>
@@ -100,10 +91,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        Event();
-
-    protected:
-        bool m_captured;
+        Event() = default;
     };
 
 

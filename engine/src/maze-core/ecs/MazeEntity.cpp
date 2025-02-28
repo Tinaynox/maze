@@ -434,12 +434,7 @@ namespace Maze
             return;
 
         for (auto const& componentData : m_components)
-        {
             componentData.second->processEvent(_event);
-            
-            if (_event->getCaptured())
-                break;
-        }
     }
     
     
