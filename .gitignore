@@ -12,7 +12,7 @@ engine/bin/
 examples/bin/log.log
 examples/bin/*.dll
 examples/bin/*.app
-CSharp/
+CSharpPrj/
 Library/
 
 # =============== #

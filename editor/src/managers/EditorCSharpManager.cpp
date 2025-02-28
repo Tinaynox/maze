@@ -150,7 +150,7 @@ namespace Maze
             "Open project",
             [](String const& _text)
             {
-                Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharp/prj/Assembly-CSharp.sln";
+                Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharpPrj/prj/Assembly-CSharp.sln";
                 SystemHelper::OpenURL(csharpPath);
             },
             []() { return true; });
@@ -180,7 +180,7 @@ namespace Maze
                 // #TODO: move to setting
                 Path devenv = "F:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/devenv.exe";
 
-                Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharp/prj/Assembly-CSharp.sln";
+                Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharpPrj/prj/Assembly-CSharp.sln";
                 Path params = csharpPath + Path(" ") + _fullPath;
                 SystemHelper::ExecuteShell(devenv, params);
             });
@@ -297,11 +297,11 @@ namespace Maze
     {
         Debug::Log("Updating CSharp folder...");
 
-        AssetFilePtr const& csharp = AssetManager::GetInstancePtr()->getAssetFileByFileName(MAZE_HCS("CSharp"));
+        AssetFilePtr const& csharp = AssetManager::GetInstancePtr()->getAssetFileByFileName(MAZE_HCS("CSharpPrj"));
         MAZE_ERROR_RETURN_IF(!csharp || csharp->getClassUID() != ClassInfo<AssetDirectory>::UID(), "CSharp dir is not found");
 
         Path const& csharpSrcPath = csharp->getFullPath();
-        Path csharpDestPath = EditorHelper::GetProjectFolder() + "/CSharp";
+        Path csharpDestPath = EditorHelper::GetProjectFolder() + "/CSharpPrj";
         FileHelper::CreateDirectoryRecursive(csharpDestPath);
 
         FileHelper::CopyDirectory(csharpSrcPath, csharpDestPath);
@@ -339,7 +339,7 @@ namespace Maze
     {
         Debug::Log("Generating CSharp assembly project...");
 
-        Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharp";
+        Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharpPrj";
 
         m_csharpScriptsHash = CalculateCSharpScriptsHash();
 
@@ -359,7 +359,7 @@ namespace Maze
     {
         Debug::Log("Compiling CSharp assembly...");
 
-        Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharp";
+        Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharpPrj";
 
 #if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
 #   if MAZE_DEBUG
