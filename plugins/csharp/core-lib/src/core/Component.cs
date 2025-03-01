@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using Maze;
 
 namespace Maze.Core
@@ -35,6 +36,25 @@ namespace Maze.Core
         public Entity InstantiateEntity(AssetUnitId auid)
         {
             return new Entity(InternalCalls.InstantiateEntity(NativeComponentPtr, auid));
+        }
+
+        public void SendEvent(Entity entity, MonoEvent monoEvent)
+        {
+            GCHandle handle = GCHandle.Alloc(monoEvent);
+            InternalCalls.ComponentSendMonoEvent(NativeComponentPtr, entity.NativeEntityPtr, GCHandle.ToIntPtr(handle));
+            handle.Free();
+        }
+
+        public void BroadcastEvent(MonoEvent monoEvent)
+        {
+            GCHandle handle = GCHandle.Alloc(monoEvent);
+            InternalCalls.ComponentBroadcastMonoEvent(NativeComponentPtr, GCHandle.ToIntPtr(handle));
+            handle.Free();
+        }
+
+        public bool IsEditorMode()
+        {
+            return InternalCalls.ComponentIsEditorMode(NativeComponentPtr);
         }
 
         public static bool operator !(Component instance)

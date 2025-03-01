@@ -44,6 +44,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(MonoBehaviour);
+    MAZE_USING_SHARED_PTR(MonoEvent);
 
 
     //////////////////////////////////////////
@@ -166,6 +167,13 @@ namespace Maze
         MonoBehaviour* _monoBehaviour);
 
     //////////////////////////////////////////
+    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnMonoEvent(
+        MonoEvent const& _event,
+        Entity* _entity,
+        MonoBehaviour* _monoBehaviour);
+
+    /*
+    //////////////////////////////////////////
     MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnEditorCreate(
         EntityAddedEvent const& _event,
         Entity* _entity,
@@ -182,6 +190,7 @@ namespace Maze
         EntityRemovedEvent const& _event,
         Entity* _entity,
         MonoBehaviour* _monoBehaviour);
+    */
 
 } // namespace Maze
 //////////////////////////////////////////

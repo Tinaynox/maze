@@ -137,6 +137,12 @@ namespace Maze
         //////////////////////////////////////////
         inline MonoMethod* getOnDestroyMethod() const { return m_onDestroyMethod; }
 
+        //////////////////////////////////////////
+        inline UnorderedMap<ClassUID, MonoMethod*> const& getOnMonoEventMethods() const { return m_onMonoEventMethods; }
+
+        //////////////////////////////////////////
+        inline MonoMethod* getOnEventMethodUnsafe(ClassUID _eventUID) const { return m_onMonoEventMethods.find(_eventUID)->second; }
+
 
         //////////////////////////////////////////
         inline String const& getNamespace() const { return m_namespace; }
@@ -204,6 +210,7 @@ namespace Maze
         MonoMethod* m_onCreateMethod = nullptr;
         MonoMethod* m_onUpdateMethod = nullptr;
         MonoMethod* m_onDestroyMethod = nullptr;
+        UnorderedMap<ClassUID, MonoMethod*> m_onMonoEventMethods;
 
         StringKeyMap<ScriptPropertyPtr> m_properties;
         StringKeyMap<ScriptFieldPtr> m_fields;

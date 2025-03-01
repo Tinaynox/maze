@@ -27,6 +27,7 @@
 #include "MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsCore.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
+#include "maze-plugin-csharp/ecs/events/MazeEcsCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
@@ -194,6 +195,32 @@ namespace Maze
         return _component->getEntityRaw();
     }
 
+    //////////////////////////////////////////
+    inline void ComponentSendMonoEvent(Component* _component, Entity* _entityReceiver, MonoObject* _monoEventPtr)
+    {
+        MonoObject* monoEvent = (MonoObject*)mono_gchandle_get_target((uint32_t)(uintptr_t)_monoEventPtr);
+        _component->getEntityRaw()->getEcsWorld()->sendEvent<Maze::MonoEvent>(_entityReceiver->getId(), monoEvent);
+    }
+
+    //////////////////////////////////////////
+    inline void ComponentBroadcastMonoEvent(Component* _component, void* _monoEventPtr)
+    {
+        MonoObject* monoEvent = (MonoObject*)mono_gchandle_get_target((uint32_t)(uintptr_t)_monoEventPtr);
+        _component->getEntityRaw()->getEcsWorld()->broadcastEvent<Maze::MonoEvent>(monoEvent);
+    }
+
+    //////////////////////////////////////////
+    inline bool ComponentIsEditorMode(Component* _component)
+    {
+        static Size const c_editorHash = MAZE_HCS("editor").hash;
+        Set<HashedString> const& tags = _component->getEntityRaw()->getEcsWorld()->getTags();
+        for (HashedString const& tag : tags)
+            if (tag.getHash() == c_editorHash)
+                return true;
+
+        return false;
+    }
+
 
     //////////////////////////////////////////
     inline void Transform3DTranslate(Component* _component, Vec3F _delta)
@@ -316,6 +343,9 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetComponent);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetMonoBehaviourComponentObject);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetEntity);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentSendMonoEvent);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentBroadcastMonoEvent);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentIsEditorMode);
 
         // Transform3D
         MAZE_CORE_MONO_BIND_FUNC(Transform3DTranslate);

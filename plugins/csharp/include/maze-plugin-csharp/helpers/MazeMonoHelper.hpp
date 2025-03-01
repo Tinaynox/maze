@@ -48,6 +48,13 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    enum class MAZE_PLUGIN_CSHARP_API MonoEntitySystemFlags : U8
+    {
+        EnableInEditor = MAZE_BIT(0)
+    };
+
+
+    //////////////////////////////////////////
     namespace MonoHelper
     {
         //////////////////////////////////////////
@@ -72,7 +79,8 @@ namespace Maze
         MAZE_PLUGIN_CSHARP_API void ParseMonoEntitySystemAttributes(
             MonoMethod* _method,
             Set<HashedString>& _outTags,
-            ComponentSystemOrder& _outOrder);
+            ComponentSystemOrder& _outOrder,
+            U8& _outFlags);
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API bool IsMethodPublic(MonoMethod* _method);

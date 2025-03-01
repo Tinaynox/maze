@@ -194,6 +194,42 @@ namespace Maze
         m_onCreateMethod = getMethod("OnCreate");
         m_onUpdateMethod = getMethod("OnUpdate", 1);
         m_onDestroyMethod = getMethod("OnDestroy");
+
+        m_onMonoEventMethods.clear();
+        if (getMethod("OnEvent", 1))
+        {
+            MonoMethod* method;
+            void* iter = nullptr;
+            while ((method = mono_class_get_methods(m_monoClass, &iter)) != nullptr)
+            {
+                CString currentMethodName = mono_method_get_name(method);
+                if (strcmp(currentMethodName, "OnEvent") == 0)
+                {
+                    MonoMethodSignature* sig = mono_method_signature(method);
+                    if (!sig)
+                        continue;
+
+                    S32 paramCount = mono_signature_get_param_count(sig);
+                    if (!paramCount)
+                        continue;
+
+                    void* iter2 = nullptr;
+                    MonoType* paramType = mono_signature_get_params(sig, &iter2);
+                    MonoClass* paramClass = mono_type_get_class(paramType);
+
+                    if (mono_class_is_subclass_of(paramClass, MonoEngine::GetMonoEventClass()->getMonoClass(), false))
+                    {
+                        CString typeName = mono_type_get_name(paramType);
+                        ClassUID eventUID = CalculateClassUID(typeName);
+
+                        m_onMonoEventMethods.emplace(
+                            std::piecewise_construct,
+                            std::forward_as_tuple(eventUID),
+                            std::forward_as_tuple(method));
+                    }
+                }
+            }
+        }
     }
 
     //////////////////////////////////////////

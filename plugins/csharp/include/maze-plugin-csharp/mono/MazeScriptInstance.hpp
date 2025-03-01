@@ -121,6 +121,15 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <>
+        inline bool invokeMethod(MonoMethod* _method, MonoObject* const& _value)
+        {
+            void* ptr = (void*)_value;
+            MonoHelper::InvokeMethod(m_instance, _method, &ptr);
+            return true;
+        }
+
+        //////////////////////////////////////////
         template <typename TValue>
         inline bool invokeMethod(CString _name, TValue const& _value)
         {

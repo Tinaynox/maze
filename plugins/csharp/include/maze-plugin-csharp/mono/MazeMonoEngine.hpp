@@ -87,6 +87,12 @@ namespace Maze
         //////////////////////////////////////////
         static ScriptClassPtr const& GetEcsUtilsClass();
 
+        //////////////////////////////////////////
+        static ScriptClassPtr const& GetMonoEventClass();
+
+        //////////////////////////////////////////
+        static ScriptClassPtr const& GetNativeEventClass();
+
 
         //////////////////////////////////////////
         static ScriptClassPtr const& GetScriptClass(HashedCString _name);

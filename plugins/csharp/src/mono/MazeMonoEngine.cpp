@@ -50,6 +50,7 @@ namespace Maze
     {
         StringKeyMap<ScriptClassPtr> scriptClasses;
 
+        // Component classes
         ScriptClassPtr monoBehaviourClass;
         StringKeyMap<ScriptClassPtr> monoBehaviourSubClasses;
         UnorderedMap<ComponentId, ScriptClassPtr> monoBehaviourSubClassesByComponentId;
@@ -61,7 +62,15 @@ namespace Maze
         ScriptClassPtr ecsUtilsClass;
         StringKeyMap<ScriptClassPtr> nativeComponentSubClasses;
 
-        UnorderedMap<MonoType*, ComponentId> monoTypePerComponentId;        
+        UnorderedMap<MonoType*, ComponentId> componentIdPerMonoType;        
+
+
+        // Event classes
+        ScriptClassPtr monoEventClass;
+        StringKeyMap<ScriptClassPtr> monoEventSubClasses;
+
+        ScriptClassPtr nativeEventClass;
+        StringKeyMap<ScriptClassPtr> nativeEventSubClasses;
     };
 
 
@@ -146,30 +155,49 @@ namespace Maze
                         scriptClass);
 
                     MonoType* monoType = mono_class_get_type(monoClass);
-                    g_monoEngineData->ecsData.monoTypePerComponentId[monoType] = GetComponentIdByName(fullName.c_str());
+                    g_monoEngineData->ecsData.componentIdPerMonoType[monoType] = GetComponentIdByName(fullName.c_str());
                     
 
                     // Process entity systems
                     Set<HashedString> systemTags;
                     ComponentSystemOrder systemOrder;
+                    U8 systemFlags = 0u;
+
+
+                    auto addRequiredSystem =
+                        [&](std::function<void(Set<HashedString> const&)> const& _addSystem)
+                        {
+                            if (systemFlags & U8(MonoEntitySystemFlags::EnableInEditor))
+                            {
+                                Set<HashedString> systemEditorTags = systemTags;
+                                systemEditorTags.insert(MAZE_HS("editor"));
+                                _addSystem(systemEditorTags);
+                            }
+
+                            systemTags.insert(MAZE_HS("default"));
+                            _addSystem(systemTags);
+                        };
+
 
                     // OnCreate
                     if (scriptClass->getOnCreateMethod())
                     {
                         HashedString systemName(fullName + "::OnCreate");
 
-                        MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnCreateMethod(), systemTags, systemOrder);
+                        MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnCreateMethod(), systemTags, systemOrder, systemFlags);
 
-                        systemTags.insert(MAZE_HS("default"));
-
-                        g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
-                            MakeShared<CustomComponentSystemHolder>(
-                                systemName,
-                                ClassInfo<EntityAddedEvent>::UID(),
-                                [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
-                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnCreate,
-                                systemTags,
-                                systemOrder));
+                        addRequiredSystem(
+                            [&](Set<HashedString> const& _systemTags)
+                            {
+                                g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
+                                    MakeShared<CustomComponentSystemHolder>(
+                                        systemName,
+                                        ClassInfo<EntityAddedEvent>::UID(),
+                                        [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                        (ComponentSystemEventHandler::Func)&MonoBehaviourOnCreate,
+                                        _systemTags,
+                                        systemOrder));
+                            });
                     }
 
                     // OnUpdate
@@ -177,18 +205,20 @@ namespace Maze
                     {
                         HashedString systemName(fullName + "::OnUpdate");
 
-                        MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnUpdateMethod(), systemTags, systemOrder);
+                        MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnUpdateMethod(), systemTags, systemOrder, systemFlags);
 
-                        systemTags.insert(MAZE_HS("default"));
-
-                        g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
-                            MakeShared<CustomComponentSystemHolder>(
-                                systemName,
-                                ClassInfo<UpdateEvent>::UID(),
-                                [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
-                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnUpdate,
-                                systemTags,
-                                systemOrder));
+                        addRequiredSystem(
+                            [&](Set<HashedString> const& _systemTags)
+                            {
+                                g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
+                                    MakeShared<CustomComponentSystemHolder>(
+                                        systemName,
+                                        ClassInfo<UpdateEvent>::UID(),
+                                        [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                        (ComponentSystemEventHandler::Func)&MonoBehaviourOnUpdate,
+                                        _systemTags,
+                                        systemOrder));
+                            });
                     }
 
                     // OnDestroy
@@ -196,88 +226,47 @@ namespace Maze
                         HashedString systemName(fullName + "::OnDestroy");
 
                         if (scriptClass->getOnDestroyMethod())
-                            MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnDestroyMethod(), systemTags, systemOrder);
+                            MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnDestroyMethod(), systemTags, systemOrder, systemFlags);
                         else
                         {
                             systemTags.clear();
                             systemOrder = ComponentSystemOrder();
                         }
 
-                        systemTags.insert(MAZE_HS("default"));
-
-                        g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
-                            MakeShared<CustomComponentSystemHolder>(
-                                systemName,
-                                ClassInfo<EntityRemovedEvent>::UID(),
-                                [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
-                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnDestroy,
-                                systemTags,
-                                systemOrder));
+                        addRequiredSystem(
+                            [&](Set<HashedString> const& _systemTags)
+                            {
+                                g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
+                                    MakeShared<CustomComponentSystemHolder>(
+                                        systemName,
+                                        ClassInfo<EntityRemovedEvent>::UID(),
+                                        [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                        (ComponentSystemEventHandler::Func)&MonoBehaviourOnDestroy,
+                                        _systemTags,
+                                        systemOrder));
+                            });
                     }
 
-                    // OnEditorCreate
-                    MonoMethod* onEditorCreate = scriptClass->getMethod("OnEditorCreate");
-                    if (onEditorCreate)
+                    // OnEvent
+                    UnorderedMap<ClassUID, MonoMethod*> const& onMonoEventMethods = scriptClass->getOnMonoEventMethods();
+                    for (auto const& onMonoEventMethodData : onMonoEventMethods)
                     {
-                        HashedString systemName(fullName + "::OnEditorCreate");
+                        HashedString systemName(fullName + "::OnEvent_" + StringHelper::ToString(onMonoEventMethodData.first));
 
-                        MonoHelper::ParseMonoEntitySystemAttributes(onEditorCreate, systemTags, systemOrder);
+                        MonoHelper::ParseMonoEntitySystemAttributes(onMonoEventMethodData.second, systemTags, systemOrder, systemFlags);
 
-                        systemTags.insert(MAZE_HS("editor"));
-
-                        g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
-                            MakeShared<CustomComponentSystemHolder>(
-                                systemName,
-                                ClassInfo<EntityAddedEvent>::UID(),
-                                [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
-                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnEditorCreate,
-                                systemTags,
-                                systemOrder));
-                    }
-
-                    // OnEditorUpdate
-                    MonoMethod* onEditorUpdate = scriptClass->getMethod("OnEditorUpdate", 1);
-                    if (onEditorUpdate)
-                    {
-                        HashedString systemName(fullName + "::OnEditorUpdate");
-
-                        MonoHelper::ParseMonoEntitySystemAttributes(onEditorUpdate, systemTags, systemOrder);
-
-                        systemTags.insert(MAZE_HS("editor"));
-
-                        g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
-                            MakeShared<CustomComponentSystemHolder>(
-                                systemName,
-                                ClassInfo<UpdateEvent>::UID(),
-                                [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
-                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnEditorUpdate,
-                                systemTags,
-                                systemOrder));
-                    }
-
-                    // OnEditorDestroy
-                    MonoMethod* onEditorDestroy = scriptClass->getMethod("OnEditorDestroy");
-                    {
-                        HashedString systemName(fullName + "::OnEditorDestroy");
-
-                        if (onEditorDestroy)
-                            MonoHelper::ParseMonoEntitySystemAttributes(onEditorDestroy, systemTags, systemOrder);
-                        else
-                        {
-                            systemTags.clear();
-                            systemOrder = ComponentSystemOrder();
-                        }
-
-                        systemTags.insert(MAZE_HS("editor"));
-
-                        g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
-                            MakeShared<CustomComponentSystemHolder>(
-                                systemName,
-                                ClassInfo<EntityRemovedEvent>::UID(),
-                                [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
-                                (ComponentSystemEventHandler::Func)&MonoBehaviourOnEditorDestroy,
-                                systemTags,
-                                systemOrder));
+                        addRequiredSystem(
+                            [&](Set<HashedString> const& _systemTags)
+                            {
+                                g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
+                                    MakeShared<CustomComponentSystemHolder>(
+                                        systemName,
+                                        onMonoEventMethodData.first,
+                                        [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                        (ComponentSystemEventHandler::Func)&MonoBehaviourOnMonoEvent,
+                                        _systemTags,
+                                        systemOrder));
+                            });
                     }
                 }
                 else
@@ -295,7 +284,31 @@ namespace Maze
                         scriptClass);
 
                     MonoType* monoType = mono_class_get_type(monoClass);
-                    g_monoEngineData->ecsData.monoTypePerComponentId[monoType] = GetComponentIdByName((String("Maze::") + typeName).c_str());
+                    g_monoEngineData->ecsData.componentIdPerMonoType[monoType] = GetComponentIdByName((String("Maze::") + typeName).c_str());
+                }
+                else
+                // MonoEvent subclasses
+                if (mono_class_is_subclass_of(monoClass, MonoEngine::GetMonoEventClass()->getMonoClass(), false) &&
+                    monoClass != MonoEngine::GetMonoEventClass()->getMonoClass())
+                {
+                    ScriptClassPtr scriptClass = MonoEngine::CreateScriptClass(fullNamespace, typeName, monoClass);
+                    loadedScriptClasses.push_back(scriptClass);
+
+                    g_monoEngineData->ecsData.monoEventSubClasses.insert(
+                        HashedCString(fullName.c_str()),
+                        scriptClass);
+                }
+                else
+                // NativeEvent subclasses
+                if (mono_class_is_subclass_of(monoClass, MonoEngine::GetNativeEventClass()->getMonoClass(), false) &&
+                    monoClass != MonoEngine::GetNativeEventClass()->getMonoClass())
+                {
+                    ScriptClassPtr scriptClass = MonoEngine::CreateScriptClass(fullNamespace, typeName, monoClass);
+                    loadedScriptClasses.push_back(scriptClass);
+
+                    g_monoEngineData->ecsData.nativeEventSubClasses.insert(
+                        HashedCString(fullName.c_str()),
+                        scriptClass);
                 }
             }
         }
@@ -558,6 +571,7 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!g_monoEngineData->coreAssembly, nullptr, "Failed to load core assembly - %s", _csharpFile.str);
 
         g_monoEngineData->coreAssemblyImage = mono_assembly_get_image(g_monoEngineData->coreAssembly);
+
         g_monoEngineData->ecsData.monoBehaviourClass = MonoEngine::CreateScriptClass(
             "Maze.Core", "MonoBehaviour", g_monoEngineData->coreAssemblyImage);
         g_monoEngineData->ecsData.componentClass = MonoEngine::CreateScriptClass(
@@ -568,6 +582,11 @@ namespace Maze
             "Maze.Core", "NativeComponent", g_monoEngineData->coreAssemblyImage);
         g_monoEngineData->ecsData.ecsUtilsClass = MonoEngine::CreateScriptClass(
             "Maze.Core", "EcsUtils", g_monoEngineData->coreAssemblyImage);
+
+        g_monoEngineData->ecsData.monoEventClass = MonoEngine::CreateScriptClass(
+            "Maze.Core", "MonoEvent", g_monoEngineData->coreAssemblyImage);
+        g_monoEngineData->ecsData.nativeEventClass = MonoEngine::CreateScriptClass(
+            "Maze.Core", "NativeEvent", g_monoEngineData->coreAssemblyImage);
 
         LoadAssemblyClasses(g_monoEngineData->coreAssembly);
 
@@ -645,6 +664,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ScriptClassPtr const& MonoEngine::GetMonoEventClass()
+    {
+        return g_monoEngineData->ecsData.monoEventClass;
+    }
+
+    //////////////////////////////////////////
+    ScriptClassPtr const& MonoEngine::GetNativeEventClass()
+    {
+        return g_monoEngineData->ecsData.nativeEventClass;
+    }
+
+    //////////////////////////////////////////
     ScriptClassPtr const& MonoEngine::GetScriptClass(HashedCString _name)
     {
         static ScriptClassPtr const nullPointer;
@@ -689,8 +720,8 @@ namespace Maze
     //////////////////////////////////////////
     ComponentId MonoEngine::GetComponentIdByMonoType(MonoType* _monoType)
     {
-        auto it = g_monoEngineData->ecsData.monoTypePerComponentId.find(_monoType);
-        if (it != g_monoEngineData->ecsData.monoTypePerComponentId.end())
+        auto it = g_monoEngineData->ecsData.componentIdPerMonoType.find(_monoType);
+        if (it != g_monoEngineData->ecsData.componentIdPerMonoType.end())
             return it->second;
         else
             return c_invalidComponentId;

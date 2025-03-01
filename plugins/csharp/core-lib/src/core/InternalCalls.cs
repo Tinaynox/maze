@@ -65,6 +65,15 @@ namespace Maze.Core
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static NativePtr ComponentGetEntity(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void ComponentSendMonoEvent(NativePtr nativeComponentPtr, NativePtr receiverEntity, IntPtr monoEvent);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void ComponentBroadcastMonoEvent(NativePtr nativeComponentPtr, IntPtr monoEvent);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool ComponentIsEditorMode(NativePtr nativeComponentPtr);
         #endregion
 
         #region Transform3D

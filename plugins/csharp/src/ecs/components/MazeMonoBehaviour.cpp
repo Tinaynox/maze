@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
+#include "maze-plugin-csharp/ecs/events/MazeEcsCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/MazeCSharpService.hpp"
@@ -423,6 +424,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnMonoEvent(
+        MonoEvent const& _event,
+        Entity* _entity,
+        MonoBehaviour* _monoBehaviour)
+    {
+        ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
+        ScriptInstancePtr const& scriptInstance = _monoBehaviour->getMonoInstance();
+
+        if (scriptClass && scriptInstance && scriptInstance->isValid())
+        {
+            MonoMethod* monoMethod = scriptClass->getOnEventMethodUnsafe(_event.getEventUID());
+            scriptInstance->invokeMethod(monoMethod, _event.getMonoEvent());
+        }
+    }
+
+    /*
+    //////////////////////////////////////////
     MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnEditorCreate(
         EntityAddedEvent const& _event,
         Entity* _entity,
@@ -479,6 +497,7 @@ namespace Maze
 
         _monoBehaviour->destroyMonoInstance();
     }
+    */
 
 
 } // namespace Maze

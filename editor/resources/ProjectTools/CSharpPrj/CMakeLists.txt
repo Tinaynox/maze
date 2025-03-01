@@ -47,6 +47,7 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY
 
 ##########################################
 set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.5")
+target_compile_options(${PROJECT_NAME} PUBLIC "/unsafe")
 
 
 ##########################################

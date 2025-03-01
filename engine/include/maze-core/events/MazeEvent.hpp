@@ -68,6 +68,9 @@ namespace Maze
         virtual ~Event() = default;
 
         //////////////////////////////////////////
+        virtual U32 getEventUID() const { return getClassUID(); }
+
+        //////////////////////////////////////////
         template <typename UEvent>
         inline UEvent* castRaw()
         {

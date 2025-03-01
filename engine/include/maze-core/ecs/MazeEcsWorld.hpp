@@ -321,7 +321,7 @@ namespace Maze
         template <typename TEvent>
         inline void broadcastEventImmediate(TEvent* _event, EcsEventParams _params = EcsEventParams())
         {
-            ClassUID eventUID = _event->getClassUID();
+            ClassUID eventUID = _event->getEventUID();
             Vector<ComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
 
             for (ComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
@@ -370,7 +370,7 @@ namespace Maze
         template <typename TEvent>
         inline void sendEventImmediate(EntityId _entityId, TEvent* _event, EcsEventParams _params = EcsEventParams())
         {
-            ClassUID eventUID = _event->getClassUID();
+            ClassUID eventUID = _event->getEventUID();
             Vector<ComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
 
             for (ComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)

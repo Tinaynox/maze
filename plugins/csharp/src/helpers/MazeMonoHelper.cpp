@@ -138,15 +138,18 @@ namespace Maze
             return InvokeMethod(nullptr, _method, _params);
         }
 
+
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void ParseMonoEntitySystemAttributes(
             MonoMethod* _method,
             Set<HashedString>& _outTags,
-            ComponentSystemOrder& _outOrder)
+            ComponentSystemOrder& _outOrder,
+            U8& _outFlags)
         {
             _outTags.clear();
             _outOrder.after.clear();
             _outOrder.before.clear();
+            _outFlags = 0u;
 
             MonoCustomAttrInfo* attrInfo = mono_custom_attrs_from_method(_method);
             if (!attrInfo)
@@ -196,6 +199,11 @@ namespace Maze
                         _outOrder.before = parseStringListMonoClassField(beforeField);
                     }
 
+                }
+                else
+                if (strcmp(attrClassName, "EnableInEditorAttribute") == 0 && strcmp(attrNamespace, "Maze.Core") == 0)
+                {
+                    _outFlags |= U8(MonoEntitySystemFlags::EnableInEditor);
                 }
             }
 
