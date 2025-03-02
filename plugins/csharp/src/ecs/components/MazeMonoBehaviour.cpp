@@ -168,7 +168,18 @@ namespace Maze
         if (_eventUID == ClassInfo<MonoPreReloadEvent>::UID())
         {
             if (m_monoClass)
-                setMonoClass(MonoEngine::GetMonoBehaviourSubClass(m_monoClass->getFullName()));
+            {
+                ScriptClassPtr const& scriptClass = MonoEngine::GetMonoBehaviourSubClass(m_monoClass->getFullName());
+
+                if (scriptClass)
+                {
+                    setMonoClass(scriptClass);
+                }
+                else
+                {
+                    MAZE_ERROR_RETURN("Undefined MonoClass: %s", m_monoClass->getFullName().c_str());
+                }
+            }
         }
         else
         if (_eventUID == ClassInfo<MonoReloadEvent>::UID())

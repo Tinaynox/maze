@@ -42,6 +42,7 @@
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
+#include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "editor/EditorSceneMode.hpp"
 
 
@@ -149,6 +150,8 @@ namespace Maze
         CanvasPtr m_assetsCanvas;
         CanvasPtr m_previewCanvas;
         CanvasPtr m_topBarCanvas;
+
+        MonoBehaviourPtr m_editorMonoController;
 
         AssetsControllerPtr m_assetsController;
         PreviewControllerPtr m_previewController;

@@ -95,6 +95,7 @@
 #include "maze-plugin-loader-jpg/MazeLoaderJPGPlugin.hpp"
 #include "maze-plugin-loader-fbx/MazeLoaderFBXPlugin.hpp"
 #include "maze-plugin-csharp/MazeCSharpPlugin.hpp"
+#include "maze-plugin-csharp/MazeCSharpService.hpp"
 #include "maze-plugin-csharp-editor-tools/MazeCSharpEditorToolsPlugin.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
@@ -354,6 +355,8 @@ namespace Maze
             {
                 MAZE_LOAD_PLATFORM_PLUGIN(CSharp);
                 MAZE_LOAD_PLATFORM_PLUGIN(CSharpEditorTools);
+
+                CSharpService::GetInstancePtr()->loadEditorAssembly(MAZE_HCS("maze-editor-lib.dll"));
 
                 setCurrentProgress(0.975f);
                 break;

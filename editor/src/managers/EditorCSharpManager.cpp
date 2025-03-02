@@ -312,6 +312,7 @@ namespace Maze
     {
         Debug::Log("Updating Library folder...");
 
+        // Maze lib
         {
             AssetFilePtr const& csharpCoreLib = AssetManager::GetInstancePtr()->getAssetFileByFileName(MAZE_HCS("maze-csharp-core-lib.dll"));
             MAZE_ERROR_RETURN_IF(!csharpCoreLib || csharpCoreLib->getClassUID() != ClassInfo<AssetRegularFile>::UID(), "CSharp core lib is not found");
@@ -330,6 +331,29 @@ namespace Maze
                 Path csharpDestPath = EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies";
                 FileHelper::CreateDirectoryRecursive(csharpDestPath);
                 FileHelper::CopyRegularFile(csharpCoreLibPath, csharpDestPath + "/" + csharpCoreLibPdb->getFileName());
+            }
+        }
+
+
+        // Editor lib
+        {
+            AssetFilePtr const& csharpEditorLib = AssetManager::GetInstancePtr()->getAssetFileByFileName(MAZE_HCS("maze-editor-lib.dll"));
+            MAZE_ERROR_RETURN_IF(!csharpEditorLib || csharpEditorLib->getClassUID() != ClassInfo<AssetRegularFile>::UID(), "CSharp editor lib is not found");
+
+            Path const& csharpEditorLibPath = csharpEditorLib->getFullPath();
+            Path csharpDestPath = EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies";
+            FileHelper::CreateDirectoryRecursive(csharpDestPath);
+            FileHelper::CopyRegularFile(csharpEditorLibPath, csharpDestPath + "/" + csharpEditorLib->getFileName());
+        }
+
+        {
+            AssetFilePtr const& csharpEditorLibPdb = AssetManager::GetInstancePtr()->getAssetFileByFileName(MAZE_HCS("maze-editor-lib.pdb"));
+            if (csharpEditorLibPdb && csharpEditorLibPdb->getClassUID() == ClassInfo<AssetRegularFile>::UID())
+            {
+                Path const& csharpEditorLibPath = csharpEditorLibPdb->getFullPath();
+                Path csharpDestPath = EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies";
+                FileHelper::CreateDirectoryRecursive(csharpDestPath);
+                FileHelper::CopyRegularFile(csharpEditorLibPath, csharpDestPath + "/" + csharpEditorLibPdb->getFileName());
             }
         }
     }
@@ -379,7 +403,7 @@ namespace Maze
     //////////////////////////////////////////
     void EditorCSharpManager::loadCSharpAssembly()
     {
-        CSharpService::GetInstancePtr()->loadMonoAssembly(MAZE_HCS("Assembly-CSharp.dll"));
+        CSharpService::GetInstancePtr()->loadAppAssembly(MAZE_HCS("Assembly-CSharp.dll"));
     }
 
     //////////////////////////////////////////

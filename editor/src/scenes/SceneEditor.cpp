@@ -494,6 +494,12 @@ namespace Maze
             EditorTopBarControllerPtr topBarController = EditorTopBarController::Create(m_topBarCanvas.get());
             topBarControllerEntity->addComponent(topBarController);
         }
+
+        {
+            EntityPtr editorMonoControllerEntity = createEntity("MonoController");
+            m_editorMonoController = editorMonoControllerEntity->createComponent<MonoBehaviour>(
+                MAZE_HCS("Maze.Editor.EditorMonoController"));
+        }
     }
 
     //////////////////////////////////////////

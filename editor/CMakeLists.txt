@@ -269,3 +269,7 @@ if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
             
     endif()
 endif()
+
+
+##########################################
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/editor-lib" "${CMAKE_CURRENT_BINARY_DIR}/editor-lib")

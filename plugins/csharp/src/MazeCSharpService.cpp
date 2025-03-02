@@ -91,7 +91,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MonoAssembly* CSharpService::loadMonoAssembly(HashedCString _csharpFile)
+    MonoAssembly* CSharpService::loadEditorAssembly(HashedCString _csharpFile)
+    {
+        return MonoEngine::LoadEditorAssembly(_csharpFile);
+    }
+
+    //////////////////////////////////////////
+    MonoAssembly* CSharpService::loadAppAssembly(HashedCString _csharpFile)
     {
         return MonoEngine::LoadAppAssembly(_csharpFile);
     }

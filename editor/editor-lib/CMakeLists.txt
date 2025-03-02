@@ -25,12 +25,16 @@ cmake_minimum_required(VERSION 3.6)
 
 
 ##########################################
-project(Assembly-CSharp LANGUAGES CSharp)
-
+project(maze-editor-lib LANGUAGES CSharp)
 
 
 ##########################################
-file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../Assets/*.cs")
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Utils.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Config.cmake")
+
+
+##########################################
+file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cs")
 
 
 ##########################################
@@ -42,21 +46,17 @@ add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
 
 ##########################################
-set_property(TARGET ${PROJECT_NAME} PROPERTY 
-    VS_DOTNET_REFERENCE_MazeCore "${CMAKE_CURRENT_SOURCE_DIR}/../Library/ScriptAssemblies/maze-csharp-core-lib.dll")
-    
-##########################################
-set_property(TARGET ${PROJECT_NAME} PROPERTY 
-    VS_DOTNET_REFERENCE_EditorLib "${CMAKE_CURRENT_SOURCE_DIR}/../Library/ScriptAssemblies/maze-editor-lib.dll")
+target_link_libraries(maze-editor-lib PRIVATE maze-csharp-core-lib)
 
 
 ##########################################
 set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.5")
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "MazeEditor")
 target_compile_options(${PROJECT_NAME} PUBLIC "/unsafe")
 
 
 ##########################################
-set(OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin/$<CONFIG>")
+set(OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../bin/${MAZE_ARCH_SUFFIX}/$<CONFIG>")
 
 
 ##########################################
@@ -79,12 +79,10 @@ set_target_properties(${PROJECT_NAME}
 ##########################################
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${OUTPUT_DIRECTORY}/Assembly-CSharp.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../Library/ScriptAssemblies/Assembly-CSharp.dll")
+    "${OUTPUT_DIRECTORY}/maze-editor-lib.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../resources/Libs/maze-editor-lib.dll")
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD    
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${OUTPUT_DIRECTORY}/Assembly-CSharp.pdb"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../Library/ScriptAssemblies/Assembly-CSharp.pdb" || (exit 0))
-
-
+    "${OUTPUT_DIRECTORY}/maze-editor-lib.pdb"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../resources/Libs/maze-editor-lib.pdb" || (exit 0))
