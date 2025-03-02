@@ -171,14 +171,14 @@ namespace Maze
                 Editor::GetInstancePtr()->getMainRenderWindow(),
                 EditorManager::GetInstancePtr()->getMainEcsWorld());
 
+            EntitySerializationManager::GetInstancePtr()->loadSceneFromDataBlock(
+                scene,
+                dataBlock);
+
             scene->setName(
                 HashedString(
                     FileHelper::GetFileNameWithoutExtension(
                         m_sceneAssetFile->getFileName()).toUTF8()));
-
-            EntitySerializationManager::GetInstancePtr()->loadSceneFromDataBlock(
-                scene,
-                dataBlock);
 
             setScene(scene);
         }
