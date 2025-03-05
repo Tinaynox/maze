@@ -62,8 +62,14 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "MazePlugins")
 target_link_libraries(
     ${PROJECT_NAME}
     PUBLIC maze-core
-    # PUBLIC maze-graphics
-    # PUBLIC maze-ui
+    PUBLIC maze-editor-tools
+    PUBLIC maze-graphics
+    PUBLIC maze-gamepad
+    PUBLIC maze-particles
+    PUBLIC maze-sound
+    PUBLIC maze-ui
+    PUBLIC maze-engine
+    PUBLIC maze-physics2d
     PUBLIC ${MONO_LIB})
     
 

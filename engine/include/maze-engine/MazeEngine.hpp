@@ -152,9 +152,21 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void setEngineRenderTarget(RenderTargetPtr const& _engineRenderTarget);
+
+        //////////////////////////////////////////
+        inline RenderTargetPtr const& getEngineRenderTarget() const { return m_engineRenderTarget; }
+
+
+        //////////////////////////////////////////
         EcsAssetScenePtr loadAssetScene(
             Path const& _sceneName,
             RenderTargetPtr const& _renderTarget,
+            bool _additive = true);
+
+        //////////////////////////////////////////
+        EcsAssetScenePtr loadAssetScene(
+            Path const& _sceneName,
             bool _additive = true);
 
 
@@ -209,6 +221,8 @@ namespace Maze
         EngineConfig m_config;
 
         bool m_running;
+
+        RenderTargetPtr m_engineRenderTarget;
                 
         SystemManagerPtr m_systemManager;
         TaskManagerPtr m_taskManager;

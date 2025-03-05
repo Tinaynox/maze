@@ -2,9 +2,9 @@ using System;
 
 namespace Maze.Core
 {
-    public class PostUpdateEvent : NativeEvent
-    {
-        float m_DeltaTime;
-        public float DeltaTime => m_DeltaTime;
-    }
+    public class PostUpdateEvent : NativeEvent {}
+
+    public class MonoPreShutdownEvent : NativeEvent {}
+    public class MonoReloadEvent : NativeEvent { }
+
 }

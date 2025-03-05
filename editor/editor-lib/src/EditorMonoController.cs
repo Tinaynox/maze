@@ -36,6 +36,13 @@ namespace Maze.Editor
                 editor.Update(_dt);
         }
 
+        [EntitySystem, EnableInEditor]
+        public void OnEvent(MonoPreShutdownEvent evt)
+        {
+            DestroyEditors();
+        }
+
+
 
         void CreateEditors()
         {
@@ -57,6 +64,8 @@ namespace Maze.Editor
 
         void DestroyEditors()
         {
+            foreach (Editor editor in m_Editors)
+                editor.Destroy();
             m_Editors.Clear();
         }
     }

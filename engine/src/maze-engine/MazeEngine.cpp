@@ -82,6 +82,8 @@ namespace Maze
     //////////////////////////////////////////
     Engine::~Engine()
     {
+        m_engineRenderTarget.reset();
+
         m_particlesManager.reset();
         m_editorToolsManager.reset();
         m_soundManager.reset();
@@ -404,6 +406,26 @@ namespace Maze
         SceneManager::GetInstancePtr()->loadScene(scene, _additive);
 
         return scene;
+    }
+
+    //////////////////////////////////////////
+    EcsAssetScenePtr Engine::loadAssetScene(
+        Path const& _sceneName,
+        bool _additive)
+    {
+        MAZE_ERROR_RETURN_VALUE_IF(!m_engineRenderTarget, nullptr, "Engine Render Target is not set!");
+
+        return loadAssetScene(_sceneName, m_engineRenderTarget, _additive);
+    }
+
+    //////////////////////////////////////////
+    void Engine::setEngineRenderTarget(RenderTargetPtr const& _engineRenderTarget)
+    {
+        if (m_engineRenderTarget == _engineRenderTarget)
+            return;
+
+        m_engineRenderTarget = _engineRenderTarget;
+
     }
     
 

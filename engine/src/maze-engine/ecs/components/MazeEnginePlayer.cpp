@@ -28,6 +28,8 @@
 #include "maze-engine/ecs/components/MazeEnginePlayer.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
+#include "maze-engine/MazeEngine.hpp"
 
 
 
@@ -69,7 +71,6 @@ namespace Maze
     //////////////////////////////////////////
     bool EnginePlayer::init()
     {
-
         return true;
     }
 
@@ -77,6 +78,9 @@ namespace Maze
     void EnginePlayer::processOnCreate()
     {
         m_cameras3DSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Camera3D>();
+
+        Engine::GetInstancePtr()->setEngineRenderTarget(
+            getEntityRaw()->getEcsScene()->cast<EcsRenderScene>()->getRenderTarget());
     }
 
     //////////////////////////////////////////

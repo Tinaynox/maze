@@ -141,7 +141,13 @@ namespace Maze
         inline UnorderedMap<ClassUID, MonoMethod*> const& getOnMonoEventMethods() const { return m_onMonoEventMethods; }
 
         //////////////////////////////////////////
-        inline MonoMethod* getOnEventMethodUnsafe(ClassUID _eventUID) const { return m_onMonoEventMethods.find(_eventUID)->second; }
+        inline MonoMethod* getOnMonoEventMethodUnsafe(ClassUID _eventUID) const { return m_onMonoEventMethods.find(_eventUID)->second; }
+
+        //////////////////////////////////////////
+        inline UnorderedMap<ClassUID, MonoMethod*> const& getOnNativeEventMethods() const { return m_onNativeEventMethods; }
+
+        //////////////////////////////////////////
+        inline MonoMethod* getOnNativeEventMethodUnsafe(ClassUID _eventUID) const { return m_onNativeEventMethods.find(_eventUID)->second; }
 
 
         //////////////////////////////////////////
@@ -211,6 +217,7 @@ namespace Maze
         MonoMethod* m_onUpdateMethod = nullptr;
         MonoMethod* m_onDestroyMethod = nullptr;
         UnorderedMap<ClassUID, MonoMethod*> m_onMonoEventMethods;
+        UnorderedMap<ClassUID, MonoMethod*> m_onNativeEventMethods;
 
         StringKeyMap<ScriptPropertyPtr> m_properties;
         StringKeyMap<ScriptFieldPtr> m_fields;

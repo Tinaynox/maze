@@ -32,6 +32,7 @@
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsCore.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsGraphics.hpp"
+#include "maze-plugin-csharp/mono-binds/MazeMonoBindsEngine.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsEditorTools.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
@@ -258,7 +259,7 @@ namespace Maze
                             });
                     }
 
-                    // OnEvent
+                    // OnEvent (MonoEvent)
                     UnorderedMap<ClassUID, MonoMethod*> const& onMonoEventMethods = scriptClass->getOnMonoEventMethods();
                     for (auto const& onMonoEventMethodData : onMonoEventMethods)
                     {
@@ -278,6 +279,28 @@ namespace Maze
                                         _systemTags,
                                         systemOrder));
                             });
+                    }
+
+                    // OnEvent (NativeEvent)
+                    UnorderedMap<ClassUID, MonoMethod*> const& onNativeEventMethods = scriptClass->getOnNativeEventMethods();
+                    for (auto const& onNativeEventMethodData : onNativeEventMethods)
+                    {
+                        HashedString systemName(fullName + "::OnEvent_" + StringHelper::ToString(onNativeEventMethodData.first));
+
+                        MonoHelper::ParseMonoEntitySystemAttributes(onNativeEventMethodData.second, systemTags, systemOrder, systemFlags);
+
+                        addRequiredSystem(
+                            [&](Set<HashedString> const& _systemTags)
+                        {
+                            g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
+                                MakeShared<CustomComponentSystemHolder>(
+                                    systemName,
+                                    onNativeEventMethodData.first,
+                                    [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                    (ComponentSystemEventHandler::Func)&MonoBehaviourOnNativeEvent,
+                                    _systemTags,
+                                    systemOrder));
+                        });
                     }
                 }
                 else
@@ -476,6 +499,7 @@ namespace Maze
 
         BindCppFunctionsCore();
         BindCppFunctionsGraphics();
+        BindCppFunctionsEngine();
         BindCppFunctionsEditorTools();
 
         return true;

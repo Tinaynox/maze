@@ -196,6 +196,8 @@ namespace Maze
         m_onDestroyMethod = getMethod("OnDestroy");
 
         m_onMonoEventMethods.clear();
+        m_onNativeEventMethods.clear();
+
         if (getMethod("OnEvent", 1))
         {
             MonoMethod* method;
@@ -223,6 +225,19 @@ namespace Maze
                         ClassUID eventUID = CalculateClassUID(typeName);
 
                         m_onMonoEventMethods.emplace(
+                            std::piecewise_construct,
+                            std::forward_as_tuple(eventUID),
+                            std::forward_as_tuple(method));
+                    }
+                    else
+                    if (mono_class_is_subclass_of(paramClass, MonoEngine::GetNativeEventClass()->getMonoClass(), false))
+                    {
+                        //CString typeName = mono_type_get_name(paramType);
+                        //mono_type_get_class()
+                        CString paramName = mono_class_get_name(paramClass);
+                        ClassUID eventUID = CalculateClassUID((String("Maze::") + paramName).c_str());
+
+                        m_onNativeEventMethods.emplace(
                             std::piecewise_construct,
                             std::forward_as_tuple(eventUID),
                             std::forward_as_tuple(method));

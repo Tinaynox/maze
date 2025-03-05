@@ -118,6 +118,8 @@ namespace Maze
 
         makeMainScene();
 
+        Engine::GetInstancePtr()->setEngineRenderTarget(renderWindow);
+
         return true;
     }
 

@@ -38,6 +38,7 @@
 #include "maze-core/services/MazeLogService.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeEntityPrefabManager.hpp"
+#include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/assets/MazeAssetUnitId.hpp"
 
 

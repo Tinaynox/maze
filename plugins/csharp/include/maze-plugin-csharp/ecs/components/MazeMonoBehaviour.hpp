@@ -172,25 +172,12 @@ namespace Maze
         Entity* _entity,
         MonoBehaviour* _monoBehaviour);
 
-    /*
     //////////////////////////////////////////
-    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnEditorCreate(
-        EntityAddedEvent const& _event,
+    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnNativeEvent(
+        Event const& _event,
         Entity* _entity,
         MonoBehaviour* _monoBehaviour);
 
-    //////////////////////////////////////////
-    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnEditorUpdate(
-        UpdateEvent const& _event,
-        Entity* _entity,
-        MonoBehaviour* _monoBehaviour);
-
-    //////////////////////////////////////////
-    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnEditorDestroy(
-        EntityRemovedEvent const& _event,
-        Entity* _entity,
-        MonoBehaviour* _monoBehaviour);
-    */
 
 } // namespace Maze
 //////////////////////////////////////////

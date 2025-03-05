@@ -160,6 +160,8 @@ namespace Maze
     {
         if (_eventUID == ClassInfo<MonoPreShutdownEvent>::UID())
         {
+            getEntityRaw()->getEcsWorld()->sendEventImmediate(getEntityId(), _event);
+
             m_cachedData = getData();
             // m_cachedData.saveTextFile(EcsHelper::GetName(getEntityRaw()));
             destroyMonoInstance();
@@ -186,6 +188,8 @@ namespace Maze
         {
             setData(m_cachedData);
             m_cachedData.clear();
+
+            getEntityRaw()->getEcsWorld()->sendEventImmediate(getEntityId(), _event);
         }
     }
 
@@ -445,53 +449,14 @@ namespace Maze
 
         if (scriptClass && scriptInstance && scriptInstance->isValid())
         {
-            MonoMethod* monoMethod = scriptClass->getOnEventMethodUnsafe(_event.getEventUID());
+            MonoMethod* monoMethod = scriptClass->getOnMonoEventMethodUnsafe(_event.getEventUID());
             scriptInstance->invokeMethod(monoMethod, _event.getMonoEvent());
         }
     }
 
-    /*
     //////////////////////////////////////////
-    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnEditorCreate(
-        EntityAddedEvent const& _event,
-        Entity* _entity,
-        MonoBehaviour* _monoBehaviour)
-    {
-        ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
-        if (!scriptClass)
-            return;
-
-        if (ScriptInstancePtr const& scriptInstance = _monoBehaviour->ensureMonoInstance())
-        {
-            MonoMethod* onEditorCreate = scriptClass->getMethod("OnEditorCreate");
-            if (onEditorCreate)
-                scriptInstance->invokeMethod(
-                    onEditorCreate);
-        }
-    }
-
-    //////////////////////////////////////////
-    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnEditorUpdate(
-        UpdateEvent const& _event,
-        Entity* _entity,
-        MonoBehaviour* _monoBehaviour)
-    {
-        ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
-        ScriptInstancePtr const& scriptInstance = _monoBehaviour->getMonoInstance();
-
-        if (!scriptClass || !scriptInstance || !scriptInstance->isValid())
-            return;
-
-        MonoMethod* onEditorUpdate = scriptClass->getMethod("OnEditorUpdate", 1); // Save to field?
-        if (onEditorUpdate)
-            scriptInstance->invokeMethod(
-                onEditorUpdate,
-                _event.getDt());
-    }
-
-    //////////////////////////////////////////
-    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnEditorDestroy(
-        EntityRemovedEvent const& _event,
+    MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnNativeEvent(
+        Event const& _event,
         Entity* _entity,
         MonoBehaviour* _monoBehaviour)
     {
@@ -500,16 +465,10 @@ namespace Maze
 
         if (scriptClass && scriptInstance && scriptInstance->isValid())
         {
-            MonoMethod* onEditorCreate = scriptClass->getMethod("OnEditorDestroy");
-            if (onEditorCreate)
-                scriptInstance->invokeMethod(
-                    onEditorCreate);
+            MonoMethod* monoMethod = scriptClass->getOnNativeEventMethodUnsafe(_event.getEventUID());
+            scriptInstance->invokeMethod(monoMethod, (MonoObject*)nullptr);
         }
-
-        _monoBehaviour->destroyMonoInstance();
     }
-    */
-
 
 } // namespace Maze
 //////////////////////////////////////////

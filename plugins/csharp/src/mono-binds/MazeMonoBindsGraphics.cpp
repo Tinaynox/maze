@@ -29,6 +29,8 @@
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-core/assets/MazeAssetUnitId.hpp"
+#include "maze-core/helpers/MazeThreadHelper.hpp"
+#include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -145,8 +147,12 @@ namespace Maze
     //////////////////////////////////////////
     inline void DestroySubMesh(S32 _subMeshId)
     {
-        if (SubMesh* subMesh = SubMesh::GetResource(_subMeshId))
-            subMesh->getSharedPtr().decRef();
+        TaskManager::GetInstancePtr()->addMainThreadTask(
+            [_subMeshId]()
+            {
+                if (SubMesh* subMesh = SubMesh::GetResource(_subMeshId))
+                    subMesh->getSharedPtr().decRef();
+            });
     }
 
     //////////////////////////////////////////
@@ -281,8 +287,12 @@ namespace Maze
     //////////////////////////////////////////
     inline void DestroyMesh(S32 _meshId)
     {
-        if (Mesh* mesh = Mesh::GetResource(_meshId))
-            mesh->getSharedPtr().decRef();
+        TaskManager::GetInstancePtr()->addMainThreadTask(
+            [_meshId]()
+            {
+                if (Mesh* mesh = Mesh::GetResource(_meshId))
+                    mesh->getSharedPtr().decRef();
+            });
     }
 
     //////////////////////////////////////////
@@ -311,8 +321,12 @@ namespace Maze
     //////////////////////////////////////////
     inline void DestroyRenderMesh(S32 _renderMeshId)
     {
-        if (RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId))
-            renderMesh->getSharedPtr().decRef();
+        TaskManager::GetInstancePtr()->addMainThreadTask(
+            [_renderMeshId]()
+            {
+                if (RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId))
+                    renderMesh->getSharedPtr().decRef();
+            });
     }
 
     //////////////////////////////////////////
