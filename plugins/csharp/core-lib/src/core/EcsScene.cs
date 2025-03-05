@@ -3,14 +3,15 @@ using Maze;
 
 namespace Maze.Core
 {
-    public class EcsScene
+    public struct EcsScene
     {
-        int m_SceneId = 0;
-        public int SceneId => m_SceneId;
+        readonly int m_Id;
+        public int Id => m_Id;
+        public static EcsScene Invalid => new EcsScene(-1);
 
-        public EcsScene(int sceneId)
+        public EcsScene(int sceneId = -1)
         {
-            m_SceneId = sceneId;
+            m_Id = sceneId;
         }
     }
 }

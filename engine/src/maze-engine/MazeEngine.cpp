@@ -381,7 +381,8 @@ namespace Maze
     EcsAssetScenePtr Engine::loadAssetScene(
         Path const& _sceneName,
         RenderTargetPtr const& _renderTarget,
-        bool _additive)
+        bool _additive,
+        EcsWorldId _ecsWorldId)
     {
         AssetFilePtr const& file = AssetManager::GetInstancePtr()->getAssetFile(_sceneName);
         if (!file)
@@ -389,9 +390,15 @@ namespace Maze
 
         DataBlock dataBlock = file->readAsDataBlock();
 
+        EcsWorld* ecsWorld = nullptr;
+        if (_ecsWorldId == c_invalidWorldId)
+            ecsWorld = m_entityManager->getDefaultWorldRaw();
+        else
+            ecsWorld = EcsWorld::GetEcsWorld(_ecsWorldId);
+
         EcsAssetScenePtr scene = EcsAssetScene::Create(
             _renderTarget,
-            m_entityManager->getDefaultWorldRaw());
+            ecsWorld);
 
         scene->setName(
             HashedString(
@@ -411,11 +418,12 @@ namespace Maze
     //////////////////////////////////////////
     EcsAssetScenePtr Engine::loadAssetScene(
         Path const& _sceneName,
-        bool _additive)
+        bool _additive,
+        EcsWorldId _ecsWorldId)
     {
         MAZE_ERROR_RETURN_VALUE_IF(!m_engineRenderTarget, nullptr, "Engine Render Target is not set!");
 
-        return loadAssetScene(_sceneName, m_engineRenderTarget, _additive);
+        return loadAssetScene(_sceneName, m_engineRenderTarget, _additive, _ecsWorldId);
     }
 
     //////////////////////////////////////////

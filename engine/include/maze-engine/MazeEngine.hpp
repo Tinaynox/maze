@@ -162,12 +162,14 @@ namespace Maze
         EcsAssetScenePtr loadAssetScene(
             Path const& _sceneName,
             RenderTargetPtr const& _renderTarget,
-            bool _additive = true);
+            bool _additive = true,
+            EcsWorldId _ecsWorldId = c_invalidWorldId);
 
         //////////////////////////////////////////
         EcsAssetScenePtr loadAssetScene(
             Path const& _sceneName,
-            bool _additive = true);
+            bool _additive = true,
+            EcsWorldId _ecsWorldId = c_invalidWorldId);
 
 
         //////////////////////////////////////////

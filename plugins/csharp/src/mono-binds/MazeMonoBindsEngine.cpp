@@ -25,6 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeCSharpHeader.hpp"
+#include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsEngine.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
@@ -38,10 +39,13 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    inline S32 LoadAssetScene(MonoString* _sceneName, bool _additive)
+    inline S32 LoadAssetScene(
+        MonoString* _sceneName,
+        bool _additive,
+        S8 _ecsWorldId)
     {
         Char* sceneName = mono_string_to_utf8(_sceneName);
-        EcsAssetScenePtr scene = Engine::GetInstancePtr()->loadAssetScene(sceneName, _additive);
+        EcsAssetScenePtr scene = Engine::GetInstancePtr()->loadAssetScene(sceneName, _additive, EcsWorldId(_ecsWorldId));
         mono_free(sceneName);
 
         if (scene)
@@ -50,11 +54,18 @@ namespace Maze
         return -1;
     }
 
+    //////////////////////////////////////////
+    inline void DestroyScene(S32 _ecsSceneId)
+    {
+         SceneManager::GetInstancePtr()->destroyScene(EcsSceneId(_ecsSceneId));
+    }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsEngine()
     {
         MAZE_ENGINE_MONO_BIND_FUNC(LoadAssetScene);
+        MAZE_ENGINE_MONO_BIND_FUNC(DestroyScene);
     }
 
 } // namespace Maze
