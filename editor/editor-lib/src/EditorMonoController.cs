@@ -9,6 +9,7 @@ namespace Maze.Editor
     public class EditorMonoController : MonoBehaviour
     {
         List<Editor> m_Editors = new List<Editor>();
+        Dictionary<string, Editor> m_EditorsMenuBar = new Dictionary<string, Editor>();
 
 
         EditorMonoController()
@@ -39,7 +40,23 @@ namespace Maze.Editor
         [EntitySystem, EnableInEditor]
         public void OnEvent(MonoPreShutdownEvent evt)
         {
+            InternalCalls.MenuBarClearOptions();
             DestroyEditors();
+        }
+
+        [EntitySystem, EnableInEditor]
+        public void OnEvent(OpenEditorEvent evt)
+        {
+            Editor editor = m_EditorsMenuBar[evt.editorName];
+            if (editor != null)
+            {
+                editor.SwitchState();
+            }
+            else
+            {
+                Debug.LogError($"Undefined editor - {evt.editorName}!");
+                return;
+            }
         }
 
 
@@ -57,6 +74,17 @@ namespace Maze.Editor
                     {
                         var editorInstance = Activator.CreateInstance(type) as Editor;
                         m_Editors.Add(editorInstance);
+
+                        var menuBarAttribute = type.GetCustomAttribute<EditorMenuBarAttribute>();
+                        if (menuBarAttribute != null)
+                        {
+                            if (menuBarAttribute.OptionPath.Length > 0)
+                                InternalCalls.MenuBarAddOption(menuBarAttribute.MenuName, menuBarAttribute.OptionPath + "/" + menuBarAttribute.Option);
+                            else
+                                InternalCalls.MenuBarAddOption(menuBarAttribute.MenuName, menuBarAttribute.Option);
+
+                            m_EditorsMenuBar.Add(menuBarAttribute.Option, editorInstance);
+                        }
                     }
                 }
             }
@@ -65,8 +93,11 @@ namespace Maze.Editor
         void DestroyEditors()
         {
             foreach (Editor editor in m_Editors)
+            {
                 editor.Destroy();
+            }
             m_Editors.Clear();
+            m_EditorsMenuBar.Clear();
         }
     }
 }

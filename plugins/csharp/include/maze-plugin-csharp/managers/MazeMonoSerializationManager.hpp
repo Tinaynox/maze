@@ -47,6 +47,13 @@ namespace Maze
     MAZE_USING_SHARED_PTR(MonoSerializationManager);
     MAZE_USING_SHARED_PTR(EcsWorld);
 
+    //////////////////////////////////////////
+    using WriteMetaPropertyToMonoClassFieldFunction = std::function<void(
+        ConstMetaInstance const&,
+        MetaProperty const*,
+        MonoObject*,
+        MonoClassField*)>;
+
 
     //////////////////////////////////////////
     struct MAZE_PLUGIN_CSHARP_API ScriptPropertyDataBlockSerializationData
@@ -167,6 +174,19 @@ namespace Maze
             registerFieldDataBlockSubClassSerialization(_monoClass, _fieldPropToDataBlockCb, _fieldPropFromDataBlockCb);
         }
 
+
+        //////////////////////////////////////////
+        inline WriteMetaPropertyToMonoClassFieldFunction const& getWriteMetaPropertyToMonoClassFieldFunction(ClassUID _typeUID)
+        {
+            static WriteMetaPropertyToMonoClassFieldFunction nullValue;
+
+            auto it = m_writeMetaPropertyToMonoClassFieldFunctions.find(_typeUID);
+            if (it != m_writeMetaPropertyToMonoClassFieldFunctions.end())
+                return it->second;
+
+            return nullValue;
+        }
+
     protected:
 
         //////////////////////////////////////////
@@ -178,6 +198,10 @@ namespace Maze
         //////////////////////////////////////////
         void notifyEvent(ClassUID _eventUID, Event* _event);
 
+
+        //////////////////////////////////////////
+        void registerWriteMetaPropertyToMonoClassFieldFunctions();
+
     protected:
         static MonoSerializationManager* s_instance;
 
@@ -186,6 +210,8 @@ namespace Maze
 
         UnorderedMap<MonoClass*, ScriptPropertyDataBlockSerializationData> m_propertyDataBlockSubClassSerializationData;
         UnorderedMap<MonoClass*, ScriptFieldDataBlockSerializationData> m_fieldDataBlockSubClassSerializationData;
+
+        UnorderedMap<ClassUID, WriteMetaPropertyToMonoClassFieldFunction> m_writeMetaPropertyToMonoClassFieldFunctions;
     };
 
 } // namespace Maze

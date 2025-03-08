@@ -24,22 +24,31 @@
 
 
 //////////////////////////////////////////
-#include "MazeCSharpHeader.hpp"
-#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
+#pragma once
+#if (!defined(_MazeEditorSceneSettings_hpp_))
+#define _MazeEditorSceneSettings_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-plugin-csharp/mono-binds/MazeMonoBinds.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(CSharpCoreAssemblyLoadedEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(CSharpAppAssemblyLoadedEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoPreShutdownEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoInitializationEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoShutdownEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoPreReloadEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoReloadEvent);
+    #define MAZE_EDITOR_MONO_BIND_FUNC(DName) MAZE_MONO_BIND_FUNC("Maze.Editor", DName)
 
+    //////////////////////////////////////////
+    #define MAZE_EDITOR_MONO_BIND_FUNC_WITH_NAME(DFunc, DName) MAZE_MONO_BIND_FUNC_WITH_NAME("Maze.Editor", DFunc, DName)
+
+    //////////////////////////////////////////
+    void BindCppFunctionsEditor();
 
 } // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _MazeEditorSceneSettings_hpp_
 //////////////////////////////////////////

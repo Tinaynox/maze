@@ -4,5 +4,6 @@ namespace Maze.Editor
     {
         public abstract void Update(float _dt);
         public abstract void Destroy();
+        public abstract void SwitchState();
     }
 }

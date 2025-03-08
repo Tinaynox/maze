@@ -86,6 +86,7 @@ namespace Maze
                 String text;
                 MenuListTree2D::ItemCallback callback;
                 MenuListTree2D::ItemValidateCallback validate;
+                HashedString tag;
             };
 
             ToggleButton2DPtr button;
@@ -196,7 +197,11 @@ namespace Maze
             String const& _menuName,
             String const& _option,
             MenuListTree2D::ItemCallback _callback,
-            MenuListTree2D::ItemValidateCallback _validate = nullptr);
+            MenuListTree2D::ItemValidateCallback _validate = nullptr,
+            HashedString const& _tag = HashedString());
+
+        //////////////////////////////////////////
+        void removeOptionsWithTag(HashedString const& _tag);
 
     protected:
 

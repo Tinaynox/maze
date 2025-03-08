@@ -60,6 +60,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(MeshRenderer);
     MAZE_USING_SHARED_PTR(DebugGridRenderer);
     MAZE_USING_SHARED_PTR(PreviewController);
+    MAZE_USING_SHARED_PTR(MenuBar2D);
     
 
     //////////////////////////////////////////
@@ -87,8 +88,15 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        static inline SceneEditor* GetInstancePtr() { return s_instance; }
+
+
+        //////////////////////////////////////////
         inline CanvasPtr const& getWorkspaceCanvas() const { return m_workspaceCanvas; }
 
+
+        //////////////////////////////////////////
+        inline MenuBar2DPtr const& getMenuBar() const { return m_menuBar; }
 
     protected:
 
@@ -151,10 +159,15 @@ namespace Maze
         CanvasPtr m_previewCanvas;
         CanvasPtr m_topBarCanvas;
 
+        MenuBar2DPtr m_menuBar;
+
         MonoBehaviourPtr m_editorMonoController;
 
         AssetsControllerPtr m_assetsController;
         PreviewControllerPtr m_previewController;
+
+    private:
+        static SceneEditor* s_instance;
     };
 
 

@@ -168,6 +168,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        virtual void getValueRef(ConstMetaInstance const& _instance, void** _valueRef) const MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        template <typename TClass>
+        inline TClass const& getValueRef(ConstMetaInstance const& _instance) const
+        {
+            void* ref;
+            getValueRef(_instance, &ref);
+            return *static_cast<TClass const*>(ref);
+        }
+
+        //////////////////////////////////////////
         virtual void setValue(MetaInstance const& _instance, void const* _buffer) const MAZE_ABSTRACT;
 
 
@@ -813,6 +825,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        virtual void getValueRef(ConstMetaInstance const& _instance, void** _valueRef) const MAZE_OVERRIDE
+        {
+            *_valueRef = getValueRefImpl<TGetterReturnValue>(_instance);
+        }
+
+        //////////////////////////////////////////
         virtual void setValue(MetaInstance const& _instance, void const* _buffer) const MAZE_OVERRIDE
         {
             TObject* obj = castMetaInstanceObject(_instance);
@@ -1080,6 +1098,7 @@ namespace Maze
         }
 
 
+
         //////////////////////////////////////////
         template <typename TProperty>
         inline typename ::std::enable_if<(StdHelper::HasOperatorEquals<TProperty>::value), bool>::type isEqualImpl(ConstMetaInstance const& _instance0, ConstMetaInstance const& _instance1) const
@@ -1097,6 +1116,23 @@ namespace Maze
             return false;
         }
  
+
+
+        //////////////////////////////////////////
+        template <typename TGetterReturnProperty>
+        inline typename ::std::enable_if<(std::is_reference<TGetterReturnProperty>::value), void*>::type getValueRefImpl(ConstMetaInstance const& _instance) const
+        {
+            TObject const* obj = castMetaInstanceObject(_instance);
+            return const_cast<void*>(static_cast<const void*>(&((obj->*m_getter)())));
+        }
+
+        //////////////////////////////////////////
+        template <typename TGetterReturnProperty>
+        inline typename ::std::enable_if<!(std::is_reference<TGetterReturnProperty>::value), void*>::type getValueRefImpl(ConstMetaInstance const& _instance) const
+        {
+            return nullptr;
+        }
+
     private:
         Getter m_getter;
         Setter m_setter;

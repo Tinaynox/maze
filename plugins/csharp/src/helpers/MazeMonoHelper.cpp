@@ -327,7 +327,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API void SerializeComponentToDataBlock(
+        MAZE_PLUGIN_CSHARP_API void SerializeComponentToDataBlock(
             DataBlock& _dataBlock,
             CString _name,
             MonoObject* _componentInstance)
@@ -351,7 +351,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool IsValueType(MonoObject* _obj)
+        MAZE_PLUGIN_CSHARP_API bool IsValueType(MonoObject* _obj)
         {
             if (!_obj)
                 return false;
@@ -360,8 +360,62 @@ namespace Maze
             return mono_class_is_valuetype(klass);
         }
 
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void WriteMetaPropertyToMonoClassFieldString(
+            ConstMetaInstance const& _metaInstance,
+            MetaProperty const* _metaProperty,
+            MonoObject* _monoObj,
+            MonoClassField* _field)
+        {
+            String const& value = _metaProperty->getValueRef<String>(_metaInstance);
 
-    } // namespace AssetHelper
+            MonoString* monoStr = mono_string_new(MonoEngine::GetMonoDomain(), value.c_str());
+            mono_field_set_value(_monoObj, _field, monoStr);
+        }
+
+        //////////////////////////////////////////
+        #define MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(DType)       \
+            MAZE_PLUGIN_CSHARP_API void WriteMetaPropertyToMonoClassField ## DType( \
+                ConstMetaInstance const& _metaInstance,                             \
+                MetaProperty const* _metaProperty,                                  \
+                MonoObject* _monoObj,                                               \
+                MonoClassField* _field)                                             \
+        {                                                                           \
+            DType value;                                                            \
+            _metaProperty->getValue<DType>(_metaInstance, value);                   \
+            mono_field_set_value(_monoObj, _field, &value);                         \
+        }
+
+        //////////////////////////////////////////
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Bool);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(F32);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(F64);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(S8);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(S16);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(S32);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(S64);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(U8);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(U16);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(U32);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(U64);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Vec2F);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Vec3F);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Vec4F);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Vec2S);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Vec3S);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Vec4S);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Vec2U);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Vec3U);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Vec4U);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Mat3F);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Mat4F);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(TMat);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Rect2F);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(ColorU32);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(ColorF128);
+
+
+    } // namespace MonoHelper
     //////////////////////////////////////////
 
 } // namespace Maze

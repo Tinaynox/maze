@@ -465,8 +465,45 @@ namespace Maze
 
         if (scriptClass && scriptInstance && scriptInstance->isValid())
         {
+            ClassUID eventUID = _event.getEventUID();
+
+            ScriptClassPtr const& monoEventScriptClass = MonoEngine::GetNativeEventSubClass(eventUID);
+
+            MonoObject* monoEventObj = mono_object_new(
+                MonoEngine::GetMonoDomain(),
+                monoEventScriptClass->getMonoClass());
+
             MonoMethod* monoMethod = scriptClass->getOnNativeEventMethodUnsafe(_event.getEventUID());
-            scriptInstance->invokeMethod(monoMethod, (MonoObject*)nullptr);
+
+            MetaClass const* eventMetaClass = _event.getMetaClass();
+            for (S32 i = 0; i < eventMetaClass->getPropertiesCount(); ++i)
+            {
+                MetaProperty const* eventMetaProperty = eventMetaClass->getProperty(i);
+                ClassUID eventMetaPropertyClassUID = eventMetaProperty->getValueClassUID();
+
+                MonoClassField* monoField = mono_class_get_field_from_name(
+                    monoEventScriptClass->getMonoClass(),
+                    eventMetaProperty->getName());
+                MAZE_ERROR_CONTINUE_IF(
+                    !monoField,
+                    "Property is not found: %s",
+                    eventMetaProperty->getName().str);
+
+                auto writeFieldValueFunc = MonoSerializationManager::GetInstancePtr()->getWriteMetaPropertyToMonoClassFieldFunction(eventMetaPropertyClassUID);
+                MAZE_ERROR_CONTINUE_IF(
+                    !writeFieldValueFunc,
+                    "WriteMetaPropertyToMonoClassFieldFunction is not found for property: %s",
+                    eventMetaProperty->getName().str);
+
+                writeFieldValueFunc(
+                    _event.getMetaInstance(),
+                    eventMetaProperty,
+                    monoEventObj,
+                    monoField);
+            }
+            scriptInstance->invokeMethod(monoMethod, (MonoObject*)monoEventObj);
+            
+            // scriptInstance->invokeMethod(monoMethod, (MonoObject*)nullptr);
         }
     }
 

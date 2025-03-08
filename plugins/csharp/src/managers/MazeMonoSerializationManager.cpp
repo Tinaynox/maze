@@ -75,6 +75,9 @@ namespace Maze
         EventManager::GetInstancePtr()->subscribeEvent<CSharpCoreAssemblyLoadedEvent>(this, &MonoSerializationManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &MonoSerializationManager::notifyEvent);
 
+
+        registerWriteMetaPropertyToMonoClassFieldFunctions();
+
         return true;
     }
 
@@ -83,7 +86,7 @@ namespace Maze
     {
         if (_eventUID == ClassInfo<CSharpCoreAssemblyLoadedEvent>::UID())
         {
-#define MAZE_MONO_SERIALIZATION_TYPE(DTypeName, DType)                                                                 \
+#define MAZE_MONO_SERIALIZATION_TYPE(DTypeName, DType)                                                                     \
             registerPropertyAndFieldDataBlockSerialization(MAZE_HCS(DTypeName),                                            \
                 [](EcsWorld*, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)      \
                 {                                                                                                          \
@@ -468,6 +471,40 @@ namespace Maze
         return false;
     }
 
+    //////////////////////////////////////////
+    void MonoSerializationManager::registerWriteMetaPropertyToMonoClassFieldFunctions()
+    {
+        #define REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(DType) \
+            m_writeMetaPropertyToMonoClassFieldFunctions[ClassInfo<DType>::UID()] = MonoHelper::WriteMetaPropertyToMonoClassField ## DType;
+    
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(String);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Bool);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(F32);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(F64);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(S8);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(S16);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(S32);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(S64);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(U8);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(U16);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(U32);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(U64);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Vec2F);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Vec3F);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Vec4F);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Vec2S);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Vec3S);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Vec4S);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Vec2U);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Vec3U);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Vec4U);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Mat3F);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Mat4F);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(TMat);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Rect2F);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(ColorU32);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(ColorF128);
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

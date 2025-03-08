@@ -126,12 +126,16 @@ namespace Maze
     //////////////////////////////////////////
     // Class SceneEditor
     //
+    ////////////////////////////////////////// 
+    SceneEditor* SceneEditor::s_instance = nullptr;
+    
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneEditor, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneEditor::SceneEditor()
     {
+        s_instance = this;
     }
 
     //////////////////////////////////////////
@@ -150,6 +154,8 @@ namespace Maze
             EditorManager::GetInstancePtr()->eventSceneModeChanged.unsubscribe(this);
             EditorManager::GetInstancePtr()->eventPlaytestModeEnabledChanged.unsubscribe(this);
         }
+
+        s_instance = nullptr;
     }
 
     //////////////////////////////////////////
@@ -211,7 +217,7 @@ namespace Maze
             m_topMenuBarCanvas->setSortOrder(-100000);
 
             // Menu Bar
-            MenuBar2DPtr menuBar = UIHelper::CreateDefaultMenuBarList(
+            m_menuBar = UIHelper::CreateDefaultMenuBarList(
                 EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
                 Vec2F32((F32)renderWindow->getRenderTargetWidth(), EditorLayout::c_menuBarHeight + 1),
                 Vec2F32::c_zero,
@@ -219,66 +225,66 @@ namespace Maze
                 this,
                 Vec2F32::c_zero,
                 Vec2F32::c_zero);
-            menuBar->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            m_menuBar->getEntityRaw()->ensureComponent<SizePolicy2D>();
             
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "File", "Save",
                 [](String const& _text) { EditorHelper::Save(); },
                 EditorHelper::SaveValidate);
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "File", "Save As...",
                 [](String const& _text) { EditorHelper::SaveAs(); },
                 EditorHelper::SaveAsValidate);
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "File", "Load",
                 [](String const& _text) { EditorHelper::Load(); },
                 EditorHelper::LoadValidate);
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "File", "Clear",
                 [](String const& _text) { EditorHelper::Clear(); },
                 EditorHelper::ClearValidate);
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "File", "Close Project",
                 [](String const& _text) { EditorHelper::SelectProject(); },
                 []() { return true; });
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "File", "Exit",
                 [](String const& _text) { Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->close(); });
 
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "Edit", "Play",
                 [](String const& _text) { Debug::Log("Play"); },
                 EditorHelper::IsValidSceneMode);
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "Edit", "Pause",
                 [](String const& _text) { Debug::Log("Pause"); },
                 EditorHelper::IsValidSceneMode);
 
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "Edit", "Create/Prefab/2D",
                 [](String const& _text) { EditorHelper::CreateNewPrefab2D(); },
                 EditorHelper::IsValidSceneMode);
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "Edit", "Create/Prefab/3D",
                 [](String const& _text) { EditorHelper::CreateNewPrefab3D(); },
                 EditorHelper::IsValidSceneMode);
 
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "Entity", "Create/2D/Empty",
                 [](String const& _text) { EditorHelper::CreateEntity2D("Entity"); },
                 EditorHelper::IsValidSceneMode);
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "Entity", "Create/3D/Empty",
                 [](String const& _text) { EditorHelper::CreateEntity3D("Entity"); },
                 EditorHelper::IsValidSceneMode);
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "Entity", "Create/3D/Light/Directional",
                 [](String const& _text) { EditorHelper::CreateDirectionalLight("Directional Light"); },
                 EditorHelper::IsValidSceneMode);
 
             for (BuiltinRenderMeshType meshType = BuiltinRenderMeshType(1); meshType != BuiltinRenderMeshType::MAX; ++meshType)
             {
-                menuBar->addOption(
+                m_menuBar->addOption(
                     "Entity", "Create/3D/Mesh/" + meshType.toString(),
                     [meshType](String const& _text)
                     {
@@ -286,7 +292,7 @@ namespace Maze
                     },
                     EditorHelper::IsValidSceneMode);
             }
-            menuBar->addOption(
+            m_menuBar->addOption(
                 "Entity", "Create/3D/FX/Particle System",
                 [](String const& _text)
                 {
@@ -296,7 +302,7 @@ namespace Maze
 
             for (TopBarMenuData const& optionData : EditorUIManager::GetInstancePtr()->getTopBarMenuData())
             {
-                menuBar->addOption(
+                m_menuBar->addOption(
                     optionData.menuName,
                     optionData.option,
                     optionData.callback,

@@ -244,13 +244,35 @@ namespace Maze
         String const& _menuName,
         String const& _option,
         MenuListTree2D::ItemCallback _callback,
-        MenuListTree2D::ItemValidateCallback _validate)
+        MenuListTree2D::ItemValidateCallback _validate,
+        HashedString const& _tag)
     {
         OptionData* optionData = ensureMenu(_menuName);
         if (!optionData)
             return;
 
-        optionData->callbacks.push_back({ _option, _callback, _validate });
+        optionData->callbacks.push_back({ _option, _callback, _validate, _tag });
+    }
+
+    //////////////////////////////////////////
+    void MenuBar2D::removeOptionsWithTag(HashedString const& _tag)
+    {
+        for (auto& optionData : m_options)
+        {
+            auto& callbacks = optionData.second.callbacks;
+            for (auto it = callbacks.begin(), end = callbacks.end(); it != end; )
+            {
+                if (it->tag == _tag)
+                {
+                    it = callbacks.erase(it);
+                    end = callbacks.end();
+                }
+                else
+                {
+                    ++it;
+                }
+            }
+        }
     }
 
     //////////////////////////////////////////

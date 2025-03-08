@@ -72,6 +72,7 @@ namespace Maze
 
         ScriptClassPtr nativeEventClass;
         StringKeyMap<ScriptClassPtr> nativeEventSubClasses;
+        UnorderedMap<ClassUID, ScriptClassPtr> nativeEventSubClassesByClassUID;
     };
 
 
@@ -337,12 +338,19 @@ namespace Maze
                 if (mono_class_is_subclass_of(monoClass, MonoEngine::GetNativeEventClass()->getMonoClass(), false) &&
                     monoClass != MonoEngine::GetNativeEventClass()->getMonoClass())
                 {
+                    ClassUID eventUID = CalculateClassUID((String("Maze::") + typeName).c_str());
+
                     ScriptClassPtr scriptClass = MonoEngine::CreateScriptClass(fullNamespace, typeName, monoClass);
                     loadedScriptClasses.push_back(scriptClass);
 
                     g_monoEngineData->ecsData.nativeEventSubClasses.insert(
                         HashedCString(fullName.c_str()),
                         scriptClass);
+
+                    g_monoEngineData->ecsData.nativeEventSubClassesByClassUID.emplace(
+                        std::piecewise_construct,
+                        std::forward_as_tuple(eventUID),
+                        std::forward_as_tuple(scriptClass));
                 }
             }
         }
@@ -501,6 +509,8 @@ namespace Maze
         BindCppFunctionsGraphics();
         BindCppFunctionsEngine();
         BindCppFunctionsEditorTools();
+
+        EventManager::GetInstancePtr()->broadcastEventImmediate<MonoInitializationEvent>();
 
         return true;
     }
@@ -729,6 +739,18 @@ namespace Maze
     ScriptClassPtr const& MonoEngine::GetNativeEventClass()
     {
         return g_monoEngineData->ecsData.nativeEventClass;
+    }
+
+    //////////////////////////////////////////
+    ScriptClassPtr const& MonoEngine::GetNativeEventSubClass(ClassUID _eventUID)
+    {
+        static ScriptClassPtr const nullValue;
+
+        auto it = g_monoEngineData->ecsData.nativeEventSubClassesByClassUID.find(_eventUID);
+        if (it != g_monoEngineData->ecsData.nativeEventSubClassesByClassUID.end())
+            return it->second;
+        else
+            return nullValue;
     }
 
     //////////////////////////////////////////

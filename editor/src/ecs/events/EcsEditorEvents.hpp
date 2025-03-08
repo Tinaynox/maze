@@ -24,22 +24,52 @@
 
 
 //////////////////////////////////////////
-#include "MazeCSharpHeader.hpp"
-#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
+#pragma once
+#if (!defined(_EcsEditorEvents_hpp_))
+#define _EcsEditorEvents_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-core/ecs/MazeEcsScene.hpp"
+#include "maze-core/events/MazeEvent.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(CSharpCoreAssemblyLoadedEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(CSharpAppAssemblyLoadedEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoPreShutdownEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoInitializationEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoShutdownEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoPreReloadEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoReloadEvent);
+    // Class OpenEditorEvent
+    //
+    //////////////////////////////////////////
+    class OpenEditorEvent
+        : public GenericEvent<OpenEditorEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(OpenEditorEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline OpenEditorEvent(
+            String const& _editorName = String())
+            : m_editorName(_editorName)
+        {}
+
+        //////////////////////////////////////////
+        inline void setEditorName(String const& _editorName) { m_editorName = _editorName; }
+
+        //////////////////////////////////////////
+        inline String const& getEditorName() const { return m_editorName; }
+
+    private:
+        String m_editorName;
+    };
 
 
 } // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _EcsEditorEvents_hpp_
 //////////////////////////////////////////

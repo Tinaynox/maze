@@ -39,6 +39,7 @@
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
+#include "mono-binds/MonoBindsEditor.hpp"
 #include "events/EditorEvents.hpp"
 #include "helpers/EditorProjectHelper.hpp"
 #include "helpers/EditorAssetHelper.hpp"
@@ -102,6 +103,7 @@ namespace Maze
             EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectOpenedEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectWillBeClosedEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<CSharpAppAssemblyLoadedEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<MonoInitializationEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
         }
 
@@ -122,6 +124,7 @@ namespace Maze
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectOpenedEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectWillBeClosedEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<CSharpAppAssemblyLoadedEvent>(this, &EditorCSharpManager::notifyEvent);
+        EventManager::GetInstancePtr()->subscribeEvent<MonoInitializationEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &EditorCSharpManager::notifyEvent);
 
         /*
@@ -233,6 +236,11 @@ namespace Maze
     //////////////////////////////////////////
     void EditorCSharpManager::notifyEvent(ClassUID _eventUID, Event* _event)
     {
+        if (_eventUID == ClassInfo<MonoInitializationEvent>::UID())
+        {
+            bindCppFunctionsEditor();
+        }
+        else
         if (_eventUID == ClassInfo<EditorProjectOpenedEvent>::UID())
         {
             Path scriptAssembliesPath = EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies";
@@ -431,6 +439,12 @@ namespace Maze
     {
         m_csharpScriptsChanged = true;
         m_scriptActionsBlockedUntil = UpdateManager::GetInstancePtr()->getAppTime() + 0.1f;
+    }
+
+    //////////////////////////////////////////
+    void EditorCSharpManager::bindCppFunctionsEditor()
+    {
+        BindCppFunctionsEditor();
     }
 
     //////////////////////////////////////////

@@ -24,22 +24,15 @@
 
 
 //////////////////////////////////////////
-#include "MazeCSharpHeader.hpp"
-#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
+#include "ecs/events/EcsEditorEvents.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(CSharpCoreAssemblyLoadedEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(CSharpAppAssemblyLoadedEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoPreShutdownEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoInitializationEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoShutdownEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoPreReloadEvent);
-    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoReloadEvent);
-
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(OpenEditorEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, editorName, String(), getEditorName, setEditorName));
 
 } // namespace Maze
 //////////////////////////////////////////

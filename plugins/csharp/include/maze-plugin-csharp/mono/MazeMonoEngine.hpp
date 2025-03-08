@@ -93,6 +93,9 @@ namespace Maze
         //////////////////////////////////////////
         static ScriptClassPtr const& GetNativeEventClass();
 
+        //////////////////////////////////////////
+        static ScriptClassPtr const& GetNativeEventSubClass(ClassUID _eventUID);
+
 
         //////////////////////////////////////////
         static ScriptClassPtr const& GetScriptClass(HashedCString _name);
@@ -134,6 +137,7 @@ namespace Maze
             String const& _namespace,
             String const& _className,
             MonoImage* _monoImage);
+
 
     protected:
 
