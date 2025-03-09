@@ -157,6 +157,20 @@ namespace Maze
     inline S32 ComponentGetEntityId(Component* _component) { return (S32)_component->getEntityId(); }
 
     //////////////////////////////////////////
+    inline S32 ComponentGetSceneId(Component* _component)
+    {
+        Entity* entity = _component->getEntityRaw();
+        if (!entity)
+            return -1;
+
+        EcsScene* ecsScene = entity->getEcsScene();
+        if (!ecsScene)
+            return -1;
+
+        return ecsScene->getId();
+    }
+
+    //////////////////////////////////////////
     inline ComponentId ComponentGetComponentId(MonoString* _name)
     {
         Char* cstr = mono_string_to_utf8(_name);
@@ -340,6 +354,7 @@ namespace Maze
         // Component
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetFrameNumber);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetEntityId);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentGetSceneId);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetComponentId);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetComponent);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetMonoBehaviourComponentObject);

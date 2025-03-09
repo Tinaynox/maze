@@ -54,6 +54,9 @@ namespace Maze.Core
         public extern static int ComponentGetEntityId(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int ComponentGetSceneId(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int ComponentGetComponentId(string name);
       
 

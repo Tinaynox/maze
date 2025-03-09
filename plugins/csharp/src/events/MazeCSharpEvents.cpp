@@ -32,8 +32,10 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(CSharpAssemblyLoadedEvent);
     MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(CSharpCoreAssemblyLoadedEvent);
     MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(CSharpAppAssemblyLoadedEvent);
+    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(CSharpEditorAssemblyLoadedEvent);
     MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoPreShutdownEvent);
     MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoInitializationEvent);
     MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(MonoShutdownEvent);

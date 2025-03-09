@@ -102,7 +102,7 @@ namespace Maze
         {
             EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectOpenedEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<EditorProjectWillBeClosedEvent>(this);
-            EventManager::GetInstancePtr()->unsubscribeEvent<CSharpAppAssemblyLoadedEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<CSharpAssemblyLoadedEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<MonoInitializationEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
         }
@@ -123,7 +123,7 @@ namespace Maze
 
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectOpenedEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectWillBeClosedEvent>(this, &EditorCSharpManager::notifyEvent);
-        EventManager::GetInstancePtr()->subscribeEvent<CSharpAppAssemblyLoadedEvent>(this, &EditorCSharpManager::notifyEvent);
+        EventManager::GetInstancePtr()->subscribeEvent<CSharpAssemblyLoadedEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<MonoInitializationEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &EditorCSharpManager::notifyEvent);
 
@@ -275,8 +275,11 @@ namespace Maze
             AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(EditorHelper::GetProjectFolder() + "/Library/ScriptAssemblies");
         }
         else
-        if (_eventUID == ClassInfo<CSharpAppAssemblyLoadedEvent>::UID())
+        if (_eventUID == ClassInfo<CSharpAssemblyLoadedEvent>::UID())
         {
+            // #TODO: Rework via dirty flag
+            InspectorManager::GetInstancePtr()->removeAddComponentCallbacks();
+
             StringKeyMap<ScriptClassPtr> const& monoBehaviourSubClasses = MonoEngine::GetMonoBehaviourSubClasses();
             for (auto const& data : monoBehaviourSubClasses)
             {

@@ -31,6 +31,7 @@
 #include "maze-ui/ecs/components/MazeMenuBar2D.hpp"
 #include "scenes/SceneEditor.hpp"
 #include "managers/EditorManager.hpp"
+#include "managers/EditorSceneManager.hpp"
 #include "ecs/events/EcsEditorEvents.hpp"
 #include "Editor.hpp"
 
@@ -78,12 +79,30 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    inline S8 GetEditorMainSceneEcsWorld()
+    {
+        return EditorManager::GetInstancePtr()->getMainEcsWorld()->getId();
+    }
+
+    //////////////////////////////////////////
+    inline S32 GetEditorOpenedScene()
+    {
+        EcsAssetScenePtr const& ecsScene = EditorSceneManager::GetInstancePtr()->getScene();
+        if (ecsScene)
+            return ecsScene->getId();
+
+        return c_invalidEcsSceneId;
+    }
+
 
     //////////////////////////////////////////
     void BindCppFunctionsEditor()
     {
         MAZE_EDITOR_MONO_BIND_FUNC(MenuBarAddOption);
         MAZE_EDITOR_MONO_BIND_FUNC(MenuBarClearOptions);
+        MAZE_EDITOR_MONO_BIND_FUNC(GetEditorMainSceneEcsWorld);
+        MAZE_EDITOR_MONO_BIND_FUNC(GetEditorOpenedScene);
     }
 
 

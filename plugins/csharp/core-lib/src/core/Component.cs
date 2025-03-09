@@ -28,6 +28,12 @@ namespace Maze.Core
             return EcsUtils.GetComponentByType(NativeComponentPtr, componentType);
         }
 
+        public EcsScene GetScene()
+        {
+            return new EcsScene(InternalCalls.ComponentGetSceneId(NativeComponentPtr));
+        }
+
+
         public Entity CreateEntity()
         {
             return new Entity(InternalCalls.CreateEntity(NativeComponentPtr));

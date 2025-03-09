@@ -194,6 +194,9 @@ namespace Maze
         MetaPropertyDrawerPtr createMetaPropertyDrawer(MetaProperty* _metaProperty);
 
         //////////////////////////////////////////
+        void removeAddComponentCallbacks();
+
+        //////////////////////////////////////////
         void addComponentContextMenuOption(
             ClassUID _componentUID,
             String const& _title,

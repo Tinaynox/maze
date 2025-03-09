@@ -11,6 +11,12 @@ namespace Maze.Editor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void MenuBarClearOptions();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static sbyte GetEditorMainSceneEcsWorld();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int GetEditorOpenedScene();
         #endregion
 
     }

@@ -315,6 +315,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void InspectorManager::removeAddComponentCallbacks()
+    {
+        m_extraAddComponentCallbacks.clear();
+    }
+
+    //////////////////////////////////////////
     void InspectorManager::addAddComponentCallback(
         String const& _menuName,
         std::function<void(EntityPtr const&)> const& _callback,

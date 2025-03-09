@@ -637,6 +637,7 @@ namespace Maze
         LoadAssemblyClasses(g_monoEngineData->coreAssemblyData.assembly);
 
         EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpCoreAssemblyLoadedEvent>();
+        EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpAssemblyLoadedEvent>();
 
         return g_monoEngineData->coreAssemblyData.assembly;
     }
@@ -656,7 +657,8 @@ namespace Maze
 
         LoadAssemblyClasses(g_monoEngineData->editorAssemblyData.assembly);
 
-        EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpAppAssemblyLoadedEvent>();
+        EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpEditorAssemblyLoadedEvent>();
+        EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpAssemblyLoadedEvent>();
 
         return g_monoEngineData->editorAssemblyData.assembly;
     }
@@ -677,6 +679,7 @@ namespace Maze
         LoadAssemblyClasses(g_monoEngineData->appAssemblyData.assembly);
 
         EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpAppAssemblyLoadedEvent>();
+        EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpAssemblyLoadedEvent>();
 
         return g_monoEngineData->appAssemblyData.assembly;
     }

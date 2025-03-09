@@ -4,7 +4,7 @@ using Maze.Graphics;
 
 namespace Maze.Engine
 {
-    public class EngineUtils
+    public class EngineHelper
     {
         public static EcsScene LoadAssetScene(
             string sceneName,
@@ -14,6 +14,15 @@ namespace Maze.Engine
         {
             int sceneId = InternalCalls.LoadAssetScene(sceneName, renderTarget.ResourceId, additive, ecsWorldId);
             return new EcsScene(sceneId);
+        }
+
+        public static EcsScene LoadAssetScene(
+            string sceneName,
+            RenderTarget renderTarget,
+            bool additive,
+            EcsWorld ecsWorld)
+        {
+            return LoadAssetScene(sceneName, renderTarget, additive, ecsWorld.Id);
         }
 
         public static EcsScene LoadAssetScene(
