@@ -338,6 +338,38 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline S32 CreateRenderWindow(
+        Vec2U const& _size,
+        MonoString* _title)
+    {
+        Char* cstr = mono_string_to_utf8(_title);
+
+        RenderWindowParams params;
+        params.windowParams =
+            WindowParams::Create(
+                _size,
+                32,
+                cstr);
+
+        mono_free(cstr);
+
+        RenderWindowPtr renderWindow = RenderWindow::Create(params);
+        renderWindow.incRef();
+        return renderWindow->getResourceId();
+    }
+
+    //////////////////////////////////////////
+    inline void DestroyRenderWindow(S32 _resourceId)
+    {
+        TaskManager::GetInstancePtr()->addMainThreadTask(
+            [_resourceId]()
+            {
+                if (RenderWindow* renderTarget = (RenderWindow*)RenderWindow::GetResource(_resourceId))
+                    renderTarget->getSharedPtr().decRef();
+            });
+    }
+
+    //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsGraphics()
     {
         // MeshRenderer
@@ -382,6 +414,10 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreateRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(DestroyRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshLoadFromMesh);
+
+        // RenderWindow
+        MAZE_GRAPHICS_MONO_BIND_FUNC(CreateRenderWindow);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(DestroyRenderWindow);
     }
 
 } // namespace Maze

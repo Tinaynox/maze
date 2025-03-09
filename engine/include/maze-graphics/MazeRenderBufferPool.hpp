@@ -47,7 +47,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(RenderBuffer);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderBuffer);
     MAZE_USING_SHARED_PTR(RenderSystem);
     
 

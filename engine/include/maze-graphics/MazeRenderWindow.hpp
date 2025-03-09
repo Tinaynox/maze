@@ -46,7 +46,7 @@ namespace Maze
 {
 
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(RenderWindow);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderWindow);
     MAZE_USING_SHARED_PTR(Window);
 
 

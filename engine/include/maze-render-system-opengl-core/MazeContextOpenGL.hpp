@@ -49,7 +49,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Shader);
     MAZE_USING_SHARED_PTR(RenderSystemOpenGL);
     MAZE_USING_SHARED_PTR(ExtensionsOpenGL);
-    MAZE_USING_SHARED_PTR(RenderBuffer);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderBuffer);
 
 
     //////////////////////////////////////////

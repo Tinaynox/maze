@@ -54,7 +54,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(RenderBuffer);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderBuffer);
     MAZE_USING_SHARED_PTR(RenderBufferUniform);
     MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
     MAZE_USING_MANAGED_SHARED_PTR(Texture);
@@ -67,7 +67,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API RenderBuffer
         : public RenderTarget
-        , public ISharedCopyable<RenderBuffer>
+        , public IManagedSharedCopyable<RenderBuffer>
     {
     public:
 

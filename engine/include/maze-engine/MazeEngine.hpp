@@ -61,7 +61,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ParticlesManager);
     MAZE_USING_SHARED_PTR(EditorToolsManager);
     MAZE_USING_SHARED_PTR(Physics2DManager);
-    MAZE_USING_SHARED_PTR(RenderWindow);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderWindow);
     MAZE_USING_SHARED_PTR(RenderSystem);
     MAZE_USING_SHARED_PTR(SoundManager);
     MAZE_USING_SHARED_PTR(SceneEngine);

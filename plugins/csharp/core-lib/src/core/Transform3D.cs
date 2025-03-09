@@ -7,7 +7,7 @@ namespace Maze.Core
         public Vec3F Position
         {
             get { InternalCalls.Transform3DGetPosition(NativeComponentPtr, out Vec3F pos); return pos; }
-            set { InternalCalls.Transform3DSetPosition(NativeComponentPtr, value); }
+            set { InternalCalls.Transform3DSetPosition(NativeComponentPtr, ref value); }
         }
 
         public float X { get => Position.X; set { Vec3F v = Position; v.X = value; Position = v; } }
@@ -17,13 +17,13 @@ namespace Maze.Core
         public Quaternion Rotation
         {
             get { InternalCalls.Transform3DGetRotation(NativeComponentPtr, out Quaternion rotation); return rotation; }
-            set { InternalCalls.Transform3DSetRotation(NativeComponentPtr, value); }
+            set { InternalCalls.Transform3DSetRotation(NativeComponentPtr, ref value); }
         }
 
         public Vec3F Scale
         {
             get { InternalCalls.Transform3DGetScale(NativeComponentPtr, out Vec3F scale); return scale; }
-            set { InternalCalls.Transform3DSetScale(NativeComponentPtr, value); }
+            set { InternalCalls.Transform3DSetScale(NativeComponentPtr, ref value); }
         }
 
         public TMat Transform
@@ -45,12 +45,12 @@ namespace Maze.Core
 
         public void Translate(Vec3F delta)
         {
-            InternalCalls.Transform3DTranslate(NativeComponentPtr, delta);
+            InternalCalls.Transform3DTranslate(NativeComponentPtr, ref delta);
         }
 
         public void Rotate(Vec3F axis, float angle)
         {
-            InternalCalls.Transform3DRotate(NativeComponentPtr, axis, angle);
+            InternalCalls.Transform3DRotate(NativeComponentPtr, ref axis, angle);
         }
 
         public void SetParent(Transform3D parent)

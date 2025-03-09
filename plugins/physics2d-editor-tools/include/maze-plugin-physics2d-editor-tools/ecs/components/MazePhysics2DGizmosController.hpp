@@ -44,7 +44,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(EntitiesSample);
     MAZE_USING_SHARED_PTR(GizmosDrawer);
-    MAZE_USING_SHARED_PTR(RenderTarget);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderTarget);
 
 
     //////////////////////////////////////////

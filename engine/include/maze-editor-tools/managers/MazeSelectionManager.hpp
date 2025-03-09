@@ -43,7 +43,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SelectionManager);
-    MAZE_USING_SHARED_PTR(RenderTarget);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderTarget);
     MAZE_USING_SHARED_PTR(ComponentGizmos);
     MAZE_USING_SHARED_PTR(GizmosDrawer);
     MAZE_USING_SHARED_PTR(Entity);

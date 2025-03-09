@@ -46,7 +46,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderQueue);
-    MAZE_USING_SHARED_PTR(RenderTarget);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderTarget);
     MAZE_USING_SHARED_PTR(GPUTextureBuffer);
 
 

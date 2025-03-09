@@ -8,7 +8,7 @@ namespace Maze.Engine
     {
         #region Ecs
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static int LoadAssetScene(string sceneName, bool additive, sbyte ecsWorldId);
+        public extern static int LoadAssetScene(string sceneName, int resourceId, bool additive, sbyte ecsWorldId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int DestroyScene(int sceneId);

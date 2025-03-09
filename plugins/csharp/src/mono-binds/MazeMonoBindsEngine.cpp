@@ -41,11 +41,26 @@ namespace Maze
     //////////////////////////////////////////
     inline S32 LoadAssetScene(
         MonoString* _sceneName,
+        S32 _renderTargetId,
         bool _additive,
         S8 _ecsWorldId)
     {
+        EcsAssetScenePtr scene;
+
         Char* sceneName = mono_string_to_utf8(_sceneName);
-        EcsAssetScenePtr scene = Engine::GetInstancePtr()->loadAssetScene(sceneName, _additive, EcsWorldId(_ecsWorldId));
+        if (_renderTargetId == -1)
+        {
+            scene = Engine::GetInstancePtr()->loadAssetScene(sceneName, _additive, EcsWorldId(_ecsWorldId));
+        }
+        else
+        {
+            if (RenderTarget* renderTarget = RenderWindow::GetResource(_renderTargetId))
+                scene = Engine::GetInstancePtr()->loadAssetScene(
+                    sceneName,
+                    renderTarget->getSharedPtr(),
+                    _additive,
+                    EcsWorldId(_ecsWorldId));
+        }
         mono_free(sceneName);
 
         if (scene)

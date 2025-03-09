@@ -39,7 +39,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(RenderBufferOpenGL);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderBufferOpenGL);
     MAZE_USING_SHARED_PTR(RenderSystemOpenGL);
     MAZE_USING_SHARED_PTR(ContextOpenGL);
 

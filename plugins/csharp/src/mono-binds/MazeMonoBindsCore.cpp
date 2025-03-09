@@ -224,14 +224,14 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    inline void Transform3DTranslate(Component* _component, Vec3F _delta)
+    inline void Transform3DTranslate(Component* _component, Vec3F const& _delta)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
         _component->castRaw<Transform3D>()->translate(_delta);
     }
 
     //////////////////////////////////////////
-    inline void Transform3DRotate(Component* _component, Vec3F _axis, F32 _angle)
+    inline void Transform3DRotate(Component* _component, Vec3F const& _axis, F32 _angle)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
         _component->castRaw<Transform3D>()->rotate(_axis, _angle);
@@ -253,7 +253,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline void Transform3DSetPosition(Component* _component, Vec3F _position)
+    inline void Transform3DSetPosition(Component* _component, Vec3F const& _position)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
         _component->castRaw<Transform3D>()->setLocalPosition(_position);
@@ -267,7 +267,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline void Transform3DSetRotation(Component* _component, Quaternion _rotation)
+    inline void Transform3DSetRotation(Component* _component, Quaternion const& _rotation)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
         _component->castRaw<Transform3D>()->setLocalRotation(_rotation);
@@ -309,7 +309,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline void Transform3DSetScale(Component* _component, Vec3F _scale)
+    inline void Transform3DSetScale(Component* _component, Vec3F const& _scale)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
         _component->castRaw<Transform3D>()->setLocalScale(_scale);

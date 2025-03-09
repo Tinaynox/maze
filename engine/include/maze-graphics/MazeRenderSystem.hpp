@@ -52,10 +52,10 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderSystem);
-    MAZE_USING_SHARED_PTR(RenderTarget);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderTarget);
     MAZE_USING_SHARED_PTR(Shader);
     MAZE_USING_SHARED_PTR(ShaderUniform);
-    MAZE_USING_SHARED_PTR(RenderWindow);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderWindow);
     MAZE_USING_SHARED_PTR(ShaderSystem);
     MAZE_USING_SHARED_PTR(TextureManager);
     MAZE_USING_SHARED_PTR(MaterialManager);
@@ -71,11 +71,11 @@ namespace Maze
     MAZE_USING_MANAGED_SHARED_PTR(Material);
     MAZE_USING_SHARED_PTR(RenderPass);
     MAZE_USING_SHARED_PTR(RenderQueue);
-    MAZE_USING_SHARED_PTR(RenderTarget);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderTarget);
     MAZE_USING_SHARED_PTR(GPUVertexBuffer);
     MAZE_USING_SHARED_PTR(GPUTextureBuffer);
     MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(RenderBuffer);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderBuffer);
 
 
     //////////////////////////////////////////

@@ -646,6 +646,10 @@ namespace std
                                                                                                     __object.reset();
 #define MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(__DClass, __object, __init)                     MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR_EX(__DClass, __object, Maze::DefaultDelete<__DClass>(), __init)
 
+#define MAZE_CREATE_AND_INIT_OS_OBJECT_MANAGED_SHARED_PTR_EX(__DClass, __object, __deleter, __init) __object = MAZE_CREATE_MANAGED_SHARED_PTR_EX(MAZE_PLATFORM_OBJECT(__DClass), __deleter);    \
+                                                                                                    if (!__object->__init)                                                                      \
+                                                                                                        __object.reset();
+#define MAZE_CREATE_AND_INIT_OS_OBJECT_MANAGED_SHARED_PTR(__DClass, __object, __init)           MAZE_CREATE_AND_INIT_OS_OBJECT_MANAGED_SHARED_PTR_EX(__DClass, __object, Maze::DefaultDelete<MAZE_PLATFORM_OBJECT(__DClass)>(), __init)
 
 //////////////////////////////////////////
 #endif // _ManagedSharedPtr_hpp_

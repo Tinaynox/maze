@@ -47,6 +47,9 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS(RenderTarget);
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(RenderTarget);
+
+    //////////////////////////////////////////
     RenderTarget::RenderTarget()
         : m_renderSystem(nullptr)
         , m_order(0)

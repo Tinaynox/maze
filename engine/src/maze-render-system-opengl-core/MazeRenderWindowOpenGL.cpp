@@ -58,7 +58,7 @@ namespace Maze
     RenderWindowOpenGLPtr RenderWindowOpenGL::Create(RenderWindowParams const& _params)
     {
         RenderWindowOpenGLPtr window;
-        MAZE_CREATE_AND_INIT_OS_OBJECT_SHARED_PTR(RenderWindowOpenGL, window, init(_params));
+        MAZE_CREATE_AND_INIT_OS_OBJECT_MANAGED_SHARED_PTR(RenderWindowOpenGL, window, init(_params));
         return window;
     }
 

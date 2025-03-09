@@ -78,28 +78,28 @@ namespace Maze.Core
 
         #region Transform3D
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DTranslate(NativePtr nativeComponentPtr, Vec3F delta);
+        public extern static void Transform3DTranslate(NativePtr nativeComponentPtr, ref Vec3F delta);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DRotate(NativePtr nativeComponentPtr, Vec3F axis, float angle);
+        public extern static void Transform3DRotate(NativePtr nativeComponentPtr, ref Vec3F axis, float angle);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform3DGetPosition(NativePtr nativeComponentPtr, out Vec3F outPosition);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetPosition(NativePtr nativeComponentPtr, Vec3F pos);
+        public extern static void Transform3DSetPosition(NativePtr nativeComponentPtr, ref Vec3F pos);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform3DGetRotation(NativePtr nativeComponentPtr, out Quaternion outPosition);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetRotation(NativePtr nativeComponentPtr, Quaternion pos);
+        public extern static void Transform3DSetRotation(NativePtr nativeComponentPtr, ref Quaternion pos);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform3DGetScale(NativePtr nativeComponentPtr, out Vec3F outScale);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetScale(NativePtr nativeComponentPtr, Vec3F scale);
+        public extern static void Transform3DSetScale(NativePtr nativeComponentPtr, ref Vec3F scale);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform3DSetParent(NativePtr nativeComponentPtr, NativePtr parentPtr);

@@ -104,7 +104,7 @@ namespace Maze
         RenderBufferDeleter const& _deleter)
     {
         RenderBufferOpenGLPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR_EX(RenderBufferOpenGL, object, _deleter, init(_renderSystem, _contextOpenGL));
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR_EX(RenderBufferOpenGL, object, _deleter, init(_renderSystem, _contextOpenGL));
         return object;
     }
 
@@ -114,7 +114,7 @@ namespace Maze
         RenderBufferDeleter const& _deleter)
     {
         RenderBufferOpenGLPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR_EX(RenderBufferOpenGL, object, _deleter, init(_renderBuffer));
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR_EX(RenderBufferOpenGL, object, _deleter, init(_renderBuffer));
         return object;
     }
 

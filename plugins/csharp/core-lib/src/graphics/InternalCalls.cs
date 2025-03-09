@@ -112,5 +112,13 @@ namespace Maze.Graphics
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void RenderMeshLoadFromMesh(int renderMeshId, int meshId);
         #endregion
+
+        #region RenderWindow
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int CreateRenderWindow(ref Vec2U windowSize, string title);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void DestroyRenderWindow(int resourceId);
+        #endregion
     }
 }

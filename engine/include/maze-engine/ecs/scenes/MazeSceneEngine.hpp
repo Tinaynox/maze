@@ -40,7 +40,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SceneEngine);
-    MAZE_USING_SHARED_PTR(RenderTarget);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderTarget);
     MAZE_USING_SHARED_PTR(RenderController);
     MAZE_USING_SHARED_PTR(ParticlesDrawerController);
     MAZE_USING_SHARED_PTR(InputSystem2D);
