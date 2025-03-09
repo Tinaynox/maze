@@ -17,6 +17,9 @@ namespace Maze.Editor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int GetEditorOpenedScene();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int GetEditorMainRenderWindow();
         #endregion
 
     }

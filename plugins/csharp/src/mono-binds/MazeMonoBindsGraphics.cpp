@@ -379,12 +379,18 @@ namespace Maze
     //////////////////////////////////////////
     inline void DestroyRenderWindow(S32 _resourceId)
     {
-        TaskManager::GetInstancePtr()->addMainThreadTask(
+        auto func =
             [_resourceId]()
             {
                 if (RenderWindow* renderTarget = (RenderWindow*)RenderWindow::GetResource(_resourceId))
                     renderTarget->getSharedPtr().decRef();
-            });
+            };
+
+
+        if (TaskManager::IsMainThread())
+            func();
+        else
+            TaskManager::GetInstancePtr()->addMainThreadTask(func);
     }
 
     //////////////////////////////////////////

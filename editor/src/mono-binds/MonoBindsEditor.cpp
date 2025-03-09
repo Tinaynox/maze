@@ -95,6 +95,16 @@ namespace Maze
         return c_invalidEcsSceneId;
     }
 
+    //////////////////////////////////////////
+    inline S32 GetEditorMainRenderWindow()
+    {
+        RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
+        if (!renderWindow)
+            return -1;
+
+        return renderWindow->getResourceId();
+    }
+
 
     //////////////////////////////////////////
     void BindCppFunctionsEditor()
@@ -103,6 +113,7 @@ namespace Maze
         MAZE_EDITOR_MONO_BIND_FUNC(MenuBarClearOptions);
         MAZE_EDITOR_MONO_BIND_FUNC(GetEditorMainSceneEcsWorld);
         MAZE_EDITOR_MONO_BIND_FUNC(GetEditorOpenedScene);
+        MAZE_EDITOR_MONO_BIND_FUNC(GetEditorMainRenderWindow);
     }
 
 

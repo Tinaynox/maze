@@ -30,6 +30,8 @@
 #include "maze-particles/ecs/components/MazeParticlesDrawerController.hpp"
 #include "maze-ui/ecs/components/MazeInputSystem2D.hpp"
 #include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
+#include "maze-graphics/ecs/components/MazeGraphicsEventRetranslator.hpp"
 
 
 //////////////////////////////////////////
@@ -84,6 +86,13 @@ namespace Maze
         if (_config.createGizmosController)
             m_gizmosController = createAndAddEntityWithComponent<GizmosController>("GizmosController", _config.renderTarget.get());
         
+        // Event retranslators
+        {
+            EntityPtr graphicsEventRetranslator = createEntity();
+            graphicsEventRetranslator->createComponent<StaticName>("GraphicsEventRetranslator");
+            graphicsEventRetranslator->createComponent<GraphicsEventRetranslator>();
+        }
+
         return true;
     }
 

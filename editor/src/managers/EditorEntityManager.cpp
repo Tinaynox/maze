@@ -30,9 +30,11 @@
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/ecs/components/MazeRenderController.hpp"
+#include "maze-graphics/ecs/components/MazeGraphicsEventRetranslator.hpp"
 #include "maze-ui/ecs/components/MazeInputSystem2D.hpp"
 #include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-particles/ecs/components/MazeParticlesDrawerController.hpp"
 #include "layout/EditorLayout.hpp"
 #include "managers/EditorManager.hpp"
@@ -81,27 +83,34 @@ namespace Maze
         // RenderController
         {
             EntityPtr entity = m_workspaceWorld->createEntity();
-            entity->createComponent<Name>("RenderController");
+            entity->createComponent<StaticName>("RenderController");
             m_renderController = entity->createComponent<RenderController>(renderSystem);
         }
 
         // Particles
         {
             EntityPtr entity = m_workspaceWorld->createEntity();
-            entity->createComponent<Name>("ParticlesDrawerController");
+            entity->createComponent<StaticName>("ParticlesDrawerController");
             m_particlesDrawerController = entity->createComponent<ParticlesDrawerController>(renderSystem);
         }
 
         // 2D Input
         {
             EntityPtr entity = m_workspaceWorld->createEntity();
-            entity->createComponent<Name>("InputSystem2D");
+            entity->createComponent<StaticName>("InputSystem2D");
             m_inputSystem2D = entity->createComponent<InputSystem2D>();
             m_inputSystem2D->setCoordsConverter(
                 [](Vec2F32 const& _coords)
             {
                 return EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(_coords);
             });
+        }
+
+        // Event retranslators
+        {
+            EntityPtr graphicsEventRetranslator = m_workspaceWorld->createEntity();
+            graphicsEventRetranslator->createComponent<StaticName>("GraphicsEventRetranslator");
+            graphicsEventRetranslator->createComponent<GraphicsEventRetranslator>();
         }
 
         

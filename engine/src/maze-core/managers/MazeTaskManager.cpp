@@ -41,6 +41,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     TaskManager* TaskManager::s_instance = nullptr;
+    std::thread::id TaskManager::s_mainThreadId = std::thread::id();
 
     //////////////////////////////////////////
     TaskManager::TaskManager()
@@ -65,6 +66,7 @@ namespace Maze
     //////////////////////////////////////////
     bool TaskManager::init(DataBlock const& _config)
     {
+        s_mainThreadId = std::this_thread::get_id();
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
         return true;

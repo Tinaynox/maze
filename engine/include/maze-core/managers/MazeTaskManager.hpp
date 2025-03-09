@@ -37,6 +37,7 @@
 #include "maze-core/utils/MazeSwitchableContainer.hpp"
 #include "maze-core/system/MazeTaskDelegate.hpp"
 #include "maze-core/system/MazeMutex.hpp"
+#include <thread>
 
 
 //////////////////////////////////////////
@@ -87,6 +88,9 @@ namespace Maze
 
         //////////////////////////////////////////
         static inline TaskManager& GetInstance() { return *s_instance; }
+
+        //////////////////////////////////////////
+        static bool IsMainThread() { return s_mainThreadId == std::this_thread::get_id(); }
 
 
         //////////////////////////////////////////
@@ -153,12 +157,14 @@ namespace Maze
     private:
 
         static TaskManager* s_instance;
+        static std::thread::id s_mainThreadId;
 
         Mutex m_mainThreadTasksMutex;
         SwitchableContainer<FastVector<SharedPtr<TaskDelegate>>> m_mainThreadTasks;
         List<DelayedTask> m_delayedMainThreadTasks;
 
         bool m_update = false;
+
     };
 
 

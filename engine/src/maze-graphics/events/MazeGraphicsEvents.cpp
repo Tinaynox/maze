@@ -40,6 +40,10 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(RenderBufferDestroyedEvent, Event);
 
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(RenderWindowWillCloseEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, renderWindowResourceId, -1, getRenderWindowResourceId, setRenderWindowResourceId));
+
 
 } // namespace Maze
 //////////////////////////////////////////

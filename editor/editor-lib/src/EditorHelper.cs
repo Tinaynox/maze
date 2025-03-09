@@ -1,4 +1,5 @@
 using Maze.Core;
+using Maze.Graphics;
 using System.Runtime.InteropServices;
 
 
@@ -18,5 +19,9 @@ namespace Maze.Editor
             return new EcsScene(InternalCalls.GetEditorOpenedScene());
         }
 
+        public static RenderWindow GetEditorMainRenderWindow()
+        {
+            return new RenderWindow(InternalCalls.GetEditorMainRenderWindow());
+        }
     }
 }

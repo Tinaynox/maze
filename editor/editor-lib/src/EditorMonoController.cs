@@ -1,5 +1,6 @@
 using Maze;
 using Maze.Core;
+using Maze.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -59,6 +60,14 @@ namespace Maze.Editor
             }
         }
 
+        [EntitySystem, EnableInEditor]
+        public void OnEvent(RenderWindowWillCloseEvent evt)
+        {
+            if (InternalCalls.GetEditorMainRenderWindow() == evt.renderWindowResourceId)
+            {
+                DestroyEditors();
+            }
+        }
 
 
         void CreateEditors()

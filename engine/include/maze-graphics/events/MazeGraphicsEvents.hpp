@@ -111,6 +111,34 @@ namespace Maze
         RenderBuffer* renderBuffer = nullptr;
     };
 
+
+    //////////////////////////////////////////
+    // Class RenderWindowWillCloseEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API RenderWindowWillCloseEvent
+        : public GenericEvent<RenderWindowWillCloseEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(RenderWindowWillCloseEvent, Event);
+
+    public:
+        //////////////////////////////////////////
+        RenderWindowWillCloseEvent(
+            S32 _renderWindowResourceId = -1)
+            : renderWindowResourceId(_renderWindowResourceId)
+        {}
+
+        //////////////////////////////////////////
+        inline void setRenderWindowResourceId(S32 _value) { renderWindowResourceId = _value; }
+
+        //////////////////////////////////////////
+        inline S32 getRenderWindowResourceId() const { return renderWindowResourceId; }
+
+    public:
+        S32 renderWindowResourceId = -1;
+    };
     
 } // namespace Maze
 //////////////////////////////////////////

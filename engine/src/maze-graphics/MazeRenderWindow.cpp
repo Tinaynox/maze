@@ -28,6 +28,8 @@
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-graphics/events/MazeGraphicsEvents.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
 
 
 //////////////////////////////////////////
@@ -159,6 +161,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderWindow::notifyWindowWillClose(Window* _window)
     {
+        EventManager::GetInstancePtr()->broadcastEventImmediate<RenderWindowWillCloseEvent>(getResourceId());
     }
 
     //////////////////////////////////////////

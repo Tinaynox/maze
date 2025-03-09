@@ -502,8 +502,6 @@ namespace Maze
                     monoField);
             }
             scriptInstance->invokeMethod(monoMethod, (MonoObject*)monoEventObj);
-            
-            // scriptInstance->invokeMethod(monoMethod, (MonoObject*)nullptr);
         }
     }
 
