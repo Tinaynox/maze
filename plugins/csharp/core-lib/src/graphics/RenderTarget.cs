@@ -2,7 +2,7 @@ using Maze.Core;
 
 namespace Maze.Graphics
 {
-    public abstract class RenderTarget : IndexedResource
+    public class RenderTarget : IndexedResource
     {
         public RenderTarget(int resourceId = -1)
         {
@@ -14,5 +14,6 @@ namespace Maze.Graphics
             ReleaseResource();
         }
 
+        public override void ReleaseResource() {}
     }
 }

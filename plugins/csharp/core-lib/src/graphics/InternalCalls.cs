@@ -42,6 +42,12 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Camera3DSetRenderMask(NativePtr nativeComponentPtr, int value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Camera3DGetRenderTarget(NativePtr nativeComponentPtr, out int outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Camera3DSetRenderTarget(NativePtr nativeComponentPtr, int value);
         #endregion
 
         #region Mesh
@@ -119,6 +125,11 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void DestroyRenderWindow(int resourceId);
+        #endregion
+
+        #region EcsRenderScene
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int EcsRenderSceneGetRenderTarget(NativePtr nativeComponentPtr);
         #endregion
     }
 }

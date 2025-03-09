@@ -33,6 +33,7 @@
 #include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -134,6 +135,23 @@ namespace Maze
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
         _component->castRaw<Camera3D>()->setRenderMask(_value);
+    }
+
+    //////////////////////////////////////////
+    inline void Camera3DGetRenderTarget(Component* _component, S32& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        RenderTargetPtr const& renderTarget = _component->castRaw<Camera3D>()->getRenderTarget();
+        _outValue = renderTarget ? renderTarget->getResourceId() : c_invalidResourceId;
+    }
+
+    //////////////////////////////////////////
+    inline void Camera3DSetRenderTarget(Component* _component, S32 _resourceId)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+
+        RenderTarget* renderTarget = RenderWindow::GetResource(_resourceId);
+        _component->castRaw<Camera3D>()->setRenderTarget(renderTarget ? renderTarget->getSharedPtr() : nullptr);
     }
 
     //////////////////////////////////////////
@@ -370,6 +388,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline S32 EcsRenderSceneGetRenderTarget(Component* _component)
+    {
+        EcsRenderScene* scene = _component->getEntityRaw()->getEcsScene()->castRaw<EcsRenderScene>();
+        return scene->getRenderTarget()->getResourceId();
+    }
+
+    //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsGraphics()
     {
         // MeshRenderer
@@ -387,6 +412,8 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DSetFarZ);
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DGetRenderMask);
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DSetRenderMask);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DGetRenderTarget);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DSetRenderTarget);
         
         // SubMesh
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreateSubMesh);
@@ -418,6 +445,9 @@ namespace Maze
         // RenderWindow
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreateRenderWindow);
         MAZE_GRAPHICS_MONO_BIND_FUNC(DestroyRenderWindow);
+
+        // EcsRenderScene
+        MAZE_GRAPHICS_MONO_BIND_FUNC(EcsRenderSceneGetRenderTarget);
     }
 
 } // namespace Maze

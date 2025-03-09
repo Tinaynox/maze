@@ -4,6 +4,12 @@ namespace Maze.Graphics
 {
     public class Camera3D : NativeComponent
     {
+        public int RenderTarget
+        {
+            get { InternalCalls.Camera3DGetRenderTarget(NativeComponentPtr, out int value); return value; }
+            set { InternalCalls.Camera3DSetRenderTarget(NativeComponentPtr, value); }
+        }
+
         public float AspectRatio
         {
             get { InternalCalls.Camera3DGetAspectRatio(NativeComponentPtr, out float value); return value; }

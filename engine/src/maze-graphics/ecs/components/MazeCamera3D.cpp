@@ -30,6 +30,7 @@
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
@@ -253,6 +254,24 @@ namespace Maze
         }
           
     }
+
+
+    //////////////////////////////////////////
+    /*
+    COMPONENT_SYSTEM_EVENT_HANDLER(Camera3DAddedToSampleEvent,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        Camera3D* _camera3D)
+    {
+        if (!_camera3D->getRenderTarget())
+        {
+            EcsRenderScene* scene = _entity->getEcsScene()->castRaw<EcsRenderScene>();
+            _camera3D->setRenderTarget(scene->getRenderTarget());
+        }
+    }
+    */
     
     
 } // namespace Maze
