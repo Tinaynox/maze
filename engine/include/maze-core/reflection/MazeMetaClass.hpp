@@ -526,7 +526,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename T>
-        typename ::std::enable_if<(::std::is_abstract<T>::value), T*>::type
+        typename ::std::enable_if<(::std::is_abstract<T>::value || !(::std::is_default_constructible<T>::value)), T*>::type
             createInstanceImpl() const
         {
             return nullptr;
@@ -534,7 +534,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename T>
-        typename ::std::enable_if<!(::std::is_abstract<T>::value), T*>::type
+        typename ::std::enable_if<!(::std::is_abstract<T>::value) && ::std::is_default_constructible<T>::value, T*>::type
             createInstanceImpl() const
         {
             return new TClass();

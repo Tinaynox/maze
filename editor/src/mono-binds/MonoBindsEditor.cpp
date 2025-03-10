@@ -105,6 +105,12 @@ namespace Maze
         return renderWindow->getResourceId();
     }
 
+    //////////////////////////////////////////
+    inline bool GetEditorPlaytestModeEnabled()
+    {
+        return EditorManager::GetInstancePtr()->getPlaytestModeEnabled();
+    }
+
 
     //////////////////////////////////////////
     void BindCppFunctionsEditor()
@@ -114,6 +120,7 @@ namespace Maze
         MAZE_EDITOR_MONO_BIND_FUNC(GetEditorMainSceneEcsWorld);
         MAZE_EDITOR_MONO_BIND_FUNC(GetEditorOpenedScene);
         MAZE_EDITOR_MONO_BIND_FUNC(GetEditorMainRenderWindow);
+        MAZE_EDITOR_MONO_BIND_FUNC(GetEditorPlaytestModeEnabled);
     }
 
 

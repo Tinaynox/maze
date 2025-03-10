@@ -45,6 +45,7 @@
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -90,6 +91,7 @@
 #include "ecs/components/EditorHierarchyController.hpp"
 #include "ecs/components/EditorMainCanvasController.hpp"
 #include "ecs/components/EditorTopBarController.hpp"
+#include "ecs/components/EditorEventRetranslator.hpp"
 #include "Editor.hpp"
 #include "layout/EditorLayout.hpp"
 #include "scenes/SceneDebug.hpp"
@@ -177,6 +179,14 @@ namespace Maze
         create3D();
         create2D();
         createSceneModeController();
+
+
+        // Event retranslators
+        {
+            EntityPtr editorEventRetranslator = createEntity();
+            editorEventRetranslator->createComponent<StaticName>("EditorEventRetranslator");
+            editorEventRetranslator->createComponent<EditorEventRetranslator>();
+        }
 
         EditorManager::GetInstancePtr()->eventSceneModeChanged.subscribe(this, &SceneEditor::notifySceneModeChanged);
         EditorManager::GetInstancePtr()->eventPlaytestModeEnabledChanged.subscribe(this, &SceneEditor::notifyPlaytestModeEnabledChanged);

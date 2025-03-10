@@ -69,7 +69,6 @@ namespace Maze.Editor
             }
         }
 
-
         void CreateEditors()
         {
             DestroyEditors();

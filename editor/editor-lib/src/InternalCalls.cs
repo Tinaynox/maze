@@ -20,6 +20,9 @@ namespace Maze.Editor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int GetEditorMainRenderWindow();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool GetEditorPlaytestModeEnabled();
         #endregion
 
     }

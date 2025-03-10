@@ -33,9 +33,9 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditorProjectWillBeClosedEvent, Event);
-
-    //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditorProjectOpenedEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PlaytestModeEnabledChangedEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, playtestModeEnabled, false, getPlaytestModeEnabled, setPlaytestModeEnabled));
 
 } // namespace Maze
 //////////////////////////////////////////

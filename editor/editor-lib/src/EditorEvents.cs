@@ -10,4 +10,10 @@ namespace Maze.Editor
         public string editorName;
         public Vec2F testValue;
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public class PlaytestModeEnabledChangedEvent : NativeEvent
+    {
+        public bool playtestModeEnabled;
+    }
 }

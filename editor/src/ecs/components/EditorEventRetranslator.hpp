@@ -25,74 +25,78 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorEvents_hpp_))
-#define _EditorEvents_hpp_
+#if (!defined(_EditorEventRetranslator_hpp_))
+#define _EditorEventRetranslator_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/ecs/MazeEcsScene.hpp"
-#include "maze-core/events/MazeEvent.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class EditorProjectWillBeClosedEvent
+    MAZE_USING_SHARED_PTR(EditorEventRetranslator);
+
+
+    //////////////////////////////////////////
+    // Class EditorEventRetranslator
     //
     //////////////////////////////////////////
-    class EditorProjectWillBeClosedEvent
-        : public GenericEvent<EditorProjectWillBeClosedEvent>
+    class EditorEventRetranslator
+        : public Component
+        , public MultiDelegateCallbackReceiver
     {
     public:
+
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorProjectWillBeClosedEvent, Event);
-    };
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorEventRetranslator, Component);
 
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(EditorEventRetranslator);
 
-    //////////////////////////////////////////
-    // Class EditorProjectOpenedEvent
-    //
-    //////////////////////////////////////////
-    class EditorProjectOpenedEvent
-        : public GenericEvent<EditorProjectOpenedEvent>
-    {
+        //////////////////////////////////////////
+        friend class Entity;
+
     public:
+
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorProjectOpenedEvent, Event);
+        virtual ~EditorEventRetranslator();
+
+        //////////////////////////////////////////
+        static EditorEventRetranslatorPtr Create();
+
+
+        //////////////////////////////////////////
+        void processAppear();
+
+        //////////////////////////////////////////
+        void processDisappear();
+
+    protected:
+
+        //////////////////////////////////////////
+        EditorEventRetranslator();
+
+        //////////////////////////////////////////
+        using Component::init;
+
+        //////////////////////////////////////////
+        bool init();
+
+        //////////////////////////////////////////
+        void retranslateEvent(ClassUID _eventUID, Event* _event);
+
+    protected:
     };
 
-
-    //////////////////////////////////////////
-    // Class PlaytestModeEnabledChangedEvent
-    //
-    //////////////////////////////////////////
-    class PlaytestModeEnabledChangedEvent
-        : public GenericEvent<PlaytestModeEnabledChangedEvent>
-    {
-    public:
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(PlaytestModeEnabledChangedEvent, Event);
-
-        //////////////////////////////////////////
-        PlaytestModeEnabledChangedEvent(bool _playtestModeEnabled)
-            : m_playtestModeEnabled(_playtestModeEnabled)
-        {}
-
-        //////////////////////////////////////////
-        inline void setPlaytestModeEnabled(bool _value) { m_playtestModeEnabled = _value; }
-
-        //////////////////////////////////////////
-        inline bool getPlaytestModeEnabled() const { return m_playtestModeEnabled; }
-
-    private:
-        bool m_playtestModeEnabled = false;
-    };
- 
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorEvents_hpp_
+#endif // _EditorEventRetranslator_hpp_
 //////////////////////////////////////////

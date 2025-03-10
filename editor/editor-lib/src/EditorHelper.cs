@@ -22,6 +22,6 @@ namespace Maze.Editor
         public static RenderWindow GetEditorMainRenderWindow()
         {
             return new RenderWindow(InternalCalls.GetEditorMainRenderWindow());
-        }
+        }        
     }
 }

@@ -84,6 +84,7 @@
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
+#include "events/EditorEvents.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "Editor.hpp"
 #include "managers/EditorActionManager.hpp"
@@ -395,6 +396,7 @@ namespace Maze
         updateMainScene();
 
         eventPlaytestModeEnabledChanged(m_playtestModeEnabled);
+        EventManager::GetInstancePtr()->broadcastEvent<PlaytestModeEnabledChangedEvent>(m_playtestModeEnabled);
     }
 
     //////////////////////////////////////////

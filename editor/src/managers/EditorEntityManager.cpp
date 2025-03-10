@@ -36,6 +36,7 @@
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-particles/ecs/components/MazeParticlesDrawerController.hpp"
+#include "ecs/components/EditorEventRetranslator.hpp"
 #include "layout/EditorLayout.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
@@ -111,6 +112,10 @@ namespace Maze
             EntityPtr graphicsEventRetranslator = m_workspaceWorld->createEntity();
             graphicsEventRetranslator->createComponent<StaticName>("GraphicsEventRetranslator");
             graphicsEventRetranslator->createComponent<GraphicsEventRetranslator>();
+
+            EntityPtr editorEventRetranslator = m_workspaceWorld->createEntity();
+            editorEventRetranslator->createComponent<StaticName>("EditorEventRetranslator");
+            editorEventRetranslator->createComponent<EditorEventRetranslator>();
         }
 
         
