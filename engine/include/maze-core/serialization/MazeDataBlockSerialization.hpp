@@ -522,7 +522,8 @@ namespace Maze
         if (!_value)
             _value = MakeShared<UValue>();
 
-        TryValueFromDataBlock<UValue>(*_value.get(), _data);
+        if (!TryValueFromDataBlock<UValue>(*_value.get(), _data))
+            _value.reset();
     }
 
     //////////////////////////////////////////

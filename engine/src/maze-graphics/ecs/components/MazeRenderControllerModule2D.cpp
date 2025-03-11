@@ -137,6 +137,9 @@ namespace Maze
             Rect2F const& rootViewport = rootCanvas->getViewport();
 
             RenderTargetPtr const& renderTarget = canvas->getRenderTarget();
+            if (!renderTarget)
+                return;
+
             RenderQueuePtr const& renderQueue = renderTarget->getRenderQueue();
 
             if (_renderTarget != renderTarget.get())

@@ -131,5 +131,13 @@ namespace Maze.Graphics
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int EcsRenderSceneGetRenderTarget(NativePtr nativeComponentPtr);
         #endregion
+
+        #region Canvas
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void CanvasGetRenderTarget(NativePtr nativeComponentPtr, out int outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void CanvasSetRenderTarget(NativePtr nativeComponentPtr, int value);
+        #endregion
     }
 }

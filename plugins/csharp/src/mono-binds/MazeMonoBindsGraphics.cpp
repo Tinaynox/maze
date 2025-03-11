@@ -33,6 +33,7 @@
 #include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -401,6 +402,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void CanvasGetRenderTarget(Component* _component, S32& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Canvas>::UID(), "Component is not Camera3D!");
+        RenderTargetPtr const& renderTarget = _component->castRaw<Canvas>()->getRenderTarget();
+        _outValue = renderTarget ? renderTarget->getResourceId() : c_invalidResourceId;
+    }
+
+    //////////////////////////////////////////
+    inline void CanvasSetRenderTarget(Component* _component, S32 _resourceId)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Canvas>::UID(), "Component is not Camera3D!");
+
+        RenderTarget* renderTarget = RenderWindow::GetResource(_resourceId);
+        _component->castRaw<Canvas>()->setRenderTarget(renderTarget ? renderTarget->getSharedPtr() : nullptr);
+    }
+
+    //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsGraphics()
     {
         // MeshRenderer
@@ -454,6 +472,10 @@ namespace Maze
 
         // EcsRenderScene
         MAZE_GRAPHICS_MONO_BIND_FUNC(EcsRenderSceneGetRenderTarget);
+
+        // Canvas
+        MAZE_GRAPHICS_MONO_BIND_FUNC(CanvasGetRenderTarget);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(CanvasSetRenderTarget);
     }
 
 } // namespace Maze

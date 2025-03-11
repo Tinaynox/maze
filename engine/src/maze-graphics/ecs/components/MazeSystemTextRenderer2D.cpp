@@ -169,6 +169,8 @@ namespace Maze
         Vec2F const& size = m_transform->getSize();
 
         Texture2DPtr const& systemFontTexture = m_systemFont->texture;
+        if (!systemFontTexture)
+            return;
 
 
         F32 fontScale = (F32)m_fontSize / (F32)(m_systemFont->charSize.x - m_systemFont->outline * 2);
