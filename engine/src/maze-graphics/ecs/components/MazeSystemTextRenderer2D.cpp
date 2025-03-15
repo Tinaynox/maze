@@ -33,6 +33,7 @@
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeSystemFontManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
@@ -45,6 +46,7 @@
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 
 
@@ -59,7 +61,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(SystemFontPtr, systemFont, SystemFontPtr(), getSystemFont, setSystemFont),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(U32, fontSize, 32, getFontSize, setFontSize),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(U32, fontSize, 32u, getFontSize, setFontSize),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(HorizontalAlignment2D, horizontalAlignment, HorizontalAlignment2D::Left, getHorizontalAlignment, setHorizontalAlignment),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(VerticalAlignment2D, verticalAlignment, VerticalAlignment2D::Top, getVerticalAlignment, setVerticalAlignment));
 
@@ -444,7 +446,21 @@ namespace Maze
             m_meshRenderer->setModelMatrix(i, tm);
         }
     }
-            
+    
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SystemTextRenderer2DAdded,
+        {},
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        SystemTextRenderer2D* _textRenderer)
+    {
+        if (!_textRenderer->getSystemFont())
+        {
+            _textRenderer->setSystemFont(
+                SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault());
+        }
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

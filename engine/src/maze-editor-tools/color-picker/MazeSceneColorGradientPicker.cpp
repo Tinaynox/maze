@@ -299,7 +299,7 @@ namespace Maze
                 Vec2F(1.0f, 1.0f),
                 Vec2F(1.0f, 1.0f));
             m_copyButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
+                [](Button2D* _button, CursorInputEvent& _event)
                 {
                     ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
                     SystemManager::GetInstancePtr()->setClipboardString(gradient.toString());
@@ -314,7 +314,7 @@ namespace Maze
                 Vec2F(1.0f, 1.0f),
                 Vec2F(1.0f, 1.0f));
             m_pasteButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
+                [](Button2D* _button, CursorInputEvent& _event)
             {
                 String text = SystemManager::GetInstancePtr()->getClipboardAsString();
                 ColorGradient gradient = ColorGradient::FromString(text);
@@ -332,7 +332,7 @@ namespace Maze
                 Vec2F(1.0f, 1.0f),
                 Vec2F(1.0f, 1.0f));
             m_copyXMLButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
+                [](Button2D* _button, CursorInputEvent& _event)
             {
                 ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
                 String text = gradient.toString();
@@ -349,7 +349,7 @@ namespace Maze
                 Vec2F(1.0f, 1.0f),
                 Vec2F(1.0f, 1.0f));
             m_pasteXMLButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
+                [](Button2D* _button, CursorInputEvent& _event)
             {
                 String text = SystemManager::GetInstancePtr()->getClipboardAsString();
                 StringHelper::ReplaceSubstring(text, "&quot;", "\"");
@@ -838,7 +838,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorGradientPicker::notifyColorSliderTagClick(Button2D* _button, CursorInputEvent const& _event)
+    void SceneColorGradientPicker::notifyColorSliderTagClick(Button2D* _button, CursorInputEvent& _event)
     {
         
     }
@@ -850,7 +850,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorGradientPicker::notifyColorSliderTagCursorPressIn(Button2D* _button, Vec2F const& _positionOS, CursorInputEvent const& _event)
+    void SceneColorGradientPicker::notifyColorSliderTagCursorPressIn(Button2D* _button, Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         if (m_draggingTag)
             return;
@@ -1226,14 +1226,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorGradientPicker::notifyCanvasCursorRelease(CursorInputEvent const& _event)
+    void SceneColorGradientPicker::notifyCanvasCursorRelease(CursorInputEvent& _event)
     {
         m_draggingTag = false;
         m_draggingTagDistance = 0.0f;
     }
 
     //////////////////////////////////////////
-    void SceneColorGradientPicker::notifyGradientClickButtonClick(Button2D* _button, CursorInputEvent const& _event)
+    void SceneColorGradientPicker::notifyGradientClickButtonClick(Button2D* _button, CursorInputEvent& _event)
     {
         if (_event.button == 0)
         {
@@ -1276,7 +1276,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorGradientPicker::notifyGradientClickButtonCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
+    void SceneColorGradientPicker::notifyGradientClickButtonCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         m_gradientClickPosition = _event.position;
     }

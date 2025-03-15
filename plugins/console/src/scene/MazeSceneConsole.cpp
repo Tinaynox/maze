@@ -236,7 +236,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneConsole::notifyBackgroundClick(Vec2F const& _positionOS, CursorInputEvent const& _event)
+    void SceneConsole::notifyBackgroundClick(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         m_edit->setSelected(true);
     }

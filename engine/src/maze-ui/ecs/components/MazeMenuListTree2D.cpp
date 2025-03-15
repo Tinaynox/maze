@@ -265,15 +265,19 @@ namespace Maze
             MenuList2DPtr menuList = itemEntity->getComponent<MenuList2D>();
 
             menuList->eventListItemFocused.subscribe(
-                [&](MenuList2D* _list, Size _index)
+                [menuListTree2DWeak = (MenuListTree2DWPtr)cast<MenuListTree2D>()](MenuList2D* _list, Size _index)
                 {
+                    MenuListTree2DPtr menuListTree = menuListTree2DWeak.lock();
+                    if (!menuListTree)
+                        return;
+
                     Set<MenuList2DPtr> activeLists;
 
                     MenuListItem2DPtr menuListItem = _list->getListItem(_index);
                     if (menuListItem->getIsSubMenu())
                     {
-                        auto const subMenuListIt = m_subMenuLists.find(menuListItem.get());
-                        if (subMenuListIt != m_subMenuLists.end())
+                        auto const subMenuListIt = menuListTree->m_subMenuLists.find(menuListItem.get());
+                        if (subMenuListIt != menuListTree->m_subMenuLists.end())
                         {
                             MenuList2DPtr subMenuList = subMenuListIt->second;
                             subMenuList->getEntityRaw()->setActiveSelf(true);
@@ -282,43 +286,47 @@ namespace Maze
                         }
                     }
 
-                    MenuList2D* list = _list;
-                    do
                     {
-                        activeLists.insert(list->cast<MenuList2D>());
-
-                        bool listFound = false;
-
-                        for (auto subMenuListsData : m_subMenuLists)
+                        MenuList2D* list = _list;
+                        do
                         {
-                            if (subMenuListsData.second.get() == list)
+                            activeLists.insert(list->cast<MenuList2D>());
+
+                            bool listFound = false;
+
+                            for (auto subMenuListsData : menuListTree->m_subMenuLists)
                             {
-                                MenuListItem2D* parentListItem = subMenuListsData.first;
-
-                                auto parentListIt = m_listsByListItem.find(parentListItem);
-                                if (parentListIt != m_listsByListItem.end())
+                                if (subMenuListsData.second.get() == list)
                                 {
-                                    list = parentListIt->second.get();
-                                }
-                                else
-                                {
-                                    list = nullptr;
-                                }
+                                    MenuListItem2D* parentListItem = subMenuListsData.first;
 
-                                listFound = true;
-                                break;
+                                    auto parentListIt = menuListTree->m_listsByListItem.find(parentListItem);
+                                    if (parentListIt != menuListTree->m_listsByListItem.end())
+                                    {
+                                        list = parentListIt->second.get();
+                                    }
+                                    else
+                                    {
+                                        list = nullptr;
+                                    }
+
+                                    listFound = true;
+                                    break;
+                                }
                             }
+
+                            if (!listFound)
+                                list = nullptr;
                         }
-
-                        if (!listFound)
-                            list = nullptr;
+                        while (list != nullptr);
                     }
-                    while (list != nullptr);
 
-                    for (auto listData : m_lists)
                     {
-                        bool isActiveList = (activeLists.find(listData.second) != activeLists.end());
-                        listData.second->getEntityRaw()->setActiveSelf(isActiveList);
+                        for (auto& listData : menuListTree->m_lists)
+                        {
+                            bool isActiveList = (activeLists.find(listData.second) != activeLists.end());
+                            listData.second->getEntityRaw()->setActiveSelf(isActiveList);
+                        }
                     }
                 });
 
@@ -401,7 +409,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MenuListTree2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void MenuListTree2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -414,7 +422,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MenuListTree2D::notifyCursorPressOut(CursorInputEvent const& _inputEvent)
+    void MenuListTree2D::notifyCursorPressOut(CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;

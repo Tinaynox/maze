@@ -41,22 +41,37 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(DragAndDropCurrentZoneChangedEvent, Event);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementClickEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementClickEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, positionOS, Vec2F::c_zero, getPositionOS, setPositionOS),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CursorInputEvent, inputEvent, CursorInputEvent(), getInputEvent, setInputEvent));
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementSingleClickEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementSingleClickEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, positionOS, Vec2F::c_zero, getPositionOS, setPositionOS),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CursorInputEvent, inputEvent, CursorInputEvent(), getInputEvent, setInputEvent));
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementDoubleClickEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementDoubleClickEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, positionOS, Vec2F::c_zero, getPositionOS, setPositionOS),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CursorInputEvent, inputEvent, CursorInputEvent(), getInputEvent, setInputEvent));
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementCursorPressInEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementCursorPressInEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, positionOS, Vec2F::c_zero, getPositionOS, setPositionOS),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CursorInputEvent, inputEvent, CursorInputEvent(), getInputEvent, setInputEvent));
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementCursorMoveInEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementCursorMoveInEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, positionOS, Vec2F::c_zero, getPositionOS, setPositionOS),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CursorInputEvent, inputEvent, CursorInputEvent(), getInputEvent, setInputEvent));
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementCursorMoveOutEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementCursorMoveOutEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CursorInputEvent, inputEvent, CursorInputEvent(), getInputEvent, setInputEvent));
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementCursorReleaseEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CursorInputEvent, inputEvent, CursorInputEvent(), getInputEvent, setInputEvent));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIDragElementDragStartedEvent, Event);

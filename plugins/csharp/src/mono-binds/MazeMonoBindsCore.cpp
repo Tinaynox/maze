@@ -191,6 +191,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline Component* ComponentGetComponentInheritedFrom(Component* _component, ComponentId _componentId)
+    {
+        if (!_component->getEntityRaw())
+            return nullptr;
+
+        ComponentPtr const& component = _component->getEntityRaw()->getComponentInheritedFrom(_componentId);
+        return component.get();
+    }
+
+    //////////////////////////////////////////
     inline MonoObject* ComponentGetMonoBehaviourComponentObject(Component* _component, ComponentId _componentId)
     {
         if (!_component->getEntityRaw())
@@ -357,6 +367,7 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetSceneId);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetComponentId);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetComponent);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentGetComponentInheritedFrom);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetMonoBehaviourComponentObject);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetEntity);
         MAZE_CORE_MONO_BIND_FUNC(ComponentSendMonoEvent);

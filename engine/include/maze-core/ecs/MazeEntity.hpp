@@ -227,6 +227,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline ComponentPtr getComponentInheritedFrom(ComponentId _id) const
+        {
+            for (auto const& componentData : m_components)
+                if (componentData.second->getMetaClass()->isInheritedFrom(_id))
+                    return componentData.second;
+
+            return nullptr;
+        }
+
+        //////////////////////////////////////////
         template <typename TComponent>
         inline SharedPtr<TComponent> getComponentInheritedFrom() const
         {

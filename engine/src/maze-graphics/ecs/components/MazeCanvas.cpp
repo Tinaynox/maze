@@ -58,6 +58,9 @@ namespace Maze
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Canvas);
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(Canvas);
+
+    //////////////////////////////////////////
     Canvas::Canvas()
         : m_viewport(0.0f, 0.0f, 1.0f, 1.0f)
         , m_clearColorFlag(false)

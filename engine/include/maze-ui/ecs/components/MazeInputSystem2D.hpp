@@ -138,7 +138,7 @@ namespace Maze
         };
 
         //////////////////////////////////////////
-        static inline Vec2F DefaultCoordsConverter(Vec2F const& _coords) { return _coords; }
+        static inline Vec2F DefaultCoordsConverter(Window* _window, Vec2F const& _coords) { return _coords; }
 
     public:
 
@@ -154,7 +154,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setCoordsConverter(std::function<Vec2F(Vec2F const&)> const& _coordsConverter) { m_coordsConverter = _coordsConverter; }
+        inline void setCoordsConverter(std::function<Vec2F(Window*, Vec2F const&)> const& _coordsConverter) { m_coordsConverter = _coordsConverter; }
 
         //////////////////////////////////////////
         bool traceElement(
@@ -272,7 +272,7 @@ namespace Maze
         bool m_sortedCanvasDataDirty;
         Vector<CanvasData> m_sortedCanvasData;
 
-        std::function<Vec2F(Vec2F const&)> m_coordsConverter = DefaultCoordsConverter;
+        std::function<Vec2F(Window*, Vec2F const&)> m_coordsConverter = DefaultCoordsConverter;
 
         Vec2F m_firstCursorPressRenderTargetCoords = Vec2F::c_zero;
         U32 m_firstCursorPressTime = 0u;

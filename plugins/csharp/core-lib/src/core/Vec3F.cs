@@ -144,5 +144,10 @@ namespace Maze.Core
         {
             return new Vec3F(vec0.X / vec1.X, vec0.Y / vec1.Y, vec0.Z / vec1.Z);
         }
+
+        public override string ToString()
+        {
+            return $"[{X}, {Y}, {Z}]";
+        }
     }
 }

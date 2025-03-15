@@ -99,10 +99,10 @@ namespace Maze
         virtual bool init(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void notifyMaterialButtonClick(Button2D* _button, CursorInputEvent const& _event);
+        void notifyMaterialButtonClick(Button2D* _button, CursorInputEvent& _event);
 
         //////////////////////////////////////////
-        void notifySelectAssetClick(Button2D* _button, CursorInputEvent const& _event);
+        void notifySelectAssetClick(Button2D* _button, CursorInputEvent& _event);
 
     protected:
         ClickButton2DPtr m_materialButton;

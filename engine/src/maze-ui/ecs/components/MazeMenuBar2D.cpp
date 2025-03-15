@@ -138,7 +138,7 @@ namespace Maze
         optionData.button = menuButtonObject->getComponent<ToggleButton2D>();
 
         optionData.button->eventClick.subscribe(
-            [_menuName, this](Button2D* _button, CursorInputEvent const& _inputEvent)
+            [_menuName, this](Button2D* _button, CursorInputEvent& _inputEvent)
             {
                 if ((m_currentMenu == _menuName))
                 {
@@ -202,14 +202,15 @@ namespace Maze
                         return;
 
                     _menuListTree->setCloseMenuByPressOutCallback(
-                        [this, _menuName](CursorInputEvent const& _inputEvent) -> bool
+                        [this, _menuName](CursorInputEvent& _inputEvent) -> bool
                         {
                             auto optionsIt = m_options.find(_menuName);
                             if (optionsIt == m_options.end())
                                 return true;
 
                             Vec2F const& positionWS = _inputEvent.position;
-                            Vec2F positionRTS = _inputEvent.rootCanvas->convertViewportCoordsToRenderTargetCoords(positionWS);
+                            Canvas* rootCanvas = Canvas::GetResource(_inputEvent.rootCanvasId);
+                            Vec2F positionRTS = rootCanvas->convertViewportCoordsToRenderTargetCoords(positionWS);
 
                             Canvas* buttonRootCanvas = optionsIt->second.button->getTransform()->getLastTrunkComponent<Canvas>();
                             if (buttonRootCanvas)

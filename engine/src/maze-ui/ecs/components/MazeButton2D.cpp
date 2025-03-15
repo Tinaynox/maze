@@ -106,7 +106,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Button2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Button2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         eventCursorPressIn(this, _positionOS, _inputEvent);
     }
@@ -126,7 +126,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Button2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Button2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         if (!getEnabled())
             return;
@@ -135,7 +135,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Button2D::notifySingleClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Button2D::notifySingleClick(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         if (!getEnabled())
             return;
@@ -144,7 +144,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Button2D::notifyDoubleClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Button2D::notifyDoubleClick(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         if (!getEnabled())
             return;

@@ -88,27 +88,27 @@ namespace Maze
         Bounds2DPtr const& getBounds() const { return m_bounds; }
             
         //////////////////////////////////////////
-        void processCursorPress(CursorInputEvent const& _inputEvent);
+        void processCursorPress(CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void processCursorClick(CursorInputEvent const& _inputEvent);
+        void processCursorClick(CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void processCursorDoubleClick(CursorInputEvent const& _inputEvent);
+        void processCursorDoubleClick(CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
         void processCursorRelease(
-            CursorInputEvent const& _inputEvent,
+            CursorInputEvent& _inputEvent,
             bool _forceOut = false);
 
         //////////////////////////////////////////
-        bool processCursorTrace(CursorInputEvent const& _inputEvent);
+        bool processCursorTrace(CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void processCursorMove(CursorInputEvent const& _inputEvent);
+        void processCursorMove(CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void processCursorDrag(CursorInputEvent const& _inputEvent);
+        void processCursorDrag(CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
         void processCursorWheel(CursorWheelInputEvent const& _inputEvent);
@@ -150,20 +150,20 @@ namespace Maze
     public:
 
         // positionOS, CursorInputEvent
-        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventCursorPressIn;
-        MultiDelegate<CursorInputEvent const&> eventCursorPressOut;
-        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventCursorMoveIn;
-        MultiDelegate<CursorInputEvent const&> eventCursorMoveOut;
-        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventCursorDrag;
-        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventCursorReleaseIn;
-        MultiDelegate<CursorInputEvent const&> eventCursorReleaseOut;
-        MultiDelegate<CursorInputEvent const&> eventCursorRelease;
+        MultiDelegate<Vec2F const&, CursorInputEvent&> eventCursorPressIn;
+        MultiDelegate<CursorInputEvent&> eventCursorPressOut;
+        MultiDelegate<Vec2F const&, CursorInputEvent&> eventCursorMoveIn;
+        MultiDelegate<CursorInputEvent&> eventCursorMoveOut;
+        MultiDelegate<Vec2F const&, CursorInputEvent&> eventCursorDrag;
+        MultiDelegate<Vec2F const&, CursorInputEvent&> eventCursorReleaseIn;
+        MultiDelegate<CursorInputEvent&> eventCursorReleaseOut;
+        MultiDelegate<CursorInputEvent&> eventCursorRelease;
 
         MultiDelegate<bool> eventFocusChanged;
         MultiDelegate<bool> eventPressedChanged;
-        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventClick;
-        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventSingleClick;
-        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventDoubleClick;
+        MultiDelegate<Vec2F const&, CursorInputEvent&> eventClick;
+        MultiDelegate<Vec2F const&, CursorInputEvent&> eventSingleClick;
+        MultiDelegate<Vec2F const&, CursorInputEvent&> eventDoubleClick;
 
         MultiDelegate<CursorWheelInputEvent const&> eventCursorWheel;
 

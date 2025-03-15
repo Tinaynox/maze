@@ -428,7 +428,7 @@ namespace Maze
                 Vec2F(1.0f, 1.0f),
                 Vec2F(1.0f, 1.0f));
             m_copyButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
+                [](Button2D* _button, CursorInputEvent& _event)
             {
                 AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
                 SystemManager::GetInstancePtr()->setClipboardString(curve.toString());
@@ -443,7 +443,7 @@ namespace Maze
                 Vec2F(1.0f, 1.0f),
                 Vec2F(1.0f, 1.0f));
             m_pasteButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
+                [](Button2D* _button, CursorInputEvent& _event)
             {
                 String text = SystemManager::GetInstancePtr()->getClipboardAsString();
                 AnimationCurve curve = AnimationCurve::FromString(text);
@@ -461,7 +461,7 @@ namespace Maze
                 Vec2F(1.0f, 1.0f),
                 Vec2F(1.0f, 1.0f));
             m_copyDataBlockButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
+                [](Button2D* _button, CursorInputEvent& _event)
             {
                 AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
                 DataBlock data;
@@ -481,7 +481,7 @@ namespace Maze
                 Vec2F(1.0f, 1.0f),
                 Vec2F(1.0f, 1.0f));
             m_pasteDataBlockButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
+                [](Button2D* _button, CursorInputEvent& _event)
             {
                 String text = SystemManager::GetInstancePtr()->getClipboardAsString();
                 ByteBuffer buffer((U8 const*)&text[0], text.size());
@@ -1095,7 +1095,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCurveEditor::notifyCurveClickButtonClick(Button2D* _button, CursorInputEvent const& _event)
+    void SceneCurveEditor::notifyCurveClickButtonClick(Button2D* _button, CursorInputEvent& _event)
     {
         if (_event.button == 0)
         {
@@ -1156,7 +1156,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCurveEditor::notifyCurveClickButtonCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
+    void SceneCurveEditor::notifyCurveClickButtonCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         if (_event.button == 0)
         {
@@ -1387,7 +1387,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCurveEditor::notifyCanvasCursorRelease(CursorInputEvent const& _event)
+    void SceneCurveEditor::notifyCanvasCursorRelease(CursorInputEvent& _event)
     {
         m_draggingElement = CurveElement::None;
         m_draggingDistance = 0.0f;

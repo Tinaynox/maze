@@ -33,6 +33,7 @@
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeSystemFontManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
@@ -436,6 +437,21 @@ namespace Maze
     {
         if (_systemTextRenderer3D->getTransform()->isWorldTransformChanged())
             _systemTextRenderer3D->updateMeshRendererModelMatrices();
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SystemTextRenderer3DAdded,
+        {},
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        SystemTextRenderer3D* _textRenderer)
+    {
+        if (!_textRenderer->getSystemFont())
+        {
+            _textRenderer->setSystemFont(
+                SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault());
+        }
     }
             
     

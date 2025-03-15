@@ -148,13 +148,13 @@ namespace Maze
 
     public:
 
-        MultiDelegate<Button2D*, CursorInputEvent const&> eventClick;
-        MultiDelegate<Button2D*, CursorInputEvent const&> eventSingleClick;
-        MultiDelegate<Button2D*, CursorInputEvent const&> eventDoubleClick;
+        MultiDelegate<Button2D*, CursorInputEvent&> eventClick;
+        MultiDelegate<Button2D*, CursorInputEvent&> eventSingleClick;
+        MultiDelegate<Button2D*, CursorInputEvent&> eventDoubleClick;
         MultiDelegate<Button2D*, bool> eventFocusChanged;
         MultiDelegate<Button2D*, bool> eventPressedChanged;
         MultiDelegate<Button2D*, bool> eventEnabledChanged;
-        MultiDelegate<Button2D*, Vec2F const&, CursorInputEvent const&> eventCursorPressIn;
+        MultiDelegate<Button2D*, Vec2F const&, CursorInputEvent&> eventCursorPressIn;
 
     protected:
 
@@ -171,7 +171,7 @@ namespace Maze
         virtual void processEntityAwakened() MAZE_OVERRIDE;
             
         //////////////////////////////////////////
-        void notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
         void notifyFocusChanged(bool _focused);
@@ -180,13 +180,13 @@ namespace Maze
         void notifyPressedChanged(bool _pressed);
 
         //////////////////////////////////////////
-        void notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyClick(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void notifySingleClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifySingleClick(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyDoubleClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyDoubleClick(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
 
 
         //////////////////////////////////////////

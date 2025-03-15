@@ -74,7 +74,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        using CloseMenuByPressOutCallback = std::function<bool(CursorInputEvent const&)>;
+        using CloseMenuByPressOutCallback = std::function<bool(CursorInputEvent&)>;
 
         //////////////////////////////////////////
         using ItemCallback = std::function<void(String const& _text)>;
@@ -220,10 +220,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyCursorPressOut(CursorInputEvent const& _inputEvent);
+        void notifyCursorPressOut(CursorInputEvent& _inputEvent);
 
 
         //////////////////////////////////////////

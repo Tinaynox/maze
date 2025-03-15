@@ -222,7 +222,7 @@ namespace Maze
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         m_copyButton->eventClick.subscribe(
-            [this](Button2D* _button, CursorInputEvent const& _event)
+            [this](Button2D* _button, CursorInputEvent& _event)
             {
                 if (m_hdr)
                 {
@@ -245,7 +245,7 @@ namespace Maze
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         m_pasteButton->eventClick.subscribe(
-            [this](Button2D* _button, CursorInputEvent const& _event)
+            [this](Button2D* _button, CursorInputEvent& _event)
             {
                 String text = SystemManager::GetInstancePtr()->getClipboardAsString();
                 if (m_hdr)
@@ -891,20 +891,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyHSVRectCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyHSVRectCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         processHSVRectPick(_positionOS);
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyHSVRectCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyHSVRectCursorDrag(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         if (m_hsvRectButton->getPressed())
             processHSVRectPick(_positionOS);
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyHSVRectCursorMoveOut(CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyHSVRectCursorMoveOut(CursorInputEvent& _inputEvent)
     {
         if (m_hsvRectButton->getPressed())
         {
@@ -927,20 +927,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyHSVBandCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyHSVBandCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         processHSVBandPick(_positionOS);
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyHSVBandCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyHSVBandCursorDrag(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         if (m_hsvBandButton->getPressed())
             processHSVBandPick(_positionOS);
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyHSVBandCursorMoveOut(CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyHSVBandCursorMoveOut(CursorInputEvent& _inputEvent)
     {
         if (m_hsvBandButton->getPressed())
         {
@@ -962,7 +962,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyRGBBandCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyRGBBandCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         S32 channel = -1;
         for (Size i = 0; i < 4; ++i)
@@ -977,7 +977,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyRGBBandCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyRGBBandCursorDrag(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         S32 channel = -1;
         for (Size i = 0; i < 4; ++i)
@@ -992,7 +992,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyRGBBandCursorMoveOut(CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyRGBBandCursorMoveOut(CursorInputEvent& _inputEvent)
     {
         S32 channel = -1;
         for (Size i = 0; i < 4; ++i)

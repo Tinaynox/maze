@@ -64,6 +64,9 @@ namespace Maze.Core
         public extern static NativePtr ComponentGetComponent(NativePtr nativeComponentPtr, int componentId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static NativePtr ComponentGetComponentInheritedFrom(NativePtr nativeComponentPtr, int componentId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static MonoBehaviour ComponentGetMonoBehaviourComponentObject(NativePtr nativeComponentPtr, int componentId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

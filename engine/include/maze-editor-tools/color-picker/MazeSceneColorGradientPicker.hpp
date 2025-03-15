@@ -139,13 +139,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyColorSliderTagClick(Button2D* _button, CursorInputEvent const& _event);
+        void notifyColorSliderTagClick(Button2D* _button, CursorInputEvent& _event);
 
         //////////////////////////////////////////
         void notifyColorSliderTagPressedChanged(Button2D* _button, bool _pressed);
 
         //////////////////////////////////////////
-        void notifyColorSliderTagCursorPressIn(Button2D* _button, Vec2F const& _positionOS, CursorInputEvent const& _event);
+        void notifyColorSliderTagCursorPressIn(Button2D* _button, Vec2F const& _positionOS, CursorInputEvent& _event);
 
         //////////////////////////////////////////
         void processAlphaColorSliderTagClick(Size _index, S32 _buttonId);
@@ -184,14 +184,14 @@ namespace Maze
         void changeCurrentColorTagTime(F32 _newTime);
 
         //////////////////////////////////////////
-        void notifyCanvasCursorRelease(CursorInputEvent const& _event);
+        void notifyCanvasCursorRelease(CursorInputEvent& _event);
 
 
         //////////////////////////////////////////
-        void notifyGradientClickButtonClick(Button2D* _button, CursorInputEvent const& _event);
+        void notifyGradientClickButtonClick(Button2D* _button, CursorInputEvent& _event);
 
         //////////////////////////////////////////
-        void notifyGradientClickButtonCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _event);
+        void notifyGradientClickButtonCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _event);
 
     protected:
         CanvasPtr m_canvas;

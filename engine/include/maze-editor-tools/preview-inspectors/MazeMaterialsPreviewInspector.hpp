@@ -99,10 +99,10 @@ namespace Maze
         virtual bool getCanvasActive() const MAZE_OVERRIDE { return false; }
 
         //////////////////////////////////////////
-        virtual void processCursorPress(Vec2F const& _positionOS, CursorInputEvent const& _event) MAZE_OVERRIDE;
+        virtual void processCursorPress(Vec2F const& _positionOS, CursorInputEvent& _event) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _event) MAZE_OVERRIDE;
+        virtual void processCursorDrag(Vec2F const& _positionOS, CursorInputEvent& _event) MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////

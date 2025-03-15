@@ -119,6 +119,9 @@ namespace Maze
     // Class Window
     //
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(Window);
+     
+    //////////////////////////////////////////
     Window::Window()
     {
     }

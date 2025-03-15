@@ -394,7 +394,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ParticleEffectInfo::notifyStopButtonClick(Button2D* _button, CursorInputEvent const& _cursor)
+    void ParticleEffectInfo::notifyStopButtonClick(Button2D* _button, CursorInputEvent& _cursor)
     {
         Set<EntityPtr> const& selectedEntities = SelectionManager::GetInstancePtr()->getSelectedEntities();
 
@@ -409,7 +409,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ParticleEffectInfo::notifyPlayButtonClick(Button2D* _button, CursorInputEvent const& _cursor)
+    void ParticleEffectInfo::notifyPlayButtonClick(Button2D* _button, CursorInputEvent& _cursor)
     {
         Set<EntityPtr> const& selectedEntities = SelectionManager::GetInstancePtr()->getSelectedEntities();
 
@@ -424,7 +424,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ParticleEffectInfo::notifyRestartButtonClick(Button2D* _button, CursorInputEvent const& _cursor)
+    void ParticleEffectInfo::notifyRestartButtonClick(Button2D* _button, CursorInputEvent& _cursor)
     {
         Set<EntityPtr> const& selectedEntities = SelectionManager::GetInstancePtr()->getSelectedEntities();
 
@@ -439,7 +439,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ParticleEffectInfo::notifyPauseButtonClick(Button2D* _button, CursorInputEvent const& _cursor)
+    void ParticleEffectInfo::notifyPauseButtonClick(Button2D* _button, CursorInputEvent& _cursor)
     {
         Set<EntityPtr> const& selectedEntities = SelectionManager::GetInstancePtr()->getSelectedEntities();
 

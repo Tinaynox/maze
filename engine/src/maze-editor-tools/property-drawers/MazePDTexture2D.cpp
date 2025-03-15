@@ -231,7 +231,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerTexture2D::notifySelectAssetClick(Button2D* _button, CursorInputEvent const& _event)
+    void PropertyDrawerTexture2D::notifySelectAssetClick(Button2D* _button, CursorInputEvent& _event)
     {
         PropertyDrawerTexture2DWPtr weakPtr = cast<PropertyDrawerTexture2D>();
         TexturePickerManager::GetInstancePtr()->openTexturePicker(

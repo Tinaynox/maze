@@ -256,7 +256,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerMaterial::notifyMaterialButtonClick(Button2D* _button, CursorInputEvent const& _event)
+    void PropertyDrawerMaterial::notifyMaterialButtonClick(Button2D* _button, CursorInputEvent& _event)
     {
         if (m_material)
         {
@@ -283,7 +283,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerMaterial::notifySelectAssetClick(Button2D* _button, CursorInputEvent const& _event)
+    void PropertyDrawerMaterial::notifySelectAssetClick(Button2D* _button, CursorInputEvent& _event)
     {
         PropertyDrawerMaterialWPtr weakPtr = cast<PropertyDrawerMaterial>();
         MaterialPickerManager::GetInstancePtr()->openMaterialPicker(

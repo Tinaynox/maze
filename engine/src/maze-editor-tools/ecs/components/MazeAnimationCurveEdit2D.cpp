@@ -125,13 +125,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AnimationCurveEdit2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void AnimationCurveEdit2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
             
     }
 
     //////////////////////////////////////////
-    void AnimationCurveEdit2D::notifyCursorReleaseOut(CursorInputEvent const& _inputEvent)
+    void AnimationCurveEdit2D::notifyCursorReleaseOut(CursorInputEvent& _inputEvent)
     {
         setSelected(false);
     }
@@ -155,7 +155,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AnimationCurveEdit2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void AnimationCurveEdit2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;

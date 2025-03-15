@@ -33,6 +33,7 @@
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 
 
 //////////////////////////////////////////
@@ -74,33 +75,31 @@ namespace Maze
             Vec2F const& _position = Vec2F::c_zero,
             S32 _button = 0,
             CursorInputSource const& _inputSource = CursorInputSource::None,
-            Window* _window = nullptr)
+            ResourceId _windowId = c_invalidResourceId)
             : type(_type)
             , index(_index)
             , position(_position)
             , capturerHandle(0)
             , button(_button)
             , inputSource(_inputSource)
-            , window(_window)
-            , canvas(nullptr)
-            , rootCanvas(nullptr)
+            , windowId(_windowId)
         {}
 
         //////////////////////////////////////////
-        inline void captureHit(S32 _capturerHandle) const { capturerHandle = _capturerHandle; }
+        inline void captureHit(S32 _capturerHandle) { capturerHandle = _capturerHandle; }
 
         //////////////////////////////////////////
         inline bool isCaptured() const { return capturerHandle != 0; }
 
-        CursorInputType type;
+        S32 type;
         S32 index;
         Vec2F position;
-        mutable S32 capturerHandle;
+        S32 capturerHandle;
         S32 button;
-        CursorInputSource inputSource;
-        Window* window;
-        Canvas* canvas;
-        Canvas* rootCanvas;
+        S32 inputSource;
+        ResourceId windowId;
+        ResourceId canvasId = c_invalidResourceId;
+        ResourceId rootCanvasId = c_invalidResourceId;
     };
 
 
@@ -114,18 +113,16 @@ namespace Maze
         inline CursorWheelInputEvent(
             S32 _index = 0,
             F32 _deltaWheel = 0.0f,
-            Window* _window = nullptr)
+            ResourceId _windowId = c_invalidResourceId)
             : index(_index)
             , position(Vec2F::c_zero)
             , deltaWheel(_deltaWheel)
             , capturerHandle(0)
-            , window(_window)
-            , canvas(nullptr)
-            , rootCanvas(nullptr)
+            , windowId(_windowId)
         {}
 
         //////////////////////////////////////////
-        inline void captureHit(S32 _capturerHandle) const { capturerHandle = _capturerHandle; }
+        inline void captureHit(S32 _capturerHandle) { capturerHandle = _capturerHandle; }
 
         //////////////////////////////////////////
         inline bool isCaptured() const { return capturerHandle != 0; }
@@ -133,10 +130,10 @@ namespace Maze
         S32 index;
         Vec2F position;
         F32 deltaWheel;
-        mutable S32 capturerHandle;
-        Window* window;
-        Canvas* canvas;
-        Canvas* rootCanvas;
+        S32 capturerHandle;
+        ResourceId windowId;
+        ResourceId canvasId = c_invalidResourceId;
+        ResourceId rootCanvasId = c_invalidResourceId;
     };
     
 

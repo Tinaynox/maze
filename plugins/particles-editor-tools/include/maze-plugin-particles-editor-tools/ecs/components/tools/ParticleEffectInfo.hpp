@@ -114,16 +114,16 @@ namespace Maze
         void notifySelectionChanged();
 
         //////////////////////////////////////////
-        void notifyStopButtonClick(Button2D* _button, CursorInputEvent const& _cursor);
+        void notifyStopButtonClick(Button2D* _button, CursorInputEvent& _cursor);
 
         //////////////////////////////////////////
-        void notifyPlayButtonClick(Button2D* _button, CursorInputEvent const& _cursor);
+        void notifyPlayButtonClick(Button2D* _button, CursorInputEvent& _cursor);
 
         //////////////////////////////////////////
-        void notifyRestartButtonClick(Button2D* _button, CursorInputEvent const& _cursor);
+        void notifyRestartButtonClick(Button2D* _button, CursorInputEvent& _cursor);
 
         //////////////////////////////////////////
-        void notifyPauseButtonClick(Button2D* _button, CursorInputEvent const& _cursor);
+        void notifyPauseButtonClick(Button2D* _button, CursorInputEvent& _cursor);
 
     protected:
         Transform2DPtr m_transform;

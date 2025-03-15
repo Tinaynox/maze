@@ -112,13 +112,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ColorEdit2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void ColorEdit2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
             
     }
 
     //////////////////////////////////////////
-    void ColorEdit2D::notifyCursorReleaseOut(CursorInputEvent const& _inputEvent)
+    void ColorEdit2D::notifyCursorReleaseOut(CursorInputEvent& _inputEvent)
     {
         setSelected(false);
     }
@@ -142,7 +142,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ColorEdit2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void ColorEdit2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;

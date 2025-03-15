@@ -283,7 +283,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetLine::notifyDropDownClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void AssetLine::notifyDropDownClick(Button2D* _button, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -294,7 +294,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetLine::AssetLine::notifyLineClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void AssetLine::AssetLine::notifyLineClick(Button2D* _button, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -316,7 +316,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetLine::notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _inputEvent)
+    void AssetLine::notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -326,7 +326,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetLine::notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void AssetLine::notifyLineDoubleClick(Button2D* _button, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;

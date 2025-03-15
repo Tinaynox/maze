@@ -125,13 +125,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Dropdown2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Dropdown2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
             
     }
 
     //////////////////////////////////////////
-    void Dropdown2D::notifyCursorReleaseOut(CursorInputEvent const& _inputEvent)
+    void Dropdown2D::notifyCursorReleaseOut(CursorInputEvent& _inputEvent)
     {
         if (m_listCanvas)
         {
@@ -163,7 +163,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Dropdown2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Dropdown2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         eventClick(this, _inputEvent);
     }
@@ -397,7 +397,7 @@ namespace Maze
             Dropdown2D* dropdown = this;
 
             button->eventClick.subscribe(
-                [dropdown, i](Button2D* _button, CursorInputEvent const& _inputEvent)
+                [dropdown, i](Button2D* _button, CursorInputEvent& _inputEvent)
                 {
                     dropdown->setValue(i);
                     dropdown->setSelected(false);

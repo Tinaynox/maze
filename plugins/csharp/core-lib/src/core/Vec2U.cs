@@ -61,5 +61,10 @@ namespace Maze.Core
         {
             return new Vec2U(vec0.X / vec1.X, vec0.Y / vec1.Y);
         }
+
+        public override string ToString()
+        {
+            return $"[{X}, {Y}]";
+        }
     }
 }

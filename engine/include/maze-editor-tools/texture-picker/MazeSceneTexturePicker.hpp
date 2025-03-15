@@ -130,10 +130,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _event);
+        void notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event);
 
         //////////////////////////////////////////
-        void notifyCanvasCursorReleaseOut(CursorInputEvent const& _event);
+        void notifyCanvasCursorReleaseOut(CursorInputEvent& _event);
 
 
         //////////////////////////////////////////
@@ -144,7 +144,7 @@ namespace Maze
         void clearPreviews();
 
         //////////////////////////////////////////
-        void notifyButtonClick(Button2D* _button, CursorInputEvent const& _event);
+        void notifyButtonClick(Button2D* _button, CursorInputEvent& _event);
 
         //////////////////////////////////////////
         void notifyFilterTextInput(EditBox2D* _editBox);

@@ -107,7 +107,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ToggleButton2D::notifyCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void ToggleButton2D::notifyCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         if (getCheckByClick())
             setChecked(!getChecked());

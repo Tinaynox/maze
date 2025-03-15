@@ -326,7 +326,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EntitiesInspector::notifyAddComponentButton(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void EntitiesInspector::notifyAddComponentButton(Button2D* _button, CursorInputEvent& _inputEvent)
     {
         ContextMenuCanvas2DPtr contextMenuCanvas = ContextMenuCanvas2D::EnsureContextMenuCanvas(_button->getEntityRaw()->getEcsScene());
 

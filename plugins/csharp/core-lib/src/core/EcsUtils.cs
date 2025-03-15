@@ -13,7 +13,7 @@ namespace Maze.Core
             // Native component wrappers
             if (typeof(NativeComponent).IsAssignableFrom(componentType))
             {
-                NativePtr componentPtr = InternalCalls.ComponentGetComponent(nativePtr, componentId);
+                NativePtr componentPtr = InternalCalls.ComponentGetComponentInheritedFrom(nativePtr, componentId);
                 if (componentPtr == NativePtr.Zero)
                     return null;
 

@@ -116,7 +116,7 @@ namespace Maze
         void notifyEntitiesEnabledToggleCheckedChanged(ToggleButton2D* _button, bool _checked);
 
         //////////////////////////////////////////
-        void notifyAddComponentButton(Button2D* _button, CursorInputEvent const& _inputEvent);
+        void notifyAddComponentButton(Button2D* _button, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
         void notifyEntityChanged(EntityPtr const& _entity);

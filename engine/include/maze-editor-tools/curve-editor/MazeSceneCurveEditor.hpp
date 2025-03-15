@@ -135,10 +135,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyCurveClickButtonClick(Button2D* _button, CursorInputEvent const& _event);
+        void notifyCurveClickButtonClick(Button2D* _button, CursorInputEvent& _event);
         
         //////////////////////////////////////////
-        void notifyCurveClickButtonCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _event);
+        void notifyCurveClickButtonCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _event);
 
 
         //////////////////////////////////////////
@@ -157,7 +157,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyCanvasCursorRelease(CursorInputEvent const& _event);
+        void notifyCanvasCursorRelease(CursorInputEvent& _event);
 
         //////////////////////////////////////////
         void processDragging();

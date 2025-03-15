@@ -193,13 +193,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditBox2D::notifyCursorPressOut(CursorInputEvent const& _inputEvent)
+    void EditBox2D::notifyCursorPressOut(CursorInputEvent& _inputEvent)
     {
         setSelected(false);
     }
 
     //////////////////////////////////////////
-    void EditBox2D::notifyCursorReleaseOut(CursorInputEvent const& _inputEvent)
+    void EditBox2D::notifyCursorReleaseOut(CursorInputEvent& _inputEvent)
     {
         setSelected(false);
     }
@@ -228,7 +228,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditBox2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void EditBox2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         eventClick(this, _inputEvent);
     }

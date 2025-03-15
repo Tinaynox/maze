@@ -180,7 +180,7 @@ namespace Maze
                 Vec2F(16.0f, 16.0f));
             m_gizmoToolButtons[tool]->setCheckByClick(false);
             m_gizmoToolButtons[tool]->eventClick.subscribe(
-                [tool](Button2D* _button, CursorInputEvent const& _event)
+                [tool](Button2D* _button, CursorInputEvent& _event)
             {
                 EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
                 debbugerSettings->setSelectedGizmoTool(tool);
@@ -207,7 +207,7 @@ namespace Maze
             getEntityRaw()->getEcsScene());
         m_pauseButton->setCheckByClick(false);
         m_pauseButton->eventClick.subscribe(
-            [](Button2D* _button, CursorInputEvent const& _event)
+            [](Button2D* _button, CursorInputEvent& _event)
             {
                 EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
                 debbugerSettings->switchPause();
@@ -224,7 +224,7 @@ namespace Maze
             m_layout->getTransform(),
             getEntityRaw()->getEcsScene());
         m_stepButton->eventClick.subscribe(
-            [](Button2D* _button, CursorInputEvent const& _event)
+            [](Button2D* _button, CursorInputEvent& _event)
             {
                 TaskManager::GetInstancePtr()->addMainThreadTask(
                     []()

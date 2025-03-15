@@ -180,16 +180,16 @@ namespace Maze
         void processEntityAwakened() MAZE_OVERRIDE;
         
         //////////////////////////////////////////
-        void notifyDropDownClick(Button2D* _button, CursorInputEvent const& _inputEvent);
+        void notifyDropDownClick(Button2D* _button, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyLineClick(Button2D* _button, CursorInputEvent const& _inputEvent);
+        void notifyLineClick(Button2D* _button, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _inputEvent);
+        void notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent);
+        void notifyLineDoubleClick(Button2D* _button, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
         void notifyLineFocusChanged(Button2D* _button, bool _value);

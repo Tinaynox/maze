@@ -120,39 +120,39 @@ namespace Maze
         void updateUI();
 
         //////////////////////////////////////////
-        void notifyHSVRectCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyHSVRectCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyHSVRectCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyHSVRectCursorDrag(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyHSVRectCursorMoveOut(CursorInputEvent const& _inputEvent);
+        void notifyHSVRectCursorMoveOut(CursorInputEvent& _inputEvent);
         
         //////////////////////////////////////////
         void processHSVRectPick(Vec2F const& _positionOS);
 
 
         //////////////////////////////////////////
-        void notifyHSVBandCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyHSVBandCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyHSVBandCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyHSVBandCursorDrag(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyHSVBandCursorMoveOut(CursorInputEvent const& _inputEvent);
+        void notifyHSVBandCursorMoveOut(CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
         void processHSVBandPick(Vec2F const& _positionOS);
 
 
         //////////////////////////////////////////
-        void notifyRGBBandCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyRGBBandCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyRGBBandCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyRGBBandCursorDrag(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyRGBBandCursorMoveOut(CursorInputEvent const& _inputEvent);
+        void notifyRGBBandCursorMoveOut(CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
         void processRGBBandPick(S32 _channel, Vec2F const& _positionOS);

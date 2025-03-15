@@ -229,27 +229,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmoToolsManager::notifyCursorMoveIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
+    void GizmoToolsManager::notifyCursorMoveIn(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         processCursorMove(_positionOS);
     }
 
     //////////////////////////////////////////
-    void GizmoToolsManager::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
+    void GizmoToolsManager::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         if (_event.button == 0)
             processCursorPressIn(_positionOS);
     }
 
     //////////////////////////////////////////
-    void GizmoToolsManager::notifyCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
+    void GizmoToolsManager::notifyCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         if (_event.button == 0)
             processCursorRelease();
     }
 
     //////////////////////////////////////////
-    void GizmoToolsManager::notifyCursorReleaseOut(CursorInputEvent const& _event)
+    void GizmoToolsManager::notifyCursorReleaseOut(CursorInputEvent& _event)
     {
         if (_event.button == 0)
             processCursorRelease();

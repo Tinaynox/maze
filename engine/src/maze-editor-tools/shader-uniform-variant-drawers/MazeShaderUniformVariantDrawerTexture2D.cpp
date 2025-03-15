@@ -269,7 +269,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderUniformVariantDrawerTexture2D::notifySelectAssetClick(Button2D* _button, CursorInputEvent const& _event)
+    void ShaderUniformVariantDrawerTexture2D::notifySelectAssetClick(Button2D* _button, CursorInputEvent& _event)
     {
         ShaderUniformVariantDrawerTexture2DWPtr weakPtr = cast<ShaderUniformVariantDrawerTexture2D>();
         TexturePickerManager::GetInstancePtr()->openTexturePicker(

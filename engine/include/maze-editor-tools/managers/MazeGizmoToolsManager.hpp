@@ -103,16 +103,16 @@ namespace Maze
         void unsubscribeCanvas(CanvasPtr const& _canvas);
 
         //////////////////////////////////////////
-        void notifyCursorMoveIn(Vec2F const& _positionOS, CursorInputEvent const& _event);
+        void notifyCursorMoveIn(Vec2F const& _positionOS, CursorInputEvent& _event);
 
         //////////////////////////////////////////
-        void notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _event);
+        void notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _event);
 
         //////////////////////////////////////////
-        void notifyCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _event);
+        void notifyCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event);
 
         //////////////////////////////////////////
-        void notifyCursorReleaseOut(CursorInputEvent const& _event);
+        void notifyCursorReleaseOut(CursorInputEvent& _event);
 
         //////////////////////////////////////////
         void processCursorMove(Vec2F const& _positionOS);

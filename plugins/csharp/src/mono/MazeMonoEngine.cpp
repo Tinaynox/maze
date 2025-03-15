@@ -34,6 +34,7 @@
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsGraphics.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsEngine.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsEditorTools.hpp"
+#include "maze-plugin-csharp/mono-binds/MazeMonoBindsUI.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
@@ -507,6 +508,7 @@ namespace Maze
 
         BindCppFunctionsCore();
         BindCppFunctionsGraphics();
+        BindCppFunctionsUI();
         BindCppFunctionsEngine();
         BindCppFunctionsEditorTools();
 

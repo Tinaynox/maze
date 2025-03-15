@@ -35,6 +35,7 @@
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 
 
 //////////////////////////////////////////
@@ -149,6 +150,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_CORE_API Window
         : public SharedObject<Window>
+        , public IndexedResource<Window>
     {
     public:
 

@@ -96,15 +96,15 @@ namespace Maze
         InputSystem2D::CanvasData const& _canvasData,
         Vec2F const& _renderTargetCoords)
     {
-        _event.canvas = _canvasData.canvas;
-        _event.rootCanvas = _canvasData.rootCanvas;
+        _event.canvasId = _canvasData.canvas ? _canvasData.canvas->getResourceId() : c_invalidResourceId;
+        _event.rootCanvasId = _canvasData.rootCanvas ? _canvasData.rootCanvas->getResourceId() : c_invalidResourceId;
 
         //bool canvasContainsCursor = _canvasData.canvas->getRenderTargetAABB().contains(_renderTargetCoords);
 
-        if (_event.rootCanvas)
-            _event.position = _event.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+        if (_canvasData.rootCanvas)
+            _event.position = _canvasData.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
         else
-            _event.position = _event.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            _event.position = _canvasData.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
 
     }
 
@@ -114,7 +114,7 @@ namespace Maze
         Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
         Vector<InputSystem2D::UIElementData>::const_iterator const& _it,
         Vector<InputSystem2D::UIElementData>::const_iterator& _end,
-        CursorInputEvent const& _cursorInputEvent,
+        CursorInputEvent& _cursorInputEvent,
         std::function<void(UIElement2D*)> _cb)
     {
         InputSystem2D::UIElementData const& elementData = *_it;
@@ -158,7 +158,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void ProcessUIElementsInput(
         Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
-        CursorInputEvent const& _cursorInputEvent,
+        CursorInputEvent& _cursorInputEvent,
         std::function<void(UIElement2D*)> _cb)
     {
         if (_cursorInputEvent.isCaptured())
@@ -177,7 +177,7 @@ namespace Maze
         Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
         Vector<InputSystem2D::UIElementData>::const_iterator const& _it,
         Vector<InputSystem2D::UIElementData>::const_iterator& _end,
-        CursorInputEvent const& _cursorInputEvent,
+        CursorInputEvent& _cursorInputEvent,
         std::function<void(UIElement2D*)> _cbValid,
         std::function<void(UIElement2D*)> _cbInvalid)
     {
@@ -224,7 +224,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void ProcessUIElementsMoveInput(
         Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
-        CursorInputEvent const& _cursorInputEvent,
+        CursorInputEvent& _cursorInputEvent,
         std::function<void(UIElement2D*)> _cbValid,
         std::function<void(UIElement2D*)> _cbInvalid)
     {
@@ -242,7 +242,7 @@ namespace Maze
         Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
         Vector<InputSystem2D::UIElementData>::const_iterator const& _it,
         Vector<InputSystem2D::UIElementData>::const_iterator& _end,
-        CursorInputEvent const& _cursorInputEvent,
+        CursorInputEvent& _cursorInputEvent,
         UIElement2D const* _element,
         CursorElementTraceParams const& _traceParams,
         bool& _outResult)
@@ -301,7 +301,7 @@ namespace Maze
     //////////////////////////////////////////
     inline bool TraceUIElement(
         Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
-        CursorInputEvent const& _cursorInputEvent,
+        CursorInputEvent& _cursorInputEvent,
         UIElement2D const* _element,
         CursorElementTraceParams const& _traceParams)
     {
@@ -531,7 +531,7 @@ namespace Maze
             Maze::Vec2F::c_zero,
             _traceParams.buttonIndex,
             _traceParams.inputSource,
-            window);
+            window ? window->getResourceId() : c_invalidResourceId);
 
         for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
                                                         end = m_sortedCanvasData.rend();
@@ -609,7 +609,7 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyMouse(Maze::InputEventMouseData const& _mouseData)
     {
-        Vec2F mousePosition = m_coordsConverter(Vec2F((F32)_mouseData.x, (F32)_mouseData.y));
+        Vec2F mousePosition = m_coordsConverter(_mouseData.window, Vec2F((F32)_mouseData.x, (F32)_mouseData.y));
 
         switch (_mouseData.type)
         {
@@ -648,7 +648,7 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyTouch(Maze::InputEventTouchData const& _touchData)
     {
-        Vec2F touchPosition = m_coordsConverter(Vec2F((F32)_touchData.x, (F32)_touchData.y));
+        Vec2F touchPosition = m_coordsConverter(_touchData.window, Vec2F((F32)_touchData.x, (F32)_touchData.y));
 
         switch (_touchData.type)
         {
@@ -679,7 +679,7 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyVirtualCursor(Maze::InputEventVirtualCursorData const& _virtualCursorData)
     {
-        Vec2F mousePosition = m_coordsConverter(Vec2F((F32)_virtualCursorData.x, (F32)_virtualCursorData.y));
+        Vec2F mousePosition = m_coordsConverter(_virtualCursorData.window, Vec2F((F32)_virtualCursorData.x, (F32)_virtualCursorData.y));
 
         switch (_virtualCursorData.type)
         {
@@ -729,7 +729,7 @@ namespace Maze
                 Maze::Vec2F::c_zero,
                 _buttonIndex,
                 _inputSource,
-                _window);
+                _window ? _window->getResourceId() : c_invalidResourceId);
 
             for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
                 end = m_sortedCanvasData.rend();
@@ -798,7 +798,7 @@ namespace Maze
             Maze::Vec2F::c_zero,
             _buttonIndex,
             _inputSource,
-            _window);
+            _window ? _window->getResourceId() : c_invalidResourceId);
 
         for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
             end = m_sortedCanvasData.rend();
@@ -848,7 +848,7 @@ namespace Maze
             Maze::Vec2F::c_zero,
             _buttonIndex,
             _inputSource,
-            _window);
+            _window ? _window->getResourceId() : c_invalidResourceId);
 
         for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
             end = m_sortedCanvasData.rend();
@@ -898,7 +898,7 @@ namespace Maze
             Maze::Vec2F::c_zero,
             _buttonIndex,
             _inputSource,
-            _window);
+            _window ? _window->getResourceId() : c_invalidResourceId);
 
         for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
             end = m_sortedCanvasData.rend();
@@ -972,7 +972,7 @@ namespace Maze
             Maze::Vec2F::c_zero,
             _buttonIndex,
             _inputSource,
-            _window);
+            _window ? _window->getResourceId() : c_invalidResourceId);
 
         for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
                                                         end = m_sortedCanvasData.rend();
@@ -1026,7 +1026,7 @@ namespace Maze
             Maze::Vec2F::c_zero,
             _buttonIndex,
             _inputSource,
-            _window);
+            _window ? _window->getResourceId() : c_invalidResourceId);
 
         for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
                                                         end = m_sortedCanvasData.rend();
@@ -1076,7 +1076,7 @@ namespace Maze
         CursorWheelInputEvent cursorInputEvent(
             _cursorIndex,
             _deltaWheel,
-            _window);
+            _window ? _window->getResourceId() : c_invalidResourceId);
 
         for (Vector<CanvasData>::const_reverse_iterator it = m_sortedCanvasData.rbegin(),
                                                         end = m_sortedCanvasData.rend();
@@ -1094,15 +1094,15 @@ namespace Maze
             }
 
             Vector<UIElementData> const& sortedUIElements2D = canvasData.sortedUIElements2D;
-            cursorInputEvent.canvas = canvasData.canvas;
-            cursorInputEvent.rootCanvas = canvasData.rootCanvas;
+            cursorInputEvent.canvasId = canvasData.canvas ? canvasData.canvas->getResourceId() : c_invalidResourceId;
+            cursorInputEvent.rootCanvasId = canvasData.rootCanvas ? canvasData.rootCanvas->getResourceId() : c_invalidResourceId;
 
             //bool canvasContainsCursor = canvasData.canvas->getRenderTargetAABB().contains(_renderTargetCoords);
 
-            if (cursorInputEvent.rootCanvas)
-                cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            if (canvasData.rootCanvas)
+                cursorInputEvent.position = canvasData.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
             else
-                cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+                cursorInputEvent.position = canvasData.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
 
             for (Vector<UIElementData>::const_iterator it2 = sortedUIElements2D.begin(),
                                                              end2 = sortedUIElements2D.end();

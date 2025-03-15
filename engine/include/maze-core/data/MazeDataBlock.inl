@@ -119,6 +119,10 @@ namespace Maze
 
         if ((U8)param.type != (U8)TypeOf<TValue>::type)
         {
+            if MAZE_CONSTEXPR17 (((U8)param.type == (U8)DataBlockParamType::ParamS32 && (U8)TypeOf<TValue>::type == (U8)DataBlockParamType::ParamU32) ||
+                                 ((U8)param.type == (U8)DataBlockParamType::ParamU32 && (U8)TypeOf<TValue>::type == (U8)DataBlockParamType::ParamS32))
+                return static_cast<TValue>(castParamValue<TValue, ParamValue>(value));
+
             MAZE_ERROR(
                 "Param type mismatch. Inner type: '%s'(%d). Requested type: '%s'(%d)",
                 static_cast<CString>(c_dataBlockParamTypeInfo[(S32)param.type].name), (S32)param.type,

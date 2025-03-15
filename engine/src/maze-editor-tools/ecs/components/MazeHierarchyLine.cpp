@@ -670,7 +670,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::notifyDropDownClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void HierarchyLine::notifyDropDownClick(Button2D* _button, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -679,7 +679,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::notifyLineClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void HierarchyLine::notifyLineClick(Button2D* _button, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -688,7 +688,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _inputEvent)
+    void HierarchyLine::notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -697,7 +697,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void HierarchyLine::notifyLineDoubleClick(Button2D* _button, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;

@@ -455,7 +455,7 @@ namespace Maze
                     m_parent->getEntityRaw()->getEcsScene());
 
                 button->eventClick.subscribe(
-                    [assetFileName, assetFileFullPath](Button2D* _button, CursorInputEvent const& _event)
+                    [assetFileName, assetFileFullPath](Button2D* _button, CursorInputEvent& _event)
                     {
                         MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(assetFileName);
                         if (material)

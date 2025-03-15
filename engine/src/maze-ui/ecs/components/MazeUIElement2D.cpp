@@ -99,7 +99,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void UIElement2D::processCursorPress(
-        CursorInputEvent const& _inputEvent)
+        CursorInputEvent& _inputEvent)
     {
         if (m_cursorIndex != -1 && m_cursorIndex != _inputEvent.index)
             return;
@@ -137,7 +137,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void UIElement2D::processCursorClick(
-        CursorInputEvent const& _inputEvent)
+        CursorInputEvent& _inputEvent)
     {
         if (m_cursorIndex != -1 && m_cursorIndex != _inputEvent.index)
             return;
@@ -165,7 +165,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void UIElement2D::processCursorDoubleClick(
-        CursorInputEvent const& _inputEvent)
+        CursorInputEvent& _inputEvent)
     {
         if (m_cursorIndex != -1 && m_cursorIndex != _inputEvent.index)
             return;
@@ -193,7 +193,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void UIElement2D::processCursorRelease(
-        CursorInputEvent const& _inputEvent,
+        CursorInputEvent& _inputEvent,
         bool _forceOut)
     {
         if (m_cursorIndex != -1 && m_cursorIndex != _inputEvent.index)
@@ -203,12 +203,13 @@ namespace Maze
 
         setPressed(false);
 
-        if (!eventCursorReleaseIn.empty() || !eventPressedChanged.empty() || !eventCursorRelease.empty() || !eventCursorReleaseOut.empty() || !eventClick.empty())
+        if (!eventCursorReleaseIn.empty() || !eventPressedChanged.empty() || !eventCursorRelease.empty() || !eventCursorReleaseOut.empty() || !eventClick.empty() || m_captureCursorHits)
         {
             Vec2F const& positionWS = _inputEvent.position;
 
             eventCursorRelease(_inputEvent);
-
+            getEntityRaw()->getEcsWorld()->sendEvent<UIElementCursorReleaseEvent>(getEntityId(), _inputEvent);
+            
             if (!m_bounds->getBounds().contains(positionWS))
             {
                 eventCursorReleaseOut(_inputEvent);
@@ -243,7 +244,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool UIElement2D::processCursorTrace(CursorInputEvent const& _inputEvent)
+    bool UIElement2D::processCursorTrace(CursorInputEvent& _inputEvent)
     {
         if (m_cursorIndex != -1 && m_cursorIndex != _inputEvent.index)
             return false;
@@ -267,7 +268,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void UIElement2D::processCursorMove(
-        CursorInputEvent const& _inputEvent)
+        CursorInputEvent& _inputEvent)
     {
         if (m_cursorIndex != -1 && m_cursorIndex != _inputEvent.index)
             return;
@@ -314,7 +315,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void UIElement2D::processCursorDrag(
-        CursorInputEvent const& _inputEvent)
+        CursorInputEvent& _inputEvent)
     {
         if (m_cursorIndex != -1 && m_cursorIndex != _inputEvent.index)
             return;

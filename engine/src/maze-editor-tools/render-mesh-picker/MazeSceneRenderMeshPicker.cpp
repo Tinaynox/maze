@@ -294,13 +294,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneRenderMeshPicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
+    void SceneRenderMeshPicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         
     }
 
     //////////////////////////////////////////
-    void SceneRenderMeshPicker::notifyCanvasCursorReleaseOut(CursorInputEvent const& _event)
+    void SceneRenderMeshPicker::notifyCanvasCursorReleaseOut(CursorInputEvent& _event)
     {
         
     }
@@ -372,7 +372,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneRenderMeshPicker::notifyButtonClick(Button2D* _button, CursorInputEvent const& _event)
+    void SceneRenderMeshPicker::notifyButtonClick(Button2D* _button, CursorInputEvent& _event)
     {
         for (RenderMeshPreviewData const& preview : m_previews)
         {

@@ -123,7 +123,7 @@ namespace Maze
             bool& _isMultiValue);
 
         //////////////////////////////////////////
-        void notifyExpandButtonClick(Button2D* _button, CursorInputEvent const& _inputEvent);
+        void notifyExpandButtonClick(Button2D* _button, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
         void notifyValueChanged(Dropdown2D* _dropdown, S32 _value);

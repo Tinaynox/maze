@@ -278,7 +278,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ComponentEditor::notifyExpandButtonClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void ComponentEditor::notifyExpandButtonClick(Button2D* _button, CursorInputEvent& _inputEvent)
     {
         m_bodyRoot->getEntityRaw()->setActiveSelf(!m_bodyRoot->getEntityRaw()->getActiveSelf());
 

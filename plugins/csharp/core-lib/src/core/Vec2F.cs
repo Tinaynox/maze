@@ -133,5 +133,10 @@ namespace Maze.Core
             double angle = 2.0 * Math.PI * random.NextDouble();
             return new Vec2F((float)Math.Cos(angle), (float)Math.Sin(angle));
         }
+
+        public override string ToString()
+        {
+            return $"[{X}, {Y}]";
+        }
     }
 }

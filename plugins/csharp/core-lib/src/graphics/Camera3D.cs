@@ -44,5 +44,10 @@ namespace Maze.Graphics
         {  
         }
 
+        public Ray ConvertViewportCoordsToRay(Vec2F positionViewport)
+        {
+            InternalCalls.Camera3DConvertViewportCoordsToRay(NativeComponentPtr, ref positionViewport, out Ray ray);
+            return ray;
+        }
     }
 }

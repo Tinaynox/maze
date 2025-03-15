@@ -48,6 +48,9 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Camera3DSetRenderTarget(NativePtr nativeComponentPtr, int value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Camera3DConvertViewportCoordsToRay(NativePtr nativeComponentPtr, ref Vec2F positionViewport, out Ray ray);
         #endregion
 
         #region Mesh
@@ -138,6 +141,14 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void CanvasSetRenderTarget(NativePtr nativeComponentPtr, int value);
+        #endregion
+
+        #region AbstractTextRenderer
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void AbstractTextRendererGetText(NativePtr nativeComponentPtr, out string outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void AbstractTextRendererSetText(NativePtr nativeComponentPtr, string value);
         #endregion
     }
 }

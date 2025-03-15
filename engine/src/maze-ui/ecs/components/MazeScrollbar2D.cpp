@@ -134,7 +134,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Scrollbar2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Scrollbar2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -153,7 +153,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Scrollbar2D::notifyCursorReleaseOut(CursorInputEvent const& _inputEvent)
+    void Scrollbar2D::notifyCursorReleaseOut(CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -162,7 +162,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Scrollbar2D::notifyCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Scrollbar2D::notifyCursorDrag(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -172,7 +172,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Scrollbar2D::notifyCursorMoveOut(CursorInputEvent const& _inputEvent)
+    void Scrollbar2D::notifyCursorMoveOut(CursorInputEvent& _inputEvent)
     {
 
         if (m_UIElement2D->getPressed())
@@ -201,7 +201,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Scrollbar2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Scrollbar2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         eventClick(this, _inputEvent);
     }

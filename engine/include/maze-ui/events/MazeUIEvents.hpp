@@ -156,7 +156,13 @@ namespace Maze
         inline Vec2F const& getPositionOS() const { return positionOS; }
 
         //////////////////////////////////////////
+        inline void setPositionOS(Vec2F const& _value) { positionOS = _value; }
+
+        //////////////////////////////////////////
         inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
+
+        //////////////////////////////////////////
+        inline void setInputEvent(CursorInputEvent const& _value) { inputEvent = _value; }
 
     public:
         Vec2F positionOS;
@@ -192,7 +198,13 @@ namespace Maze
         inline Vec2F const& getPositionOS() const { return positionOS; }
 
         //////////////////////////////////////////
+        inline void setPositionOS(Vec2F const& _value) { positionOS = _value; }
+
+        //////////////////////////////////////////
         inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
+
+        //////////////////////////////////////////
+        inline void setInputEvent(CursorInputEvent const& _value) { inputEvent = _value; }
 
     public:
         Vec2F positionOS;
@@ -228,7 +240,13 @@ namespace Maze
         inline Vec2F const& getPositionOS() const { return positionOS; }
 
         //////////////////////////////////////////
+        inline void setPositionOS(Vec2F const& _value) { positionOS = _value; }
+
+        //////////////////////////////////////////
         inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
+
+        //////////////////////////////////////////
+        inline void setInputEvent(CursorInputEvent const& _value) { inputEvent = _value; }
 
     public:
         Vec2F positionOS;
@@ -264,7 +282,13 @@ namespace Maze
         inline Vec2F const& getPositionOS() const { return positionOS; }
 
         //////////////////////////////////////////
+        inline void setPositionOS(Vec2F const& _value) { positionOS = _value; }
+
+        //////////////////////////////////////////
         inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
+
+        //////////////////////////////////////////
+        inline void setInputEvent(CursorInputEvent const& _value) { inputEvent = _value; }
 
     public:
         Vec2F positionOS;
@@ -300,7 +324,13 @@ namespace Maze
         inline Vec2F const& getPositionOS() const { return positionOS; }
 
         //////////////////////////////////////////
+        inline void setPositionOS(Vec2F const& _value) { positionOS = _value; }
+
+        //////////////////////////////////////////
         inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
+
+        //////////////////////////////////////////
+        inline void setInputEvent(CursorInputEvent const& _value) { inputEvent = _value; }
 
     public:
         Vec2F positionOS;
@@ -332,6 +362,42 @@ namespace Maze
 
         //////////////////////////////////////////
         inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
+
+        //////////////////////////////////////////
+        inline void setInputEvent(CursorInputEvent const& _value) { inputEvent = _value; }
+
+    public:
+        CursorInputEvent inputEvent;
+    };
+
+
+    //////////////////////////////////////////
+    // Class UIElemenReleaseEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UIElementCursorReleaseEvent
+        : public GenericEvent<UIElementCursorReleaseEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UIElementCursorReleaseEvent, Event);
+
+
+        //////////////////////////////////////////
+        UIElementCursorReleaseEvent() = default;
+
+        //////////////////////////////////////////
+        UIElementCursorReleaseEvent(
+            CursorInputEvent _inputEvent)
+            : inputEvent(_inputEvent)
+        {}
+
+        //////////////////////////////////////////
+        inline CursorInputEvent const& getInputEvent() const { return inputEvent; }
+
+        //////////////////////////////////////////
+        inline void setInputEvent(CursorInputEvent const& _value) { inputEvent = _value; }
 
     public:
         CursorInputEvent inputEvent;

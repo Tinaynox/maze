@@ -23,5 +23,10 @@ namespace Maze.Core
             W = w;
             H = h;
         }
+
+        public override string ToString()
+        {
+            return $"[{X}, {Y}][{W}, {H}]";
+        }
     }
 }

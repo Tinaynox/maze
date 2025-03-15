@@ -196,7 +196,7 @@ namespace Maze
             ColorU32::c_yellow);
         m_lightButton->setChecked(true);
         m_lightButton->eventClick.subscribe(
-            [this](Button2D* _button, CursorInputEvent const& _event)
+            [this](Button2D* _button, CursorInputEvent& _event)
         {
             SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchSceneDebugLightEnabled();
             SettingsManager::GetInstancePtr()->saveSettings();
@@ -211,7 +211,7 @@ namespace Maze
             ColorU32::c_white);
         m_axesButton->setChecked(true);
         m_axesButton->eventClick.subscribe(
-            [this](Button2D* _button, CursorInputEvent const& _event)
+            [this](Button2D* _button, CursorInputEvent& _event)
         {
             SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchSceneDebugAxesEnabled();
             SettingsManager::GetInstancePtr()->saveSettings();
@@ -226,7 +226,7 @@ namespace Maze
             ColorU32::c_white);
         m_gridButton->setChecked(true);
         m_gridButton->eventClick.subscribe(
-            [this](Button2D* _button, CursorInputEvent const& _event)
+            [this](Button2D* _button, CursorInputEvent& _event)
         {
             SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchSceneDebugGridEnabled();
             SettingsManager::GetInstancePtr()->saveSettings();
@@ -265,7 +265,7 @@ namespace Maze
                     Vec2F32(1.0f, 1.0f),
                     Vec2F32(1.0f, 1.0f));
                 m_saveButton->eventClick.subscribe(
-                    [](Button2D* _button, CursorInputEvent const& _event)
+                    [](Button2D* _button, CursorInputEvent& _event)
                 {
                     EditorSceneManager::GetInstancePtr()->saveAssetFile();
                 });
@@ -282,7 +282,7 @@ namespace Maze
                 Vec2F32(1.0f, 1.0f),
                 Vec2F32(1.0f, 1.0f));
             closeButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
+                [](Button2D* _button, CursorInputEvent& _event)
             {
                 EditorManager::GetInstancePtr()->clearMode();
             });

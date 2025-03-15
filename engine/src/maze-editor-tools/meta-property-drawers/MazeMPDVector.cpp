@@ -356,7 +356,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MetaPropertyDrawerVector::notifyExpandButtonClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void MetaPropertyDrawerVector::notifyExpandButtonClick(Button2D* _button, CursorInputEvent& _inputEvent)
     {
     }
 

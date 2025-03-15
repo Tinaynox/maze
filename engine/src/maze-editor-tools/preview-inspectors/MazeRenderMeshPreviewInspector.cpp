@@ -132,7 +132,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderMeshPreviewInspector::processCursorPress(Vec2F const& _positionOS, CursorInputEvent const& _event)
+    void RenderMeshPreviewInspector::processCursorPress(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         if (_event.button == 1)
         {
@@ -141,7 +141,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderMeshPreviewInspector::processCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _event)
+    void RenderMeshPreviewInspector::processCursorDrag(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         Vec2F deltaPosition = _positionOS - m_cursorPositionLastFrame;
 

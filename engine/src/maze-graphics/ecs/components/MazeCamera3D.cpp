@@ -185,6 +185,9 @@ namespace Maze
     //////////////////////////////////////////
     Ray Camera3D::convertViewportCoordsToRay(Vec2F const& _positionV) const
     {
+        if (!m_renderTarget)
+            return Ray();
+
         Vec2U renderTargetSize = m_renderTarget->getRenderTargetSize();
         if (renderTargetSize.x == 0u || renderTargetSize.y == 0u ||
             getViewport().size.x == 0.0f || getViewport().size.y == 0.0f)
@@ -193,20 +196,22 @@ namespace Maze
         TMat const& cameraTransform = getTransform()->getWorldTransform();
         Vec3F cameraPosition = cameraTransform.getTranslation();
         Mat4F projectionMatrix = calculateProjectionMatrix(getRenderTarget());
+        Mat4F invProjectionMatrix = projectionMatrix.inversed();
 
         Vec2F p = _positionV / ((Vec2F)renderTargetSize * getViewport().size);
-        Vec4F positionNDC = Vec4F((p * 2.0f - 1.0f), -1.0f, 1.0f);
-        Vec4F positionCS = positionNDC;
+        Vec2F positionNDC = (p * 2.0f - 1.0f);
+        Vec4F positionCSNear = Vec4F(positionNDC.x, positionNDC.y, 1.0f, 1.0f);
+        Vec4F positionCSFar = Vec4F(positionNDC.x, positionNDC.y, -1.0f, 1.0f);
 
-        Vec4F positionVS = positionCS * projectionMatrix.inversed();
-        positionVS.w = 1.0;
-        Vec4F positionWS = cameraTransform.transform(positionVS);
+        Vec4F positionVSNear = positionCSNear * invProjectionMatrix;
+        Vec4F positionVSFar = positionCSFar * invProjectionMatrix;
+        
+        Vec3F positionWSNear = cameraTransform.transform(positionVSNear.xyz());
+        Vec3F positionWSFar = cameraTransform.transform(positionVSFar.xyz());
 
         Ray ray;
-        ray.setDirection((positionWS.xyz() - cameraPosition).normalizedCopy());
-        ray.setPoint(positionWS.xyz() - ray.getDirection());
-        
-
+        ray.setPoint(positionWSNear);
+        ray.setDirection((positionWSFar - positionWSNear).normalizedCopy());
         return ray;
     }
 

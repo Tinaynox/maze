@@ -36,6 +36,7 @@
 #include "maze-core/services/MazeLogService.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-ui/MazeCursorInputEvent.hpp"
 
 
 //////////////////////////////////////////
@@ -172,6 +173,8 @@ namespace Maze
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Rect2F);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(ColorU32);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(ColorF128);
+
+        MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorInputEvent);
 
 
     } // namespace MonoHelper

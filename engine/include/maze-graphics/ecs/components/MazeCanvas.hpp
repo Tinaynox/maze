@@ -35,6 +35,7 @@
 #include "maze-core/math/MazeRect2.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 
 
 //////////////////////////////////////////
@@ -60,6 +61,7 @@ namespace Maze
     class MAZE_GRAPHICS_API Canvas
         : public Component
         , public MultiDelegateCallbackReceiver
+        , public IndexedResource<Canvas>
     {
     public:
 

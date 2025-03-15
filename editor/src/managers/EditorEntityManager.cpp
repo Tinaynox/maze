@@ -31,6 +31,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/ecs/components/MazeRenderController.hpp"
 #include "maze-graphics/ecs/components/MazeGraphicsEventRetranslator.hpp"
+#include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-ui/ecs/components/MazeInputSystem2D.hpp"
 #include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
@@ -40,6 +41,7 @@
 #include "layout/EditorLayout.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
+#include "Editor.hpp"
 
 
 //////////////////////////////////////////
@@ -101,9 +103,12 @@ namespace Maze
             entity->createComponent<StaticName>("InputSystem2D");
             m_inputSystem2D = entity->createComponent<InputSystem2D>();
             m_inputSystem2D->setCoordsConverter(
-                [](Vec2F32 const& _coords)
+                [](Window* _window, Vec2F32 const& _coords)
             {
-                return EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(_coords);
+                if (_window == Editor::GetInstancePtr()->getMainRenderWindow()->getWindow().get())
+                    return EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(_coords);
+
+                return _coords;
             });
         }
 

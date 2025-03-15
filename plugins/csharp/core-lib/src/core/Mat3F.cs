@@ -101,8 +101,8 @@ namespace Maze.Core
         public override string ToString()
         {
             return
-                $"[{M00}, {M01}, {M02}]\n" +
-                $"[{M10}, {M11}, {M12}]\n" +
+                $"[{M00}, {M01}, {M02}]" +
+                $"[{M10}, {M11}, {M12}]" +
                 $"[{M20}, {M21}, {M22}]";
         }
     }

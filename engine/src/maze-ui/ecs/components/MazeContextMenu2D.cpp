@@ -99,7 +99,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ContextMenu2D::notifyCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
+    void ContextMenu2D::notifyCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         if (!m_callback)
             return;

@@ -442,7 +442,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void PreviewController::notifyBodyBackgroundElementCursorPress(
-        Vec2F const& _positionOS, CursorInputEvent const& _event)
+        Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         if (m_previewInspector)
             m_previewInspector->processCursorPress(_positionOS, _event);
@@ -450,7 +450,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void PreviewController::notifyBodyBackgroundElementCursorDrag(
-        Vec2F const& _positionOS, CursorInputEvent const& _event)
+        Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         if (m_previewInspector)
             m_previewInspector->processCursorDrag(_positionOS, _event);

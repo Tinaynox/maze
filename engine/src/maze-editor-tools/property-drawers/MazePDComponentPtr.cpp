@@ -163,7 +163,7 @@ namespace Maze
                 if (!entity)
                     return;
 
-                ComponentPtr const& component = entity->getComponentById(m_componentId);
+                ComponentPtr const& component = entity->getComponentInheritedFrom(m_componentId);
                 if (!component)
                     return;
 
@@ -188,7 +188,7 @@ namespace Maze
                 if (!entity)
                     return;
 
-                ComponentPtr const& component = entity->getComponentById(m_componentId);
+                ComponentPtr const& component = entity->getComponentInheritedFrom(m_componentId);
                 setValue(component);
                 eventUIData();
             }
@@ -242,7 +242,7 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerComponentPtr::setValue(ComponentPtr const& _value)
     {
-        if (_value && m_componentId != c_invalidComponentId && _value->getComponentId() != m_componentId)
+        if (_value && m_componentId != c_invalidComponentId && !_value->getMetaClass()->isInheritedFrom(m_componentId))
             return;
 
         bool isValid = _value && _value->getEntityRaw() && _value && _value->getEntityRaw()->getEcsWorld();
@@ -264,7 +264,7 @@ namespace Maze
         if (!entity)
             return ComponentPtr();
 
-        return entity->getComponentById(m_componentId);
+        return entity->getComponentInheritedFrom(m_componentId);
     }
 
 

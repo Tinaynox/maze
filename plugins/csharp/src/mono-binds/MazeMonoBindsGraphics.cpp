@@ -34,6 +34,8 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
+#include "maze-graphics/ecs/components/MazeAbstractTextRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeAbstractTextRenderer3D.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -153,6 +155,14 @@ namespace Maze
 
         RenderTarget* renderTarget = RenderWindow::GetResource(_resourceId);
         _component->castRaw<Camera3D>()->setRenderTarget(renderTarget ? renderTarget->getSharedPtr() : nullptr);
+    }
+
+    //////////////////////////////////////////
+    inline void Camera3DConvertViewportCoordsToRay(Component* _component, Vec2F const& _positionV, Ray& _ray)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+
+        _ray = _component->castRaw<Camera3D>()->convertViewportCoordsToRay(_positionV);
     }
 
     //////////////////////////////////////////
@@ -419,6 +429,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void AbstractTextRendererGetText(Component* _component, MonoString* _text)
+    {
+        MAZE_ERROR_RETURN_IF(!_component->getMetaClass()->isInheritedFrom<AbstractTextRenderer>(), "Component is not AbstractTextRenderer!");
+        String const& text = _component->castRaw<AbstractTextRenderer>()->getText();
+        mono_string_new(MonoEngine::GetMonoDomain(), text.c_str());
+    }
+
+    //////////////////////////////////////////
+    inline void AbstractTextRendererSetText(Component* _component, MonoString* _text)
+    {
+        MAZE_ERROR_RETURN_IF(!_component->getMetaClass()->isInheritedFrom<AbstractTextRenderer>(), "Component is not AbstractTextRenderer!");
+        Char* cstr = mono_string_to_utf8(_text);
+        _component->castRaw<AbstractTextRenderer>()->setText(cstr);
+    }
+
+    //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsGraphics()
     {
         // MeshRenderer
@@ -438,6 +464,7 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DSetRenderMask);
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DGetRenderTarget);
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DSetRenderTarget);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DConvertViewportCoordsToRay);
         
         // SubMesh
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreateSubMesh);
@@ -476,6 +503,10 @@ namespace Maze
         // Canvas
         MAZE_GRAPHICS_MONO_BIND_FUNC(CanvasGetRenderTarget);
         MAZE_GRAPHICS_MONO_BIND_FUNC(CanvasSetRenderTarget);
+
+        // AbstractTextRenderer
+        MAZE_GRAPHICS_MONO_BIND_FUNC(AbstractTextRendererGetText);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(AbstractTextRendererSetText);
     }
 
 } // namespace Maze

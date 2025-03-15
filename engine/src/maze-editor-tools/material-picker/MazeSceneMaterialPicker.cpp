@@ -295,13 +295,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
+    void SceneMaterialPicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::notifyCanvasCursorReleaseOut(CursorInputEvent const& _event)
+    void SceneMaterialPicker::notifyCanvasCursorReleaseOut(CursorInputEvent& _event)
     {
         
     }
@@ -415,7 +415,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::notifyButtonClick(Button2D* _button, CursorInputEvent const& _event)
+    void SceneMaterialPicker::notifyButtonClick(Button2D* _button, CursorInputEvent& _event)
     {
         for (MaterialPreviewData const& preview : m_previews)
         {

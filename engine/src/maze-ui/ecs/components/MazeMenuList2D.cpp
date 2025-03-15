@@ -162,7 +162,7 @@ namespace Maze
                 {
                     button->eventClick.clear();
                     button->eventClick.subscribe(
-                        [callback, itemText](Button2D* _button, CursorInputEvent const& _inputEvent)
+                        [callback, itemText](Button2D* _button, CursorInputEvent& _inputEvent)
                         {
                             if (_inputEvent.button != 0)
                                 return;
@@ -196,7 +196,7 @@ namespace Maze
                 if (callback)
                 {
                     button->eventClick.subscribe(
-                        [callback, itemText](Button2D* _button, CursorInputEvent const& _inputEvent)
+                        [callback, itemText](Button2D* _button, CursorInputEvent& _inputEvent)
                         {
                             if (_inputEvent.button != 0)
                                 return;

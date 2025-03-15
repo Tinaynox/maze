@@ -296,13 +296,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
+    void SceneTexturePicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::notifyCanvasCursorReleaseOut(CursorInputEvent const& _event)
+    void SceneTexturePicker::notifyCanvasCursorReleaseOut(CursorInputEvent& _event)
     {
         
     }
@@ -384,7 +384,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::notifyButtonClick(Button2D* _button, CursorInputEvent const& _event)
+    void SceneTexturePicker::notifyButtonClick(Button2D* _button, CursorInputEvent& _event)
     {
         for (TexturePreviewData const& preview : m_previews)
         {
