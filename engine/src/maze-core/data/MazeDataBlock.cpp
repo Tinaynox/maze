@@ -109,30 +109,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // DataBlockDataBuffer
-    //
-    //////////////////////////////////////////
-    U8* DataBlockDataBuffer::insertAt(U32 _at, Size _size, U8 const* _data)
-    {
-        U8* destPtr = m_buffer.insert(_at, _size);
-        memcpy(destPtr, _data, _size);
-        return destPtr;
-    }
-
-    //////////////////////////////////////////
-    void DataBlockDataBuffer::erase(U32 _at, Size _size)
-    {
-        m_buffer.erase(_at, _size);
-    }
-
-    //////////////////////////////////////////
-    void DataBlockDataBuffer::clear()
-    {
-        m_buffer.clear();
-    }
-
-
-    //////////////////////////////////////////
     // DataBlock
     //
     //////////////////////////////////////////

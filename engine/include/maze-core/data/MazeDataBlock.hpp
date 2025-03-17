@@ -212,13 +212,13 @@ namespace Maze
         inline U8 const* getDataRO(Size _offs = 0u) const { return m_buffer.getDataRO() + _offs; }
 
         //////////////////////////////////////////
-        U8* insertAt(U32 _at, Size _size, U8 const* _data);
+        inline U8* insertAt(U32 _at, Size _size, U8 const* _data) { return m_buffer.insertAt(_at, _size, _data); }
 
         //////////////////////////////////////////
-        void erase(U32 _at, Size _size);
+        inline void erase(U32 _at, Size _size) { m_buffer.erase(_at, _size); }
 
         //////////////////////////////////////////
-        void clear();
+        inline void clear() { m_buffer.clear(); }
 
     private:
         ByteBuffer m_buffer;

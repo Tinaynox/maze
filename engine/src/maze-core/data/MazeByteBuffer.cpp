@@ -221,6 +221,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    U8* ByteBuffer::insertAt(U32 _at, Size _size, U8 const* _data)
+    {
+        U8* destPtr = insert(_at, _size);
+        memcpy(destPtr, _data, _size);
+        return destPtr;
+    }
+
+    //////////////////////////////////////////
     void ByteBuffer::erase(U32 _at, Size _size)
     {
         if (_size == 0)

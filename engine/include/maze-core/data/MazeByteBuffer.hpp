@@ -122,6 +122,9 @@ namespace Maze
         U8* insert(U32 _at, Size _size);
 
         //////////////////////////////////////////
+        U8* insertAt(U32 _at, Size _size, U8 const* _data);
+
+        //////////////////////////////////////////
         void erase(U32 _at, Size _size);
 
         //////////////////////////////////////////
