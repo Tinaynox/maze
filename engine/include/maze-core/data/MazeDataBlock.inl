@@ -219,7 +219,7 @@ namespace Maze
     inline TValue DataBlock::getParamValueByName(HashedCString _name, TValue const& _defaultValue) const
     {
         SharedStringId nameId = getSharedStringId(_name);
-        return nameId < 0 ? _defaultValue : getParamValueByNameId(nameId, _defaultValue);
+        return nameId == 0 ? _defaultValue : getParamValueByNameId(nameId, _defaultValue);
     }
             
     //////////////////////////////////////////

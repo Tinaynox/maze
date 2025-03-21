@@ -22,7 +22,19 @@ namespace Maze.Editor
         [EntitySystem, EnableInEditor]
         public void OnCreate()
         {
-            
+            DataBlock testBlock = new DataBlock();
+            testBlock.AddS32("a", 42);
+            testBlock.AddS16("bb", 255);
+            testBlock.AddS8("c", -25);
+            testBlock.AddBool("bool", true);
+            testBlock.AddS64("d", 23435623622);
+
+            int a = testBlock.GetS32("a");
+            short bb = testBlock.GetS16("bb");
+            sbyte c = testBlock.GetS8("c");
+            long d = testBlock.GetS64("d");
+            bool b0 = testBlock.GetBool("bool");
+            Debug.LogError($"a={a} bb={bb} c={c} b0={b0} d={d}");
         }
 
         [EntitySystem, EnableInEditor]

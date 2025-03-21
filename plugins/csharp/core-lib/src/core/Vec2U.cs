@@ -62,6 +62,26 @@ namespace Maze.Core
             return new Vec2U(vec0.X / vec1.X, vec0.Y / vec1.Y);
         }
 
+        public byte[] GetBytes()
+        {
+            byte[] bytes = new byte[8];
+            BitConverter.GetBytes(X).CopyTo(bytes, 0);
+            BitConverter.GetBytes(Y).CopyTo(bytes, 4);
+            return bytes;
+        }
+
+        public static Vec2U FromBytes(byte[] bytes, int startIndex = 0)
+        {
+            if (bytes == null || bytes.Length - startIndex < 8)
+                throw new ArgumentException("Byte array must contain at least 8 bytes");
+
+            return new Vec2U
+            {
+                X = BitConverter.ToUInt32(bytes, startIndex + 0),
+                Y = BitConverter.ToUInt32(bytes, startIndex + 4)
+            };
+        }
+
         public override string ToString()
         {
             return $"[{X}, {Y}]";

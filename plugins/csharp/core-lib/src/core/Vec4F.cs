@@ -123,6 +123,30 @@ namespace Maze.Core
             return new Vec4F(vec0.X / vec1.X, vec0.Y / vec1.Y, vec0.Z / vec1.Z, vec0.W / vec1.W);
         }
 
+        public byte[] GetBytes()
+        {
+            byte[] bytes = new byte[16];
+            BitConverter.GetBytes(X).CopyTo(bytes, 0);
+            BitConverter.GetBytes(Y).CopyTo(bytes, 4);
+            BitConverter.GetBytes(Z).CopyTo(bytes, 8);
+            BitConverter.GetBytes(W).CopyTo(bytes, 8);
+            return bytes;
+        }
+
+        public static Vec4F FromBytes(byte[] bytes, int startIndex = 0)
+        {
+            if (bytes == null || bytes.Length - startIndex < 16)
+                throw new ArgumentException("Byte array must contain at least 8 bytes");
+
+            return new Vec4F
+            {
+                X = BitConverter.ToSingle(bytes, startIndex + 0),
+                Y = BitConverter.ToSingle(bytes, startIndex + 4),
+                Z = BitConverter.ToSingle(bytes, startIndex + 8),
+                W = BitConverter.ToSingle(bytes, startIndex + 12)
+            };
+        }
+
         public override string ToString()
         {
             return $"[{X}, {Y}, {Z}, {W}]";
