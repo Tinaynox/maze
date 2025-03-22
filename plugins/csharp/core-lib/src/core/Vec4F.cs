@@ -136,7 +136,7 @@ namespace Maze.Core
         public static Vec4F FromBytes(byte[] bytes, int startIndex = 0)
         {
             if (bytes == null || bytes.Length - startIndex < 16)
-                throw new ArgumentException("Byte array must contain at least 8 bytes");
+                throw new ArgumentException("Byte array must contain at least 16 bytes");
 
             return new Vec4F
             {

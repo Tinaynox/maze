@@ -8,103 +8,11 @@ namespace Maze.Core
         TopmostBlock = 1
     }
 
-    public enum DataBlockParamType : uint
-    {
-        None = 0,
-        ParamS8,
-        ParamS16,
-        ParamS32,
-        ParamS64,
-        ParamU8,
-        ParamU16,
-        ParamU32,
-        ParamU64,
-        ParamF32,
-        ParamF64,
-        ParamBool,
-        ParamVec4S8,
-        ParamVec4U8,
-        ParamVec2S32,
-        ParamVec3S32,
-        ParamVec4S32,
-        ParamVec2U32,
-        ParamVec3U32,
-        ParamVec4U32,
-        ParamVec2F32,
-        ParamVec3F32,
-        ParamVec4F32,
-        ParamVec2B,
-        ParamVec3B,
-        ParamVec4B,
-        ParamMat3F32,
-        ParamMat4F32,
-        ParamTMat,
-        ParamString,
-
-        MAX
-    }
-
-    public struct DataBlockParam
-    {
-        public uint NameId;
-        public DataBlockParamType Type;
-        public uint Value;
-
-        public static DataBlockParamType GetType<T>() where T : struct
-        {
-            switch (default(T))
-            {
-                case sbyte _: return DataBlockParamType.ParamS8;
-                case short _: return DataBlockParamType.ParamS16;
-                case int _: return DataBlockParamType.ParamS32;
-                case long _: return DataBlockParamType.ParamS64;
-                case byte _: return DataBlockParamType.ParamU8;
-                case ushort _: return DataBlockParamType.ParamU16;
-                case uint _: return DataBlockParamType.ParamU32;
-                case ulong _: return DataBlockParamType.ParamU64;
-                case float _: return DataBlockParamType.ParamF32;
-                case double _: return DataBlockParamType.ParamF64;
-                case bool _: return DataBlockParamType.ParamBool;
-                case Vec2F _: return DataBlockParamType.ParamVec2F32;
-                case Vec3F _: return DataBlockParamType.ParamVec3F32;
-                case Vec4F _: return DataBlockParamType.ParamVec4F32;
-                case Vec2U _: return DataBlockParamType.ParamVec2U32;
-                case Mat3F _: return DataBlockParamType.ParamMat3F32;
-                case Mat4F _: return DataBlockParamType.ParamMat4F32;
-                case TMat _: return DataBlockParamType.ParamTMat;
-                default: throw new NotImplementedException();
-            }
-        }
-
-        public static byte[] GetBytes<T>(T value) where T : struct
-        {
-            switch (value)
-            {
-                case sbyte castValue: return BitConverter.GetBytes(castValue);
-                case short castValue: return BitConverter.GetBytes(castValue);
-                case int castValue: return BitConverter.GetBytes(castValue);
-                case long castValue: return BitConverter.GetBytes(castValue);
-                case byte castValue: return BitConverter.GetBytes(castValue);
-                case ushort castValue: return BitConverter.GetBytes(castValue);
-                case uint castValue: return BitConverter.GetBytes(castValue);
-                case ulong castValue: return BitConverter.GetBytes(castValue);
-                case float castValue: return BitConverter.GetBytes(castValue);
-                case double castValue: return BitConverter.GetBytes(castValue);
-                case bool castValue: return BitConverter.GetBytes(castValue);
-                case Vec2F castValue: return castValue.GetBytes();
-                case Vec3F castValue: return castValue.GetBytes();
-                case Vec4F castValue: return castValue.GetBytes();
-                case Vec2U castValue: return castValue.GetBytes();
-                default: throw new NotImplementedException($"value={value}");
-            }
-        }
-    }
-
     public class DataBlock
     {
         DataBlockShared m_Shared;
         List<DataBlockParam> m_Params;
-        ByteBuffer m_ComplexParamsBuffer;
+        List<DataBlock> m_DataBlocks;
 
         uint m_NameId;
         public uint NameId => m_NameId;
@@ -112,19 +20,14 @@ namespace Maze.Core
         uint m_Flags;
         public uint Flags => m_Flags;
 
-        ushort m_DataBlockCount;
-        public ushort DataBlockCount => m_DataBlockCount;
-
         public int ParamsCount => m_Params?.Count ?? 0;
-
-
+        public int DataBlocksCount => m_DataBlocks?.Count ?? 0;
 
         public DataBlock()
         {
             m_Shared = new DataBlockShared();
             m_Flags |= (uint)DataBlockFlags.TopmostBlock;
         }
-
 
         #region Shared
         uint AddSharedString(string name)
@@ -136,8 +39,12 @@ namespace Maze.Core
         {
             return m_Shared.GetStringId(name);
         }
-        #endregion
 
+        string GetSharedString(uint nameId)
+        {
+            return m_Shared.GetString(nameId);
+        }
+        #endregion
 
         #region Param
         List<DataBlockParam> EnsureParams()
@@ -148,55 +55,28 @@ namespace Maze.Core
             return m_Params;
         }
 
-        ByteBuffer EnsureComplexParamsBuffer()
+        List<DataBlock> EnsureDataBlocks()
         {
-            if (m_ComplexParamsBuffer == null)
-                m_ComplexParamsBuffer = new ByteBuffer();
+            if (m_DataBlocks == null)
+                m_DataBlocks = new List<DataBlock>();
 
-            return m_ComplexParamsBuffer;
+            return m_DataBlocks;
         }
 
-        public void InsertSimpleParamAt<T>(int atIndex, uint nameId, DataBlockParamType type, uint value) where T : struct
+        public void InsertParamAt(int atIndex, uint nameId, DataBlockParamType type, object value)
         {
             EnsureParams().Insert(atIndex, new DataBlockParam { NameId = nameId, Type = type, Value = value });
         }
 
-        public void InsertParamAt<T>(int atIndex, uint nameId, T value) where T : struct
+        public void SetParamAt(int atIndex, uint nameId, DataBlockParamType type, object value)
         {
-            switch (value)
-            {
-                case sbyte _:
-                case short _:
-                case int _:
-                case byte _:
-                case ushort _:
-                case uint _:
-                case float _:
-                case bool _:
-
-                    uint valueUint;
-                    byte[] bytes = DataBlockParam.GetBytes(value);
-                    if (bytes.Length < 4)
-                    {
-                        byte[] paddedBytes = new byte[4];
-                        Array.Copy(bytes, 0, paddedBytes, 0, bytes.Length);
-                        valueUint = BitConverter.ToUInt32(paddedBytes, 0);
-                    }
-                    else
-                    {
-                        valueUint = BitConverter.ToUInt32(bytes, 0);
-                    }
-
-                    InsertSimpleParamAt<T>(atIndex, nameId, DataBlockParam.GetType<T>(), valueUint);
-                    break;
-                default: throw new NotImplementedException($"value={value}");
-            }
+            EnsureParams()[atIndex] = new DataBlockParam { NameId = nameId, Type = type, Value = value };
         }
 
         public int AddParamByNameId<T>(uint nameId, T value) where T : struct
         {
             int at = ParamsCount;
-            InsertParamAt<T>(at, nameId, value);
+            InsertParamAt(at, nameId, DataBlockParam.GetType<T>(), value);
             return at;
         }
 
@@ -206,10 +86,20 @@ namespace Maze.Core
             return AddParamByNameId<T>(nameId, value);
         }
 
-
         public void SetParam<T>(int paramIndex, T value) where T : struct
         {
+            var param = GetParam(paramIndex);
+            SetParamAt(paramIndex, param.NameId, DataBlockParam.GetType<T>(), value);
+        }
 
+        public void SetParam<T>(string name, T value) where T : struct
+        {
+            uint nameId = AddSharedString(name);
+            int paramIndex = FindParamIndex(nameId);
+            if (paramIndex >= 0)
+                SetParamAt(paramIndex, nameId, DataBlockParam.GetType<T>(), value);
+            else
+                AddParamByNameId(nameId, value);
         }
 
         public DataBlockParam GetParam(int paramIndex)
@@ -231,24 +121,10 @@ namespace Maze.Core
                 return defValue;
             }
 
-            switch (type)
-            {
-                case DataBlockParamType.ParamS8: return (T)(object)(sbyte)BitConverter.ToInt32(DataBlockParam.GetBytes(param.Value), 0);
-                case DataBlockParamType.ParamS16: return (T)(object)BitConverter.ToInt16(DataBlockParam.GetBytes(param.Value), 0);
-                case DataBlockParamType.ParamS32: return (T)(object)BitConverter.ToInt32(DataBlockParam.GetBytes(param.Value), 0);
-                case DataBlockParamType.ParamS64: return (T)(object)BitConverter.ToInt64(DataBlockParam.GetBytes(param.Value), 0);
-                case DataBlockParamType.ParamU8: return (T)(object)(byte)BitConverter.ToUInt32(DataBlockParam.GetBytes(param.Value), 0);
-                case DataBlockParamType.ParamU16: return (T)(object)BitConverter.ToUInt16(DataBlockParam.GetBytes(param.Value), 0);
-                case DataBlockParamType.ParamU32: return (T)(object)BitConverter.ToUInt32(DataBlockParam.GetBytes(param.Value), 0);
-                case DataBlockParamType.ParamU64: return (T)(object)BitConverter.ToUInt64(DataBlockParam.GetBytes(param.Value), 0);
-                case DataBlockParamType.ParamF32: return (T)(object)BitConverter.ToSingle(DataBlockParam.GetBytes(param.Value), 0);
-                case DataBlockParamType.ParamF64: return (T)(object)BitConverter.ToDouble(DataBlockParam.GetBytes(param.Value), 0);
-                case DataBlockParamType.ParamBool: return (T)(object)BitConverter.ToBoolean(DataBlockParam.GetBytes(param.Value), 0);
-                default: throw new NotImplementedException($"param.Type={param.Type}");
-            }
+            return (T)param.Value;
         }
 
-        int FindParamIndex(uint nameId)
+        public int FindParamIndex(uint nameId)
         {
             if (ParamsCount == 0 || nameId == 0)
                 return -1;
@@ -258,6 +134,15 @@ namespace Maze.Core
                     return i;
 
             return -1;
+        }
+
+        public int FindParamIndex(string name)
+        {
+            uint nameId = GetSharedStringId(name);
+            if (nameId == 0)
+                return -1;
+
+            return FindParamIndex(nameId);
         }
 
         T GetParamValueByNameId<T>(uint nameId, T defValue = default(T)) where T : struct
@@ -271,36 +156,238 @@ namespace Maze.Core
             uint nameId = GetSharedStringId(name);
             return nameId == 0 ? defValue : GetParamValueByNameId(nameId, defValue);
         }
+
+        public int AddParamByNameId(uint nameId, string value)
+        {
+            int at = ParamsCount;
+            uint valueNameId = AddSharedString(value);
+            InsertParamAt(at, nameId, DataBlockParamType.ParamString, valueNameId);
+            return at;
+        }
+
+        public int AddParamByName(string name, string value)
+        {
+            uint nameId = AddSharedString(name);
+            return AddParamByNameId(nameId, value);
+        }
+
+        public void SetParam(int paramIndex, string value)
+        {
+            var param = GetParam(paramIndex);
+            SetParamAt(paramIndex, param.NameId, DataBlockParamType.ParamString, AddSharedString(value));
+        }
+
+        public void SetParam(string name, string value)
+        {
+            uint nameId = AddSharedString(name);
+            int paramIndex = FindParamIndex(nameId);
+            if (paramIndex >= 0)
+                SetParamAt(paramIndex, nameId, DataBlockParamType.ParamString, AddSharedString(value));
+            else
+                AddParamByNameId(nameId, value);
+        }
+
+        string GetParamValue(int paramIndex, string defValue)
+        {
+            DataBlockParam param = GetParam(paramIndex);
+
+            if (param.Type != DataBlockParamType.ParamString)
+            {
+                Debug.LogError($"Param type mismatch. Inner type: '{param.Type}'. Requested type: '{DataBlockParamType.ParamString}'");
+                return defValue;
+            }
+
+            return GetSharedString((uint)param.Value) ?? defValue;
+        }
+
+        string GetParamValueByNameId(uint nameId, string defValue = default)
+        {
+            int paramIndex = FindParamIndex(nameId);
+            return paramIndex < 0 ? defValue : GetParamValue(paramIndex, defValue);
+        }
+
+        string GetParamValueByName(string name, string defValue = default)
+        {
+            uint nameId = GetSharedStringId(name);
+            return nameId == 0 ? defValue : GetParamValueByNameId(nameId, defValue);
+        }
         #endregion
+
 
         #region Param S8
         public void AddS8(string name, sbyte value) { AddParamByName(name, value); }
         public void SetS8(int paramIndex, sbyte value) { SetParam(paramIndex, value); }
+        public void SetS8(string name, sbyte value) { SetParam(name, value); }
         public sbyte GetS8(string name, sbyte defValue = 0) { return GetParamValueByName(name, defValue); }
         #endregion
-
         #region Param S16
         public void AddS16(string name, short value) { AddParamByName(name, value); }
         public void SetS16(int paramIndex, short value) { SetParam(paramIndex, value); }
+        public void SetS16(string name, short value) { SetParam(name, value); }
         public short GetS16(string name, short defValue = 0) { return GetParamValueByName(name, defValue); }
         #endregion
-
         #region Param S32
         public void AddS32(string name, int value) { AddParamByName(name, value); }
         public void SetS32(int paramIndex, int value) { SetParam(paramIndex, value); }
+        public void SetS32(string name, int value) { SetParam(name, value); }
         public int GetS32(string name, int defValue = 0) { return GetParamValueByName(name, defValue); }
         #endregion
-
         #region Param S64
         public void AddS64(string name, long value) { AddParamByName(name, value); }
         public void SetS64(int paramIndex, long value) { SetParam(paramIndex, value); }
+        public void SetS64(string name, long value) { SetParam(name, value); }
         public long GetS64(string name, long defValue = 0) { return GetParamValueByName(name, defValue); }
         #endregion
-
+        #region Param U8
+        public void AddU8(string name, byte value) { AddParamByName(name, value); }
+        public void SetU8(int paramIndex, byte value) { SetParam(paramIndex, value); }
+        public void SetU8(string name, byte value) { SetParam(name, value); }
+        public byte GetU8(string name, byte defValue = 0) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param U16
+        public void AddU16(string name, ushort value) { AddParamByName(name, value); }
+        public void SetU16(int paramIndex, ushort value) { SetParam(paramIndex, value); }
+        public void SetU16(string name, ushort value) { SetParam(name, value); }
+        public ushort GetU16(string name, ushort defValue = 0) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param U32
+        public void AddU32(string name, uint value) { AddParamByName(name, value); }
+        public void SetU32(int paramIndex, uint value) { SetParam(paramIndex, value); }
+        public void SetU32(string name, uint value) { SetParam(name, value); }
+        public uint GetU32(string name, uint defValue = 0) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param U64
+        public void AddU64(string name, ulong value) { AddParamByName(name, value); }
+        public void SetU64(int paramIndex, ulong value) { SetParam(paramIndex, value); }
+        public void SetU64(string name, ulong value) { SetParam(name, value); }
+        public ulong GetU64(string name, ulong defValue = 0) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param F32
+        public void AddF32(string name, float value) { AddParamByName(name, value); }
+        public void SetF32(int paramIndex, float value) { SetParam(paramIndex, value); }
+        public void SetF32(string name, float value) { SetParam(name, value); }
+        public float GetF32(string name, float defValue = 0.0f) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param F64
+        public void AddF64(string name, double value) { AddParamByName(name, value); }
+        public void SetF64(int paramIndex, double value) { SetParam(paramIndex, value); }
+        public void SetF64(string name, double value) { SetParam(name, value); }
+        public double GetF64(string name, double defValue = 0.0) { return GetParamValueByName(name, defValue); }
+        #endregion
         #region Param Bool
         public void AddBool(string name, bool value) { AddParamByName(name, value); }
         public void SetBool(int paramIndex, bool value) { SetParam(paramIndex, value); }
+        public void SetBool(string name, bool value) { SetParam(name, value); }
         public bool GetBool(string name, bool defValue = false) { return GetParamValueByName(name, defValue); }
         #endregion
+        #region Param Vec4S8
+        public void AddVec4S8(string name, Vec4S8 value) { AddParamByName(name, value); }
+        public void SetVec4S8(int paramIndex, Vec4S8 value) { SetParam(paramIndex, value); }
+        public void SetVec4S8(string name, Vec4S8 value) { SetParam(name, value); }
+        public Vec4S8 GetVec4S8(string name, Vec4S8 defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec4U8
+        public void AddVec4U8(string name, Vec4U8 value) { AddParamByName(name, value); }
+        public void SetVec4U8(int paramIndex, Vec4U8 value) { SetParam(paramIndex, value); }
+        public void SetVec4U8(string name, Vec4U8 value) { SetParam(name, value); }
+        public Vec4U8 GetVec4U8(string name, Vec4U8 defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec2S
+        public void AddVec2S(string name, Vec2S value) { AddParamByName(name, value); }
+        public void SetVec2S(int paramIndex, Vec2S value) { SetParam(paramIndex, value); }
+        public void SetVec2S(string name, Vec2S value) { SetParam(name, value); }
+        public Vec2S GetVec2S(string name, Vec2S defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec3S
+        public void AddVec3S(string name, Vec3S value) { AddParamByName(name, value); }
+        public void SetVec3S(int paramIndex, Vec3S value) { SetParam(paramIndex, value); }
+        public void SetVec3S(string name, Vec3S value) { SetParam(name, value); }
+        public Vec3S GetVec3S(string name, Vec3S defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec4S
+        public void AddVec4S(string name, Vec4S value) { AddParamByName(name, value); }
+        public void SetVec4S(int paramIndex, Vec4S value) { SetParam(paramIndex, value); }
+        public void SetVec4S(string name, Vec4S value) { SetParam(name, value); }
+        public Vec4S GetVec4S(string name, Vec4S defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec2U
+        public void AddVec2U(string name, Vec2U value) { AddParamByName(name, value); }
+        public void SetVec2U(int paramIndex, Vec2U value) { SetParam(paramIndex, value); }
+        public void SetVec2U(string name, Vec2U value) { SetParam(name, value); }
+        public Vec2U GetVec2U(string name, Vec2U defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec3U
+        public void AddVec3U(string name, Vec3U value) { AddParamByName(name, value); }
+        public void SetVec3U(int paramIndex, Vec3U value) { SetParam(paramIndex, value); }
+        public void SetVec3U(string name, Vec3U value) { SetParam(name, value); }
+        public Vec3U GetVec3U(string name, Vec3U defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec4U
+        public void AddVec4U(string name, Vec4U value) { AddParamByName(name, value); }
+        public void SetVec4U(int paramIndex, Vec4U value) { SetParam(paramIndex, value); }
+        public void SetVec4U(string name, Vec4U value) { SetParam(name, value); }
+        public Vec4U GetVec4U(string name, Vec4U defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec2F
+        public void AddVec2F(string name, Vec2F value) { AddParamByName(name, value); }
+        public void SetVec2F(int paramIndex, Vec2F value) { SetParam(paramIndex, value); }
+        public void SetVec2F(string name, Vec2F value) { SetParam(name, value); }
+        public Vec2F GetVec2F(string name, Vec2F defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec3F
+        public void AddVec3F(string name, Vec3F value) { AddParamByName(name, value); }
+        public void SetVec3F(int paramIndex, Vec3F value) { SetParam(paramIndex, value); }
+        public void SetVec3F(string name, Vec3F value) { SetParam(name, value); }
+        public Vec3F GetVec3F(string name, Vec3F defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec4F
+        public void AddVec4F(string name, Vec4F value) { AddParamByName(name, value); }
+        public void SetVec4F(int paramIndex, Vec4F value) { SetParam(paramIndex, value); }
+        public void SetVec4F(string name, Vec4F value) { SetParam(name, value); }
+        public Vec4F GetVec4F(string name, Vec4F defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec2B
+        public void AddVec2B(string name, Vec2B value) { AddParamByName(name, value); }
+        public void SetVec2B(int paramIndex, Vec2B value) { SetParam(paramIndex, value); }
+        public void SetVec2B(string name, Vec2B value) { SetParam(name, value); }
+        public Vec2B GetVec2B(string name, Vec2B defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec3B
+        public void AddVec3B(string name, Vec3B value) { AddParamByName(name, value); }
+        public void SetVec3B(int paramIndex, Vec3B value) { SetParam(paramIndex, value); }
+        public void SetVec3B(string name, Vec3B value) { SetParam(name, value); }
+        public Vec3B GetVec3B(string name, Vec3B defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Vec4B
+        public void AddVec4B(string name, Vec4B value) { AddParamByName(name, value); }
+        public void SetVec4B(int paramIndex, Vec4B value) { SetParam(paramIndex, value); }
+        public void SetVec4B(string name, Vec4B value) { SetParam(name, value); }
+        public Vec4B GetVec4B(string name, Vec4B defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Mat3F
+        public void AddMat3F(string name, Mat3F value) { AddParamByName(name, value); }
+        public void SetMat3F(int paramIndex, Mat3F value) { SetParam(paramIndex, value); }
+        public void SetMat3F(string name, Mat3F value) { SetParam(name, value); }
+        public Mat3F GetMat3F(string name, Mat3F defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param Mat4F
+        public void AddMat4F(string name, Mat4F value) { AddParamByName(name, value); }
+        public void SetMat4F(int paramIndex, Mat4F value) { SetParam(paramIndex, value); }
+        public void SetMat4F(string name, Mat4F value) { SetParam(name, value); }
+        public Mat4F GetMat4F(string name, Mat4F defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param TMat
+        public void AddTMat(string name, TMat value) { AddParamByName(name, value); }
+        public void SetTMat(int paramIndex, TMat value) { SetParam(paramIndex, value); }
+        public void SetTMat(string name, TMat value) { SetParam(name, value); }
+        public TMat GetTMat(string name, TMat defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+        #region Param String
+        public void AddString(string name, string value) { AddParamByName(name, value); }
+        public void SetString(int paramIndex, string value) { SetParam(paramIndex, value); }
+        public void SetString(string name, string value) { SetParam(name, value); }
+        public string GetString(string name, string defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
     }
+
 }

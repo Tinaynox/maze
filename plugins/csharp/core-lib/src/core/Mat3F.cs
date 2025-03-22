@@ -98,6 +98,41 @@ namespace Maze.Core
             );
         }
 
+
+        public byte[] GetBytes()
+        {
+            byte[] bytes = new byte[36];
+            BitConverter.GetBytes(M00).CopyTo(bytes, 0);
+            BitConverter.GetBytes(M01).CopyTo(bytes, 4);
+            BitConverter.GetBytes(M02).CopyTo(bytes, 8);
+            BitConverter.GetBytes(M10).CopyTo(bytes, 12);
+            BitConverter.GetBytes(M11).CopyTo(bytes, 16);
+            BitConverter.GetBytes(M12).CopyTo(bytes, 20);
+            BitConverter.GetBytes(M20).CopyTo(bytes, 24);
+            BitConverter.GetBytes(M21).CopyTo(bytes, 28);
+            BitConverter.GetBytes(M22).CopyTo(bytes, 32);
+            return bytes;
+        }
+
+        public static Mat3F FromBytes(byte[] bytes, int startIndex = 0)
+        {
+            if (bytes == null || bytes.Length - startIndex < 36)
+                throw new ArgumentException("Byte array must contain at least 36 bytes");
+
+            return new Mat3F
+            {
+                M00 = BitConverter.ToSingle(bytes, startIndex + 0),
+                M01 = BitConverter.ToSingle(bytes, startIndex + 4),
+                M02 = BitConverter.ToSingle(bytes, startIndex + 8),
+                M10 = BitConverter.ToSingle(bytes, startIndex + 12),
+                M11 = BitConverter.ToSingle(bytes, startIndex + 16),
+                M12 = BitConverter.ToSingle(bytes, startIndex + 20),
+                M20 = BitConverter.ToSingle(bytes, startIndex + 24),
+                M21 = BitConverter.ToSingle(bytes, startIndex + 28),
+                M22 = BitConverter.ToSingle(bytes, startIndex + 32),
+            };
+        }
+
         public override string ToString()
         {
             return

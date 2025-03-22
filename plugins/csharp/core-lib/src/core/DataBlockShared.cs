@@ -36,7 +36,7 @@ namespace Maze.Core
             return 0u;
         }
 
-        public string GetStringId(uint stringId)
+        public string GetString(uint stringId)
         {
             if (m_StringsById.TryGetValue(stringId, out string value))
                 return value;

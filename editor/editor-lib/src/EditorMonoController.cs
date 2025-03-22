@@ -29,12 +29,29 @@ namespace Maze.Editor
             testBlock.AddBool("bool", true);
             testBlock.AddS64("d", 23435623622);
 
+            testBlock.SetS16("bb", 23);
+            testBlock.SetS16("bbb", 24);
+
+            testBlock.SetVec3F("vec3", new Vec3F(1.0f, 2.0f, 3.0f));
+
+            testBlock.SetString("123", "Hello World!");
+
             int a = testBlock.GetS32("a");
             short bb = testBlock.GetS16("bb");
             sbyte c = testBlock.GetS8("c");
             long d = testBlock.GetS64("d");
             bool b0 = testBlock.GetBool("bool");
             Debug.LogError($"a={a} bb={bb} c={c} b0={b0} d={d}");
+            Debug.LogError($"bbb={testBlock.GetS16("bbb")}");
+            Debug.LogError($"string={testBlock.GetString("123")}");
+            Debug.LogError($"string2={testBlock.GetString("1234")}");
+            Debug.LogError($"vec3={testBlock.GetVec3F("vec3")}");
+
+            for (int i = 0; i < testBlock.ParamsCount; ++i)
+            {
+                DataBlockParam param = testBlock.GetParam(i);
+                Debug.LogError($"{i} => type={param.Type} param={param.Value}");
+            }
         }
 
         [EntitySystem, EnableInEditor]

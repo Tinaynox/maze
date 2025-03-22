@@ -120,6 +120,54 @@ namespace Maze.Core
             );
         }
 
+        public byte[] GetBytes()
+        {
+            byte[] bytes = new byte[64];
+            BitConverter.GetBytes(M00).CopyTo(bytes, 0);
+            BitConverter.GetBytes(M01).CopyTo(bytes, 4);
+            BitConverter.GetBytes(M02).CopyTo(bytes, 8);
+            BitConverter.GetBytes(M03).CopyTo(bytes, 12);
+            BitConverter.GetBytes(M10).CopyTo(bytes, 16);
+            BitConverter.GetBytes(M11).CopyTo(bytes, 20);
+            BitConverter.GetBytes(M12).CopyTo(bytes, 24);
+            BitConverter.GetBytes(M13).CopyTo(bytes, 28);
+            BitConverter.GetBytes(M20).CopyTo(bytes, 32);
+            BitConverter.GetBytes(M21).CopyTo(bytes, 36);
+            BitConverter.GetBytes(M22).CopyTo(bytes, 40);
+            BitConverter.GetBytes(M23).CopyTo(bytes, 44);
+            BitConverter.GetBytes(M30).CopyTo(bytes, 48);
+            BitConverter.GetBytes(M31).CopyTo(bytes, 52);
+            BitConverter.GetBytes(M32).CopyTo(bytes, 56);
+            BitConverter.GetBytes(M33).CopyTo(bytes, 60);
+            return bytes;
+        }
+
+        public static Mat4F FromBytes(byte[] bytes, int startIndex = 0)
+        {
+            if (bytes == null || bytes.Length - startIndex < 64)
+                throw new ArgumentException("Byte array must contain at least 64 bytes");
+
+            return new Mat4F
+            {
+                M00 = BitConverter.ToSingle(bytes, startIndex + 0),
+                M01 = BitConverter.ToSingle(bytes, startIndex + 4),
+                M02 = BitConverter.ToSingle(bytes, startIndex + 8),
+                M03 = BitConverter.ToSingle(bytes, startIndex + 12),
+                M10 = BitConverter.ToSingle(bytes, startIndex + 16),
+                M11 = BitConverter.ToSingle(bytes, startIndex + 20),
+                M12 = BitConverter.ToSingle(bytes, startIndex + 24),
+                M13 = BitConverter.ToSingle(bytes, startIndex + 28),
+                M20 = BitConverter.ToSingle(bytes, startIndex + 32),
+                M21 = BitConverter.ToSingle(bytes, startIndex + 36),
+                M22 = BitConverter.ToSingle(bytes, startIndex + 40),
+                M23 = BitConverter.ToSingle(bytes, startIndex + 44),
+                M30 = BitConverter.ToSingle(bytes, startIndex + 48),
+                M31 = BitConverter.ToSingle(bytes, startIndex + 52),
+                M32 = BitConverter.ToSingle(bytes, startIndex + 56),
+                M33 = BitConverter.ToSingle(bytes, startIndex + 60)
+            };
+        }
+
         public override string ToString()
         {
             return
