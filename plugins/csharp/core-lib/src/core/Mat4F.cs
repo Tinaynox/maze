@@ -145,7 +145,7 @@ namespace Maze.Core
         public static Mat4F FromBytes(byte[] bytes, int startIndex = 0)
         {
             if (bytes == null || bytes.Length - startIndex < 64)
-                throw new ArgumentException("Byte array must contain at least 64 bytes");
+                throw new ArgumentException($"Byte array must contain at least 64 bytes! bytes={bytes}({bytes?.Length}), startIndex={startIndex}");
 
             return new Mat4F
             {

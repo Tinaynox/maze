@@ -129,14 +129,14 @@ namespace Maze.Core
             BitConverter.GetBytes(X).CopyTo(bytes, 0);
             BitConverter.GetBytes(Y).CopyTo(bytes, 4);
             BitConverter.GetBytes(Z).CopyTo(bytes, 8);
-            BitConverter.GetBytes(W).CopyTo(bytes, 8);
+            BitConverter.GetBytes(W).CopyTo(bytes, 12);
             return bytes;
         }
 
         public static Vec4F FromBytes(byte[] bytes, int startIndex = 0)
         {
             if (bytes == null || bytes.Length - startIndex < 16)
-                throw new ArgumentException("Byte array must contain at least 16 bytes");
+                throw new ArgumentException($"Byte array must contain at least 16 bytes! bytes={bytes}({bytes?.Length}), startIndex={startIndex}");
 
             return new Vec4F
             {

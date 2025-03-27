@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Maze.Core
 {
@@ -9,13 +11,17 @@ namespace Maze.Core
     }
 
     public class DataBlock
+        : IEnumerable<DataBlock>
     {
         DataBlockShared m_Shared;
+        public DataBlockShared Shared => m_Shared;
+
         List<DataBlockParam> m_Params;
         List<DataBlock> m_DataBlocks;
 
         uint m_NameId;
         public uint NameId => m_NameId;
+        public string Name => GetSharedString(NameId);
 
         uint m_Flags;
         public uint Flags => m_Flags;
@@ -29,18 +35,37 @@ namespace Maze.Core
             m_Flags |= (uint)DataBlockFlags.TopmostBlock;
         }
 
+        public DataBlock(DataBlockShared shared, string name)
+        {
+            m_Shared = shared;
+            m_NameId = AddSharedString(name);
+        }
+
+        #region IEnumerable
+        public IEnumerator<DataBlock> GetEnumerator()
+        {
+            return m_DataBlocks?.GetEnumerator() ?? Enumerable.Empty<DataBlock>().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+        #endregion
+
+
         #region Shared
-        uint AddSharedString(string name)
+        public uint AddSharedString(string name)
         {
             return m_Shared.AddString(name);
         }
 
-        uint GetSharedStringId(string name)
+        public uint GetSharedStringId(string name)
         {
             return m_Shared.GetStringId(name);
         }
 
-        string GetSharedString(uint nameId)
+        public string GetSharedString(uint nameId)
         {
             return m_Shared.GetString(nameId);
         }
@@ -61,6 +86,11 @@ namespace Maze.Core
                 m_DataBlocks = new List<DataBlock>();
 
             return m_DataBlocks;
+        }
+
+        public void ResizeParams(int paramsCount)
+        {
+            EnsureParams().Resize(paramsCount);
         }
 
         public void InsertParamAt(int atIndex, uint nameId, DataBlockParamType type, object value)
@@ -84,6 +114,11 @@ namespace Maze.Core
         {
             uint nameId = AddSharedString(name);
             return AddParamByNameId<T>(nameId, value);
+        }
+
+        public void SetParam<T>(int paramIndex, uint nameId, T value) where T : struct
+        {
+            SetParamAt(paramIndex, nameId, DataBlockParam.GetType<T>(), value);
         }
 
         public void SetParam<T>(int paramIndex, T value) where T : struct
@@ -387,6 +422,60 @@ namespace Maze.Core
         public void SetString(int paramIndex, string value) { SetParam(paramIndex, value); }
         public void SetString(string name, string value) { SetParam(name, value); }
         public string GetString(string name, string defValue = default) { return GetParamValueByName(name, defValue); }
+        #endregion
+
+
+        #region DataBlock
+        public DataBlock EnsureDataBlock(string name)
+        {
+            DataBlock blk = GetDataBlock(name);
+            if (blk != null)
+                return blk;
+
+            return AddNewDataBlock(name);
+        }
+
+        public DataBlock GetDataBlock(string name)
+        {
+            uint nameId = GetSharedStringId(name);
+            if (nameId == 0)
+                return null;
+            return GetDataBlockByNameId(nameId);
+        }
+
+        public DataBlock GetDataBlockByNameId(uint nameId, int startAfter = 0)
+        {
+            int blockIndex = FindDataBlockIndex(nameId, startAfter);
+            return GetDataBlock(blockIndex);
+        }
+
+        public int FindDataBlockIndex(uint nameId, int startAfter = 0)
+        {
+            int dataBlocksCount = DataBlocksCount;
+            if (dataBlocksCount == 0)
+                return -1;
+
+            for (int i = startAfter; i < dataBlocksCount; ++i)
+                if (m_DataBlocks[i].NameId == nameId)
+                    return i;
+            return -1;
+        }
+
+        public DataBlock GetDataBlock(int blockIndex)
+        {
+            if (blockIndex >= 0 && blockIndex < DataBlocksCount)
+                return m_DataBlocks[blockIndex];
+            return null;
+        }
+
+        public DataBlock AddNewDataBlock(string name)
+        {
+            DataBlock newBlock = new DataBlock(m_Shared, name);
+            EnsureDataBlocks().Add(newBlock);
+            return newBlock;
+        }
+
+        public DataBlock this[string name] { get => EnsureDataBlock(name); }
         #endregion
     }
 

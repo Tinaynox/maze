@@ -4,10 +4,8 @@ using System;
 
 namespace Maze.EditorTools
 {
-    public class GizmosHelper
+    public static class GizmosHelper
     {
-        private GizmosHelper() {}
-
         public static void PushTransform(
             TMat tm)
         {

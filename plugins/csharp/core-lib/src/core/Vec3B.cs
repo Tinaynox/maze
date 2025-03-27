@@ -35,7 +35,7 @@ namespace Maze.Core
         public static Vec3B FromBytes(byte[] bytes, int startIndex = 0)
         {
             if (bytes == null || bytes.Length - startIndex < 3)
-                throw new ArgumentException("Byte array must contain at least 3 bytes");
+                throw new ArgumentException($"Byte array must contain at least 3 bytes! bytes={bytes}({bytes?.Length}), startIndex={startIndex}");
 
             return new Vec3B
             {

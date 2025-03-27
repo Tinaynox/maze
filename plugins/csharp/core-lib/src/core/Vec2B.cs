@@ -31,7 +31,7 @@ namespace Maze.Core
         public static Vec2B FromBytes(byte[] bytes, int startIndex = 0)
         {
             if (bytes == null || bytes.Length - startIndex < 2)
-                throw new ArgumentException("Byte array must contain at least 2 bytes");
+                throw new ArgumentException($"Byte array must contain at least 2 bytes! bytes={bytes}({bytes?.Length}), startIndex={startIndex}");
 
             return new Vec2B
             {

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -7,6 +8,7 @@ namespace Maze.Core
     public class ByteBuffer
     {
         byte[] m_Data;
+        public byte[] Data => m_Data;
 
         int m_Size = 0;
         public int Size => m_Size;
@@ -91,6 +93,27 @@ namespace Maze.Core
             m_Size = size;
         }
 
+        public void CapacityToSize()
+        {
+            if (m_Size == m_Capacity)
+                return;
+
+            byte[] prevData = m_Data;
+
+            if (!Reallocate(m_Size))
+                return;
+
+            if (prevData != null)
+                Buffer.BlockCopy(prevData, 0, m_Data, 0, m_Size);
+        }
+
+        public void Assign(byte[] data)
+        {
+            m_Data = data;
+            m_Capacity = m_Data?.Length ?? 0;
+            m_Size = m_Capacity;
+        }
+
         public void SetData(byte[] data)
         {
             Resize(data.Length);
@@ -150,6 +173,22 @@ namespace Maze.Core
             m_Size -= size;
         }
 
+        public void Append(byte data)
+        {
+            int requiredSize = m_Size + 1;
+
+            if (requiredSize > m_Capacity)
+                Reserve(Math.Max(requiredSize, m_Capacity + (m_Capacity >> 1) + 1));
+
+            m_Data[m_Size] = data;
+            m_Size += 1;
+        }
+
+        public void Append(sbyte data)
+        {
+            Append((byte)data);
+        }
+
         public void Append(byte[] data, int size)
         {
             int requiredSize = m_Size + size;
@@ -180,48 +219,35 @@ namespace Maze.Core
         {
             switch (value)
             {
-                case int intValue:
-                    Append(BitConverter.GetBytes(intValue));
-                    break;
-                case float floatValue:
-                    Append(BitConverter.GetBytes(floatValue));
-                    break;
-                case double doubleValue:
-                    Append(BitConverter.GetBytes(doubleValue));
-                    break;
-                case bool boolValue:
-                    Append(BitConverter.GetBytes(boolValue));
-                    break;
-                case short shortValue:
-                    Append(BitConverter.GetBytes(shortValue));
-                    break;
-                case long longValue:
-                    Append(BitConverter.GetBytes(longValue));
-                    break;
-                case ushort ushortValue:
-                    Append(BitConverter.GetBytes(ushortValue));
-                    break;
-                case uint uintValue:
-                    Append(BitConverter.GetBytes(uintValue));
-                    break;
-                case ulong ulongValue:
-                    Append(BitConverter.GetBytes(ulongValue));
-                    break;
-                case char charValue:
-                    Append(BitConverter.GetBytes(charValue));
-                    break;
-                case Vec2F vecValue:
-                    Append(vecValue.GetBytes());
-                    break;
-                case Vec3F vecValue:
-                    Append(vecValue.GetBytes());
-                    break;
-                case Vec4F vecValue:
-                    Append(vecValue.GetBytes());
-                    break;
-                case Vec2U vecValue:
-                    Append(vecValue.GetBytes());
-                    break;
+                case sbyte sbyteValue: Append(sbyteValue); break;
+                case short shortValue: Append(BitConverter.GetBytes(shortValue)); break;
+                case int intValue: Append(BitConverter.GetBytes(intValue)); break;
+                case long longValue: Append(BitConverter.GetBytes(longValue)); break;
+                case byte byteValue: Append(byteValue); break;
+                case ushort ushortValue: Append(BitConverter.GetBytes(ushortValue)); break;
+                case uint uintValue: Append(BitConverter.GetBytes(uintValue)); break;
+                case ulong ulongValue: Append(BitConverter.GetBytes(ulongValue)); break;
+                case float floatValue: Append(BitConverter.GetBytes(floatValue)); break;
+                case double doubleValue: Append(BitConverter.GetBytes(doubleValue)); break;
+                case bool boolValue: Append(BitConverter.GetBytes(boolValue)); break;             
+                case char charValue: Append(BitConverter.GetBytes(charValue)); break;
+                case Vec4S8 vecValue: Append(vecValue.GetBytes()); break;
+                case Vec4U8 vecValue: Append(vecValue.GetBytes()); break;
+                case Vec2S vecValue: Append(vecValue.GetBytes()); break;
+                case Vec3S vecValue: Append(vecValue.GetBytes()); break;
+                case Vec4S vecValue: Append(vecValue.GetBytes()); break;
+                case Vec2U vecValue: Append(vecValue.GetBytes()); break;
+                case Vec3U vecValue: Append(vecValue.GetBytes()); break;
+                case Vec4U vecValue: Append(vecValue.GetBytes()); break;
+                case Vec2F vecValue: Append(vecValue.GetBytes()); break;
+                case Vec3F vecValue: Append(vecValue.GetBytes()); break;
+                case Vec4F vecValue: Append(vecValue.GetBytes()); break;
+                case Vec2B vecValue: Append(vecValue.GetBytes()); break;
+                case Vec3B vecValue: Append(vecValue.GetBytes()); break;
+                case Vec4B vecValue: Append(vecValue.GetBytes()); break;
+                case Mat3F matValue: Append(matValue.GetBytes()); break;
+                case Mat4F matValue: Append(matValue.GetBytes()); break;
+                case TMat matValue: Append(matValue.GetBytes()); break;
                 default:
                     throw new ArgumentException($"Type {typeof(T)} is not supported by BitConverter");
             }
@@ -263,8 +289,6 @@ namespace Maze.Core
                 default:
                     throw new ArgumentException($"Type {typeof(T)} is not supported by BitConverter");
             }
-
-            return default(T);
         }
 
         public bool IsEqual(ByteBuffer other)
@@ -281,6 +305,14 @@ namespace Maze.Core
                     return false;
             }
             return true;
+        }
+
+        public static ByteBuffer LoadFile(string path)
+        {
+            byte[] bytes = File.ReadAllBytes(path);
+            ByteBuffer buffer = new ByteBuffer();
+            buffer.Assign(bytes);
+            return buffer;
         }
 
         public ByteBuffer Clone()

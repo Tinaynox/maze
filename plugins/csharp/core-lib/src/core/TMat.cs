@@ -252,7 +252,7 @@ namespace Maze.Core
         public static TMat FromBytes(byte[] bytes, int startIndex = 0)
         {
             if (bytes == null || bytes.Length - startIndex < 48)
-                throw new ArgumentException("Byte array must contain at least 48 bytes");
+                throw new ArgumentException($"Byte array must contain at least 48 bytes! bytes={bytes}({bytes?.Length}), startIndex={startIndex}");
 
             return new TMat
             {

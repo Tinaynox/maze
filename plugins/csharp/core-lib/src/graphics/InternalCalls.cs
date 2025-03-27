@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Maze.Graphics
 {
-    public class InternalCalls
+    public static class InternalCalls
     {
         #region MeshRenderer
         [MethodImpl(MethodImplOptions.InternalCall)]

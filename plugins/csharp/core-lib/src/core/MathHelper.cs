@@ -2,10 +2,8 @@ using System;
 
 namespace Maze.Core
 {
-    public class MathHelper
+    public static class MathHelper
     {
-        private MathHelper() {}
-
         public static float Lerp(float v0, float v1, float s) 
         {
             return v0 + (v1 - v0) * s;

@@ -78,7 +78,7 @@ namespace Maze.Core
         public static Vec3U FromBytes(byte[] bytes, int startIndex = 0)
         {
             if (bytes == null || bytes.Length - startIndex < 12)
-                throw new ArgumentException("Byte array must contain at least 12 bytes");
+                throw new ArgumentException($"Byte array must contain at least 12 bytes! bytes={bytes}({bytes?.Length}), startIndex={startIndex}");
 
             return new Vec3U
             {

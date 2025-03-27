@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Maze.Core
 {
-    public enum DataBlockParamType : uint
+    public enum DataBlockParamType : byte
     {
         None = 0,
         ParamS8,

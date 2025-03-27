@@ -6,8 +6,15 @@ namespace Maze.Core
     public class DataBlockShared
     {
         Dictionary<string, uint> m_Strings = new Dictionary<string, uint>();
+        public IReadOnlyDictionary<string, uint> Strings => m_Strings;
+
         Dictionary<uint, string> m_StringsById = new Dictionary<uint, string>();
         uint m_StringsIndexCounter = 0u;
+        public uint StringsIndexCounter
+        { 
+            get => m_StringsIndexCounter;
+            set => m_StringsIndexCounter = value;
+        }
 
         public bool SetString(string name, uint stringId)
         {

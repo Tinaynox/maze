@@ -2,7 +2,7 @@ using System;
 
 namespace Maze.Core
 {
-    public class EcsUtils
+    public static class EcsUtils
     {
         public static object GetComponentByType(
             NativePtr nativePtr,

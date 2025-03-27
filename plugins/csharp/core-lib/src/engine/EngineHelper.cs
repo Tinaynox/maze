@@ -4,7 +4,7 @@ using Maze.Graphics;
 
 namespace Maze.Engine
 {
-    public class EngineHelper
+    public static class EngineHelper
     {
         public static EcsScene LoadAssetScene(
             string sceneName,

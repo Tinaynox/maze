@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Maze.EditorTools
 {
-    public class InternalCalls
+    public static class InternalCalls
     {
         #region GizmosHelper
         [MethodImpl(MethodImplOptions.InternalCall)]

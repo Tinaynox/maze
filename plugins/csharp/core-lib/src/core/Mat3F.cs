@@ -117,7 +117,7 @@ namespace Maze.Core
         public static Mat3F FromBytes(byte[] bytes, int startIndex = 0)
         {
             if (bytes == null || bytes.Length - startIndex < 36)
-                throw new ArgumentException("Byte array must contain at least 36 bytes");
+                throw new ArgumentException($"Byte array must contain at least 36 bytes! bytes={bytes}({bytes?.Length}), startIndex={startIndex}");
 
             return new Mat3F
             {

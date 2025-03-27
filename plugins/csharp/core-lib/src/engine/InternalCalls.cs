@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Maze.Engine
 {
-    public class InternalCalls
+    public static class InternalCalls
     {
         #region Ecs
         [MethodImpl(MethodImplOptions.InternalCall)]

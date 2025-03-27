@@ -39,7 +39,7 @@ namespace Maze.Core
         public static Vec4B FromBytes(byte[] bytes, int startIndex = 0)
         {
             if (bytes == null || bytes.Length - startIndex < 4)
-                throw new ArgumentException("Byte array must contain at least 4 bytes");
+                throw new ArgumentException($"Byte array must contain at least 4 bytes! bytes={bytes}({bytes?.Length}), startIndex={startIndex}");
 
             return new Vec4B
             {

@@ -3,6 +3,7 @@ using Maze.Core;
 using Maze.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 
 namespace Maze.Editor
@@ -19,10 +20,53 @@ namespace Maze.Editor
         }
 
 
+        void Draw(DataBlock dataBlock)
+        {
+            if (dataBlock.ParamsCount > 0)
+            {
+                Debug.LogError("Params:");
+                for (int i = 0; i < dataBlock.ParamsCount; ++i)
+                {
+                    DataBlockParam param = dataBlock.GetParam(i);
+                    Debug.LogError($"{i} => {dataBlock.GetSharedString(param.NameId)} type={param.Type} param={param.Value}");
+                }
+            }
+
+            if (dataBlock.DataBlocksCount > 0)
+            { 
+                Debug.LogError("DataBlocks:");
+                foreach (DataBlock subBlock in dataBlock)
+                {
+                    Debug.LogError($"Block: {dataBlock.GetSharedString(subBlock.NameId)}");
+                    Draw(subBlock);
+                }
+            }
+        }
+
+
         [EntitySystem, EnableInEditor]
         public void OnCreate()
         {
-            DataBlock testBlock = new DataBlock();
+            /*
+            Debug.LogError("Test1 >>>>");
+
+            DataBlockBinarySerialization.LoadBinaryFile(out DataBlock dataBlock, "AsteroidSmall000.spunit");
+            // Draw(dataBlock);
+
+            DataBlockBinarySerialization.SaveBinaryFile(dataBlock, "AsteroidSmall000_Save.spunit");
+
+            DataBlockBinarySerialization.LoadBinaryFile(out DataBlock dataBlock2, "AsteroidSmall000_Save.spunit");
+            Draw(dataBlock2);
+
+            Debug.LogError("Test2 <<<<");
+            */
+
+            /*
+            DataBlock root = new DataBlock();
+
+            Debug.LogError("1");
+            DataBlock testBlock = root.AddNewDataBlock("test");
+            Debug.LogError("2");
             testBlock.AddS32("a", 42);
             testBlock.AddS16("bb", 255);
             testBlock.AddS8("c", -25);
@@ -47,11 +91,21 @@ namespace Maze.Editor
             Debug.LogError($"string2={testBlock.GetString("1234")}");
             Debug.LogError($"vec3={testBlock.GetVec3F("vec3")}");
 
-            for (int i = 0; i < testBlock.ParamsCount; ++i)
+            root["test"].SetParam("TEST_TEST", 256.0);
+
+            foreach (DataBlock dataBlock in root)
             {
-                DataBlockParam param = testBlock.GetParam(i);
-                Debug.LogError($"{i} => type={param.Type} param={param.Value}");
+                Debug.LogError($"dataBlock => {dataBlock.Name}");
+
+                for (int i = 0; i < dataBlock.ParamsCount; ++i)
+                {
+                    DataBlockParam param = dataBlock.GetParam(i);
+                    Debug.LogError($"{i} => {dataBlock.GetSharedString(param.NameId)} type={param.Type} param={param.Value}");
+                }
             }
+
+            Debug.LogWarning($"{root["test"].GetString("123")}");
+            */
         }
 
         [EntitySystem, EnableInEditor]
