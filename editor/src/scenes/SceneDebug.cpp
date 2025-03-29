@@ -44,6 +44,7 @@
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -109,6 +110,12 @@ namespace Maze
                 Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.unsubscribe(this);
             }
         }
+
+        if (SettingsManager::GetInstancePtr())
+        {
+            if (m_editorSettings)
+                m_editorSettings->getDebugInfoEnabledChangedEvent().unsubscribe(this);
+        }
     }
 
     //////////////////////////////////////////
@@ -126,9 +133,13 @@ namespace Maze
         if (!EcsRenderScene::init(renderWindow))
             return false;
 
+        m_editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+        m_editorSettings->getDebugInfoEnabledChangedEvent().subscribe(this, &SceneDebug::notifyDebugInfoEnabledChanged);
+
         Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneDebug::notifyMainRenderWindowResized);
 
         create2D();
+        updateTextRendererEnabled();
 
         return true;
     }
@@ -139,37 +150,40 @@ namespace Maze
         if (!Editor::GetInstancePtr()->getRunning())
             return;
 
-        m_fpsTimeLeft -= _dt;
-        F32 currentFPS = _dt > 0.0f ? 1.0f/ _dt : 0.0f;
-        m_fpsLowest = Math::Min(m_fpsLowest, currentFPS);
-        m_fpsAcc += currentFPS;
-
-        ++m_framesCount;
-
-        if (m_fpsTimeLeft <= 0.0f)
+        if (m_editorSettings->getDebugInfoEnabled())
         {
-            F32 fps = m_fpsAcc / m_framesCount;
-            String fpsText;
+            m_fpsTimeLeft -= _dt;
+            F32 currentFPS = _dt > 0.0f ? 1.0f / _dt : 0.0f;
+            m_fpsLowest = Math::Min(m_fpsLowest, currentFPS);
+            m_fpsAcc += currentFPS;
+
+            ++m_framesCount;
+
+            if (m_fpsTimeLeft <= 0.0f)
+            {
+                F32 fps = m_fpsAcc / m_framesCount;
+                String fpsText;
 
 #if (MAZE_DEBUG)
-            fpsText += "DEBUG\n";
+                fpsText += "DEBUG\n";
 #else
-            fpsText += "RELEASE\n";
+                fpsText += "RELEASE\n";
 #endif
 
-            fpsText += "FPS: " + StringHelper::ToString((S32)Math::Round(fps)) + " (Min: " + StringHelper::ToString((S32)Math::Round(m_fpsLowest)) + ")\n";
-            fpsText += "DIP: " + StringHelper::ToString(GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getDrawCalls()) + "\n";
-            fpsText += "WE: " + StringHelper::ToString((U32)EntityManager::GetInstancePtr()->getDefaultWorldRaw()->calculateEntitiesCount());
+                fpsText += "FPS: " + StringHelper::ToString((S32)Math::Round(fps)) + " (Min: " + StringHelper::ToString((S32)Math::Round(m_fpsLowest)) + ")\n";
+                fpsText += "DIP: " + StringHelper::ToString(GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getDrawCalls()) + "\n";
+                fpsText += "WE: " + StringHelper::ToString((U32)EntityManager::GetInstancePtr()->getDefaultWorldRaw()->calculateEntitiesCount());
 
-            m_fpsTimeLeft = m_fpsUpdateInterval;
-            m_fpsAcc = 0.0f;
-            m_framesCount = 0;
-            m_fpsLowest = currentFPS;
+                m_fpsTimeLeft = m_fpsUpdateInterval;
+                m_fpsAcc = 0.0f;
+                m_framesCount = 0;
+                m_fpsLowest = currentFPS;
 
-            m_fpsSystemTextRenderer->setText(fpsText);
+                m_fpsSystemTextRenderer->setText(fpsText);
+            }
+
+            GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->clearDrawCalls();
         }
-
-        GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->clearDrawCalls();
     }
 
     //////////////////////////////////////////
@@ -211,6 +225,19 @@ namespace Maze
             Rect2F sceneViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
             m_canvas->setViewport(sceneViewport);
         }
+    }
+
+    //////////////////////////////////////////
+    void SceneDebug::notifyDebugInfoEnabledChanged(bool const& _value)
+    {
+        updateTextRendererEnabled();
+    }
+
+    //////////////////////////////////////////
+    void SceneDebug::updateTextRendererEnabled()
+    {
+        m_fpsSystemTextRenderer->getEntityRaw()->setActiveSelf(
+            m_editorSettings->getDebugInfoEnabled());
     }
 
 } // namespace Maze

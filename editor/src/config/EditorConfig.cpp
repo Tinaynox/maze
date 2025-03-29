@@ -24,38 +24,18 @@
 
 
 //////////////////////////////////////////
-#include "settings/MazeEditorSettings.hpp"
-#include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
-#include "maze-core/memory/MazeMemory.hpp"
+#include "config/EditorConfig.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-
-
     //////////////////////////////////////////
-    // Class EditorSettings
-    //
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditorSettings, Settings,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, projectFullPath, String(), getProjectFullPath, setProjectFullPath),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, debugInfoEnabled, false, getDebugInfoEnabled, setDebugInfoEnabled));
-
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(EditorSettings);
-
-    //////////////////////////////////////////
-    EditorSettings::EditorSettings()
+    namespace EditorConfig
     {
+        //////////////////////////////////////////
         
-    }
-
-    //////////////////////////////////////////
-    EditorSettings::~EditorSettings()
-    {
-    }
-
+    };
 
 } // namespace Maze
 //////////////////////////////////////////

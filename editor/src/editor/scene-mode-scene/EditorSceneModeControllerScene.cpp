@@ -83,6 +83,7 @@
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "Editor.hpp"
+#include "layout/EditorLayout.hpp"
 #include "scenes/SceneEditor.hpp"
 #include "scenes/SceneWorkspaceTools.hpp"
 #include "scenes/SceneMainTools.hpp"
@@ -165,7 +166,7 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
             Vec2F32(
                 m_canvasNode->getSize().x,
-                20.0f),
+                EditorLayout::c_workspaceTopBarHeight),
             Vec2F32(0.0f, 0.0f),
             MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
             m_canvasNode,

@@ -92,6 +92,7 @@ namespace Maze
     Rect2F const EditorLayout::c_assetsViewport(0.0f, 0.0f, 0.5f, 0.33f);
     Rect2F const EditorLayout::c_previewViewport(0.5f, 0.0f, 0.5f, 0.33f);
     Rect2F const EditorLayout::c_topBarViewport(0.0f, 0.975f, 1.0f, topBarHeight);
+    F32 const EditorLayout::c_workspaceTopBarHeight = 20.0f;
         
     //////////////////////////////////////////
     Rect2F EditorLayout::CalculateWorkViewport(Rect2F const& _viewport)

@@ -110,6 +110,9 @@ namespace Maze
         void notifyPauseChanged(bool const& _value);
 
         //////////////////////////////////////////
+        void notifyBoolParamChanged(bool const& _value);
+
+        //////////////////////////////////////////
         void notifySelectedGizmoToolChanged(GizmoToolType const& _tool);
 
         //////////////////////////////////////////
@@ -132,6 +135,9 @@ namespace Maze
         ToggleButton2DPtr m_playButton;
         ToggleButton2DPtr m_pauseButton;
         ClickButton2DPtr m_stepButton;
+
+        HorizontalLayout2DPtr m_rightLayout;
+        ToggleButton2DPtr m_debugInfoButton;
     };
 
 

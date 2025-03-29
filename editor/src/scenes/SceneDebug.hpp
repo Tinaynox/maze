@@ -45,6 +45,7 @@
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
+#include "settings/MazeEditorSettings.hpp"
 
 
 //////////////////////////////////////////
@@ -92,6 +93,12 @@ namespace Maze
         //////////////////////////////////////////
         void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
 
+        //////////////////////////////////////////
+        void notifyDebugInfoEnabledChanged(bool const& _value);
+
+        //////////////////////////////////////////
+        void updateTextRendererEnabled();
+
     protected:
         AbstractTextRenderer2DPtr m_fpsSystemTextRenderer;
         F32 m_fpsUpdateInterval;
@@ -101,6 +108,8 @@ namespace Maze
         F32 m_fpsTimeLeft;
 
         CanvasPtr m_canvas;
+
+        EditorSettings* m_editorSettings = nullptr;
     };
 
 

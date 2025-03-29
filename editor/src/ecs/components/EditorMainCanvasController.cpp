@@ -36,6 +36,7 @@
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -61,6 +62,7 @@
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
 #include "maze-plugin-particles-editor-tools/ecs/components/tools/ParticleEffectInfo.hpp"
+#include "layout/EditorLayout.hpp"
 
 
 //////////////////////////////////////////
@@ -121,6 +123,106 @@ namespace Maze
         ParticleEffectInfoPtr particleEffectInfo = particleEffectInfoEntity->createComponent<ParticleEffectInfo>();
         particleEffectInfo->getTransform()->setParent(m_canvas->getTransform());
     }
+
+    //////////////////////////////////////////
+    void EditorMainCanvasController::processAppear()
+    {
+        m_canvasesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Canvas>();
+    }
+
+    //////////////////////////////////////////
+    void EditorMainCanvasController::processDisappear()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    void EditorMainCanvasController::onPreRender()
+    {
+        m_canvasesSample->query(
+            [&](Entity* _entity, Canvas* _canvas)
+            {
+                if (!_canvas->getRenderTarget())
+                {
+                    WorkspaceCanvasData data;
+                    data.canvas = _canvas;
+                    data.viewport = _canvas->getViewport();
+                    m_workspaceCanvasData.push_back(data);
+
+                    _canvas->setRenderTarget(
+                        m_canvas->getRenderTarget());
+
+                    F32 topBarHeightRel = EditorLayout::c_workspaceTopBarHeight / m_canvas->getRenderTarget()->getRenderTargetHeight();
+                    F32 heightRel = 1.0f - topBarHeightRel;
+
+                    Rect2F viewport = m_canvas->getViewport();
+                    viewport.size.y = heightRel;
+                    _canvas->setViewport(viewport);
+                }
+            });
+        // Debug::LogError("PRE RENDER");
+    }
+
+    //////////////////////////////////////////
+    void EditorMainCanvasController::onPostRender()
+    {
+        for (WorkspaceCanvasData const& data : m_workspaceCanvasData)
+        {
+            data.canvas->setRenderTarget(nullptr);
+            data.canvas->setViewport(data.viewport);
+        }
+        m_workspaceCanvasData.clear();
+    }
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(EditorMainCanvasControllerAppear,
+        {},
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        EditorMainCanvasController* _controller)
+    {
+        _controller->processAppear();
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(EditorMainCanvasControllerDisappear,
+        {},
+        {},
+        EntityRemovedFromSampleEvent const& _event,
+        Entity* _entity,
+        EditorMainCanvasController* _controller)
+    {
+        _controller->processDisappear();
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(EditorMainCanvasControllerOnPreRender,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        MAZE_ECS_ORDER(
+            MAZE_ECS_ORDER_AFTER(),
+            MAZE_ECS_ORDER_BEFORE(MAZE_HS("RenderControllerSystem"))),
+        PostUpdateEvent const& _event,
+        Entity* _entity,
+        EditorMainCanvasController* _controller)
+    {
+        _controller->onPreRender();
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(EditorMainCanvasControllerOnPostRender,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        MAZE_ECS_ORDER(
+            MAZE_ECS_ORDER_AFTER(MAZE_HS("RenderControllerSystem")),
+            MAZE_ECS_ORDER_BEFORE()),
+        PostUpdateEvent const& _event,
+        Entity* _entity,
+        EditorMainCanvasController* _controller)
+    {
+        _controller->onPostRender();
+    }
+    
 
 } // namespace Maze
 //////////////////////////////////////////

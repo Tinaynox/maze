@@ -78,8 +78,23 @@ namespace Maze
         //////////////////////////////////////////
         inline MultiDelegate<String const&>& getProjectFullPathChangedEvent() { return m_projectFullPath.eventValueChanged; }
 
+
+        //////////////////////////////////////////
+        void setDebugInfoEnabled(bool _value) { m_debugInfoEnabled = _value; }
+
+        //////////////////////////////////////////
+        inline bool getDebugInfoEnabled() const { return m_debugInfoEnabled.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<bool const&>& getDebugInfoEnabledChangedEvent() { return m_debugInfoEnabled.eventValueChanged; }
+
+        //////////////////////////////////////////
+        inline void switchDebugInfoEnabled() { setDebugInfoEnabled(!getDebugInfoEnabled()); }
+
     protected:
         ObservableValue<String> m_projectFullPath;
+
+        ObservableValue<bool> m_debugInfoEnabled = true;
     };
 
 

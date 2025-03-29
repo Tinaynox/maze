@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorLayout_hpp_))
-#define _EditorLayout_hpp_
+#if (!defined(_EditorConfig_hpp_))
+#define _EditorConfig_hpp_
 
 
 //////////////////////////////////////////
@@ -47,6 +47,9 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionEntityAdd.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
@@ -56,28 +59,13 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class EditorLayout
-    //
+    MAZE_USING_SHARED_PTR(Transform3D);
+    
+
     //////////////////////////////////////////
-    class EditorLayout
+    namespace EditorConfig
     {
-    public:
-
-        //////////////////////////////////////////
-        static F32 const c_menuBarHeight;
-        static Rect2F const c_hierarchyViewport;
-        static Rect2F const c_inspectorViewport;
-        static Rect2F const c_assetsViewport;
-        static Rect2F const c_sceneViewport;
-        static Rect2F const c_previewViewport;
-        static Rect2F const c_topBarViewport;
-        static F32 const c_workspaceTopBarHeight;
-
-        //////////////////////////////////////////
-        static Rect2F CalculateWorkViewport(Rect2F const& _viewport);
-
-        //////////////////////////////////////////
-        static Vec2F32 ConvertRenderWindowCoordsToWorkspaceViewport(Vec2F32 const& _coord);
+        
     };
 
 
@@ -85,5 +73,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorLayout_hpp_
+#endif // _EditorConfig_hpp_
 //////////////////////////////////////////

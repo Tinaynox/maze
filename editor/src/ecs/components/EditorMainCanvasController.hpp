@@ -33,8 +33,10 @@
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/utils/MazeManagedSharedPtr.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "editor/EditorSceneMode.hpp"
 
@@ -53,6 +55,15 @@ namespace Maze
     MAZE_USING_SHARED_PTR(HierarchyLinePool);
     MAZE_USING_SHARED_PTR(HierarchyLine);
     MAZE_USING_SHARED_PTR(EcsScene);
+
+
+    //////////////////////////////////////////
+    struct WorkspaceCanvasData
+    {
+        Canvas* canvas = nullptr;
+        Rect2F viewport;
+    };
+
 
     //////////////////////////////////////////
     // Class EditorMainCanvasController
@@ -92,6 +103,18 @@ namespace Maze
         inline Transform2DPtr const& getTransform() const { return m_transform; }
 
 
+        //////////////////////////////////////////
+        void processAppear();
+
+        //////////////////////////////////////////
+        void processDisappear();
+
+        //////////////////////////////////////////
+        void onPreRender();
+
+        //////////////////////////////////////////
+        void onPostRender();
+
     protected:
 
         //////////////////////////////////////////
@@ -112,6 +135,9 @@ namespace Maze
 
         Transform2DPtr m_transform;
 
+        SharedPtr<GenericInclusiveEntitiesSample<Canvas>> m_canvasesSample;
+
+        Vector<WorkspaceCanvasData> m_workspaceCanvasData;
     };
 
 

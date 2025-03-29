@@ -525,6 +525,12 @@ namespace Maze
         if (renderWindow->getWindow()->getMinimized())
             return;
 
+        if (m_topBarCanvas)
+        {
+            Rect2F topBarCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_topBarViewport);
+            m_topBarCanvas->setViewport(topBarCanvasViewport);
+        }
+
         if (m_topMenuBarCanvas)
         {
             Rect2F topMenuBarCanvasViewport(

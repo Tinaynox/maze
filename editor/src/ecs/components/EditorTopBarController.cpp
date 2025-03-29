@@ -60,6 +60,7 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "managers/EditorManager.hpp"
+#include "settings/MazeEditorSettings.hpp"
 
 
 //////////////////////////////////////////
@@ -91,6 +92,9 @@ namespace Maze
             EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
             debbugerSettings->getPauseChangedEvent().unsubscribe(this);
             debbugerSettings->getSelectedGizmoToolChangedEvent().unsubscribe(this);
+
+            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+            editorSettings->getDebugInfoEnabledChangedEvent().unsubscribe(this);
         }
 
         if (EditorManager::GetInstancePtr())
@@ -193,7 +197,6 @@ namespace Maze
                 debbugerSettings->setSelectedGizmoTool(tool);
             });
         }
-    
 
         
         m_layout = UIHelper::CreateHorizontalLayout(
@@ -264,15 +267,60 @@ namespace Maze
             m_stepButton->getTransform(),
             getEntityRaw()->getEcsScene())->setColor(85, 85, 85);
 
+
+
+        m_rightLayout = UIHelper::CreateHorizontalLayout(
+            HorizontalAlignment2D::Right,
+            VerticalAlignment2D::Middle,
+            m_bodyBackground->getTransform()->getSize(),
+            Vec2F32::c_zero,
+            m_bodyBackground->getTransform(),
+            getEntityRaw()->getEcsScene(),
+            Vec2F32(1.0f, 0.0f),
+            Vec2F32(1.0f, 0.0f));
+        m_rightLayout->setAutoWidth(false);
+        m_rightLayout->setAutoHeight(false);
+        m_rightLayout->setSpacing(2.0f);
+
+        {
+            m_debugInfoButton = EditorToolsUIHelper::CreateDefaultToggleButton(
+                m_rightLayout->getTransform(),
+                getEntityRaw()->getEcsScene());
+            m_debugInfoButton->setCheckByClick(false);
+            m_debugInfoButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent& _event)
+            {
+                EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+                editorSettings->switchDebugInfoEnabled();
+            });
+            SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Hamburger),
+                Vec2F32(18.0f, 18.0f),
+                Vec2F32::c_zero,
+                MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
+                m_debugInfoButton->getTransform(),
+                getEntityRaw()->getEcsScene())->setColor(85, 85, 85);
+        }
+
+
         updateUI();
 
         EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
         debbugerSettings->getPauseChangedEvent().subscribe(this, &EditorTopBarController::notifyPauseChanged);
         debbugerSettings->getSelectedGizmoToolChangedEvent().subscribe(this, &EditorTopBarController::notifySelectedGizmoToolChanged);
+
+        EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+        editorSettings->getDebugInfoEnabledChangedEvent().subscribe(this, &EditorTopBarController::notifyBoolParamChanged);
     }
 
     //////////////////////////////////////////
     void EditorTopBarController::notifyPauseChanged(bool const& _value)
+    {
+        updateUI();
+    }
+
+    //////////////////////////////////////////
+    void EditorTopBarController::notifyBoolParamChanged(bool const& _value)
     {
         updateUI();
     }
@@ -297,10 +345,17 @@ namespace Maze
     //////////////////////////////////////////
     void EditorTopBarController::updateUI()
     {
+        EditorToolsSettings* editorToolsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+        EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+
         if (m_pauseButton)
         {
-            EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
-            m_pauseButton->setChecked(debbugerSettings->getPause());
+            m_pauseButton->setChecked(editorToolsSettings->getPause());
+        }
+
+        if (m_debugInfoButton)
+        {
+            m_debugInfoButton->setChecked(editorSettings->getDebugInfoEnabled());
         }
 
         updateGizmoToolsButtons();
