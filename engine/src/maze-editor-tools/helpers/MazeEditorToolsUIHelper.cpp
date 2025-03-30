@@ -91,6 +91,29 @@ namespace Maze
     //////////////////////////////////////////
     namespace EditorToolsUIHelper
     {
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API ToggleButton2DPtr CreateDefaultToggleButton(
+            EntityPtr const& _entity,
+            Transform2DPtr const& _parent,
+            EcsScene* _ecsScene)
+        {
+            ToggleButton2DPtr button = UIHelper::CreateToggleButton(
+                _entity,
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+                Vec2F(18.0f, 18.0f),
+                Vec2F::c_zero,
+                _parent,
+                _ecsScene,
+                Vec2F(0.5f, 0.5f),
+                Vec2F(0.5f, 0.5f),
+                ColorU32{ 200, 200, 200 },
+                ColorU32{ 187, 187, 187 },
+                ColorU32{ 161, 161, 161 },
+                ColorU32{ 171, 171, 171 },
+                ColorU32{ 151, 151, 151 });
+
+            return button;
+        }
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API ToggleButton2DPtr CreateDefaultToggleButton(
@@ -132,6 +155,30 @@ namespace Maze
                 button->getTransform(),
                 _ecsScene);
             sprite->setColor(_spriteColor);
+
+            return button;
+        }
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API ClickButton2DPtr CreateDefaultClickButton(
+            EntityPtr const& _entity,
+            Transform2DPtr const& _parent,
+            EcsScene* _ecsScene)
+        {
+            ClickButton2DPtr button = UIHelper::CreateDefaultClickButton(
+                _entity,
+                "",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                Vec2F(18.0f, 18.0f),
+                Vec2F::c_zero,
+                _parent,
+                _ecsScene,
+                Vec2F(0.5f, 0.5f),
+                Vec2F(0.5f, 0.5f));
+            button->setNormalColor(ColorU32{ 200, 200, 200 });
+            button->setFocusedColor(ColorU32{ 187, 187, 187 });
+            button->setSelectedColor(ColorU32{ 161, 161, 161 });
+            button->setPressedColor(ColorU32{ 171, 171, 171 });
 
             return button;
         }
@@ -245,7 +292,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr colorEditEntity = _ecsScene->createEntity();
-            colorEditEntity->ensureComponent<StaticName>("ColorEdit");
+            colorEditEntity->ensureComponent<Name>("ColorEdit");
 
             ColorEdit2DPtr colorEdit = colorEditEntity->createComponent<ColorEdit2D>();
             colorEdit->setColor(_color);
@@ -363,7 +410,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr colorEditEntity = _ecsScene->createEntity();
-            colorEditEntity->ensureComponent<StaticName>("ColorHDREdit");
+            colorEditEntity->ensureComponent<Name>("ColorHDREdit");
 
             ColorHDREdit2DPtr colorEdit = colorEditEntity->createComponent<ColorHDREdit2D>();
             colorEdit->setColor(_color);
@@ -522,7 +569,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr colorEditEntity = _ecsScene->createEntity();
-            colorEditEntity->ensureComponent<StaticName>("ColorGradientEdit");
+            colorEditEntity->ensureComponent<Name>("ColorGradientEdit");
 
             ColorGradientEdit2DPtr colorEdit = colorEditEntity->createComponent<ColorGradientEdit2D>();
             colorEdit->setGradient(_gradient);
@@ -624,7 +671,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr curveEditEntity = _ecsScene->createEntity();
-            curveEditEntity->ensureComponent<StaticName>("CurveEdit");
+            curveEditEntity->ensureComponent<Name>("CurveEdit");
 
             AnimationCurveEdit2DPtr curveEdit = curveEditEntity->createComponent<AnimationCurveEdit2D>();
             curveEdit->setCurve(_curve);

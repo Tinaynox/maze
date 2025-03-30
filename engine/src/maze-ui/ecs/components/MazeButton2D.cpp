@@ -31,12 +31,14 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
+#include "maze-ui/ecs/events/MazeEcsUIEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -53,7 +55,8 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, focusedColor, ColorU32(245, 245, 245, 255), getFocusedColor, setFocusedColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, pressedColor, ColorU32(200, 200, 200, 255), getPressedColor, setPressedColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, selectedColor, ColorU32(245, 245, 245, 255), getSelectedColor, setSelectedColor),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, disabledColor, ColorU32(200, 200, 200, 128), getDisabledColor, setDisabledColor)
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, disabledColor, ColorU32(200, 200, 200, 128), getDisabledColor, setDisabledColor),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(EntityId, eventReceiverEid, c_invalidEntityId, getEventReceiverEid, setEventReceiverEid)
     );
 
     //////////////////////////////////////////
@@ -132,6 +135,10 @@ namespace Maze
             return;
 
         eventClick(this, _inputEvent);
+
+        if (m_eventReceiverEid != c_invalidEntityId && getEntityRaw() && getEntityRaw()->getEcsWorld())
+            getEntityRaw()->getEcsWorld()->sendEvent<ButtonClickEvent>(
+                m_eventReceiverEid, getEntityId(), _positionOS, _inputEvent);
     }
 
     //////////////////////////////////////////

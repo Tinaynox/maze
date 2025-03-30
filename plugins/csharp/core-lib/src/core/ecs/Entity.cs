@@ -4,6 +4,8 @@ namespace Maze.Core
 {
     public struct Entity
     {
+        public int Id => GetEntityId();
+
         public NativePtr NativeEntityPtr { get; private set; }
 
         public Entity(NativePtr ptr)

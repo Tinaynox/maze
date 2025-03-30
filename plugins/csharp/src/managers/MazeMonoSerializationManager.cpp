@@ -28,6 +28,7 @@
 #include "maze-plugin-csharp/managers/MazeMonoSerializationManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 #include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
@@ -503,6 +504,7 @@ namespace Maze
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Mat4F);
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(TMat);
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Rect2F);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(EntityId);
 
         // Graphics
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(ColorU32);

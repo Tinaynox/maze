@@ -45,6 +45,7 @@
 #include "maze-core/math/MazePlane.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
 #include "maze-core/math/MazeRay.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
 #include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 #include "maze-core/serialization/MazeStringSerialization.hpp"
@@ -264,6 +265,24 @@ namespace Maze
     MAZE_FORCEINLINE void ValueFromDataBlock(IDataBlockSerializable& _value, DataBlock const& _data)
     {
         _value.loadFromDataBlock(_data);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: EntityId
+    //
+    //////////////////////////////////////////
+    inline void ValueToDataBlock(EntityId const& _value, DataBlock& _data)
+    {
+        ValueToDataBlock((S32)_value, _data);
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromDataBlock(EntityId& _value, DataBlock const& _data)
+    {
+        S32 eid;
+        ValueFromDataBlock(eid, _data);
+        _value = EntityId(eid);
     }
 
 

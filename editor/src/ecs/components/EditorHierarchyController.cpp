@@ -80,6 +80,7 @@
 #include "managers/EditorPrefabManager.hpp"
 #include "managers/EditorSceneManager.hpp"
 #include "managers/EditorEntityManager.hpp"
+#include "helpers/EditorHelper.hpp"
 #include "ecs/components/EditorHierarchyControllerAgent.hpp"
 
 
@@ -646,17 +647,22 @@ namespace Maze
                             _menuListTree->addItem(
                                 "Add Child/2D/Empty",
                                 [transform2D](String const& _text)
-                            {
-                                EntityPtr newEntity = EditorToolsHelper::CreateEntity2D("Entity");
-                                Transform2DPtr newEntityTransform = newEntity->getComponent<Transform2D>();
+                                { EditorHelper::CreateEntity2D("Sprite", transform2D->cast<Transform2D>()); });
 
-                                newEntityTransform->setParent(transform2D->cast<Transform2D>());
+                            _menuListTree->addItem(
+                                "Add Child/2D/Sprite",
+                                [transform2D](String const& _text)
+                                { EditorHelper::CreateSprite2D("Sprite", transform2D->cast<Transform2D>()); });
 
-                                if (EditorToolsActionManager::GetInstancePtr())
-                                    EditorToolsActionManager::GetInstancePtr()->applyActions(
-                                        EditorActionEntityAdd::Create(newEntity),
-                                        EditorActionSelectEntities::Create(true, newEntity));
-                            });
+                            _menuListTree->addItem(
+                                "Add Child/2D/Toggle Button",
+                                [transform2D](String const& _text)
+                                { EditorHelper::CreateToggleButton2D("Toggle Button", transform2D->cast<Transform2D>()); });
+
+                            _menuListTree->addItem(
+                                "Add Child/2D/Click Button",
+                                [transform2D](String const& _text)
+                                { EditorHelper::CreateClickButton2D("Click Button", transform2D->cast<Transform2D>()); });
                         }
                     }
 

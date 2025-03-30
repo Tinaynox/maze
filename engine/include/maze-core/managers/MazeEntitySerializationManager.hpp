@@ -155,6 +155,7 @@ namespace Maze
             Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
             Vector<PrefabInstance*> const& _prefabs,
             Map<void*, S32>& _pointerIndices,
+            Map<EntityId, S32>& _entityIndices,
             Map<AssetUnitId, EntityPtr>& _identityPrefabs,
             DataBlock& _dataBlock) const;
 

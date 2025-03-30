@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/property-drawers/MazePDEntityPtr.hpp"
+#include "maze-editor-tools/property-drawers/MazePDEntityId.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
@@ -53,36 +53,36 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class PropertyDrawerEntityPtr
+    // Class PropertyDrawerEntityId
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerEntityPtr, PropertyDrawer);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerEntityId, PropertyDrawer);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerEntityPtr);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerEntityId);
 
     //////////////////////////////////////////
-    PropertyDrawerEntityPtr::PropertyDrawerEntityPtr()
+    PropertyDrawerEntityId::PropertyDrawerEntityId()
     {
         
     }
 
     //////////////////////////////////////////
-    PropertyDrawerEntityPtr::~PropertyDrawerEntityPtr()
+    PropertyDrawerEntityId::~PropertyDrawerEntityId()
     {
         
     }
 
     //////////////////////////////////////////
-    PropertyDrawerEntityPtrPtr PropertyDrawerEntityPtr::Create(DataBlock const& _dataBlock)
+    PropertyDrawerEntityIdPtr PropertyDrawerEntityId::Create(DataBlock const& _dataBlock)
     {
-        PropertyDrawerEntityPtrPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerEntityPtr, object, init(_dataBlock));
+        PropertyDrawerEntityIdPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerEntityId, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerEntityPtr::init(DataBlock const& _dataBlock)
+    bool PropertyDrawerEntityId::init(DataBlock const& _dataBlock)
     {
         if (!PropertyDrawer::init(_dataBlock))
             return false;
@@ -91,7 +91,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerEntityPtr::buildUI(
+    void PropertyDrawerEntityId::buildUI(
         Transform2DPtr const& _parent,
         CString _label)
     {
@@ -184,7 +184,7 @@ namespace Maze
                     if (!entity)
                         return;
 
-                    setValue(entity);
+                    setValue(entity->getId());
                     eventUIData();
                 }
             });
@@ -213,29 +213,22 @@ namespace Maze
     }
 
     ////////////////////////////////////////////
-    void PropertyDrawerEntityPtr::unselectUI()
+    void PropertyDrawerEntityId::unselectUI()
     {
         
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerEntityPtr::setValue(EntityPtr const& _value)
+    void PropertyDrawerEntityId::setValue(EntityId const& _value)
     {
-        m_worldId = _value ? _value->getEcsWorld()->getId() : EcsWorldId(0);
-        m_entityId = _value ? _value->getId() : c_invalidEntityId;
-        CString name = _value ? EcsHelper::GetName(_value.get()) : "None";
-
-        m_text->setTextFormatted("%s [%d]", name, (S32)m_entityId);
+        m_entityId = _value;
+        m_text->setTextFormatted("[%d]", (S32)m_entityId);
     }
 
     //////////////////////////////////////////
-    EntityPtr PropertyDrawerEntityPtr::getValue() const
+    EntityId PropertyDrawerEntityId::getValue() const
     {
-        EcsWorld* world = EcsWorld::GetEcsWorld(m_worldId);
-        if (!world)
-            return EntityPtr();
-
-        return world->getEntity(m_entityId);
+        return m_entityId;
     }
 
 

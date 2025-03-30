@@ -28,6 +28,7 @@
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -69,6 +70,7 @@
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -84,6 +86,7 @@
 #include "maze-editor-tools/editor-actions/MazeEditorActionActionsGroup.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionSelectEntities.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
@@ -211,6 +214,113 @@ namespace Maze
                     return EntityPtr();
                 }
             }
+        }
+
+        //////////////////////////////////////////
+        EntityPtr CreateEntity2D(
+            CString _entityName,
+            Transform2DPtr const& _parent,
+            bool _select)
+        {
+            EntityPtr gameObject = CreateEntity2D(_entityName);
+            if (!gameObject)
+                return EntityPtr();
+
+            Transform2D* transform2D = gameObject->getComponentRaw<Transform2D>();
+            if (_parent)
+                transform2D->setParent(_parent);
+
+            ProcessEditorActionsForCreatedEntity(gameObject, _select);
+
+            return gameObject;
+        }
+
+        //////////////////////////////////////////
+        EntityPtr CreateSprite2D(
+            CString _entityName,
+            Transform2DPtr const& _parent,
+            bool _select)
+        {
+            EntityPtr gameObject = CreateEntity2D(_entityName);
+            if (!gameObject)
+                return EntityPtr();
+
+            Maze::SpriteRenderer2DPtr spriteRenderer = gameObject->createComponent<SpriteRenderer2D>();
+            spriteRenderer->setSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02));
+            spriteRenderer->setMaterialCopy(SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
+
+            if (spriteRenderer->getSprite())
+            {
+                if (spriteRenderer->getSprite()->getSliceBorder().isBorderExists())
+                    spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
+            }
+
+            if (_parent)
+                spriteRenderer->getTransform()->setParent(_parent);
+
+            ProcessEditorActionsForCreatedEntity(gameObject, _select);
+
+            return gameObject;
+        }
+
+        //////////////////////////////////////////
+        EntityPtr CreateToggleButton2D(
+            CString _entityName,
+            Transform2DPtr const& _parent,
+            bool _select)
+        {
+            EntityPtr gameObject = CreateEntity2D(_entityName);
+            if (!gameObject)
+                return EntityPtr();
+
+            ToggleButton2DPtr button = EditorToolsUIHelper::CreateDefaultToggleButton(
+                gameObject,
+                _parent,
+                gameObject->getEcsScene());
+            button->setCheckByClick(false);
+            SpriteRenderer2DPtr iconSprite = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Hamburger),
+                Vec2F32(18.0f, 18.0f),
+                Vec2F32::c_zero,
+                MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
+                button->getTransform(),
+                gameObject->getEcsScene());
+            iconSprite->setColor(85, 85, 85);
+            iconSprite->getEntityRaw()->ensureComponent<Name>("Icon");
+
+            ProcessEditorActionsForCreatedEntity(gameObject, _select);
+
+            return gameObject;
+        }
+
+        //////////////////////////////////////////
+        EntityPtr CreateClickButton2D(
+            CString _entityName,
+            Transform2DPtr const& _parent,
+            bool _select)
+        {
+            EntityPtr gameObject = CreateEntity2D(_entityName);
+            if (!gameObject)
+                return EntityPtr();
+
+            ClickButton2DPtr button = EditorToolsUIHelper::CreateDefaultClickButton(
+                gameObject,
+                _parent,
+                gameObject->getEcsScene());
+            SpriteRenderer2DPtr iconSprite = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Hamburger),
+                Vec2F32(18.0f, 18.0f),
+                Vec2F32::c_zero,
+                MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
+                button->getTransform(),
+                gameObject->getEcsScene());
+            iconSprite->setColor(85, 85, 85);
+            iconSprite->getEntityRaw()->ensureComponent<Name>("Icon");
+
+            ProcessEditorActionsForCreatedEntity(gameObject, _select);
+
+            return gameObject;
         }
 
         //////////////////////////////////////////

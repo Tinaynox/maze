@@ -332,6 +332,9 @@ namespace Maze
                    Button2D* _button,
                    SpriteRenderer2D* _backgroundRenderer)
             {
+                if (!_backgroundRenderer)
+                    return;
+
                 S32 buttonIndex = _dropdown->getButtonIndex(_button->castRaw<ClickButton2D>());
                 bool isSelected = (buttonIndex == _dropdown->getValue());
 

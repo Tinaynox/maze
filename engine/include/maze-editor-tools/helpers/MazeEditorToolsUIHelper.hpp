@@ -69,6 +69,12 @@ namespace Maze
     {
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API ToggleButton2DPtr CreateDefaultToggleButton(
+            EntityPtr const& _entity,
+            Transform2DPtr const& _parent,
+            EcsScene* _ecsScene);
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API ToggleButton2DPtr CreateDefaultToggleButton(
             Transform2DPtr const& _parent,
             EcsScene* _ecsScene);
 
@@ -79,6 +85,12 @@ namespace Maze
             Transform2DPtr const& _parent,
             EcsScene* _ecsScene,
             Vec2F const& _spriteSize = Vec2F(14.0f, 14.0f));
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API ClickButton2DPtr CreateDefaultClickButton(
+            EntityPtr const& _entity,
+            Transform2DPtr const& _parent,
+            EcsScene* _ecsScene);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API ClickButton2DPtr CreateDefaultClickButton(

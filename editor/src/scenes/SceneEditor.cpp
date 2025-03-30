@@ -284,6 +284,19 @@ namespace Maze
                 [](String const& _text) { EditorHelper::CreateEntity2D("Entity"); },
                 EditorHelper::IsValidSceneMode);
             m_menuBar->addOption(
+                "Entity", "Create/2D/Sprite",
+                [](String const& _text) { EditorHelper::CreateSprite2D("Sprite"); },
+                EditorHelper::IsValidSceneMode);
+            m_menuBar->addOption(
+                "Entity", "Create/2D/Toggle Button",
+                [](String const& _text) { EditorHelper::CreateToggleButton2D("ToggleButton"); },
+                EditorHelper::IsValidSceneMode);
+            m_menuBar->addOption(
+                "Entity", "Create/2D/Click Button",
+                [](String const& _text) { EditorHelper::CreateClickButton2D("ClickButton"); },
+                EditorHelper::IsValidSceneMode);
+
+            m_menuBar->addOption(
                 "Entity", "Create/3D/Empty",
                 [](String const& _text) { EditorHelper::CreateEntity3D("Entity"); },
                 EditorHelper::IsValidSceneMode);

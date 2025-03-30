@@ -25,4 +25,12 @@ namespace Maze.UI
     {
         public CursorInputEvent inputEvent;
     }
+
+    public class ButtonClickEvent : NativeEvent
+    {
+        public int buttonEid;
+        public Vec2F positionOS;
+        public CursorInputEvent inputEvent;
+    }
+
 }

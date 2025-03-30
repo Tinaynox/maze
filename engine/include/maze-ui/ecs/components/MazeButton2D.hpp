@@ -146,6 +146,13 @@ namespace Maze
         //////////////////////////////////////////
         inline ColorU32 const& getDisabledColor() const { return m_disabledColor; }
 
+
+        //////////////////////////////////////////
+        inline void setEventReceiverEid(EntityId const& _value) { m_eventReceiverEid = _value; }
+
+        //////////////////////////////////////////
+        inline EntityId const& getEventReceiverEid() const { return m_eventReceiverEid; }
+
     public:
 
         MultiDelegate<Button2D*, CursorInputEvent&> eventClick;
@@ -204,6 +211,8 @@ namespace Maze
         ColorU32 m_pressedColor;
         ColorU32 m_selectedColor;
         ColorU32 m_disabledColor;
+
+        EntityId m_eventReceiverEid = c_invalidEntityId;
     };
 
 

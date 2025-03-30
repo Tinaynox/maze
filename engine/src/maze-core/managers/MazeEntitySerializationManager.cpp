@@ -98,6 +98,7 @@ namespace Maze
         Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
         Vector<PrefabInstance*> const& _prefabs,
         Map<void*, S32>& _outPointerIndices,
+        Map<EntityId, S32>& _outEntityIndices,
         Map<AssetUnitId, EntityPtr>& _outIdentityPrefabs,
         EcsWorldPtr& _outIdentityPrefabsWorld)
     {
@@ -107,7 +108,9 @@ namespace Maze
         for (auto const& entityComponentsData : _entityComponents)
         {
             EntityPtr const& entity = entityComponentsData.first;
-            _outPointerIndices[entity.get()] = ++indexCounter;
+            S32 entityIndex = ++indexCounter;
+            _outPointerIndices[entity.get()] = entityIndex;
+            _outEntityIndices[entity->getId()] = entityIndex;
 
             Vector<ComponentPtr> const& components = entityComponentsData.second;
             for (ComponentPtr const& component : components)
@@ -146,6 +149,7 @@ namespace Maze
         Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
         Vector<PrefabInstance*> const& _prefabs,
         Map<void*, S32>& _pointerIndices,
+        Map<EntityId, S32>& _entityIndices,
         Map<AssetUnitId, EntityPtr>& _identityPrefabs,
         DataBlock& _dataBlock) const
     {
@@ -193,7 +197,7 @@ namespace Maze
                                     continue;
                                 }
                                 else
-                                if (metaPropertyMetaClass->isInheritedFrom<Entity>())
+                                if (metaPropertyMetaClass == Entity::GetMetaClass())
                                 {
                                     void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
                                     if (propertyValuePointer)
@@ -203,6 +207,15 @@ namespace Maze
                                     }
                                     continue;
                                 }
+                            }
+                            else
+                            if (metaPropertyUID == ClassInfo<EntityId>::UID())
+                            {
+                                EntityId eid;
+                                metaProperty->getValue(metaInstance, eid);
+                                S32 propertyValueIndex = _entityIndices[eid];
+                                EcsHelper::EnsureEntityIdBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
+                                continue;
                             }
                             else
                             if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
@@ -446,12 +459,13 @@ namespace Maze
 
 
         Map<void*, S32> pointerIndices;
+        Map<EntityId, S32> entityIndices;
         Map<AssetUnitId, EntityPtr> identityPrefabs;
         EcsWorldPtr identityPrefabsWorld;
-        PrepareEntitiesToSerialize(entityComponents, prefabs, pointerIndices, identityPrefabs, identityPrefabsWorld);
+        PrepareEntitiesToSerialize(entityComponents, prefabs, pointerIndices, entityIndices, identityPrefabs, identityPrefabsWorld);
 
 
-        saveEntitiesToDataBlock(entityComponents, prefabs, pointerIndices, identityPrefabs, _dataBlock);
+        saveEntitiesToDataBlock(entityComponents, prefabs, pointerIndices, entityIndices, identityPrefabs, _dataBlock);
 
 
         _dataBlock.setS32(MAZE_HCS("_version"), c_enititySerializationVersion);
@@ -469,12 +483,13 @@ namespace Maze
 
 
         Map<void*, S32> pointerIndices;
+        Map<EntityId, S32> entityIndices;
         Map<AssetUnitId, EntityPtr> identityPrefabs;
         EcsWorldPtr identityPrefabsWorld;
-        PrepareEntitiesToSerialize(entityComponents, prefabs, pointerIndices, identityPrefabs, identityPrefabsWorld);
+        PrepareEntitiesToSerialize(entityComponents, prefabs, pointerIndices, entityIndices, identityPrefabs, identityPrefabsWorld);
 
 
-        saveEntitiesToDataBlock(entityComponents, prefabs, pointerIndices, identityPrefabs, _dataBlock);
+        saveEntitiesToDataBlock(entityComponents, prefabs, pointerIndices, entityIndices, identityPrefabs, _dataBlock);
 
 
         _dataBlock.setS32(MAZE_HCS("_rootIndex"), pointerIndices[_entity.get()]);
@@ -1185,6 +1200,16 @@ namespace Maze
                                             continue;
                                         }
                                         else
+                                        if (metaPropertyUID == ClassInfo<EntityId>::UID())
+                                        {
+                                            S32 valueIndex = componentBlock->getS32(MAZE_HCS("value"));
+                                            EntityPtr const& entity = _outEntities[valueIndex];
+                                            EntityId entityId = entity ? entity->getId() : c_invalidEntityId;
+                                            metaProperty->setValue(component->getMetaInstance(), &entityId);
+
+                                            continue;
+                                        }
+                                        else
                                         if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
                                         {
                                             DataBlock const* propertyBlock = componentBlock->getDataBlock(MAZE_HCS("value"));
@@ -1309,6 +1334,26 @@ namespace Maze
                                                     metaProperty->setValue(componentMetaInstance, &_outEntities[valueIndex]);
                                                 }
                                                 continue;
+                                            }
+                                            else
+                                            if (metaPropertyUID == ClassInfo<EntityId>::UID())
+                                            {
+                                                DataBlock const* entityIdBlock = EcsHelper::GetEntityIdBlock(*componentBlock, propertyName.str);
+                                                if (entityIdBlock)
+                                                {
+                                                    EntityId entityId(entityIdBlock->getS32(MAZE_HCS("value")));
+                                                    metaProperty->setValue(componentMetaInstance, &entityId);
+
+                                                    MAZE_ERROR_IF(
+                                                        entityId != c_invalidEntityId && !entitiesPerEntityId[entityId],
+                                                        "Entity %d is not found! propertyName=%s",
+                                                        (S32)entityId,
+                                                        propertyName.str);
+                                                }
+                                                else
+                                                {
+                                                    MAZE_ERROR("Wrong syntax");
+                                                }
                                             }
                                             else
                                             if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())

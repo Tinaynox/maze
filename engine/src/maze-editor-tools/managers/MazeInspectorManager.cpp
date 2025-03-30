@@ -55,6 +55,7 @@
 #include "maze-editor-tools/property-drawers/MazePDRenderMesh.hpp"
 #include "maze-editor-tools/property-drawers/MazePDRadians.hpp"
 #include "maze-editor-tools/property-drawers/MazePDTexture2D.hpp"
+#include "maze-editor-tools/property-drawers/MazePDEntityId.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDBool.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDS32.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDF32.hpp"
@@ -143,6 +144,14 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    using MetaPropertyDrawerEntityId =
+        MetaPropertyDrawerDefault<
+        EntityId,
+        PropertyDrawerEntityId>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerEntityId, MetaPropertyDrawer);
+
+
+    //////////////////////////////////////////
     // Class InspectorManager
     //
     //////////////////////////////////////////
@@ -190,6 +199,7 @@ namespace Maze
         registerPropertyDrawer<RenderMeshPtr, PropertyDrawerRenderMesh>();
         registerPropertyDrawer<RenderMeshAssetRef, PropertyDrawerRenderMeshAssetRef>();
         registerPropertyDrawer<Texture2DPtr, PropertyDrawerTexture2D>();
+        registerPropertyDrawer<EntityId, PropertyDrawerEntityId>();
 
         registerMetaPropertyDrawer<bool, MetaPropertyDrawerBool>();
         registerMetaPropertyDrawer<S32, MetaPropertyDrawerS32>();
@@ -211,6 +221,7 @@ namespace Maze
         registerMetaPropertyDrawer<RenderMeshPtr, MetaPropertyDrawerRenderMesh>();
         registerMetaPropertyDrawer<RenderMeshAssetRef, MetaPropertyDrawerRenderMeshAssetRef>();
         registerMetaPropertyDrawer<Texture2DPtr, MetaPropertyDrawerTexture2D>();
+        registerMetaPropertyDrawer<EntityId, MetaPropertyDrawerEntityId>();
 
         registerComponentEditor<Transform3D, ComponentEditorTransform3D>();
         registerComponentEditor<Camera3D, ComponentEditorCamera3D>();

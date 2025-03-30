@@ -85,6 +85,30 @@ namespace Maze
         EntityPtr CreateEntity2D(CString _entityName);
 
         //////////////////////////////////////////
+        EntityPtr CreateEntity2D(
+            CString _entityName,
+            Transform2DPtr const& _parent,
+            bool _select = true);
+
+        //////////////////////////////////////////
+        EntityPtr CreateSprite2D(
+            CString _entityName,
+            Transform2DPtr const& _parent = nullptr,
+            bool _select = true);
+
+        //////////////////////////////////////////
+        EntityPtr CreateToggleButton2D(
+            CString _entityName,
+            Transform2DPtr const& _parent = nullptr,
+            bool _select = true);
+
+        //////////////////////////////////////////
+        EntityPtr CreateClickButton2D(
+            CString _entityName,
+            Transform2DPtr const& _parent = nullptr,
+            bool _select = true);
+
+        //////////////////////////////////////////
         EntityPtr CreateEntity3D(CString _entityName);
 
         //////////////////////////////////////////
