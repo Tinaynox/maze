@@ -55,6 +55,7 @@
 #include "maze-editor-tools/property-drawers/MazePDRenderMesh.hpp"
 #include "maze-editor-tools/property-drawers/MazePDRadians.hpp"
 #include "maze-editor-tools/property-drawers/MazePDTexture2D.hpp"
+#include "maze-editor-tools/property-drawers/MazePDSprite.hpp"
 #include "maze-editor-tools/property-drawers/MazePDEntityId.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDBool.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDS32.hpp"
@@ -144,6 +145,22 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    using MetaPropertyDrawerSprite =
+        MetaPropertyDrawerDefault<
+        SpritePtr,
+        PropertyDrawerSprite>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerSprite, MetaPropertyDrawer);
+
+
+    //////////////////////////////////////////
+    using MetaPropertyDrawerSpriteAssetRef =
+        MetaPropertyDrawerDefault<
+        SpriteAssetRef,
+        PropertyDrawerSpriteAssetRef>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerSpriteAssetRef, MetaPropertyDrawer);
+
+
+    //////////////////////////////////////////
     using MetaPropertyDrawerEntityId =
         MetaPropertyDrawerDefault<
         EntityId,
@@ -199,6 +216,8 @@ namespace Maze
         registerPropertyDrawer<RenderMeshPtr, PropertyDrawerRenderMesh>();
         registerPropertyDrawer<RenderMeshAssetRef, PropertyDrawerRenderMeshAssetRef>();
         registerPropertyDrawer<Texture2DPtr, PropertyDrawerTexture2D>();
+        registerPropertyDrawer<SpritePtr, PropertyDrawerSprite>();
+        registerPropertyDrawer<SpriteAssetRef, PropertyDrawerSpriteAssetRef>();
         registerPropertyDrawer<EntityId, PropertyDrawerEntityId>();
 
         registerMetaPropertyDrawer<bool, MetaPropertyDrawerBool>();
@@ -221,6 +240,8 @@ namespace Maze
         registerMetaPropertyDrawer<RenderMeshPtr, MetaPropertyDrawerRenderMesh>();
         registerMetaPropertyDrawer<RenderMeshAssetRef, MetaPropertyDrawerRenderMeshAssetRef>();
         registerMetaPropertyDrawer<Texture2DPtr, MetaPropertyDrawerTexture2D>();
+        registerMetaPropertyDrawer<SpritePtr, MetaPropertyDrawerSprite>();
+        registerMetaPropertyDrawer<SpriteAssetRef, MetaPropertyDrawerSpriteAssetRef>();
         registerMetaPropertyDrawer<EntityId, MetaPropertyDrawerEntityId>();
 
         registerComponentEditor<Transform3D, ComponentEditorTransform3D>();

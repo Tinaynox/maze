@@ -158,6 +158,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    SpritePtr const& SpriteManager::getOrLoadSprite(
+        AssetFilePtr const& _assetFile,
+        bool _syncLoad)
+    {
+        static SpritePtr const nullPointer;
+
+        SpriteLibraryData const* libraryData = getSpriteLibraryData(_assetFile->getFileName());
+        if (libraryData)
+        {
+            if (libraryData->callbacks.requestLoad)
+                libraryData->callbacks.requestLoad(_syncLoad);
+
+            return libraryData->sprite;
+        }
+
+        return getOrLoadSprite(_assetFile->getFileName(), _syncLoad);
+    }
+
+    //////////////////////////////////////////
     void SpriteManager::loadSpriteMetaData(SpritePtr const& _sprite, DataBlock const& _metaData)
     {
         _sprite->set(
@@ -219,6 +238,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void SpriteManager::loadAllAssetSprites()
+    {
+        MAZE_PROFILE_EVENT("SpriteManager::loadAllAssetSprites");
+
+        TextureManager::GetCurrentInstancePtr()->loadAllAssetTextures();
+        StringKeyMap<Texture2DLibraryData> const& textures2D = TextureManager::GetCurrentInstancePtr()->getTextures2DLibrary();
+
+        for (auto texture2DData : textures2D)
+        {
+            getOrLoadSprite(texture2DData.first);
+        }
+    }
+
+    //////////////////////////////////////////
     HashedCString SpriteManager::getSpriteName(Sprite const* _sprite)
     {
         for (StringKeyMap<SpriteLibraryData>::iterator it = m_spritesLibrary.begin(),
@@ -240,32 +273,32 @@ namespace Maze
 
         switch (_spriteType)
         {
-        case BuiltinSpriteType::White:
-        {
-            sprite = Sprite::Create(
-                TextureManager::GetCurrentInstancePtr()->ensureBuiltinTexture2D(
-                    BuiltinTexture2DType::White));
-            break;
-        }
-        case BuiltinSpriteType::Black:
-        {
-            sprite = Sprite::Create(
-                TextureManager::GetCurrentInstancePtr()->ensureBuiltinTexture2D(
-                    BuiltinTexture2DType::Black));
-            break;
-        }
-        case BuiltinSpriteType::Error:
-        {
-            sprite = Sprite::Create(
-                TextureManager::GetCurrentInstancePtr()->ensureBuiltinTexture2D(
-                    BuiltinTexture2DType::Error));
-            break;
-        }
-        default:
-        {
-            MAZE_NOT_IMPLEMENTED;
-            break;
-        }
+            case BuiltinSpriteType::White:
+            {
+                sprite = Sprite::Create(
+                    TextureManager::GetCurrentInstancePtr()->ensureBuiltinTexture2D(
+                        BuiltinTexture2DType::White));
+                break;
+            }
+            case BuiltinSpriteType::Black:
+            {
+                sprite = Sprite::Create(
+                    TextureManager::GetCurrentInstancePtr()->ensureBuiltinTexture2D(
+                        BuiltinTexture2DType::Black));
+                break;
+            }
+            case BuiltinSpriteType::Error:
+            {
+                sprite = Sprite::Create(
+                    TextureManager::GetCurrentInstancePtr()->ensureBuiltinTexture2D(
+                        BuiltinTexture2DType::Error));
+                break;
+            }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+                break;
+            }
         }
 
         if (sprite)
@@ -296,6 +329,25 @@ namespace Maze
             ensureBuiltinSprite(t);
 
         eventBuiltinSpritesCreated();
+    }
+
+    //////////////////////////////////////////
+    Vector<SpritePtr> SpriteManager::getSpritesSorted()
+    {
+        Vector<SpritePtr> result;
+
+        for (auto const& value : m_spritesLibrary)
+            result.emplace_back(value.second.sprite);
+
+        std::sort(
+            result.begin(),
+            result.end(),
+            [](SpritePtr const& _a, SpritePtr const& _b)
+            {
+                return _a->getName() < _b->getName();
+            });
+
+        return result;
     }
 
 } // namespace Maze

@@ -137,6 +137,8 @@ namespace Maze
         //////////////////////////////////////////
         inline SpritePtr const& getOrLoadSprite(CString _imageName, bool _syncLoad = true) { return getOrLoadSprite(MAZE_HASHED_CSTRING(_imageName), _syncLoad); }
 
+        //////////////////////////////////////////
+        SpritePtr const& getOrLoadSprite(AssetFilePtr const& _assetFile, bool _syncLoad = true);
 
         //////////////////////////////////////////
         void setDefaultSpriteMaterial(MaterialPtr const& _defaultSpriteMaterial) { m_defaultSpriteMaterial = _defaultSpriteMaterial; }
@@ -168,6 +170,9 @@ namespace Maze
         //////////////////////////////////////////
         void unloadAssetSprites(Set<String> const& _tags);
 
+        //////////////////////////////////////////
+        void loadAllAssetSprites();
+
 
         //////////////////////////////////////////
         HashedCString getSpriteName(Sprite const* _sprite);
@@ -184,6 +189,11 @@ namespace Maze
 
         //////////////////////////////////////////
         void createBuiltinSprites();
+
+
+
+        //////////////////////////////////////////
+        Vector<SpritePtr> getSpritesSorted();
 
     public:
         //////////////////////////////////////////
