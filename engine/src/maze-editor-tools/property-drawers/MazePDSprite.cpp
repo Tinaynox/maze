@@ -238,7 +238,7 @@ namespace Maze
                 PropertyDrawerSpritePtr ptr = weakPtr.lock();
                 if (ptr)
                 {
-                    ptr->m_sprite = _sprite;
+                    ptr->setValue(_sprite);
 
                     if (!ptr->m_sprite)
                         ptr->m_sprite = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getSpriteManager()->getBuiltinSprite(

@@ -283,9 +283,9 @@ namespace Maze
         for (Size i = 0; i < m_previews.size(); ++i)
         {
             SpritePreviewData const& previewData = m_previews[i];        
-            SpritePtr const& material = previewData.sprite;
+            SpritePtr const& sprite = previewData.sprite;
 
-            bool checked = (material == currentSprite);
+            bool checked = (sprite == currentSprite);
             previewData.button->setChecked(checked);
 
             if (checked)

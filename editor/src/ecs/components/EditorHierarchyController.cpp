@@ -645,6 +645,24 @@ namespace Maze
                         if (transform2D)
                         {
                             _menuListTree->addItem(
+                                "Duplicate",
+                                [entityWeak](String const& _text)
+                                {
+                                    EntityPtr entity = entityWeak.lock();
+                                    if (entity)
+                                    {
+                                        EntityPtr entityCopy = entity->createCopy();
+                                        entityCopy->ensureComponent<Transform2D>()->setParent(
+                                            entity->ensureComponent<Transform2D>()->getParent());
+
+                                        if (EditorToolsActionManager::GetInstancePtr())
+                                            EditorToolsActionManager::GetInstancePtr()->applyActions(
+                                                EditorActionEntityAdd::Create(entityCopy),
+                                                EditorActionSelectEntities::Create(true, entityCopy));
+                                    }
+                                });
+
+                            _menuListTree->addItem(
                                 "Add Child/2D/Empty",
                                 [transform2D](String const& _text)
                                 { EditorHelper::CreateEntity2D("Sprite", transform2D->cast<Transform2D>()); });
