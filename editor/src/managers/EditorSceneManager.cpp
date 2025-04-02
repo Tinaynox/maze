@@ -168,6 +168,7 @@ namespace Maze
             DataBlock dataBlock = m_sceneAssetFile->readAsDataBlock();
             
             EcsAssetScenePtr scene = EcsAssetScene::Create(
+                m_sceneAssetFile,
                 Editor::GetInstancePtr()->getMainRenderWindow(),
                 EditorManager::GetInstancePtr()->getMainEcsWorld());
 

@@ -164,6 +164,7 @@ namespace Maze
             Path name = FileHelper::GetFileNameWithoutExtension(newPrefabFullPath);
 
             EcsAssetScenePtr scene = EcsAssetScene::Create(
+                nullptr,
                 EditorManager::GetInstancePtr()->getActiveScene()->getRenderTarget(),
                 EditorManager::GetInstancePtr()->getMainEcsWorld());
             scene->setName(HashedString(name.toUTF8()));

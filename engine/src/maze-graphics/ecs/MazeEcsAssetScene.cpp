@@ -53,19 +53,22 @@ namespace Maze
 
     //////////////////////////////////////////
     EcsAssetScenePtr EcsAssetScene::Create(
+        AssetFilePtr const& _file,
         RenderTargetPtr const& _renderTarget,
         EcsWorld* _world)
     {
         EcsAssetScenePtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EcsAssetScene, object, init(_renderTarget, _world));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EcsAssetScene, object, init(_file, _renderTarget, _world));
         return object;
     }
 
     //////////////////////////////////////////
     bool EcsAssetScene::init(
+        AssetFilePtr const& _file,
         RenderTargetPtr const& _renderTarget,
         EcsWorld* _world)
     {
+        m_file = _file;
         m_world = _world;
 
         if (!EcsRenderScene::init(_renderTarget))

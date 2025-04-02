@@ -397,6 +397,7 @@ namespace Maze
             ecsWorld = EcsWorld::GetEcsWorld(_ecsWorldId);
 
         EcsAssetScenePtr scene = EcsAssetScene::Create(
+            file,
             _renderTarget,
             ecsWorld);
 

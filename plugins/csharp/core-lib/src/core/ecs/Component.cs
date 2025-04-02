@@ -6,6 +6,8 @@ namespace Maze.Core
 {
     public class Component
     {
+        public EcsScene Scene => GetScene();
+
         protected NativePtr NativeComponentPtr { get; set; }
 
         public int GetEntityId()

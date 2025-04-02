@@ -9,6 +9,8 @@ namespace Maze.Core
         public int Id => m_Id;
         public static EcsScene Invalid => new EcsScene(-1);
 
+        public string AssetFilePath => GetAssetFilePath();
+
         public EcsScene(int sceneId = -1)
         {
             m_Id = sceneId;
@@ -32,6 +34,11 @@ namespace Maze.Core
         public static bool operator !=(EcsScene value0, EcsScene value1)
         {
             return value0.m_Id != value1.m_Id;
+        }
+
+        public string GetAssetFilePath()
+        {
+            return InternalCalls.EcsSceneGetAssetFilePath(m_Id);
         }
     }
 }

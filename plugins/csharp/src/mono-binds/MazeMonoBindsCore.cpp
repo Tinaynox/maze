@@ -39,7 +39,10 @@
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeEntityPrefabManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
+#include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/assets/MazeAssetUnitId.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-graphics/ecs/MazeEcsAssetScene.hpp"
 
 
 
@@ -99,6 +102,24 @@ namespace Maze
             return nullptr;
 
         return newEntity.get();
+    }
+
+    //////////////////////////////////////////
+    inline MonoString* EcsSceneGetAssetFilePath(S32 _sceneId)
+    {
+        EcsScenePtr const& scene = SceneManager::GetInstancePtr()->getScene(EcsSceneId(_sceneId));
+        if (!scene)
+            return nullptr;
+
+        if (!scene->getMetaClass()->isInheritedFrom<EcsAssetScene>())
+            return nullptr;
+
+        EcsAssetScene* ecsAssetScene = scene->castRaw<EcsAssetScene>();
+        AssetFilePtr const& file = ecsAssetScene->getFile();
+        if (!file)
+            return nullptr;
+
+        return mono_string_new(mono_domain_get(), file->getFullPath().toUTF8().c_str());
     }
 
     //////////////////////////////////////////
@@ -354,6 +375,9 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(GetComponentIdByMonoType);
         MAZE_CORE_MONO_BIND_FUNC(CreateEntity);
         MAZE_CORE_MONO_BIND_FUNC(InstantiateEntity);
+
+        // EcsScene
+        MAZE_CORE_MONO_BIND_FUNC(EcsSceneGetAssetFilePath);
 
         // Entity
         MAZE_CORE_MONO_BIND_FUNC(EntityGetEntityId);

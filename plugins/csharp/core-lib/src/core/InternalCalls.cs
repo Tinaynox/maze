@@ -29,6 +29,11 @@ namespace Maze.Core
         public extern static NativePtr InstantiateEntity(NativePtr nativeComponentPtr, AssetUnitId auid);
         #endregion
 
+        #region EcsScene
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static string EcsSceneGetAssetFilePath(int sceneId);
+        #endregion
+
         #region Entity
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static NativePtr CreateEntity(NativePtr nativeEntityPtr);

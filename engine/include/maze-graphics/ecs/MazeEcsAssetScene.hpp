@@ -65,6 +65,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static EcsAssetScenePtr Create(
+            AssetFilePtr const& _file,
             RenderTargetPtr const& _renderTarget,
             EcsWorld* _world);
 
@@ -89,6 +90,13 @@ namespace Maze
         //////////////////////////////////////////
         virtual void deserializeSceneCommonInfo(DataBlock const& _info) MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        inline void setFile(AssetFilePtr const& _file) { m_file = _file; }
+
+        //////////////////////////////////////////
+        inline AssetFilePtr const& getFile() const { return m_file; }
+
     protected:
 
         //////////////////////////////////////////
@@ -96,6 +104,7 @@ namespace Maze
         
         //////////////////////////////////////////
         bool init(
+            AssetFilePtr const& _file,
             RenderTargetPtr const& _renderTarget,
             EcsWorld* _world);
 
@@ -109,6 +118,7 @@ namespace Maze
         using EcsRenderScene::init;
 
     protected:
+        AssetFilePtr m_file;
         HashedString m_name;
     };
 
