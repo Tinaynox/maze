@@ -152,7 +152,7 @@ namespace Maze
     protected:
         static EditorAssetsManager* s_instance;
 
-        Set<AssetFilePtr> m_assetFilessToFix;
+        Set<AssetFilePtr> m_assetFilesToFix;
 
         StringKeyMap<Vector<EditorAssetContextOption>> m_editorAssetContextOptions;
     };

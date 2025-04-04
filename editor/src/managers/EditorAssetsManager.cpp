@@ -344,12 +344,17 @@ namespace Maze
 
             if (AssetManager::GetInstancePtr()->getGenerateIdsForNewAssetFiles())
             {
-                for (AssetFilePtr const& assetFile : AssetManager::GetInstancePtr()->getAssetFilesInFolder(assetsPath))
+                for (AssetFilePtr const& assetFile : AssetManager::GetInstancePtr()->getAssetFilesInFolder(assetsPath, true))
+                {
                     if (assetFile->getAssetFileId() == c_invalidAssetFileId)
                         fixAssetFile(assetFile);
-                for (AssetFilePtr const& assetFile : AssetManager::GetInstancePtr()->getAssetFilesInFolder(packagesPath))
+                }
+
+                for (AssetFilePtr const& assetFile : AssetManager::GetInstancePtr()->getAssetFilesInFolder(packagesPath, true))
+                {
                     if (assetFile->getAssetFileId() == c_invalidAssetFileId)
                         fixAssetFile(assetFile);
+                }
             }
 
             fixAssetFilesNow();
@@ -379,7 +384,7 @@ namespace Maze
         if (_assetFile->getMetaClass()->isInheritedFrom<AssetDirectory>())
             return;
 
-        m_assetFilessToFix.insert(_assetFile);
+        m_assetFilesToFix.insert(_assetFile);
     }
 
     //////////////////////////////////////////
@@ -394,12 +399,12 @@ namespace Maze
     //////////////////////////////////////////
     void EditorAssetsManager::fixAssetFilesNow()
     {
-        if (m_assetFilessToFix.empty())
+        if (m_assetFilesToFix.empty())
             return;
 
-        for (AssetFilePtr const& assetFile : m_assetFilessToFix)
+        for (AssetFilePtr const& assetFile : m_assetFilesToFix)
             fixAssetFileNow(assetFile);
-        m_assetFilessToFix.clear();
+        m_assetFilesToFix.clear();
 
         AssetManager::GetInstancePtr()->updateAssets();
     }

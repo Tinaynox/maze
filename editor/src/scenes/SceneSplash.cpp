@@ -366,7 +366,9 @@ namespace Maze
                 AssetFilePtr const& pluginsDirectory = AssetManager::GetInstancePtr()->getAssetFile(MAZE_HASHED_CSTRING("plugins"));
                 if (pluginsDirectory && pluginsDirectory->getClassUID() == ClassInfo<AssetDirectory>::UID())
                 {
-                    Vector<AssetFilePtr> pluginAssets = AssetManager::GetInstancePtr()->getAssetFilesInFolder(pluginsDirectory->getFullPath());
+                    Vector<AssetFilePtr> pluginAssets = AssetManager::GetInstancePtr()->getAssetFilesInFolder(
+                        pluginsDirectory->getFullPath(),
+                        false);
                     for (AssetFilePtr const& pluginAsset : pluginAssets)
                     {
                         Path pluginPlatformName = FileHelper::GetFileNameWithoutExtension(pluginAsset->getFileName());

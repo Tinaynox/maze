@@ -512,7 +512,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vector<AssetFilePtr> AssetManager::getAssetFilesInFolder(Path const& _folderFullPath)
+    Vector<AssetFilePtr> AssetManager::getAssetFilesInFolder(
+        Path const& _folderFullPath,
+        bool _recursive)
     {
         Vector<AssetFilePtr> result;
         for (auto data : m_assetFilesByFullPath)
@@ -522,11 +524,18 @@ namespace Maze
                 data.second->getFullPath()[_folderFullPath.size()] == '/' &&
                 StringHelper::IsStartsWith(data.second->getFullPath().getPath(), _folderFullPath.getPath()))
             {
-                Path relativePath = data.second->getFullPath().getPath().substr(
-                    _folderFullPath.size() + 1, data.second->getFullPath().size() - _folderFullPath.size() - 1);
-
-                if (relativePath.getPath().find('/') == Path::StringType::npos)
+                if (_recursive)
+                {
                     result.emplace_back(data.second);
+                }
+                else
+                {
+                    Path relativePath = data.second->getFullPath().getPath().substr(
+                        _folderFullPath.size() + 1, data.second->getFullPath().size() - _folderFullPath.size() - 1);
+
+                    if (relativePath.getPath().find('/') == Path::StringType::npos)
+                        result.emplace_back(data.second);
+                }
             }
         }
 
@@ -573,6 +582,8 @@ namespace Maze
     //////////////////////////////////////////
     void AssetManager::updateAndSaveMetaData(AssetFilePtr const& _assetFile)
     {
+        Debug::Log("Updating asset file metafile: %@...", _assetFile->getFileName().toUTF8().c_str());
+
         DataBlock metaData;
         loadMetaData(_assetFile, metaData);
         _assetFile->updateDataFromAssetFile(metaData);

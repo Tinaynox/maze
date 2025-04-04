@@ -527,7 +527,7 @@ namespace Maze
 
         AssetsControllerWPtr controllerWeak = cast<AssetsController>();
 
-        Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesInFolder(m_selectedAssetFolder);
+        Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesInFolder(m_selectedAssetFolder, false);
 
         std::sort(
             assetFiles.begin(),

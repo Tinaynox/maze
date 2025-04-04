@@ -215,7 +215,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        Vector<AssetFilePtr> getAssetFilesInFolder(Path const& _folderFullPath);
+        Vector<AssetFilePtr> getAssetFilesInFolder(
+            Path const& _folderFullPath,
+            bool _recursive = true);
 
         //////////////////////////////////////////
         Path getMetaDataFullPath(AssetFilePtr const& _assetFile);

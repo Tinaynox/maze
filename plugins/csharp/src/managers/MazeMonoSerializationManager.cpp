@@ -223,6 +223,7 @@ namespace Maze
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.TMat", TMat);
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.Rect2F", Vec4F);
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.AssetUnitId", U32);
+            MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.AssetFileId", U32);
 
             // Graphics
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Graphics.ColorU32", Vec4U8);
