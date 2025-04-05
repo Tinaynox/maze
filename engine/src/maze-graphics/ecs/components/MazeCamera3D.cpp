@@ -194,7 +194,6 @@ namespace Maze
             return Ray();
 
         TMat const& cameraTransform = getTransform()->getWorldTransform();
-        Vec3F cameraPosition = cameraTransform.getTranslation();
         Mat4F projectionMatrix = calculateProjectionMatrix(getRenderTarget());
         Mat4F invProjectionMatrix = projectionMatrix.inversed();
 
@@ -203,11 +202,14 @@ namespace Maze
         Vec4F positionCSNear = Vec4F(positionNDC.x, positionNDC.y, 1.0f, 1.0f);
         Vec4F positionCSFar = Vec4F(positionNDC.x, positionNDC.y, -1.0f, 1.0f);
 
-        Vec4F positionVSNear = positionCSNear * invProjectionMatrix;
-        Vec4F positionVSFar = positionCSFar * invProjectionMatrix;
+        Vec4F positionHVSNear = positionCSNear * invProjectionMatrix;
+        Vec4F positionHVSFar = positionCSFar * invProjectionMatrix;
+
+        Vec3F positionVSNear = positionHVSNear.xyz() / positionHVSNear.w;
+        Vec3F positionVSFar = positionHVSFar.xyz() / positionHVSFar.w;
         
-        Vec3F positionWSNear = cameraTransform.transform(positionVSNear.xyz());
-        Vec3F positionWSFar = cameraTransform.transform(positionVSFar.xyz());
+        Vec3F positionWSNear = cameraTransform.transform(positionVSNear);
+        Vec3F positionWSFar = cameraTransform.transform(positionVSFar);
 
         Ray ray;
         ray.setPoint(positionWSNear);
