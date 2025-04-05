@@ -7,6 +7,8 @@ namespace Maze.Core
         uint m_Id;
         public uint Id => m_Id;
 
+        public static AssetUnitId InvalidId => new AssetUnitId(0u);
+
         public AssetUnitId(uint id)
         {
             m_Id = id;

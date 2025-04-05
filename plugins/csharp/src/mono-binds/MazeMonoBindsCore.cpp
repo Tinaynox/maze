@@ -418,9 +418,6 @@ namespace Maze
         // EcsScene
         MAZE_CORE_MONO_BIND_FUNC(EcsSceneGetAssetFilePath);
 
-        // AssetFile
-        MAZE_CORE_MONO_BIND_FUNC(AssetFileIdIsValid);
-
         // Entity
         MAZE_CORE_MONO_BIND_FUNC(EntityGetEntityId);
         MAZE_CORE_MONO_BIND_FUNC(EntityGetComponent);
@@ -454,6 +451,10 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetLocalTransform);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetWorldTransform);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetWorldTransform);
+
+        // AssetFile
+        MAZE_CORE_MONO_BIND_FUNC(AssetFileIdIsValid);
+        MAZE_CORE_MONO_BIND_FUNC(AssetFileReadAsDataBlock);
     }
 
 } // namespace Maze

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace Maze.Core
 {
@@ -31,19 +32,10 @@ namespace Maze.Core
             ByteBuffer byteBuffer = new ByteBuffer();
             byteBuffer.Resize((int)size);
 
-            Debug.LogError($"size = {size}");
+            for (int i = 0; i < byteBuffer.Size; i++)
+                byteBuffer.Data[i] = bytes[i];
 
             return byteBuffer;
-        }
-
-        public static bool operator ==(AssetFile value0, AssetFile value1)
-        {
-            return value0.m_Id == value1.m_Id;
-        }
-
-        public static bool operator !=(AssetFile value0, AssetFile value1)
-        {
-            return value0.m_Id != value1.m_Id;
         }
     }
 }

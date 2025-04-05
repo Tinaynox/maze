@@ -211,7 +211,7 @@ namespace Maze
             });
 
         m_text = EditorToolsUIHelper::CreateText(
-            EditorToolsHelper::BuildPropertyName(m_dataBlock.getCString(MAZE_HCS("label")), _label).c_str(),
+            "None",
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
             HorizontalAlignment2D::Left,
@@ -241,9 +241,16 @@ namespace Maze
             return;
 
         m_afid = _value;
-        CString name = _value ? "AssetFile" : "None";
 
-        m_text->setTextFormatted("%s [%u]", name, (U32)m_afid);
+        if (AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(m_afid))
+        {
+            m_text->setTextFormatted("%s [%u]", assetFile->getFileName().toUTF8().c_str(), (U32)m_afid);
+        }
+        else
+        {
+            CString name = _value ? "Invalid" : "None";
+            m_text->setTextFormatted("%s [%u]", name, (U32)m_afid);
+        }
     }
 
     //////////////////////////////////////////
