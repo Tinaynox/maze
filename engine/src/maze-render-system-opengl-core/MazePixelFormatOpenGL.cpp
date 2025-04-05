@@ -289,7 +289,7 @@ namespace Maze
                 break;
         }
 
-        MAZE_ERROR("Unsupported Pixel Format: %s", PixelFormat::ToString(_pixelFormat).c_str());
+        MAZE_ERROR("Unsupported Pixel Format: %s (%d)", PixelFormat::ToString(_pixelFormat).c_str(), (S32)_pixelFormat);
         
         return 0;
     }
