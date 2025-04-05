@@ -4,7 +4,8 @@ namespace Maze.Core
 {
     public struct AssetFileId
     {
-        private uint m_Id;
+        uint m_Id;
+        public uint Id => m_Id;
 
         public AssetFileId(uint id)
         {

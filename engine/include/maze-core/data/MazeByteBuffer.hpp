@@ -47,7 +47,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     // Aliases
-    MAZE_USING_SHARED_PTR(ByteBuffer);
+    MAZE_USING_MANAGED_SHARED_PTR(ByteBuffer);
 
 
     //////////////////////////////////////////
@@ -57,7 +57,7 @@ namespace Maze
     class MAZE_CORE_API ByteBuffer MAZE_FINAL
         : public IBinarySerializable
         , public IStringSerializable
-        , public ISharedCopyable<ByteBuffer>
+        , public IManagedSharedCopyable<ByteBuffer>
     {
     public:
 

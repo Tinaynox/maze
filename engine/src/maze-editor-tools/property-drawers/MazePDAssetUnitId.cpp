@@ -227,6 +227,9 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerAssetUnitId::setValue(AssetUnitId const& _value)
     {
+        if (m_auid == _value)
+            return;
+
         m_auid = _value;
         CString name = _value ? "Prefab" : "None";
 

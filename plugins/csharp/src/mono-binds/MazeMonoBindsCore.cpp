@@ -30,6 +30,8 @@
 #include "maze-plugin-csharp/ecs/events/MazeEcsCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
@@ -120,6 +122,43 @@ namespace Maze
             return nullptr;
 
         return mono_string_new(mono_domain_get(), file->getFullPath().toUTF8().c_str());
+    }
+
+    //////////////////////////////////////////
+    inline bool AssetFileIdIsValid(U32 _assetFileId)
+    {
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_assetFileId);
+        return !!assetFile;
+    }
+
+    //////////////////////////////////////////
+    inline bool AssetFileReadAsDataBlock(
+        U32 _assetFileId,
+        U32* _size,
+        U8 const** _bytes)
+    {
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_assetFileId);
+        if (!assetFile)
+            return false;
+
+        TaskManager* taskManager = TaskManager::GetInstancePtr();
+        if (!taskManager)
+            return false;
+
+        ByteBufferPtr byteBuffer = assetFile->readAsByteBuffer();
+        byteBuffer.incRef();
+
+        *_size = byteBuffer->getSize();
+        *_bytes = byteBuffer->getDataRO();
+
+        taskManager->addMainThreadTask(
+            [weakPtr = (ByteBufferWPtr)byteBuffer]()
+            {
+                if (ByteBufferPtr strongPtr = weakPtr.lock())
+                    strongPtr.decRef();
+            });
+
+        return true;
     }
 
     //////////////////////////////////////////
@@ -378,6 +417,9 @@ namespace Maze
 
         // EcsScene
         MAZE_CORE_MONO_BIND_FUNC(EcsSceneGetAssetFilePath);
+
+        // AssetFile
+        MAZE_CORE_MONO_BIND_FUNC(AssetFileIdIsValid);
 
         // Entity
         MAZE_CORE_MONO_BIND_FUNC(EntityGetEntityId);

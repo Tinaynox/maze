@@ -56,13 +56,14 @@ namespace Maze
         std::function<void(void*)> deleter;
     };
 
+
     //////////////////////////////////////////
     template <typename T>
     void CheckEnableManagedSharedFromThis(RefCountBlock* _refCountBlock, EnableManagedSharedFromThis<T>* _enableSharedFromThis, T* _ptr);
 
     //////////////////////////////////////////
-    template <typename T>
-    inline void CheckEnableManagedSharedFromThis(RefCountBlock* _refCountBlock, ...) { }
+    inline void CheckEnableManagedSharedFromThis(RefCountBlock* _refCountBlock, void* _enableSharedFromThis, void* _ptr) { }
+    
 
 
     //////////////////////////////////////////

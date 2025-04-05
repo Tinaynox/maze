@@ -127,5 +127,16 @@ namespace Maze.Core
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform3DSetWorldTransform(NativePtr nativeComponentPtr, TMat tm);
         #endregion
+
+        #region AssetFile
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool AssetFileIdIsValid(uint assetFileId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static unsafe bool AssetFileReadAsDataBlock(
+            uint assetFileId,
+            out uint size,
+            out byte* bytes);
+        #endregion
     }
 }

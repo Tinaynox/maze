@@ -237,6 +237,9 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerAssetFileId::setValue(AssetFileId const& _value)
     {
+        if (m_afid == _value)
+            return;
+
         m_afid = _value;
         CString name = _value ? "AssetFile" : "None";
 

@@ -34,13 +34,14 @@
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/system/MazeFileStats.hpp"
 #include "maze-core/system/MazePath.hpp"
+#include "maze-core/utils/MazeManagedSharedPtr.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ByteBuffer);
+    MAZE_USING_MANAGED_SHARED_PTR(ByteBuffer);
 
 
     //////////////////////////////////////////

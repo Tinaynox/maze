@@ -582,7 +582,7 @@ namespace Maze
     //////////////////////////////////////////
     void AssetManager::updateAndSaveMetaData(AssetFilePtr const& _assetFile)
     {
-        Debug::Log("Updating asset file metafile: %@...", _assetFile->getFileName().toUTF8().c_str());
+        Debug::Log("Updating asset file metafile: %s...", _assetFile->getFileName().toUTF8().c_str());
 
         DataBlock metaData;
         loadMetaData(_assetFile, metaData);
