@@ -76,5 +76,9 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIDragElementDragStartedEvent, Event);
 
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementWheelEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CursorWheelInputEvent, inputEvent, CursorWheelInputEvent(), getInputEvent, setInputEvent));
+
 } // namespace Maze
 //////////////////////////////////////////

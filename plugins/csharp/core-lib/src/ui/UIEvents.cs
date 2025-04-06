@@ -33,4 +33,9 @@ namespace Maze.UI
         public CursorInputEvent inputEvent;
     }
 
+
+    public class UIElementWheelEvent : NativeEvent
+    {
+        public CursorWheelInputEvent inputEvent;
+    }
 }

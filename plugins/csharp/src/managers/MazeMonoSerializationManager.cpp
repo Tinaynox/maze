@@ -513,6 +513,7 @@ namespace Maze
 
         // UI
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(CursorInputEvent);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(CursorWheelInputEvent);
     }
 
 } // namespace Maze

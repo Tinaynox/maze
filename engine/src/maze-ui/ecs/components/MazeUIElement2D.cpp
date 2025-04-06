@@ -356,7 +356,7 @@ namespace Maze
     //////////////////////////////////////////
     void UIElement2D::processCursorWheel(CursorWheelInputEvent const& _inputEvent)
     {
-        if (!eventCursorWheel.empty())
+        if (!eventCursorWheel.empty() || m_captureCursorHits)
         {
             Vec2F const& positionWS = _inputEvent.position;
 
@@ -371,6 +371,7 @@ namespace Maze
             }
 
             eventCursorWheel(_inputEvent);
+            getEntityRaw()->getEcsWorld()->sendEvent<UIElementWheelEvent>(getEntityId(), _inputEvent);
         }
     }
 

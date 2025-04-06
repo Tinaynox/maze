@@ -82,6 +82,11 @@ namespace Maze
         return InputManager::GetInstancePtr()->getKeyState(KeyCode(_keyCode));
     }
 
+    //////////////////////////////////////////
+    inline bool GetCursorButtonState(S32 _cursorId, S32 _buttonIndex)
+    {
+        return InputManager::GetInstancePtr()->getCursorButtonState(_cursorId, _buttonIndex);
+    }
 
     //////////////////////////////////////////
     inline ComponentId GetComponentIdByMonoType(MonoReflectionType* _type)
@@ -409,6 +414,7 @@ namespace Maze
 
         // Input
         MAZE_CORE_MONO_BIND_FUNC(GetKeyState);
+        MAZE_CORE_MONO_BIND_FUNC(GetCursorButtonState);
 
         // Ecs
         MAZE_CORE_MONO_BIND_FUNC(GetComponentIdByMonoType);

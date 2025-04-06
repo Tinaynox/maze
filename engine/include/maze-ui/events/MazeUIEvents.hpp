@@ -422,6 +422,39 @@ namespace Maze
 
     public:
     };
+
+
+    //////////////////////////////////////////
+    // Class UIElementWheelEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UIElementWheelEvent
+        : public GenericEvent<UIElementWheelEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UIElementWheelEvent, Event);
+
+
+        //////////////////////////////////////////
+        UIElementWheelEvent() = default;
+
+        //////////////////////////////////////////
+        UIElementWheelEvent(
+            CursorWheelInputEvent _inputEvent)
+            : inputEvent(_inputEvent)
+        {}
+
+        //////////////////////////////////////////
+        inline CursorWheelInputEvent const& getInputEvent() const { return inputEvent; }
+
+        //////////////////////////////////////////
+        inline void setInputEvent(CursorWheelInputEvent const& _value) { inputEvent = _value; }
+
+    public:
+        CursorWheelInputEvent inputEvent;
+    };
     
 } // namespace Maze
 //////////////////////////////////////////

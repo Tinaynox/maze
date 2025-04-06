@@ -19,6 +19,9 @@ namespace Maze.Core
         #region Input
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool GetKeyState(int keyCode);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool GetCursorButtonState(int cursorId, int buttonIndex);
         #endregion
 
         #region Ecs

@@ -176,6 +176,7 @@ namespace Maze
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(ColorF128);
 
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorInputEvent);
+        MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorWheelInputEvent);
 
 
     } // namespace MonoHelper
