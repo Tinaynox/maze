@@ -469,13 +469,14 @@ namespace Maze
 
         if (g_monoEngineData->debugEnabled)
         {
-            CString argv[2] =
+            S32 const argc = 2;
+            CString argv[argc] =
             {
                 "--debugger-agent=transport=dt_socket,address=127.0.0.1:2550,server=y,suspend=n,loglevel=3,logfile=MonoDebugger.log",
                 "--soft-breakpoints"
             };
 
-            mono_jit_parse_options(2, (Char**)argv);
+            mono_jit_parse_options(argc, (Char**)argv);
             mono_debug_init(MONO_DEBUG_FORMAT_MONO);
         }
 

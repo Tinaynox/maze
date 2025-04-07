@@ -33,5 +33,10 @@ namespace Maze.Core
         {
             return value0.m_Id != value1.m_Id;
         }
+
+        public override string ToString()
+        {
+            return m_Id.ToString();
+        }
     }
 }
