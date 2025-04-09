@@ -390,7 +390,8 @@ namespace Maze
                             for (EntityPtr const& entity : m_entities)
                                 callback(entity);
                         },
-                        callbackData.validate);
+                        callbackData.validate,
+                        false);
                 }
             });
 

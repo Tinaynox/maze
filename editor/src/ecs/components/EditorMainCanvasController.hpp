@@ -38,6 +38,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
+#include "maze-engine/ecs/components/MazePlayerCanvas.hpp"
 #include "editor/EditorSceneMode.hpp"
 
 
@@ -136,6 +137,7 @@ namespace Maze
         Transform2DPtr m_transform;
 
         SharedPtr<GenericInclusiveEntitiesSample<Canvas>> m_canvasesSample;
+        SharedPtr<GenericInclusiveEntitiesSample<Canvas, PlayerCanvas>> m_playerCanvasesSample;
 
         Vector<WorkspaceCanvasData> m_workspaceCanvasData;
     };

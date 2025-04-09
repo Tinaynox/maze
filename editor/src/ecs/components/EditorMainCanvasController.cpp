@@ -128,6 +128,7 @@ namespace Maze
     void EditorMainCanvasController::processAppear()
     {
         m_canvasesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Canvas>();
+        m_playerCanvasesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Canvas, PlayerCanvas>();
     }
 
     //////////////////////////////////////////
@@ -139,28 +140,40 @@ namespace Maze
     //////////////////////////////////////////
     void EditorMainCanvasController::onPreRender()
     {
-        m_canvasesSample->query(
-            [&](Entity* _entity, Canvas* _canvas)
-            {
-                if (!_canvas->getRenderTarget())
+        if (!EditorManager::GetInstancePtr()->getPlaytestModeEnabled())
+        {
+            m_canvasesSample->query(
+                [&](Entity* _entity, Canvas* _canvas)
                 {
-                    WorkspaceCanvasData data;
-                    data.canvas = _canvas;
-                    data.viewport = _canvas->getViewport();
-                    m_workspaceCanvasData.push_back(data);
+                    if (!_canvas->getRenderTarget())
+                    {
+                        WorkspaceCanvasData data;
+                        data.canvas = _canvas;
+                        data.viewport = _canvas->getViewport();
+                        m_workspaceCanvasData.push_back(data);
 
-                    _canvas->setRenderTarget(
-                        m_canvas->getRenderTarget());
+                        _canvas->setRenderTarget(
+                            m_canvas->getRenderTarget());
 
-                    F32 topBarHeightRel = EditorLayout::c_workspaceTopBarHeight / m_canvas->getRenderTarget()->getRenderTargetHeight();
-                    F32 heightRel = 1.0f - topBarHeightRel;
+                        F32 topBarHeightRel = EditorLayout::c_workspaceTopBarHeight / m_canvas->getRenderTarget()->getRenderTargetHeight();
+                        F32 heightRel = 1.0f - topBarHeightRel;
 
-                    Rect2F viewport = m_canvas->getViewport();
-                    viewport.size.y = heightRel;
-                    _canvas->setViewport(viewport);
-                }
-            });
-        // Debug::LogError("PRE RENDER");
+                        Rect2F viewport = m_canvas->getViewport();
+                        viewport.size.y = heightRel;
+                        _canvas->setViewport(viewport);
+                    }
+                });
+        }
+        else
+        {
+            m_playerCanvasesSample->query(
+                [&](Entity* _entity, Canvas* _canvas, PlayerCanvas* _playerCanvas)
+                {
+                    _canvas->setViewport(
+                        EditorLayout::CalculateWorkViewport(
+                            EditorLayout::c_sceneViewport));
+                });
+        }
     }
 
     //////////////////////////////////////////

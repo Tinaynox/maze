@@ -370,7 +370,9 @@ namespace Maze
             m_mainCanvas->setViewport(sceneRect);
 
         if (m_playtestCamera)
-            m_playtestCamera->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport));
+            m_playtestCamera->setViewport(
+                EditorLayout::CalculateWorkViewport(
+                    EditorLayout::c_sceneViewport));
     }
 
     //////////////////////////////////////////

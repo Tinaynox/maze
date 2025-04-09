@@ -49,6 +49,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
+#include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-gamepad/managers/MazeGamepadManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
@@ -59,6 +60,7 @@
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-engine/ecs/scenes/MazeSceneEngine.hpp"
+#include "maze-engine/ecs/components/MazePlayerCanvas.hpp"
 #include "settings/MazePlayerSettings.hpp"
 
 
@@ -358,6 +360,10 @@ namespace Maze
         if (!m_particlesManager)
             return false;
         
+
+        // Register components
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<PlayerCanvas>("2D");
+
 
         return true;
     }
