@@ -139,6 +139,52 @@ namespace Maze
     public:
         S32 renderWindowResourceId = -1;
     };
+
+
+    //////////////////////////////////////////
+    // Class GlobalShaderUniformAddedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API GlobalShaderUniformAddedEvent
+        : public GenericEvent<GlobalShaderUniformAddedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(GlobalShaderUniformAddedEvent, Event);
+
+    public:
+        //////////////////////////////////////////
+        GlobalShaderUniformAddedEvent(
+            S32 _globalShaderUniformId = -1)
+            : globalShaderUniformId(_globalShaderUniformId)
+        {}
+
+    public:
+        S32 globalShaderUniformId = -1;
+    };
+
+
+    //////////////////////////////////////////
+    // Class GlobalShaderUniformChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API GlobalShaderUniformChangedEvent
+        : public GenericEvent<GlobalShaderUniformChangedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(GlobalShaderUniformChangedEvent, Event);
+
+    public:
+        //////////////////////////////////////////
+        GlobalShaderUniformChangedEvent(
+            S32 _globalShaderUniformId = -1)
+            : globalShaderUniformId(_globalShaderUniformId)
+        {}
+
+    public:
+        S32 globalShaderUniformId = -1;
+    };
     
 } // namespace Maze
 //////////////////////////////////////////

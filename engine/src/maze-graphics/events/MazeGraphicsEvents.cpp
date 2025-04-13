@@ -44,6 +44,11 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(RenderWindowWillCloseEvent, Event,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, renderWindowResourceId, -1, getRenderWindowResourceId, setRenderWindowResourceId));
 
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(GlobalShaderUniformAddedEvent, Event);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(GlobalShaderUniformChangedEvent, Event);
 
 } // namespace Maze
 //////////////////////////////////////////

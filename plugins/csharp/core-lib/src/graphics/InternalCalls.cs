@@ -150,5 +150,73 @@ namespace Maze.Graphics
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void AbstractTextRendererSetText(NativePtr nativeComponentPtr, string value);
         #endregion
+
+        #region GlobalShaderUniform
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool GlobalShaderUniformIdIsValid(int globalShaderUniformId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int GlobalShaderUniformEnsure(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetS32(int globalShaderUniformId, int value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetF32(int globalShaderUniformId, float value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetF64(int globalShaderUniformId, double value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetBool(int globalShaderUniformId, bool value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetVec2F(int globalShaderUniformId, ref Vec2F value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetVec3F(int globalShaderUniformId, ref Vec3F value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetVec4F(int globalShaderUniformId, ref Vec4F value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetVec2S(int globalShaderUniformId, ref Vec2S value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetVec3S(int globalShaderUniformId, ref Vec3S value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetVec4S(int globalShaderUniformId, ref Vec4S value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetVec2U(int globalShaderUniformId, ref Vec2U value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetVec3U(int globalShaderUniformId, ref Vec3U value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetVec4U(int globalShaderUniformId, ref Vec4U value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetVec2B(int globalShaderUniformId, ref Vec2B value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetVec3B(int globalShaderUniformId, ref Vec3B value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetVec4B(int globalShaderUniformId, ref Vec4B value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetMat3F(int globalShaderUniformId, ref Mat3F value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetMat4F(int globalShaderUniformId, ref Mat4F value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetTMat(int globalShaderUniformId, ref TMat value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GlobalShaderUniformSetColorF128(int globalShaderUniformId, ref ColorF128 value);
+        #endregion
     }
 }

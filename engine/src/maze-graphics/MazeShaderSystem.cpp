@@ -35,6 +35,7 @@
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/assets/MazeAssetUnitShader.hpp"
+#include "maze-graphics/MazeGlobalShaderUniform.hpp"
 
 
 //////////////////////////////////////////
@@ -390,6 +391,35 @@ namespace Maze
 
         m_globalFeaturesString = buildGlobalShaderFeatures();
         m_globalFeaturesStringDirty = false;
+    }
+
+    //////////////////////////////////////////
+    GlobalShaderUniformPtr const& ShaderSystem::ensureGlobalShaderUniform(HashedCString _name)
+    {
+        auto it = m_globalShaderUniforms.find(_name);
+        if (it != m_globalShaderUniforms.end())
+        {
+            return it->second;
+        }
+        else
+        {
+            GlobalShaderUniformPtr uniform = GlobalShaderUniform::Create(
+                m_renderSystemRaw,
+                HashedString(_name));
+            return *m_globalShaderUniforms.insert(_name, uniform);
+        }
+    }
+
+    //////////////////////////////////////////
+    GlobalShaderUniformPtr const& ShaderSystem::getGlobalShaderUniform(HashedCString _name) const
+    {
+        static GlobalShaderUniformPtr const nullPointer;
+
+        auto it = m_globalShaderUniforms.find(_name);
+        if (it != m_globalShaderUniforms.end())
+            return it->second;
+
+        return nullPointer;
     }
 
 } // namespace Maze

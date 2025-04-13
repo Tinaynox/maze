@@ -39,6 +39,7 @@
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/events/MazeGraphicsEvents.hpp"
 #include "maze-graphics/assets/MazeAssetUnitShader.hpp"
+#include "maze-graphics/MazeGlobalShaderUniform.hpp"
 #include <tinyxml2.h>
 
 
@@ -78,7 +79,12 @@ namespace Maze
             s_instancesList = m_instancesListPrev;
 
         if (EventManager::GetInstancePtr())
+        {
+            EventManager::GetInstancePtr()->unsubscribeEvent<GlobalShaderUniformAddedEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<GlobalShaderUniformChangedEvent>(this);
+
             EventManager::GetInstancePtr()->broadcastEventImmediate<ShaderDestroyedEvent>(this);
+        }
     }
 
     //////////////////////////////////////////
@@ -104,6 +110,8 @@ namespace Maze
         m_renderSystem = _renderSystem;
         m_renderSystemRaw = _renderSystem.get();
 
+        EventManager::GetInstancePtr()->subscribeEvent<GlobalShaderUniformAddedEvent>(this, &Shader::notifyEvent);
+
         return true;
     }
 
@@ -119,6 +127,8 @@ namespace Maze
         m_renderSystemRaw = _shader->m_renderSystemRaw;
 
         m_localFeatures = _shader->m_localFeatures;
+
+        EventManager::GetInstancePtr()->subscribeEvent<GlobalShaderUniformAddedEvent>(this, &Shader::notifyEvent);
 
         return true;
     }
@@ -145,7 +155,7 @@ namespace Maze
         return (it != m_uniformsCache.end()) && it->second;
     }
 
-    ///////////////////////////f///////////////
+    //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, ShaderUniformVariant const& _value, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
@@ -874,6 +884,112 @@ namespace Maze
                 break;
 
             instance = instance->m_instancesListPrev;
+        }
+    }
+
+    //////////////////////////////////////////
+    bool Shader::haveGlobalUniforms()
+    {
+        bool result = false;
+
+        for (auto const& uniformData : m_uniformsCache)
+        {
+            if (!uniformData.second)
+                continue;
+
+            if (StringHelper::IsStartsWith(uniformData.second->getName().c_str(), "u_global_"))
+            {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    //////////////////////////////////////////
+    void Shader::processShaderLoaded()
+    {
+        bool haveGU = haveGlobalUniforms();
+
+        m_uniformsPerGlobalUniform.clear();
+
+        if (EventManager::GetInstancePtr())
+        {
+            if (haveGU && !m_subscribedToGlobalUniforms)
+            {
+                EventManager::GetInstancePtr()->subscribeEvent<GlobalShaderUniformChangedEvent>(this, &Shader::notifyEvent);
+                m_subscribedToGlobalUniforms = true;
+
+                auto const& shaderSystem = ShaderSystem::GetCurrentInstancePtr();
+                for (auto const& uniformData : m_uniformsCache)
+                {
+                    if (!uniformData.second)
+                        continue;
+
+                    if (StringHelper::IsStartsWith(uniformData.second->getName().c_str(), "u_global_"))
+                    {
+                        GlobalShaderUniformPtr const& shaderUniform = shaderSystem->getGlobalShaderUniform(
+                            uniformData.second->getName());
+
+                        if (shaderUniform)
+                            m_uniformsPerGlobalUniform[shaderUniform->getResourceId()] = uniformData.first;
+                    }
+                }
+            }
+            else
+            if(!haveGU && m_subscribedToGlobalUniforms)
+            {
+                EventManager::GetInstancePtr()->unsubscribeEvent<GlobalShaderUniformChangedEvent>(this);
+                m_subscribedToGlobalUniforms = false;
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void Shader::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+        if (_eventUID == ClassInfo<GlobalShaderUniformAddedEvent>::UID())
+        {
+            ResourceId globalShaderUniformId = ResourceId(_event->castRaw<GlobalShaderUniformAddedEvent>()->globalShaderUniformId);
+            GlobalShaderUniform* globalShaderUniform = GlobalShaderUniform::GetResource(globalShaderUniformId);
+            if (globalShaderUniform)
+            {
+                UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(
+                    globalShaderUniform->getName().getHash());
+                if (it != m_uniformsCache.end())
+                {
+                    if (!m_subscribedToGlobalUniforms)
+                    {
+                        EventManager::GetInstancePtr()->subscribeEvent<GlobalShaderUniformChangedEvent>(this, &Shader::notifyEvent);
+                        m_subscribedToGlobalUniforms = true;
+                    }
+
+                    m_uniformsPerGlobalUniform[globalShaderUniformId] = it->first;
+
+                    it->second->set(
+                        globalShaderUniform->getVariant());
+                }
+            }
+        }
+        else
+        if (_eventUID == ClassInfo<GlobalShaderUniformChangedEvent>::UID())
+        {
+            ResourceId globalShaderUniformId = ResourceId(_event->castRaw<GlobalShaderUniformAddedEvent>()->globalShaderUniformId);
+            auto it = m_uniformsPerGlobalUniform.find(globalShaderUniformId);
+            if (it != m_uniformsPerGlobalUniform.end())
+            {
+                auto uniformIt = m_uniformsCache.find(it->second);
+                if (uniformIt != m_uniformsCache.end())
+                {
+                    GlobalShaderUniform* globalShaderUniform = GlobalShaderUniform::GetResource(globalShaderUniformId);
+                    if (globalShaderUniform)
+                    {
+                        uniformIt->second->set(
+                            globalShaderUniform->getVariant());
+                    }
+                }
+            }
         }
     }
 

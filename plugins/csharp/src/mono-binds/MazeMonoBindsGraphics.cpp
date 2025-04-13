@@ -40,6 +40,8 @@
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
+#include "maze-graphics/MazeGlobalShaderUniform.hpp"
+#include "maze-graphics/MazeShaderSystem.hpp"
 
 
 
@@ -442,7 +444,61 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(!_component->getMetaClass()->isInheritedFrom<AbstractTextRenderer>(), "Component is not AbstractTextRenderer!");
         Char* cstr = mono_string_to_utf8(_text);
         _component->castRaw<AbstractTextRenderer>()->setText(cstr);
+        mono_free(cstr);
     }
+
+    //////////////////////////////////////////
+    inline bool GlobalShaderUniformIdIsValid(S32 _globalShaderUniformId)
+    {
+        GlobalShaderUniform* uniform = GlobalShaderUniform::GetResource(_globalShaderUniformId);
+        return !!uniform;
+    }
+
+    //////////////////////////////////////////
+    inline S32 GlobalShaderUniformEnsure(MonoString* _name)
+    {
+        S32 result = -1;
+
+        Char* cstr = mono_string_to_utf8(_name);
+
+        GlobalShaderUniformPtr const& uniform = ShaderSystem::GetCurrentInstancePtr()->ensureGlobalShaderUniform(
+            HashedCString(cstr));
+        if (uniform)
+            result = uniform->getResourceId();
+
+        mono_free(cstr);
+
+        return result;
+    }
+
+    //////////////////////////////////////////
+    #define IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(DType)                                \
+        inline void GlobalShaderUniformSet ## DType (S32 _id, DType const& _value)    \
+        {                                                                             \
+            if (GlobalShaderUniform* uniform = GlobalShaderUniform::GetResource(_id)) \
+                uniform->setValue(_value);                                            \
+        }
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(S32);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(F32);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(F64);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Bool);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Vec2F);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Vec3F);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Vec4F);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Vec2S);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Vec3S);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Vec4S);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Vec2U);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Vec3U);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Vec4U);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Vec2B);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Vec3B);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Vec4B);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Mat3F);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Mat4F);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(TMat);
+    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(ColorF128);
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsGraphics()
@@ -507,6 +563,31 @@ namespace Maze
         // AbstractTextRenderer
         MAZE_GRAPHICS_MONO_BIND_FUNC(AbstractTextRendererGetText);
         MAZE_GRAPHICS_MONO_BIND_FUNC(AbstractTextRendererSetText);
+
+        // GlobalShaderUniform
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformIdIsValid);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformEnsure);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetS32);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetF32);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetF64);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetBool);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetVec2F);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetVec3F);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetVec4F);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetVec2S);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetVec3S);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetVec4S);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetVec2U);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetVec3U);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetVec4U);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetVec2B);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetVec3B);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetVec4B);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetMat3F);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetMat4F);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetTMat);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetColorF128);
+        
     }
 
 } // namespace Maze

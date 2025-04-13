@@ -588,6 +588,7 @@ namespace Maze
 
         assignUniforms();
         assignDefaultUniforms();
+        processShaderLoaded();
 
         F32 msTime = F32(timer.getMicroseconds()) / 1000.0f;
         Debug::Log("Shader %s loaded for %.1fms.", getName().c_str(), msTime);

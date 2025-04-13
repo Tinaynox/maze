@@ -233,7 +233,7 @@ namespace Maze
                 if (componentData.second->getMetaClass()->isInheritedFrom(_id))
                     return componentData.second;
 
-            return nullptr;
+            return getComponentById(_id);
         }
 
         //////////////////////////////////////////
@@ -244,7 +244,7 @@ namespace Maze
                 if (componentData.second->getMetaClass()->template isInheritedFrom<TComponent>())
                     return componentData.second->cast<TComponent>();
 
-            return SharedPtr<TComponent>();
+            return getComponent<TComponent>();
         }
 
         //////////////////////////////////////////
@@ -255,7 +255,7 @@ namespace Maze
                 if (componentData.second->getMetaClass()->template isInheritedFrom<TComponent>())
                     return componentData.second->castRaw<TComponent>();
 
-            return nullptr;
+            return getComponentRaw<TComponent>();
         }
 
         //////////////////////////////////////////

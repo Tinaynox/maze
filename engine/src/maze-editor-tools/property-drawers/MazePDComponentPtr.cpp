@@ -242,7 +242,8 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerComponentPtr::setValue(ComponentPtr const& _value)
     {
-        if (_value && m_componentId != c_invalidComponentId && !_value->getMetaClass()->isInheritedFrom(m_componentId))
+        if (_value && m_componentId != c_invalidComponentId && 
+            !(_value->getComponentId() == m_componentId || _value->getMetaClass()->isInheritedFrom(m_componentId)))
             return;
 
         bool isValid = _value && _value->getEntityRaw() && _value && _value->getEntityRaw()->getEcsWorld();

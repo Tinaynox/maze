@@ -70,7 +70,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_RENDER_SYSTEM_OPENGL_CORE_API ShaderOpenGL
         : public Shader
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

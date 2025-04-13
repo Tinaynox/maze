@@ -66,6 +66,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API Shader
         : public SharedObject<Shader>
+        , public MultiDelegateCallbackReceiver
         , public ISharedCopyable<Shader>
         , public IDataBlockSerializable
         , public IStringSerializable
@@ -341,8 +342,21 @@ namespace Maze
             AssetFilePtr const& _fragmentShaderFile,
             Vector<ShaderUniformVariant> const& _uniformsData);
 
+
+        //////////////////////////////////////////
+        bool haveGlobalUniforms();
+
+        //////////////////////////////////////////
+        virtual void processShaderLoaded();
+
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
     protected:
         HashedString m_name;
+
+        bool m_subscribedToGlobalUniforms = false;
+        Map<ResourceId, U32> m_uniformsPerGlobalUniform;
 
         UnorderedMap<U32, ShaderUniformPtr> m_uniformsCache;
 
