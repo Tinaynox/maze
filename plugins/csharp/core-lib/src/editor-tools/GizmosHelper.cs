@@ -4,6 +4,20 @@ using System;
 
 namespace Maze.EditorTools
 {
+    public enum GizmosMode
+    {
+        Debug = 0,
+        CustomGeometry = 1,
+    }
+
+    public enum MeshRenderMode
+    {
+        Opaque = 0,
+        Transparent = 1,
+        TransparentTop = 2,
+    }
+
+
     public static class GizmosHelper
     {
         public static void PushTransform(
@@ -27,10 +41,10 @@ namespace Maze.EditorTools
             Vec3F point0,
             Vec3F point1,
             float duration = 0.0f,
-            int gizmosMode = 0,
-            int renderMode = 0)
+            GizmosMode gizmosMode = GizmosMode.Debug,
+            MeshRenderMode renderMode = MeshRenderMode.Opaque)
         {
-            InternalCalls.DrawLine(point0, point1, duration, gizmosMode, renderMode);
+            InternalCalls.DrawLine(point0, point1, duration, (int)gizmosMode, (int)renderMode);
         }
 
         public static void DrawLine(
@@ -38,11 +52,11 @@ namespace Maze.EditorTools
             Vec3F point1,
             ColorF128 color,
             float duration = 0.0f,
-            int gizmosMode = 0,
-            int renderMode = 0)
+            GizmosMode gizmosMode = GizmosMode.Debug,
+            MeshRenderMode renderMode = MeshRenderMode.Opaque)
         {
             SetColor(color);
-            InternalCalls.DrawLine(point0, point1, duration, gizmosMode, renderMode);
+            InternalCalls.DrawLine(point0, point1, duration, (int)gizmosMode, (int)renderMode);
         }
 
         public static void DrawWireSphere(
@@ -50,10 +64,10 @@ namespace Maze.EditorTools
             float radius,
             ColorF128 color,
             float duration = 0.0f,
-            int gizmosMode = 0,
-            int renderMode = 0) 
+            GizmosMode gizmosMode = GizmosMode.Debug,
+            MeshRenderMode renderMode = MeshRenderMode.Opaque) 
         {
-            InternalCalls.DrawWireSphere(position, radius, color.ToVec4F(), duration, gizmosMode, renderMode);
+            InternalCalls.DrawWireSphere(position, radius, color.ToVec4F(), duration, (int)gizmosMode, (int)renderMode);
         }
 
     }

@@ -348,7 +348,7 @@ namespace Maze
                 MAZE_LOAD_PLATFORM_PLUGIN(CSharp);
                 MAZE_LOAD_PLATFORM_PLUGIN(CSharpEditorTools);
 
-                CSharpService::GetInstancePtr()->loadMonoAssembly(MAZE_HCS("Assembly-CSharp.dll"));
+                CSharpService::GetInstancePtr()->loadAppAssembly(MAZE_HCS("Assembly-CSharp.dll"));
 
                 setCurrentProgress(0.975f);
                 break;
@@ -389,9 +389,9 @@ namespace Maze
                     MAZE_ERROR("Initial scene is not set!", initialSceneName.c_str());
                     break;
                 }
+                Engine::GetInstancePtr()->setEngineRenderTarget(Player::GetInstancePtr()->getMainRenderWindow());
                 EcsAssetScenePtr firstScene = Engine::GetInstancePtr()->loadAssetScene(
-                    initialSceneName,
-                    Player::GetInstancePtr()->getMainRenderWindow());
+                    initialSceneName);
                 MAZE_ERROR_IF(!firstScene, "Failed to load first scene - %s!", initialSceneName.c_str());
 
                 return;
