@@ -46,6 +46,39 @@ namespace Maze.Core
             W = w;
         }
 
+        public static Quaternion FromRotationMatrix(Mat3F rotationMatrix)
+        {
+            Quaternion q = new Quaternion();
+            q.SetRotationMatrix(rotationMatrix);
+            return q;
+        }
+
+        public static Quaternion FromRotationMatrix(Mat4F rotationMatrix)
+        {
+            Quaternion q = new Quaternion();
+            q.SetRotationMatrix(rotationMatrix);
+            return q;
+        }
+
+        public static Quaternion FromRotationMatrix(TMat rotationMatrix)
+        {
+            Quaternion q = new Quaternion();
+            q.SetRotationMatrix(rotationMatrix);
+            return q;
+        }
+
+        public static Quaternion LookRotation(Vec3F forward, Vec3F up)
+        {
+            Vec3F right = up.Cross(forward).NormalizedCopy();
+            up = forward.Cross(right).NormalizedCopy();
+            
+            Mat3F rotationMatrix = new Mat3F();
+            rotationMatrix.SetRow(0, right);
+            rotationMatrix.SetRow(1, up);
+            rotationMatrix.SetRow(2, forward);
+
+            return FromRotationMatrix(rotationMatrix);
+        }
 
         public static Quaternion operator -(Quaternion vec0)
         {
@@ -92,7 +125,7 @@ namespace Maze.Core
             return new Quaternion(vec0.X / vec1.X, vec0.Y / vec1.Y, vec0.Z / vec1.Z, vec0.W / vec1.W);
         }
 
-        public void setEulerAngles(
+        public void SetEulerAngles(
             float xAngle,
             float yAngle,
             float zAngle)
@@ -116,7 +149,7 @@ namespace Maze.Core
             Z = cosYawOver2 * cosPitchOver2 * sinRollOver2 - sinYawOver2 * sinPitchOver2 * cosRollOver2;
         }
 
-        public Vec3F getEuler()
+        public Vec3F GetEuler()
         {
             // If the input quaternion is normalized, this is exactly one. Otherwise, this acts as a correction factor for the quaternion not-normalizedness
             float unit = (X * X) + (Y * Y) + (Z * Z) + (W * W);
@@ -154,6 +187,82 @@ namespace Maze.Core
             euler.Z = MathHelper.NormalizedAnglePI(euler.Z);
 
             return euler;
+        }
+
+        
+        public void SetRotationMatrix(Mat3F rotationMatrix)
+        {
+            float trace = rotationMatrix[0][0] + rotationMatrix[1][1] + rotationMatrix[2][2];
+            float root;
+
+            // |w| > 1/2, may as well choose w > 1/2
+            if (trace > 0.0)
+            {
+                // 2w
+                root = (float)Math.Sqrt(trace + 1.0f);
+
+                W = 0.5f * root;
+
+                // 1/(4w)
+                root = 0.5f / root;  
+
+                X = (rotationMatrix[1][2] - rotationMatrix[2][1]) * root;
+                Y = (rotationMatrix[2][0] - rotationMatrix[0][2]) * root;
+                Z = (rotationMatrix[0][1] - rotationMatrix[1][0]) * root;
+            }
+            // |w| <= 1/2
+            else
+            {
+                int[] next = new int[] { 1, 2, 0 };
+                int i = 0;
+
+                if (rotationMatrix[1][1] > rotationMatrix[0][0])
+                    i = 1;
+
+                if (rotationMatrix[2][2] > rotationMatrix[i][i])
+                    i = 2;
+
+                int j = next[i];
+                int k = next[j];
+
+                root = (float)Math.Sqrt(rotationMatrix[i][i] - rotationMatrix[j][j] - rotationMatrix[k][k] + 1.0f);
+                float value = 0.5f * root;
+                if (i == 0)
+                    X = value;
+                else if (i == 1)
+                    Y = value;
+                else
+                    Z = value;
+
+                root = 0.5f / root;
+                W = (rotationMatrix[j][k] - rotationMatrix[k][j]) * root;
+
+                value = (rotationMatrix[i][j] + rotationMatrix[j][i]) * root;
+                if (j == 0)
+                    X = value;
+                else if (j == 1)
+                    Y = value;
+                else
+                    Z = value;
+
+                value = (rotationMatrix[i][k] + rotationMatrix[k][i]) * root;
+                if (k == 0)
+                    X = value;
+                else if (k == 1)
+                    Y = value;
+                else
+                    Z = value;
+            }
+        }
+
+        public void SetRotationMatrix(Mat4F rotationMatrix)
+        {
+            SetRotationMatrix(rotationMatrix.GetMat3());
+        }
+
+        public void SetRotationMatrix(TMat rotationMatrix)
+        {
+            SetRotationMatrix(rotationMatrix.GetMat3());
         }
     }
 }

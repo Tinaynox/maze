@@ -30,6 +30,23 @@ namespace Maze.Core
             W = w;
         }
 
+        public uint this[int index]
+        {
+            get
+            {
+                if (index == 0)
+                    return X;
+                else if (index == 1)
+                    return Y;
+                else if (index == 2)
+                    return Z;
+                else if (index == 3)
+                    return W;
+                else
+                    throw new IndexOutOfRangeException("Index must be between 0 and 3.");
+            }
+        }
+
         public static Vec4U operator +(Vec4U vec0, uint value)
         {
             return new Vec4U(vec0.X + value, vec0.Y + value, vec0.Z + value, vec0.W + value);

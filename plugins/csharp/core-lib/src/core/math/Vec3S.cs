@@ -26,6 +26,21 @@ namespace Maze.Core
             Z = z;
         }
 
+        public int this[int index]
+        {
+            get
+            {
+                if (index == 0)
+                    return X;
+                else if (index == 1)
+                    return Y;
+                else if (index == 2)
+                    return Z;
+                else
+                    throw new IndexOutOfRangeException("Index must be between 0 and 2.");
+            }
+        }
+
         public static Vec3S operator +(Vec3S vec0, int value)
         {
             return new Vec3S(vec0.X + value, vec0.Y + value, vec0.Z + value);

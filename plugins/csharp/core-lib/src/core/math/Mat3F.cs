@@ -41,6 +41,30 @@ namespace Maze.Core
             }
         }
 
+        public void SetRow(int i, Vec3F row)
+        {
+            if (i == 0)
+            { 
+                M00 = row.X;
+                M01 = row.Y;
+                M02 = row.Z;
+            }
+            else if (i == 1)
+            {
+                M10 = row.X;
+                M11 = row.Y;
+                M12 = row.Z;
+            }
+            else if (i == 2)
+            {
+                M20 = row.X;
+                M21 = row.Y;
+                M22 = row.Z;
+            }
+            else
+                throw new IndexOutOfRangeException("Index must be between 0 and 2.");
+        }
+
         public static Mat3F Multiply(Mat3F a, Mat3F b)
         {
             return new Mat3F(

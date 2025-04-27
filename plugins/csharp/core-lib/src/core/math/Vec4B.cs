@@ -26,6 +26,23 @@ namespace Maze.Core
             W = w;
         }
 
+        public bool this[int index]
+        {
+            get
+            {
+                if (index == 0)
+                    return X;
+                else if (index == 1)
+                    return Y;
+                else if (index == 2)
+                    return Z;
+                else if (index == 3)
+                    return W;
+                else
+                    throw new IndexOutOfRangeException("Index must be between 0 and 3.");
+            }
+        }
+
         public byte[] GetBytes()
         {
             byte[] bytes = new byte[4];

@@ -32,6 +32,7 @@
 #include "maze-core/helpers/MazeThreadHelper.hpp"
 #include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeSkinnedMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeAbstractTextRenderer2D.hpp"
@@ -77,6 +78,46 @@ namespace Maze
             _outResourceId = renderMesh->getResourceId();
         else
             _outResourceId = c_invalidEcsSceneId;
+    }
+
+    //////////////////////////////////////////
+    inline void SkinnedMeshRendererSetMaterial(Component* _component, AssetUnitId _auid)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not Transform3D!");
+
+        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(_auid);
+        _component->castRaw<SkinnedMeshRenderer>()->setMaterial(material);
+    }
+
+    //////////////////////////////////////////
+    inline void SkinnedMeshRendererSetRenderMesh(Component* _component, S32 _resourceId)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not Transform3D!");
+
+        RenderMesh* renderMesh = RenderMesh::GetResource(_resourceId);
+        _component->castRaw<SkinnedMeshRenderer>()->setRenderMesh(renderMesh ? renderMesh->getSharedPtr() : RenderMeshPtr());
+    }
+
+    //////////////////////////////////////////
+    inline void SkinnedMeshRendererGetRenderMesh(Component* _component, S32& _outResourceId)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not Transform3D!");
+
+        RenderMeshPtr const& renderMesh = _component->castRaw<SkinnedMeshRenderer>()->getRenderMesh();
+        if (renderMesh)
+            _outResourceId = renderMesh->getResourceId();
+        else
+            _outResourceId = c_invalidEcsSceneId;
+    }
+
+    //////////////////////////////////////////
+    inline void SkinnedMeshRendererPlayAnimation(Component* _component, MonoString* _animationName)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not Transform3D!");
+
+        Char* cstr = mono_string_to_utf8(_animationName);
+        _component->castRaw<SkinnedMeshRenderer>()->playAnimation(HashedCString(cstr));
+        mono_free(cstr);
     }
 
     //////////////////////////////////////////
@@ -507,6 +548,12 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetRenderMesh);
+
+        // SkinnedMeshRenderer
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetMaterial);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetRenderMesh);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetRenderMesh);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererPlayAnimation);
 
         // Camera3D
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DGetOrthographicSize);

@@ -231,6 +231,14 @@ namespace Maze.Core
             );
         }
 
+        public Mat3F GetMat3()
+        {
+            return new Mat3F(
+                M00, M01, M02,
+                M10, M11, M12,
+                M20, M21, M22);
+        }
+
         public byte[] GetBytes()
         {
             byte[] bytes = new byte[48];

@@ -41,6 +41,21 @@ namespace Maze.Core
             Z = z;
         }
 
+        public float this[int index]
+        {
+            get
+            {
+                if (index == 0)
+                    return X;
+                else if (index == 1)
+                    return Y;
+                else if (index == 2)
+                    return Z;
+                else
+                    throw new IndexOutOfRangeException("Index must be between 0 and 2.");
+            }
+        }
+
         public float Length()
         {
             return (float)Math.Sqrt(X * X + Y * Y + Z * Z);
