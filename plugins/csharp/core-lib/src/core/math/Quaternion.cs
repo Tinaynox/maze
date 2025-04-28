@@ -7,6 +7,8 @@ namespace Maze.Core
     [StructLayout(LayoutKind.Sequential)]
     public struct Quaternion
     {
+        const float Epsilon = 1e-03f;
+
         public float W;
         public float X;
         public float Y;
@@ -80,12 +82,55 @@ namespace Maze.Core
             return FromRotationMatrix(rotationMatrix);
         }
 
+        public static Quaternion Slerp(
+            float t,
+            Quaternion p,
+            Quaternion q,
+            bool shortestPath = true)
+        {
+            float c = p.Dot(q);
+            Quaternion r;
+
+            if (c < 0.0f && shortestPath)
+            {
+                c = -c;
+                r = -q;
+            }
+            else
+            {
+                r = q;
+            }
+
+            if (Math.Abs(c) < 1.0 - Epsilon)
+            {
+                float s = (float)Math.Sqrt(1.0 - c * c);
+                float angle = (float)Math.Atan2(s, c);
+                float invSin = 1.0f / s;
+                float coeff0 = (float)Math.Sin((1.0f - t) * angle) * invSin;
+                float coeff1 = (float)Math.Sin(t * angle) * invSin;
+                return coeff0 * p + coeff1 * r;
+            }
+            else
+            {
+                Quaternion res = (1.0f - t) * p + t * r;
+
+                res.Normalize();
+
+                return res;
+            }
+        }
+
         public static Quaternion operator -(Quaternion vec0)
         {
             return new Quaternion(-vec0.X, -vec0.Y, -vec0.Z, -vec0.W);
         }
 
         public static Quaternion operator +(Quaternion vec0, float value)
+        {
+            return new Quaternion(vec0.X + value, vec0.Y + value, vec0.Z + value, vec0.W + value);
+        }
+
+        public static Quaternion operator +(float value, Quaternion vec0)
         {
             return new Quaternion(vec0.X + value, vec0.Y + value, vec0.Z + value, vec0.W + value);
         }
@@ -100,12 +145,22 @@ namespace Maze.Core
             return new Quaternion(vec0.X - value, vec0.Y - value, vec0.Z - value, vec0.W - value);
         }
 
+        public static Quaternion operator -(float value, Quaternion vec0)
+        {
+            return new Quaternion(value - vec0.X, value - vec0.Y, value - vec0.Z, value - vec0.W);
+        }
+
         public static Quaternion operator -(Quaternion vec0, Quaternion vec1)
         {
             return new Quaternion(vec0.X - vec1.X, vec0.Y - vec1.Y, vec0.Z - vec1.Z, vec0.W - vec1.W);
         }
 
         public static Quaternion operator *(Quaternion vec0, float value)
+        {
+            return new Quaternion(vec0.X * value, vec0.Y * value, vec0.Z * value, vec0.W * value);
+        }
+
+        public static Quaternion operator *(float value, Quaternion vec0)
         {
             return new Quaternion(vec0.X * value, vec0.Y * value, vec0.Z * value, vec0.W * value);
         }
@@ -123,6 +178,23 @@ namespace Maze.Core
         public static Quaternion operator /(Quaternion vec0, Quaternion vec1)
         {
             return new Quaternion(vec0.X / vec1.X, vec0.Y / vec1.Y, vec0.Z / vec1.Z, vec0.W / vec1.W);
+        }
+
+        float Dot(Quaternion q)
+        {
+            return W * q.W + X * q.X + Y * q.Y + Z * q.Z;
+        }
+
+        public float Norm()
+        {
+            return (float)Math.Sqrt(W * W + X * X + Y * Y + Z * Z);
+        }
+
+        public float Normalize()
+        {
+            float l = Norm();
+            this = 1.0f / l * this;
+            return l;
         }
 
         public void SetEulerAngles(
