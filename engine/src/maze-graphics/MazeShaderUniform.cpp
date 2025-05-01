@@ -144,7 +144,7 @@ namespace Maze
         
         m_value.set(_texture2D); 
         
-        processSimpleUniformChanged();
+        // processSimpleUniformChanged();
 
         return true;
     }
@@ -160,7 +160,7 @@ namespace Maze
 
         m_value.set(_textures, _count);
 
-        processSimpleUniformChanged();
+        // processSimpleUniformChanged();
 
         return true;
     }
@@ -176,7 +176,7 @@ namespace Maze
 
         m_value.set(_textureCube);
 
-        processSimpleUniformChanged();
+        // processSimpleUniformChanged();
 
         return true;
     }

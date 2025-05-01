@@ -119,9 +119,7 @@ namespace Maze
             case ShaderUniformType::UniformTextureCube:
             case ShaderUniformType::UniformTexture2DArray:
             {
-                m_textureIndex = -1;
-                m_shaderRaw->castRaw<ShaderOpenGL>()->assignUniformTextureIndexes();
-
+                // Will be uploaded in bindTextures
                 break;
             }
 
@@ -451,10 +449,7 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderUniformOpenGL::setTextureIndices(MZGLint* _textureIndices, U32 _count)
     {
-        if (m_textureIndex == *_textureIndices)
-            return;
-
-        m_textureIndex = *_textureIndices;
+        m_textureIndex = -1;
 
         if (getType() == ShaderUniformType::UniformTexture2DArray)
         {

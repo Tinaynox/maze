@@ -139,7 +139,7 @@ namespace Maze
         UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(_uniformName.hash);
         if (it != m_uniformsCache.end())
         {
-#if MAZE_DEBUG
+#if MAZE_DEBUG && 0
             MAZE_ERROR_IF(it->second && it->second->getName().asHashedCString() != _uniformName, "Hash collision detected!");
 #endif
             return it->second;

@@ -55,6 +55,10 @@ set(EXAMPLE_MAZE_LIBS
 
 
 ##########################################
+set(MAZE_USE_OPTICK ON CACHE BOOL "Use Optick Profiler" FORCE)
+
+
+##########################################
 include("${CMAKE_CURRENT_SOURCE_DIR}/../engine/cmake/Utils.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/../engine/cmake/Config.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/../engine/cmake/Macros.cmake")

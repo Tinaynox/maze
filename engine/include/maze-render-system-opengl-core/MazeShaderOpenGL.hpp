@@ -121,9 +121,6 @@ namespace Maze
         virtual bool loadFromSources(String const& _vertexShaderSource, String const& _fragmentShaderSource) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void assignUniformTextureIndexes();
-
-        //////////////////////////////////////////
         void bindTextures();
 
         //////////////////////////////////////////

@@ -748,41 +748,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderOpenGL::assignUniformTextureIndexes()
-    {
-        S32 textureIndex = 0;
-
-        for (auto& uniformCache : m_uniformsCache)
-        {
-            ShaderUniformPtr const& uniform = uniformCache.second;
-
-            if (!uniform)
-                continue;
-
-            if (uniform->getType() == ShaderUniformType::UniformTexture2D ||
-                uniform->getType() == ShaderUniformType::UniformTextureCube)
-            {
-                uniform->castRaw<ShaderUniformOpenGL>()->setTextureIndex(textureIndex);
-                ++textureIndex;
-            }
-            else
-            if (uniform->getType() == ShaderUniformType::UniformTexture2DArray)
-            {
-                FastVector<MZGLint> indices;
-                indices.resize(uniform->getCount());
-                for (S32 i = 0; i < (S32)uniform->getCount(); ++i)
-                    indices[i] = textureIndex + i;
-
-                uniform->castRaw<ShaderUniformOpenGL>()->setTextureIndices(&indices[0], uniform->getCount());
-                textureIndex += uniform->getCount();
-            }
-
-        }
-    }
-
-    //////////////////////////////////////////
     void ShaderOpenGL::bindTextures()
     {
+        S32 textureSlotIndex = 0;
+
         for (auto& uniformCache : m_uniformsCache)
         {
             ShaderUniformPtr const& uniform = uniformCache.second;
@@ -794,33 +763,37 @@ namespace Maze
             {
                 Maze::ContextOpenGLScopeBind contextOpenGLScopedLock(m_context);
                 
-                MZGLint textureIndex = uniform->castRaw<ShaderUniformOpenGL>()->getTextureIndex();
-
-                m_context->activeTexture(textureIndex);
+                m_context->activeTexture(textureSlotIndex);
                 m_context->bindTexture2D(uniform->getTexture2D());
+                uniform->castRaw<ShaderUniformOpenGL>()->setTextureIndex(textureSlotIndex++);
             }
             else
             if (uniform->getType() == ShaderUniformType::UniformTextureCube)
             {
                 Maze::ContextOpenGLScopeBind contextOpenGLScopedLock(m_context);
 
-                MZGLint textureIndex = uniform->castRaw<ShaderUniformOpenGL>()->getTextureIndex();
-
-                m_context->activeTexture(textureIndex);
+                m_context->activeTexture(textureSlotIndex);
                 m_context->bindTextureCube(uniform->getTextureCube());
+                uniform->castRaw<ShaderUniformOpenGL>()->setTextureIndex(textureSlotIndex++);
             }
             else
             if (uniform->getType() == ShaderUniformType::UniformTexture2DArray)
             {
                 Maze::ContextOpenGLScopeBind contextOpenGLScopedLock(m_context);
 
-                MZGLint textureIndex = uniform->castRaw<ShaderUniformOpenGL>()->getTextureIndex();
-
+                FastVector<MZGLint> indices;
+                indices.resize(uniform->getCount());
+                
                 for (U32 i = 0; i < uniform->getCount(); ++i)
                 {
-                    m_context->activeTexture(textureIndex + (S32)i);
+                    indices[i] = textureSlotIndex + i;
+
+                    m_context->activeTexture(textureSlotIndex + (S32)i);
                     m_context->bindTexture2D(*((Texture2D**)uniform->getPtr() + i));
                 }
+
+                uniform->castRaw<ShaderUniformOpenGL>()->setTextureIndices(&indices[0], uniform->getCount());
+                textureSlotIndex += uniform->getCount();
             }
         }
     }

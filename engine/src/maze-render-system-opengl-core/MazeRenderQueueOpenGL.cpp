@@ -191,8 +191,9 @@ namespace Maze
                                 if (command->uvMask & (1 << i))
                                     m_instanceStreamUVs[i]->castRaw<InstanceStreamUVOpenGL>()->prepareForRender(command->count);
                         
-                            ShaderOpenGL* shaderOpenGL = static_cast<ShaderOpenGL*>(m_context->getCurrentShader());
-                            shaderOpenGL->bindTextures();
+                            // TODO: Do we need it here? I don't think so
+                            // ShaderOpenGL* shaderOpenGL = static_cast<ShaderOpenGL*>(m_context->getCurrentShader());
+                            // shaderOpenGL->bindTextures();
 
                             VertexArrayObjectOpenGL* vao = command->vao->castRaw<VertexArrayObjectOpenGL>();
 
@@ -434,6 +435,9 @@ namespace Maze
 
         // Shader uniforms
         _renderPass->applyRenderPassUniforms();
+
+        // Bind textures
+        shaderOpenGL->bindTextures();
 
 
         // Stream data
