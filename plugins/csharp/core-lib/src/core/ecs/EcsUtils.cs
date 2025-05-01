@@ -27,5 +27,29 @@ namespace Maze.Core
             // Not supported type
             return null;
         }
+
+        public static object CreateComponent(
+            NativePtr nativePtr,
+            Type componentType)
+        {
+            int componentId = InternalCalls.GetComponentIdByMonoType(componentType);
+
+            // Native component
+            if (typeof(NativeComponent).IsAssignableFrom(componentType))
+            {
+                NativePtr componentPtr = InternalCalls.ComponentCreateNativeComponent(nativePtr, componentId);
+                if (componentPtr == NativePtr.Zero)
+                    return null;
+
+                return Activator.CreateInstance(componentType, componentPtr);
+            }
+
+            // MonoBehaviour
+            if (typeof(MonoBehaviour).IsAssignableFrom(componentType))
+                return InternalCalls.ComponentCreateMonoBehaviourComponentObject(nativePtr, componentId);
+
+            // Not supported type
+            return null;
+        }
     }
 }

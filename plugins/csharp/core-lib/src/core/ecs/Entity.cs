@@ -27,7 +27,7 @@ namespace Maze.Core
             {
                 NativePtr componentPtr = InternalCalls.EntityGetComponent(NativeEntityPtr, componentId);
                 if (componentPtr == NativePtr.Zero)
-                    return default(T);
+                    return null;
 
                 return (T)Activator.CreateInstance(typeof(T), componentPtr);
             }
@@ -39,7 +39,37 @@ namespace Maze.Core
 
 
             // Not supported type
-            return default(T);
+            return null;
+        }
+
+        public T CreateComponent<T>() where T : class
+        {
+            int componentId = InternalCalls.GetComponentIdByMonoType(typeof(T));
+
+            // Native component
+            if (typeof(NativeComponent).IsAssignableFrom(typeof(T)))
+            {
+                NativePtr componentPtr = InternalCalls.EntityCreateNativeComponent(NativeEntityPtr, componentId);
+                if (componentPtr == NativePtr.Zero)
+                    return null;
+
+                return (T)Activator.CreateInstance(typeof(T), componentPtr);
+            }
+
+            // MonoBehaviour
+            if (typeof(MonoBehaviour).IsAssignableFrom(typeof(T)))
+                return (T)(object)InternalCalls.EntityCreateMonoBehaviourComponentObject(NativeEntityPtr, componentId);
+
+            return null;
+        }
+
+        public T EnsureComponent<T>() where T : class
+        {
+            T component = GetComponent<T>();
+            if (component != null)
+                return component;
+
+            return CreateComponent<T>();
         }
 
         public void Destroy()

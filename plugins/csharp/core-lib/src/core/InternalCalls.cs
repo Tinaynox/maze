@@ -51,6 +51,12 @@ namespace Maze.Core
         public extern static MonoBehaviour EntityGetMonoBehaviourComponentObject(NativePtr nativeEntityPtr, int componentId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static NativePtr EntityCreateNativeComponent(NativePtr nativeEntityPtr, int componentId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static MonoBehaviour EntityCreateMonoBehaviourComponentObject(NativePtr nativeEntityPtr, int componentId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void EntityRemoveFromEcsWorld(NativePtr nativeEntityPtr);
         #endregion
 
@@ -76,6 +82,12 @@ namespace Maze.Core
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static MonoBehaviour ComponentGetMonoBehaviourComponentObject(NativePtr nativeComponentPtr, int componentId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static NativePtr ComponentCreateNativeComponent(NativePtr nativeComponentPtr, int componentId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static MonoBehaviour ComponentCreateMonoBehaviourComponentObject(NativePtr nativeComponentPtr, int componentId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static NativePtr ComponentGetEntity(NativePtr nativeComponentPtr);
@@ -129,6 +141,14 @@ namespace Maze.Core
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform3DSetWorldTransform(NativePtr nativeComponentPtr, TMat tm);
+        #endregion
+
+        #region Name
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static string NameGetName(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void NameSetName(NativePtr nativeComponentPtr, string name);
         #endregion
 
         #region AssetFile

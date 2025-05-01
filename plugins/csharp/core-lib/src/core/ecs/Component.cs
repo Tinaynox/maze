@@ -30,6 +30,16 @@ namespace Maze.Core
             return EcsUtils.GetComponentByType(NativeComponentPtr, componentType);
         }
 
+        public T CreateComponent<T>() where T : class
+        {
+            return CreateComponent(typeof(T)) as T;
+        }
+
+        public object CreateComponent(Type componentType)
+        {
+            return EcsUtils.CreateComponent(NativeComponentPtr, componentType);
+        }
+
         public EcsScene GetScene()
         {
             return new EcsScene(InternalCalls.ComponentGetSceneId(NativeComponentPtr));
@@ -39,6 +49,22 @@ namespace Maze.Core
         public Entity CreateEntity()
         {
             return new Entity(InternalCalls.CreateEntity(NativeComponentPtr));
+        }
+
+        public Entity CreateEntity(string name, Transform2D parent)
+        {
+            Entity entity = CreateEntity();
+            entity.CreateComponent<Name>().Title = name;
+            entity.CreateComponent<Transform2D>().SetParent(parent);
+            return entity;
+        }
+
+        public Entity CreateEntity(string name, Transform3D parent)
+        {
+            Entity entity = CreateEntity();
+            entity.CreateComponent<Name>().Title = name;
+            entity.CreateComponent<Transform3D>().SetParent(parent);
+            return entity;
         }
 
         public Entity InstantiateEntity(AssetUnitId auid)

@@ -35,6 +35,7 @@
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/services/MazeLogService.hpp"
@@ -42,6 +43,7 @@
 #include "maze-core/managers/MazeEntityPrefabManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/assets/MazeAssetUnitId.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-graphics/ecs/MazeEcsAssetScene.hpp"
@@ -209,6 +211,44 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline Component* EntityCreateNativeComponent(Entity* _entity, ComponentId _componentId)
+    {
+        if (!_entity)
+            return nullptr;
+
+        auto const& componentFactory = EntityManager::GetInstancePtr()->getComponentFactory();
+        if (!componentFactory)
+            return nullptr;
+
+        ComponentPtr component = componentFactory->createComponent(_componentId);
+        if (!component)
+            return nullptr;
+
+        _entity->addComponent(component);
+        
+        return component.get();
+    }
+
+    //////////////////////////////////////////
+    inline MonoObject* EntityCreateMonoBehaviourComponentObject(Entity* _entity, ComponentId _componentId)
+    {
+        if (!_entity)
+            return nullptr;
+
+        ScriptClassPtr const& scriptClass = MonoEngine::GetMonoBehaviourSubClass(_componentId);
+        MAZE_ERROR_RETURN_VALUE_IF(!scriptClass, nullptr, "Undefined MonoBehaviour script with componentId=%d", _componentId);
+
+        MonoBehaviourPtr component = MonoBehaviour::Create();
+        component->setMonoClass(scriptClass);
+
+        MAZE_ERROR_RETURN_VALUE_IF(!component->getMonoInstance(), nullptr, "Failed to create MonoBehaviour script instance - %s", scriptClass->getFullName().c_str());
+        
+        _entity->addComponent(component);
+
+        return component->getMonoInstance()->getInstance();
+    }
+
+    //////////////////////////////////////////
     inline void EntityRemoveFromEcsWorld(Entity* _entity)
     {
         _entity->removeFromEcsWorld();
@@ -277,6 +317,44 @@ namespace Maze
 
         MAZE_ERROR_RETURN_VALUE_IF(component->getClassUID() != ClassInfo<MonoBehaviour>::UID(), nullptr, "Component is not MonoBehaviour!");
         return component->castRaw<MonoBehaviour>()->getMonoInstance()->getInstance();
+    }
+
+    //////////////////////////////////////////
+    inline Component* ComponentCreateNativeComponent(Component* _component, ComponentId _componentId)
+    {
+        if (!_component)
+            return nullptr;
+
+        auto const& componentFactory = EntityManager::GetInstancePtr()->getComponentFactory();
+        if (!componentFactory)
+            return nullptr;
+
+        ComponentPtr component = componentFactory->createComponent(_componentId);
+        if (!component)
+            return nullptr;
+
+        _component->getEntityRaw()->addComponent(component);
+
+        return component.get();
+    }
+
+    //////////////////////////////////////////
+    inline MonoObject* ComponentCreateMonoBehaviourComponentObject(Component* _component, ComponentId _componentId)
+    {
+        if (!_component)
+            return nullptr;
+
+        ScriptClassPtr const& scriptClass = MonoEngine::GetMonoBehaviourSubClass(_componentId);
+        MAZE_ERROR_RETURN_VALUE_IF(!scriptClass, nullptr, "Undefined MonoBehaviour script with componentId=%d", _componentId);
+
+        MonoBehaviourPtr component = MonoBehaviour::Create();
+        component->setMonoClass(scriptClass);
+
+        MAZE_ERROR_RETURN_VALUE_IF(!component->getMonoInstance(), nullptr, "Failed to create MonoBehaviour script instance - %s", scriptClass->getFullName().c_str());
+
+        _component->getEntityRaw()->addComponent(component);
+
+        return component->getMonoInstance()->getInstance();
     }
 
     //////////////////////////////////////////
@@ -404,6 +482,25 @@ namespace Maze
         _component->castRaw<Transform3D>()->setLocalScale(_scale);
     }
 
+
+    //////////////////////////////////////////
+    inline MonoString* NameGetName(Component* _component)
+    {
+        MAZE_ERROR_RETURN_VALUE_IF(_component->getClassUID() != ClassInfo<Name>::UID(), nullptr, "Component is not Name!");
+        return mono_string_new(mono_domain_get(), _component->castRaw<Name>()->getName().c_str());
+    }
+
+    //////////////////////////////////////////
+    inline void NameSetName(Component* _component, MonoString* _name)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Name>::UID(), "Component is not Name!");
+
+        Char* cstr = mono_string_to_utf8(_name);
+        _component->castRaw<Name>()->setName(cstr);
+        mono_free(cstr);
+    }
+
+
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsCore()
     {
@@ -428,6 +525,8 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(EntityGetEntityId);
         MAZE_CORE_MONO_BIND_FUNC(EntityGetComponent);
         MAZE_CORE_MONO_BIND_FUNC(EntityGetMonoBehaviourComponentObject);
+        MAZE_CORE_MONO_BIND_FUNC(EntityCreateNativeComponent);
+        MAZE_CORE_MONO_BIND_FUNC(EntityCreateMonoBehaviourComponentObject);
         MAZE_CORE_MONO_BIND_FUNC(EntityRemoveFromEcsWorld);
 
         // Component
@@ -438,6 +537,8 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetComponent);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetComponentInheritedFrom);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetMonoBehaviourComponentObject);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentCreateNativeComponent);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentCreateMonoBehaviourComponentObject);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetEntity);
         MAZE_CORE_MONO_BIND_FUNC(ComponentSendMonoEvent);
         MAZE_CORE_MONO_BIND_FUNC(ComponentBroadcastMonoEvent);
@@ -457,6 +558,10 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetLocalTransform);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetWorldTransform);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetWorldTransform);
+
+        // Name
+        MAZE_CORE_MONO_BIND_FUNC(NameGetName);
+        MAZE_CORE_MONO_BIND_FUNC(NameSetName);
 
         // AssetFile
         MAZE_CORE_MONO_BIND_FUNC(AssetFileIdIsValid);
