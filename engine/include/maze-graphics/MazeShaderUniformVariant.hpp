@@ -60,7 +60,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderSystem);
-    MAZE_USING_SHARED_PTR(ShaderUniform);
+    MAZE_USING_MANAGED_SHARED_PTR(ShaderUniform);
     MAZE_USING_SHARED_PTR(Shader);
     MAZE_USING_MANAGED_SHARED_PTR(Texture2D);
     MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
@@ -211,188 +211,188 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline ShaderUniformType const& getType() const { return m_type; }
+        MAZE_FORCEINLINE ShaderUniformType const& getType() const { return m_type; }
 
 
         //////////////////////////////////////////
-        inline void* getPtr() const { return m_ptr; }
+        MAZE_FORCEINLINE void* getPtr() const { return m_ptr; }
 
         //////////////////////////////////////////
-        inline U32 getCount() const { return m_count; }
-
-
-        //////////////////////////////////////////
-        inline S32 getS32() const { return m_S32; }
-
-        //////////////////////////////////////////
-        inline F32 getF32() const { return m_F32; }
-
-        //////////////////////////////////////////
-        inline F64 getF64() const { return m_F64; }
-
-        //////////////////////////////////////////
-        inline bool getBool() const { return m_bool; }
-
-        //////////////////////////////////////////
-        inline TexturePtr const& getTexture() const { return m_texture; }
-
-        //////////////////////////////////////////
-        inline Texture2DPtr getTexture2D() const { return Maze::static_pointer_cast<Texture2D>(m_texture); }
-
-        //////////////////////////////////////////
-        inline TextureCubePtr getTextureCube() const { return Maze::static_pointer_cast<TextureCube>(m_texture); }
-
-        //////////////////////////////////////////
-        inline Vec4F const& getVecF() const { return m_vectorF; }
-
-        //////////////////////////////////////////
-        inline Vec2F getVec2F32() const { return { m_vectorF.x, m_vectorF.y }; }
-
-        //////////////////////////////////////////
-        inline Vec3F getVec3F32() const { return { m_vectorF.x, m_vectorF.y, m_vectorF.z }; }
-
-        //////////////////////////////////////////
-        inline Vec4F getVec4F32() const { return m_vectorF; }
+        MAZE_FORCEINLINE U32 getCount() const { return m_count; }
 
 
         //////////////////////////////////////////
-        inline Vec4S const& getVecS() const { return m_vectorS; }
+        MAZE_FORCEINLINE S32 getS32() const { return m_S32; }
 
         //////////////////////////////////////////
-        inline Vec2S getVec2S32() const { return { m_vectorS.x, m_vectorS.y }; }
+        MAZE_FORCEINLINE F32 getF32() const { return m_F32; }
 
         //////////////////////////////////////////
-        inline Vec3S getVec3S32() const { return { m_vectorS.x, m_vectorS.y, m_vectorS.z }; }
+        MAZE_FORCEINLINE F64 getF64() const { return m_F64; }
 
         //////////////////////////////////////////
-        inline Vec4S getVec4S32() const { return m_vectorS; }
+        MAZE_FORCEINLINE bool getBool() const { return m_bool; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE TexturePtr const& getTexture() const { return m_texture; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE Texture2DPtr getTexture2D() const { return Maze::static_pointer_cast<Texture2D>(m_texture); }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE TextureCubePtr getTextureCube() const { return Maze::static_pointer_cast<TextureCube>(m_texture); }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE Vec4F const& getVecF() const { return m_vectorF; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE Vec2F getVec2F32() const { return { m_vectorF.x, m_vectorF.y }; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE Vec3F getVec3F32() const { return { m_vectorF.x, m_vectorF.y, m_vectorF.z }; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE Vec4F getVec4F32() const { return m_vectorF; }
 
 
         //////////////////////////////////////////
-        inline Vec4U const& getVecU() const { return m_vectorU; }
+        MAZE_FORCEINLINE Vec4S const& getVecS() const { return m_vectorS; }
 
         //////////////////////////////////////////
-        inline Vec2U getVec2U32() const { return { m_vectorU.x, m_vectorU.y }; }
+        MAZE_FORCEINLINE Vec2S getVec2S32() const { return { m_vectorS.x, m_vectorS.y }; }
 
         //////////////////////////////////////////
-        inline Vec3U getVec3U32() const { return { m_vectorU.x, m_vectorU.y, m_vectorU.z }; }
+        MAZE_FORCEINLINE Vec3S getVec3S32() const { return { m_vectorS.x, m_vectorS.y, m_vectorS.z }; }
 
         //////////////////////////////////////////
-        inline Vec4U getVec4U32() const { return m_vectorU; }
+        MAZE_FORCEINLINE Vec4S getVec4S32() const { return m_vectorS; }
 
 
         //////////////////////////////////////////
-        inline Vec4B const& getVecB() const { return m_vectorB; }
+        MAZE_FORCEINLINE Vec4U const& getVecU() const { return m_vectorU; }
 
         //////////////////////////////////////////
-        inline Vec2B getVec2B() const { return { m_vectorB.x, m_vectorB.y }; }
+        MAZE_FORCEINLINE Vec2U getVec2U32() const { return { m_vectorU.x, m_vectorU.y }; }
 
         //////////////////////////////////////////
-        inline Vec3B getVec3B() const { return { m_vectorB.x, m_vectorB.y, m_vectorB.z }; }
+        MAZE_FORCEINLINE Vec3U getVec3U32() const { return { m_vectorU.x, m_vectorU.y, m_vectorU.z }; }
 
         //////////////////////////////////////////
-        inline Vec4B getVec4B() const { return m_vectorB; }
+        MAZE_FORCEINLINE Vec4U getVec4U32() const { return m_vectorU; }
+
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE Vec4B const& getVecB() const { return m_vectorB; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE Vec2B getVec2B() const { return { m_vectorB.x, m_vectorB.y }; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE Vec3B getVec3B() const { return { m_vectorB.x, m_vectorB.y, m_vectorB.z }; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE Vec4B getVec4B() const { return m_vectorB; }
 
         
         //////////////////////////////////////////
-        inline Mat3F const& getMat3F32() const { return m_matrix3DF; }
+        MAZE_FORCEINLINE Mat3F const& getMat3F32() const { return m_matrix3DF; }
         
         //////////////////////////////////////////
-        inline Mat4F const& getMat4F32() const { return m_matrix4DF; }
+        MAZE_FORCEINLINE Mat4F const& getMat4F32() const { return m_matrix4DF; }
 
         //////////////////////////////////////////
-        inline TMat const& getTMat() const { return m_matrixT; }
-
-
-        //////////////////////////////////////////
-        inline ColorF128 getColorF128() const { return ColorF128(m_vectorF); }
+        MAZE_FORCEINLINE TMat const& getTMat() const { return m_matrixT; }
 
 
         //////////////////////////////////////////
-        inline void reset() { m_type = ShaderUniformType::None; }
+        MAZE_FORCEINLINE ColorF128 getColorF128() const { return ColorF128(m_vectorF); }
+
 
         //////////////////////////////////////////
-        inline void set(S32 _value) { m_S32 = _value; m_type = ShaderUniformType::UniformS32; }
+        MAZE_FORCEINLINE void reset() { m_type = ShaderUniformType::None; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE void set(S32 _value) { m_S32 = _value; m_type = ShaderUniformType::UniformS32; }
         
         //////////////////////////////////////////
-        inline void set(F32 _value) { m_F32 = _value; m_type = ShaderUniformType::UniformF32; }
+        MAZE_FORCEINLINE void set(F32 _value) { m_F32 = _value; m_type = ShaderUniformType::UniformF32; }
         
         //////////////////////////////////////////
-        inline void set(F64 _value) { m_F64 = _value; m_type = ShaderUniformType::UniformF64; }
+        MAZE_FORCEINLINE void set(F64 _value) { m_F64 = _value; m_type = ShaderUniformType::UniformF64; }
 
         //////////////////////////////////////////
-        inline void set(bool _value) { m_bool = _value; m_type = ShaderUniformType::UniformBool; }
+        MAZE_FORCEINLINE void set(bool _value) { m_bool = _value; m_type = ShaderUniformType::UniformBool; }
         
         //////////////////////////////////////////
-        inline void set(Texture2DPtr const& _texture) { m_texture = _texture; m_type = ShaderUniformType::UniformTexture2D; }
+        MAZE_FORCEINLINE void set(Texture2DPtr const& _texture) { m_texture = _texture; m_type = ShaderUniformType::UniformTexture2D; }
 
         //////////////////////////////////////////
-        inline void set(TextureCubePtr const& _texture) { m_texture = _texture; m_type = ShaderUniformType::UniformTextureCube; }
+        MAZE_FORCEINLINE void set(TextureCubePtr const& _texture) { m_texture = _texture; m_type = ShaderUniformType::UniformTextureCube; }
 
         //////////////////////////////////////////
-        inline void set(Texture2D** _textures, U32 _count) { m_ptr = _textures; m_count = _count; m_type = ShaderUniformType::UniformTexture2DArray; }
+        MAZE_FORCEINLINE void set(Texture2D** _textures, U32 _count) { m_ptr = _textures; m_count = _count; m_type = ShaderUniformType::UniformTexture2DArray; }
 
         //////////////////////////////////////////
-        inline void set(Texture2D* _texture2D) { return set(_texture2D ? _texture2D->cast<Texture2D>() : nullptr); }
+        MAZE_FORCEINLINE void set(Texture2D* _texture2D) { return set(_texture2D ? _texture2D->cast<Texture2D>() : nullptr); }
 
         //////////////////////////////////////////
-        inline void set(TextureCube* _textureCube) { return set(_textureCube ? _textureCube->cast<TextureCube>() : nullptr); }
+        MAZE_FORCEINLINE void set(TextureCube* _textureCube) { return set(_textureCube ? _textureCube->cast<TextureCube>() : nullptr); }
         
         //////////////////////////////////////////
-        inline void set(Vec2F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec2F32; }
+        MAZE_FORCEINLINE void set(Vec2F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec2F32; }
         
         //////////////////////////////////////////
-        inline void set(Vec3F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec3F32; }
+        MAZE_FORCEINLINE void set(Vec3F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec3F32; }
         
         //////////////////////////////////////////
-        inline void set(Vec4F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec4F32; }
+        MAZE_FORCEINLINE void set(Vec4F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec4F32; }
 
 
         //////////////////////////////////////////
-        inline void set(Vec2S const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec2S32; }
+        MAZE_FORCEINLINE void set(Vec2S const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec2S32; }
         
         //////////////////////////////////////////
-        inline void set(Vec3S const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec3S32; }
+        MAZE_FORCEINLINE void set(Vec3S const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec3S32; }
         
         //////////////////////////////////////////
-        inline void set(Vec4S const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec4S32; }
+        MAZE_FORCEINLINE void set(Vec4S const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec4S32; }
 
 
         //////////////////////////////////////////
-        inline void set(Vec2U const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec2U32; }
+        MAZE_FORCEINLINE void set(Vec2U const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec2U32; }
         
         //////////////////////////////////////////
-        inline void set(Vec3U const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec3U32; }
+        MAZE_FORCEINLINE void set(Vec3U const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec3U32; }
         
         //////////////////////////////////////////
-        inline void set(Vec4U const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec4U32; }
+        MAZE_FORCEINLINE void set(Vec4U const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec4U32; }
 
 
         //////////////////////////////////////////
-        inline void set(Vec2B const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec2B; }
+        MAZE_FORCEINLINE void set(Vec2B const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec2B; }
 
         //////////////////////////////////////////
-        inline void set(Vec3B const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec3B; }
+        MAZE_FORCEINLINE void set(Vec3B const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec3B; }
 
         //////////////////////////////////////////
-        inline void set(Vec4B const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec4B; }
+        MAZE_FORCEINLINE void set(Vec4B const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec4B; }
         
         
         //////////////////////////////////////////
-        inline void set(Mat3F const& _matrix) { m_matrix3DF = _matrix; m_type = ShaderUniformType::UniformMat3F32; }
+        MAZE_FORCEINLINE void set(Mat3F const& _matrix) { m_matrix3DF = _matrix; m_type = ShaderUniformType::UniformMat3F32; }
                 
         //////////////////////////////////////////
-        inline void set(Mat4F const& _matrix) { m_matrix4DF = _matrix; m_type = ShaderUniformType::UniformMat4F32; }
+        MAZE_FORCEINLINE void set(Mat4F const& _matrix) { m_matrix4DF = _matrix; m_type = ShaderUniformType::UniformMat4F32; }
 
         //////////////////////////////////////////
-        inline void set(TMat const& _matrix) { m_matrixT = _matrix; m_type = ShaderUniformType::UniformTMat; }
+        MAZE_FORCEINLINE void set(TMat const& _matrix) { m_matrixT = _matrix; m_type = ShaderUniformType::UniformTMat; }
         
 
         //////////////////////////////////////////
-        inline void set(ColorF128 const& _color) { m_vectorF = _color.toVec4F32(); m_type = ShaderUniformType::UniformColorF128; }
+        MAZE_FORCEINLINE void set(ColorF128 const& _color) { m_vectorF = _color.toVec4F32(); m_type = ShaderUniformType::UniformColorF128; }
 
         //////////////////////////////////////////
-        inline void setColor(Vec4F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformColorF128; }
+        MAZE_FORCEINLINE void setColor(Vec4F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformColorF128; }
 
 
         //////////////////////////////////////////
@@ -430,7 +430,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setName(HashedString const& _name)
+        MAZE_FORCEINLINE void setName(HashedString const& _name)
         {
             if (m_name == _name)
                 return;
@@ -439,7 +439,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline HashedString const& getName() const { return m_name; }
+        MAZE_FORCEINLINE HashedString const& getName() const { return m_name; }
 
     public:
 

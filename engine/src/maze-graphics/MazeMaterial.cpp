@@ -368,6 +368,8 @@ namespace Maze
                 {
                     renderPass->set(otherRenderPass);
                 }
+
+                renderPass->dirtyShaderUniforms();
             }
         }
     }
@@ -548,18 +550,9 @@ namespace Maze
             return uniform;
 
         m_uniforms.push_back(MakeShared<ShaderUniformVariant>(m_renderSystem, _type, _uniformName));
+        dirtyRenderPassShaderUniforms();
 
         return m_uniforms.back();
-    }
-
-    //////////////////////////////////////////
-    void Material::applyRenderPassUniforms(RenderPass* _renderPass)
-    {
-        ShaderPtr const& shader = _renderPass->getShader();
-        MAZE_DEBUG_ERROR_RETURN_IF(!shader, "Render pass has no shader!");
-
-        for (auto const& uniformVariantData : m_uniforms)
-            shader->setUniform(*uniformVariantData.get());
     }
 
     //////////////////////////////////////////
@@ -793,6 +786,19 @@ namespace Maze
             instance = instance->m_instancesListPrev;
         }
     }
+
+    //////////////////////////////////////////
+    void Material::dirtyRenderPassShaderUniforms()
+    {
+        for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
+        {
+            for (RenderPassPtr const& renderPass : m_passes[passType])
+            {
+                renderPass->dirtyShaderUniforms();
+            }
+        }
+    }
+
 
 
     //////////////////////////////////////////

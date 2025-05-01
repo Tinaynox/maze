@@ -113,10 +113,10 @@ namespace Maze
         inline void swap(Vec2& _other);
 
         //////////////////////////////////////////
-        inline TValue operator[](Size const _i) const;
+        MAZE_FORCEINLINE TValue operator[](Size const _i) const;
 
         //////////////////////////////////////////
-        inline TValue& operator[](Size const _i);
+        MAZE_FORCEINLINE TValue& operator[](Size const _i);
 
         //////////////////////////////////////////
         inline TValue* ptr();

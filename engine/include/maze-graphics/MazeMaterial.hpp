@@ -223,15 +223,6 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void applyRenderPassUniforms(RenderPass* _renderPass);
-
-        //////////////////////////////////////////
-        inline void applyRenderPassUniforms(RenderPassPtr const& _renderPass)
-        {
-            applyRenderPassUniforms(_renderPass.get());
-        }
-
-        //////////////////////////////////////////
         RenderSystem* getRenderSystem() const { return m_renderSystem; }
 
         //////////////////////////////////////////
@@ -245,6 +236,10 @@ namespace Maze
 
         //////////////////////////////////////////
         bool saveToFile(Path const& _path);
+
+
+        //////////////////////////////////////////
+        void dirtyRenderPassShaderUniforms();
 
     public:
 
@@ -304,6 +299,7 @@ namespace Maze
         HashedString m_name;
 
         Vector<RenderPassPtr> m_passes[RenderPassType::MAX];
+
         FastVector<ShaderUniformVariantPtr> m_uniforms;
 
     protected:

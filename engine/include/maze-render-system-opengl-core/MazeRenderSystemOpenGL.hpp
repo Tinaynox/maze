@@ -121,10 +121,10 @@ namespace Maze
         virtual F32 getTextureMaxAnisotropyLevel() MAZE_OVERRIDE { return m_textureMaxAnisotropyLevel; }
 
         //////////////////////////////////////////
-        inline void lockGLMutex() { m_glMutex.lock(); }
+        MAZE_FORCEINLINE void lockGLMutex() { m_glMutex.lock(); }
 
         //////////////////////////////////////////
-        inline void unlockGLMutex() { m_glMutex.unlock(); }
+        MAZE_FORCEINLINE void unlockGLMutex() { m_glMutex.unlock(); }
 
 
         //////////////////////////////////////////
@@ -283,14 +283,14 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        inline GLMutexScope(RenderSystemOpenGL* _renderSystem)
+        MAZE_FORCEINLINE GLMutexScope(RenderSystemOpenGL* _renderSystem)
             : m_renderSystem(_renderSystem)
         {
             m_renderSystem->lockGLMutex();
         }
 
         //////////////////////////////////////////
-        inline ~GLMutexScope()
+        MAZE_FORCEINLINE ~GLMutexScope()
         {
             m_renderSystem->unlockGLMutex();
         }

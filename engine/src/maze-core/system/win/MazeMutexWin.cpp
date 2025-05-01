@@ -31,38 +31,6 @@
 //////////////////////////////////////////
 namespace Maze
 {
-    //////////////////////////////////////////
-    // Class MutexWin
-    //
-    //////////////////////////////////////////
-    MutexWin::MutexWin()
-    {
-        InitializeCriticalSection(&m_criticalSection);
-    }
-
-    //////////////////////////////////////////
-    MutexWin::~MutexWin()
-    {
-        DeleteCriticalSection(&m_criticalSection);
-    }
-
-    //////////////////////////////////////////
-    void MutexWin::lock()
-    {
-        EnterCriticalSection(&m_criticalSection);
-    }
-
-    //////////////////////////////////////////
-    void MutexWin::unlock()
-    {
-        LeaveCriticalSection(&m_criticalSection);
-    }
-
-    //////////////////////////////////////////
-    bool MutexWin::tryLock()
-    {
-        return (TryEnterCriticalSection(&m_criticalSection) == TRUE);
-    }
 
 } // namespace Maze
 //////////////////////////////////////////

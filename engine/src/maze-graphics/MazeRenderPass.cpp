@@ -131,6 +131,7 @@ namespace Maze
             return;
 
         m_shaderRef.setShader(_shader);
+        dirtyShaderUniforms();
     }
 
     //////////////////////////////////////////
@@ -146,7 +147,45 @@ namespace Maze
         if (!m_material)
             return;
 
-        m_material->applyRenderPassUniforms(this);
+        if (m_shaderUniformsDirty)
+            updateShaderUniforms();
+
+        FastVector<ShaderUniformVariantPtr> const& uniforms = m_material->getUniforms();
+        MAZE_DEBUG_ERROR_RETURN_IF(uniforms.size() != m_shaderUniforms.size(), "Uniforms mismatch!");
+
+        for (Size i = 0, in = uniforms.size(); i != in; ++i)
+        {
+            ShaderUniformVariantPtr const& uniformVariant = uniforms[i];
+            ShaderUniformPtr const& shaderUniform = m_shaderUniforms[i];
+            
+            if (uniformVariant && shaderUniform)
+                shaderUniform->set(*uniformVariant.get());
+        }
+
+    }
+
+    //////////////////////////////////////////
+    void RenderPass::updateShaderUniforms()
+    {
+        m_shaderUniforms.clear();
+
+        if (!m_material)
+            return;
+
+        if (!m_shaderRef.getShader())
+            return;
+
+        FastVector<ShaderUniformVariantPtr> const& uniforms = m_material->getUniforms();
+        m_shaderUniforms.resize(uniforms.size());
+
+        for (Size i = 0, in = uniforms.size(); i != in; ++i)
+        {
+            ShaderUniformVariantPtr const& uniformVariant = uniforms[i];
+            if (uniformVariant)
+                m_shaderUniforms[i] = m_shaderRef.getShader()->ensureUniform(uniformVariant->getName());
+        }
+
+        m_shaderUniformsDirty = false;
     }
 
     //////////////////////////////////////////

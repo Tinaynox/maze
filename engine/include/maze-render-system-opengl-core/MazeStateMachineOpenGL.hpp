@@ -289,13 +289,13 @@ namespace Maze
         void bindTexture(MZGLenum _textureTarget, MZGLuint _textureId);
 
         //////////////////////////////////////////
-        inline void bindTexture2D(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_2D, _textureId); }
+        MAZE_FORCEINLINE void bindTexture2D(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_2D, _textureId); }
 
         //////////////////////////////////////////
-        inline void bindTexture2DMS(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_2D_MULTISAMPLE, _textureId); }
+        MAZE_FORCEINLINE void bindTexture2DMS(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_2D_MULTISAMPLE, _textureId); }
 
         //////////////////////////////////////////
-        inline void bindTextureCube(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_CUBE_MAP, _textureId); }
+        MAZE_FORCEINLINE void bindTextureCube(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_CUBE_MAP, _textureId); }
     
         
         //////////////////////////////////////////

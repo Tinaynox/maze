@@ -60,7 +60,7 @@ namespace Maze
         ShaderUniformType _type)
     {
         ShaderUniformOpenGLPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ShaderUniformOpenGL, object, init(_shader, _type));
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(ShaderUniformOpenGL, object, init(_shader, _type));
         return object;
     }
 

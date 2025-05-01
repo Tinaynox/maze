@@ -287,7 +287,7 @@ namespace Maze
             return nullPointer;
         }
 
-        ShaderUniformOpenGLPtr newUniform = std::static_pointer_cast<ShaderUniformOpenGL>(ShaderUniform::Create(getSharedPtr(), _type));
+        ShaderUniformOpenGLPtr newUniform = static_pointer_cast<ShaderUniformOpenGL>(ShaderUniform::Create(getSharedPtr(), _type));
         MAZE_ERROR_RETURN_VALUE_IF(!newUniform, nullPointer, "Shader Uniform creation error!");
         newUniform->setLocation(uniformLocation);
         newUniform->setName(_uniformName);

@@ -54,7 +54,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderSystem);
     MAZE_USING_MANAGED_SHARED_PTR(RenderTarget);
     MAZE_USING_SHARED_PTR(Shader);
-    MAZE_USING_SHARED_PTR(ShaderUniform);
+    MAZE_USING_MANAGED_SHARED_PTR(ShaderUniform);
     MAZE_USING_MANAGED_SHARED_PTR(RenderWindow);
     MAZE_USING_SHARED_PTR(ShaderSystem);
     MAZE_USING_SHARED_PTR(TextureManager);

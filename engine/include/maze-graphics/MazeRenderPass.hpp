@@ -196,6 +196,10 @@ namespace Maze
         //////////////////////////////////////////
         bool hasUniform(HashedCString _uniformName);
 
+
+        //////////////////////////////////////////
+        inline void dirtyShaderUniforms() { m_shaderUniformsDirty = true; }
+
     public:
 
         //////////////////////////////////////////
@@ -232,6 +236,10 @@ namespace Maze
         //////////////////////////////////////////
         void setMaterial(Material* _material);
 
+
+        //////////////////////////////////////////
+        void updateShaderUniforms();
+
     protected:
         RenderSystem* m_renderSystem;
 
@@ -242,6 +250,8 @@ namespace Maze
         S32 m_renderQueueIndex;
 
         ShaderAssetRef m_shaderRef;
+        FastVector<ShaderUniformPtr> m_shaderUniforms;
+        bool m_shaderUniformsDirty = true;
 
         BlendOperation m_blendOperation;
         BlendFactor m_blendSrcFactor;

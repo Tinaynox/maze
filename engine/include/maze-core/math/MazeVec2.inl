@@ -157,14 +157,14 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline TValue Vec2<TValue>::operator[](Size const _i) const
+    MAZE_FORCEINLINE TValue Vec2<TValue>::operator[](Size const _i) const
     {
         return *(&x + _i);
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline TValue& Vec2<TValue>::operator[](Size const _i)
+    MAZE_FORCEINLINE TValue& Vec2<TValue>::operator[](Size const _i)
     {
         return *(&x + _i);
     }

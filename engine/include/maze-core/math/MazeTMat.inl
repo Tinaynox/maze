@@ -307,7 +307,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline Vec3F& TMat::operator[](Size _row) const
+    MAZE_FORCEINLINE Vec3F& TMat::operator[](Size _row) const
     {
         return *(Vec3F*)m[_row];
     }

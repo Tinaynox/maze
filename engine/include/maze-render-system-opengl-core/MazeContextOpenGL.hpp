@@ -297,24 +297,24 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void bindTexture(Texture* _texture) { m_stateMachine->bindTexture(_texture); }
+        MAZE_FORCEINLINE void bindTexture(Texture* _texture) { m_stateMachine->bindTexture(_texture); }
 
         //////////////////////////////////////////
-        inline void bindTexture(TexturePtr const& _texture) { bindTexture(_texture.get()); }
-
-
-        //////////////////////////////////////////
-        inline void bindTexture2D(Texture2D* _texture) { m_stateMachine->bindTexture2D(_texture); }
-
-        //////////////////////////////////////////
-        inline void bindTexture2D(Texture2DPtr const& _texture2D) { bindTexture2D(_texture2D.get()); }
+        MAZE_FORCEINLINE void bindTexture(TexturePtr const& _texture) { bindTexture(_texture.get()); }
 
 
         //////////////////////////////////////////
-        inline void bindTexture2DMS(Texture2DMS* _texture) { m_stateMachine->bindTexture2DMS(_texture); }
+        MAZE_FORCEINLINE void bindTexture2D(Texture2D* _texture) { m_stateMachine->bindTexture2D(_texture); }
 
         //////////////////////////////////////////
-        inline void bindTexture2DMS(Texture2DMSPtr const& _texture2D) { bindTexture2DMS(_texture2D.get()); }
+        MAZE_FORCEINLINE void bindTexture2D(Texture2DPtr const& _texture2D) { bindTexture2D(_texture2D.get()); }
+
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE void bindTexture2DMS(Texture2DMS* _texture) { m_stateMachine->bindTexture2DMS(_texture); }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE void bindTexture2DMS(Texture2DMSPtr const& _texture2D) { bindTexture2DMS(_texture2D.get()); }
 
 
         //////////////////////////////////////////

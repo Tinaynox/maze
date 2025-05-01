@@ -47,10 +47,16 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        MutexWin();
+        MAZE_FORCEINLINE MutexWin()
+        {
+            InitializeCriticalSection(&m_criticalSection);
+        }
 
         //////////////////////////////////////////
-        ~MutexWin();
+        MAZE_FORCEINLINE ~MutexWin()
+        {
+            DeleteCriticalSection(&m_criticalSection);
+        }
 
 
         //////////////////////////////////////////
@@ -68,13 +74,22 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void lock();
+        MAZE_FORCEINLINE void lock()
+        {
+            EnterCriticalSection(&m_criticalSection);
+        }
 
         //////////////////////////////////////////
-        void unlock();
+        MAZE_FORCEINLINE void unlock()
+        {
+            LeaveCriticalSection(&m_criticalSection);
+        }
 
         //////////////////////////////////////////
-        bool tryLock();
+        MAZE_FORCEINLINE bool tryLock()
+        {
+            return (TryEnterCriticalSection(&m_criticalSection) == TRUE);
+        }
     
     protected:
         CRITICAL_SECTION m_criticalSection;

@@ -381,13 +381,13 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline operator bool() const
+        MAZE_FORCEINLINE operator bool() const
         {
             return !isNull();
         }
 
         //////////////////////////////////////////
-        inline bool operator!() const { return !m_ptr; }
+        MAZE_FORCEINLINE bool operator!() const { return !m_ptr; }
 
         //////////////////////////////////////////
         MAZE_FORCEINLINE T& operator*() const { assert(m_ptr); return *m_ptr; }
@@ -428,7 +428,7 @@ namespace Maze
         MAZE_FORCEINLINE void decRef() { assert(m_refCountBlock && m_refCountBlock->strong > 1); --m_refCountBlock->strong; }
 
         //////////////////////////////////////////
-        inline T* getPtr() const { return m_ptr; }
+        MAZE_FORCEINLINE T* getPtr() const { return m_ptr; }
 
         //////////////////////////////////////////
         inline RefCountBlock* getRefCountBlock() const { return m_refCountBlock; }
