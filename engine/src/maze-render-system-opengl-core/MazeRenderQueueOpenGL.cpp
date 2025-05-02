@@ -467,7 +467,8 @@ namespace Maze
         }
 
         // Projection matrix
-        shaderOpenGL->getProjectionMatrixUniform()->set(m_renderTarget->getProjectionMatrix());
+        if (shaderOpenGL->getProjectionMatrixUniform())
+            shaderOpenGL->getProjectionMatrixUniform()->set(m_renderTarget->getProjectionMatrix());
 
         // Projection params
         if (shaderOpenGL->getProjectionParamsUniform())
