@@ -8,12 +8,13 @@ namespace Maze.Core
     public struct Quaternion
     {
         const float Epsilon = 1e-03f;
+        public static Quaternion Identity = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+
 
         public float W;
         public float X;
         public float Y;
         public float Z;
-
 
         public Quaternion(
             float x = 0.0f,
@@ -88,6 +89,8 @@ namespace Maze.Core
             Quaternion q,
             bool shortestPath = true)
         {
+            t = MathHelper.Clamp(t, 0.0f, 1.0f);
+
             float c = p.Dot(q);
             Quaternion r;
 
@@ -185,14 +188,14 @@ namespace Maze.Core
             return W * q.W + X * q.X + Y * q.Y + Z * q.Z;
         }
 
-        public float Norm()
+        public float Length()
         {
             return (float)Math.Sqrt(W * W + X * X + Y * Y + Z * Z);
         }
 
         public float Normalize()
         {
-            float l = Norm();
+            float l = Length();
             this = 1.0f / l * this;
             return l;
         }
@@ -335,6 +338,11 @@ namespace Maze.Core
         public void SetRotationMatrix(TMat rotationMatrix)
         {
             SetRotationMatrix(rotationMatrix.GetMat3());
+        }
+
+        public override string ToString()
+        {
+            return $"[{X}, {Y}, {Z}, {W}]";
         }
     }
 }
