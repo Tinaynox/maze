@@ -254,6 +254,18 @@ namespace Maze
         _entity->removeFromEcsWorld();
     }
 
+    //////////////////////////////////////////
+    inline void EntityGetActive(Entity* _entity, bool& _outValue)
+    {
+        _outValue = _entity->getActiveSelf();
+    }
+
+    //////////////////////////////////////////
+    inline void EntitySetActive(Entity* _entity, bool _value)
+    {
+        _entity->setActiveSelf(_value);
+    }
+
 
     //////////////////////////////////////////
     inline S32 ComponentGetFrameNumber(Component* _component) { return _component->getEntityRaw()->getEcsWorld()->getFrameNumber(); }
@@ -528,6 +540,8 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(EntityCreateNativeComponent);
         MAZE_CORE_MONO_BIND_FUNC(EntityCreateMonoBehaviourComponentObject);
         MAZE_CORE_MONO_BIND_FUNC(EntityRemoveFromEcsWorld);
+        MAZE_CORE_MONO_BIND_FUNC(EntityGetActive);
+        MAZE_CORE_MONO_BIND_FUNC(EntitySetActive);
 
         // Component
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetFrameNumber);

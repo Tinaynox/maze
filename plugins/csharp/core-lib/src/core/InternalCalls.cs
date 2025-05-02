@@ -58,6 +58,12 @@ namespace Maze.Core
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void EntityRemoveFromEcsWorld(NativePtr nativeEntityPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void EntityGetActive(NativePtr nativeEntityPtr, out bool outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void EntitySetActive(NativePtr nativeEntityPtr, bool value);
         #endregion
 
         #region Component

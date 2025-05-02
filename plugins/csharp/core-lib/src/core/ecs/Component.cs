@@ -19,6 +19,7 @@ namespace Maze.Core
         {
             return new Entity(InternalCalls.ComponentGetEntity(NativeComponentPtr));
         }
+        public Entity Entity => GetEntity();
 
         public T GetComponent<T>() where T : class
         {

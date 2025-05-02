@@ -8,6 +8,12 @@ namespace Maze.Core
 
         public NativePtr NativeEntityPtr { get; private set; }
 
+        public bool Active
+        {
+            get { InternalCalls.EntityGetActive(NativeEntityPtr, out bool active); return active; }
+            set { InternalCalls.EntitySetActive(NativeEntityPtr, value); }
+        }
+
         public Entity(NativePtr ptr)
         {
             NativeEntityPtr = ptr;
