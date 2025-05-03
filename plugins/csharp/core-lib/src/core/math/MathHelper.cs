@@ -94,5 +94,33 @@ namespace Maze.Core
             float diff = (angle1 - angle0 + (float)Math.PI) % ((float)Math.PI * 2.0f) - (float)Math.PI;
             return diff < -(float)Math.PI ? diff + (float)(Math.PI * 2.0f) : diff;
         }
+
+        public static float Frac(float value) { return value - (float)Math.Truncate(value); }
+
+
+        public static Vec3F ProjectionPointOnSegment(
+            Vec3F point,
+            Vec3F segmentPointA,
+            Vec3F segmentPointB)
+        {
+            Vec3F c = point - segmentPointA;
+            Vec3F v = segmentPointB - segmentPointA;
+
+            float d = v.Length();
+            if (d > 1e-08f)
+                v /= d;
+
+            float t = v.Dot(c);
+
+            if (t < 0.0f)
+                return segmentPointA;
+
+            if (t > d)
+                return segmentPointB;
+
+            v *= t;
+
+            return segmentPointA + v;
+        }
     }
 }
