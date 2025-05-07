@@ -8,7 +8,14 @@ namespace Maze.Graphics
     {
         #region MeshRenderer
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererSetMaterial(NativePtr nativeComponentPtr, AssetUnitId material);
+        public extern static void MeshRendererSetMaterialAssetUnit(NativePtr nativeComponentPtr, AssetUnitId material);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void MeshRendererSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -17,7 +24,14 @@ namespace Maze.Graphics
 
         #region SkinnedMeshRenderer
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshRendererSetMaterial(NativePtr nativeComponentPtr, AssetUnitId material);
+        public extern static void SkinnedMeshRendererSetMaterialAssetUnit(NativePtr nativeComponentPtr, AssetUnitId material);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SkinnedMeshRendererSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SkinnedMeshRendererGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void SkinnedMeshRendererSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -170,16 +184,16 @@ namespace Maze.Graphics
         public extern static int GlobalShaderUniformEnsure(string name);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetS32(int globalShaderUniformId, int value);
+        public extern static void GlobalShaderUniformSetS32(int globalShaderUniformId, ref int value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetF32(int globalShaderUniformId, float value);
+        public extern static void GlobalShaderUniformSetF32(int globalShaderUniformId, ref float value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetF64(int globalShaderUniformId, double value);
+        public extern static void GlobalShaderUniformSetF64(int globalShaderUniformId, ref double value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetBool(int globalShaderUniformId, bool value);
+        public extern static void GlobalShaderUniformSetBool(int globalShaderUniformId, ref bool value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void GlobalShaderUniformSetVec2F(int globalShaderUniformId, ref Vec2F value);
@@ -228,6 +242,74 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void GlobalShaderUniformSetColorF128(int globalShaderUniformId, ref ColorF128 value);
+        #endregion
+
+        #region Material
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool MaterialIsValid(int materialId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int MaterialEnsureUniformIndex(int materialId, string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetS32(int materialId, int uniformIndex, ref int value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetF32(int materialId, int uniformIndex, ref float value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetF64(int materialId, int uniformIndex, ref double value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetBool(int materialId, int uniformIndex, ref bool value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetVec2F(int materialId, int uniformIndex, ref Vec2F value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetVec3F(int materialId, int uniformIndex, ref Vec3F value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetVec4F(int materialId, int uniformIndex, ref Vec4F value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetVec2S(int materialId, int uniformIndex, ref Vec2S value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetVec3S(int materialId, int uniformIndex, ref Vec3S value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetVec4S(int materialId, int uniformIndex, ref Vec4S value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetVec2U(int materialId, int uniformIndex, ref Vec2U value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetVec3U(int materialId, int uniformIndex, ref Vec3U value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetVec4U(int materialId, int uniformIndex, ref Vec4U value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetVec2B(int materialId, int uniformIndex, ref Vec2B value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetVec3B(int materialId, int uniformIndex, ref Vec3B value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetVec4B(int materialId, int uniformIndex, ref Vec4B value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetMat3F(int materialId, int uniformIndex, ref Mat3F value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetMat4F(int materialId, int uniformIndex, ref Mat4F value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetTMat(int materialId, int uniformIndex, ref TMat value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetColorF128(int materialId, int uniformIndex, ref ColorF128 value);
         #endregion
     }
 }

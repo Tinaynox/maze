@@ -31,10 +31,10 @@ namespace Maze.Graphics
             return new GlobalShaderUniform(new GlobalShaderUniformId(id));
         }
 
-        public void Set(int value) { InternalCalls.GlobalShaderUniformSetS32(m_Id.Id, value); }
-        public void Set(float value) { InternalCalls.GlobalShaderUniformSetF32(m_Id.Id, value); }
-        public void Set(double value) { InternalCalls.GlobalShaderUniformSetF64(m_Id.Id, value); }
-        public void Set(bool value) { InternalCalls.GlobalShaderUniformSetBool(m_Id.Id, value); }
+        public void Set(int value) { InternalCalls.GlobalShaderUniformSetS32(m_Id.Id, ref value); }
+        public void Set(float value) { InternalCalls.GlobalShaderUniformSetF32(m_Id.Id, ref value); }
+        public void Set(double value) { InternalCalls.GlobalShaderUniformSetF64(m_Id.Id, ref value); }
+        public void Set(bool value) { InternalCalls.GlobalShaderUniformSetBool(m_Id.Id, ref value); }
         public void Set(Vec2F value) { InternalCalls.GlobalShaderUniformSetVec2F(m_Id.Id, ref value); }
         public void Set(Vec3F value) { InternalCalls.GlobalShaderUniformSetVec3F(m_Id.Id, ref value); }
         public void Set(Vec4F value) { InternalCalls.GlobalShaderUniformSetVec4F(m_Id.Id, ref value); }

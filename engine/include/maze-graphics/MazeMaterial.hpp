@@ -40,6 +40,7 @@
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/math/MazeMat3.hpp"
 #include "maze-core/math/MazeMat4.hpp"
@@ -68,6 +69,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API Material
         : public ManagedSharedObject<Material>
+        , public IndexedResource<Material>
         , public IXMLElementSerializable
         , public IDataBlockSerializable
         , public IStringSerializable
@@ -220,6 +222,9 @@ namespace Maze
 
         //////////////////////////////////////////
         FastVector<ShaderUniformVariantPtr> const& getUniforms() const { return m_uniforms; }
+
+        //////////////////////////////////////////
+        ShaderUniformVariantPtr const& getUniform(Size _index);
 
 
         //////////////////////////////////////////

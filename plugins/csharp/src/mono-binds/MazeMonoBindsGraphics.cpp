@@ -51,18 +51,39 @@ namespace Maze
 {
     
     //////////////////////////////////////////
-    inline void MeshRendererSetMaterial(Component* _component, AssetUnitId _auid)
+    inline void MeshRendererSetMaterialAssetUnit(Component* _component, AssetUnitId _auid)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not Transform3D!");
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
 
         MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(_auid);
         _component->castRaw<MeshRenderer>()->setMaterial(material);
     }
 
     //////////////////////////////////////////
+    inline void MeshRendererSetMaterial(Component* _component, S32 _resourceId)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
+
+        Material* material = Material::GetResource(_resourceId);
+        _component->castRaw<MeshRenderer>()->setMaterial(material ? material->getSharedPtr() : MaterialPtr());
+    }
+
+    //////////////////////////////////////////
+    inline void MeshRendererGetMaterial(Component* _component, S32& _outResourceId)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
+
+        MaterialPtr const& material = _component->castRaw<MeshRenderer>()->getMaterial();
+        if (material)
+            _outResourceId = material->getResourceId();
+        else
+            _outResourceId = c_invalidResourceId;
+    }
+
+    //////////////////////////////////////////
     inline void MeshRendererSetRenderMesh(Component* _component, S32 _resourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not Transform3D!");
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
 
         RenderMesh* renderMesh = RenderMesh::GetResource(_resourceId);
         _component->castRaw<MeshRenderer>()->setRenderMesh(renderMesh ? renderMesh->getSharedPtr() : RenderMeshPtr());
@@ -71,28 +92,49 @@ namespace Maze
     //////////////////////////////////////////
     inline void MeshRendererGetRenderMesh(Component* _component, S32& _outResourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not Transform3D!");
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
 
         RenderMeshPtr const& renderMesh = _component->castRaw<MeshRenderer>()->getRenderMesh();
         if (renderMesh)
             _outResourceId = renderMesh->getResourceId();
         else
-            _outResourceId = c_invalidEcsSceneId;
+            _outResourceId = c_invalidResourceId;
     }
 
     //////////////////////////////////////////
-    inline void SkinnedMeshRendererSetMaterial(Component* _component, AssetUnitId _auid)
+    inline void SkinnedMeshRendererSetMaterialAssetUnit(Component* _component, AssetUnitId _auid)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not Transform3D!");
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
 
         MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(_auid);
         _component->castRaw<SkinnedMeshRenderer>()->setMaterial(material);
     }
 
     //////////////////////////////////////////
+    inline void SkinnedMeshRendererSetMaterial(Component* _component, S32 _resourceId)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
+
+        Material* material = Material::GetResource(_resourceId);
+        _component->castRaw<SkinnedMeshRenderer>()->setMaterial(material ? material->getSharedPtr() : MaterialPtr());
+    }
+
+    //////////////////////////////////////////
+    inline void SkinnedMeshRendererGetMaterial(Component* _component, S32& _outResourceId)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
+
+        MaterialPtr const& material = _component->castRaw<SkinnedMeshRenderer>()->getMaterial();
+        if (material)
+            _outResourceId = material->getResourceId();
+        else
+            _outResourceId = c_invalidResourceId;
+    }
+
+    //////////////////////////////////////////
     inline void SkinnedMeshRendererSetRenderMesh(Component* _component, S32 _resourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not Transform3D!");
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
 
         RenderMesh* renderMesh = RenderMesh::GetResource(_resourceId);
         _component->castRaw<SkinnedMeshRenderer>()->setRenderMesh(renderMesh ? renderMesh->getSharedPtr() : RenderMeshPtr());
@@ -101,19 +143,19 @@ namespace Maze
     //////////////////////////////////////////
     inline void SkinnedMeshRendererGetRenderMesh(Component* _component, S32& _outResourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not Transform3D!");
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
 
         RenderMeshPtr const& renderMesh = _component->castRaw<SkinnedMeshRenderer>()->getRenderMesh();
         if (renderMesh)
             _outResourceId = renderMesh->getResourceId();
         else
-            _outResourceId = c_invalidEcsSceneId;
+            _outResourceId = c_invalidResourceId;
     }
 
     //////////////////////////////////////////
     inline void SkinnedMeshRendererPlayAnimation(Component* _component, MonoString* _animationName)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not Transform3D!");
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
 
         Char* cstr = mono_string_to_utf8(_animationName);
         _component->castRaw<SkinnedMeshRenderer>()->playAnimation(HashedCString(cstr));
@@ -542,15 +584,87 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    inline bool MaterialIsValid(S32 _materialId)
+    {
+        Material* material = Material::GetResource(_materialId);
+        return !!material;
+    }
+
+    //////////////////////////////////////////
+    inline S32 MaterialEnsureUniformIndex(S32 _materialId, MonoString* _name)
+    {
+        if (Material* material = Material::GetResource(_materialId))
+        {
+            Char* cstr = mono_string_to_utf8(_name);
+            ShaderUniformVariantPtr const& shaderUniformVariant = material->ensureUniform(HashedCString(cstr));
+            mono_free(cstr);
+
+            Size index = material->getUniforms().find(shaderUniformVariant) - material->getUniforms().begin();
+            return (S32)index;
+        }
+
+        return -1;
+    }
+
+    //////////////////////////////////////////
+    #define IMPLEMENT_MATERIAL_UNIFORM_SET(DType)                                                             \
+        inline void MaterialUniformSet ## DType (S32 _materialId, S32 _uniformId, DType const& _value)        \
+        {                                                                                                     \
+            if (Material* material = Material::GetResource(_materialId))                                      \
+            {                                                                                                 \
+                ShaderUniformVariantPtr const& uniform = material->getUniform(_uniformId);                    \
+                if (uniform)                                                                                  \
+                    uniform->set(_value);                                                                     \
+            }                                                                                                 \
+        }
+    IMPLEMENT_MATERIAL_UNIFORM_SET(S32);
+    // IMPLEMENT_MATERIAL_UNIFORM_SET(F32);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(F64);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Bool);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Vec2F);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Vec3F);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Vec4F);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Vec2S);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Vec3S);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Vec4S);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Vec2U);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Vec3U);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Vec4U);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Vec2B);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Vec3B);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Vec4B);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Mat3F);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(Mat4F);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(TMat);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(ColorF128);
+
+
+    //////////////////////////////////////////
+    inline void MaterialUniformSetF32(S32 _materialId, S32 _uniformId, F32 const& _value)
+    {
+        if (Material* material = Material::GetResource(_materialId))
+        {
+            ShaderUniformVariantPtr const& uniform = material->getUniform(_uniformId);
+            if (uniform)
+                uniform->set(_value);
+        }
+    }
+
+
+    //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsGraphics()
     {
         // MeshRenderer
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetMaterialAssetUnit);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetMaterial);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetRenderMesh);
 
         // SkinnedMeshRenderer
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetMaterialAssetUnit);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetMaterial);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererPlayAnimation);
@@ -634,6 +748,30 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetMat4F);
         MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetTMat);
         MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetColorF128);
+
+        // Material
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialIsValid);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialEnsureUniformIndex);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetS32);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetF32);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetF64);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetBool);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetVec2F);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetVec3F);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetVec4F);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetVec2S);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetVec3S);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetVec4S);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetVec2U);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetVec3U);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetVec4U);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetVec2B);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetVec3B);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetVec4B);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetMat3F);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetMat4F);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetTMat);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetColorF128);
         
     }
 

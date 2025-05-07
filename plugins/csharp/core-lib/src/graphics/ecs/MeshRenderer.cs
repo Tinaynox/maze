@@ -10,6 +10,12 @@ namespace Maze.Graphics
             set { InternalCalls.MeshRendererSetRenderMesh(NativeComponentPtr, value.ResourceId); }
         }
 
+        public Material Material
+        {
+            get { InternalCalls.MeshRendererGetMaterial(NativeComponentPtr, out int resId); return new Material(resId); }
+            set { InternalCalls.MeshRendererSetMaterial(NativeComponentPtr, value.ResourceId); }
+        }
+
         public MeshRenderer(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
         {  
@@ -17,7 +23,7 @@ namespace Maze.Graphics
 
         public void SetMaterial(AssetUnitId auid)
         {
-            InternalCalls.MeshRendererSetMaterial(NativeComponentPtr, auid);
+            InternalCalls.MeshRendererSetMaterialAssetUnit(NativeComponentPtr, auid);
         }
     }
 }

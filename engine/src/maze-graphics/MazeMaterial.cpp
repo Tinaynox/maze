@@ -59,6 +59,9 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(HashedString, name, HashedString(), getName, setName));
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(Material);
+
+    //////////////////////////////////////////
     Material* Material::s_instancesList = nullptr;
 
     //////////////////////////////////////////
@@ -553,6 +556,17 @@ namespace Maze
         dirtyRenderPassShaderUniforms();
 
         return m_uniforms.back();
+    }
+
+    //////////////////////////////////////////
+    ShaderUniformVariantPtr const& Material::getUniform(Size _index)
+    {
+        static ShaderUniformVariantPtr nullPointer;
+
+        if (_index >= m_uniforms.size())
+            return nullPointer;
+
+        return m_uniforms[_index];
     }
 
     //////////////////////////////////////////
