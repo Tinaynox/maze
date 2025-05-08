@@ -182,7 +182,7 @@ namespace Maze
             m_mainCanvas->setClearColorFlag(false);
             m_mainCanvas->setClearColor(ColorU32::c_zero);
             m_mainCanvas->setRenderTarget(m_renderTarget);
-            m_mainCanvas->setSortOrder(-1000000);
+            m_mainCanvas->setSortOrder(10000000);
             GizmosManager::GetInstancePtr()->setCanvas(m_mainCanvas);
 
             EntityPtr mainCanvasControllerEntity = createEntity();

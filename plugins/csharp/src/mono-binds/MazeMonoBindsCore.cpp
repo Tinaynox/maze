@@ -439,6 +439,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void Transform3DGetWorldPosition(Component* _component, Vec3F& _outPosition)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        _outPosition = _component->castRaw<Transform3D>()->getWorldPosition();
+    }
+
+    //////////////////////////////////////////
     inline void Transform3DGetRotation(Component* _component, Quaternion& _outRotation)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
@@ -564,6 +571,7 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetParent);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetPosition);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetPosition);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DGetWorldPosition);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetRotation);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetRotation);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetScale);
