@@ -967,8 +967,9 @@ namespace Maze
 
                     m_uniformsPerGlobalUniform[globalShaderUniformId] = it->first;
 
-                    it->second->set(
-                        globalShaderUniform->getVariant());
+                    if (it->second)
+                        it->second->set(
+                            globalShaderUniform->getVariant());
                 }
             }
         }
@@ -985,8 +986,9 @@ namespace Maze
                     GlobalShaderUniform* globalShaderUniform = GlobalShaderUniform::GetResource(globalShaderUniformId);
                     if (globalShaderUniform)
                     {
-                        uniformIt->second->set(
-                            globalShaderUniform->getVariant());
+                        if (uniformIt->second)
+                            uniformIt->second->set(
+                                globalShaderUniform->getVariant());
                     }
                 }
             }

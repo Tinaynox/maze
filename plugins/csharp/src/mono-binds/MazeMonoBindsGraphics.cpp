@@ -580,7 +580,12 @@ namespace Maze
     IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Mat3F);
     IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(Mat4F);
     IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(TMat);
-    IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(ColorF128);
+
+    inline void GlobalShaderUniformSetColorF128(S32 _id, Vec4F const& _value)
+    {
+        if (GlobalShaderUniform* uniform = GlobalShaderUniform::GetResource(_id))
+            uniform->setValue(ColorF128(_value));
+    }
 
 
     //////////////////////////////////////////
