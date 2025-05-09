@@ -162,6 +162,7 @@ namespace Maze
         //////////////////////////////////////////
         void replaceDataBlockEcsIds(
             DataBlock& _dataBlock,
+            Map<EntityId, S32> const& _entityIndices,
             Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
             Map<void*, S32>& _pointerIndices) const;
 

@@ -124,7 +124,9 @@ namespace Maze
 
         for (PrefabInstance* prefabInstance : _prefabs)
         {
-            _outPointerIndices[prefabInstance->getEntityRaw()] = ++indexCounter;
+            S32 entityIndex = ++indexCounter;
+            _outPointerIndices[prefabInstance->getEntityRaw()] = entityIndex;
+            _outEntityIndices[prefabInstance->getEntityId()] = entityIndex;
 
             auto it = _outIdentityPrefabs.find(prefabInstance->getAssetUnitId());
             if (it == _outIdentityPrefabs.end())
@@ -183,7 +185,6 @@ namespace Maze
                         MetaProperty* metaProperty = metaClass->getProperty(i);
 
                         HashedCString propertyName = metaProperty->getName();
-
 
                         ClassUID metaPropertyUID = metaProperty->getValueClassUID();
                         if (metaPropertyUID != 0)
@@ -265,7 +266,7 @@ namespace Maze
                         }
 
                         DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, *componentBlock);
-                        replaceDataBlockEcsIds(*componentBlock, _entityComponents, _pointerIndices);
+                        replaceDataBlockEcsIds(*componentBlock, _entityIndices, _entityComponents, _pointerIndices);
                     }
                 }
             };
@@ -376,6 +377,7 @@ namespace Maze
     //////////////////////////////////////////
     void EntitySerializationManager::replaceDataBlockEcsIds(
         DataBlock& _dataBlock,
+        Map<EntityId, S32> const& _entityIndices,
         Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
         Map<void*, S32>& _pointerIndices) const
     {
@@ -394,12 +396,26 @@ namespace Maze
             if (StringHelper::IsEndsWith(subBlock->getName().str, ":EntityId"))
             {
                 EntityId eid = EntityId(subBlock->getS32(MAZE_HCS("value"), (S32)c_invalidEntityId));
-                Entity* entity = findEntity(eid);
-                subBlock->setS32(MAZE_HCS("value"), _pointerIndices[entity]);
+                if (eid != c_invalidEntityId)
+                {
+                    auto it = _entityIndices.find(eid);
+                    if (it != _entityIndices.end())
+                    {
+                        subBlock->setS32(MAZE_HCS("value"), it->second);
+                    }
+                    else
+                    {
+                        Entity* entity = findEntity(eid);
+                        MAZE_ERROR_IF(!entity, "Entity is not found: %d", (S32)eid);
+                        S32 entityIndex = _pointerIndices[entity];
+                        MAZE_ERROR_IF(entityIndex == 0, "Entity is not found: %d", (S32)eid);
+                        subBlock->setS32(MAZE_HCS("value"), entityIndex);
+                    }
+                }
             }
             else
             {
-                replaceDataBlockEcsIds(*subBlock, _entityComponents, _pointerIndices);
+                replaceDataBlockEcsIds(*subBlock, _entityIndices, _entityComponents, _pointerIndices);
             }
         }
     }
