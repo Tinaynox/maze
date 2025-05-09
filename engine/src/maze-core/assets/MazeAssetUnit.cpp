@@ -65,7 +65,12 @@ namespace Maze
         m_data = _data;
 
         m_auid = m_data.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
-        m_name = HashedString(m_data.getHashedString(MAZE_HCS("name"), HashedString(_assetFile->getFileName().toUTF8().c_str())));
+
+        if (isForceSetAssetFileName())
+            m_name = HashedString(_assetFile->getFileName().toUTF8().c_str());
+        else
+            m_name = m_data.getHashedString(MAZE_HCS("name"),
+                    HashedString(_assetFile->getFileName().toUTF8().c_str()));
             
         return true;
     }

@@ -129,12 +129,17 @@ namespace Maze
             auto it = _outIdentityPrefabs.find(prefabInstance->getAssetUnitId());
             if (it == _outIdentityPrefabs.end())
             {
+                // #TODO: Optimize
                 HashedString const& prefabName = AssetUnitManager::GetInstancePtr()->getAssetUnitName(
                     prefabInstance->getAssetUnitId());
 
                 EntityPtr identityPrefab = EntitySerializationManager::GetInstancePtr()->loadPrefab(
                     prefabName.getString(),
                     _outIdentityPrefabsWorld.get());
+
+                MAZE_ERROR_IF(!identityPrefab, "Prefab '%s' (auid=%u) is not found!",
+                    prefabName.getString().c_str(),
+                    prefabInstance->getAssetUnitId());
 
                 _outIdentityPrefabs.emplace(
                     std::piecewise_construct,

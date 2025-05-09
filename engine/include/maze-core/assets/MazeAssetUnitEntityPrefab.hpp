@@ -99,6 +99,10 @@ namespace Maze
         //////////////////////////////////////////
         EntityPtr const& initPrefab();
 
+
+        //////////////////////////////////////////
+        virtual bool isForceSetAssetFileName() const { return true; }
+
     protected:
         EntityPtr m_prefab;
     };
