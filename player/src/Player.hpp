@@ -72,10 +72,6 @@ namespace Maze
         static PlayerPtr Create(EngineConfig const& _config);
 
     
-        //////////////////////////////////////////
-        RenderWindowPtr const& getMainRenderWindow() const { return m_mainRenderWindow;}
-
-
 
         //////////////////////////////////////////
         static inline Player* GetInstancePtr() { return s_instance; }
@@ -136,8 +132,6 @@ namespace Maze
         static Player* s_instance;
 
         PlayerMainRenderWindowState m_mainRenderWindowState;
-        RenderWindowPtr m_mainRenderWindow;
-
         
         PlayerManagerPtr m_playerManager;
     };

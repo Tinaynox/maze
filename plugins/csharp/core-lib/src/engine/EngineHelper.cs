@@ -46,5 +46,10 @@ namespace Maze.Engine
         {
             InternalCalls.DestroyScene(scene.Id);
         }
+
+        public static bool IsMainRenderWindowFocused()
+        {
+            return InternalCalls.IsEngineMainRenderWindowFocused();
+        }
     }
 }

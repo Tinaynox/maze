@@ -14,5 +14,10 @@ namespace Maze.Engine
         public extern static int DestroyScene(int sceneId);
         #endregion
 
+        #region MainRenderWindow
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool IsEngineMainRenderWindowFocused();
+        #endregion
+
     }
 }

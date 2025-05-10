@@ -84,6 +84,7 @@ namespace Maze
     //////////////////////////////////////////
     Engine::~Engine()
     {
+        m_mainRenderWindow.reset();
         m_engineRenderTarget.reset();
 
         m_particlesManager.reset();
@@ -440,7 +441,15 @@ namespace Maze
             return;
 
         m_engineRenderTarget = _engineRenderTarget;
+    }
 
+    //////////////////////////////////////////
+    void Engine::setMainRenderWindow(RenderWindowPtr const& _mainRenderWindow)
+    {
+        if (m_mainRenderWindow == _mainRenderWindow)
+            return;
+
+        m_mainRenderWindow = _mainRenderWindow;
     }
     
 

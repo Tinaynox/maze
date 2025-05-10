@@ -159,6 +159,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void setMainRenderWindow(RenderWindowPtr const& _renderWindow);
+
+        //////////////////////////////////////////
+        inline RenderWindowPtr const& getMainRenderWindow() const { return m_mainRenderWindow; }
+
+
+        //////////////////////////////////////////
         EcsAssetScenePtr loadAssetScene(
             Path const& _sceneName,
             RenderTargetPtr const& _renderTarget,
@@ -225,6 +232,7 @@ namespace Maze
         bool m_running;
 
         RenderTargetPtr m_engineRenderTarget;
+        RenderWindowPtr m_mainRenderWindow;
                 
         SystemManagerPtr m_systemManager;
         TaskManagerPtr m_taskManager;

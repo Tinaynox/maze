@@ -75,12 +75,26 @@ namespace Maze
          SceneManager::GetInstancePtr()->destroyScene(EcsSceneId(_ecsSceneId));
     }
 
+    //////////////////////////////////////////
+    inline bool IsEngineMainRenderWindowFocused()
+    {
+        RenderWindowPtr const& renderWindow = Engine::GetInstancePtr()->getMainRenderWindow();
+        if (!renderWindow)
+            return false;
+
+        return renderWindow->getFocused();
+    }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsEngine()
     {
+        // Scene
         MAZE_ENGINE_MONO_BIND_FUNC(LoadAssetScene);
         MAZE_ENGINE_MONO_BIND_FUNC(DestroyScene);
+
+        // Main RenderWindow
+        MAZE_ENGINE_MONO_BIND_FUNC(IsEngineMainRenderWindowFocused);
     }
 
 } // namespace Maze
