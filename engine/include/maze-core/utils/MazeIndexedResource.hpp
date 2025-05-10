@@ -53,33 +53,33 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        IndexedResource();
+        MAZE_FORCEINLINE IndexedResource();
 
         //////////////////////////////////////////
-        ~IndexedResource();
+        MAZE_FORCEINLINE ~IndexedResource();
 
         //////////////////////////////////////////
-        inline ResourceId getResourceId() const { return m_resourceId; }
+        MAZE_FORCEINLINE ResourceId getResourceId() const { return m_resourceId; }
 
         //////////////////////////////////////////
-        inline static T* GetResource(ResourceId _id);
+        MAZE_FORCEINLINE static T* GetResource(ResourceId _id);
 
         //////////////////////////////////////////
-        inline static T* GetResource(S32 _id) { return GetResource(ResourceId(_id)); }
+        MAZE_FORCEINLINE static T* GetResource(S32 _id) { return GetResource(ResourceId(_id)); }
 
         //////////////////////////////////////////
-        inline static T* GetResourceUnsafe(ResourceId _id);
+        MAZE_FORCEINLINE static T* GetResourceUnsafe(ResourceId _id);
 
         //////////////////////////////////////////
-        inline static T* GetResourceUnsafe(S32 _id) { return GetResourceUnsafe(ResourceId(_id)); }
+        MAZE_FORCEINLINE static T* GetResourceUnsafe(S32 _id) { return GetResourceUnsafe(ResourceId(_id)); }
 
     private:
 
         //////////////////////////////////////////
-        static ResourceId GenerateNewResourceId(T* _ptr);
+        MAZE_FORCEINLINE static ResourceId GenerateNewResourceId(T* _ptr);
 
         //////////////////////////////////////////
-        static void ReleaseResourceId(ResourceId _id);
+        MAZE_FORCEINLINE static void ReleaseResourceId(ResourceId _id);
 
     private:
         static FastVector<T*> s_resources;

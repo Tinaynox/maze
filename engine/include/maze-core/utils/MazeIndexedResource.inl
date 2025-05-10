@@ -31,21 +31,21 @@ namespace Maze
 {
     //////////////////////////////////////////
     template <typename T>
-    IndexedResource<T>::IndexedResource()
+    MAZE_FORCEINLINE IndexedResource<T>::IndexedResource()
     {
         m_resourceId = GenerateNewResourceId(static_cast<T*>(this));
     }
 
     //////////////////////////////////////////
     template <typename T>
-    IndexedResource<T>::~IndexedResource()
+    MAZE_FORCEINLINE IndexedResource<T>::~IndexedResource()
     {
         ReleaseResourceId(m_resourceId);
     }
 
     //////////////////////////////////////////
     template <typename T>
-    T* IndexedResource<T>::GetResource(ResourceId _id)
+    MAZE_FORCEINLINE T* IndexedResource<T>::GetResource(ResourceId _id)
     {
         Size index = (Size)_id.getIndex();
 
@@ -57,14 +57,14 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename T>
-    T* IndexedResource<T>::GetResourceUnsafe(ResourceId _id)
+    MAZE_FORCEINLINE T* IndexedResource<T>::GetResourceUnsafe(ResourceId _id)
     {
         return s_resources[(Size)_id.getIndex()];
     }
 
     //////////////////////////////////////////
     template <typename T>
-    ResourceId IndexedResource<T>::GenerateNewResourceId(T* _ptr)
+    MAZE_FORCEINLINE ResourceId IndexedResource<T>::GenerateNewResourceId(T* _ptr)
     {
         if (!s_freeResourceIndices.empty())
         {
@@ -81,7 +81,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename T>
-    void IndexedResource<T>::ReleaseResourceId(ResourceId _id)
+    MAZE_FORCEINLINE void IndexedResource<T>::ReleaseResourceId(ResourceId _id)
     {
         s_resources[(Size)_id.getIndex()] = nullptr;
         _id.incrementGeneration();
