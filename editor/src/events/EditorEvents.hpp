@@ -64,6 +64,33 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Class PlaytestModePrepareEvent
+    //
+    //////////////////////////////////////////
+        class PlaytestModePrepareEvent
+        : public GenericEvent<PlaytestModePrepareEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PlaytestModePrepareEvent, Event);
+
+        //////////////////////////////////////////
+        PlaytestModePrepareEvent(bool _playtestModeEnabled)
+            : m_playtestModeEnabled(_playtestModeEnabled)
+        {}
+
+        //////////////////////////////////////////
+        inline void setPlaytestModeEnabled(bool _value) { m_playtestModeEnabled = _value; }
+
+        //////////////////////////////////////////
+        inline bool getPlaytestModeEnabled() const { return m_playtestModeEnabled; }
+
+    private:
+        bool m_playtestModeEnabled = false;
+    };
+
+
+    //////////////////////////////////////////
     // Class PlaytestModeEnabledChangedEvent
     //
     //////////////////////////////////////////

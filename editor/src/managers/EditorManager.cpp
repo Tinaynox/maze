@@ -366,15 +366,16 @@ namespace Maze
         m_playtestModeEnabled = _value;
 
         if (m_playtestModeEnabled)
-        {
             m_editorWorkspaceManager->destroyScenes();
-            m_editorPlaytestManager->createScenes();
-        }
         else
-        {
             m_editorPlaytestManager->destroyScenes();
+
+        EventManager::GetInstancePtr()->broadcastEventImmediate<PlaytestModePrepareEvent>(m_playtestModeEnabled);
+
+        if (m_playtestModeEnabled)
+            m_editorPlaytestManager->createScenes();
+        else
             m_editorWorkspaceManager->createScenes();
-        }
 
         getMainEcsWorld()->requestInclusiveSample<GizmosController>()->findQuery(
             [](Entity* _entity, GizmosController* _gizmosController)
@@ -382,6 +383,8 @@ namespace Maze
                 EditorToolsManager::GetInstancePtr()->setGizmosController(_gizmosController);
                 return true;
             });
+
+        
 
         if (m_editorPrefabManager->getPrefabAssetFile())
             m_editorPrefabManager->updatePrefabAssetFile();

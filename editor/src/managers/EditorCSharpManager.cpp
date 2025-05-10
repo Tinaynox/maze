@@ -105,6 +105,7 @@ namespace Maze
             EventManager::GetInstancePtr()->unsubscribeEvent<CSharpAssemblyLoadedEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<MonoInitializationEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<PlaytestModePrepareEvent>(this);
         }
 
         s_instance = nullptr;
@@ -126,6 +127,7 @@ namespace Maze
         EventManager::GetInstancePtr()->subscribeEvent<CSharpAssemblyLoadedEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<MonoInitializationEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &EditorCSharpManager::notifyEvent);
+        EventManager::GetInstancePtr()->subscribeEvent<PlaytestModePrepareEvent>(this, &EditorCSharpManager::notifyEvent);
 
         /*
         EditorUIManager::GetInstancePtr()->addTopBarOption(
@@ -206,30 +208,35 @@ namespace Maze
     {
         if (m_scriptActionsBlockedUntil < UpdateManager::GetInstancePtr()->getAppTime())
         {
-            if (Editor::GetInstancePtr()->getMainRenderWindow() &&
-                Editor::GetInstancePtr()->getMainRenderWindow()->getWindow() &&
-                Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->getFocused())
-            {
-                if (m_csharpScriptsChanged)
-                {
-                    m_csharpScriptsChanged = false;
-                    U32 csharpScriptsHash = CalculateCSharpScriptsHash();
-                    if (csharpScriptsHash != m_csharpScriptsHash)
-                        generateCSharpAssembly();
-                }
+            
+        }
+    }
 
-                if (m_csharpScriptsRecompileRequired)
-                {
-                    m_csharpScriptsRecompileRequired = false;
-                    compileCSharpAssembly();
-                }
+    //////////////////////////////////////////
+    void EditorCSharpManager::updateAndReloadScriptsIfRequired()
+    {
+        if (Editor::GetInstancePtr()->getMainRenderWindow() &&
+            Editor::GetInstancePtr()->getMainRenderWindow()->getWindow())
+        {
+            if (m_csharpScriptsChanged)
+            {
+                m_csharpScriptsChanged = false;
+                U32 csharpScriptsHash = CalculateCSharpScriptsHash();
+                if (csharpScriptsHash != m_csharpScriptsHash)
+                    generateCSharpAssembly();
             }
 
-            if (m_scriptAssembliesReloadRequired)
+            if (m_csharpScriptsRecompileRequired)
             {
-                m_scriptAssembliesReloadRequired = false;
-                reloadCSharpScripts();
+                m_csharpScriptsRecompileRequired = false;
+                compileCSharpAssembly();
             }
+        }
+
+        if (m_scriptAssembliesReloadRequired)
+        {
+            m_scriptAssembliesReloadRequired = false;
+            reloadCSharpScripts();
         }
     }
 
@@ -300,6 +307,11 @@ namespace Maze
             {
                 // InspectorManager::GetInstancePtr()->remove
             }
+        }
+        else
+        if (_eventUID == ClassInfo<PlaytestModePrepareEvent>::UID())
+        {
+            updateAndReloadScriptsIfRequired();
         }
     }
 
