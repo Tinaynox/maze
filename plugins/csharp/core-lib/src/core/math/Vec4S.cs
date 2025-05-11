@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Maze.Core
@@ -109,6 +110,54 @@ namespace Maze.Core
                 Z = BitConverter.ToInt32(bytes, startIndex + 8),
                 W = BitConverter.ToInt32(bytes, startIndex + 12)
             };
+        }
+
+        public static int ParseString(string str, int start, int end, out Vec4S outValue, char separator = ',')
+        {
+            start = StringHelper.ParseInteger(str, start, end, out int x); outValue.X = x;
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ParseInteger(str, start, end, out int y); outValue.Y = y;
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ParseInteger(str, start, end, out int z); outValue.Z = z;
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ParseInteger(str, start, end, out int w); outValue.W = w;
+
+            return start;
+        }
+
+        public static int ParseString(string str, out Vec4S outValue, char separator = ',')
+        {
+            return ParseString(str, 0, str.Length, out outValue, separator);
+        }
+
+        public static int ParseString(List<byte> str, int start, int end, out Vec4S outValue, byte separator = (byte)',')
+        {
+            start = StringHelper.ParseInteger(str, start, end, out int x); outValue.X = x;
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ParseInteger(str, start, end, out int y); outValue.Y = y;
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ParseInteger(str, start, end, out int z); outValue.Z = z;
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ParseInteger(str, start, end, out int w); outValue.W = w;
+
+            return start;
+        }
+
+        public static int ParseString(List<byte> str, out Vec4S outValue, byte separator = (byte)',')
+        {
+            return ParseString(str, 0, str.Count, out outValue, separator);
         }
 
         public override string ToString()

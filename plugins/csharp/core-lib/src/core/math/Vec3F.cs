@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Maze.Core
@@ -180,6 +181,46 @@ namespace Maze.Core
                 Y = BitConverter.ToSingle(bytes, startIndex + 4),
                 Z = BitConverter.ToSingle(bytes, startIndex + 8)
             };
+        }
+
+        public static int ParseString(string str, int start, int end, out Vec3F outValue, char separator = ',')
+        {
+            start = StringHelper.ParseFloat(str, start, end, out float x); outValue.X = x;
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ParseFloat(str, start, end, out float y); outValue.Y = y;
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ParseFloat(str, start, end, out float z); outValue.Z = z;
+
+            return start;
+        }
+
+        public static int ParseString(string str, out Vec3F outValue, char separator = ',')
+        {
+            return ParseString(str, 0, str.Length, out outValue, separator);
+        }
+
+        public static int ParseString(List<byte> str, int start, int end, out Vec3F outValue, byte separator = (byte)',')
+        {
+            start = StringHelper.ParseFloat(str, start, end, out float x); outValue.X = x;
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ParseFloat(str, start, end, out float y); outValue.Y = y;
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ParseFloat(str, start, end, out float z); outValue.Z = z;
+
+            return start;
+        }
+
+        public static int ParseString(List<byte> str, out Vec3F outValue, byte separator = (byte)',')
+        {
+            return ParseString(str, 0, str.Count, out outValue, separator);
         }
 
         public override string ToString()

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 
@@ -112,6 +113,36 @@ namespace Maze.Core
                 else
                     throw new IndexOutOfRangeException("Index must be between 0 and 3.");
             }
+        }
+
+        public void SetRow(int index, Vec3F value)
+        {
+            if (index == 0)
+            { 
+                M00 = value.X;
+                M01 = value.Y;
+                M02 = value.Z;
+            }
+            else if (index == 1)
+            {
+                M10 = value.X;
+                M11 = value.Y;
+                M12 = value.Z;
+            }
+            else if (index == 2)
+            {
+                M20 = value.X;
+                M21 = value.Y;
+                M22 = value.Z;
+            }
+            else if (index == 3)
+            {
+                M30 = value.X;
+                M31 = value.Y;
+                M32 = value.Z;
+            }
+            else
+                throw new IndexOutOfRangeException("Index must be between 0 and 3.");
         }
 
         //////////////////////////////////////////
@@ -278,6 +309,91 @@ namespace Maze.Core
                 M32 = BitConverter.ToSingle(bytes, startIndex + 44)
             };
         }
+
+        public static int ParseStringPretty(string str, int start, int end, out TMat outValue, char separator = ',')
+        {
+            outValue = new TMat();
+
+            start = StringHelper.ExpectSkipChar(str, start, end, '[');
+            for (int r = 0; r < 4; ++r)
+            {
+                Vec3F row = new Vec3F();
+
+                start = StringHelper.SkipChar(str, start, end, ' ');
+                start = StringHelper.ExpectSkipChar(str, start, end, '[');
+                start = StringHelper.SkipChar(str, start, end, ' ');
+
+                start = StringHelper.ParseFloat(str, start, end, out float x);
+                row.X = x;
+                start = StringHelper.SkipChar(str, start, end, ' ');
+                start = StringHelper.ExpectSkipChar(str, start, end, separator);
+                start = StringHelper.SkipChar(str, start, end, ' ');
+                start = StringHelper.ParseFloat(str, start, end, out float y);
+                row.Y = y;
+                start = StringHelper.SkipChar(str, start, end, ' ');
+                start = StringHelper.ExpectSkipChar(str, start, end, separator);
+                start = StringHelper.SkipChar(str, start, end, ' ');
+                start = StringHelper.ParseFloat(str, start, end, out float z);
+                row.Z = z;
+
+                outValue.SetRow(r, row);
+
+                start = StringHelper.SkipChar(str, start, end, ' ');
+                start = StringHelper.ExpectSkipChar(str, start, end, ']');
+            }
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, ']');
+
+            return start;
+        }
+
+        public static int ParseStringPretty(string str, out TMat outValue, char separator = ',')
+        {
+            return ParseStringPretty(str, 0, str.Length, out outValue, separator);
+        }
+
+        public static int ParseStringPretty(List<byte> str, int start, int end, out TMat outValue, byte separator = (byte)',')
+        {
+            outValue = new TMat();
+
+            start = StringHelper.ExpectSkipChar(str, start, end, (byte)'[');
+            for (int r = 0; r < 4; ++r)
+            {
+                Vec3F row = new Vec3F();
+
+                start = StringHelper.SkipChar(str, start, end, (byte)' ');
+                start = StringHelper.ExpectSkipChar(str, start, end, (byte)'[');
+                start = StringHelper.SkipChar(str, start, end, (byte)' ');
+
+                start = StringHelper.ParseFloat(str, start, end, out float x);
+                row.X = x;
+                start = StringHelper.SkipChar(str, start, end, (byte)' ');
+                start = StringHelper.ExpectSkipChar(str, start, end, separator);
+                start = StringHelper.SkipChar(str, start, end, (byte)' ');
+                start = StringHelper.ParseFloat(str, start, end, out float y);
+                row.Y = y;
+                start = StringHelper.SkipChar(str, start, end, (byte)' ');
+                start = StringHelper.ExpectSkipChar(str, start, end, separator);
+                start = StringHelper.SkipChar(str, start, end, (byte)' ');
+                start = StringHelper.ParseFloat(str, start, end, out float z);
+                row.Z = z;
+
+                outValue.SetRow(r, row);
+
+                start = StringHelper.SkipChar(str, start, end, (byte)' ');
+                start = StringHelper.ExpectSkipChar(str, start, end, (byte)']');
+            }
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, (byte)']');
+
+            return start;
+        }
+
+        public static int ParseStringPretty(List<byte> str, out TMat outValue, byte separator = (byte)',')
+        {
+            return ParseStringPretty(str, 0, str.Count, out outValue, separator);
+        }
+
         public override string ToString()
         {
             return $"[{M00}, {M01}, {M02}]" +

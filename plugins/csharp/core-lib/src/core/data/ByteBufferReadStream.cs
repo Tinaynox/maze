@@ -34,6 +34,21 @@ namespace Maze.Core
             return readSize;
         }
 
+        public int ReadNoRewind(out byte[] buffer, int readSize, int dstOffset = 0)
+        {
+            buffer = new byte[readSize];
+            return ReadNoRewind(buffer, readSize);
+        }
+
+        public ByteBufferReadStream ReadNoRewind(out byte value)
+        {
+            if (CanRead(sizeof(byte)))
+                value = m_ByteBuffer.Data[m_Offset];
+            else
+                value = default;
+            return this;
+        }
+
         public int Read(byte[] dst, int readSize, int dstOffset = 0)
         {
             readSize = ReadNoRewind(dst, readSize, dstOffset);

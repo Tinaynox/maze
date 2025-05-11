@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Maze.Core
 {
@@ -39,6 +40,28 @@ namespace Maze.Core
         {
             m_Shared = shared;
             m_NameId = AddSharedString(name);
+        }
+
+        public bool IsTopmost() => (m_Flags & (uint)DataBlockFlags.TopmostBlock) != 0u;
+
+        public void ClearData()
+        {
+            m_Params.Clear();
+            m_DataBlocks.Clear();
+        }
+
+        public void Clear()
+        {
+            if (!IsTopmost())
+            {
+                Debug.LogError("Clear is cannot be called for the not topmost block");
+                return;
+            }
+
+            m_NameId = 0u;
+
+            ClearData();
+            m_Shared.Clear();
         }
 
         #region IEnumerable
@@ -419,6 +442,7 @@ namespace Maze.Core
         #endregion
         #region Param String
         public void AddString(string name, string value) { AddParamByName(name, value); }
+        public void AddString(string name, byte[] value) { AddString(name, Encoding.ASCII.GetString(value)); }
         public void SetString(int paramIndex, string value) { SetParam(paramIndex, value); }
         public void SetString(string name, string value) { SetParam(name, value); }
         public string GetString(string name, string defValue = default) { return GetParamValueByName(name, defValue); }

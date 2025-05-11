@@ -189,15 +189,20 @@ namespace Maze.Core
             Append((byte)data);
         }
 
-        public void Append(byte[] data, int size)
+        public void Append(byte[] data, int offs, int size)
         {
             int requiredSize = m_Size + size;
 
             if (requiredSize > m_Capacity)
                 Reserve(Math.Max(requiredSize, m_Capacity + (m_Capacity >> 1) + 1));
 
-            Buffer.BlockCopy(data, 0, m_Data, m_Size, size);
+            Buffer.BlockCopy(data, offs, m_Data, m_Size, size);
             m_Size += size;
+        }
+
+        public void Append(byte[] data, int size)
+        {
+            Append(data, 0, size);
         }
 
         public void Append(byte[] data)

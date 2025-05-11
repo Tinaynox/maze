@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Maze.Core
@@ -38,6 +39,38 @@ namespace Maze.Core
                 X = Convert.ToBoolean(bytes[startIndex + 0]),
                 Y = Convert.ToBoolean(bytes[startIndex + 1])
             };
+        }
+
+        public static int ParseString(string str, int start, int end, out Vec2B outValue, char separator = ',')
+        {
+            start = StringHelper.ParseBoolPretty(str, start, end, out bool x); outValue.X = x;
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ParseBoolPretty(str, start, end, out bool y); outValue.Y = y;
+
+            return start;
+        }
+
+        public static int ParseString(string str, out Vec2B outValue, char separator = ',')
+        {
+            return ParseString(str, 0, str.Length, out outValue, separator);
+        }
+
+        public static int ParseString(List<byte> str, int start, int end, out Vec2B outValue, byte separator = (byte)',')
+        {
+            start = StringHelper.ParseBoolPretty(str, start, end, out bool x); outValue.X = x;
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ParseBoolPretty(str, start, end, out bool y); outValue.Y = y;
+
+            return start;
+        }
+
+        public static int ParseString(List<byte> str, out Vec2B outValue, byte separator = (byte)',')
+        {
+            return ParseString(str, 0, str.Count, out outValue, separator);
         }
 
         public override string ToString()

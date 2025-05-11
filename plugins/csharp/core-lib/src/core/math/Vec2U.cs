@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Maze.Core
@@ -80,6 +81,38 @@ namespace Maze.Core
                 X = BitConverter.ToUInt32(bytes, startIndex + 0),
                 Y = BitConverter.ToUInt32(bytes, startIndex + 4)
             };
+        }
+
+        public static int ParseString(string str, int start, int end, out Vec2U outValue, char separator = ',')
+        {
+            start = StringHelper.ParseInteger(str, start, end, out uint x); outValue.X = x;
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, ' ');
+            start = StringHelper.ParseInteger(str, start, end, out uint y); outValue.Y = y;
+
+            return start;
+        }
+
+        public static int ParseString(string str, out Vec2U outValue, char separator = ',')
+        {
+            return ParseString(str, 0, str.Length, out outValue, separator);
+        }
+
+        public static int ParseString(List<byte> str, int start, int end, out Vec2U outValue, byte separator = (byte)',')
+        {
+            start = StringHelper.ParseInteger(str, start, end, out uint x); outValue.X = x;
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ExpectSkipChar(str, start, end, separator);
+            start = StringHelper.SkipChar(str, start, end, (byte)' ');
+            start = StringHelper.ParseInteger(str, start, end, out uint y); outValue.Y = y;
+
+            return start;
+        }
+
+        public static int ParseString(List<byte> str, out Vec2U outValue, byte separator = (byte)',')
+        {
+            return ParseString(str, 0, str.Count, out outValue, separator);
         }
 
         public override string ToString()

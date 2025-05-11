@@ -354,14 +354,19 @@ namespace Maze.Core
             return true;
         }
 
+        public static bool SaveBinaryFile(ByteBuffer buffer, string path)
+        {
+            buffer.CapacityToSize();
+            File.WriteAllBytes(path, buffer.Data);
+            return true;
+        }
+
         public static bool SaveBinaryFile(DataBlock dataBlock, string path)
         {
             if (!SaveBinary(dataBlock, out ByteBuffer buffer))
                 return false;
 
-            buffer.CapacityToSize();
-            File.WriteAllBytes(path, buffer.Data);
-            return true;
+            return SaveBinaryFile(buffer, path);
         }
     }
 }

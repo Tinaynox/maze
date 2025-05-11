@@ -38,14 +38,19 @@ namespace Maze.Core
             }
         }
 
-        public ByteBufferWriteStream Write(byte[] arr, int size)
+        public ByteBufferWriteStream Write(byte[] arr, int offs, int size)
         {
             if (size <= 0)
                 return this;
 
             ReserveToFit(size);
-            m_ByteBuffer.Append(arr, size);
+            m_ByteBuffer.Append(arr, offs, size);
             return this;
+        }
+
+        public ByteBufferWriteStream Write(byte[] arr, int size)
+        {
+            return Write(arr, 0, size);
         }
 
         public ByteBufferWriteStream Write(byte[] arr)
