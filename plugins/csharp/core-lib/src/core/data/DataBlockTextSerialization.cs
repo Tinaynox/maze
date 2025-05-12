@@ -131,7 +131,9 @@ namespace Maze.Core
 
         static bool LoadText(DataBlock dataBlock, ByteBuffer buffer)
         {
-            Debug.LogError("NOT IMPLEMENTED");
+            DataBlockTextParser parser = new DataBlockTextParser(buffer);
+            parser.Parse(dataBlock);
+
             return true;
         }
 
@@ -563,9 +565,43 @@ namespace Maze.Core
             return true;
         }
 
-        bool ParseIdentifier(List<byte> value)
+        bool ParseIdentifier(List<byte> name)
         {
-            Debug.LogError("NOT IMPLEMENTED");
+            while (true)
+            {
+                if (!SkipWhite())
+                    return false;
+
+                if (IsEndOfBuffer())
+                    break;
+
+                byte ch = ReadCharNoRewind();
+                if (DataBlockSerializationUtils.IsDataBlockIdentifierChar(ch))
+                {
+                    int identifierOffset = m_ReadStream.Offset;
+                    m_ReadStream.Rewind(1);
+                    while (!IsEndOfBuffer())
+                    {
+                        if (!DataBlockSerializationUtils.IsDataBlockIdentifierChar(ReadCharNoRewind()))
+                            break;
+                        m_ReadStream.Rewind(1);
+                    }
+
+                    int identifierLength = m_ReadStream.Offset - identifierOffset;
+
+                    name.Resize(identifierLength + 1);
+                    for (int i = 0; i < identifierLength; ++i)
+                        name[i] = m_ReadStream.ByteBufferData[m_ReadStream.Offset + i];
+                    name[identifierLength] = 0;
+                    
+                    return true;
+                }
+                else if (ch == '"' || ch == '\'')
+                    return ParseValue(name);
+                else
+                    break;
+            }
+            
             return false;
         }
 
@@ -575,7 +611,228 @@ namespace Maze.Core
 
             bool multiLineString = false;
 
-            Debug.LogError("NOT IMPLEMENTED");
+            byte quotCh = 0;
+            if (ReadCharNoRewind() == '"' || ReadCharNoRewind() == '\'')
+            {
+                quotCh = ReadChar();
+
+                byte[] twoCh = new byte[2];
+                m_ReadStream.ReadNoRewind(twoCh, 2);
+
+                // Triple quot (MultiLine value prefix like '''\n )
+                if (twoCh[0] == quotCh && twoCh[1] == quotCh)
+                {
+                    multiLineString = true;
+                    m_ReadStream.Rewind(2);
+
+                    // Skip first \n (start) of multiline
+                    int chIdx = m_ReadStream.Offset;
+                    for (; chIdx < m_ReadStream.ByteBuffereSize; ++chIdx)
+                    {
+                        byte c = m_ReadStream.ByteBufferData[chIdx];
+
+                        if (c == '\n')
+                        {
+                            m_ReadStream.SetOffset(chIdx + 1);
+                            break;
+                        }
+                        else if (c == ' ' || c == '\r' || c == '\t')
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            int multiLineCommentOffset = -1;
+            int rewindToOffset = -1;
+
+            while (true)
+            {
+                if (IsEndOfBuffer())
+                    break;
+
+                m_ReadStream.ReadNoRewind(out byte ch);
+
+                // MultiLine comment
+                if (multiLineCommentOffset != -1)
+                {
+                    byte ch2 = ReadCharNoRewind(1);
+
+                    // CRLF
+                    if (ch == '\r')
+                    {
+                        if (ch2 == '\n')
+                        {
+                            m_ReadStream.Rewind(2);
+                            IncCurrentLine();
+                        }
+                        rewindToOffset = multiLineCommentOffset;
+                        break;
+                    }
+                    else if (ch == '\n')
+                    {
+                        m_ReadStream.Rewind(1);
+                        IncCurrentLine();
+                        rewindToOffset = multiLineCommentOffset;
+                        break;
+                    }
+                    else if (ch == 0)
+                    {
+                        ProcessSyntaxError("Unclosed comment");
+                        return false;
+                    }
+                    else if (ch == '*' && ch2 == '/')
+                    {
+                        m_ReadStream.Rewind(2);
+                        ch = ReadCharNoRewind();
+                        if (ch == '\r' || ch == '\n')
+                        {
+                            rewindToOffset = multiLineCommentOffset;
+                        }
+                        multiLineCommentOffset = -1;
+                    }
+                    else
+                    {
+                        m_ReadStream.Rewind(1);
+                        continue;
+                    }
+                }
+
+                // String value
+                if (quotCh != 0)
+                {
+                    if (ch == quotCh && !multiLineString)
+                    {
+                        m_ReadStream.Rewind(1);
+                        if (!SkipWhite())
+                            return false;
+
+                        if (ReadCharNoRewind() == ';')
+                            m_ReadStream.Rewind(1);
+
+                        break;
+                    }
+                    else if (ch  == quotCh && multiLineString && ReadCharNoRewind(1) == quotCh && ReadCharNoRewind(2) == quotCh)
+                    {
+                        // Crop last multiline \n (end)
+                        if (value.Count > 1 && value[value.Count - 1] == '\n')
+                            value.RemoveAt(value.Count - 1);
+
+                        m_ReadStream.Rewind(3);
+
+                        if (!SkipWhite())
+                            return false;
+
+                        if (ReadCharNoRewind() == ';')
+                            m_ReadStream.Rewind(1);
+
+                        break;
+                    }
+                    else if (((ch == '\r' || ch == '\n') && !multiLineString) || ch == 0)
+                    {
+                        ProcessSyntaxError("Unclosed string");
+                        return false;
+                    }
+                    else if (ch == '~')
+                    {
+                        m_ReadStream.Rewind(1);
+
+                        if (IsEndOfBuffer())
+                        {
+                            ProcessSyntaxError("Unclosed string");
+                            return false;
+                        }
+
+                        ch = ReadCharNoRewind();
+                        if (ch == 'r')
+                            ch = (byte)'\r';
+                        else if (ch == 'n')
+                            ch = (byte)'\n';
+                        else if (ch == 't')
+                            ch = (byte)'\t';
+                    }
+                    else if (ch == '\r')
+                    {
+                        m_ReadStream.Rewind(1);
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (ch == ';' || ch == '\r' || ch == '\n' || ch == 0 || ch == '}')
+                    {
+                        if (ch == ';')
+                            m_ReadStream.Rewind(1);
+                        break;
+                    }
+                    else if (ch == '/')
+                    {
+                        byte nextChar = ReadCharNoRewind(1);
+
+                        if (nextChar == '/')
+                            break;
+                        else if (nextChar == '*')
+                        {
+                            multiLineCommentOffset = m_ReadStream.Offset - 1;
+                            m_ReadStream.Rewind(2);
+                            continue;
+                        }
+                    }
+                }
+
+                value.Add(ch);
+                m_ReadStream.Rewind(1);
+            }
+
+            // MultiLine comment end
+            if (multiLineCommentOffset != -1)
+            {
+                while (true)
+                {
+                    byte ch = ReadCharNoRewind();
+                    if (ch == 0)
+                    {
+                        ProcessSyntaxError("Unclosed string");
+                        return false;
+                    }
+                    else if (ch == '\r' && ReadCharNoRewind(1) == '\n')
+                    {
+                        m_ReadStream.Rewind(1);
+                        IncCurrentLine();
+                    }
+                    else if (ch == '\n')
+                    {
+                        IncCurrentLine();
+                    }
+                    else if (ch == '*' && ReadCharNoRewind(1) == '/')
+                    {
+                        m_ReadStream.Rewind(2);
+                        multiLineCommentOffset = -1;
+                    }
+
+                    m_ReadStream.Rewind(1);
+                }
+            }
+
+            if (quotCh == 0)
+            {
+                int i = 0;
+                for (i = value.Count - 1; i >= 0; --i)
+                {
+                    if (value[i] != ' ' && value[i] != '\t')
+                        break;
+                }
+                ++i;
+                if (i < value.Count)
+                    value.RemoveRange(i, value.Count - 1);
+            }
+
+            value.Add(0);
+
+            if (rewindToOffset != -1)
+                m_ReadStream.SetOffset(rewindToOffset);
+
             return true;
         }
 
@@ -777,6 +1034,168 @@ namespace Maze.Core
                         dataBlock.AddVec4S8(name, paramValue);
                         break;
                     }
+                    case DataBlockParamType.ParamVec4U8:
+                    {
+                        if (Vec4U8.ParseString(value, 0, value.Count, out Vec4U8 paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec4U8(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamVec2S32:
+                    {
+                        if (Vec2S.ParseString(value, 0, value.Count, out Vec2S paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec2S(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamVec3S32:
+                    {
+                        if (Vec3S.ParseString(value, 0, value.Count, out Vec3S paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec3S(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamVec4S32:
+                    {
+                        if (Vec4S.ParseString(value, 0, value.Count, out Vec4S paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec4S(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamVec2U32:
+                    {
+                        if (Vec2U.ParseString(value, 0, value.Count, out Vec2U paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec2U(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamVec3U32:
+                    {
+                        if (Vec3U.ParseString(value, 0, value.Count, out Vec3U paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec3U(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamVec4U32:
+                    {
+                        if (Vec4U.ParseString(value, 0, value.Count, out Vec4U paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec4U(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamVec2F32:
+                    {
+                        if (Vec2F.ParseString(value, 0, value.Count, out Vec2F paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec2F(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamVec3F32:
+                    {
+                        if (Vec3F.ParseString(value, 0, value.Count, out Vec3F paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec3F(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamVec4F32:
+                    {
+                        if (Vec4F.ParseString(value, 0, value.Count, out Vec4F paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec4F(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamVec2B:
+                    {
+                        if (Vec2B.ParseString(value, 0, value.Count, out Vec2B paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec2B(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamVec3B:
+                    {
+                        if (Vec3B.ParseString(value, 0, value.Count, out Vec3B paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec3B(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamVec4B:
+                    {
+                        if (Vec4B.ParseString(value, 0, value.Count, out Vec4B paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddVec4B(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamMat3F32:
+                    {
+                        if (Mat3F.ParseStringPretty(value, 0, value.Count, out Mat3F paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddMat3F(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamMat4F32:
+                    {
+                        if (Mat4F.ParseStringPretty(value, 0, value.Count, out Mat4F paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddMat4F(name, paramValue);
+                        break;
+                    }
+                    case DataBlockParamType.ParamTMat:
+                    {
+                        if (TMat.ParseStringPretty(value, 0, value.Count, out TMat paramValue, (byte)',') < 0)
+                        {
+                            ProcessSyntaxError("Syntax error");
+                            return false;
+                        }
+                        dataBlock.AddTMat(name, paramValue);
+                        break;
+                    }
+                    default:
+                        break;
                 }
             }
 
