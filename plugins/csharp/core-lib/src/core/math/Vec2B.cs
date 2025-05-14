@@ -75,7 +75,12 @@ namespace Maze.Core
 
         public override string ToString()
         {
-            return $"[{X}, {Y}]";
+            return $"{X}, {Y}";
+        }
+
+        public string ToStringPretty()
+        {
+            return $"{StringHelper.BoolToStringPretty(X)}, {StringHelper.BoolToStringPretty(Y)}";
         }
     }
 }

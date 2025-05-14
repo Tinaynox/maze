@@ -17,6 +17,7 @@ namespace Maze.Core
         static public byte[] CommentEndlineCpp = new byte[] { CommentPrefix[0], CommentPrefix[1], CommentEndlineSuffixCpp };
         static public byte[] CommentEndlineC = new byte[] { CommentPrefix[0], CommentPrefix[1], CommentEndlineSuffixC };
 
+        static public string CommentPrefixString = Encoding.ASCII.GetString(CommentPrefix);
         static public string CommentCppString = Encoding.ASCII.GetString(CommentCpp);
         static public string CommentCString = Encoding.ASCII.GetString(CommentC);
         static public string CommentEndlineCppString = Encoding.ASCII.GetString(CommentCpp);

@@ -64,6 +64,11 @@ namespace Maze.Core
             return Write(asciiBytes);
         }
 
+        public ByteBufferWriteStream WriteASCII(char ch)
+        {            
+            return Write((byte)ch);
+        }
+
         public ByteBufferWriteStream Write(sbyte value) { ReserveToFit(sizeof(sbyte)); m_ByteBuffer.Append(value); return this; }
         public ByteBufferWriteStream Write(short value) { ReserveToFit(sizeof(short)); m_ByteBuffer.Append(value); return this; }
         public ByteBufferWriteStream Write(int value) { ReserveToFit(sizeof(int)); m_ByteBuffer.Append(value); return this; }

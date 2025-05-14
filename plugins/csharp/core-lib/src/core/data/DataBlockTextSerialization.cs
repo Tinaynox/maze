@@ -109,13 +109,236 @@ namespace Maze.Core
         }
 
         static bool WriteDataBlockText(
-            ByteBufferWriteStream stram,
+            ByteBufferWriteStream stream,
             DataBlock dataBlock,
             int level,
             bool compact)
         {
-            Debug.LogError("NOT IMPLEMENTED");
-            return false;
+            void WriteEndOfLine() => stream.WriteASCII('\n');
+            void WriteIndent(int size)
+            {
+                for (int i = 0; i < size; ++i)
+                    stream.WriteASCII(' ');
+            }
+            
+
+            bool IsNameIsSimple(string name)
+            {
+                var result = true;
+                if (name.Length == 0)
+                    result = false;
+
+                for (int i = 0; i < name.Length && result; ++i)
+                    result = DataBlockSerializationUtils.IsDataBlockIdentifierChar((byte)name[i]);
+
+                return result;
+            }
+
+            bool skipNextIndent = false;
+            
+            for (int i = 0; i < dataBlock.ParamsCount; ++i)
+            {
+                DataBlockParam param = dataBlock.GetParam(i);
+
+                string name = dataBlock.Shared.GetString(param.NameId);
+                bool nameIsSimple = IsNameIsSimple(name);
+
+                // Indent
+                if (level > 0)
+                {
+                    if (!skipNextIndent)
+                        WriteIndent(level * 2);
+                    else
+                        skipNextIndent = false;
+                }
+
+                if (name.Length >= 3 && name.StartsWith(DataBlockSerializationUtils.CommentPrefixString))
+                {
+                    // C-style comment
+                    if (name[2] == DataBlockSerializationUtils.CommentEndlineSuffixC || name[2] == DataBlockSerializationUtils.CommentSuffixC)
+                    {
+                        stream.WriteASCII('/');
+                        stream.WriteASCII('*');
+                        stream.WriteASCII(dataBlock.GetString(i));
+                        stream.WriteASCII('*');
+                        stream.WriteASCII('/');
+                        WriteEndOfLine();
+                    }
+                    // CPP-style comment
+                    else if (name[2] == DataBlockSerializationUtils.CommentEndlineSuffixCpp || name[2] == DataBlockSerializationUtils.CommentSuffixCpp)
+                    {
+                        stream.WriteASCII('/');
+                        stream.WriteASCII('/');
+                        stream.WriteASCII(dataBlock.GetString(i));
+                        WriteEndOfLine();
+                    }
+                    continue;
+                }
+
+                if (nameIsSimple)
+                    WriteSimpleString(stream, Encoding.ASCII.GetBytes(name));
+                else
+                    WriteComplexString(stream, Encoding.ASCII.GetBytes(name));
+
+                stream.WriteASCII(':');
+                stream.WriteASCII(GetDataBlockParamTypeString(param.Type));
+
+                if (compact)
+                    stream.WriteASCII('=');
+                else
+                {
+                    stream.WriteASCII(' ');
+                    stream.WriteASCII('=');
+                    stream.WriteASCII(' ');
+                }
+
+                if (param.Type == DataBlockParamType.ParamString)
+                {
+                    WriteComplexString(stream, Encoding.ASCII.GetBytes(dataBlock.GetString(i)));
+                }
+                else
+                {
+                    switch (param.Type)
+                    {
+                        case DataBlockParamType.ParamS8: stream.Write(dataBlock.GetParamValue(i, (sbyte)0)); break;
+                        case DataBlockParamType.ParamS16: stream.Write(dataBlock.GetParamValue(i, (short)0)); break;
+                        case DataBlockParamType.ParamS32: stream.Write(dataBlock.GetParamValue(i, (int)0)); break;
+                        case DataBlockParamType.ParamS64: stream.Write(dataBlock.GetParamValue(i, (long)0)); break;
+                        case DataBlockParamType.ParamU8: stream.Write(dataBlock.GetParamValue(i, (byte)0)); break;
+                        case DataBlockParamType.ParamU16: stream.Write(dataBlock.GetParamValue(i, (ushort)0)); break;
+                        case DataBlockParamType.ParamU32: stream.Write(dataBlock.GetParamValue(i, (uint)0)); break;
+                        case DataBlockParamType.ParamU64: stream.Write(dataBlock.GetParamValue(i, (ulong)0)); break;
+                        case DataBlockParamType.ParamF32: stream.Write(dataBlock.GetParamValue(i, 0.0f)); break;
+                        case DataBlockParamType.ParamF64: stream.Write(dataBlock.GetParamValue(i, 0.0)); break;
+                        case DataBlockParamType.ParamBool: StringHelper.BoolToStringPretty(dataBlock.GetParamValue(i, false)); break;
+                        case DataBlockParamType.ParamVec4S8: stream.WriteASCII(dataBlock.GetParamValue(i, Vec4S8.Zero).ToString()); break;
+                        case DataBlockParamType.ParamVec4U8: stream.WriteASCII(dataBlock.GetParamValue(i, Vec4U8.Zero).ToString()); break;
+                        case DataBlockParamType.ParamVec2S32: stream.WriteASCII(dataBlock.GetParamValue(i, Vec2S.Zero).ToString()); break;
+                        case DataBlockParamType.ParamVec3S32: stream.WriteASCII(dataBlock.GetParamValue(i, Vec3S.Zero).ToString()); break;
+                        case DataBlockParamType.ParamVec4S32: stream.WriteASCII(dataBlock.GetParamValue(i, Vec4S.Zero).ToString()); break;
+                        case DataBlockParamType.ParamVec2U32: stream.WriteASCII(dataBlock.GetParamValue(i, Vec2U.Zero).ToString()); break;
+                        case DataBlockParamType.ParamVec3U32: stream.WriteASCII(dataBlock.GetParamValue(i, Vec3U.Zero).ToString()); break;
+                        case DataBlockParamType.ParamVec4U32: stream.WriteASCII(dataBlock.GetParamValue(i, Vec4U.Zero).ToString()); break;
+                        case DataBlockParamType.ParamVec2F32: stream.WriteASCII(dataBlock.GetParamValue(i, Vec2F.Zero).ToString()); break;
+                        case DataBlockParamType.ParamVec3F32: stream.WriteASCII(dataBlock.GetParamValue(i, Vec3F.Zero).ToString()); break;
+                        case DataBlockParamType.ParamVec4F32: stream.WriteASCII(dataBlock.GetParamValue(i, Vec4F.Zero).ToString()); break;
+                        case DataBlockParamType.ParamVec2B: stream.WriteASCII(dataBlock.GetParamValue(i, Vec2B.False).ToStringPretty()); break;
+                        case DataBlockParamType.ParamVec3B: stream.WriteASCII(dataBlock.GetParamValue(i, Vec3B.False).ToStringPretty()); break;
+                        case DataBlockParamType.ParamVec4B: stream.WriteASCII(dataBlock.GetParamValue(i, Vec4B.False).ToStringPretty()); break;
+                        case DataBlockParamType.ParamMat3F32: stream.WriteASCII(dataBlock.GetParamValue(i, Mat3F.Identity).ToStringPretty()); break;
+                        case DataBlockParamType.ParamMat4F32: stream.WriteASCII(dataBlock.GetParamValue(i, Mat4F.Identity).ToStringPretty()); break;
+                        case DataBlockParamType.ParamTMat: stream.WriteASCII(dataBlock.GetParamValue(i, TMat.Identity).ToStringPretty()); break;
+                        default:
+                            Debug.LogError($"Undefined data block param type: {param.Type}");
+                            break;
+                    }
+
+                }
+
+                if (compact && dataBlock.ParamsCount == 1 && dataBlock.DataBlocksCount == 0)
+                    stream.WriteASCII(';');
+                else
+                {
+                    if (i + 1 < dataBlock.ParamsCount)
+                    {
+                        string nextParamName = dataBlock.Shared.GetString(dataBlock.GetParam(i + 1).NameId);
+
+                        if (nextParamName.Length >= 3 &&
+                            nextParamName[0] == DataBlockSerializationUtils.CommentPrefix[0] &&
+                            nextParamName[1] == DataBlockSerializationUtils.CommentPrefix[1] &&
+                            (nextParamName[2] == DataBlockSerializationUtils.CommentEndlineSuffixC ||
+                             nextParamName[2] == DataBlockSerializationUtils.CommentEndlineSuffixCpp))
+                        {
+                            stream.WriteASCII(' ');
+                            skipNextIndent = true;
+                            continue;
+                        }
+                    }
+
+                    WriteEndOfLine();
+                }
+            }
+
+            if (!compact && dataBlock.ParamsCount > 0 && dataBlock.DataBlocksCount > 0)
+                WriteEndOfLine();
+
+            // Data Blocks
+            for (int i = 0; i < dataBlock.DataBlocksCount; ++i)
+            {
+                DataBlock childBlock = dataBlock.GetDataBlock(i);
+
+                string name = dataBlock.Shared.GetString(childBlock.NameId);
+                bool nameIsSimple = IsNameIsSimple(name);
+
+                if (name.Length >= 3 &&
+                    name[0] == DataBlockSerializationUtils.CommentPrefix[0] &&
+                    name[1] == DataBlockSerializationUtils.CommentPrefix[1])
+                {
+                    if (!compact && level > 0)
+                        WriteIndent(level * 2);
+
+                    // C-style comment
+                    if (name[2] == DataBlockSerializationUtils.CommentSuffixC)
+                    {
+                        stream.WriteASCII('/');
+                        stream.WriteASCII('*');
+                        stream.WriteASCII(childBlock.GetString(0));
+                        stream.WriteASCII('*');
+                        stream.WriteASCII('/');
+                        WriteEndOfLine();
+                    }
+                    // CPP-style comment
+                    else if (name[2] == DataBlockSerializationUtils.CommentSuffixCpp)
+                    {
+                        stream.WriteASCII('/');
+                        stream.WriteASCII('/');
+                        stream.WriteASCII(childBlock.GetString(0));
+                        WriteEndOfLine();
+                    }
+
+                    continue;
+                }
+
+                if (!compact && level > 0)
+                    WriteIndent(level * 2);
+
+                if (nameIsSimple)
+                    WriteSimpleString(stream, Encoding.ASCII.GetBytes(name));
+                else
+                    WriteComplexString(stream, Encoding.ASCII.GetBytes(name));
+
+                if (childBlock.IsEmpty())
+                {
+                    stream.WriteASCII('{');
+                    stream.WriteASCII('}');
+                    WriteEndOfLine();
+                    continue;
+                }
+
+                // Opening bracket
+                WriteEndOfLine();
+                if (!compact && level > 0)
+                    WriteIndent(level * 2);
+                stream.WriteASCII('{');
+
+                if (!(compact && childBlock.ParamsCount == 1 && dataBlock.DataBlocksCount == 0))
+                    WriteEndOfLine();
+
+                if (!WriteDataBlockText(stream, childBlock, level + 1, compact))
+                    return false;
+
+                // Closing bracket
+                if (!compact && level > 0)
+                    WriteIndent(level * 2);
+                stream.WriteASCII('}');
+
+                WriteEndOfLine();
+
+                if (i != dataBlock.DataBlocksCount - 1 && !compact)
+                    WriteEndOfLine();
+            }
+
+            return true;
         }
 
         static bool SaveText(DataBlock dataBlock, ByteBuffer buffer, uint flags)
@@ -203,6 +426,45 @@ namespace Maze.Core
             }
 
             return DataBlockParamType.None;
+        }
+
+        public static string GetDataBlockParamTypeString(DataBlockParamType type)
+        {
+            switch (type)
+            {
+                case DataBlockParamType.ParamS8: return "S8";
+                case DataBlockParamType.ParamS16: return "S16";
+                case DataBlockParamType.ParamS32: return "S32";
+                case DataBlockParamType.ParamS64: return "S64";
+                case DataBlockParamType.ParamU8: return "U8";
+                case DataBlockParamType.ParamU16: return "U16";
+                case DataBlockParamType.ParamU32: return "U32";
+                case DataBlockParamType.ParamU64: return "U64";
+                case DataBlockParamType.ParamF32: return "F32";
+                case DataBlockParamType.ParamF64: return "F64";
+                case DataBlockParamType.ParamBool: return "Bool";
+                case DataBlockParamType.ParamVec4S8: return "Vec4S8";
+                case DataBlockParamType.ParamVec4U8: return "Vec4U8";
+                case DataBlockParamType.ParamVec2S32: return "Vec2S";
+                case DataBlockParamType.ParamVec3S32: return "Vec3S";
+                case DataBlockParamType.ParamVec4S32: return "Vec4S";
+                case DataBlockParamType.ParamVec2U32: return "Vec2U";
+                case DataBlockParamType.ParamVec3U32: return "Vec3U";
+                case DataBlockParamType.ParamVec4U32: return "Vec4U";
+                case DataBlockParamType.ParamVec2F32: return "Vec2F";
+                case DataBlockParamType.ParamVec3F32: return "Vec3F";
+                case DataBlockParamType.ParamVec4F32: return "Vec4F";
+                case DataBlockParamType.ParamVec2B: return "Vec2B";
+                case DataBlockParamType.ParamVec3B: return "Vec3B";
+                case DataBlockParamType.ParamVec4B: return "Vec4B";
+                case DataBlockParamType.ParamMat3F32: return "Mat3F";
+                case DataBlockParamType.ParamMat4F32: return "Mat4F";
+                case DataBlockParamType.ParamTMat: return "TMat";
+                case DataBlockParamType.ParamString: return "String";
+            }
+            Debug.LogError($"Not implemented DataBlockParamType: {type}");
+
+            return "";
         }
     }
 

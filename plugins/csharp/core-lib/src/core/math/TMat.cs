@@ -396,11 +396,15 @@ namespace Maze.Core
 
         public override string ToString()
         {
+            return ToStringPretty();
+        }
+
+        public string ToStringPretty()
+        {
             return $"[{M00}, {M01}, {M02}]" +
                    $"[{M10}, {M11}, {M12}]" +
                    $"[{M20}, {M21}, {M22}]" +
                    $"[{M30}, {M31}, {M32}]";
         }
-
     }
 }

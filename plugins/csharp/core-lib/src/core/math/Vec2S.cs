@@ -117,7 +117,7 @@ namespace Maze.Core
 
         public override string ToString()
         {
-            return $"[{X}, {Y}]";
+            return $"{X}, {Y}";
         }
     }
 }

@@ -601,5 +601,7 @@ namespace Maze.Core
 
             return count == 0 ? start : -1;
         }
+
+        public static string BoolToStringPretty(bool value) => value ? "true" : "false";
     }
 }

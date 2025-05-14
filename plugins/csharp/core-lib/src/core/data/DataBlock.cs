@@ -43,6 +43,7 @@ namespace Maze.Core
         }
 
         public bool IsTopmost() => (m_Flags & (uint)DataBlockFlags.TopmostBlock) != 0u;
+        public bool IsEmpty() => ParamsCount == 0 && DataBlocksCount == 0;
 
         public void ClearData()
         {
@@ -168,7 +169,7 @@ namespace Maze.Core
             return m_Params[paramIndex];
         }
 
-        T GetParamValue<T>(int paramIndex, T defValue = default(T)) where T : struct
+        public T GetParamValue<T>(int paramIndex, T defValue = default(T)) where T : struct
         {
             DataBlockParam param = GetParam(paramIndex);
             DataBlockParamType type = DataBlockParam.GetType<T>();
@@ -446,6 +447,7 @@ namespace Maze.Core
         public void SetString(int paramIndex, string value) { SetParam(paramIndex, value); }
         public void SetString(string name, string value) { SetParam(name, value); }
         public string GetString(string name, string defValue = default) { return GetParamValueByName(name, defValue); }
+        public string GetString(int paramIndex, string defValue = default) { return GetParamValue(paramIndex, defValue); }
         #endregion
 
 

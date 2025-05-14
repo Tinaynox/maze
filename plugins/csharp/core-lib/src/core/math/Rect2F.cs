@@ -28,5 +28,10 @@ namespace Maze.Core
         {
             return $"[{X}, {Y}][{W}, {H}]";
         }
+
+        public string ToStringCompact()
+        {
+            return $"{X}, {Y}, {W}, {H}";
+        }
     }
 }
