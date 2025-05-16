@@ -200,17 +200,17 @@ namespace Maze.Core
                 {
                     switch (param.Type)
                     {
-                        case DataBlockParamType.ParamS8: stream.Write(dataBlock.GetParamValue(i, (sbyte)0)); break;
-                        case DataBlockParamType.ParamS16: stream.Write(dataBlock.GetParamValue(i, (short)0)); break;
-                        case DataBlockParamType.ParamS32: stream.Write(dataBlock.GetParamValue(i, (int)0)); break;
-                        case DataBlockParamType.ParamS64: stream.Write(dataBlock.GetParamValue(i, (long)0)); break;
-                        case DataBlockParamType.ParamU8: stream.Write(dataBlock.GetParamValue(i, (byte)0)); break;
-                        case DataBlockParamType.ParamU16: stream.Write(dataBlock.GetParamValue(i, (ushort)0)); break;
-                        case DataBlockParamType.ParamU32: stream.Write(dataBlock.GetParamValue(i, (uint)0)); break;
-                        case DataBlockParamType.ParamU64: stream.Write(dataBlock.GetParamValue(i, (ulong)0)); break;
-                        case DataBlockParamType.ParamF32: stream.Write(dataBlock.GetParamValue(i, 0.0f)); break;
-                        case DataBlockParamType.ParamF64: stream.Write(dataBlock.GetParamValue(i, 0.0)); break;
-                        case DataBlockParamType.ParamBool: StringHelper.BoolToStringPretty(dataBlock.GetParamValue(i, false)); break;
+                        case DataBlockParamType.ParamS8: stream.WriteASCII(dataBlock.GetParamValue(i, (sbyte)0).ToString()); break;
+                        case DataBlockParamType.ParamS16: stream.WriteASCII(dataBlock.GetParamValue(i, (short)0).ToString()); break;
+                        case DataBlockParamType.ParamS32: stream.WriteASCII(dataBlock.GetParamValue(i, (int)0).ToString()); break;
+                        case DataBlockParamType.ParamS64: stream.WriteASCII(dataBlock.GetParamValue(i, (long)0).ToString()); break;
+                        case DataBlockParamType.ParamU8: stream.WriteASCII(dataBlock.GetParamValue(i, (byte)0).ToString()); break;
+                        case DataBlockParamType.ParamU16: stream.WriteASCII(dataBlock.GetParamValue(i, (ushort)0).ToString()); break;
+                        case DataBlockParamType.ParamU32: stream.WriteASCII(dataBlock.GetParamValue(i, (uint)0).ToString()); break;
+                        case DataBlockParamType.ParamU64: stream.WriteASCII(dataBlock.GetParamValue(i, (ulong)0).ToString()); break;
+                        case DataBlockParamType.ParamF32: stream.WriteASCII(dataBlock.GetParamValue(i, 0.0f).ToString()); break;
+                        case DataBlockParamType.ParamF64: stream.WriteASCII(dataBlock.GetParamValue(i, 0.0).ToString()); break;
+                        case DataBlockParamType.ParamBool: stream.WriteASCII(StringHelper.BoolToStringPretty(dataBlock.GetParamValue(i, false))); break;
                         case DataBlockParamType.ParamVec4S8: stream.WriteASCII(dataBlock.GetParamValue(i, Vec4S8.Zero).ToString()); break;
                         case DataBlockParamType.ParamVec4U8: stream.WriteASCII(dataBlock.GetParamValue(i, Vec4U8.Zero).ToString()); break;
                         case DataBlockParamType.ParamVec2S32: stream.WriteASCII(dataBlock.GetParamValue(i, Vec2S.Zero).ToString()); break;
@@ -341,7 +341,7 @@ namespace Maze.Core
             return true;
         }
 
-        static bool SaveText(DataBlock dataBlock, ByteBuffer buffer, uint flags)
+        public static bool SaveText(DataBlock dataBlock, ByteBuffer buffer, uint flags)
         {
             buffer.Clear();
 
@@ -352,15 +352,16 @@ namespace Maze.Core
             return true;
         }
 
-        static bool LoadText(DataBlock dataBlock, ByteBuffer buffer)
+        public static bool LoadText(DataBlock dataBlock, ByteBuffer buffer)
         {
             DataBlockTextParser parser = new DataBlockTextParser(buffer);
-            parser.Parse(dataBlock);
+            if (!parser.Parse(dataBlock))
+                return false;
 
             return true;
         }
 
-        static bool SaveTextFile(DataBlock dataBlock, string path, uint flags)
+        public static bool SaveTextFile(DataBlock dataBlock, string path, uint flags = 0)
         {
             ByteBuffer byteBuffer = new ByteBuffer();
             if (!SaveText(dataBlock, byteBuffer, flags))
@@ -369,7 +370,7 @@ namespace Maze.Core
             return DataBlockBinarySerialization.SaveBinaryFile(byteBuffer, path);
         }
 
-        static bool LoadTextFile(DataBlock dataBlock, string path)
+        public static bool LoadTextFile(DataBlock dataBlock, string path)
         {
             ByteBuffer buffer = ByteBuffer.LoadFile(path);
             if (buffer == null)
@@ -608,6 +609,7 @@ namespace Maze.Core
 
                     DataBlockParamType paramType = DataBlockTextSerialization.GetDataBlockParamType(
                         Encoding.ASCII.GetString(m_TypeNameText.ToArray()));
+                    
                     if (paramType == DataBlockParamType.None)
                     {
                         ProcessSyntaxError("Unknown type");
@@ -661,7 +663,8 @@ namespace Maze.Core
                 }
                 else
                 {
-                    ProcessSyntaxError("Syntax error!");
+                    byte ch = ReadCharNoRewind();
+                    ProcessSyntaxError($"Syntax error! char = '{(char)ch}'({ch}), name='{Encoding.ASCII.GetString(m_NameText.ToArray())}', offset={m_ReadStream.Offset}");
                     return false;
                 }
             }
@@ -851,10 +854,9 @@ namespace Maze.Core
 
                     int identifierLength = m_ReadStream.Offset - identifierOffset;
 
-                    name.Resize(identifierLength + 1);
+                    name.Resize(identifierLength);
                     for (int i = 0; i < identifierLength; ++i)
-                        name[i] = m_ReadStream.ByteBufferData[m_ReadStream.Offset + i];
-                    name[identifierLength] = 0;
+                        name[i] = m_ReadStream.ByteBufferData[identifierOffset + i];
                     
                     return true;
                 }

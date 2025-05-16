@@ -70,6 +70,12 @@ namespace Maze.Core
 
         public bool SetOffset(int value)
         {
+            if (value < 0)
+            {
+                m_Offset= 0;
+                return false;
+            }
+            else
             if (value <= ByteBuffereSize)
             {
                 m_Offset = value;
@@ -84,14 +90,7 @@ namespace Maze.Core
 
         public int Rewind(int delta)
         {
-            if (delta > 0)
-                SetOffset(m_Offset + delta);
-            else
-            if (delta >= m_Offset)
-                SetOffset(m_Offset - delta);
-            else
-                SetOffset(0);
-
+            SetOffset(m_Offset + delta);
             return m_Offset;
         }
 

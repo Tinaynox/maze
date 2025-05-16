@@ -357,6 +357,9 @@ namespace Maze.Core
         public static bool SaveBinaryFile(ByteBuffer buffer, string path)
         {
             buffer.CapacityToSize();
+            if (buffer.Data == null || buffer.Data.Length == 0)
+                return false;
+
             File.WriteAllBytes(path, buffer.Data);
             return true;
         }

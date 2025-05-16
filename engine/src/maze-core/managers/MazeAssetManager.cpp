@@ -306,7 +306,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    const AssetFilePtr& AssetManager::getAssetFile(Path const& _string)
+    AssetFilePtr const& AssetManager::getAssetFile(Path const& _string)
     {
         if (_string.getPath().find('/') != Path::StringType::npos)
             return getAssetFileByFullPath(_string);

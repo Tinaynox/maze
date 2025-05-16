@@ -47,8 +47,8 @@ namespace Maze.Core
 
         public void ClearData()
         {
-            m_Params.Clear();
-            m_DataBlocks.Clear();
+            m_Params?.Clear();
+            m_DataBlocks?.Clear();
         }
 
         public void Clear()
