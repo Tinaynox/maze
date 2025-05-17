@@ -116,6 +116,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        static ScriptClassPtr const& GetScriptableObjectClass();
+
+        //////////////////////////////////////////
+        static ScriptClassPtr const& GetScriptableObjectSubClass(HashedCString _name);
+
+
+        //////////////////////////////////////////
         static MonoObject* InstantiateClass(MonoClass* _monoClass);
 
 

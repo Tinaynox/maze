@@ -37,6 +37,7 @@
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
+#include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "mono-binds/MonoBindsEditor.hpp"

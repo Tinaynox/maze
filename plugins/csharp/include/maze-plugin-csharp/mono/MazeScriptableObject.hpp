@@ -25,78 +25,98 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeCSharpService_hpp_))
-#define _MazeCSharpService_hpp_
+#if (!defined(_MazeScriptableObject_hpp_))
+#define _MazeScriptableObject_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-plugin-csharp/MazeCSharpHeader.hpp"
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptField.hpp"
+#include "maze-core/data/MazeHashedCString.hpp"
+#include "maze-core/MazeTypes.hpp"
+#include "maze-core/events/MazeEvent.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/MazeRenderWindow.hpp"
-#include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(MonoSerializationManager);
-    MAZE_USING_SHARED_PTR(ScriptableObjectManager);
+    MAZE_USING_SHARED_PTR(ScriptClass);
+    MAZE_USING_SHARED_PTR(ScriptProperty);
+    MAZE_USING_SHARED_PTR(ScriptInstance);
+    MAZE_USING_MANAGED_SHARED_PTR(ScriptableObject);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
 
 
     //////////////////////////////////////////
-    // Class CSharpService
+    // Class ScriptableObject
     //
     //////////////////////////////////////////
-    class MAZE_PLUGIN_CSHARP_API CSharpService
-        : public MultiDelegateCallbackReceiver
+    class MAZE_PLUGIN_CSHARP_API ScriptableObject
+        : public IndexedResource<ScriptableObject>
+        , public MultiDelegateCallbackReceiver
     {
     public:
+
+        //////////////////////////////////////////
+        ScriptableObject();
+
+        //////////////////////////////////////////
+        ~ScriptableObject();
+
+        //////////////////////////////////////////
+        static ScriptableObjectPtr Create();
+
+        //////////////////////////////////////////
+        ScriptableObject(ScriptableObject const&) = delete;
+
+        //////////////////////////////////////////
+        ScriptableObject(ScriptableObject&&) = delete;
+
+        //////////////////////////////////////////
+        ScriptableObject& operator=(ScriptableObject const&) = default;
+
+        //////////////////////////////////////////
+        ScriptableObject& operator=(ScriptableObject&&) = default;
+
+
+        //////////////////////////////////////////
+        inline HashedString const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        inline void setName(HashedString const& _name) { m_name = _name; }
+
+
+        //////////////////////////////////////////
+        bool loadFromAssetFile(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
+        bool loadFromDataBlock(DataBlock const& _dataBlock);
+
+        //////////////////////////////////////////
+        void setData(DataBlock const& _dataBlock);
+
+    private:
+
+        //////////////////////////////////////////
+        bool init();
+
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
+    private:
+        HashedString m_name;
+        ScriptInstancePtr m_scriptInstance;
         
-        //////////////////////////////////////////
-        CSharpService();
-
-        //////////////////////////////////////////
-        ~CSharpService();
-        
-
-        //////////////////////////////////////////
-        void initialize();
-
-        //////////////////////////////////////////
-        void shutdown();
-
-
-        //////////////////////////////////////////
-        MonoDomain* getMonoDomain();
-
-
-        //////////////////////////////////////////
-        MonoAssembly* loadEditorAssembly(HashedCString _csharpFile);
-
-        //////////////////////////////////////////
-        MonoAssembly* loadAppAssembly(HashedCString _csharpFile);
-
-
-        //////////////////////////////////////////
-        static CSharpService& GetInstance();
-
-        //////////////////////////////////////////
-        static inline CSharpService* GetInstancePtr() { return &GetInstance(); }
-
-
-    protected:
-        MonoSerializationManagerPtr m_monoSerializationManager;
-        ScriptableObjectManagerPtr m_scriptableObjectManager;
     };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeCSharpService_hpp_
+#endif // _MazeScriptableObject_hpp_
 //////////////////////////////////////////

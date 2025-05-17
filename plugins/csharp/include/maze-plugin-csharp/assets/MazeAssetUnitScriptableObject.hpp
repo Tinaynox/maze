@@ -25,78 +25,87 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeCSharpService_hpp_))
-#define _MazeCSharpService_hpp_
+#if (!defined(_MazeAssetUnitScriptableObject_hpp_))
+#define _MazeAssetUnitScriptableObject_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-plugin-csharp/MazeCSharpHeader.hpp"
-#include "maze-plugin-csharp/MazeMonoHeader.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/MazeRenderWindow.hpp"
-#include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-plugin-csharp/mono/MazeScriptInstance.hpp"
+#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-core/assets/MazeAssetUnit.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(MonoSerializationManager);
-    MAZE_USING_SHARED_PTR(ScriptableObjectManager);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetUnitScriptableObject);   
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
+    MAZE_USING_MANAGED_SHARED_PTR(ScriptableObject);
 
 
     //////////////////////////////////////////
-    // Class CSharpService
+    // Class AssetUnitScriptableObject
     //
     //////////////////////////////////////////
-    class MAZE_PLUGIN_CSHARP_API CSharpService
-        : public MultiDelegateCallbackReceiver
+    class MAZE_PLUGIN_CSHARP_API AssetUnitScriptableObject
+        : public AssetUnit
     {
     public:
         
         //////////////////////////////////////////
-        CSharpService();
-
-        //////////////////////////////////////////
-        ~CSharpService();
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitScriptableObject, AssetUnit);
         
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE static HashedCString GetDataBlockId() { return MAZE_HCS("scriptableObject"); }
+
+    public:
 
         //////////////////////////////////////////
-        void initialize();
+        virtual ~AssetUnitScriptableObject();
 
         //////////////////////////////////////////
-        void shutdown();
-
-
-        //////////////////////////////////////////
-        MonoDomain* getMonoDomain();
-
+        virtual HashedCString getDataBlockId() const MAZE_OVERRIDE { return GetDataBlockId(); }
 
         //////////////////////////////////////////
-        MonoAssembly* loadEditorAssembly(HashedCString _csharpFile);
-
-        //////////////////////////////////////////
-        MonoAssembly* loadAppAssembly(HashedCString _csharpFile);
+        static AssetUnitScriptableObjectPtr Create(
+            AssetFilePtr const& _assetFile,
+            DataBlock const& _data = DataBlock::c_empty);
 
 
         //////////////////////////////////////////
-        static CSharpService& GetInstance();
+        inline ScriptableObjectPtr const& getScriptableObject() const { return m_scriptableObject; }
 
         //////////////////////////////////////////
-        static inline CSharpService* GetInstancePtr() { return &GetInstance(); }
+        ScriptableObjectPtr const& loadScriptableObject(bool _syncLoad = false);
 
+
+        //////////////////////////////////////////
+        ScriptableObjectPtr const& initScriptableObject();
 
     protected:
-        MonoSerializationManagerPtr m_monoSerializationManager;
-        ScriptableObjectManagerPtr m_scriptableObjectManager;
+
+        //////////////////////////////////////////
+        AssetUnitScriptableObject();
+
+        //////////////////////////////////////////
+        virtual bool init(
+            AssetFilePtr const& _assetFile,
+            DataBlock const& _data) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual bool loadNowImpl() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual bool unloadNowImpl() MAZE_OVERRIDE;
+    
+    protected:
+        ScriptableObjectPtr m_scriptableObject;
     };
+
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeCSharpService_hpp_
+#endif // _MazeAssetUnitScriptableObject_hpp_
 //////////////////////////////////////////

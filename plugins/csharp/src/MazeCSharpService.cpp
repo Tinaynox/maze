@@ -36,6 +36,7 @@
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-plugin-csharp/managers/MazeMonoSerializationManager.hpp"
+#include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
 
 
 //////////////////////////////////////////
@@ -68,6 +69,10 @@ namespace Maze
     {
         MonoSerializationManager::Initialize(m_monoSerializationManager);
         if (!m_monoSerializationManager)
+            return;
+
+        ScriptableObjectManager::Initialize(m_scriptableObjectManager);
+        if (!m_scriptableObjectManager)
             return;
 
         MonoEngine::Initialize();

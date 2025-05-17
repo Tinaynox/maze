@@ -74,6 +74,11 @@ namespace Maze
         ScriptClassPtr nativeEventClass;
         StringKeyMap<ScriptClassPtr> nativeEventSubClasses;
         UnorderedMap<ClassUID, ScriptClassPtr> nativeEventSubClassesByClassUID;
+
+
+        // ScriptableObject
+        ScriptClassPtr scriptableObjectClass;
+        StringKeyMap<ScriptClassPtr> scriptableObjectSubClasses;
     };
 
 
@@ -352,6 +357,18 @@ namespace Maze
                         std::piecewise_construct,
                         std::forward_as_tuple(eventUID),
                         std::forward_as_tuple(scriptClass));
+                }
+                else
+                // ScriptableObject subclasses
+                if (mono_class_is_subclass_of(monoClass, MonoEngine::GetScriptableObjectClass()->getMonoClass(), false) &&
+                    monoClass != MonoEngine::GetScriptableObjectClass()->getMonoClass())
+                {
+                    ScriptClassPtr scriptClass = MonoEngine::CreateScriptClass(fullNamespace, typeName, monoClass);
+                    loadedScriptClasses.push_back(scriptClass);
+
+                    g_monoEngineData->ecsData.scriptableObjectSubClasses.insert(
+                        HashedCString(fullName.c_str()),
+                        scriptClass);
                 }
             }
         }
@@ -637,6 +654,9 @@ namespace Maze
         g_monoEngineData->ecsData.nativeEventClass = MonoEngine::CreateScriptClass(
             "Maze.Core", "NativeEvent", g_monoEngineData->coreAssemblyData.assemblyImage);
 
+        g_monoEngineData->ecsData.scriptableObjectClass = MonoEngine::CreateScriptClass(
+            "Maze.Core", "ScriptableObject", g_monoEngineData->coreAssemblyData.assemblyImage);
+
         LoadAssemblyClasses(g_monoEngineData->coreAssemblyData.assembly);
 
         EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpCoreAssemblyLoadedEvent>();
@@ -809,6 +829,24 @@ namespace Maze
             return it->second;
         else
             return c_invalidComponentId;
+    }
+
+    //////////////////////////////////////////
+    ScriptClassPtr const& MonoEngine::GetScriptableObjectClass()
+    {
+        return g_monoEngineData->ecsData.scriptableObjectClass;
+    }
+
+    //////////////////////////////////////////
+    ScriptClassPtr const& MonoEngine::GetScriptableObjectSubClass(HashedCString _name)
+    {
+        static ScriptClassPtr const nullPointer;
+
+        auto it = g_monoEngineData->ecsData.scriptableObjectSubClasses.find(_name);
+        if (it != g_monoEngineData->ecsData.scriptableObjectSubClasses.end())
+            return it->second;
+        else
+            return nullPointer;
     }
 
     //////////////////////////////////////////
