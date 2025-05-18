@@ -39,6 +39,7 @@
 #include "maze-core/events/MazeEvent.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeIndexedResource.hpp"
+#include "maze-core/utils/MazeManagedSharedObject.hpp"
 
 
 //////////////////////////////////////////
@@ -59,11 +60,11 @@ namespace Maze
     class MAZE_PLUGIN_CSHARP_API ScriptableObject
         : public IndexedResource<ScriptableObject>
         , public MultiDelegateCallbackReceiver
+        , public ManagedSharedObject<ScriptableObject>
     {
     public:
 
-        //////////////////////////////////////////
-        ScriptableObject();
+        
 
         //////////////////////////////////////////
         ~ScriptableObject();
@@ -105,6 +106,9 @@ namespace Maze
         inline ScriptInstancePtr const& getScriptInstance() const { return m_scriptInstance; }
 
     private:
+
+        //////////////////////////////////////////
+        ScriptableObject();
 
         //////////////////////////////////////////
         bool init();

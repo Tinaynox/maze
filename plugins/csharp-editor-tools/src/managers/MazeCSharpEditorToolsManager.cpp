@@ -48,6 +48,7 @@
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-plugin-csharp-editor-tools/property-drawers/MazePDScriptableObject.hpp"
 
 
 //////////////////////////////////////////
@@ -651,8 +652,9 @@ namespace Maze
             _instance.setFieldValue(_field, _drawer->getValue().toVec4F32());
         });
 
-        ScriptClassPtr const& componentClass = MonoEngine::GetComponentClass();
 
+        // Components
+        ScriptClassPtr const& componentClass = MonoEngine::GetComponentClass();
         registerScriptPropertyAndFieldDrawerSuperClassCallbacks<PropertyDrawerComponentPtr>(
             componentClass->getMonoClass(),
             [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerComponentPtr* _drawer)
@@ -727,6 +729,44 @@ namespace Maze
             else
                 _instance.resetFieldValue(_field);
         });
+
+
+        // ScriptableObjects
+        ScriptClassPtr const& scriptableObjectClass = MonoEngine::GetScriptableObjectClass();
+        registerScriptPropertyAndFieldDrawerSuperClassCallbacks<PropertyDrawerScriptableObject>(
+            scriptableObjectClass->getMonoClass(),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerScriptableObject* _drawer)
+            {
+                MonoObject* componentInstance = nullptr;
+                _instance.getPropertyValue(_property, componentInstance);
+                ScriptableObject* scriptableObject = MonoHelper::GetScriptableObject(componentInstance);
+                _drawer->setValue(scriptableObject ? scriptableObject->getSharedPtr() : nullptr);
+                
+            },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerScriptableObject const* _drawer)
+            {
+                ScriptableObjectPtr scriptableObject = _drawer->getValue();
+                if (scriptableObject && scriptableObject->getScriptInstance())
+                    _instance.setPropertyValue(_property, scriptableObject->getScriptInstance()->getInstance());
+                else
+                    _instance.resetPropertyValue(_property);
+            },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerScriptableObject* _drawer)
+            {
+                MonoObject* componentInstance = nullptr;
+                _instance.getFieldValue(_field, componentInstance);
+                ScriptableObject* scriptableObject = MonoHelper::GetScriptableObject(componentInstance);
+                _drawer->setValue(scriptableObject ? scriptableObject->getSharedPtr() : nullptr);
+
+            },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerScriptableObject const* _drawer)
+            {
+                ScriptableObjectPtr scriptableObject = _drawer->getValue();
+                if (scriptableObject && scriptableObject->getScriptInstance())
+                    _instance.setFieldValue(_field, scriptableObject->getScriptInstance()->getInstance());
+                else
+                    _instance.resetFieldValue(_field);
+            });
     }
 
 } // namespace Maze

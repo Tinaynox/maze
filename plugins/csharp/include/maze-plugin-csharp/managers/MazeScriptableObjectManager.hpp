@@ -49,6 +49,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(ScriptableObjectManager);
     MAZE_USING_MANAGED_SHARED_PTR(ScriptableObject);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
 
 
     //////////////////////////////////////////
@@ -132,10 +133,17 @@ namespace Maze
         //////////////////////////////////////////
         ScriptableObjectPtr const& getOrLoadScriptableObject(
             HashedCString _scriptableObjectName,
-            bool _syncLoad);
+            bool _syncLoad = true);
 
         //////////////////////////////////////////
-        ScriptableObjectPtr const& getOrLoadScriptableObject(AssetUnitId _auid, bool _syncLoad);
+        ScriptableObjectPtr const& getOrLoadScriptableObject(
+            AssetUnitId _auid,
+            bool _syncLoad = true);
+
+        //////////////////////////////////////////
+        ScriptableObjectPtr const& getOrLoadScriptableObject(
+            AssetFilePtr const& _assetFile,
+            bool _syncLoad = true);
 
 
         //////////////////////////////////////////

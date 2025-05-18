@@ -219,6 +219,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ScriptableObjectPtr const& ScriptableObjectManager::getOrLoadScriptableObject(
+        AssetFilePtr const& _assetFile,
+        bool _syncLoad)
+    {
+        static ScriptableObjectPtr const nullPointer;
+
+        AssetUnitScriptableObjectPtr assetUnit = _assetFile->getAssetUnit<AssetUnitScriptableObject>();
+        if (assetUnit)
+            return getOrLoadScriptableObject(assetUnit->getAssetUnitId(), _syncLoad);
+
+        return nullPointer;
+    }
+
+    //////////////////////////////////////////
     ScriptableObjectLibraryData* ScriptableObjectManager::addScriptableObjectToLibrary(
         ScriptableObjectPtr const& _scriptableObject,
         ScriptableObjectLibraryDataCallbacks const& _callbacks,

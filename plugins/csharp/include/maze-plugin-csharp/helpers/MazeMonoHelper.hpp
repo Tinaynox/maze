@@ -46,6 +46,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ScriptClass);
     MAZE_USING_SHARED_PTR(ScriptProperty);
     MAZE_USING_SHARED_PTR(ScriptField);
+    MAZE_USING_MANAGED_SHARED_PTR(ScriptableObject);
 
 
     //////////////////////////////////////////
@@ -178,6 +179,9 @@ namespace Maze
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorInputEvent);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorWheelInputEvent);
 
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API ScriptableObject* GetScriptableObject(MonoObject* _scritableObjectInstance);
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void SerializeScriptableObjectToDataBlock(

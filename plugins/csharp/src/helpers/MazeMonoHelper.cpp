@@ -421,6 +421,24 @@ namespace Maze
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorWheelInputEvent);
 
 
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API ScriptableObject* GetScriptableObject(MonoObject* _scritableObjectInstance)
+        {
+            if (!_scritableObjectInstance)
+                return nullptr;
+
+            MonoProperty* resourceIdMonoProperty = MonoEngine::GetIndexedResourceIdProperty()->getMonoProperty();
+            MonoObject* result = mono_property_get_value(resourceIdMonoProperty, _scritableObjectInstance, nullptr, nullptr);
+            if (!result)
+                return nullptr;
+
+            S32 resourceId = *(S32*)mono_object_unbox(result);
+            if (ScriptableObject* scriptableObject = ScriptableObject::GetResource(resourceId))
+                return scriptableObject;
+
+            return nullptr;
+        }
+
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void SerializeScriptableObjectToDataBlock(
@@ -428,16 +446,7 @@ namespace Maze
             HashedCString _name,
             MonoObject* _scritableObjectInstance)
         {
-            if (!_scritableObjectInstance)
-                return;
-
-            MonoProperty* resourceIdMonoProperty = MonoEngine::GetIndexedResourceIdProperty()->getMonoProperty();
-            MonoObject* result = mono_property_get_value(resourceIdMonoProperty, _scritableObjectInstance, nullptr, nullptr);
-            if (!result)
-                return;
-
-            S32 resourceId = *(S32*)mono_object_unbox(result);
-            if (ScriptableObject* scriptableObject = ScriptableObject::GetResource(resourceId))
+            if (ScriptableObject* scriptableObject = GetScriptableObject(_scritableObjectInstance))
             {
                 ScriptableObjectLibraryData const* libraryData = ScriptableObjectManager::GetInstancePtr()->getScriptableObjectLibraryData(
                     scriptableObject->getName().asHashedCString());
