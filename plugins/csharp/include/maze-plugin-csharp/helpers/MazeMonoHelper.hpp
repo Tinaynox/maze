@@ -122,13 +122,13 @@ namespace Maze
             MonoType* _monoType);
 
         //////////////////////////////////////////
-        MAZE_CORE_API void SerializeComponentToDataBlock(
+        MAZE_PLUGIN_CSHARP_API void SerializeComponentToDataBlock(
             DataBlock& _dataBlock,
             CString _name,
             MonoObject* _componentInstance);
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool IsValueType(MonoObject* _obj);
+        MAZE_PLUGIN_CSHARP_API bool IsValueType(MonoObject* _obj);
 
 
         //////////////////////////////////////////
@@ -178,6 +178,12 @@ namespace Maze
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorInputEvent);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorWheelInputEvent);
 
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void SerializeScriptableObjectToDataBlock(
+            DataBlock& _dataBlock,
+            HashedCString _name,
+            MonoObject* _scritableObjectInstance);
 
     } // namespace MonoHelper
     //////////////////////////////////////////

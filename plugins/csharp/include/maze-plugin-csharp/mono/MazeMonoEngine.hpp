@@ -116,6 +116,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        static ScriptPropertyPtr const& GetIndexedResourceIdProperty();
+
+
+        //////////////////////////////////////////
         static ScriptClassPtr const& GetScriptableObjectClass();
 
         //////////////////////////////////////////

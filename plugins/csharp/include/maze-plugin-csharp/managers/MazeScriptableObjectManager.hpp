@@ -116,7 +116,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ScriptableObjectLibraryData const* getScriptableObjectLibraryData(HashedCString _materialName);
+        ScriptableObjectLibraryData const* getScriptableObjectLibraryData(HashedCString _scriptableObjectName);
 
         //////////////////////////////////////////
         ScriptableObjectLibraryData const* getScriptableObjectLibraryData(String const& _assetFileName) { return getScriptableObjectLibraryData(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }

@@ -60,7 +60,8 @@ namespace Maze
     //////////////////////////////////////////
     ScriptInstance::~ScriptInstance()
     {
-        EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
     }
 
     //////////////////////////////////////////

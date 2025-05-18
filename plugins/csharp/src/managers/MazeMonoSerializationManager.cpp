@@ -34,6 +34,8 @@
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptableObject.hpp"
 
 
 //////////////////////////////////////////
@@ -225,6 +227,66 @@ namespace Maze
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.AssetUnitId", U32);
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.AssetFileId", U32);
 
+            // SciptableObjects
+            ScriptClassPtr const& scriptableObjectClass = MonoEngine::GetScriptableObjectClass();
+            registerPropertyAndFieldDataBlockSubClassSerialization(
+                scriptableObjectClass->getMonoClass(),
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+                {
+                    MonoObject* scriptableObjectInstance = nullptr;
+                    _instance.getPropertyValue(_prop, scriptableObjectInstance);
+                    MonoHelper::SerializeScriptableObjectToDataBlock(_dataBlock, _prop->getName(), scriptableObjectInstance);
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+                {
+                    DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(_prop->getName());
+                    if (paramIndex >= 0)
+                    {
+                        DataBlock::Param const& param = _dataBlock.getParam(paramIndex);
+                        if (param.type == U8(DataBlockParamType::ParamU32))
+                        {
+                            U32 auid = _dataBlock.getU32(paramIndex);
+                            ScriptableObjectPtr const& scriptableObject = ScriptableObjectManager::GetInstancePtr()->getOrLoadScriptableObject(auid, true);
+                            if (scriptableObject && scriptableObject->getScriptInstance())
+                                _instance.setPropertyValue(_prop, scriptableObject->getScriptInstance()->getInstance());
+                            else
+                                _instance.resetPropertyValue(_prop);
+                        }
+                        else
+                        {
+                            MAZE_ERROR("Unsupported type: %d", U8(param.type));
+                        }
+                    }
+                },
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+                {
+                    MonoObject* scriptableObjectInstance = nullptr;
+                    _instance.getFieldValue(_field, scriptableObjectInstance);
+                    MonoHelper::SerializeScriptableObjectToDataBlock(_dataBlock, _field->getName(), scriptableObjectInstance);
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+                {
+                    DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(_field->getName());
+                    if (paramIndex >= 0)
+                    {
+                        DataBlock::Param const& param = _dataBlock.getParam(paramIndex);
+                        if (param.type == U8(DataBlockParamType::ParamU32))
+                        {
+                            U32 auid = _dataBlock.getU32(paramIndex);
+                            ScriptableObjectPtr const& scriptableObject = ScriptableObjectManager::GetInstancePtr()->getOrLoadScriptableObject(auid, true);
+                            if (scriptableObject && scriptableObject->getScriptInstance())
+                                _instance.setFieldValue(_field, scriptableObject->getScriptInstance()->getInstance());
+                            else
+                                _instance.resetFieldValue(_field);
+                        }
+                        else
+                        {
+                            MAZE_ERROR("Unsupported type: %d", U8(param.type));
+                        }
+                    }
+                });
+
+
             // Graphics
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Graphics.ColorU32", Vec4U8);
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Graphics.ColorF128", Vec4F);
@@ -233,9 +295,8 @@ namespace Maze
 
 
 
+            // Components
             ScriptClassPtr const& componentClass = MonoEngine::GetComponentClass();
-
-            // Core
             registerPropertyAndFieldDataBlockSubClassSerialization(
                 componentClass->getMonoClass(),
                 [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
@@ -249,7 +310,7 @@ namespace Maze
                     MonoObject* result = MonoHelper::DeserializeComponentFromDataBlock(
                         _world, _dataBlock, _prop->getName().c_str(), _prop->getMonoType());
                     if (result)
-                        _instance.setPropertyValue(_prop, *result);
+                        _instance.setPropertyValue(_prop, result);
                     else
                         _instance.resetPropertyValue(_prop);
                 },
@@ -264,7 +325,7 @@ namespace Maze
                     MonoObject* result = MonoHelper::DeserializeComponentFromDataBlock(
                         _world, _dataBlock, _field->getName().c_str(), _field->getMonoType());
                     if (result)
-                        _instance.setFieldValue(_field, *result);
+                        _instance.setFieldValue(_field, result);
                     else
                         _instance.resetFieldValue(_field);
                 });

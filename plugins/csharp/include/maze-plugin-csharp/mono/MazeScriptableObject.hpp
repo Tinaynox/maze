@@ -100,6 +100,10 @@ namespace Maze
         //////////////////////////////////////////
         void setData(DataBlock const& _dataBlock);
 
+
+        //////////////////////////////////////////
+        inline ScriptInstancePtr const& getScriptInstance() const { return m_scriptInstance; }
+
     private:
 
         //////////////////////////////////////////

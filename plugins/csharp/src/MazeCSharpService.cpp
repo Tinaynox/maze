@@ -87,6 +87,8 @@ namespace Maze
     void CSharpService::shutdown()
     {
         MonoEngine::Shutdown();
+        m_scriptableObjectManager.reset();
+        m_monoSerializationManager.reset();
     }
 
     //////////////////////////////////////////

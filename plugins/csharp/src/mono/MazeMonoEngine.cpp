@@ -76,6 +76,11 @@ namespace Maze
         UnorderedMap<ClassUID, ScriptClassPtr> nativeEventSubClassesByClassUID;
 
 
+        // IndexedResource
+        ScriptClassPtr indexedResourceClass;
+        ScriptPropertyPtr indexedResourceIdProperty;
+
+
         // ScriptableObject
         ScriptClassPtr scriptableObjectClass;
         StringKeyMap<ScriptClassPtr> scriptableObjectSubClasses;
@@ -364,6 +369,7 @@ namespace Maze
                     monoClass != MonoEngine::GetScriptableObjectClass()->getMonoClass())
                 {
                     ScriptClassPtr scriptClass = MonoEngine::CreateScriptClass(fullNamespace, typeName, monoClass);
+                    scriptClass->assignPrivateProperty(MAZE_HCS("ResourceId"));
                     loadedScriptClasses.push_back(scriptClass);
 
                     g_monoEngineData->ecsData.scriptableObjectSubClasses.insert(
@@ -654,6 +660,12 @@ namespace Maze
         g_monoEngineData->ecsData.nativeEventClass = MonoEngine::CreateScriptClass(
             "Maze.Core", "NativeEvent", g_monoEngineData->coreAssemblyData.assemblyImage);
 
+        g_monoEngineData->ecsData.indexedResourceClass = MonoEngine::CreateScriptClass(
+            "Maze.Core", "IndexedResource", g_monoEngineData->coreAssemblyData.assemblyImage);
+        g_monoEngineData->ecsData.indexedResourceClass->assignPrivateProperty(MAZE_HCS("ResourceId"));
+        g_monoEngineData->ecsData.indexedResourceIdProperty = g_monoEngineData->ecsData.indexedResourceClass->getProperty(
+            MAZE_HCS("ResourceId"));
+
         g_monoEngineData->ecsData.scriptableObjectClass = MonoEngine::CreateScriptClass(
             "Maze.Core", "ScriptableObject", g_monoEngineData->coreAssemblyData.assemblyImage);
 
@@ -832,6 +844,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ScriptPropertyPtr const& MonoEngine::GetIndexedResourceIdProperty()
+    {
+        return g_monoEngineData->ecsData.indexedResourceIdProperty;
+    }
+
+    //////////////////////////////////////////
     ScriptClassPtr const& MonoEngine::GetScriptableObjectClass()
     {
         return g_monoEngineData->ecsData.scriptableObjectClass;
@@ -862,9 +880,9 @@ namespace Maze
 
             return instance;
         }
-        catch (const std::exception& ex)
+        catch (std::exception const& _ex)
         {
-            Debug::logerr << "MONO exception caught: " << ex.what() << Maze::endl;
+            Debug::logerr << "MONO exception caught: " << _ex.what() << Maze::endl;
         };
 
 

@@ -53,7 +53,8 @@ namespace Maze
     //////////////////////////////////////////
     ScriptableObject::~ScriptableObject()
     {
-        EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
     }
 
     //////////////////////////////////////////
@@ -111,6 +112,8 @@ namespace Maze
 
         m_scriptInstance = scriptClass->instantiate();
         MAZE_ERROR_RETURN_VALUE_IF(!m_scriptInstance, false, "Failed to instantiate ScriptableObject with class '%s'", className.str);
+        
+        m_scriptInstance->setPropertyValue(MAZE_HCS("ResourceId"), getResourceId());
 
         setData(_dataBlock);
         return true;
