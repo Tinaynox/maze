@@ -50,6 +50,15 @@ namespace Maze
     
 
     //////////////////////////////////////////
+    struct MAZE_CORE_API EntitySerializationData
+    {
+        EntityPtr entity;
+        Vector<ComponentPtr> components;
+        S32 serializationIndex = -1;
+    };
+
+
+    //////////////////////////////////////////
     // Class EntitySerializationManager
     //
     //////////////////////////////////////////
@@ -132,13 +141,13 @@ namespace Maze
         //////////////////////////////////////////
         void collectEntitiesComponentsMap(
             Set<Entity*> const& _entities,
-            Map<EntityPtr, Vector<ComponentPtr>>& _entityComponents,
+            Vector<EntitySerializationData>& _entityComponents,
             Vector<PrefabInstance*>& _prefabs) const;
 
         //////////////////////////////////////////
         void collectEntityComponentsMap(
             EntityPtr const& _entity,
-            Map<EntityPtr, Vector<ComponentPtr>>& _entityComponents,
+            Vector<EntitySerializationData>& _entityComponents,
             Vector<PrefabInstance*>& _prefabs) const;
 
     protected:
@@ -152,7 +161,7 @@ namespace Maze
 
         //////////////////////////////////////////
         void saveEntitiesToDataBlock(
-            Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
+            Vector<EntitySerializationData> const& _entityComponents,
             Vector<PrefabInstance*> const& _prefabs,
             Map<void*, S32>& _pointerIndices,
             Map<EntityId, S32>& _entityIndices,
@@ -163,7 +172,7 @@ namespace Maze
         void replaceDataBlockEcsIds(
             DataBlock& _dataBlock,
             Map<EntityId, S32> const& _entityIndices,
-            Map<EntityPtr, Vector<ComponentPtr>> const& _entityComponents,
+            Vector<EntitySerializationData> const& _entityComponents,
             Map<void*, S32>& _pointerIndices) const;
 
         //////////////////////////////////////////
@@ -182,7 +191,7 @@ namespace Maze
     protected:
         static EntitySerializationManager* s_instance;
 
-
+        Set<ClassUID> m_componentsToIgnore;
     };
 
 

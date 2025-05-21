@@ -223,9 +223,11 @@ namespace Maze
     void EntitiesInspector::buildEntitiesPropertiesList()
     {
         InspectorManager* inspectorManager = InspectorManager::GetInstancePtr();
+        Vector<ClassUID> const& hiddenComponents = inspectorManager->getHiddenComponents();
 
         UnorderedMap<ComponentId, MetaClass*> componentMetaClasses = EditorToolsHelper::CollectIntersectingComponentMetaClasses(m_entities);
-
+        for (ClassUID componentUID : hiddenComponents)
+            componentMetaClasses.erase(componentUID);
 
         // Ignored components
         componentMetaClasses.erase(ClassInfo<PrefabInstance>::UID());

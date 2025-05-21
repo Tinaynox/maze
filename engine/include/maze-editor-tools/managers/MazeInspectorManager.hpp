@@ -425,6 +425,10 @@ namespace Maze
         //////////////////////////////////////////
         inline Vector<AddComponentCallback> const& getExtraAddComponentCallbacks() const { return m_extraAddComponentCallbacks; }
 
+
+        //////////////////////////////////////////
+        inline Vector<ClassUID> const& getHiddenComponents() const { return m_hiddenComponents; }
+
     public:
 
         //////////////////////////////////////////
@@ -450,6 +454,8 @@ namespace Maze
 
 
         Vector<AddComponentCallback> m_extraAddComponentCallbacks;
+
+        Vector<ClassUID> m_hiddenComponents;
     };
     
 
