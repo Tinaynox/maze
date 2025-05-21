@@ -1618,7 +1618,11 @@ namespace Maze
                 components.push_back(componentData.second);
             }
 
-            _entityComponents.emplace_back(EntitySerializationData{ entity, components });
+            EntitySerializationData data{ entity, components };
+            SerializationIndex* serializationIndex = entity->getComponentRaw<SerializationIndex>();
+            if (serializationIndex)
+                data.serializationIndex = serializationIndex->getSerializationIndex();
+            _entityComponents.emplace_back(data);
         }
     }
 
@@ -1643,7 +1647,11 @@ namespace Maze
                 components.push_back(componentData.second);
             }
 
-            _entityComponents.emplace_back(EntitySerializationData{ entity, components });
+            EntitySerializationData data{ entity, components };
+            SerializationIndex* serializationIndex = entity->getComponentRaw<SerializationIndex>();
+            if (serializationIndex)
+                data.serializationIndex = serializationIndex->getSerializationIndex();
+            _entityComponents.emplace_back(data);
         }
     }
 
