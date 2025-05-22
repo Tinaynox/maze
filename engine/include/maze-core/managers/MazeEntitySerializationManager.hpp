@@ -57,6 +57,13 @@ namespace Maze
         S32 serializationIndex = -1;
     };
 
+    //////////////////////////////////////////
+    struct MAZE_CORE_API PrefabSerializationData
+    {
+        PrefabInstance* prefabInstance = nullptr;
+        S32 serializationIndex = -1;
+    };
+
 
     //////////////////////////////////////////
     // Class EntitySerializationManager
@@ -136,19 +143,19 @@ namespace Maze
         void collectAllChildrenEntity(
             Entity* _entity,
             Vector<EntityPtr>& _entities,
-            Vector<PrefabInstance*>& _prefabInstances) const;
+            Vector<PrefabSerializationData>& _prefabInstances) const;
 
         //////////////////////////////////////////
         void collectEntitiesComponentsMap(
             Set<Entity*> const& _entities,
             Vector<EntitySerializationData>& _entityComponents,
-            Vector<PrefabInstance*>& _prefabs) const;
+            Vector<PrefabSerializationData>& _prefabs) const;
 
         //////////////////////////////////////////
         void collectEntityComponentsMap(
             EntityPtr const& _entity,
             Vector<EntitySerializationData>& _entityComponents,
-            Vector<PrefabInstance*>& _prefabs) const;
+            Vector<PrefabSerializationData>& _prefabs) const;
 
     protected:
 
@@ -162,7 +169,7 @@ namespace Maze
         //////////////////////////////////////////
         void saveEntitiesToDataBlock(
             Vector<EntitySerializationData> const& _entityComponents,
-            Vector<PrefabInstance*> const& _prefabs,
+            Vector<PrefabSerializationData> const& _prefabs,
             Map<void*, S32>& _pointerIndices,
             Map<EntityId, S32>& _entityIndices,
             Map<AssetUnitId, EntityPtr>& _identityPrefabs,

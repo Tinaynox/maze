@@ -98,31 +98,55 @@ namespace Maze
     //////////////////////////////////////////
     void PrepareEntitiesToSerialize(
         Vector<EntitySerializationData>& _entityComponents,
-        Vector<PrefabInstance*> const& _prefabs,
+        Vector<PrefabSerializationData>& _prefabs,
         Map<void*, S32>& _outPointerIndices,
         Map<EntityId, S32>& _outEntityIndices,
         Map<AssetUnitId, EntityPtr>& _outIdentityPrefabs,
         EcsWorldPtr& _outIdentityPrefabsWorld)
     {
-        S32 maxSerializationIndex = 0;
-        for (EntitySerializationData const& entityData : _entityComponents)
-        {
-            if (entityData.serializationIndex > maxSerializationIndex)
-                maxSerializationIndex = entityData.serializationIndex;
-        }
-
-        for (EntitySerializationData& entityData : _entityComponents)
-        {
-            if (entityData.serializationIndex == -1)
-                entityData.serializationIndex = ++maxSerializationIndex;
-        }
-
         // Sort entities
-        std::sort(_entityComponents.begin(), _entityComponents.end(),
-            [](EntitySerializationData const& _first, EntitySerializationData const& _second)
         {
-            return _first.serializationIndex < _second.serializationIndex;
-        });
+            S32 maxSerializationIndex = 0;
+            for (EntitySerializationData const& entityData : _entityComponents)
+            {
+                if (entityData.serializationIndex > maxSerializationIndex)
+                    maxSerializationIndex = entityData.serializationIndex;
+            }
+
+            for (EntitySerializationData& entityData : _entityComponents)
+            {
+                if (entityData.serializationIndex == -1)
+                    entityData.serializationIndex = ++maxSerializationIndex;
+            }
+            
+            std::sort(_entityComponents.begin(), _entityComponents.end(),
+                [](EntitySerializationData const& _first, EntitySerializationData const& _second)
+                {
+                    return _first.serializationIndex < _second.serializationIndex;
+                });
+        }
+
+        // Sort prefabs
+        {
+            S32 maxSerializationIndex = 0;
+            for (PrefabSerializationData const& prefabData : _prefabs)
+            {
+                if (prefabData.serializationIndex > maxSerializationIndex)
+                    maxSerializationIndex = prefabData.serializationIndex;
+            }
+
+            for (PrefabSerializationData& prefabData : _prefabs)
+            {
+                if (prefabData.serializationIndex == -1)
+                    prefabData.serializationIndex = ++maxSerializationIndex;
+            }
+
+            std::sort(_prefabs.begin(), _prefabs.end(),
+                [](PrefabSerializationData const& _first, PrefabSerializationData const& _second)
+                {
+                    return _first.serializationIndex < _second.serializationIndex;
+                });
+        }
 
         S32 indexCounter = 0;
 
@@ -144,8 +168,10 @@ namespace Maze
                 MAZE_HS("PrefabSerialization"),
                 false);
 
-        for (PrefabInstance* prefabInstance : _prefabs)
+        for (auto& prefabInstanceData : _prefabs)
         {
+            PrefabInstance* prefabInstance = prefabInstanceData.prefabInstance;
+
             S32 entityIndex = ++indexCounter;
             _outPointerIndices[prefabInstance->getEntityRaw()] = entityIndex;
             _outEntityIndices[prefabInstance->getEntityId()] = entityIndex;
@@ -176,7 +202,7 @@ namespace Maze
     //////////////////////////////////////////
     void EntitySerializationManager::saveEntitiesToDataBlock(
         Vector<EntitySerializationData> const& _entityComponents,
-        Vector<PrefabInstance*> const& _prefabs,
+        Vector<PrefabSerializationData> const& _prefabs,
         Map<void*, S32>& _pointerIndices,
         Map<EntityId, S32>& _entityIndices,
         Map<AssetUnitId, EntityPtr>& _identityPrefabs,
@@ -313,8 +339,10 @@ namespace Maze
         }
 
         // Prefabs
-        for (PrefabInstance* prefabInstance : _prefabs)
+        for (auto& prefabInstanceData : _prefabs)
         {
+            PrefabInstance* prefabInstance = prefabInstanceData.prefabInstance;
+
             EntityPtr const& prefabEntity = prefabInstance->getEntity();
             EntityPtr const& identityPrefabEntity = _identityPrefabs[prefabInstance->getAssetUnitId()];
 
@@ -328,6 +356,7 @@ namespace Maze
 
             DataBlock* entityBlock = _dataBlock.addNewDataBlock(MAZE_HCS("prefabInstance"));
             entityBlock->setS32(MAZE_HCS("_i"), _pointerIndices[prefabEntity.get()]);
+            entityBlock->setS32(MAZE_HCS("_s"), prefabInstanceData.serializationIndex);
             entityBlock->setU32(MAZE_HCS("source"), (U32)prefabInstance->getAssetUnitId());
 
             if (!prefabEntity->getActiveSelf())
@@ -391,6 +420,9 @@ namespace Maze
                 }
                 else
                 {
+                    if (m_componentsToIgnore.count(componentData.first) > 0)
+                        continue;
+
                     saveComponentFunc(componentData.second, *entityBlock);
                 }
             }
@@ -498,7 +530,7 @@ namespace Maze
     bool EntitySerializationManager::saveEntitiesToDataBlock(Set<Entity*> const& _entities, DataBlock& _dataBlock) const
     {
         Vector<EntitySerializationData> entityComponents;
-        Vector<PrefabInstance*> prefabs;
+        Vector<PrefabSerializationData> prefabs;
         collectEntitiesComponentsMap(_entities, entityComponents, prefabs);
 
        
@@ -522,7 +554,7 @@ namespace Maze
     bool EntitySerializationManager::savePrefabToDataBlock(EntityPtr const& _entity, DataBlock& _dataBlock) const
     {
         Vector<EntitySerializationData> entityComponents;
-        Vector<PrefabInstance*> prefabs;
+        Vector<PrefabSerializationData> prefabs;
         collectEntityComponentsMap(_entity, entityComponents, prefabs);
 
 
@@ -1558,11 +1590,18 @@ namespace Maze
     void EntitySerializationManager::collectAllChildrenEntity(
         Entity* _entity,
         Vector<EntityPtr>& _entities,
-        Vector<PrefabInstance*>& _prefabInstances) const
+        Vector<PrefabSerializationData>& _prefabInstances) const
     {
         if (PrefabInstance* prefabInstance = _entity->getComponentRaw<PrefabInstance>())
         {
-            _prefabInstances.emplace_back(prefabInstance);
+            PrefabSerializationData data;
+            data.prefabInstance = prefabInstance;
+
+            SerializationIndex* serializationIndex = _entity->getComponentRaw<SerializationIndex>();
+            if (serializationIndex)
+                data.serializationIndex = serializationIndex->getSerializationIndex();
+
+            _prefabInstances.emplace_back(data);
             return;
         }
         else
@@ -1593,7 +1632,8 @@ namespace Maze
     void EntitySerializationManager::collectEntitiesComponentsMap(
         Set<Entity*> const& _entities,
         Vector<EntitySerializationData>& _entityComponents,
-        Vector<PrefabInstance*>& _prefabs) const
+        Vector<PrefabSerializationData>& _prefabs
+    ) const
     {
         Vector<EntityPtr> entities;
 
@@ -1630,7 +1670,7 @@ namespace Maze
     void EntitySerializationManager::collectEntityComponentsMap(
         EntityPtr const& _entity,
         Vector<EntitySerializationData>& _entityComponents,
-        Vector<PrefabInstance*>& _prefabs) const
+        Vector<PrefabSerializationData>& _prefabs) const
     {
         Vector<EntityPtr> entities;
 
