@@ -48,18 +48,30 @@ namespace Maze
         EcsAssetScenePtr scene;
 
         Char* sceneName = mono_string_to_utf8(_sceneName);
+
+        Debug::Log("Loading asset scene: %s", sceneName);
+
         if (_renderTargetId == -1)
         {
-            scene = Engine::GetInstancePtr()->loadAssetScene(sceneName, _additive, EcsWorldId(_ecsWorldId));
+            scene = Engine::GetInstancePtr()->loadAssetScene(
+                sceneName,
+                _additive,
+                EcsWorldId(_ecsWorldId));
         }
         else
         {
             if (RenderTarget* renderTarget = RenderWindow::GetResource(_renderTargetId))
+            {
                 scene = Engine::GetInstancePtr()->loadAssetScene(
                     sceneName,
                     renderTarget->getSharedPtr(),
                     _additive,
                     EcsWorldId(_ecsWorldId));
+            }
+            else
+            {
+                MAZE_ERROR("Render target with id=%d is not found! (sceneName='%s')", _renderTargetId, sceneName);
+            }
         }
         mono_free(sceneName);
 

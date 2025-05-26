@@ -393,7 +393,10 @@ namespace Maze
     {
         AssetFilePtr const& file = AssetManager::GetInstancePtr()->getAssetFile(_sceneName);
         if (!file)
+        {
+            Debug::LogError("Scene asset file is not found: '%s'!", _sceneName.toUTF8().c_str());
             return nullptr;
+        }
 
         DataBlock dataBlock = file->readAsDataBlock();
 
@@ -416,7 +419,10 @@ namespace Maze
         if (!EntitySerializationManager::GetInstancePtr()->loadSceneFromDataBlock(
             scene,
             dataBlock))
+        {
+            MAZE_ERROR("Failed to load asset scene: '%s'!", _sceneName.toUTF8().c_str());
             return nullptr;
+        }
 
         SceneManager::GetInstancePtr()->loadScene(scene, _additive);
 
