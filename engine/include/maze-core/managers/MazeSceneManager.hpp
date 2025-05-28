@@ -110,6 +110,21 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <class TScene>
+        inline void destroyNotSystemScenes()
+        {
+            ClassUID sceneUID = ClassInfo<TScene>::UID();
+
+            for (Size i = 0; i < m_scenes.size(); ++i)
+            {
+                if (!m_scenes[i].scene || m_scenes[i].scene->getIsSystemScene() || m_scenes[i].scene->getClassUID() != sceneUID)
+                    continue;
+
+                destroyScene(m_scenes[i].scene);
+            }
+        }
+
+        //////////////////////////////////////////
         template <class TScene, typename ...TArgs>
         inline SharedPtr<TScene> loadScene(
             bool _additive,

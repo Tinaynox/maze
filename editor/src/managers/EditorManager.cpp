@@ -365,6 +365,11 @@ namespace Maze
 
         m_playtestModeEnabled = _value;
 
+
+        // Destroy asset scenes
+        SceneManager::GetInstancePtr()->destroyNotSystemScenes<EcsAssetScene>();
+
+
         if (m_playtestModeEnabled)
             m_editorWorkspaceManager->destroyScenes();
         else
