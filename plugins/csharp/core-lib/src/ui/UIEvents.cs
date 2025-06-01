@@ -38,4 +38,14 @@ namespace Maze.UI
     {
         public CursorWheelInputEvent inputEvent;
     }
+
+    public class UIElementFocusedChangedEvent : NativeEvent
+    {
+        public bool focused;
+    }
+
+    public class UIElementPressedChangedEvent : NativeEvent
+    {
+        public bool pressed;
+    }
 }

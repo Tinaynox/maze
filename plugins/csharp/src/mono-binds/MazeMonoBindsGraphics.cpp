@@ -37,6 +37,7 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeAbstractTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeAbstractTextRenderer3D.hpp"
+#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -160,6 +161,27 @@ namespace Maze
         Char* cstr = mono_string_to_utf8(_animationName);
         _component->castRaw<SkinnedMeshRenderer>()->playAnimation(HashedCString(cstr));
         mono_free(cstr);
+    }
+
+    //////////////////////////////////////////
+    inline void SpriteRenderer2DSetMaterial(Component* _component, S32 _resourceId)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SpriteRenderer2D>::UID(), "Component is not SpriteRenderer2D!");
+
+        Material* material = Material::GetResource(_resourceId);
+        _component->castRaw<SpriteRenderer2D>()->setMaterial(material ? material->getSharedPtr() : MaterialPtr());
+    }
+
+    //////////////////////////////////////////
+    inline void SpriteRenderer2DGetMaterial(Component* _component, S32& _outResourceId)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SpriteRenderer2D>::UID(), "Component is not SpriteRenderer2D!");
+
+        MaterialPtr const& material = _component->castRaw<SpriteRenderer2D>()->getMaterial();
+        if (material)
+            _outResourceId = material->getResourceId();
+        else
+            _outResourceId = c_invalidResourceId;
     }
 
     //////////////////////////////////////////
@@ -673,6 +695,10 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererPlayAnimation);
+
+        // SpriteRenderer2D
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DSetMaterial);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DGetMaterial);
 
         // Camera3D
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DGetOrthographicSize);

@@ -384,6 +384,7 @@ namespace Maze
         m_focused = _focused;
 
         eventFocusChanged(m_focused);
+        getEntityRaw()->getEcsWorld()->sendEvent<UIElementFocusedChangedEvent>(getEntityId(), m_focused);
 
         if (!m_focused)
         {
@@ -403,6 +404,7 @@ namespace Maze
         m_pressed = _pressed;
 
         eventPressedChanged(m_pressed);
+        getEntityRaw()->getEcsWorld()->sendEvent<UIElementPressedChangedEvent>(getEntityId(), m_pressed);
     }
     
 

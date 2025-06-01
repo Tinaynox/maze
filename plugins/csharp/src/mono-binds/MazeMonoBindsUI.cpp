@@ -30,6 +30,7 @@
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-core/assets/MazeAssetUnitId.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
+#include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 
 
 
@@ -38,9 +39,57 @@ namespace Maze
 {
 
     //////////////////////////////////////////
+    inline void UIElement2DSetFlags(Component* _component, S32 _flags)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UIElement2D>::UID(), "Component is not UIElement2D!");
+        _component->castRaw<UIElement2D>()->setFlags(_flags);
+    }
+
+    //////////////////////////////////////////
+    inline void UIElement2DGetFlags(Component* _component, S32& _outFlags)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UIElement2D>::UID(), "Component is not UIElement2D!");
+        _outFlags = _component->castRaw<UIElement2D>()->getFlags();
+    }
+
+    //////////////////////////////////////////
+    inline void UIElement2DSetFocused(Component* _component, bool _value)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UIElement2D>::UID(), "Component is not UIElement2D!");
+        _component->castRaw<UIElement2D>()->setFocused(_value);
+    }
+
+    //////////////////////////////////////////
+    inline void UIElement2DGetFocused(Component* _component, bool& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UIElement2D>::UID(), "Component is not UIElement2D!");
+        _outValue = _component->castRaw<UIElement2D>()->getFocused();
+    }
+
+    //////////////////////////////////////////
+    inline void UIElement2DSetPressed(Component* _component, bool _value)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UIElement2D>::UID(), "Component is not UIElement2D!");
+        _component->castRaw<UIElement2D>()->setPressed(_value);
+    }
+
+    //////////////////////////////////////////
+    inline void UIElement2DGetPressed(Component* _component, bool& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UIElement2D>::UID(), "Component is not UIElement2D!");
+        _outValue = _component->castRaw<UIElement2D>()->getPressed();
+    }
+
+    //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsUI()
     {
-        
+        // UIElement2D
+        MAZE_UI_MONO_BIND_FUNC(UIElement2DSetFlags);
+        MAZE_UI_MONO_BIND_FUNC(UIElement2DGetFlags);
+        MAZE_UI_MONO_BIND_FUNC(UIElement2DSetFocused);
+        MAZE_UI_MONO_BIND_FUNC(UIElement2DGetFocused);
+        MAZE_UI_MONO_BIND_FUNC(UIElement2DSetPressed);
+        MAZE_UI_MONO_BIND_FUNC(UIElement2DGetPressed);
     }
 
 } // namespace Maze

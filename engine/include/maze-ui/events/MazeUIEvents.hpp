@@ -455,6 +455,72 @@ namespace Maze
     public:
         CursorWheelInputEvent inputEvent;
     };
+
+
+    //////////////////////////////////////////
+    // Class UIElementFocusedChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UIElementFocusedChangedEvent
+        : public GenericEvent<UIElementFocusedChangedEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UIElementFocusedChangedEvent, Event);
+
+
+        //////////////////////////////////////////
+        UIElementFocusedChangedEvent() = default;
+
+        //////////////////////////////////////////
+        UIElementFocusedChangedEvent(
+            bool _value)
+            : focused(_value)
+        {}
+
+        //////////////////////////////////////////
+        inline bool getFocused() const { return focused; }
+
+        //////////////////////////////////////////
+        inline void setFocused(bool _value) { focused = _value; }
+
+    public:
+        bool focused = false;
+    };
+
+
+    //////////////////////////////////////////
+    // Class UIElementPressedChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UIElementPressedChangedEvent
+        : public GenericEvent<UIElementPressedChangedEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UIElementPressedChangedEvent, Event);
+
+
+        //////////////////////////////////////////
+        UIElementPressedChangedEvent() = default;
+
+        //////////////////////////////////////////
+        UIElementPressedChangedEvent(
+            bool _value)
+            : pressed(_value)
+        {}
+
+        //////////////////////////////////////////
+        inline bool getPressed() const { return pressed; }
+
+        //////////////////////////////////////////
+        inline void setPressed(bool _value) { pressed = _value; }
+
+    public:
+        bool pressed = false;
+    };
     
 } // namespace Maze
 //////////////////////////////////////////

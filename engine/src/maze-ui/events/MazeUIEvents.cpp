@@ -80,5 +80,13 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementWheelEvent, Event,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(CursorWheelInputEvent, inputEvent, CursorWheelInputEvent(), getInputEvent, setInputEvent));
 
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementFocusedChangedEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, focused, false, getFocused, setFocused));
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UIElementPressedChangedEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, pressed, false, getPressed, setPressed));
+
 } // namespace Maze
 //////////////////////////////////////////

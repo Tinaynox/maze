@@ -40,6 +40,15 @@ namespace Maze.Graphics
         public extern static void SkinnedMeshRendererPlayAnimation(NativePtr nativeComponentPtr, string animationName);
         #endregion
 
+        #region SpriteRenderer2D
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SpriteRenderer2DSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SpriteRenderer2DGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
+        #endregion
+
+
         #region Camera3D
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Camera3DGetAspectRatio(NativePtr nativeComponentPtr, out float outValue);
