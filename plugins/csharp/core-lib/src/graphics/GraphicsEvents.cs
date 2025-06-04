@@ -7,4 +7,6 @@ namespace Maze.Graphics
     {
         public int renderWindowResourceId;
     }
+
+    public class SpriteRenderer2DMaterialUpdatedEvent : NativeEvent { }
 }

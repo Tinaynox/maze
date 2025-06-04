@@ -101,6 +101,19 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    MAZE_CORE_API void SendEvent(EcsWorld* _ecsWorld, EntityId _id, EventPtr const& _event)
+    {
+        _ecsWorld->sendEvent(_id, _event);
+    }
+
+    //////////////////////////////////////////
+    MAZE_CORE_API void SendEventImmediate(EcsWorld* _ecsWorld, EntityId _id, Event* _event)
+    {
+        _ecsWorld->sendEventImmediate(_id, _event);
+    }
+
+
+    //////////////////////////////////////////
     bool AddSystemEventHandler(
         Vector<ComponentSystemEventHandlerPtr>& _eventHandlers,
         ComponentSystemEventHandlerPtr const& _system,

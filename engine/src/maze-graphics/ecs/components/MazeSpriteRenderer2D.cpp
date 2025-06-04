@@ -237,6 +237,8 @@ namespace Maze
 
         m_meshRenderer->setMaterial(getMaterial());
 
+        disableFlag(SpriteRenderer2D::Flags::MaterialDirty);
+
         if (getMaterial())
         {
             Texture2DPtr texture;
@@ -258,9 +260,10 @@ namespace Maze
                 getMaterial()->setUniform(MAZE_HCS("u_baseMap"), texture);
                 getMaterial()->setUniform(MAZE_HCS("u_baseMapTexelSize"), 1.0f / (Vec2F)texture->getSize());
             }
-        }
 
-        disableFlag(SpriteRenderer2D::Flags::MaterialDirty);
+            if (getEntityRaw() && getEntityRaw()->getEcsWorld())
+                getEntityRaw()->sendEventImmediate<SpriteRenderer2DMaterialUpdatedEvent>();
+        }        
     }
 
     //////////////////////////////////////////

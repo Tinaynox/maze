@@ -217,7 +217,9 @@ namespace Maze
                                     MakeShared<CustomComponentSystemHolder>(
                                         systemName,
                                         ClassInfo<EntityAddedEvent>::UID(),
-                                        [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                        [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(
+                                            componentId,
+                                            (U8)EntitiesSampleFlags::IncludeInactive); },
                                         (ComponentSystemEventHandler::Func)&MonoBehaviourOnCreate,
                                         _systemTags,
                                         systemOrder));
@@ -264,7 +266,9 @@ namespace Maze
                                     MakeShared<CustomComponentSystemHolder>(
                                         systemName,
                                         ClassInfo<EntityRemovedEvent>::UID(),
-                                        [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(componentId); },
+                                        [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(
+                                            componentId,
+                                            (U8)EntitiesSampleFlags::IncludeInactive); },
                                         (ComponentSystemEventHandler::Func)&MonoBehaviourOnDestroy,
                                         _systemTags,
                                         systemOrder));

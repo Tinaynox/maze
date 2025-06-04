@@ -506,6 +506,10 @@ namespace Maze
                     if (!entity->getActiveInHierarchy() || entity->getAdding() || entity->getRemoving())
                         return;
 
+                    // #TODO: Rework (to execute after Render2DPostUpdateEvent call)
+                    if (!entity->getActiveInHierarchyPrevFrame())
+                        return;
+
                     if (_transform->getParent())
                     {
                         Canvas* canvas = entity->getComponentRaw<Canvas>();

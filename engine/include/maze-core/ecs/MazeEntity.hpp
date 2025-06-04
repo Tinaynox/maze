@@ -52,6 +52,13 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    extern void SendEvent(EcsWorld* _ecsWorld, EntityId _id, EventPtr const& _event);
+
+    //////////////////////////////////////////
+    extern void SendEventImmediate(EcsWorld* _ecsWorld, EntityId _id, Event* _event);
+
+
+    //////////////////////////////////////////
     // Class Entity
     //
     //////////////////////////////////////////
@@ -296,6 +303,29 @@ namespace Maze
             return addComponent(TComponent::Create(_args...))->template cast<TComponent>();
         }
 
+
+        //////////////////////////////////////////
+        template <typename TEvent, typename ...TArgs>
+        inline void sendEvent(TArgs... _args)
+        {
+            if (getEcsWorld())
+            {
+                SharedPtr<TEvent> evt = MakeShared<TEvent>(_args...);
+                SendEvent(getEcsWorld(), getId(), evt);
+            }
+        }
+
+        //////////////////////////////////////////
+        template <typename TEvent, typename ...TArgs>
+        inline void sendEventImmediate(TArgs... _args)
+        {
+            if (getEcsWorld())
+            {
+                TEvent evt(_args...);
+                SendEventImmediate(getEcsWorld(), getId(), &evt);
+            }
+        }
+
         
         //////////////////////////////////////////
         inline bool getTransitionFlag(TransitionFlags flag) const { return (m_transitionFlags & static_cast<U8>(flag)) != 0; }
@@ -345,6 +375,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool getActiveInHierarchy() const { return getFlag(Flags::ActiveSelf) && !getFlag(Flags::DisabledByHierarchy); }
+
+        //////////////////////////////////////////
+        inline bool getActiveInHierarchyPrevFrame() const { return getFlag(Flags::ActiveInHierarchyPrevFrame); }
 
 
         //////////////////////////////////////////
@@ -424,8 +457,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void setActiveInHierarchyPrevFrame(bool _active) { setFlag(Flags::ActiveInHierarchyPrevFrame, _active); }
 
-        //////////////////////////////////////////
-        inline bool getActiveInHierarchyPrevFrame() const { return getFlag(Flags::ActiveInHierarchyPrevFrame); }
+        
 
     protected:
         EcsWorld* m_world = nullptr;

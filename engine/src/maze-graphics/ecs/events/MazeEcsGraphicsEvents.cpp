@@ -49,6 +49,9 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Render2DPostUpdateEvent, Event);
     
 
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_SIMPLE_GENERIC_EVENT(SpriteRenderer2DMaterialUpdatedEvent);
+
     
 } // namespace Maze
 //////////////////////////////////////////

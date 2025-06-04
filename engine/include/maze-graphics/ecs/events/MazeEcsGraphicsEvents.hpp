@@ -363,6 +363,10 @@ namespace Maze
         F32 m_dt = 0.0f;
     };
 
+
+    //////////////////////////////////////////
+    MAZE_DECLARE_SIMPLE_GENERIC_EVENT_API(MAZE_GRAPHICS_API, SpriteRenderer2DMaterialUpdatedEvent);
+
 } // namespace Maze
 //////////////////////////////////////////
 

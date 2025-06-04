@@ -74,6 +74,13 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    MAZE_CORE_API void SendEvent(EcsWorld* _ecsWorld, EntityId _id, EventPtr const& _event);
+
+    //////////////////////////////////////////
+    MAZE_CORE_API void SendEventImmediate(EcsWorld* _ecsWorld, EntityId _id, Event* _event);
+
+
+    //////////////////////////////////////////
     // Class EcsWorld
     //
     //////////////////////////////////////////
