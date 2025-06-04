@@ -503,11 +503,7 @@ namespace Maze
                 [&](Transform2D* _transform)
                 {
                     Entity* entity = _transform->getEntityRaw();
-                    if (!entity->getActiveInHierarchy() || entity->getAdding() || entity->getRemoving())
-                        return;
-
-                    // #TODO: Rework (to execute after Render2DPostUpdateEvent call)
-                    if (!entity->getActiveInHierarchyPrevFrame())
+                    if (!entity->getActiveInHierarchyPrevFrame() || entity->getAdding() || entity->getRemoving())
                         return;
 
                     if (_transform->getParent())
