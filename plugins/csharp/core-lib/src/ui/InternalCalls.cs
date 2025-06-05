@@ -26,5 +26,34 @@ namespace Maze.UI
         public extern static void UIElement2DGetPressed(NativePtr nativeComponentPtr, out bool outValue);
         #endregion
 
+        #region UITweenTransitionAlpha
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionAlphaSetHidden(NativePtr nativeComponentPtr, bool value, bool resetProgress = false);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionAlphaGetHidden(NativePtr nativeComponentPtr, out bool outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionAlphaAddDelayTimer(NativePtr nativeComponentPtr, float value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionAlphaSetDelayTimer(NativePtr nativeComponentPtr, float value);
+        #endregion
+
+        #region UITweenTransitionScale
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionScaleSetHidden(NativePtr nativeComponentPtr, bool value, bool resetProgress = false);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionScaleGetHidden(NativePtr nativeComponentPtr, out bool outValue);
+        #endregion
+
+        #region UITweenTransitionTranslation
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionTranslationSetHidden(NativePtr nativeComponentPtr, bool value, bool resetProgress = false);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionTranslationGetHidden(NativePtr nativeComponentPtr, out bool outValue);
+        #endregion
     }
 }

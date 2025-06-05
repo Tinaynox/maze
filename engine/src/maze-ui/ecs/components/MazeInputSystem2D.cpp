@@ -375,7 +375,7 @@ namespace Maze
         m_canvasesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Canvas>();
         m_canvasesSample->eventEntityAdded.subscribe(this, &InputSystem2D::processCanvasEntityAdded);
         m_canvasesSample->eventEntityRemoved.subscribe(this, &InputSystem2D::processCanvasEntityRemoved);
-        updateSortedCanvasesList();
+        dirtySortedCanvasData();
 
         m_canvasScalersSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<CanvasScaler>();
 
@@ -1199,6 +1199,17 @@ namespace Maze
         m_sortedCanvasDataDirty = false;
     }
     
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(InputSystem2DSystemOnAdded,
+        {},
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        InputSystem2D* _inputSystem2D)
+    {
+        _inputSystem2D->dirtySortedCanvasData();
+    }
 
 
     //////////////////////////////////////////

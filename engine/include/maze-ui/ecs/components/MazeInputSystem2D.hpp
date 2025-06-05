@@ -162,6 +162,12 @@ namespace Maze
             Vec2F const& _renderTargetCoords,
             CursorElementTraceParams const& _traceParams = CursorElementTraceParams());
 
+        //////////////////////////////////////////
+        void updateSortedCanvasesList();
+
+        //////////////////////////////////////////
+        inline void dirtySortedCanvasData() { m_sortedCanvasDataDirty = true; }
+
     protected:
 
         //////////////////////////////////////////
@@ -178,9 +184,6 @@ namespace Maze
 
         //////////////////////////////////////////
         void processCanvasEntityRemoved(Entity* _entity);
-
-        //////////////////////////////////////////
-        void updateSortedCanvasesList();
 
         //////////////////////////////////////////
         void notifyMouse(InputEventMouseData const& _mouseData);

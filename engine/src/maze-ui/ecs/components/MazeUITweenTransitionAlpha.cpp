@@ -145,6 +145,12 @@ namespace Maze
         if (m_unscaledDeltaTime)
             _dt = UpdateManager::GetInstancePtr()->getUnscaledDeltaTime();
 
+        if (m_delayTimer > 0.0f)
+        {
+            m_delayTimer -= _dt;
+            return;
+        }
+
         if (m_isHidden && m_hidingProgress < 1.0f)
         {
             m_hidingProgress += _dt * m_hideSpeed;

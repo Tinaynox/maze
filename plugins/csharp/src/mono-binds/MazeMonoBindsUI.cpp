@@ -31,7 +31,9 @@
 #include "maze-core/assets/MazeAssetUnitId.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
-
+#include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
+#include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "maze-ui/ecs/components/MazeUITweenTransitionTranslation.hpp"
 
 
 //////////////////////////////////////////
@@ -80,6 +82,66 @@ namespace Maze
         _outValue = _component->castRaw<UIElement2D>()->getPressed();
     }
 
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionAlphaSetHidden(Component* _component, bool _value, bool _resetProgress)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        _component->castRaw<UITweenTransitionAlpha>()->setHidden(_value, _resetProgress);
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionAlphaGetHidden(Component* _component, bool& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        _outValue = _component->castRaw<UITweenTransitionAlpha>()->getHidden();
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionAlphaAddDelayTimer(Component* _component, F32 _time)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        _component->castRaw<UITweenTransitionAlpha>()->addDelayTimer(_time);
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionAlphaSetDelayTimer(Component* _component, F32 _time)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        _component->castRaw<UITweenTransitionAlpha>()->setDelayTimer(_time);
+    }
+
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionScaleSetHidden(Component* _component, bool _value, bool _resetProgress)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionScale>::UID(), "Component is not UITweenTransitionScale!");
+        _component->castRaw<UITweenTransitionScale>()->setHidden(_value, _resetProgress);
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionScaleGetHidden(Component* _component, bool& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionScale>::UID(), "Component is not UITweenTransitionScale!");
+        _outValue = _component->castRaw<UITweenTransitionScale>()->getHidden();
+    }
+
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionTranslationSetHidden(Component* _component, bool _value, bool _resetProgress)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        _component->castRaw<UITweenTransitionTranslation>()->setHidden(_value, _resetProgress);
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionTranslationGetHidden(Component* _component, bool& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        _outValue = _component->castRaw<UITweenTransitionTranslation>()->getHidden();
+    }
+
+
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsUI()
     {
@@ -90,6 +152,20 @@ namespace Maze
         MAZE_UI_MONO_BIND_FUNC(UIElement2DGetFocused);
         MAZE_UI_MONO_BIND_FUNC(UIElement2DSetPressed);
         MAZE_UI_MONO_BIND_FUNC(UIElement2DGetPressed);
+
+        // UITweenTransitionAlpha
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaSetHidden);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaGetHidden);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaAddDelayTimer);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaSetDelayTimer);
+
+        // UITweenTransitionScale
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionScaleSetHidden);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionScaleGetHidden);
+
+        // UITweenTransitionTranslation
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationSetHidden);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationGetHidden);
     }
 
 } // namespace Maze

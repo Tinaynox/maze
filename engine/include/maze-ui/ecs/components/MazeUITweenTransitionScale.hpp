@@ -122,6 +122,9 @@ namespace Maze
         //////////////////////////////////////////
         void setHidden(bool _isHidden, bool _resetProgress = false);
 
+        //////////////////////////////////////////
+        inline bool getHidden() const { return m_isHidden; }
+
 
         //////////////////////////////////////////
         void setShowTime(F32 _showTime);

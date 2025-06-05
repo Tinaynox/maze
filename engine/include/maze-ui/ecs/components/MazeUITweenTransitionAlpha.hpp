@@ -108,6 +108,9 @@ namespace Maze
         //////////////////////////////////////////
         void setHidden(bool _isHidden, bool _resetProgress = false);
 
+        //////////////////////////////////////////
+        inline bool getHidden() const { return m_isHidden; }
+
 
         //////////////////////////////////////////
         inline void setHideKoef(F32 _value) { m_hideKoef = _value; updateHideSpeed(); }
@@ -167,6 +170,14 @@ namespace Maze
         //////////////////////////////////////////
         void updateCanvasGroup();
 
+
+
+        //////////////////////////////////////////
+        void addDelayTimer(F32 _time) { m_delayTimer += _time; }
+
+        //////////////////////////////////////////
+        void setDelayTimer(F32 _time) { m_delayTimer = _time; }
+
     public:
 
         MultiDelegate<UITweenTransitionAlpha*> eventShowComplete;
@@ -209,6 +220,8 @@ namespace Maze
         F32 m_hidingProgress;
         F32 m_showSpeed;
         F32 m_hideSpeed;
+
+        F32 m_delayTimer = 0.0f;
 
         Delegate<void> m_onShowComplete;
         Delegate<void> m_onHideComplete;
