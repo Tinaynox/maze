@@ -50,7 +50,8 @@ namespace Maze
     //////////////////////////////////////////
     GraphicsEventRetranslator::~GraphicsEventRetranslator()
     {
-
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->unsubscribeEvent<RenderWindowWillCloseEvent>(this);
     }
 
     //////////////////////////////////////////

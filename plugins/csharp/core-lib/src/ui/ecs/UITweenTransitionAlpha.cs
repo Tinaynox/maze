@@ -15,6 +15,18 @@ namespace Maze.UI
             set { InternalCalls.UITweenTransitionAlphaSetHidden(NativeComponentPtr, value); }
         }
 
+        public float ShowTime
+        {
+            get { InternalCalls.UITweenTransitionAlphaGetShowTime(NativeComponentPtr, out float value); return value; }
+            set { InternalCalls.UITweenTransitionAlphaSetShowTime(NativeComponentPtr, value); }
+        }
+
+        public float HideKoef
+        {
+            get { InternalCalls.UITweenTransitionAlphaGetHideKoef(NativeComponentPtr, out float value); return value; }
+            set { InternalCalls.UITweenTransitionAlphaSetHideKoef(NativeComponentPtr, value); }
+        }
+
         public void SetHidden(bool value, bool resetProgress = false) => InternalCalls.UITweenTransitionAlphaSetHidden(NativeComponentPtr, value, resetProgress);
 
         public void AddDelayTimer(float time) => InternalCalls.UITweenTransitionAlphaAddDelayTimer(NativeComponentPtr, time);

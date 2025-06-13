@@ -111,6 +111,34 @@ namespace Maze
         _component->castRaw<UITweenTransitionAlpha>()->setDelayTimer(_time);
     }
 
+    //////////////////////////////////////////
+    inline void UITweenTransitionAlphaSetShowTime(Component* _component, F32 _value)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        _component->castRaw<UITweenTransitionAlpha>()->setShowTime(_value);
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionAlphaGetShowTime(Component* _component, F32& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        _outValue = _component->castRaw<UITweenTransitionAlpha>()->getShowTime();
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionAlphaSetHideKoef(Component* _component, F32 _value)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        _component->castRaw<UITweenTransitionAlpha>()->setHideKoef(_value);
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionAlphaGetHideKoef(Component* _component, F32& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        _outValue = _component->castRaw<UITweenTransitionAlpha>()->getHideKoef();
+    }
+
 
     //////////////////////////////////////////
     inline void UITweenTransitionScaleSetHidden(Component* _component, bool _value, bool _resetProgress)
@@ -158,6 +186,10 @@ namespace Maze
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaGetHidden);
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaAddDelayTimer);
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaSetDelayTimer);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaSetShowTime);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaGetShowTime);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaSetHideKoef);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaGetHideKoef);
 
         // UITweenTransitionScale
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionScaleSetHidden);

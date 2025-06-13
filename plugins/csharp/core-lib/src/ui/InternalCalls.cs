@@ -38,6 +38,18 @@ namespace Maze.UI
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void UITweenTransitionAlphaSetDelayTimer(NativePtr nativeComponentPtr, float value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionAlphaSetShowTime(NativePtr nativeComponentPtr, float value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionAlphaGetShowTime(NativePtr nativeComponentPtr, out float outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionAlphaSetHideKoef(NativePtr nativeComponentPtr, float value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionAlphaGetHideKoef(NativePtr nativeComponentPtr, out float outValue);
         #endregion
 
         #region UITweenTransitionScale

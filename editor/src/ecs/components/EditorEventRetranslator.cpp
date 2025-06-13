@@ -52,7 +52,8 @@ namespace Maze
     //////////////////////////////////////////
     EditorEventRetranslator::~EditorEventRetranslator()
     {
-
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->unsubscribeEvent<PlaytestModeEnabledChangedEvent>(this);
     }
 
     //////////////////////////////////////////

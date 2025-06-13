@@ -41,6 +41,14 @@ namespace Maze.Core
             return EcsUtils.CreateComponent(NativeComponentPtr, componentType);
         }
 
+        public T EnsureComponent<T>() where T : class
+        {
+            T cmp = GetComponent<T>();
+            if (cmp != null)
+                return cmp;
+            return CreateComponent<T>();
+        }
+
         public EcsScene GetScene()
         {
             return new EcsScene(InternalCalls.ComponentGetSceneId(NativeComponentPtr));
