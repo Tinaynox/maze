@@ -229,8 +229,14 @@ namespace Maze
     {
         if (_texture)
         {
-            MAZE_ERROR_RETURN_IF(_texture->getType() != TextureType::TwoDimensional, "DepthTexture type is not TwoDimensional!");
-            MAZE_ERROR_RETURN_IF(_texture->castRaw<Texture2D>()->getInternalPixelFormat() == PixelFormat::None, "DepthTexture pixel format is None");
+            MAZE_ERROR_RETURN_IF(
+                _texture->getType() != TextureType::TwoDimensional && _texture->getType() != TextureType::TwoDimensionalMultisample,
+                "DepthTexture type is not TwoDimensional! Texture type is %s",
+                _texture->getType().toCString());
+            MAZE_ERROR_RETURN_IF(
+                (_texture->getType() == TextureType::TwoDimensional && _texture->castRaw<Texture2D>()->getInternalPixelFormat() == PixelFormat::None) ||
+                (_texture->getType() == TextureType::TwoDimensionalMultisample && _texture->castRaw<Texture2DMS>()->getInternalPixelFormat() == PixelFormat::None),
+                "DepthTexture pixel format is None");
         }
 
         m_depthTexture = _texture;
@@ -241,8 +247,14 @@ namespace Maze
     {
         if (_texture)
         {
-            MAZE_ERROR_RETURN_IF(_texture->getType() != TextureType::TwoDimensional, "StencilTexture type is not TwoDimensional!");
-            MAZE_ERROR_RETURN_IF(_texture->castRaw<Texture2D>()->getInternalPixelFormat() == PixelFormat::None, "StencilTexture pixel format is None");
+            MAZE_ERROR_RETURN_IF(
+                _texture->getType() != TextureType::TwoDimensional && _texture->getType() != TextureType::TwoDimensionalMultisample,
+                "StencilTexture type is not TwoDimensional! Texture type is %s",
+                _texture->getType().toCString());
+            MAZE_ERROR_RETURN_IF(
+                (_texture->getType() == TextureType::TwoDimensional && _texture->castRaw<Texture2D>()->getInternalPixelFormat() == PixelFormat::None) ||
+                (_texture->getType() == TextureType::TwoDimensionalMultisample && _texture->castRaw<Texture2DMS>()->getInternalPixelFormat() == PixelFormat::None),
+                "StencilTexture pixel format is None");
         }
 
         m_stencilTexture = _texture;
