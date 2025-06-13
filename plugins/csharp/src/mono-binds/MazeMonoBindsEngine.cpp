@@ -97,6 +97,15 @@ namespace Maze
         return renderWindow->getFocused();
     }
 
+    //////////////////////////////////////////
+    inline S32 GetEngineFrame()
+    {
+        if (!Engine::GetInstancePtr())
+            return -1;
+
+        return Engine::GetInstancePtr()->getFrame();
+    }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsEngine()
@@ -107,6 +116,9 @@ namespace Maze
 
         // Main RenderWindow
         MAZE_ENGINE_MONO_BIND_FUNC(IsEngineMainRenderWindowFocused);
+
+        // Engine
+        MAZE_ENGINE_MONO_BIND_FUNC(GetEngineFrame);
     }
 
 } // namespace Maze

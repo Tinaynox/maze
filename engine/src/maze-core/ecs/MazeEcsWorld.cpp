@@ -490,23 +490,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EcsWorld::addSystemEventHandler(ComponentSystemEventHandlerPtr const& _system)
+    bool EcsWorld::addSystemEventHandler(ComponentSystemEventHandlerPtr const& _system)
     {
         if (!_system)
-            return;
+            return false;
 
         if (!std::includes(
             m_tags.begin(),
             m_tags.end(),
             _system->getTags().begin(),
             _system->getTags().end()))
-            return;
+            return false;
 
         ClassUID eventUID = _system->getEventUID();
         Vector<ComponentSystemEventHandlerPtr>& eventHandlers = m_eventHandlers[eventUID];
         
         if (!AddSystemEventHandler(eventHandlers, _system, true))
-            return;
+            return false;
 
         if (eventUID == ClassInfo<EntityAddedToSampleEvent>::UID())
         {
@@ -519,6 +519,8 @@ namespace Maze
             m_entityRemovedFromSampleEventHandlers.push_back(
                 ComponentSystemEntityRemovedFromSampleEventHandler::Create(this, _system));
         }
+
+        return true;
     }
 
     //////////////////////////////////////////
@@ -534,8 +536,32 @@ namespace Maze
             if (eventHandlers[i] == _system)
             {
                 eventHandlers.erase(eventHandlers.begin() + i);
-                return;
+                break;
             }
+        }
+
+        if (eventUID == ClassInfo<EntityAddedToSampleEvent>::UID())
+        {
+            m_entityAddedToSampleEventHandlers.erase(
+                std::find_if(
+                    m_entityAddedToSampleEventHandlers.begin(),
+                    m_entityAddedToSampleEventHandlers.end(),
+                    [systemRaw = _system.get()](auto const& _val)
+                    {
+                        return systemRaw == _val->getEventHandler().get();
+                    }));
+        }
+        else
+        if (eventUID == ClassInfo<EntityRemovedFromSampleEvent>::UID())
+        {
+            m_entityRemovedFromSampleEventHandlers.erase(
+                std::find_if(
+                    m_entityRemovedFromSampleEventHandlers.begin(),
+                    m_entityRemovedFromSampleEventHandlers.end(),
+                    [systemRaw = _system.get()](auto const& _val)
+                    {
+                        return systemRaw == _val->getEventHandler().get();
+                    }));
         }
     }
 

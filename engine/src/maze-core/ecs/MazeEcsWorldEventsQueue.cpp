@@ -195,6 +195,13 @@ namespace Maze
         _entity->setAdding(true);
         _entity->setEcsWorld(m_world);
 
+#if 1
+        MAZE_BP_IF(std::find(
+            m_addingEntities.begin(),
+            m_addingEntities.end(),
+            _entity) != m_addingEntities.end());
+#endif
+
         m_addingEntities.push_back(_entity);
         m_eventTypes.push(EcsWorldEventType::AddingEntity);
 

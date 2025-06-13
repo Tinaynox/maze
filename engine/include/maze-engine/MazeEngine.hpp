@@ -147,8 +147,12 @@ namespace Maze
         //////////////////////////////////////////
         inline EditorToolsManagerPtr const& getEditorToolsManager() const { return m_editorToolsManager; }
 
+
         //////////////////////////////////////////
         inline bool getRunning() const { return m_running; }
+
+        //////////////////////////////////////////
+        inline S32 getFrame() const { return m_frame; }
 
 
         //////////////////////////////////////////
@@ -229,6 +233,7 @@ namespace Maze
 
         EngineConfig m_config;
 
+        S32 m_frame = 0;
         bool m_running;
 
         RenderTargetPtr m_engineRenderTarget;

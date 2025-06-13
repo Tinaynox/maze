@@ -231,6 +231,7 @@ namespace Maze
             {
                 m_csharpScriptsRecompileRequired = false;
                 compileCSharpAssembly();
+                m_scriptAssembliesReloadRequired = true;
             }
         }
 

@@ -216,7 +216,7 @@ namespace Maze
                                 g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                                     MakeShared<CustomComponentSystemHolder>(
                                         systemName,
-                                        ClassInfo<EntityAddedEvent>::UID(),
+                                        ClassInfo<EntityAddedToSampleEvent>::UID(),
                                         [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(
                                             componentId,
                                             (U8)EntitiesSampleFlags::IncludeInactive); },
@@ -265,7 +265,7 @@ namespace Maze
                                 g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                                     MakeShared<CustomComponentSystemHolder>(
                                         systemName,
-                                        ClassInfo<EntityRemovedEvent>::UID(),
+                                        ClassInfo<EntityRemovedFromSampleEvent>::UID(),
                                         [componentId](EcsWorld* _world) { return _world->requestDynamicIdSample<MonoBehaviour>(
                                             componentId,
                                             (U8)EntitiesSampleFlags::IncludeInactive); },
@@ -554,6 +554,8 @@ namespace Maze
         mono_domain_set(mono_get_root_domain(), false);
         if (g_monoEngineData->appDomain)
             mono_domain_unload(g_monoEngineData->appDomain);
+
+        g_monoEngineData->ecsData.monoBehaviourSystems.clear();
 
         g_monoEngineData->ecsData = MonoEcsData();
 

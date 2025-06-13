@@ -385,7 +385,7 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnCreate(
-        EntityAddedEvent const& _event,
+        EntityAddedToSampleEvent const& _event,
         Entity* _entity,
         MonoBehaviour* _monoBehaviour)
     {
@@ -421,7 +421,7 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnDestroy(
-        EntityRemovedEvent const& _event,
+        EntityRemovedFromSampleEvent const& _event,
         Entity* _entity,
         MonoBehaviour* _monoBehaviour)
     {

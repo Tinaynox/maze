@@ -185,6 +185,8 @@ namespace Maze
             return false;
         }
 
+        ++m_frame;
+
         return true;
     }
 

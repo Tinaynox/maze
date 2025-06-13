@@ -86,7 +86,7 @@ namespace Maze
 
         //////////////////////////////////////////
         inline CustomComponentSystemHolder(
-            HashedCString _name,
+            HashedString _name,
             ClassUID _eventUID,
             std::function<IEntitiesSamplePtr(EcsWorld*)> const& _createSampleFunc,
             ComponentSystemEventHandler::Func _func,
@@ -127,18 +127,24 @@ namespace Maze
                 m_tags,
                 m_order);
 
-            _world->addSystemEventHandler(system);
-            m_systems[_world] = system;
+            if (_world->addSystemEventHandler(system))
+                m_systems[_world] = system;
         }
 
         //////////////////////////////////////////
         inline void detach(EcsWorld* _world)
         {
-            _world->removeSystemEventHandler(m_systems[_world].lock());
+            auto it = m_systems.find(_world);
+            if (it != m_systems.end())
+            {
+                ComponentSystemEventHandlerPtr eventHandler = it->second.lock();
+                if (eventHandler)
+                    _world->removeSystemEventHandler(eventHandler);
+            }
         }
 
     protected:
-        HashedCString m_name;
+        HashedString m_name;
         ClassUID m_eventUID = 0;
         std::function<IEntitiesSamplePtr(EcsWorld*)> m_createSampleFunc;
         ComponentSystemEventHandler::Func m_func;

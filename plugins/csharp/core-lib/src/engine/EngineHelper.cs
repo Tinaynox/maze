@@ -57,5 +57,10 @@ namespace Maze.Engine
         {
             return InternalCalls.IsEngineMainRenderWindowFocused();
         }
+
+        public static int GetFrame()
+        {
+            return InternalCalls.GetEngineFrame();
+        }
     }
 }

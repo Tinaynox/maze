@@ -236,6 +236,8 @@ namespace Maze
         //////////////////////////////////////////
         ~ComponentSystemEntityAddedToSampleEventHandler();
 
+        //////////////////////////////////////////
+        inline ComponentSystemEventHandlerPtr const& getEventHandler() const { return m_eventHandler; }
 
     protected:
 
@@ -278,6 +280,8 @@ namespace Maze
         //////////////////////////////////////////
         ~ComponentSystemEntityRemovedFromSampleEventHandler();
 
+        //////////////////////////////////////////
+        inline ComponentSystemEventHandlerPtr const& getEventHandler() const { return m_eventHandler; }
 
     protected:
 

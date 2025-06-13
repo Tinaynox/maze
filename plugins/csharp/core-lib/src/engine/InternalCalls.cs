@@ -19,5 +19,10 @@ namespace Maze.Engine
         public extern static bool IsEngineMainRenderWindowFocused();
         #endregion
 
+        #region Engine
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int GetEngineFrame();
+        #endregion
+
     }
 }

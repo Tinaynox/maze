@@ -201,7 +201,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void addSystemEventHandler(ComponentSystemEventHandlerPtr const& _system);
+        bool addSystemEventHandler(ComponentSystemEventHandlerPtr const& _system);
 
         //////////////////////////////////////////
         void removeSystemEventHandler(ComponentSystemEventHandlerPtr const& _system);

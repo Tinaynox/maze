@@ -227,12 +227,24 @@ namespace Maze
     //////////////////////////////////////////
     void RenderBuffer::setDepthTexture(TexturePtr const& _texture)
     {
+        if (_texture)
+        {
+            MAZE_ERROR_RETURN_IF(_texture->getType() != TextureType::TwoDimensional, "DepthTexture type is not TwoDimensional!");
+            MAZE_ERROR_RETURN_IF(_texture->castRaw<Texture2D>()->getInternalPixelFormat() == PixelFormat::None, "DepthTexture pixel format is None");
+        }
+
         m_depthTexture = _texture;
     }
 
     //////////////////////////////////////////
     void RenderBuffer::setStencilTexture(TexturePtr const& _texture)
     {
+        if (_texture)
+        {
+            MAZE_ERROR_RETURN_IF(_texture->getType() != TextureType::TwoDimensional, "StencilTexture type is not TwoDimensional!");
+            MAZE_ERROR_RETURN_IF(_texture->castRaw<Texture2D>()->getInternalPixelFormat() == PixelFormat::None, "StencilTexture pixel format is None");
+        }
+
         m_stencilTexture = _texture;
     }
 
