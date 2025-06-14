@@ -69,6 +69,9 @@ namespace Maze
         void CreateMaterial(AssetsController* _controller, Path const& _fullPath);
 
         //////////////////////////////////////////
+        void CreatePrefab2D(AssetsController* _controller, Path const& _fullPath);
+
+        //////////////////////////////////////////
         void CreatePrefab3D(AssetsController* _controller, Path const& _fullPath);
 
         //////////////////////////////////////////

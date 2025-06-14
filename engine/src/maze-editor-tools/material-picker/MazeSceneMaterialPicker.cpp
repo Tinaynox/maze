@@ -337,7 +337,7 @@ namespace Maze
             data.button->getTransform(),
             data.bodyTransform->getEntityRaw()->getEcsScene());
 
-        if (_material)
+        if (_material && _material->getFirstRenderPass())
         {
             MaterialPtr materialCopy = _material->createCopy();
             

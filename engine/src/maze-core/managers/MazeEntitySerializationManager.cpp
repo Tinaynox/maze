@@ -1240,7 +1240,7 @@ namespace Maze
 
                     S32 serializationIndex = subBlock->getS32(MAZE_HCS("_s"), -1);
                     if (serializationIndex != -1)
-                        entity->createComponent<SerializationIndex>(serializationIndex);
+                        entity->ensureComponent<SerializationIndex>()->setSerializationIndex(serializationIndex);
 
                     entity->setActiveSelf(subBlock->getBool(MAZE_HCS("active"), true));
 

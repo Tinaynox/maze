@@ -255,6 +255,12 @@ namespace Maze
                 false);
 
             _menuListTree->addItem(
+                "Create/Prefab/2D",
+                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreatePrefab2D(_controller, _fullPath); },
+                nullptr,
+                false);
+
+            _menuListTree->addItem(
                 "Create/Prefab/3D",
                 [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreatePrefab3D(_controller, _fullPath); },
                 nullptr,

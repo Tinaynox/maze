@@ -132,6 +132,29 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        void CreatePrefab2D(AssetsController* _controller, Path const& _fullPath)
+        {
+            Path dir = FileHelper::GetDirectoryInPath(_fullPath);
+
+            Path newPrefabFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/New Prefab.mzprefab");
+
+            Path name = FileHelper::GetFileNameWithoutExtension(newPrefabFullPath);
+            EntityPtr entity = EditorManager::GetInstancePtr()->getActiveScene()->createEntity(name);
+            entity->createComponent<Transform2D>();
+            EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(entity, newPrefabFullPath);
+            AssetManager::GetInstancePtr()->updateAssets();
+
+            entity->removeFromEcsWorld();
+
+            AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(newPrefabFullPath);
+            if (assetFile)
+            {
+                SelectionManager::GetInstancePtr()->selectObject(assetFile);
+                _controller->setAssetFileRename(assetFile, true);
+            }
+        }
+
+        //////////////////////////////////////////
         void CreatePrefab3D(AssetsController* _controller, Path const& _fullPath)
         {
             Path dir = FileHelper::GetDirectoryInPath(_fullPath);

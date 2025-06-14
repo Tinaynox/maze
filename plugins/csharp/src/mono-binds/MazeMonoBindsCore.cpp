@@ -403,6 +403,21 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    inline S32 Transform2DGetChildCount(Component* _component)
+    {
+        MAZE_ERROR_RETURN_VALUE_IF(_component->getClassUID() != ClassInfo<Transform2D>::UID(), 0, "Component is not Transform2D!");
+        return (S32)_component->castRaw<Transform2D>()->getChildren().size();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform2DGetChild(Component* _component, S32 _index, Component** _outComponent)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform2D>::UID(), "Component is not Transform2D!");
+        *_outComponent = _component->castRaw<Transform2D>()->getChild(_index);
+    }
+
+
+    //////////////////////////////////////////
     inline void Transform3DTranslate(Component* _component, Vec3F const& _delta)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
@@ -564,6 +579,10 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(ComponentSendMonoEvent);
         MAZE_CORE_MONO_BIND_FUNC(ComponentBroadcastMonoEvent);
         MAZE_CORE_MONO_BIND_FUNC(ComponentIsEditorMode);
+
+        // Transform2D
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChildCount);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChild);
 
         // Transform3D
         MAZE_CORE_MONO_BIND_FUNC(Transform3DTranslate);

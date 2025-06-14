@@ -108,6 +108,15 @@ namespace Maze.Core
         public extern static bool ComponentIsEditorMode(NativePtr nativeComponentPtr);
         #endregion
 
+        #region Transform2D
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int Transform2DGetChildCount(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DGetChild(NativePtr nativeComponentPtr, int index, out NativePtr outChild);
+        #endregion
+
+
         #region Transform3D
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform3DTranslate(NativePtr nativeComponentPtr, ref Vec3F delta);
