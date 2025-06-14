@@ -66,6 +66,30 @@ namespace Maze.UI
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void UITweenTransitionTranslationGetHidden(NativePtr nativeComponentPtr, out bool outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionTranslationSetShowTime(NativePtr nativeComponentPtr, float value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionTranslationGetShowTime(NativePtr nativeComponentPtr, out float outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionTranslationSetHideKoef(NativePtr nativeComponentPtr, float value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionTranslationGetHideKoef(NativePtr nativeComponentPtr, out float outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionTranslationSetHiddenPosition(NativePtr nativeComponentPtr, ref Vec2F value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionTranslationGetHiddenPosition(NativePtr nativeComponentPtr, out Vec2F outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionTranslationSetShownPosition(NativePtr nativeComponentPtr, ref Vec2F value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void UITweenTransitionTranslationGetShownPosition(NativePtr nativeComponentPtr, out Vec2F outValue);
         #endregion
     }
 }

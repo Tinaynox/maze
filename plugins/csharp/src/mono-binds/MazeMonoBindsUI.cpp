@@ -169,6 +169,62 @@ namespace Maze
         _outValue = _component->castRaw<UITweenTransitionTranslation>()->getHidden();
     }
 
+    //////////////////////////////////////////
+    inline void UITweenTransitionTranslationSetHiddenPosition(Component* _component, Vec2F const& _pos)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        _component->castRaw<UITweenTransitionTranslation>()->setHiddenPosition(_pos);
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionTranslationGetHiddenPosition(Component* _component, Vec2F& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        _outValue = _component->castRaw<UITweenTransitionTranslation>()->getHiddenPosition();
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionTranslationSetShownPosition(Component* _component, Vec2F const& _pos)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        _component->castRaw<UITweenTransitionTranslation>()->setShownPosition(_pos);
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionTranslationGetShownPosition(Component* _component, Vec2F& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        _outValue = _component->castRaw<UITweenTransitionTranslation>()->getShownPosition();
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionTranslationSetShowTime(Component* _component, F32 _value)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        _component->castRaw<UITweenTransitionTranslation>()->setShowTime(_value);
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionTranslationGetShowTime(Component* _component, F32& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        _outValue = _component->castRaw<UITweenTransitionTranslation>()->getShowTime();
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionTranslationSetHideKoef(Component* _component, F32 _value)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        _component->castRaw<UITweenTransitionTranslation>()->setHideKoef(_value);
+    }
+
+    //////////////////////////////////////////
+    inline void UITweenTransitionTranslationGetHideKoef(Component* _component, F32& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        _outValue = _component->castRaw<UITweenTransitionTranslation>()->getHideKoef();
+    }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsUI()
@@ -198,6 +254,14 @@ namespace Maze
         // UITweenTransitionTranslation
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationSetHidden);
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationGetHidden);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationSetHiddenPosition);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationGetHiddenPosition);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationSetShownPosition);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationGetShownPosition);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationSetShowTime);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationGetShowTime);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationSetHideKoef);
+        MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationGetHideKoef);
     }
 
 } // namespace Maze

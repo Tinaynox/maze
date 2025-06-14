@@ -50,6 +50,7 @@
 #include "maze-ui/ecs/components/MazeUIDragElement2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "maze-ui/ecs/components/MazeUITweenTransitionTranslation.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeExperimental.hpp"
 #include "maze-ui/ecs/components/MazeTextRenderer2D.hpp"
@@ -163,6 +164,7 @@ namespace Maze
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UIDragElement2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UITweenTransitionAlpha>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UITweenTransitionScale>("UI");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UITweenTransitionTranslation>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Experimental>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<TextRenderer2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<DragAndDropZone>("UI");

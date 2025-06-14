@@ -485,7 +485,7 @@ namespace Maze
     void RenderControllerModule2D::updateSortedMeshRenderersList()
     {
         if (!m_sortedMeshRenderersDirty)
-            return;
+          return;
 
         m_sortedCanvasRenderData.clear();
 

@@ -49,7 +49,10 @@ namespace Maze
     // Class UITweenTransitionScale
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UITweenTransitionScale, Component);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UITweenTransitionScale, Component,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, hidden, true, getHidden, setHidden),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, showTime, 0.3f, getShowTime, setShowTime),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, hideKoef, 1.0f, getHideKoef, setHideKoef));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(UITweenTransitionScale);

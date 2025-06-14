@@ -49,7 +49,13 @@ namespace Maze
     // Class UITweenTransitionTranslation
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UITweenTransitionTranslation, Component);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UITweenTransitionTranslation, Component,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, hidden, true, getHidden, setHidden),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, showTime, 0.3f, getShowTime, setShowTime),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, hideKoef, 1.0f, getHideKoef, setHideKoef),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(AnimationCurve, animationCurve, AnimationCurve::c_linear01, getAnimationCurve, setAnimationCurve),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, hiddenPosition, Vec2F::c_zero, getHiddenPosition, setHiddenPosition),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, shownPosition, Vec2F::c_zero, getShownPosition, setShownPosition));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(UITweenTransitionTranslation);
@@ -224,6 +230,9 @@ namespace Maze
     //////////////////////////////////////////
     void UITweenTransitionTranslation::updateTransform()
     {
+        if (!m_transform)
+            return;
+
         F32 showingProgress = 1.0f - m_hidingProgress;
 
         F32 progress = m_animationCurve.evaluate(showingProgress);

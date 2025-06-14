@@ -369,7 +369,7 @@ namespace Maze
         if (m_parent)
         {
             m_parent->m_children.push_back(this);
-            m_flags |= ChildrenOrderDirty;
+            m_parent->m_flags |= ChildrenOrderDirty;
             m_orderOfArrival = s_globalOrderOfArrival++;
 
             if (m_parent->getEntityRaw() && m_parent->getEntityRaw()->getEcsWorld())

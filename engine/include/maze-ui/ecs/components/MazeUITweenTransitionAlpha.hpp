@@ -106,7 +106,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setHidden(bool _isHidden, bool _resetProgress = false);
+        void setHidden(bool _isHidden, bool _resetProgress);
+
+        //////////////////////////////////////////
+        inline void setHidden(bool _isHidden) { setHidden(_isHidden, false); }
 
         //////////////////////////////////////////
         inline bool getHidden() const { return m_isHidden; }
