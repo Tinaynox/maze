@@ -141,7 +141,7 @@ namespace Maze
             return false;
 
         MeshSkeletonAnimationPtr const& animation = m_skeleton->getAnimation(_name);
-        MAZE_ERROR_RETURN_VALUE_IF(!animation, false, "Undefined animation - %s!", _name.str);
+        MAZE_WARNING_RETURN_VALUE_IF(!animation, false, "Undefined animation - %s!", _name.str);
 
         MeshSkeletonAnimatorPlayerPtr const& player = findPlayerForNewAnimation(animation);
         player->play(animation);

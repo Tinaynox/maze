@@ -327,7 +327,7 @@ namespace Maze
         if (!m_world->eventEntityAdded.empty())
             m_world->eventEntityAdded(entity);
 
-        m_world->processEntityForSamples(entity.get());
+        m_world->processEntityAddedForSamples(entity.get());
 
         m_world->sendEventImmediate<EntityAddedEvent>(entity->getId());
     }

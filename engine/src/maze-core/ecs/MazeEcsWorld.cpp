@@ -600,6 +600,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EcsWorld::processEntityAddedForSamples(Entity* _entity)
+    {
+        Vector<ComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[ClassInfo<EntityAddedToSampleEvent>::UID()];
+        for (ComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
+            if (_eventHandler->getSample())
+                _eventHandler->getSample()->processEntity(_entity);
+            
+        processEntityForSamples(_entity);
+    }
+
+    //////////////////////////////////////////
     EntityId EcsWorld::generateNewEntityId(EntityPtr const& _entity)
     {
         if (!m_freeEntityIndices.empty())

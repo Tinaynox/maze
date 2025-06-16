@@ -417,6 +417,9 @@ namespace Maze
         //////////////////////////////////////////
         void processEntityForSamples(Entity* _entity);
 
+        //////////////////////////////////////////
+        void processEntityAddedForSamples(Entity* _entity);
+
     public:
 
         //////////////////////////////////////////
