@@ -95,7 +95,7 @@ namespace Maze
         ComponentPtr const& _component,
         GizmosDrawer* _drawer)
     {
-        return;
+        // return;
 
         SkinnedMeshRenderer* meshRenderer = _component->castRaw<SkinnedMeshRenderer>();    
         MeshSkeletonAnimatorPtr const& animator = meshRenderer->getAnimator();
@@ -118,13 +118,8 @@ namespace Maze
 
                 TMat const& boneGlobalTransform = bonesGlobalTransform[i];
                 TMat boneWorldTm = transform3D->getWorldTransform().transform(boneGlobalTransform);
-                _drawer->drawSphere(
-                    boneWorldTm.getTranslation(),
-                    bone.parentBoneIndex != -1 ? 0.1f : 0.15f,
-                    bone.parentBoneIndex != -1 ? ColorF128(0.0f, 1.0f, 0.0f, 0.5f) : ColorF128(1.0f, 0.66f, 0.0f, 1.0f),
-                    0.0f,
-                    GizmosDrawer::GizmosMode::Debug,
-                    GizmosDrawer::MeshRenderMode::TransparentTop);
+                
+                F32 boneLen = 1.0f;
 
                 if (bone.parentBoneIndex != -1)
                 {
@@ -135,45 +130,53 @@ namespace Maze
                     F32 toChildLen = toChild.length();
                     if (toChildLen > 1e-3)
                     {
+                        boneLen = toChildLen;
                         Vec3F toChildDir = toChild / toChildLen;
 
-                        _drawer->drawCone(
+                        _drawer->drawWireCone(
                             parentBoneWorldTm[3],
                             toChildDir,
-                            toChildDir.perpendicular(),
-                            0.05f,
-                            toChildLen,
+                            boneLen * 0.05f,
+                            boneLen,
                             ColorF128(0.0f, 1.0f, 0.0f, 0.25f),
-                            0.0f,
                             GizmosDrawer::GizmosMode::Debug,
                             GizmosDrawer::MeshRenderMode::TransparentTop);
                     }
                     
+                    /*
                     if (!skeleton->isBoneHaveChildren(i))
                     {
-                        _drawer->drawCone(
+                        boneLen = boneWorldTm.getUp().length();
+
+                        _drawer->drawWireCone(
                             boneWorldTm.getTranslation(),
-                            boneWorldTm.getUp(),
                             boneWorldTm.getForward(),
-                            0.05f,
-                            boneWorldTm.getUp().length(),
+                            boneLen * 0.05f,
+                            boneLen,
                             ColorF128(0.0f, 1.0f, 0.0f, 0.25f),
-                            0.0f,
                             GizmosDrawer::GizmosMode::Debug,
                             GizmosDrawer::MeshRenderMode::TransparentTop);
                     }
-
+                    */
                 }
+
+                _drawer->drawWireSphere(
+                    boneWorldTm.getTranslation(),
+                    boneLen * (bone.parentBoneIndex != -1 ? 0.1f : 0.15f),
+                    bone.parentBoneIndex != -1 ? ColorF128(0.0f, 1.0f, 0.0f, 0.5f) : ColorF128(1.0f, 0.66f, 0.0f, 1.0f),
+                    0.0f,
+                    GizmosDrawer::GizmosMode::Debug,
+                    GizmosDrawer::MeshRenderMode::TransparentTop);
 
 
                 // Bind pose
-                if (false)
+                if (true)
                 {
-                    TMat boneBindPoseTransform = bone.inverseBindPoseTransform.inversed();
-                    TMat boneBindPoseWorldTm = transform3D->getWorldTransform().transform(boneBindPoseTransform);
-                    _drawer->drawSphere(
-                        boneWorldTm.getTranslation(),
-                        0.2f,
+                    TMat boneBindPoseTransformMS = bone.inversedBindPoseTransformMS.inversed();
+                    TMat boneBindPoseTransformWS = transform3D->getWorldTransform().transform(boneBindPoseTransformMS);
+                    _drawer->drawWireSphere(
+                        boneBindPoseTransformWS.getTranslation(),
+                        boneLen * 0.2f,
                         ColorF128(1.0f, 0.0f, 0.0f, 0.5f),
                         0.0f,
                         GizmosDrawer::GizmosMode::Debug,

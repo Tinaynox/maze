@@ -129,8 +129,8 @@ namespace Maze
         MeshSkeletonPtr m_skeleton;
         F32 m_animationSpeed = 1.0f;
 
-        Vector<TMat> m_bonesGlobalTransforms;
-        Vector<TMat> m_bonesSkinningTransforms;
+        Vector<TMat> m_bonesGlobalTransforms; // Mesh space
+        Vector<TMat> m_bonesSkinningTransforms; // Animation delta, Mesh space
         FastVector<bool> m_bonesTransformsDirty;
 
         MeshSkeletonAnimatorPlayerPtr m_players[MESH_SKELETON_ANIMATOR_PLAYERS_COUNT];

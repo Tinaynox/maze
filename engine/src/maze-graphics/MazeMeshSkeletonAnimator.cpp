@@ -95,14 +95,15 @@ namespace Maze
                 boneTransformsDirty = false;
 
             for (MeshSkeleton::BoneIndex i = 0, in = (MeshSkeleton::BoneIndex)m_bonesGlobalTransforms.size(); i < in; ++i)
-                m_bonesGlobalTransforms[i] = m_skeleton->getBone(i).inverseBindPoseTransform.inversed();
+                m_bonesGlobalTransforms[i] = m_skeleton->getBone(i).inversedBindPoseTransformMS.inversed();
         }
        
 
         for (MeshSkeleton::BoneIndex i = 0, in = (MeshSkeleton::BoneIndex)m_bonesSkinningTransforms.size(); i < in; ++i)
         {
             auto& bone = m_skeleton->getBone(i);
-            m_bonesSkinningTransforms[i] = m_bonesGlobalTransforms[i].transform(bone.inverseBindPoseTransform);
+            // Calculate animation delta
+            m_bonesSkinningTransforms[i] = m_bonesGlobalTransforms[i].transform(bone.inversedBindPoseTransformMS);
         }
     }
 

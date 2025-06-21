@@ -237,7 +237,10 @@ namespace Maze
         {
             RenderMeshPtr const& renderMesh = getRenderMesh();
             if (renderMesh && renderMesh->getMesh() && renderMesh->getMesh()->getSkeleton())
+            {
                 m_animator->setSkeleton(renderMesh->getMesh()->getSkeleton());
+                m_animator->update(0.0f);
+            }
             else
                 m_animator->setSkeleton(nullptr);
         }
@@ -303,7 +306,7 @@ namespace Maze
 
     //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshUpdateSystem,
-        MAZE_ECS_TAGS(MAZE_HS("render")),
+        MAZE_ECS_TAGS(MAZE_HS("default"), MAZE_HS("render")),
         {},
         UpdateEvent const& _event,
         Entity* _entity,

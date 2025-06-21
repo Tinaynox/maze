@@ -593,6 +593,43 @@ namespace Maze
         drawWireCircle(_position + (forward * 0.5f), direction, ((forward * 0.5f) - (slerpedVector.normalizedCopy() * (dist * 0.5f))).length(), _duration, _gizmosMode, _renderMode);
     }
 
+    void GizmosDrawer::drawWireCone(
+        Vec3F const& _position,
+        Vec3F const& _direction,
+        F32 _radius,
+        F32 _length,
+        ColorF128 const& _color,
+        F32 _duration,
+        GizmosMode _gizmosMode,
+        MeshRenderMode _renderMode)
+    {
+        Vec3F forward = _direction.normalizedCopy() * _radius;
+        Vec3F up = forward.perpendicular();
+        Vec3F right = up.crossProduct(forward).normalizedCopy() * _radius;
+
+        Vec3F topPoint = _position + _direction * _length;
+
+        TMat matrix = TMat::CreateBasis(right, up, forward);
+        Vec3F lastPoint = _position + matrix.transform(Vec3F(Math::Cos(0.0f), Math::Sin(0.0f), 0.0f));
+        Vec3F nextPoint = Vec3F::c_zero;
+
+        setColor(_color);
+
+        for (S32 i = 0; i < 11; i++)
+        {
+            nextPoint.x = Math::Cos(Math::DegreesToRadians(i * 36.0f));
+            nextPoint.y = Math::Sin(Math::DegreesToRadians(i * 36.0f));
+            nextPoint.z = 0;
+
+            nextPoint = _position + matrix.transform(nextPoint);
+
+            drawLine(lastPoint, nextPoint, _duration, _gizmosMode, _renderMode);
+            drawLine(lastPoint, topPoint, _duration, _gizmosMode, _renderMode);
+            lastPoint = nextPoint;
+        }
+        drawLine(lastPoint, topPoint, _duration, _gizmosMode, _renderMode);
+    }
+
     //////////////////////////////////////////
     void GizmosDrawer::drawWireTruncatedCone(
         Vec3F const& _position,

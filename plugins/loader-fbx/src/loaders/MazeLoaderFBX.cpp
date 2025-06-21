@@ -249,10 +249,6 @@ namespace Maze
                 &positions,
                 &normals,
                 &tangents);
-         
-            
-            for (Vec3F& position : positions)
-                position *= _props.scale * 0.01f;
 
             subMesh->setIndices(&indices[0], indices.size());
             subMesh->setPositions(&positions[0], positions.size());
@@ -339,6 +335,8 @@ namespace Maze
 
         }
 
+        TMat convertUnitsMat = TMat::CreateScale(0.01f); // Set meters as MAZE engine units
+
         S32 indicesOffset = 0;
 
         S32 meshCount = _scene->getMeshCount();
@@ -351,11 +349,15 @@ namespace Maze
 
             MAZE_ERROR_RETURN_VALUE_IF(geom.getVertexCount() >= 65535, false, "Vertices count is over 65535 - %d!", geom.getVertexCount());
 
+            auto meshParent = mesh.getParent();
+            auto meshParentType = meshParent ? meshParent->getType() : ofbx::Object::Type::NULL_NODE;
+            auto meshParentName = meshParent ? meshParent->name : "";
+
             TMat meshGeometricTransformMat = ConvertOpenFBXMatrixToTMat(mesh.getGeometricMatrix());
             TMat meshLocalTransformMat = ConvertOpenFBXMatrixToTMat(mesh.getLocalTransform());
             TMat meshGlobalTransformMat = ConvertOpenFBXMatrixToTMat(mesh.getGlobalTransform());
             
-            TMat transformMat = fixOrientationMat.transform(meshGeometricTransformMat).transform(meshGlobalTransformMat);
+            TMat transformMat = convertUnitsMat.transform(fixOrientationMat.transform(meshGeometricTransformMat).transform(meshGlobalTransformMat));
             
 
             
@@ -470,14 +472,27 @@ namespace Maze
                     auto& meshSkeletonBone = meshSkeleton->getBone(meshSkeletonBoneIndex);
                     meshSkeletonBone.parentBoneIndex = parentBoneIndex;
 
-                    //TMat boneLocalTransform = ConvertOpenFBXMatrixToTMat(bone->getLocalTransform());
-                    TMat bindPoseTransformGlobal = ConvertOpenFBXMatrixToTMat(cluster->getTransformLinkMatrix());
-                    meshSkeletonBone.inverseBindPoseTransform = bindPoseTransformGlobal.inversed();
+                    
+                    TMat bindPoseTransformMS = ConvertOpenFBXMatrixToTMat(cluster->getTransformLinkMatrix());
+                    bindPoseTransformMS = convertUnitsMat.transform(bindPoseTransformMS);
+                    {
+                        // Flip bind pose X
+                        Quaternion bindPoseQuaternion(bindPoseTransformMS);
+                        bindPoseQuaternion.y = -bindPoseQuaternion.y;
+                        bindPoseQuaternion.z = -bindPoseQuaternion.z;
+                        TMat newBindPoseTransformGlobal = bindPoseQuaternion.toRotationMatrix();
+                        newBindPoseTransformGlobal[3] = Vec3F(-bindPoseTransformMS[3].x, bindPoseTransformMS[3].y, bindPoseTransformMS[3].z);
+                        bindPoseTransformMS = newBindPoseTransformGlobal;
+                    }
+                    meshSkeletonBone.inversedBindPoseTransformMS = bindPoseTransformMS.inversed();
 
                     if (meshSkeletonBoneIndex >= S32(bonesData.size()))
                         bonesData.resize((Size)meshSkeletonBoneIndex + 1);
+                    if (parentBoneIndex != -1 && parentBoneIndex >= S32(bonesData.size()))
+                        bonesData.resize((Size)parentBoneIndex + 1);
+
                     bonesData[meshSkeletonBoneIndex].object = bone;
-                    bonesData[meshSkeletonBoneIndex].bindPoseMat = bindPoseTransformGlobal;
+                    bonesData[meshSkeletonBoneIndex].bindPoseMat = bindPoseTransformMS;
                         
 
                     S32 const vertexCount = cluster->getIndicesCount();
@@ -538,42 +553,23 @@ namespace Maze
             for (MeshSkeleton::BoneIndex boneIndex = 0; boneIndex < bonesCount; ++boneIndex)
             {
                 ofbx::Object const* bone = bonesData[boneIndex].object;
+                if (!bone)
+                    continue;
 
-                // Find armature
+                // Find armature by root bone
                 if (bone->getParent() &&
                     bone->getParent()->getParent() &&
                     bone->getParent()->getParent()->getType() == ofbx::Object::Type::ROOT)
                 {
                     ofbx::Object const* armature = bone->getParent();
 
-                    armatureScale = ConvertOpenFBXVec3ToVec3F(armature->getLocalScaling());
-                    armatureEuler = ConvertOpenFBXVec3ToVec3F(armature->getLocalRotation());
-
-                    armatureInvScaleMat = TMat::CreateScale(1.0f / armatureScale);
+                    auto armatureParent = armature->getParent();
+                    auto armatureParentType = armatureParent ? armatureParent->getType() : ofbx::Object::Type::NULL_NODE;
+                    auto armatureParentName = armatureParent ? armatureParent->name : "";
 
                     TMat armatureGlobalTransformMat = ConvertOpenFBXMatrixToTMat(armature->getGlobalTransform());
-                    Quaternion armatureGlobalTransformQuat = Quaternion(armatureGlobalTransformMat);
-                    armatureEuler = armatureGlobalTransformQuat.getEuler();
-                    _mesh.getSkeleton()->setRootTransform(
-                        armatureGlobalTransformMat * armatureInvScaleMat);
+                    _mesh.getSkeleton()->setRootTransform(convertUnitsMat.transform(armatureGlobalTransformMat));
                 }
-            }
-
-            // Fix bone bind pose scaling
-            for (MeshSkeleton::BoneIndex boneIndex = 0; boneIndex < bonesCount; ++boneIndex)
-            {
-                MeshSkeleton::Bone& bone = _mesh.getSkeleton()->getBone(boneIndex);
-
-                TMat bindPoseTransform = bonesData[boneIndex].bindPoseMat * armatureInvScaleMat;
-
-                // Flip bind pose X
-                Quaternion bindPoseQuaternion(bindPoseTransform);
-                bindPoseQuaternion.y = -bindPoseQuaternion.y;
-                bindPoseQuaternion.z = -bindPoseQuaternion.z;
-                TMat newBindPoseTransformGlobal = bindPoseQuaternion.toRotationMatrix();
-                newBindPoseTransformGlobal[3] = Vec3F(-bindPoseTransform[3].x, bindPoseTransform[3].y, bindPoseTransform[3].z);
-
-                bone.inverseBindPoseTransform = newBindPoseTransformGlobal.inversed();
             }
 
             // Load animations

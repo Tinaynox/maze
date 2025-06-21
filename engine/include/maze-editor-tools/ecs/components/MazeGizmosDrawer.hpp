@@ -415,6 +415,30 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        void drawWireCone(
+            Vec3F const& _position,
+            Vec3F const& _direction,
+            F32 _radius,
+            F32 _length,
+            ColorF128 const& _color,
+            F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
+            MeshRenderMode _renderMode = MeshRenderMode::Transparent);
+
+        //////////////////////////////////////////
+        void drawWireCone(
+            Vec3F const& _position,
+            Vec3F const& _direction,
+            F32 _radius,
+            F32 _length,
+            ColorF128 const& _color,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
+            MeshRenderMode _renderMode = MeshRenderMode::Transparent)
+        {
+            drawWireCone(_position, _direction, _radius, _length, _color, -1.0f, _gizmosMode, _renderMode);
+        }
+
+        //////////////////////////////////////////
         void drawWireTruncatedCone(
             Vec3F const& _position,
             Vec3F const& _direction,

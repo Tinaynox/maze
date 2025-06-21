@@ -68,15 +68,15 @@ namespace Maze
             //////////////////////////////////////////
             Bone(
                 String const& _name = String(),
-                TMat const& _inverseBindPoseTransform = TMat::c_identity,
+                TMat const& _inversedBindPoseTransformMS = TMat::c_identity,
                 BoneIndex _parentBoneIndex = -1)
                 : name(_name)
-                , inverseBindPoseTransform(_inverseBindPoseTransform)
+                , inversedBindPoseTransformMS(_inversedBindPoseTransformMS)
                 , parentBoneIndex(_parentBoneIndex)
             {}
 
             String name;
-            TMat inverseBindPoseTransform;
+            TMat inversedBindPoseTransformMS; // Mesh space
             BoneIndex parentBoneIndex = -1;
         };
 
@@ -96,7 +96,7 @@ namespace Maze
         //////////////////////////////////////////
         BoneIndex addBone(
             String const& _name,
-            TMat const& _inverseBindPoseTransform = TMat::c_identity,
+            TMat const& _inversedBindPoseTransformMS = TMat::c_identity,
             BoneIndex _parentBoneIndex = -1);
 
         //////////////////////////////////////////
