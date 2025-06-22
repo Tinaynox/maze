@@ -482,7 +482,7 @@ namespace Maze
                         bindPoseQuaternion.z = -bindPoseQuaternion.z;
                         TMat newBindPoseTransformGlobal = bindPoseQuaternion.toRotationMatrix();
                         newBindPoseTransformGlobal[3] = Vec3F(-bindPoseTransformMS[3].x, bindPoseTransformMS[3].y, bindPoseTransformMS[3].z);
-                        bindPoseTransformMS = newBindPoseTransformGlobal;
+                        bindPoseTransformMS = TMat::CreateScale(bindPoseTransformMS.getScaleSignless()) * newBindPoseTransformGlobal;
                     }
                     meshSkeletonBone.inversedBindPoseTransformMS = bindPoseTransformMS.inversed();
 
