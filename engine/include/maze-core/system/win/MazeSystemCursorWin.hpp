@@ -39,7 +39,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SystemCursorWin);
+    MAZE_USING_MANAGED_SHARED_PTR(SystemCursorWin);
 
 
     //////////////////////////////////////////
@@ -55,13 +55,24 @@ namespace Maze
         virtual ~SystemCursorWin();
 
         //////////////////////////////////////////
-        static SystemCursorWinPtr Create(String const& _id, HCURSOR _cursorHandle);
+        static SystemCursorWinPtr Create(
+            HCURSOR _cursorHandle = NULL,
+            bool _ownsCursorHandle = false);
 
         //////////////////////////////////////////
-        void setCursorHandle(HCURSOR _cursorHandle) { m_cursorHandle = _cursorHandle; }
+        void setCursorHandle(
+            HCURSOR _cursorHandle,
+            bool _ownsCursorHandle = false);
 
         //////////////////////////////////////////
-        HCURSOR getCursorHandle() const { return m_cursorHandle; }
+        inline HCURSOR getCursorHandle() const { return m_cursorHandle; }
+
+
+        //////////////////////////////////////////
+        virtual bool loadFromAssetFile(AssetFilePtr const& _assetFile) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        bool loadFromWindowsCursorAssetFile(AssetFilePtr const& _assetFile);
 
     protected:
 
@@ -69,10 +80,13 @@ namespace Maze
         SystemCursorWin();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _id, HCURSOR _cursorHandle);
+        bool init(
+            HCURSOR _cursorHandle,
+            bool _ownsCursorHandle);
 
     protected:
-        HCURSOR m_cursorHandle;
+        HCURSOR m_cursorHandle = 0;
+        bool m_ownsCursorHandle = false;
     };
     
     

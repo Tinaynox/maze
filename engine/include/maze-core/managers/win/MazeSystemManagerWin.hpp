@@ -65,17 +65,7 @@ namespace Maze
         virtual void setClipboardString(String const& _text) MAZE_OVERRIDE;
 
 
-        //////////////////////////////////////////
-        virtual void showSystemCursor() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void hideSystemCursor() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void setSystemCursorPosition(Vec2F _posSystemScreen) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual Vec2F getSystemCursorPosition() MAZE_OVERRIDE;
+        
 
     protected:
 

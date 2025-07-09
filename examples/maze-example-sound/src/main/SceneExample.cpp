@@ -155,7 +155,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
+    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
     {        
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
     }
@@ -192,7 +192,7 @@ namespace Maze
             ColorU32(203, 203, 203),
             Vec2F32(640, 480),
             Vec2F32(0, 0),
-            materialManager->getColorTextureMaterial(),
+            materialManager->getSpriteMaterial(),
             canvasTransform2D,
             this);
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)

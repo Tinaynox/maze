@@ -53,10 +53,7 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(LevelBloomController);
-    MAZE_USING_SHARED_PTR(SceneExample);
-    MAZE_USING_SHARED_PTR(SpaceObject);
-    MAZE_USING_SHARED_PTR(Projectile);
-    MAZE_USING_SHARED_PTR(RenderBuffer);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderBuffer);
 
 
     //////////////////////////////////////////

@@ -33,11 +33,16 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/data/MazeHashedString.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    MAZE_USING_MANAGED_SHARED_PTR(SystemCursor);
+    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
+
     
     //////////////////////////////////////////
     // Class SystemCursor
@@ -51,21 +56,21 @@ namespace Maze
         virtual ~SystemCursor();
 
         //////////////////////////////////////////
-        void setId(String const& _id) { m_id = _id; }
+        void setName(HashedString const& _id) { m_name = _id; }
 
         //////////////////////////////////////////
-        String const& getId() const { return m_id; }
+        HashedString const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        virtual bool loadFromAssetFile(AssetFilePtr const& _assetFile) MAZE_ABSTRACT;
 
     protected:
 
         //////////////////////////////////////////
         SystemCursor();
 
-        //////////////////////////////////////////
-        virtual bool init(const String& _id);
-
     protected:
-        String m_id;
+        HashedString m_name;
     };
 
     

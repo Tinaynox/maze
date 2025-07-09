@@ -108,31 +108,5 @@ namespace Maze
         CloseClipboard();
     }
 
-    //////////////////////////////////////////
-    void SystemManagerWin::showSystemCursor()
-    {
-        while (::ShowCursor(TRUE) < 0);
-    }
-
-    //////////////////////////////////////////
-    void SystemManagerWin::hideSystemCursor()
-    {
-        while (::ShowCursor(FALSE) >= 0);
-    }
-
-    //////////////////////////////////////////
-    void SystemManagerWin::setSystemCursorPosition(Vec2F _posSystemScreen)
-    {
-        ::SetCursorPos((S32)_posSystemScreen.x, (S32)_posSystemScreen.y);
-    }
-
-    //////////////////////////////////////////
-    Vec2F SystemManagerWin::getSystemCursorPosition()
-    {
-        ::POINT lp;
-        GetCursorPos(&lp);
-        return Vec2F((F32)lp.x, (F32)lp.y);
-    }
-
 } // namespace Maze
 //////////////////////////////////////////

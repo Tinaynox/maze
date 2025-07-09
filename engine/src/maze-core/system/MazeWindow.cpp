@@ -169,6 +169,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool Window::setCursor(SystemCursorPtr const& _cursor)
+    {
+        if (m_params->cursor == _cursor)
+            return true;
+
+        m_params->cursor = _cursor;
+
+        return updateCursor();
+    }
+
+    //////////////////////////////////////////
     bool Window::setTitle(String const& _title)
     {
         if (m_params->title == _title)

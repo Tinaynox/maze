@@ -49,6 +49,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     AssetManager* AssetManager::s_instance = nullptr;
+    MultiDelegate<> AssetManager::s_eventAssetManagerInitialized = MultiDelegate<>();
 
     //////////////////////////////////////////
     AssetManager::AssetManager()
@@ -93,6 +94,8 @@ namespace Maze
             _config.getDataBlock(MAZE_HCS("assetUnitConfig"), DataBlock::c_empty));
         if (!m_assetUnitManager)
             return false;
+
+        s_eventAssetManagerInitialized();
 
         return true;
     }

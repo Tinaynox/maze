@@ -44,13 +44,5 @@ namespace Maze
     {
     }
 
-    //////////////////////////////////////////
-    bool SystemCursor::init(String const& _id)
-    {
-        setId(_id);
-
-        return true;
-    }
-
 } // namespace Maze
 //////////////////////////////////////////

@@ -42,6 +42,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeSystemCursorManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
@@ -509,6 +510,7 @@ namespace Maze
     //////////////////////////////////////////
     void Example::loadCoreGameAssets()
     {
+        SystemCursorManager::GetInstancePtr()->createBuiltinSystemCursors();
         GraphicsManager::GetInstancePtr()->createBuiltinAssets();
         GizmosManager::GetInstancePtr()->createGizmosElements();
         UIManager::GetInstancePtr()->createUIElements();

@@ -99,10 +99,10 @@ namespace Maze
         void notifyRenderTargetResized(RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
-        void processCursorPress(Vec2F32 const& _positionOS, CursorInputEvent const& _event);
+        void processCursorPress(Vec2F32 const& _positionOS, CursorInputEvent& _event);
 
         //////////////////////////////////////////
-        void processCursorDrag(Vec2F32 const& _positionOS, CursorInputEvent const& _event);
+        void processCursorDrag(Vec2F32 const& _positionOS, CursorInputEvent& _event);
 
 
         //////////////////////////////////////////

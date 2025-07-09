@@ -271,6 +271,10 @@ namespace Maze
         //////////////////////////////////////////
         inline bool getGenerateIdsForNewAssetFiles() const { return m_generateIdsForNewAssetFiles; }
 
+
+    public:
+        static MultiDelegate<> s_eventAssetManagerInitialized;
+
     public:
         MultiDelegate<Path const&> eventAssetsDirectoryPathAdded;
         MultiDelegate<Path const&> eventAssetsDirectoryPathRemoved;

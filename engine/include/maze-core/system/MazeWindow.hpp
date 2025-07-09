@@ -46,7 +46,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Window);
     class Display;
     MAZE_USING_SHARED_PTR(Display);
-    MAZE_USING_SHARED_PTR(SystemCursor);
+    MAZE_USING_MANAGED_SHARED_PTR(SystemCursor);
 
 
     //////////////////////////////////////////
@@ -168,6 +168,9 @@ namespace Maze
         virtual bool isOpened() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
+        virtual bool setCursor(SystemCursorPtr const& _cursor);
+
+        //////////////////////////////////////////
         virtual bool setTitle(String const& _title);
 
         //////////////////////////////////////////
@@ -250,6 +253,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(WindowParamsPtr const& _params);
 
+
+        //////////////////////////////////////////
+        virtual bool updateCursor() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual bool updateTitle() MAZE_ABSTRACT;

@@ -44,6 +44,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SystemManager);
     MAZE_USING_SHARED_PTR(UpdateManager);
+    MAZE_USING_SHARED_PTR(SystemCursorManager);
 
 
     //////////////////////////////////////////
@@ -110,18 +111,6 @@ namespace Maze
         virtual void setClipboardString(String const& _text);
 
 
-        //////////////////////////////////////////
-        virtual void showSystemCursor() {}
-
-        //////////////////////////////////////////
-        virtual void hideSystemCursor() {}
-
-        //////////////////////////////////////////
-        virtual void setSystemCursorPosition(Vec2F _posSystemScreen) {}
-
-        //////////////////////////////////////////
-        virtual Vec2F getSystemCursorPosition() { return Vec2F::c_zero; }
-
 
         //////////////////////////////////////////
         bool hasCommandLineArgumentFlag(HashedCString _key);
@@ -161,6 +150,7 @@ namespace Maze
         StringKeyMap<Vector<CString>> m_commandLineArgumentValues;
 
         UpdateManagerPtr m_updateManager;
+        SystemCursorManagerPtr m_systemCursorManager;
 
         DeviceCategory m_deviceCategory = DeviceCategory::None;
     };

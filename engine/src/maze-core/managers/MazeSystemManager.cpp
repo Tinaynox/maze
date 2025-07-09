@@ -30,6 +30,7 @@
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include MAZE_INCLUDE_OS_FILE(maze-core/managers, MazeSystemManager)
+#include MAZE_INCLUDE_OS_FILE(maze-core/managers, MazeSystemCursorManager)
 
 
 //////////////////////////////////////////
@@ -73,6 +74,10 @@ namespace Maze
     {
         UpdateManager::Initialize(m_updateManager);
         if (!m_updateManager)
+            return false;
+
+        SystemCursorManager::Initialize(m_systemCursorManager);
+        if (!m_systemCursorManager)
             return false;
 
         m_commandLineArguments = _commandLineArguments;

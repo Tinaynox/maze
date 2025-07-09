@@ -145,6 +145,9 @@ namespace Maze
         virtual bool init(WindowParamsPtr const& params);
 
         //////////////////////////////////////////
+        virtual bool updateCursor() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         virtual bool updateTitle() MAZE_OVERRIDE;
 
         //////////////////////////////////////////

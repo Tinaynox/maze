@@ -228,6 +228,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool WindowWin::updateCursor()
+    {
+        HCURSOR cursor = NULL;
+
+        if (m_params && m_params->cursor)
+            cursor = static_pointer_cast<SystemCursorWin>(m_params->cursor)->getCursorHandle();
+        else
+            cursor = LoadCursor(NULL, IDC_ARROW);
+
+        SetCursor(cursor);
+
+        SetClassLongPtr((HWND)m_handle, GCLP_HCURSOR, (LONG_PTR)cursor);
+
+        return false;
+    }
+
+    //////////////////////////////////////////
     bool WindowWin::updateTitle()
     {
         if (!isOpened())
@@ -885,7 +902,7 @@ namespace Maze
 
         if (m_params->cursor)
         {
-            wc.hCursor = std::static_pointer_cast<SystemCursorWin>(m_params->cursor)->getCursorHandle();
+            wc.hCursor = static_pointer_cast<SystemCursorWin>(m_params->cursor)->getCursorHandle();
         }
         else
         {

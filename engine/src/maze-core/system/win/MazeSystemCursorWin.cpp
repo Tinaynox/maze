@@ -29,6 +29,11 @@
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeLogHelper.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/assets/MazeAssetRegularFile.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
+#include "maze-core/helpers/MazeByteBufferHelper.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
 
 
 //////////////////////////////////////////
@@ -45,26 +50,84 @@ namespace Maze
     //////////////////////////////////////////
     SystemCursorWin::~SystemCursorWin()
     {
+        setCursorHandle(NULL);
     }
 
     //////////////////////////////////////////
-    SystemCursorWinPtr SystemCursorWin::Create(String const& _id, HCURSOR _cursorHandle)
+    SystemCursorWinPtr SystemCursorWin::Create(
+        HCURSOR _cursorHandle,
+        bool _ownsCursorHandle)
     {
         SystemCursorWinPtr cursor;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SystemCursorWin, cursor, init(_id, _cursorHandle));
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(SystemCursorWin, cursor, init(_cursorHandle, _ownsCursorHandle));
         return cursor;
     }
 
     //////////////////////////////////////////
-    bool SystemCursorWin::init(String const& _id, HCURSOR _cursorHandle)
+    bool SystemCursorWin::init(
+        HCURSOR _cursorHandle,
+        bool _ownsCursorHandle = false)
     {
-        if (!SystemCursor::init(_id))
+        setCursorHandle(_cursorHandle);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void SystemCursorWin::setCursorHandle(
+        HCURSOR _cursorHandle,
+        bool _ownsCursorHandle)
+    {
+        if (m_cursorHandle == _cursorHandle)
+            return;
+
+        if (m_cursorHandle != NULL && m_ownsCursorHandle)
+        {
+            DestroyCursor(m_cursorHandle);
+        }
+
+        m_cursorHandle = _cursorHandle;
+        m_ownsCursorHandle = _ownsCursorHandle;
+    }
+
+    //////////////////////////////////////////
+    bool SystemCursorWin::loadFromAssetFile(AssetFilePtr const& _assetFile)
+    {
+        DataBlock dataBlock = _assetFile->readAsDataBlock();
+        CString cursorFileName = dataBlock.getCString(MAZE_HCS(MAZE_PLATFORM_SUFFIX_CAMEL_STR));
+        if (!cursorFileName || !cursorFileName[0])
             return false;
 
-        MAZE_WARNING_RETURN_VALUE_IF(_cursorHandle == NULL, false, "Cannot load cursor '%s'!", _id.c_str());
+        AssetFilePtr const& cursorFile = AssetManager::GetInstancePtr()->getAssetFile(cursorFileName);
+        MAZE_ERROR_RETURN_VALUE_IF(!cursorFile, false, "Undefined cursor file: %s", cursorFileName);
 
-        setCursorHandle(_cursorHandle);
+        return loadFromWindowsCursorAssetFile(cursorFile);
+    }
 
+    //////////////////////////////////////////
+    bool SystemCursorWin::loadFromWindowsCursorAssetFile(AssetFilePtr const& _assetFile)
+    {
+        HCURSOR cursorHandle = NULL;
+
+        if (_assetFile->getMetaClass()->isInheritedFrom<AssetRegularFile>())
+        {
+            cursorHandle = LoadCursorFromFileW(_assetFile->getFullPath().c_str());
+        }
+        else
+        {
+            ByteBufferPtr dataBuffer = _assetFile->readAsByteBuffer();
+            Path tempCursorFilePath = FileHelper::GetDefaultTemporaryDirectory() + L"/cursors/" + _assetFile->getFileName();
+            ByteBufferHelper::SaveBinaryFile(*dataBuffer.get(), tempCursorFilePath);
+
+            cursorHandle = LoadCursorFromFileW(tempCursorFilePath.c_str());
+            FileHelper::DeleteRegularFile(tempCursorFilePath.c_str());
+        }
+
+        MAZE_ERROR_RETURN_VALUE_IF(
+            cursorHandle == NULL,
+            false,
+            "Failed to load cursor file %s!",
+            _assetFile->getFullPath().toUTF8().c_str());
+        setCursorHandle(cursorHandle, true);
         return true;
     }
 
