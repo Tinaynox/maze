@@ -521,7 +521,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void CanvasGetRenderTarget(Component* _component, S32& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Canvas>::UID(), "Component is not Camera3D!");
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Canvas>::UID(), "Component is not Canvas!");
         RenderTargetPtr const& renderTarget = _component->castRaw<Canvas>()->getRenderTarget();
         _outValue = renderTarget ? renderTarget->getResourceId() : c_invalidResourceId;
     }
@@ -529,10 +529,17 @@ namespace Maze
     //////////////////////////////////////////
     inline void CanvasSetRenderTarget(Component* _component, S32 _resourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Canvas>::UID(), "Component is not Camera3D!");
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Canvas>::UID(), "Component is not Canvas!");
 
         RenderTarget* renderTarget = RenderWindow::GetResource(_resourceId);
         _component->castRaw<Canvas>()->setRenderTarget(renderTarget ? renderTarget->getSharedPtr() : nullptr);
+    }
+
+    //////////////////////////////////////////
+    inline void CanvasGetRenderTargetRect(Component* _component, Rect2F& _outValue)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Canvas>::UID(), "Component is not Canvas!");
+        _outValue = _component->castRaw<Canvas>()->getRenderTargetRect();
     }
 
     //////////////////////////////////////////
@@ -751,6 +758,7 @@ namespace Maze
         // Canvas
         MAZE_GRAPHICS_MONO_BIND_FUNC(CanvasGetRenderTarget);
         MAZE_GRAPHICS_MONO_BIND_FUNC(CanvasSetRenderTarget);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(CanvasGetRenderTargetRect);
 
         // AbstractTextRenderer
         MAZE_GRAPHICS_MONO_BIND_FUNC(AbstractTextRendererGetText);

@@ -61,7 +61,7 @@ namespace Maze.Engine
 
         public static void SetSystemCursor(SystemCursor systemCursor)
         {
-            InternalCalls.SetSystemCursor(systemCursor.ResourceId);
+            InternalCalls.SetSystemCursor(systemCursor?.ResourceId ?? -1);
         }
 
         public static int GetFrame()

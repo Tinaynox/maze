@@ -160,7 +160,8 @@ namespace Maze
     {
         if (_eventUID == ClassInfo<MonoPreShutdownEvent>::UID())
         {
-            getEntityRaw()->getEcsWorld()->sendEventImmediate(getEntityId(), _event);
+            if (getEntityRaw()->getEcsWorld())
+                getEntityRaw()->getEcsWorld()->sendEventImmediate(getEntityId(), _event);
 
             m_cachedData = getData();
             // m_cachedData.saveTextFile(EcsHelper::GetName(getEntityRaw()));

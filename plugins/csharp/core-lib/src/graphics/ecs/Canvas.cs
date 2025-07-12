@@ -10,6 +10,11 @@ namespace Maze.Graphics
             set { InternalCalls.CanvasSetRenderTarget(NativeComponentPtr, value); }
         }
 
+        public Rect2F RenderTargetRect
+        {
+            get { InternalCalls.CanvasGetRenderTargetRect(NativeComponentPtr, out Rect2F value); return value; }
+        }
+
         public Canvas(NativePtr _nativeComponentPtr)
             : base(_nativeComponentPtr)
         {  

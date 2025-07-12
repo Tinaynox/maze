@@ -105,8 +105,16 @@ namespace Maze
         if (!renderWindow)
             return;
 
+        if (_systemCursorId == c_invalidResourceId)
+        {
+            renderWindow->getWindow()->setCursor(nullptr);
+            return;
+        }
+
         if (SystemCursor* systemCursor = SystemCursor::GetResource(_systemCursorId))
             renderWindow->getWindow()->setCursor(systemCursor->getSharedPtr());
+        else
+            Debug::LogError("Undefined cursor!");
     }
 
     //////////////////////////////////////////

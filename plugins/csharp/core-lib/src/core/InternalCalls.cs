@@ -22,6 +22,9 @@ namespace Maze.Core
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool GetCursorButtonState(int cursorId, int buttonIndex);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void GetCursorPosition(int cursorId, out Vec2F outPosition);
         #endregion
 
         #region Ecs

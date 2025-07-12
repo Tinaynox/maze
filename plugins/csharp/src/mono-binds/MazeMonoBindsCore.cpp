@@ -91,6 +91,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void GetCursorPosition(S32 _cursorId, Vec2F& _outPosition)
+    {
+        _outPosition = InputManager::GetInstancePtr()->getCursorPosition(_cursorId);
+    }
+
+    //////////////////////////////////////////
     inline ComponentId GetComponentIdByMonoType(MonoReflectionType* _type)
     {
         MonoType* monoType = mono_reflection_type_get_type(_type);
@@ -546,6 +552,7 @@ namespace Maze
         // Input
         MAZE_CORE_MONO_BIND_FUNC(GetKeyState);
         MAZE_CORE_MONO_BIND_FUNC(GetCursorButtonState);
+        MAZE_CORE_MONO_BIND_FUNC(GetCursorPosition);
 
         // Ecs
         MAZE_CORE_MONO_BIND_FUNC(GetComponentIdByMonoType);

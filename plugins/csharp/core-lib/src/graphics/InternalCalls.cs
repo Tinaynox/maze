@@ -175,6 +175,9 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void CanvasSetRenderTarget(NativePtr nativeComponentPtr, int value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void CanvasGetRenderTargetRect(NativePtr nativeComponentPtr, out Rect2F value); 
         #endregion
 
         #region AbstractTextRenderer

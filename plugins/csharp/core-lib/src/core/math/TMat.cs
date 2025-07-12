@@ -19,6 +19,10 @@ namespace Maze.Core
             0.0f, 0.0f, 1.0f,
             0.0f, 0.0f, 0.0f);
 
+        public Vec3F Right => this[0];
+        public Vec3F Up => this[1];
+        public Vec3F Forward => this[2];
+
         public TMat(
             float m00, float m01, float m02,
             float m10, float m11, float m12,
