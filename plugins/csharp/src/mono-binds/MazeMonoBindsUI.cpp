@@ -29,6 +29,8 @@
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-core/assets/MazeAssetUnitId.hpp"
+#include "maze-core/system/MazeSystemCursor.hpp"
+#include "maze-core/managers/MazeSystemCursorManager.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
@@ -227,6 +229,31 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    inline bool SystemCursorIsValid(S32 _systemCursorId)
+    {
+        SystemCursor* systemCursor = SystemCursor::GetResource(_systemCursorId);
+        return !!systemCursor;
+    }
+
+    inline S32 SystemCursorGetOrLoad(MonoString* _name)
+    {
+        if (!SystemCursorManager::GetInstancePtr())
+            return c_invalidResourceId;
+
+        Char* cstr = mono_string_to_utf8(_name);
+        S32 id = c_invalidResourceId;
+        
+        SystemCursorPtr const& systemCursor = SystemCursorManager::GetInstancePtr()->getOrLoadSystemCursor(cstr);
+        if (systemCursor)
+            id = systemCursor->getResourceId();
+
+        mono_free(cstr);
+
+        return id;
+    }
+
+
+    //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsUI()
     {
         // UIElement2D
@@ -262,6 +289,10 @@ namespace Maze
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationGetShowTime);
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationSetHideKoef);
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionTranslationGetHideKoef);
+
+        // SystemCursor
+        MAZE_UI_MONO_BIND_FUNC(SystemCursorIsValid);
+        MAZE_UI_MONO_BIND_FUNC(SystemCursorGetOrLoad);
     }
 
 } // namespace Maze

@@ -369,6 +369,10 @@ namespace Maze
         // Destroy asset scenes
         SceneManager::GetInstancePtr()->destroyNotSystemScenes<EcsAssetScene>();
 
+        // Reset cursor
+        if (Editor::GetInstancePtr()->getMainRenderWindow() && Editor::GetInstancePtr()->getMainRenderWindow()->getWindow())
+            Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->setCursor(nullptr);
+
 
         if (m_playtestModeEnabled)
             m_editorWorkspaceManager->destroyScenes();

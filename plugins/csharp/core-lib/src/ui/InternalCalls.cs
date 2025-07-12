@@ -91,5 +91,13 @@ namespace Maze.UI
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void UITweenTransitionTranslationGetShownPosition(NativePtr nativeComponentPtr, out Vec2F outValue);
         #endregion
+
+        #region SystemCursor
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool SystemCursorIsValid(int systemCursorId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int SystemCursorGetOrLoad(string systemCursorName);
+        #endregion
     }
 }

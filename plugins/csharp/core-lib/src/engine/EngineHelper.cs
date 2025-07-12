@@ -1,6 +1,7 @@
 using System;
 using Maze.Core;
 using Maze.Graphics;
+using Maze.UI;
 
 namespace Maze.Engine
 {
@@ -56,6 +57,11 @@ namespace Maze.Engine
         public static bool IsMainRenderWindowFocused()
         {
             return InternalCalls.IsEngineMainRenderWindowFocused();
+        }
+
+        public static void SetSystemCursor(SystemCursor systemCursor)
+        {
+            InternalCalls.SetSystemCursor(systemCursor.ResourceId);
         }
 
         public static int GetFrame()

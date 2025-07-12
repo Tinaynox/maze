@@ -35,6 +35,9 @@ namespace Maze
     // Class SystemCursor
     //
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(SystemCursor);
+    
+    //////////////////////////////////////////
     SystemCursor::SystemCursor()
     {
     }

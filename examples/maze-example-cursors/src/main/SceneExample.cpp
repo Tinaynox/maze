@@ -245,8 +245,9 @@ namespace Maze
                     });
             };
 
-        createAssetSystemCursorButton({ 70.0f + 130.0f * 0, 220.0f }, "Crosshair2.mzsyscur");
-        createAssetSystemCursorButton({ 70.0f + 130.0f * 1, 220.0f }, "Crosshair3.mzsyscur");
+        
+        createAssetSystemCursorButton({ 70.0f + 130.0f * 0, 220.0f }, "Arrow00.mzsyscur");
+        createAssetSystemCursorButton({ 70.0f + 130.0f * 1, 220.0f }, "Sword00.mzsyscur");
         createAssetSystemCursorButton({ 70.0f + 130.0f * 2, 220.0f }, "Cursor002.mzsyscur");
         createAssetSystemCursorButton({ 70.0f + 130.0f * 3, 220.0f }, "Cursor003.mzsyscur");
     }

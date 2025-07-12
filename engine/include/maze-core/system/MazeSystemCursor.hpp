@@ -34,6 +34,8 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
+#include "maze-core/utils/MazeManagedSharedObject.hpp"
 
 
 //////////////////////////////////////////
@@ -49,6 +51,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     class SystemCursor
+        : public IndexedResource<SystemCursor>
+        , public ManagedSharedObject<SystemCursor>
     {
     public:
 

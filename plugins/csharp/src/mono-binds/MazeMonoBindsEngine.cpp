@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCSharpHeader.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/system/MazeSystemCursor.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsEngine.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
@@ -98,6 +99,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void SetSystemCursor(S32 _systemCursorId)
+    {
+        RenderWindowPtr const& renderWindow = Engine::GetInstancePtr()->getMainRenderWindow();
+        if (!renderWindow)
+            return;
+
+        if (SystemCursor* systemCursor = SystemCursor::GetResource(_systemCursorId))
+            renderWindow->getWindow()->setCursor(systemCursor->getSharedPtr());
+    }
+
+    //////////////////////////////////////////
     inline S32 GetEngineFrame()
     {
         if (!Engine::GetInstancePtr())
@@ -105,6 +117,8 @@ namespace Maze
 
         return Engine::GetInstancePtr()->getFrame();
     }
+
+    
 
 
     //////////////////////////////////////////
@@ -116,6 +130,7 @@ namespace Maze
 
         // Main RenderWindow
         MAZE_ENGINE_MONO_BIND_FUNC(IsEngineMainRenderWindowFocused);
+        MAZE_ENGINE_MONO_BIND_FUNC(SetSystemCursor);
 
         // Engine
         MAZE_ENGINE_MONO_BIND_FUNC(GetEngineFrame);
