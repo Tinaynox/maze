@@ -67,6 +67,13 @@ namespace Maze.Core
             return _angle;
         }
 
+        public static float NormalizedAngleTwoPI(float _angle)
+        {
+            while (_angle < 0.0f) _angle += (float)Math.PI * 2.0f;
+            while (_angle > (float)Math.PI * 2.0) _angle -= (float)Math.PI * 2.0f;
+            return _angle;
+        }
+
         public static float LerpAngle(float angleFrom, float angleTo, float ratio)
         {
             angleFrom = NormalizedAnglePI(angleFrom);
