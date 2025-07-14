@@ -389,10 +389,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void ComponentSendMonoEventImmediate(Component* _component, Entity* _entityReceiver, MonoObject* _monoEventPtr)
+    {
+        MonoObject* monoEvent = (MonoObject*)mono_gchandle_get_target((uint32_t)(uintptr_t)_monoEventPtr);
+        _component->getEntityRaw()->getEcsWorld()->sendEventImmediate<Maze::MonoEvent>(_entityReceiver->getId(), monoEvent);
+    }
+
+    //////////////////////////////////////////
     inline void ComponentBroadcastMonoEvent(Component* _component, void* _monoEventPtr)
     {
         MonoObject* monoEvent = (MonoObject*)mono_gchandle_get_target((uint32_t)(uintptr_t)_monoEventPtr);
         _component->getEntityRaw()->getEcsWorld()->broadcastEvent<Maze::MonoEvent>(monoEvent);
+    }
+
+    //////////////////////////////////////////
+    inline void ComponentBroadcastMonoEventImmediate(Component* _component, void* _monoEventPtr)
+    {
+        MonoObject* monoEvent = (MonoObject*)mono_gchandle_get_target((uint32_t)(uintptr_t)_monoEventPtr);
+        _component->getEntityRaw()->getEcsWorld()->broadcastEventImmediate<Maze::MonoEvent>(monoEvent);
     }
 
     //////////////////////////////////////////
@@ -584,7 +598,9 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(ComponentCreateMonoBehaviourComponentObject);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetEntity);
         MAZE_CORE_MONO_BIND_FUNC(ComponentSendMonoEvent);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentSendMonoEventImmediate);
         MAZE_CORE_MONO_BIND_FUNC(ComponentBroadcastMonoEvent);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentBroadcastMonoEventImmediate);
         MAZE_CORE_MONO_BIND_FUNC(ComponentIsEditorMode);
 
         // Transform2D

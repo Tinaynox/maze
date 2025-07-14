@@ -88,10 +88,24 @@ namespace Maze.Core
             handle.Free();
         }
 
+        public void SendEventImmediate(Entity entity, MonoEvent monoEvent)
+        {
+            GCHandle handle = GCHandle.Alloc(monoEvent);
+            InternalCalls.ComponentSendMonoEventImmediate(NativeComponentPtr, entity.NativeEntityPtr, GCHandle.ToIntPtr(handle));
+            handle.Free();
+        }
+
         public void BroadcastEvent(MonoEvent monoEvent)
         {
             GCHandle handle = GCHandle.Alloc(monoEvent);
             InternalCalls.ComponentBroadcastMonoEvent(NativeComponentPtr, GCHandle.ToIntPtr(handle));
+            handle.Free();
+        }
+
+        public void BroadcastEventImmediate(MonoEvent monoEvent)
+        {
+            GCHandle handle = GCHandle.Alloc(monoEvent);
+            InternalCalls.ComponentBroadcastMonoEventImmediate(NativeComponentPtr, GCHandle.ToIntPtr(handle));
             handle.Free();
         }
 

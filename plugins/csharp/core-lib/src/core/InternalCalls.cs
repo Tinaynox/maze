@@ -105,7 +105,13 @@ namespace Maze.Core
         public extern static void ComponentSendMonoEvent(NativePtr nativeComponentPtr, NativePtr receiverEntity, IntPtr monoEvent);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void ComponentSendMonoEventImmediate(NativePtr nativeComponentPtr, NativePtr receiverEntity, IntPtr monoEvent);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void ComponentBroadcastMonoEvent(NativePtr nativeComponentPtr, IntPtr monoEvent);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void ComponentBroadcastMonoEventImmediate(NativePtr nativeComponentPtr, IntPtr monoEvent);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool ComponentIsEditorMode(NativePtr nativeComponentPtr);
