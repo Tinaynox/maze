@@ -47,5 +47,10 @@ namespace Maze.Graphics
                 return outCurrentTime;
             return 0.0f;
         }
+
+        public void RewindPlayerTo(int playerIndex, float time)
+        {
+            InternalCalls.SkinnedMeshRendererPlayerRewindTo(NativeComponentPtr, playerIndex, time);
+        }
     }
 }

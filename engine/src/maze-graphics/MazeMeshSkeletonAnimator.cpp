@@ -360,15 +360,20 @@ namespace Maze
     //////////////////////////////////////////
     void MeshSkeletonAnimatorPlayer::rewindToEnd()
     {
-        if (m_animation)
-            m_currentTime = m_animation->getAnimationTime();
+        rewindTo(m_animation->getAnimationTime());
     }
 
     //////////////////////////////////////////
     void MeshSkeletonAnimatorPlayer::rewindToRandom()
     {
+        rewindTo(Random::UnitRandom() * m_animation->getAnimationTime());
+    }
+
+    //////////////////////////////////////////
+    void MeshSkeletonAnimatorPlayer::rewindTo(F32 _time)
+    {
         if (m_animation)
-            m_currentTime = Random::UnitRandom() * m_animation->getAnimationTime();
+            m_currentTime = _time;
     }
 
     //////////////////////////////////////////

@@ -211,6 +211,23 @@ namespace Maze
         return true;
     }
 
+    //////////////////////////////////////////
+    inline void SkinnedMeshRendererPlayerRewindTo(
+        Component* _component,
+        S32 _playerIndex,
+        F32 _time)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
+        MAZE_ERROR_RETURN_IF(_playerIndex < 0 || _playerIndex >= MESH_SKELETON_ANIMATOR_PLAYERS_COUNT, "PlayerIndex is invalid - %d", _playerIndex);
+
+        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshRenderer>()->getAnimator();
+        MeshSkeletonAnimatorPlayerPtr const& player = animator->getPlayer(_playerIndex);
+        if (!player)
+            return;
+
+        player->rewindTo(_time);
+    }
+
 
     //////////////////////////////////////////
     inline void SpriteRenderer2DSetMaterial(Component* _component, S32 _resourceId)
@@ -753,6 +770,7 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererPlayAnimation);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetPlayerAnimationTime);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetPlayerCurrentTime);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererPlayerRewindTo);
 
         // SpriteRenderer2D
         MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DSetMaterial);

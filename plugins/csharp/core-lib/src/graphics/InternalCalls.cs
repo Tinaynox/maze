@@ -56,6 +56,12 @@ namespace Maze.Graphics
             NativePtr nativeComponentPtr,
             int playerIndex,
             out float outCurrentTime);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SkinnedMeshRendererPlayerRewindTo(
+            NativePtr nativeComponentPtr,
+            int playerIndex,
+            float time);
         #endregion
 
         #region SpriteRenderer2D
