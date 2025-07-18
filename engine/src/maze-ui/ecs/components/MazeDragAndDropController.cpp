@@ -85,9 +85,10 @@ namespace Maze
     //////////////////////////////////////////
     SceneDragAndDrop* DragAndDropController::getDragAndDropScene()
     {
-        SceneDragAndDropPtr scene = SceneManager::GetInstancePtr()->getSceneInheritedFrom<SceneDragAndDrop>();
-        if (scene)
-            return scene.get();
+        Vector<SceneDragAndDropPtr> scenes = SceneManager::GetInstancePtr()->getScenesInheritedFrom<SceneDragAndDrop>();
+        for (auto& scene : scenes)
+            if (scene->getWorld() == m_entityRaw->getEcsWorld())
+                return scene.get();
 
         return nullptr;
     }

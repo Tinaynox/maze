@@ -202,6 +202,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <class TScene>
+        Vector<SharedPtr<TScene>> getScenesInheritedFrom()
+        {
+            Vector<SharedPtr<TScene>> result;
+            for (Size i = 0; i < m_scenes.size(); ++i)
+                if (m_scenes[i].scene && m_scenes[i].scene->getMetaClass()->isInheritedFrom(ClassInfo<TScene>::UID()))
+                    result.push_back(m_scenes[i].scene->cast<TScene>());
+
+            return result;
+        }
+
+        //////////////////////////////////////////
         EcsSceneId getEcsSceneIdByClassUID(ClassUID _classUID)
         {
             for (Size i = 0; i < m_scenes.size(); ++i)
