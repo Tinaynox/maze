@@ -346,7 +346,8 @@ namespace Maze
 
         MAZE_DEBUG_ERROR_IF(
             getEntityRaw() && getEntityRaw()->getEcsWorld() && _parent && _parent->getEntityRaw() && _parent->getEntityRaw()->getEcsWorld() &&
-            getEntityRaw()->getEcsWorld() != _parent->getEntityRaw()->getEcsWorld(), "It's forbidden to connect entities from different worlds!");
+            getEntityRaw()->getEcsWorld() != _parent->getEntityRaw()->getEcsWorld(), "It's forbidden to connect entities from different worlds! Child world: %s, Parent world: %s",
+            getEntityRaw()->getEcsWorld()->getName().c_str(), _parent->getEntityRaw()->getEcsWorld()->getName().c_str());
 
         m_parent = _parent;
 

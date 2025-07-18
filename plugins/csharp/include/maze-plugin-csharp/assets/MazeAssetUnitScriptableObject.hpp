@@ -49,6 +49,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_CSHARP_API AssetUnitScriptableObject
         : public AssetUnit
+        , public MultiDelegateCallbackReceiver
     {
     public:
         
@@ -98,6 +99,10 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool unloadNowImpl() MAZE_OVERRIDE;
     
+        
+        //////////////////////////////////////////
+        void notifyEvent(ClassUID _eventUID, Event* _event);
+
     protected:
         ScriptableObjectPtr m_scriptableObject;
     };

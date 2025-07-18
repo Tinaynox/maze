@@ -178,6 +178,39 @@ namespace Maze
                     MAZE_WARNING("NOT IMPLEMENTED");
                 });
 
+
+            registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("System.String[]"),
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+                {
+                    MAZE_ERROR("NOT IMPLEMENTED");
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+                {
+                    Vector<CString> strings = _dataBlock.getDataBlockAsVectorCString(_prop->getName());
+                    MonoDomain* domain = mono_domain_get();
+                    MonoArray* arr = mono_array_new(domain, mono_get_string_class(), strings.size());
+
+                    for (Size i = 0, in = strings.size(); i != in; ++i)
+                        mono_array_set(arr, MonoString*, i, mono_string_new(domain, strings[i]));
+
+                    _instance.setPropertyValue(_prop, arr);
+                },
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+                {
+                    MAZE_ERROR("NOT IMPLEMENTED");
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+                {
+                    Vector<CString> strings = _dataBlock.getDataBlockAsVectorCString(_field->getName());
+                    MonoDomain* domain = mono_domain_get();
+                    MonoArray* arr = mono_array_new(domain, mono_get_string_class(), strings.size());
+
+                    for (Size i = 0, in = strings.size(); i != in; ++i)
+                        mono_array_set(arr, MonoString*, i, mono_string_new(domain, strings[i]));
+
+                    _instance.setFieldValue(_field, arr);
+                });
+
             // Core
             registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("Maze.Core.Entity"),
                 [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
@@ -248,7 +281,10 @@ namespace Maze
                             U32 auid = _dataBlock.getU32(paramIndex);
                             ScriptableObjectPtr const& scriptableObject = ScriptableObjectManager::GetInstancePtr()->getOrLoadScriptableObject(auid, true);
                             if (scriptableObject && scriptableObject->getScriptInstance())
+                            {
+                                MAZE_ERROR_IF(!scriptableObject->getScriptInstance()->getInstance(), "ScriptableObject is not loaded - %s!", scriptableObject->getName().c_str());
                                 _instance.setPropertyValue(_prop, scriptableObject->getScriptInstance()->getInstance());
+                            }
                             else
                                 _instance.resetPropertyValue(_prop);
                         }
@@ -275,7 +311,10 @@ namespace Maze
                             U32 auid = _dataBlock.getU32(paramIndex);
                             ScriptableObjectPtr const& scriptableObject = ScriptableObjectManager::GetInstancePtr()->getOrLoadScriptableObject(auid, true);
                             if (scriptableObject && scriptableObject->getScriptInstance())
+                            {
+                                MAZE_ERROR_IF(!scriptableObject->getScriptInstance()->getInstance(), "ScriptableObject is not loaded - %s!", scriptableObject->getName().c_str());
                                 _instance.setFieldValue(_field, scriptableObject->getScriptInstance()->getInstance());
+                            }
                             else
                                 _instance.resetFieldValue(_field);
                         }

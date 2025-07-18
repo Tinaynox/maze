@@ -152,5 +152,13 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    void ScriptableObject::clearScriptInstance()
+    {
+        if (m_scriptInstance)
+            m_scriptInstance->destroy();
+        m_scriptInstance.reset();
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

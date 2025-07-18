@@ -82,5 +82,10 @@ namespace Maze.Core
         {
             InternalCalls.EntityRemoveFromEcsWorld(NativeEntityPtr);
         }
+
+        public override string ToString()
+        {
+            return Id.ToString();
+        }
     }
 }

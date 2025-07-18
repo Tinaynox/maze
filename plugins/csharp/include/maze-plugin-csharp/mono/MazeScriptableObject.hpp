@@ -105,6 +105,9 @@ namespace Maze
         //////////////////////////////////////////
         inline ScriptInstancePtr const& getScriptInstance() const { return m_scriptInstance; }
 
+        //////////////////////////////////////////
+        void clearScriptInstance();
+
     private:
 
         //////////////////////////////////////////

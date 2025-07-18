@@ -26,9 +26,26 @@ namespace Maze.Graphics
             InternalCalls.SkinnedMeshRendererSetMaterialAssetUnit(NativeComponentPtr, auid);
         }
 
-        public void PlayAnimation(string animationName)
+        public int PlayAnimation(
+            string animationName,
+            bool loop = true,
+            float blendTime = 0.2f)
         {
-            InternalCalls.SkinnedMeshRendererPlayAnimation(NativeComponentPtr, animationName);
+            return InternalCalls.SkinnedMeshRendererPlayAnimation(NativeComponentPtr, animationName, loop, blendTime);
+        }
+
+        public float GetPlayerAnimationTime(int playerIndex)
+        {
+            if (InternalCalls.SkinnedMeshRendererGetPlayerAnimationTime(NativeComponentPtr, playerIndex, out float outAnimationTime))
+                return outAnimationTime;
+            return 0.0f;
+        }
+
+        public float GetPlayerCurrentTime(int playerIndex)
+        {
+            if (InternalCalls.SkinnedMeshRendererGetPlayerCurrentTime(NativeComponentPtr, playerIndex, out float outCurrentTime))
+                return outCurrentTime;
+            return 0.0f;
         }
     }
 }

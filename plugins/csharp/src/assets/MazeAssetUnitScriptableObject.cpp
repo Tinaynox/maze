@@ -30,6 +30,8 @@
 #include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
+#include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -51,6 +53,8 @@ namespace Maze
     //////////////////////////////////////////
     AssetUnitScriptableObject::~AssetUnitScriptableObject()
     {
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
     }
 
     //////////////////////////////////////////
@@ -73,7 +77,9 @@ namespace Maze
     {
         if (!AssetUnit::init(_assetFile, _data))
             return false;
-            
+        
+        EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &AssetUnitScriptableObject::notifyEvent);
+
         return true;
     }
 
@@ -109,7 +115,8 @@ namespace Maze
     {
         if (m_scriptableObject)
         {
-            
+            if (m_scriptableObject->getScriptInstance())
+                m_scriptableObject->clearScriptInstance();
         }
 
         return true;
@@ -175,6 +182,15 @@ namespace Maze
         }
 
         return m_scriptableObject;
+    }
+
+    //////////////////////////////////////////
+    void AssetUnitScriptableObject::notifyEvent(ClassUID _eventUID, Event* _event)
+    {
+        if (_eventUID == ClassInfo<MonoShutdownEvent>::UID())
+        {
+            unloadNow();
+        }
     }
 
 

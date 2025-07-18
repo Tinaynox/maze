@@ -81,7 +81,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void playAnimation(HashedCString _animationName);
+        S32 playAnimation(
+            HashedCString _animationName,
+            bool _loop = true,
+            F32 _blendTime = 0.2f);
 
 
         //////////////////////////////////////////

@@ -95,7 +95,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        bool playAnimation(HashedCString _name);
+        S32 playAnimation(
+            HashedCString _name,
+            bool _loop = true,
+            F32 _blendTime = 0.2f);
 
         //////////////////////////////////////////
         MeshSkeletonAnimatorPlayerPtr const& getCurrentAnimation();
@@ -107,6 +110,10 @@ namespace Maze
         //////////////////////////////////////////
         inline F32 getAnimationSpeed() const { return m_animationSpeed; }
 
+
+        //////////////////////////////////////////
+        inline MeshSkeletonAnimatorPlayerPtr const& getPlayer(Size _i) const { return m_players[_i]; }
+
     protected:
 
         //////////////////////////////////////////
@@ -117,6 +124,10 @@ namespace Maze
     
         //////////////////////////////////////////
         TMat const& calculateBoneGlobalTransform(MeshSkeleton::BoneIndex _i);
+
+        //////////////////////////////////////////
+        S32 findPlayerIndexForNewAnimation(
+            MeshSkeletonAnimationPtr const& _animation);
 
         //////////////////////////////////////////
         MeshSkeletonAnimatorPlayerPtr const& findPlayerForNewAnimation(
@@ -173,7 +184,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void play(MeshSkeletonAnimationPtr const& _animation);
+        void play(
+            MeshSkeletonAnimationPtr const& _animation,
+            bool _loop = true);
 
         //////////////////////////////////////////
         void stop();
@@ -197,7 +210,18 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline F32 getWeightSpeed() const { return m_weightSpeed; }
+
+        //////////////////////////////////////////
+        inline void setWeightSpeed(F32 _value) { m_weightSpeed = _value; }
+
+
+        //////////////////////////////////////////
         inline bool isActive() const { return m_state != State::None && m_state != State::Out; }
+
+
+        //////////////////////////////////////////
+        inline F32 getCurrentTime() const { return m_currentTime; }
 
     protected:
 

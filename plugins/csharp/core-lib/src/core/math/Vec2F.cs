@@ -129,9 +129,7 @@ namespace Maze.Core
 
         public Vec2F RandomDirection()
         {
-            Random random = new Random();
-
-            double angle = 2.0 * Math.PI * random.NextDouble();
+            double angle = 2.0 * Math.PI * RandomHelper.Double();
             return new Vec2F((float)Math.Cos(angle), (float)Math.Sin(angle));
         }
 

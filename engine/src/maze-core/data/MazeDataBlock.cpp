@@ -949,6 +949,35 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Vector<CString> DataBlock::getDataBlockAsVectorCString(HashedCString _name) const
+    {
+        DataBlock const* dataBlock = getDataBlock(_name);
+        if (!dataBlock)
+            return Vector<CString>();
+
+        Vector<CString> result;
+
+        for (ParamIndex i = 0, in = (ParamIndex)dataBlock->getParamsCount(); i < in; ++i)
+        {
+            Param const& param = dataBlock->getParam(i);
+            if (param.type == U32(DataBlockParamType::ParamString))
+                result.push_back(getSharedCString((DataBlock::SharedStringId)param.value));
+        }
+
+        return std::move(result);
+    }
+
+    //////////////////////////////////////////
+    void DataBlock::setDataBlockAsVectorCString(HashedCString _name, Vector<CString> const& _value)
+    {
+        DataBlock& childList = this->operator[](_name);
+        childList.clearData();
+
+        for (CString text : _value)
+            childList.addCString(MAZE_HCS("i"), text);
+    }
+
+    //////////////////////////////////////////
     Vector<String> DataBlock::getDataBlockAsVectorString(HashedCString _name) const
     {
         DataBlock const* dataBlock = getDataBlock(_name);
@@ -1109,6 +1138,12 @@ namespace Maze
             if ((*blockPtr)->getNameId() == _nameId)
                 return i;
         return -1;
+    }
+
+    //////////////////////////////////////////
+    DataBlock::DataBlockIndex DataBlock::findDataBlockIndex(HashedCString _name) const
+    {
+        return findDataBlockIndex(getSharedStringId(_name));
     }
 
     //////////////////////////////////////////

@@ -123,9 +123,9 @@ namespace Maze
             m_bonesTransformsDirty.resize(m_skeleton->getBonesCount());
 
             // Initial animation
-            StringKeyMap<MeshSkeletonAnimationPtr> const& animations = m_skeleton->getAnimations();
-            if (animations.size() > 0)
-                playAnimation(HashedCString(animations.begin()->first.c_str()));
+            // StringKeyMap<MeshSkeletonAnimationPtr> const& animations = m_skeleton->getAnimations();
+            // if (animations.size() > 0)
+            //    playAnimation(HashedCString(animations.begin()->first.c_str()));
         }
         else
         {
@@ -136,22 +136,35 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool MeshSkeletonAnimator::playAnimation(HashedCString _name)
+    S32 MeshSkeletonAnimator::playAnimation(
+        HashedCString _name,
+        bool _loop,
+        F32 _blendTime)
     {
         if (!m_skeleton)
             return false;
 
         MeshSkeletonAnimationPtr const& animation = m_skeleton->getAnimation(_name);
-        MAZE_WARNING_RETURN_VALUE_IF(!animation, false, "Undefined animation - %s!", _name.str);
+        MAZE_WARNING_RETURN_VALUE_IF(!animation, -1, "Undefined animation - %s!", _name.str);
 
-        MeshSkeletonAnimatorPlayerPtr const& player = findPlayerForNewAnimation(animation);
-        player->play(animation);
+        F32 blendWeightSpeed = _blendTime > 0.0f ? 1.0f / _blendTime : F32_VERY_BIG_NUMBER;
+
+        S32 playerIndex = findPlayerIndexForNewAnimation(animation);
+        MeshSkeletonAnimatorPlayerPtr const& player = m_players[playerIndex];
+
+        player->play(animation, _loop);
+        player->setWeightSpeed(blendWeightSpeed);
 
         for (S32 i = 0; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
+        {
             if (m_players[i] != player && m_players[i]->isActive())
+            {
                 m_players[i]->stop();
+                player->setWeightSpeed(blendWeightSpeed);
+            }
+        }
 
-        return true;
+        return playerIndex;
     }
 
     //////////////////////////////////////////
@@ -238,13 +251,13 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    MeshSkeletonAnimatorPlayerPtr const& MeshSkeletonAnimator::findPlayerForNewAnimation(
+    S32 MeshSkeletonAnimator::findPlayerIndexForNewAnimation(
         MeshSkeletonAnimationPtr const& _animation)
     {
         S32 playerIndex = 0;
         F32 bestWeight = m_players[playerIndex]->getCurrentWeight();
         if (_animation == m_players[playerIndex]->getAnimation() || (!m_players[playerIndex]->isActive() && bestWeight == 0.0f))
-            return m_players[playerIndex];
+            return playerIndex;
 
         // Find best inactive player or player with lowest current weight
         for (S32 i = 1; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
@@ -252,15 +265,23 @@ namespace Maze
             if (_animation == m_players[playerIndex]->getAnimation() ||
                 (m_players[playerIndex]->isActive() && !m_players[i]->isActive()) ||
                 m_players[i]->getCurrentWeight() < bestWeight)
-            {
-                playerIndex = i;
-                bestWeight = m_players[i]->getCurrentWeight();
+                {
+                    playerIndex = i;
+                    bestWeight = m_players[i]->getCurrentWeight();
 
-                if (!m_players[playerIndex]->isActive() && bestWeight == 0.0f)
-                    return m_players[playerIndex];
-            }
+                    if (!m_players[playerIndex]->isActive() && bestWeight == 0.0f)
+                        return playerIndex;
+                }
         }
 
+        return playerIndex;
+    }
+
+    //////////////////////////////////////////
+    MeshSkeletonAnimatorPlayerPtr const& MeshSkeletonAnimator::findPlayerForNewAnimation(
+        MeshSkeletonAnimationPtr const& _animation)
+    {
+        S32 playerIndex = findPlayerIndexForNewAnimation(_animation);
         return m_players[playerIndex];
     }
 
@@ -329,7 +350,7 @@ namespace Maze
             if (m_currentTime >= m_animation->getAnimationTime())
             {
                 if (m_looped)
-                    m_currentTime = 0.0f;
+                    m_currentTime = m_currentTime - m_animation->getAnimationTime();
                 else
                     m_currentTime = m_animation->getAnimationTime();
             }
@@ -351,7 +372,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MeshSkeletonAnimatorPlayer::play(MeshSkeletonAnimationPtr const& _animation)
+    void MeshSkeletonAnimatorPlayer::play(
+        MeshSkeletonAnimationPtr const& _animation,
+        bool _loop)
     {
         if (m_state != State::Active)
             setState(State::In);
@@ -360,6 +383,7 @@ namespace Maze
             m_currentTime = 0.0f;
 
         m_animation = _animation;
+        m_looped = _loop;
     }
 
     //////////////////////////////////////////

@@ -34,10 +34,28 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void SkinnedMeshRendererSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void SkinnedMeshRendererGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
+
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshRendererPlayAnimation(NativePtr nativeComponentPtr, string animationName);
+        public extern static int SkinnedMeshRendererPlayAnimation(
+            NativePtr nativeComponentPtr,
+            string animationName,
+            bool loop,
+            float blendTime);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool SkinnedMeshRendererGetPlayerAnimationTime(
+            NativePtr nativeComponentPtr,
+            int playerIndex,
+            out float outAnimationTime);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool SkinnedMeshRendererGetPlayerCurrentTime(
+            NativePtr nativeComponentPtr,
+            int playerIndex,
+            out float outCurrentTime);
         #endregion
 
         #region SpriteRenderer2D

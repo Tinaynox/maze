@@ -172,6 +172,15 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <>
+        inline bool setPropertyValue(ScriptPropertyPtr const& _property, MonoArray* const& _value)
+        {
+            void* arrayParam = _value;
+            MonoHelper::InvokeMethod(m_instance, _property->getSetterMethod(), &arrayParam);
+            return true;
+        }
+
+        //////////////////////////////////////////
         inline bool resetPropertyValue(ScriptPropertyPtr const& _property)
         {
             if (!_property->getSetterMethod())
@@ -261,6 +270,15 @@ namespace Maze
         //////////////////////////////////////////
         template <>
         inline bool setFieldValue(ScriptFieldPtr const& _field, MonoObject* const& _value)
+        {
+            MAZE_DEBUG_ASSERT(_field->getMonoClassField());
+            mono_field_set_value(m_instance, _field->getMonoClassField(), _value);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        template <>
+        inline bool setFieldValue(ScriptFieldPtr const& _field, MonoArray* const& _value)
         {
             MAZE_DEBUG_ASSERT(_field->getMonoClassField());
             mono_field_set_value(m_instance, _field->getMonoClassField(), _value);

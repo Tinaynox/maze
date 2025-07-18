@@ -648,6 +648,12 @@ namespace Maze
         DataBlock const& getDataBlock(HashedCString _name, DataBlock const& _defValue) const;
 
         //////////////////////////////////////////
+        Vector<CString> getDataBlockAsVectorCString(HashedCString _name) const;
+
+        //////////////////////////////////////////
+        void setDataBlockAsVectorCString(HashedCString _name, Vector<CString> const& _value);
+
+        //////////////////////////////////////////
         Vector<String> getDataBlockAsVectorString(HashedCString _name) const;
 
         //////////////////////////////////////////
@@ -678,6 +684,9 @@ namespace Maze
 
         //////////////////////////////////////////
         DataBlockIndex findDataBlockIndex(SharedStringId _nameId, DataBlockIndex _startAfter = 0) const;
+
+        //////////////////////////////////////////
+        DataBlockIndex findDataBlockIndex(HashedCString _name) const;
 
         //////////////////////////////////////////
         DataBlockIndex findDataBlockIndexReverse(SharedStringId _nameId, DataBlockIndex _startAfter) const;
