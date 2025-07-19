@@ -51,6 +51,7 @@
 #include "maze-core/math/MazeMathGeometry.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/assets/MazeAssetUnitId.hpp"
+#include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
 
 
 
@@ -385,6 +386,19 @@ namespace Maze
                             if (!metaProperty->hasOperatorEquals())
                                 continue;
 
+                            if (propertyName == MAZE_HCS("data"))
+                            {
+                                DataBlock dd0;
+                                metaProperty->toDataBlock(metaInstance, dd0);
+                                String some0 = DataBlockTextSerialization::SaveText(dd0);
+
+                                DataBlock dd1;
+                                metaProperty->toDataBlock(identityComponentMetaInstance, dd1);
+                                String some1 = DataBlockTextSerialization::SaveText(dd1);
+                                
+                                int a = 0;
+                            }
+
                             if (!metaProperty->isEqual(metaInstance, identityComponentMetaInstance))
                             {
                                 MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
@@ -400,6 +414,9 @@ namespace Maze
 
                                             DataBlock* modificationBlock = entityBlock->addNewDataBlock(MAZE_HCS("modification"));
                                             modificationBlock->setCString(MAZE_HCS("component"), metaClass->getName());
+                                            if (strcmp(componentData.second->getClassQualifiedName().str, componentData.second->getComponentClassName()) != 0)
+                                                modificationBlock->setCString(MAZE_HCS("_ct"), componentData.second->getComponentClassName());
+
                                             modificationBlock->setCString(MAZE_HCS("property"), propertyName);
                                             modificationBlock->setS32(MAZE_HCS("value"), propertyValueIndex);
                                         }
@@ -411,6 +428,9 @@ namespace Maze
                                 {
                                     DataBlock* modificationBlock = entityBlock->addNewDataBlock(MAZE_HCS("modification"));
                                     modificationBlock->setCString(MAZE_HCS("component"), metaClass->getName());
+                                    if (strcmp(componentData.second->getClassQualifiedName().str, componentData.second->getComponentClassName()) != 0)
+                                        modificationBlock->setCString(MAZE_HCS("_ct"), componentData.second->getComponentClassName());
+
                                     modificationBlock->setCString(MAZE_HCS("property"), propertyName);
                                     DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, MAZE_HCS("value"), *modificationBlock);
                                 }
@@ -1256,7 +1276,11 @@ namespace Maze
 
                             if (componentClassName && componentPropertyName)
                             {
-                                ComponentId componentId = factory->getComponentId(componentClassName);
+                                HashedCString componentDynamicClassName = componentBlock->getHashedCString(MAZE_HCS("_ct"));
+                                
+                                ComponentId componentId = !componentDynamicClassName.empty() ? GetComponentIdByName(componentDynamicClassName)
+                                    : factory->getComponentId(componentClassName);
+
                                 ComponentPtr const& component = entity->getComponentById(componentId);
                                 MetaProperty* metaProperty = component->getMetaClass()->getProperty(componentPropertyName);
                                 if (metaProperty)

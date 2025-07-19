@@ -46,6 +46,9 @@ namespace Maze
         MAZE_CORE_API bool SaveText(DataBlock const& _dataBlock, ByteBuffer& _buffer, U32 _flags = 0);
 
         //////////////////////////////////////////
+        MAZE_CORE_API String SaveText(DataBlock const& _dataBlock, U32 _flags = 0);
+
+        //////////////////////////////////////////
         MAZE_CORE_API bool LoadText(DataBlock& _dataBlock, ByteBuffer const& _buffer);
 
         //////////////////////////////////////////

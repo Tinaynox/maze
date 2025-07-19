@@ -675,6 +675,9 @@ namespace Maze
         //////////////////////////////////////////
         DataBlock& operator=(DataBlock&& _value) noexcept;
 
+        //////////////////////////////////////////
+        inline bool operator==(DataBlock const& _value) const { return isEqual(_value); }
+
 
         //////////////////////////////////////////
         DataBlock const* getDataBlockByNameId(SharedStringId _nameId, DataBlockIndex _startAfter = 0) const;

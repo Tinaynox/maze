@@ -433,6 +433,16 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_CORE_API String SaveText(DataBlock const& _dataBlock, U32 _flags)
+        {
+            ByteBuffer buffer;
+            if (!SaveText(_dataBlock, buffer, _flags))
+                return String();
+
+            return String(buffer.getDataRO(), buffer.getDataRO() + buffer.getSize());
+        }
+
+        //////////////////////////////////////////
         MAZE_CORE_API bool LoadText(DataBlock& _dataBlock, ByteBuffer const& _buffer)
         {
             DataBlockTextParser parser(_buffer);
