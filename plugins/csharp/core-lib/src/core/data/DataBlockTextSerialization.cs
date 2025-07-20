@@ -341,7 +341,7 @@ namespace Maze.Core
             return true;
         }
 
-        public static bool SaveText(DataBlock dataBlock, ByteBuffer buffer, uint flags)
+        public static bool SaveText(DataBlock dataBlock, ByteBuffer buffer, uint flags = 0u)
         {
             buffer.Clear();
 

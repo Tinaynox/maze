@@ -52,5 +52,10 @@ namespace Maze.Graphics
         {
             InternalCalls.SkinnedMeshRendererPlayerRewindTo(NativeComponentPtr, playerIndex, time);
         }
+
+        public void StopPlayer(int playerIndex)
+        {
+            InternalCalls.SkinnedMeshRendererPlayerStop(NativeComponentPtr, playerIndex);
+        }
     }
 }

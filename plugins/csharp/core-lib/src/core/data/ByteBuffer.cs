@@ -320,6 +320,17 @@ namespace Maze.Core
             return buffer;
         }
 
+        public static unsafe ByteBuffer LoadBytes(byte* bytes, uint size)
+        {
+            ByteBuffer byteBuffer = new ByteBuffer();
+            byteBuffer.Resize((int)size);
+
+            for (int i = 0; i < byteBuffer.Size; i++)
+                byteBuffer.Data[i] = bytes[i];
+
+            return byteBuffer;
+        }
+
         public ByteBuffer Clone()
         {
             return new ByteBuffer(m_Data);

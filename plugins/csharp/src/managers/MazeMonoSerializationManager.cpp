@@ -31,6 +31,7 @@
 #include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 #include "maze-core/managers/MazeEventManager.hpp"
+#include "maze-core/serialization/MazeDataBlockBinarySerialization.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
@@ -89,6 +90,50 @@ namespace Maze
     {
         if (_eventUID == ClassInfo<CSharpCoreAssemblyLoadedEvent>::UID())
         {
+            ScriptClassPtr monoByteBufferClass = ScriptClass::Create("Maze.Core", "ByteBuffer", MonoEngine::GetCoreAssemblyImage());
+            MonoProperty* monoByteBufferSizeProperty = monoByteBufferClass->getProperty("Size");
+            MonoProperty* monoByteBufferDataProperty = monoByteBufferClass->getProperty("Data");
+
+            ScriptClassPtr monoDataBlockClass = ScriptClass::Create("Maze.Core", "DataBlock", MonoEngine::GetCoreAssemblyImage());
+            MonoMethod* monoDataBlockLoadBytesMethod = monoDataBlockClass->getMethod("LoadBytes", 2);
+            MonoMethod* monoDataBlockToByteBufferMethod = monoDataBlockClass->getMethod("ToByteBuffer", 0);
+
+            auto dataBlockToMonoDataBlock =
+                [monoDataBlockLoadBytesMethod](DataBlock const& _dataBlock)
+                {
+                    ByteBuffer buffer;
+                    DataBlockBinarySerialization::SaveBinary(_dataBlock, buffer);
+                    U32 bufferSize = buffer.getSize();
+                    void* args[2] = { (void*)buffer.getDataRO(), (void*)&bufferSize };
+                    return MonoHelper::InvokeMethod(nullptr, monoDataBlockLoadBytesMethod, args);
+                };
+
+            auto monoDataBlockToDataBlock =
+                [monoDataBlockToByteBufferMethod,
+                monoByteBufferSizeProperty,
+                monoByteBufferDataProperty](MonoObject* _monoDataBlock, DataBlock& _dataBlock)
+                {
+                    _dataBlock.clear();
+
+                    if (!_monoDataBlock)
+                        return true;
+
+                    MonoObject* monoByteBuffer = MonoHelper::InvokeMethod(_monoDataBlock, monoDataBlockToByteBufferMethod);
+                    MonoObject* monoByteBufferSizeObject = mono_property_get_value(monoByteBufferSizeProperty, monoByteBuffer, nullptr, nullptr);
+                    MAZE_ERROR_RETURN_VALUE_IF(!monoByteBufferSizeObject || !MonoHelper::IsValueType(monoByteBufferSizeObject), false, "Failed to get Size property");
+
+                    U32 monoByteBufferSize = *(U32*)mono_object_unbox(monoByteBufferSizeObject);
+                    if (monoByteBufferSize == 0)
+                        return true;
+                        
+                    MonoArray* monoByteBufferDataObject = (MonoArray*)mono_property_get_value(monoByteBufferDataProperty, monoByteBuffer, nullptr, nullptr);
+                    U8 const* arrayData = (U8 const*)mono_array_addr_with_size(monoByteBufferDataObject, sizeof(U8), 0);
+                    ByteBuffer buffer(arrayData, monoByteBufferSize);
+                    DataBlockBinarySerialization::LoadBinary(_dataBlock, buffer);
+                    return true;
+                };
+
+
 #define MAZE_MONO_SERIALIZATION_TYPE(DTypeName, DType)                                                                     \
             registerPropertyAndFieldDataBlockSerialization(MAZE_HCS(DTypeName),                                            \
                 [](EcsWorld*, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)      \
@@ -259,6 +304,39 @@ namespace Maze
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.Rect2F", Vec4F);
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.AssetUnitId", U32);
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.AssetFileId", U32);
+
+
+            // DataBlock
+            registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("Maze.Core.DataBlock"),
+                [monoDataBlockToDataBlock](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+                {
+                    MonoObject* monoDataBlock = nullptr;
+                    _instance.getPropertyValue(_prop, monoDataBlock);
+                    monoDataBlockToDataBlock(monoDataBlock, *_dataBlock.ensureDataBlock(_prop->getName()));
+                },
+                [dataBlockToMonoDataBlock](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+                {
+                    MonoObject* monoDataBlock = nullptr;
+                    DataBlock const* dataBlock = _dataBlock.getDataBlock(_prop->getName());
+                    if (dataBlock)
+                        monoDataBlock = dataBlockToMonoDataBlock(*dataBlock);
+                    _instance.setPropertyValue(_prop, monoDataBlock);
+                },
+                [monoDataBlockToDataBlock](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+                {
+                    MonoObject* monoDataBlock = nullptr;
+                    _instance.getFieldValue(_field, monoDataBlock);
+                    monoDataBlockToDataBlock(monoDataBlock, *_dataBlock.ensureDataBlock(_field->getName()));
+                },
+                [dataBlockToMonoDataBlock, monoDataBlockToDataBlock](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+                {
+                    MonoObject* monoDataBlock = nullptr;
+                    DataBlock const* dataBlock = _dataBlock.getDataBlock(_field->getName());
+                    if (dataBlock)
+                        monoDataBlock = dataBlockToMonoDataBlock(*dataBlock);
+                    _instance.setFieldValue(_field, monoDataBlock);
+                });
+
 
             // SciptableObjects
             ScriptClassPtr const& scriptableObjectClass = MonoEngine::GetScriptableObjectClass();

@@ -194,6 +194,11 @@ namespace Maze.Core
             return true;
         }
 
+        public static unsafe bool LoadBinary(out DataBlock dataBlock, byte* bytes, uint size)
+        {
+            return LoadBinary(out dataBlock, ByteBuffer.LoadBytes(bytes, size));
+        }
+
         public static bool LoadBinaryFile(out DataBlock dataBlock, string path)
         {
             ByteBuffer buffer = ByteBuffer.LoadFile(path);

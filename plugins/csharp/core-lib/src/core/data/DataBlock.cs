@@ -501,6 +501,35 @@ namespace Maze.Core
             return newBlock;
         }
 
+        public static unsafe DataBlock LoadBytes(byte* bytes, uint size)
+        {
+            if (DataBlockBinarySerialization.LoadBinary(out DataBlock dataBlock, bytes, size))
+                return dataBlock;
+
+            return null;
+        }
+
+        public ByteBuffer ToByteBuffer()
+        {
+            if (DataBlockBinarySerialization.SaveBinary(this, out ByteBuffer buffer))
+                return buffer;
+
+            return null;
+        }
+
+        public string ToString(bool compact)
+        {
+            ByteBuffer byteBuffer = new ByteBuffer();
+            DataBlockTextSerialization.SaveText(this, byteBuffer, compact ? (uint)DataBlockTextSerialization.DataBlockTextFlags.Compact : 0u);
+
+            return Encoding.ASCII.GetString(byteBuffer.Data);
+        }
+
+        public override string ToString()
+        {
+            return ToString(false);
+        }
+
         public DataBlock this[string name] { get => EnsureDataBlock(name); }
         #endregion
     }

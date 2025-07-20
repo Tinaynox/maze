@@ -29,13 +29,7 @@ namespace Maze.Core
                 out byte* bytes))
                 return null;
 
-            ByteBuffer byteBuffer = new ByteBuffer();
-            byteBuffer.Resize((int)size);
-
-            for (int i = 0; i < byteBuffer.Size; i++)
-                byteBuffer.Data[i] = bytes[i];
-
-            return byteBuffer;
+            return ByteBuffer.LoadBytes(bytes, size);
         }
     }
 }
