@@ -17,6 +17,12 @@ namespace Maze.Core
             return s_Random.Next(a, b);
         }
 
+        // [X,Y)
+        public static float Int(Vec2S rng)
+        {
+            return Int(rng.X, rng.Y);
+        }
+
         // [0,a)
         public static int Int(int a)
         {
@@ -49,6 +55,12 @@ namespace Maze.Core
         public static float Float(float a, float b)
         {
             return ((float)s_Random.NextDouble()) * (b - a) + a;
+        }
+
+        // [X,Y]
+        public static float Float(Vec2F rng)
+        {
+            return Float(rng.X, rng.Y);
         }
 
         // [0.0f,a]

@@ -63,6 +63,34 @@ namespace Maze.Core
             return new Vec2S(vec0.X / vec1.X, vec0.Y / vec1.Y);
         }
 
+        public static bool operator ==(Vec2S value0, Vec2S value1)
+        {
+            return value0.X == value1.X && value0.Y == value1.Y;
+        }
+
+        public static bool operator !=(Vec2S value0, Vec2S value1)
+        {
+            return value0.X != value1.X || value0.Y != value1.Y;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Vec2S other)
+                return this == other;
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked // Handle arithmetic overflow
+            {
+                int hash = 17;
+                hash = hash * 23 + X.GetHashCode();
+                hash = hash * 23 + Y.GetHashCode();
+                return hash;
+            }
+        }
+
         public byte[] GetBytes()
         {
             byte[] bytes = new byte[8];

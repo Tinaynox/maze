@@ -21,6 +21,34 @@ namespace Maze.Core
             Y = y;
         }
 
+        public static bool operator ==(Vec2B value0, Vec2B value1)
+        {
+            return value0.X == value1.X && value0.Y == value1.Y;
+        }
+
+        public static bool operator !=(Vec2B value0, Vec2B value1)
+        {
+            return value0.X != value1.X || value0.Y != value1.Y;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Vec2B other)
+                return this == other;
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked // Handle arithmetic overflow
+            {
+                int hash = 17;
+                hash = hash * 23 + X.GetHashCode();
+                hash = hash * 23 + Y.GetHashCode();
+                return hash;
+            }
+        }
+
         public byte[] GetBytes()
         {
             byte[] bytes = new byte[2];
