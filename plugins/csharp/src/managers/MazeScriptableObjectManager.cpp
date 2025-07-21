@@ -107,6 +107,11 @@ namespace Maze
                 }
             });
 
+            for (AssetFilePtr const& assetFile : AssetManager::GetInstancePtr()->getAssetFilesWithExtension("mzso"))
+            {
+                assetFile->updateAssetUnitsFromMetaData();
+            }
+
             AssetManager::GetInstancePtr()->eventAssetFileMoved.subscribe(
                 [](AssetFilePtr const& _assetFile, Path const& _prevPath)
             {
