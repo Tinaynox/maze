@@ -67,6 +67,14 @@ namespace Maze.Graphics
         public extern static void SkinnedMeshRendererPlayerStop(
             NativePtr nativeComponentPtr,
             int playerIndex);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static float SkinnedMeshRendererGetAnimationSpeed(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SkinnedMeshRendererSetAnimationSpeed(
+            NativePtr nativeComponentPtr,
+            float animationSpeed);
         #endregion
 
         #region SpriteRenderer2D

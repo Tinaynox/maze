@@ -16,6 +16,12 @@ namespace Maze.Graphics
             set { InternalCalls.SkinnedMeshRendererSetMaterial(NativeComponentPtr, value.ResourceId); }
         }
 
+        public float AnimationSpeed
+        {
+            get { return InternalCalls.SkinnedMeshRendererGetAnimationSpeed(NativeComponentPtr); }
+            set { InternalCalls.SkinnedMeshRendererSetAnimationSpeed(NativeComponentPtr, value); }
+        }
+
         public SkinnedMeshRenderer(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
         {  
