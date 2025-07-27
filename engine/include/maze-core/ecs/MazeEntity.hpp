@@ -350,6 +350,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline EcsSerializationId getSerializationId() const { return m_serializationId; }
+
+        //////////////////////////////////////////
+        inline void setSerializationId(EcsSerializationId _serializationId) { m_serializationId = _serializationId; }
+
+
+        //////////////////////////////////////////
         inline U8 getFlags() const { return m_flags; }
         
         //////////////////////////////////////////
@@ -462,7 +469,8 @@ namespace Maze
     protected:
         EcsWorld* m_world = nullptr;
         EcsScene* m_scene = nullptr;
-        EntityId m_id;
+        EntityId m_id = c_invalidEntityId;
+        EcsSerializationId m_serializationId = c_invalidSerializationId;
         ComponentsContainer m_components;
         U8 m_flags = (U8(Flags::ActiveSelf) | U8(Flags::ActiveInHierarchyPrevFrame) | U8(Flags::ComponentsMaskDirty));
 

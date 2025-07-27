@@ -40,6 +40,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(Entity,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(EntityId, id, c_invalidEntityId, getId, setId),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(EcsSerializationId, _sid, c_invalidSerializationId, getSerializationId, setSerializationId),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(U8, flags, U8(Entity::Flags::ActiveSelf), getFlags, setFlags));
 
     //////////////////////////////////////////

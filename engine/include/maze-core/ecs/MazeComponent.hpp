@@ -227,6 +227,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline EcsSerializationId getSerializationId() const { return m_serializationId; }
+
+        //////////////////////////////////////////
+        inline void setSerializationId(EcsSerializationId _serializationId) { m_serializationId = _serializationId; }
+
+
+        //////////////////////////////////////////
         template <typename UComponent>
         inline SharedPtr<UComponent> safeCast()
         {
@@ -309,6 +316,7 @@ namespace Maze
 
     protected:
         Entity* m_entityRaw = nullptr;
+        EcsSerializationId m_serializationId = c_invalidSerializationId;
     };
 
     //////////////////////////////////////////

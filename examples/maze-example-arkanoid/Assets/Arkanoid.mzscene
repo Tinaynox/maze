@@ -11,11 +11,11 @@ entities
 
   entity
   {
-    _i:S32 = 1
+    _sid:S32 = 1
 
     component
     {
-      _i:S32 = 2
+      _sid:S32 = 2
       _t:String = "Name"
 
       name
@@ -26,7 +26,7 @@ entities
 
     component
     {
-      _i:S32 = 3
+      _sid:S32 = 3
       _t:String = "MonoBehaviour"
       _ct:String = "GameController"
 
@@ -42,7 +42,7 @@ entities
 
     component
     {
-      _i:S32 = 4
+      _sid:S32 = 4
       _t:String = "Transform3D"
       localPosition:Vec3F = 0, -4, 0
       localScale:Vec3F = 1, 1, 1
@@ -56,11 +56,11 @@ entities
 
   entity
   {
-    _i:S32 = 5
+    _sid:S32 = 5
 
     component
     {
-      _i:S32 = 6
+      _sid:S32 = 6
       _t:String = "Name"
 
       name
@@ -71,7 +71,7 @@ entities
 
     component
     {
-      _i:S32 = 7
+      _sid:S32 = 7
       _t:String = "MeshRenderer"
       enabled:Bool = true
 
@@ -91,14 +91,14 @@ entities
 
     component
     {
-      _i:S32 = 8
+      _sid:S32 = 8
       _t:String = "RenderMask"
       mask:S32 = 1
     }
 
     component
     {
-      _i:S32 = 9
+      _sid:S32 = 9
       _t:String = "Transform3D"
       localPosition:Vec3F = 0, 0, 0
       localScale:Vec3F = 100, 0.0001, 100
@@ -117,11 +117,11 @@ entities
 
   entity
   {
-    _i:S32 = 10
+    _sid:S32 = 10
 
     component
     {
-      _i:S32 = 11
+      _sid:S32 = 11
       _t:String = "Name"
 
       name
@@ -132,14 +132,14 @@ entities
 
     component
     {
-      _i:S32 = 12
+      _sid:S32 = 12
       _t:String = "RenderMask"
       mask:S32 = 1
     }
 
     component
     {
-      _i:S32 = 13
+      _sid:S32 = 13
       _t:String = "Light3D"
       lightType:String = "Directional"
 
@@ -151,7 +151,7 @@ entities
 
     component
     {
-      _i:S32 = 14
+      _sid:S32 = 14
       _t:String = "Transform3D"
       localPosition:Vec3F = 0, 3, 0
       localScale:Vec3F = 1, 1, 1
@@ -165,11 +165,11 @@ entities
 
   entity
   {
-    _i:S32 = 15
+    _sid:S32 = 15
 
     component
     {
-      _i:S32 = 16
+      _sid:S32 = 16
       _t:String = "Name"
 
       name
@@ -180,7 +180,7 @@ entities
 
     component
     {
-      _i:S32 = 17
+      _sid:S32 = 17
       _t:String = "Camera3D"
       fov:F32 = 0.523599
       nearZ:F32 = 0.01
@@ -207,7 +207,7 @@ entities
 
     component
     {
-      _i:S32 = 18
+      _sid:S32 = 18
       _t:String = "Transform3D"
       localPosition:Vec3F = 5e-06, -3.86169, -18.8749
       localScale:Vec3F = 1, 1, 1
@@ -221,12 +221,12 @@ entities
 
   entity
   {
-    _i:S32 = 19
+    _sid:S32 = 19
     active:Bool = false
 
     component
     {
-      _i:S32 = 20
+      _sid:S32 = 20
       _t:String = "Name"
 
       name
@@ -237,7 +237,7 @@ entities
 
     component
     {
-      _i:S32 = 21
+      _sid:S32 = 21
       _t:String = "MeshRenderer"
       enabled:Bool = true
 
@@ -257,14 +257,14 @@ entities
 
     component
     {
-      _i:S32 = 22
+      _sid:S32 = 22
       _t:String = "RenderMask"
       mask:S32 = 1
     }
 
     component
     {
-      _i:S32 = 23
+      _sid:S32 = 23
       _t:String = "Transform3D"
       localPosition:Vec3F = 5, 5, 0
       localScale:Vec3F = 1, 10, 1
@@ -283,11 +283,11 @@ entities
 
   entity
   {
-    _i:S32 = 24
+    _sid:S32 = 24
 
     component
     {
-      _i:S32 = 25
+      _sid:S32 = 25
       _t:String = "Name"
 
       name
@@ -298,7 +298,7 @@ entities
 
     component
     {
-      _i:S32 = 26
+      _sid:S32 = 26
       _t:String = "MeshRenderer"
       enabled:Bool = true
 
@@ -318,14 +318,14 @@ entities
 
     component
     {
-      _i:S32 = 27
+      _sid:S32 = 27
       _t:String = "RenderMask"
       mask:S32 = 1
     }
 
     component
     {
-      _i:S32 = 28
+      _sid:S32 = 28
       _t:String = "Transform3D"
       localPosition:Vec3F = 0, 0.0125, 0
       localScale:Vec3F = 9, 0.025, 1
@@ -344,12 +344,12 @@ entities
 
   entity
   {
-    _i:S32 = 29
+    _sid:S32 = 29
     active:Bool = false
 
     component
     {
-      _i:S32 = 30
+      _sid:S32 = 30
       _t:String = "Name"
 
       name
@@ -360,7 +360,7 @@ entities
 
     component
     {
-      _i:S32 = 31
+      _sid:S32 = 31
       _t:String = "MeshRenderer"
       enabled:Bool = true
 
@@ -380,14 +380,14 @@ entities
 
     component
     {
-      _i:S32 = 32
+      _sid:S32 = 32
       _t:String = "RenderMask"
       mask:S32 = 1
     }
 
     component
     {
-      _i:S32 = 33
+      _sid:S32 = 33
       _t:String = "Transform3D"
       localPosition:Vec3F = -5, 5, 0
       localScale:Vec3F = 1, 10, 1
@@ -406,12 +406,12 @@ entities
 
   entity
   {
-    _i:S32 = 34
+    _sid:S32 = 34
     active:Bool = false
 
     component
     {
-      _i:S32 = 35
+      _sid:S32 = 35
       _t:String = "Name"
 
       name
@@ -422,7 +422,7 @@ entities
 
     component
     {
-      _i:S32 = 36
+      _sid:S32 = 36
       _t:String = "MeshRenderer"
       enabled:Bool = true
 
@@ -442,14 +442,14 @@ entities
 
     component
     {
-      _i:S32 = 37
+      _sid:S32 = 37
       _t:String = "RenderMask"
       mask:S32 = 1
     }
 
     component
     {
-      _i:S32 = 38
+      _sid:S32 = 38
       _t:String = "Transform3D"
       localPosition:Vec3F = 0, 9.5, 0
       localScale:Vec3F = 9, 1, 1
@@ -468,11 +468,11 @@ entities
 
   entity
   {
-    _i:S32 = 39
+    _sid:S32 = 39
 
     component
     {
-      _i:S32 = 40
+      _sid:S32 = 40
       _t:String = "Name"
 
       name
@@ -483,7 +483,7 @@ entities
 
     component
     {
-      _i:S32 = 41
+      _sid:S32 = 41
       _t:String = "MeshRenderer"
       enabled:Bool = true
 
@@ -503,14 +503,14 @@ entities
 
     component
     {
-      _i:S32 = 42
+      _sid:S32 = 42
       _t:String = "RenderMask"
       mask:S32 = 1
     }
 
     component
     {
-      _i:S32 = 43
+      _sid:S32 = 43
       _t:String = "Transform3D"
       localPosition:Vec3F = 0, 0, 0
       localScale:Vec3F = 1, 1, 1

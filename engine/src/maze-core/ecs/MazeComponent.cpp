@@ -37,7 +37,8 @@ namespace Maze
     // Class Component
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS(Component);
+    MAZE_IMPLEMENT_METACLASS(Component,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(EcsSerializationId, _sid, c_invalidSerializationId, getSerializationId, setSerializationId));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Component);

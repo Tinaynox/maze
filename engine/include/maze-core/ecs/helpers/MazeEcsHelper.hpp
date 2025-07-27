@@ -99,12 +99,12 @@ namespace Maze
         inline TComponent* GetFirstTrunkComponent(Entity* _entity)
         {
             if (Transform2D* transform2D = _entity->getComponentRaw<Transform2D>())
-                transform2D->getFirstTrunkComponent<TComponent>();
+                return transform2D->getFirstTrunkComponent<TComponent>();
             else
             if (Transform3D* transform3D = _entity->getComponentRaw<Transform3D>())
-                transform3D->getFirstTrunkComponent<TComponent>();
-            else
-                return nullptr;
+                return transform3D->getFirstTrunkComponent<TComponent>();
+            
+            return nullptr;
         }
 
     } // namespace EcsHelper

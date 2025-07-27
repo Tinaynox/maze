@@ -3,11 +3,11 @@ _version:S32 = 1
 
 entity
 {
-  _i:S32 = 1
+  _sid:S32 = 1
 
   component
   {
-    _i:S32 = 2
+    _sid:S32 = 2
     _t:String = "Name"
 
     name
@@ -18,7 +18,7 @@ entity
 
   component
   {
-    _i:S32 = 3
+    _sid:S32 = 3
     _t:String = "MeshRenderer"
     enabled:Bool = true
 
@@ -38,7 +38,7 @@ entity
 
   component
   {
-    _i:S32 = 4
+    _sid:S32 = 4
     _t:String = "MonoBehaviour"
     _ct:String = "Paddle"
 
@@ -47,14 +47,14 @@ entity
 
   component
   {
-    _i:S32 = 5
+    _sid:S32 = 5
     _t:String = "RenderMask"
     mask:S32 = 1
   }
 
   component
   {
-    _i:S32 = 6
+    _sid:S32 = 6
     _t:String = "Transform3D"
     localPosition:Vec3F = 0, 0, 0
     localScale:Vec3F = 1.5, 0.25, 1
