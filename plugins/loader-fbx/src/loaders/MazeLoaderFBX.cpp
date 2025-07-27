@@ -335,7 +335,7 @@ namespace Maze
 
         }
 
-        TMat convertUnitsMat = TMat::CreateScale(0.01f); // Set meters as MAZE engine units
+        TMat convertUnitsMat = TMat::CreateScale(0.01f * _props.scale); // Set meters as MAZE engine units and custom extra scale from props
 
         S32 indicesOffset = 0;
 
