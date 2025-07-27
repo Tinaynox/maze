@@ -168,6 +168,7 @@ namespace Maze
 
         //////////////////////////////////////////
         void saveEntitiesToDataBlock(
+            EcsWorld* _ecsWorld,
             Vector<EntitySerializationData> const& _entityComponents,
             Vector<PrefabSerializationData> const& _prefabs,
             Map<void*, S32>& _pointerIndices,
@@ -180,7 +181,8 @@ namespace Maze
             DataBlock& _dataBlock,
             Map<EntityId, S32> const& _entityIndices,
             Vector<EntitySerializationData> const& _entityComponents,
-            Map<void*, S32>& _pointerIndices) const;
+            Map<void*, S32>& _pointerIndices,
+            EcsWorld* _ecsWorld) const;
 
         //////////////////////////////////////////
         void restoreDataBlockEcsIds(

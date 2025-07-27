@@ -387,6 +387,32 @@ namespace Maze
     };
 
 
+    //////////////////////////////////////////
+    // Class EntityPostCopyEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API EntityPostCopyEvent
+        : public GenericEvent<EntityPostCopyEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EntityPostCopyEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        EntityPostCopyEvent(
+            Entity const* _sourceEntity,
+            EntityCopyData const& _copyData)
+            : sourceEntity(_sourceEntity)
+            , copyData(_copyData)
+        {}
+
+        Entity const* sourceEntity;
+        EntityCopyData const& copyData;
+    };
+
+
 
 } // namespace Maze
 //////////////////////////////////////////

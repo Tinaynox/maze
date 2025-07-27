@@ -138,6 +138,7 @@ namespace Maze
         // Root entity serialized
         if (_copyData.getStackDepth() == 0)
         {
+            // Remap component properties
             for (EntityCopyData::ComponentPropertyData const& data : _copyData.getComponentProperties())
             {
                 ClassUID metaPropertyClassUID = data.metaProperty->getValueClassUID();
@@ -202,6 +203,7 @@ namespace Maze
                 }
             }
 
+            // Remap entity properties
             for (EntityCopyData::EntityPropertyData const& data : _copyData.getEntityProperties())
             {
                 ClassUID metaPropertyClassUID = data.metaProperty->getValueClassUID();
@@ -250,6 +252,13 @@ namespace Maze
                 {
                     MAZE_NOT_IMPLEMENTED
                 }
+            }
+
+            // Remap other properties
+            for (auto const& entityData : _copyData.getEntities())
+            {
+                EntityPostCopyEvent postCopyEvent(entityData.first, _copyData);
+                entityData.second->processEvent(&postCopyEvent);
             }
         }
 

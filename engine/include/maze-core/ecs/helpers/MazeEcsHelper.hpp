@@ -34,7 +34,8 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsTypes.hpp"
-
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
 
 
 //////////////////////////////////////////
@@ -91,6 +92,20 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API DataBlock const* GetComponentArrayBlock(DataBlock const& _data, CString _name);
+
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline TComponent* GetFirstTrunkComponent(Entity* _entity)
+        {
+            if (Transform2D* transform2D = _entity->getComponentRaw<Transform2D>())
+                transform2D->getFirstTrunkComponent<TComponent>();
+            else
+            if (Transform3D* transform3D = _entity->getComponentRaw<Transform3D>())
+                transform3D->getFirstTrunkComponent<TComponent>();
+            else
+                return nullptr;
+        }
 
     } // namespace EcsHelper
     //////////////////////////////////////////

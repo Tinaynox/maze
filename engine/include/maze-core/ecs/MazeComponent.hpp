@@ -107,6 +107,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline Map<Entity*, Entity*> const& getEntities() const
+        {
+            return *m_entities.get();
+        }
+
+        //////////////////////////////////////////
         inline Map<Component*, Component*>& getComponents()
         {
             return *m_components.get();

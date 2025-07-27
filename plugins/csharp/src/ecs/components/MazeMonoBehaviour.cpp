@@ -41,6 +41,62 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    void RemapDataBlockEcsIdsAfterCopy(
+        DataBlock& _dataBlock,
+        MonoBehaviour* _monoBehaviour,
+        EntityPostCopyEvent const& _event)
+    {
+        auto convertEntityId =
+            [&](EntityId _entityId)
+            {
+                if (_entityId == c_invalidEntityId)
+                    return c_invalidEntityId;
+
+                Entity* entity = _event.sourceEntity->getEcsWorld()->getEntity(_entityId).get();
+                if (entity)
+                {
+                    auto it = _event.copyData.getEntities().find(entity);
+                    if (it == _event.copyData.getEntities().end())
+                        return c_invalidEntityId;
+
+                    if (!it->second)
+                        return c_invalidEntityId;
+
+                    return it->second->getId();
+                }
+                else
+                    return c_invalidEntityId;
+            };
+
+        for (DataBlock* subBlock : _dataBlock)
+        {
+            if (StringHelper::IsEndsWith(subBlock->getName().str, ":EntityId"))
+            {
+                EntityId entityId(subBlock->getS32(MAZE_HCS("value"), (S32)c_invalidEntityId));
+                subBlock->setS32(MAZE_HCS("value"), (S32)convertEntityId(entityId));
+            }
+            else
+            if (StringHelper::IsEndsWith(subBlock->getName().str, ":Array<EntityId>"))
+            {
+                for (DataBlock::ParamIndex i = 0; i < (DataBlock::ParamIndex)subBlock->getParamsCount(); ++i)
+                {
+                    DataBlockParamType paramType = subBlock->getParamType(i);
+                    if (paramType == DataBlockParamType::ParamS32)
+                    {
+                        EntityId entityId(subBlock->getS32(i));
+                        subBlock->setS32(i, (S32)convertEntityId(entityId));
+                    }
+                }
+            }
+            else
+            {
+                RemapDataBlockEcsIdsAfterCopy(*subBlock, _monoBehaviour, _event);
+            }
+        }
+    }
+
+
+    //////////////////////////////////////////
     // Class MonoBehaviour
     //
     //////////////////////////////////////////
@@ -98,62 +154,19 @@ namespace Maze
         if (!Component::init(_component, _copyData))
             return false;
 
-
-        // Copy fields and properties from other behaviour
-        if (m_monoClass && m_monoInstance && other->m_monoClass && other->m_monoInstance)
-        {
-            DataBlock db;
-
-            MonoHelper::IterateAllFields(other->m_monoClass,
-                [&](ScriptFieldPtr const& _prop)
-                {
-                    MonoSerializationManager::GetInstancePtr()->saveFieldToDataBlock(
-                        _copyData.getWorld(),
-                        *other->m_monoInstance,
-                        _prop,
-                        db);
-                });
-
-            MonoHelper::IterateSerializableProperties(other->m_monoClass,
-                [&](ScriptPropertyPtr const& _prop)
-                {
-                    MonoSerializationManager::GetInstancePtr()->savePropertyToDataBlock(
-                        _copyData.getWorld(),
-                        *other->m_monoInstance,
-                        _prop,
-                        db);
-                });
-
-            MonoHelper::IterateAllFields(m_monoClass,
-                [&](ScriptFieldPtr const& _field)
-                {
-                    if (_field->isStatic())
-                        return;
-
-                    MonoSerializationManager::GetInstancePtr()->loadFieldFromDataBlock(
-                        _copyData.getWorld(),
-                        *m_monoInstance,
-                        _field,
-                        db);
-                });
-
-            MonoHelper::IterateSerializableProperties(m_monoClass,
-                [&](ScriptPropertyPtr const& _prop)
-                {
-                    if (_prop->isStaticGetter())
-                        return;
-
-                    MonoSerializationManager::GetInstancePtr()->loadPropertyFromDataBlock(
-                        _copyData.getWorld(),
-                        *m_monoInstance,
-                        _prop,
-                        db);
-                });
-        }
-
         return true;
     }
 
+    //////////////////////////////////////////
+    void MonoBehaviour::processEvent(Event* _event)
+    {
+        ClassUID eventUID = _event->getClassUID();
+        if (eventUID == ClassInfo<EntityPostCopyEvent>::UID())
+        {
+            EntityPostCopyEvent* copyEvent = _event->castRaw<EntityPostCopyEvent>();
+            processPostCopy(*copyEvent);
+        }
+    }
 
     //////////////////////////////////////////
     void MonoBehaviour::notifyEvent(ClassUID _eventUID, Event* _event)
@@ -383,6 +396,80 @@ namespace Maze
         return std::move(db);
     }
 
+    //////////////////////////////////////////
+    void MonoBehaviour::processPostCopy(EntityPostCopyEvent const& _event)
+    {
+        // Copy fields and properties from other behaviour
+        if (m_monoClass && m_monoInstance && _event.sourceEntity)
+        {
+            MonoBehaviour* other = (MonoBehaviour*)_event.sourceEntity->getComponentById(getComponentId()).get();
+            if (other && other->m_monoClass && other->m_monoInstance)
+            {
+                DataBlock db;
+
+                MonoHelper::IterateAllFields(other->m_monoClass,
+                    [&](ScriptFieldPtr const& _prop)
+                {
+                    MonoSerializationManager::GetInstancePtr()->saveFieldToDataBlock(
+                        _event.copyData.getWorld(),
+                        *other->m_monoInstance,
+                        _prop,
+                        db);
+                });
+
+                MonoHelper::IterateSerializableProperties(other->m_monoClass,
+                    [&](ScriptPropertyPtr const& _prop)
+                {
+                    MonoSerializationManager::GetInstancePtr()->savePropertyToDataBlock(
+                        _event.copyData.getWorld(),
+                        *other->m_monoInstance,
+                        _prop,
+                        db);
+                });
+
+                RemapDataBlockEcsIdsAfterCopy(db, this, _event);
+
+                MonoHelper::IterateAllFields(m_monoClass,
+                    [&](ScriptFieldPtr const& _field)
+                {
+                    if (_field->isStatic())
+                        return;
+
+                    MonoSerializationManager::GetInstancePtr()->loadFieldFromDataBlock(
+                        _event.copyData.getWorld(),
+                        *m_monoInstance,
+                        _field,
+                        db);
+                });
+
+                MonoHelper::IterateSerializableProperties(m_monoClass,
+                    [&](ScriptPropertyPtr const& _prop)
+                {
+                    if (_prop->isStaticGetter())
+                        return;
+
+                    MonoSerializationManager::GetInstancePtr()->loadPropertyFromDataBlock(
+                        _event.copyData.getWorld(),
+                        *m_monoInstance,
+                        _prop,
+                        db);
+                });
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    /*
+    COMPONENT_SYSTEM_EVENT_HANDLER(MonoBehaviourOnPostCopy,
+        {},
+        {},
+        EntityPostCopyEvent const& _event,
+        Entity* _entity,
+        MonoBehaviour* _monoBehaviour)
+    {
+        _monoBehaviour->processPostCopy(_event);
+    }
+    */
 
     //////////////////////////////////////////
     MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnCreate(

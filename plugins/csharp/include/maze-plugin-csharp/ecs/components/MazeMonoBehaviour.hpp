@@ -65,6 +65,7 @@ namespace Maze
 
         //////////////////////////////////////////
         friend class Entity;
+        friend void MonoBehaviourOnPostCopy(EntityPostCopyEvent const&, Entity*, MonoBehaviour*);
 
     public:
 
@@ -131,10 +132,15 @@ namespace Maze
             EntityCopyData _copyData);
 
 
-        
+        //////////////////////////////////////////
+        void processPostCopy(EntityPostCopyEvent const& _event);
+
 
         //////////////////////////////////////////
         void createMonoInstance();
+
+        //////////////////////////////////////////
+        virtual void processEvent(Event* _event) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void notifyEvent(ClassUID _eventUID, Event* _event);
