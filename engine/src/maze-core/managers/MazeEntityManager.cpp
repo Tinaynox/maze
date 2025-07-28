@@ -37,7 +37,6 @@
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeEventRetranslator.hpp"
-#include "maze-core/ecs/components/MazeSerializationIndex.hpp"
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
 #include "maze-core/ecs/components/MazeLinearMovement3D.hpp"
 #include "maze-core/ecs/components/MazeSinMovement3D.hpp"
@@ -103,7 +102,6 @@ namespace Maze
         // Common
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Name>("Common");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<EventRetranslator>("Common");
-        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SerializationIndex>("Common");
 
         // 2D
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Transform2D>("2D");

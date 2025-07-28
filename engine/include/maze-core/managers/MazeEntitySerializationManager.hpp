@@ -54,14 +54,12 @@ namespace Maze
     {
         EntityPtr entity;
         Vector<ComponentPtr> components;
-        S32 serializationIndex = -1;
     };
 
     //////////////////////////////////////////
     struct MAZE_CORE_API PrefabSerializationData
     {
         PrefabInstance* prefabInstance = nullptr;
-        S32 serializationIndex = -1;
     };
 
 

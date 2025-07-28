@@ -41,7 +41,6 @@
 #include "maze-core/ecs/components/MazeSinMovement3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazePrefabInstance.hpp"
-#include "maze-core/ecs/components/MazeSerializationIndex.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazeXMLHelper.hpp"
@@ -91,8 +90,6 @@ namespace Maze
     //////////////////////////////////////////
     bool EntitySerializationManager::init()
     {
-        m_componentsToIgnore.emplace(
-            ClassInfo<SerializationIndex>::UID());
         return true;
     }
 
@@ -100,69 +97,97 @@ namespace Maze
     void PrepareEntitiesToSerialize(
         Vector<EntitySerializationData>& _entityComponents,
         Vector<PrefabSerializationData>& _prefabs,
-        Map<void*, S32>& _outPointerIndices,
-        Map<EntityId, S32>& _outEntityIndices,
+        Map<void*, EcsSerializationId>& _outPointerIndices,
+        Map<EntityId, EcsSerializationId>& _outEntityIndices,
         Map<AssetUnitId, EntityPtr>& _outIdentityPrefabs,
         EcsWorldPtr& _outIdentityPrefabsWorld)
     {
         // Sort entities
         {
-            S32 maxSerializationIndex = 0;
+            Vector<Entity*> unassignedEntities;
+            Vector<Component*> unassginedComponents;
+            Vector<PrefabInstance*> unassginedPrefabInstances;
+
+            EcsSerializationId maxSerializationId = 0;
             for (EntitySerializationData const& entityData : _entityComponents)
             {
-                if (entityData.serializationIndex > maxSerializationIndex)
-                    maxSerializationIndex = entityData.serializationIndex;
+                if (entityData.entity->getSerializationId() == c_invalidSerializationId)
+                    unassignedEntities.push_back(entityData.entity.get());
+                else
+                {
+                    if (entityData.entity->getSerializationId() > maxSerializationId)
+                        maxSerializationId = Math::Max(maxSerializationId, entityData.entity->getSerializationId());
+                    
+                    _outPointerIndices[entityData.entity.get()] = entityData.entity->getSerializationId();
+                    _outEntityIndices[entityData.entity->getId()] = entityData.entity->getSerializationId();
+                }
+
+                for (ComponentPtr const& component : entityData.components)
+                    if (component->getSerializationId() == c_invalidSerializationId)
+                        unassginedComponents.push_back(component.get());
+                    else
+                    {
+                        if (component->getSerializationId() > maxSerializationId)
+                            maxSerializationId = Math::Max(maxSerializationId, component->getSerializationId());
+                        _outPointerIndices[component.get()] = component->getSerializationId();
+                    }
             }
 
-            for (EntitySerializationData& entityData : _entityComponents)
+            for (PrefabSerializationData const& prefabData : _prefabs)
             {
-                if (entityData.serializationIndex == -1)
-                    entityData.serializationIndex = ++maxSerializationIndex;
+                if (prefabData.prefabInstance->getEntityRaw()->getSerializationId() == c_invalidSerializationId)
+                    unassginedPrefabInstances.push_back(prefabData.prefabInstance);
+                else
+                {
+                    Entity* prefabEntity = prefabData.prefabInstance->getEntityRaw();
+                    if (prefabEntity->getSerializationId() > maxSerializationId)
+                        maxSerializationId = Math::Max(maxSerializationId, prefabEntity->getSerializationId());
+
+                    _outPointerIndices[prefabEntity] = prefabEntity->getSerializationId();
+                    _outEntityIndices[prefabEntity->getId()] = prefabEntity->getSerializationId();
+                }
+            }
+
+            // Assign serialization ids for unassigned
+            for (Entity* entity : unassignedEntities)
+            {
+                entity->setSerializationId(++maxSerializationId);
+
+                _outPointerIndices[entity] = entity->getSerializationId();
+                _outEntityIndices[entity->getId()] = entity->getSerializationId();
+            }
+
+
+            for (Component* comp : unassginedComponents)
+            {
+                comp->setSerializationId(++maxSerializationId);
+                _outPointerIndices[comp] = comp->getSerializationId();
+            }
+
+            for (PrefabInstance* prefabInstance : unassginedPrefabInstances)
+            {
+                Entity* entity = prefabInstance->getEntityRaw();
+                entity->setSerializationId(++maxSerializationId);
+
+                _outPointerIndices[entity] = entity->getSerializationId();
+                _outEntityIndices[entity->getId()] = entity->getSerializationId();
             }
             
+            // Sort entities
             std::sort(_entityComponents.begin(), _entityComponents.end(),
                 [](EntitySerializationData const& _first, EntitySerializationData const& _second)
                 {
-                    return _first.serializationIndex < _second.serializationIndex;
+                    return _first.entity->getSerializationId() < _second.entity->getSerializationId();
                 });
-        }
 
-        // Sort prefabs
-        {
-            S32 maxSerializationIndex = 0;
-            for (PrefabSerializationData const& prefabData : _prefabs)
-            {
-                if (prefabData.serializationIndex > maxSerializationIndex)
-                    maxSerializationIndex = prefabData.serializationIndex;
-            }
-
-            for (PrefabSerializationData& prefabData : _prefabs)
-            {
-                if (prefabData.serializationIndex == -1)
-                    prefabData.serializationIndex = ++maxSerializationIndex;
-            }
-
+            // Sort prefabs
             std::sort(_prefabs.begin(), _prefabs.end(),
                 [](PrefabSerializationData const& _first, PrefabSerializationData const& _second)
                 {
-                    return _first.serializationIndex < _second.serializationIndex;
+                    return _first.prefabInstance->getEntityId() < _second.prefabInstance->getEntityId();
                 });
         }
 
-        S32 indexCounter = 0;
-
-        // Index all entities and components
-        for (auto const& entityComponentsData : _entityComponents)
-        {
-            EntityPtr const& entity = entityComponentsData.entity;
-            S32 entityIndex = ++indexCounter;
-            _outPointerIndices[entity.get()] = entityIndex;
-            _outEntityIndices[entity->getId()] = entityIndex;
-
-            Vector<ComponentPtr> const& components = entityComponentsData.components;
-            for (ComponentPtr const& component : components)
-                _outPointerIndices[component.get()] = ++indexCounter;
-        }
 
         if (!_prefabs.empty())
             _outIdentityPrefabsWorld = EcsWorld::Create(
@@ -172,10 +197,11 @@ namespace Maze
         for (auto& prefabInstanceData : _prefabs)
         {
             PrefabInstance* prefabInstance = prefabInstanceData.prefabInstance;
-
+            /*
             S32 entityIndex = ++indexCounter;
             _outPointerIndices[prefabInstance->getEntityRaw()] = entityIndex;
             _outEntityIndices[prefabInstance->getEntityId()] = entityIndex;
+            */
 
             auto it = _outIdentityPrefabs.find(prefabInstance->getAssetUnitId());
             if (it == _outIdentityPrefabs.end())
@@ -205,8 +231,8 @@ namespace Maze
         EcsWorld* _ecsWorld,
         Vector<EntitySerializationData> const& _entityComponents,
         Vector<PrefabSerializationData> const& _prefabs,
-        Map<void*, S32>& _pointerIndices,
-        Map<EntityId, S32>& _entityIndices,
+        Map<void*, EcsSerializationId>& _pointerIndices,
+        Map<EntityId, EcsSerializationId>& _entityIndices,
         Map<AssetUnitId, EntityPtr>& _identityPrefabs,
         DataBlock& _dataBlock) const
     {
@@ -216,8 +242,8 @@ namespace Maze
                 DataBlock* componentBlock = _parentBlock.addNewDataBlock(MAZE_HCS("component"));
 
                 auto propertyValueIndexIt = _pointerIndices.find(_component.get());
-                if (propertyValueIndexIt != _pointerIndices.end())
-                    componentBlock->setS32(MAZE_HCS("_sid"), propertyValueIndexIt->second);
+                // if (propertyValueIndexIt != _pointerIndices.end())
+                //    componentBlock->setS32(MAZE_HCS("_sid"), propertyValueIndexIt->second);
                 componentBlock->setCString(MAZE_HCS("_t"), static_cast<CString>(_component->getMetaClass()->getName()));
 
                 if (strcmp(_component->getClassQualifiedName().str, _component->getComponentClassName()) != 0)
@@ -247,7 +273,7 @@ namespace Maze
                                     void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
                                     if (propertyValuePointer)
                                     {
-                                        S32 propertyValueIndex = _pointerIndices[propertyValuePointer];
+                                        EcsSerializationId propertyValueIndex = _pointerIndices[propertyValuePointer];
                                         EcsHelper::EnsureComponentBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
                                     }
                                     continue;
@@ -258,7 +284,7 @@ namespace Maze
                                     void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
                                     if (propertyValuePointer)
                                     {
-                                        S32 propertyValueIndex = _pointerIndices[propertyValuePointer];
+                                        EcsSerializationId propertyValueIndex = _pointerIndices[propertyValuePointer];
                                         EcsHelper::EnsureEntityIdBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
                                     }
                                     continue;
@@ -269,7 +295,7 @@ namespace Maze
                             {
                                 EntityId eid;
                                 metaProperty->getValue(metaInstance, eid);
-                                S32 propertyValueIndex = _entityIndices[eid];
+                                EcsSerializationId propertyValueIndex = _entityIndices[eid];
                                 EcsHelper::EnsureEntityIdBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
                                 continue;
                             }
@@ -281,10 +307,10 @@ namespace Maze
 
                                 if (!comps.empty())
                                 {
-                                    Vector<S32> compIndices;
+                                    Vector<EcsSerializationId> compIndices;
                                     compIndices.resize(comps.size());
                                     for (S32 i = 0, in = S32(comps.size()); i < in; ++i)
-                                        compIndices[i] = _pointerIndices[comps[i].get()];
+                                        compIndices[i] = comps[i]->getSerializationId();
 
                                     Char newPropertyName[128];
                                     StringHelper::FormatString(newPropertyName, sizeof(newPropertyName), "%s:Array<EntityId>", propertyName);
@@ -301,10 +327,10 @@ namespace Maze
 
                                 if (!ents.empty())
                                 {
-                                    Vector<S32> entIndices;
+                                    Vector<EcsSerializationId> entIndices;
                                     entIndices.resize(ents.size());
                                     for (S32 i = 0, in = S32(ents.size()); i < in; ++i)
-                                        entIndices[i] = _pointerIndices[ents[i].get()];
+                                        entIndices[i] = ents[i]->getSerializationId();
 
                                     Char newPropertyName[128];
                                     StringHelper::FormatString(newPropertyName, sizeof(newPropertyName), "%s:Array<Component>", propertyName);
@@ -316,7 +342,6 @@ namespace Maze
                         }
 
                         DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, *componentBlock);
-                        replaceDataBlockEcsIds(*componentBlock, _entityIndices, _entityComponents, _pointerIndices, _ecsWorld);
                     }
                 }
             };
@@ -328,8 +353,7 @@ namespace Maze
             Vector<ComponentPtr> const& components = entityComponentsData.components;
 
             DataBlock* entityBlock = _dataBlock.addNewDataBlock(MAZE_HCS("entity"));
-            entityBlock->setS32(MAZE_HCS("_sid"), _pointerIndices[entity.get()]);
-            entityBlock->setS32(MAZE_HCS("_s"), entityComponentsData.serializationIndex);
+            entityBlock->setS32(MAZE_HCS("_sid"), entityComponentsData.entity->getSerializationId());
 
             if (!entity->getActiveSelf())
                 entityBlock->setBool(MAZE_HCS("active"), entity->getActiveSelf());
@@ -357,8 +381,7 @@ namespace Maze
                 EcsHelper::GetName(prefabEntity.get()));
 
             DataBlock* entityBlock = _dataBlock.addNewDataBlock(MAZE_HCS("prefabInstance"));
-            entityBlock->setS32(MAZE_HCS("_sid"), _pointerIndices[prefabEntity.get()]);
-            entityBlock->setS32(MAZE_HCS("_s"), prefabInstanceData.serializationIndex);
+            entityBlock->setS32(MAZE_HCS("_sid"), prefabEntity->getSerializationId());
             entityBlock->setU32(MAZE_HCS("source"), (U32)prefabInstance->getAssetUnitId());
 
             if (!prefabEntity->getActiveSelf())
@@ -398,7 +421,7 @@ namespace Maze
                                         auto propertyValueIndexIt = _pointerIndices.find(propertyValuePointer);
                                         if (propertyValueIndexIt != _pointerIndices.end())
                                         {
-                                            S32 propertyValueIndex = propertyValueIndexIt->second;
+                                            EcsSerializationId propertyValueIndex = propertyValueIndexIt->second;
 
                                             DataBlock* modificationBlock = entityBlock->addNewDataBlock(MAZE_HCS("modification"));
                                             modificationBlock->setCString(MAZE_HCS("component"), metaClass->getName());
@@ -421,8 +444,6 @@ namespace Maze
 
                                     modificationBlock->setCString(MAZE_HCS("property"), propertyName);
                                     DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, MAZE_HCS("value"), *modificationBlock);
-
-                                    replaceDataBlockEcsIds(*modificationBlock, _entityIndices, _entityComponents, _pointerIndices, _ecsWorld);
                                 }
                             }
                         }
@@ -437,28 +458,18 @@ namespace Maze
                 }
             }
         }
+
+        replaceDataBlockEcsIds(_dataBlock, _entityIndices, _entityComponents, _pointerIndices, _ecsWorld);
     }
 
     //////////////////////////////////////////
     void EntitySerializationManager::replaceDataBlockEcsIds(
         DataBlock& _dataBlock,
-        Map<EntityId, S32> const& _entityIndices,
+        Map<EntityId, EcsSerializationId> const& _entityIndices,
         Vector<EntitySerializationData> const& _entityComponents,
-        Map<void*, S32>& _pointerIndices,
+        Map<void*, EcsSerializationId>& _pointerIndices,
         EcsWorld* _ecsWorld) const
     {
-        /*
-        auto findEntity =
-            [&](EntityId _eid)
-            {
-                for (auto const& data : _entityComponents)
-                    if (data.entity->getId() == _eid)
-                        return data.entity.get();
-
-                return (Entity*)nullptr;
-            };
-        */
-
         for (DataBlock* subBlock : _dataBlock)
         {
             if (StringHelper::IsEndsWith(subBlock->getName().str, ":EntityId"))
@@ -475,14 +486,14 @@ namespace Maze
                     {
                         Entity* entity = _ecsWorld->getEntity(eid).get();
                         MAZE_ERROR_IF(!entity, "Entity is not found: %d", (S32)eid);
-                        S32 entityIndex = _pointerIndices[entity];
+                        EcsSerializationId entityIndex = _pointerIndices[entity];
 
                         if (entityIndex == 0)
                         {
                             PrefabInstance* prefabInstance = EcsHelper::GetFirstTrunkComponent<PrefabInstance>(entity);
                             if (prefabInstance)
                             {
-                                S32 prefabEntityIndex = _pointerIndices[prefabInstance->getEntityRaw()];
+                                EcsSerializationId prefabEntityIndex = _pointerIndices[prefabInstance->getEntityRaw()];
                                 MAZE_ERROR_CONTINUE_IF(prefabEntityIndex == 0, "Potential prefab instance is invalid");
                             }
                             else
@@ -507,15 +518,15 @@ namespace Maze
     //////////////////////////////////////////
     void EntitySerializationManager::restoreDataBlockEcsIds(
         DataBlock& _dataBlock,
-        Map<S32, EntityPtr>& _outEntities,
-        Map<S32, ComponentPtr>& _outComponents) const
+        Map<EcsSerializationId, EntityPtr>& _outEntities,
+        Map<EcsSerializationId, ComponentPtr>& _outComponents) const
     {
         for (DataBlock* subBlock : _dataBlock)
         {
             if (StringHelper::IsEndsWith(subBlock->getName().str, ":EntityId"))
             {
-                S32 entityIndex = subBlock->getS32(MAZE_HCS("value"), -1);
-                if (entityIndex >= 0)
+                EcsSerializationId entityIndex = subBlock->getS32(MAZE_HCS("value"), c_invalidSerializationId);
+                if (entityIndex != c_invalidSerializationId)
                 {
                     EntityPtr const& entity = _outEntities[entityIndex];
                     if (entity)
@@ -534,8 +545,8 @@ namespace Maze
                     DataBlockParamType paramType = subBlock->getParamType(i);
                     if (paramType == DataBlockParamType::ParamS32)
                     {
-                        S32 entityIndex = subBlock->getS32(i);
-                        if (entityIndex >= 0)
+                        EcsSerializationId entityIndex = subBlock->getS32(i);
+                        if (entityIndex != c_invalidSerializationId)
                         {
                             EntityPtr const& entity = _outEntities[entityIndex];
                             if (entity)
@@ -566,8 +577,8 @@ namespace Maze
         collectEntitiesComponentsMap(_entities, entityComponents, prefabs);
 
        
-        Map<void*, S32> pointerIndices;
-        Map<EntityId, S32> entityIndices;
+        Map<void*, EcsSerializationId> pointerIndices;
+        Map<EntityId, EcsSerializationId> entityIndices;
         Map<AssetUnitId, EntityPtr> identityPrefabs;
         EcsWorldPtr identityPrefabsWorld;
         PrepareEntitiesToSerialize(entityComponents, prefabs, pointerIndices, entityIndices, identityPrefabs, identityPrefabsWorld);
@@ -684,8 +695,8 @@ namespace Maze
         DataBlock* entitiesBlock = _dataBlock.getDataBlock(MAZE_HCS("entities"));
         if (entitiesBlock)
         {
-            Map<S32, EntityPtr> entities;
-            Map<S32, ComponentPtr> components;
+            Map<EcsSerializationId, EntityPtr> entities;
+            Map<EcsSerializationId, ComponentPtr> components;
             loadEntities(*entitiesBlock, _scene->getWorld(), _scene.get(), entities, components);
         }
 
@@ -746,8 +757,8 @@ namespace Maze
         DataBlock& _dataBlock,
         EcsWorld* _world,
         EcsScene* _scene,
-        Map<S32, EntityPtr>& _outEntities,
-        Map<S32, ComponentPtr>& _outComponents) const
+        Map<EcsSerializationId, EntityPtr>& _outEntities,
+        Map<EcsSerializationId, ComponentPtr>& _outComponents) const
     {
         EcsScene* scene = _scene ? _scene
             : (_world ? nullptr : SceneManager::GetInstancePtr()->getMainScene().get());
@@ -757,8 +768,8 @@ namespace Maze
 
         ComponentFactoryPtr const& factory = EntityManager::GetInstancePtr()->getComponentFactory();
 
-        S32 autoEntityIndexCounter = 0;
-        S32 autoComponentIndexCounter = 0;
+        EcsSerializationId autoIndexCounter = 0;
+        EcsSerializationId maxSerializationId = 0;
 
         // Prepare
         {
@@ -769,11 +780,14 @@ namespace Maze
 
                 if (subBlock->getName() == MAZE_HCS("entity"))
                 {
-                    S32 entityIndex = subBlock->getS32(MAZE_HCS("_sid"));
-                    if (entityIndex == 0)
-                        entityIndex = --autoEntityIndexCounter;
+                    EcsSerializationId entityIndex = subBlock->getS32(MAZE_HCS("_sid"));
+                    if (entityIndex == c_invalidSerializationId)
+                        entityIndex = --autoIndexCounter;
+                    else
+                        maxSerializationId = Math::Max(maxSerializationId, entityIndex);
 
                     EntityPtr entity = Entity::Create();
+                    entity->setSerializationId(entityIndex);
                     entity->setAwakeForbidden(true);
                     world->addEntity(entity);
 
@@ -788,8 +802,10 @@ namespace Maze
                             continue;
 
                         S32 componentIndex = componentBlock->getS32(MAZE_HCS("_sid"));
-                        if (componentIndex == 0)
-                            componentIndex = --autoComponentIndexCounter;
+                        if (componentIndex == c_invalidSerializationId)
+                            componentIndex = --autoIndexCounter;
+                        else
+                            maxSerializationId = Math::Max(maxSerializationId, entityIndex);
 
                         CString componentClassName = componentBlock->getCString(MAZE_HCS("_t"));
                         HashedCString componentDynamicClassName = componentBlock->getHashedCString(MAZE_HCS("_ct"));
@@ -809,15 +825,20 @@ namespace Maze
                             entity->addComponent(component);
                         }
 
+                        if (component)
+                            component->setSerializationId(componentIndex);
+
                         _outComponents[componentIndex] = component;
                     }
                 }
                 else
                 if (subBlock->getName() == MAZE_HCS("prefabInstance"))
                 {
-                    S32 entityIndex = subBlock->getS32(MAZE_HCS("_sid"));
-                    if (entityIndex == 0)
-                        entityIndex = --autoEntityIndexCounter;
+                    EcsSerializationId entityIndex = subBlock->getS32(MAZE_HCS("_sid"));
+                    if (entityIndex == c_invalidSerializationId)
+                        entityIndex = --autoIndexCounter;
+                    else
+                        maxSerializationId = Math::Max(maxSerializationId, entityIndex);
 
                     EntityPtr prefab;
                     auto sourceParamIndex = subBlock->findParamIndex(MAZE_HCS("source"));
@@ -846,6 +867,7 @@ namespace Maze
                             continue;
                         }
 
+                        entity->setSerializationId(entityIndex);
                         _outEntities[entityIndex] = entity;
 
                         for (DataBlock const* prefabChildBlock : *subBlock)
@@ -866,9 +888,11 @@ namespace Maze
                             else
                             if (prefabChildBlock->getName() == MAZE_HCS("component"))
                             {
-                                S32 componentIndex = prefabChildBlock->getS32(MAZE_HCS("_sid"));
-                                if (componentIndex == 0)
-                                    componentIndex = --autoComponentIndexCounter;
+                                EcsSerializationId componentIndex = prefabChildBlock->getS32(MAZE_HCS("_sid"));
+                                if (componentIndex == c_invalidSerializationId)
+                                    componentIndex = --autoIndexCounter;
+                                else
+                                    maxSerializationId = Math::Max(maxSerializationId, entityIndex);
 
                                 CString componentClassName = prefabChildBlock->getCString(MAZE_HCS("_t"));
                                 HashedCString componentDynamicClassName = prefabChildBlock->getHashedCString(MAZE_HCS("_ct"));
@@ -889,6 +913,9 @@ namespace Maze
                                     entity->addComponent(component);
                                 }
 
+                                if (component)
+                                    component->setSerializationId(componentIndex);
+
                                 _outComponents[componentIndex] = component;
                             }
                         }
@@ -902,7 +929,41 @@ namespace Maze
             }
         }
 
-        autoComponentIndexCounter = 0;
+        autoIndexCounter = 0;
+
+
+        // Fix auto indices
+        for (Map<EcsSerializationId, EntityPtr>::iterator it = _outEntities.begin(), end = _outEntities.end(); it != end;)
+        {
+            if (it->first < 0)
+            {
+                it->second->setSerializationId(it->second->getSerializationId() - it->first);
+                it = _outEntities.erase(it);
+                _outEntities.emplace(
+                    std::piecewise_construct,
+                    std::forward_as_tuple(it->second->getSerializationId()),
+                    std::forward_as_tuple(it->second));
+                end = _outEntities.end();
+            }
+            else
+                ++it;
+        }
+
+        for (Map<EcsSerializationId, ComponentPtr>::iterator it = _outComponents.begin(), end = _outComponents.end(); it != end;)
+        {
+            if (it->first < 0)
+            {
+                it->second->setSerializationId(it->second->getSerializationId() - it->first);
+                it = _outComponents.erase(it);
+                _outComponents.emplace(
+                    std::piecewise_construct,
+                    std::forward_as_tuple(it->second->getSerializationId()),
+                    std::forward_as_tuple(it->second));
+                end = _outComponents.end();
+            }
+            else
+                ++it;
+        }
 
         UnorderedMap<EntityId, EntityPtr> entitiesPerEntityId;
         for (auto const& entityData : _outEntities)
@@ -922,17 +983,13 @@ namespace Maze
 
                 if (subBlock->getName() == MAZE_HCS("entity") || subBlock->getName() == MAZE_HCS("prefabInstance"))
                 {
-                    S32 entityIndex = subBlock->getS32(MAZE_HCS("_sid"));
+                    EcsSerializationId entityIndex = subBlock->getS32(MAZE_HCS("_sid"));
                     EntityPtr const& entity = _outEntities[entityIndex];
                     if (entity == nullptr)
                     {
                         MAZE_ERROR("Entity is nullptr!");
                         continue;
                     }
-
-                    S32 serializationIndex = subBlock->getS32(MAZE_HCS("_s"), -1);
-                    if (serializationIndex != -1)
-                        entity->ensureComponent<SerializationIndex>()->setSerializationIndex(serializationIndex);
 
                     entity->setActiveSelf(subBlock->getBool(MAZE_HCS("active"), true));
 
@@ -964,7 +1021,7 @@ namespace Maze
                                     {
                                         if (metaPropertyUID == ClassInfo<ComponentPtr>::UID())
                                         {
-                                            S32 valueIndex = componentBlock->getS32(MAZE_HCS("value"));
+                                            EcsSerializationId valueIndex = componentBlock->getS32(MAZE_HCS("value"));
                                             metaProperty->setValue(component->getMetaInstance(), &_outComponents[valueIndex]);
 
                                             continue;
@@ -972,7 +1029,7 @@ namespace Maze
                                         else
                                         if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
                                         {
-                                            S32 valueIndex = componentBlock->getS32(MAZE_HCS("value"));
+                                            EcsSerializationId valueIndex = componentBlock->getS32(MAZE_HCS("value"));
                                             metaProperty->setValue(component->getMetaInstance(), &_outEntities[valueIndex]);
 
                                             continue;
@@ -980,7 +1037,7 @@ namespace Maze
                                         else
                                         if (metaPropertyUID == ClassInfo<EntityId>::UID())
                                         {
-                                            S32 valueIndex = componentBlock->getS32(MAZE_HCS("value"));
+                                            EcsSerializationId valueIndex = componentBlock->getS32(MAZE_HCS("value"));
                                             EntityPtr const& entity = _outEntities[valueIndex];
                                             EntityId entityId = entity ? entity->getId() : c_invalidEntityId;
                                             metaProperty->setValue(component->getMetaInstance(), &entityId);
@@ -993,7 +1050,7 @@ namespace Maze
                                             DataBlock const* propertyBlock = componentBlock->getDataBlock(MAZE_HCS("value"));
                                             if (propertyBlock)
                                             {
-                                                Vector<S32> componentsIndices;
+                                                Vector<EcsSerializationId> componentsIndices;
                                                 ValueFromDataBlock(componentsIndices, *propertyBlock);
 
                                                 Vector<ComponentPtr> componentsValue;
@@ -1014,7 +1071,7 @@ namespace Maze
                                             DataBlock const* propertyBlock = componentBlock->getDataBlock(MAZE_HCS("value"));
                                             if (propertyBlock)
                                             {
-                                                Vector<S32> entitiesIndices;
+                                                Vector<EcsSerializationId> entitiesIndices;
                                                 ValueFromDataBlock(entitiesIndices, *propertyBlock);
 
                                                 Vector<EntityPtr> entitiesValue;
@@ -1037,15 +1094,11 @@ namespace Maze
                         }
                         if (componentBlock->getName() == MAZE_HCS("component"))
                         {
-                            S32 componentIndex = componentBlock->getS32(MAZE_HCS("_sid"));
-                            if (componentIndex == 0)
-                                componentIndex = --autoComponentIndexCounter;
+                            EcsSerializationId componentIndex = componentBlock->getS32(MAZE_HCS("_sid"));
 
                             ComponentPtr const& component = _outComponents[componentIndex];
                             if (!component)
-                            {
                                 continue;
-                            }
 
                             MetaClass const* componentMetaClass = component->getMetaClass();
                             MetaInstance componentMetaInstance = component->getMetaInstance();
@@ -1067,7 +1120,7 @@ namespace Maze
                                                 DataBlock const* cmpBlock = EcsHelper::GetComponentBlock(*componentBlock, propertyName.str);
                                                 if (cmpBlock)
                                                 {
-                                                    S32 valueIndex = cmpBlock->getS32(MAZE_HCS("value"));
+                                                    EcsSerializationId valueIndex = cmpBlock->getS32(MAZE_HCS("value"));
 
                                                     MAZE_ERROR_IF(
                                                         valueIndex > 0 && !_outComponents[valueIndex],
@@ -1139,7 +1192,7 @@ namespace Maze
                                                 DataBlock const* cmpArrayBlock = EcsHelper::GetComponentArrayBlock(*componentBlock, propertyName.str);
                                                 if (cmpArrayBlock)
                                                 {
-                                                    Vector<S32> componentsIndices;
+                                                    Vector<EcsSerializationId> componentsIndices;
                                                     ValueFromDataBlock(componentsIndices, *cmpArrayBlock);
 
                                                     Vector<ComponentPtr> componentsValue;
@@ -1163,7 +1216,7 @@ namespace Maze
                                                     {
                                                         MAZE_ERROR("Obsolete component param: %s!", propertyName.str);
 
-                                                        Vector<S32> componentsIndices;
+                                                        Vector<EcsSerializationId> componentsIndices;
                                                         ValueFromDataBlock(componentsIndices, *propertyBlock);
 
                                                         Vector<ComponentPtr> componentsValue;
@@ -1186,7 +1239,7 @@ namespace Maze
                                                 DataBlock const* entityIdArrayBlock = EcsHelper::GetEntityIdArrayBlock(*componentBlock, propertyName.str);
                                                 if (entityIdArrayBlock)
                                                 {
-                                                    Vector<S32> entitiesIds;
+                                                    Vector<EcsSerializationId> entitiesIds;
                                                     ValueFromDataBlock(entitiesIds, *entityIdArrayBlock);
 
                                                     Vector<EntityPtr> entitiesValue;
@@ -1211,7 +1264,7 @@ namespace Maze
                                                     {
                                                         MAZE_ERROR("Obsolete eid array block: %s!", propertyName.str);
 
-                                                        Vector<S32> entitiesIndices;
+                                                        Vector<EcsSerializationId> entitiesIndices;
                                                         ValueFromDataBlock(entitiesIndices, *propertyBlock);
 
                                                         Vector<EntityPtr> entitiesValue;
@@ -1272,13 +1325,13 @@ namespace Maze
         static EntityPtr const nullPointer;
 
         
-        S32 rootIndex = _dataBlock.getS32(MAZE_HCS("_rootIndex"), -1);
-        if (rootIndex == -1)
+        EcsSerializationId rootIndex = _dataBlock.getS32(MAZE_HCS("_rootIndex"), c_invalidSerializationId);
+        if (rootIndex == c_invalidSerializationId)
             return nullptr;
 
 
-        Map<S32, EntityPtr> entities;
-        Map<S32, ComponentPtr> components;
+        Map<EcsSerializationId, EntityPtr> entities;
+        Map<EcsSerializationId, ComponentPtr> components;
         loadEntities(_dataBlock, _world, _scene, entities, components);
 
         return entities[rootIndex];
@@ -1294,11 +1347,6 @@ namespace Maze
         {
             PrefabSerializationData data;
             data.prefabInstance = prefabInstance;
-
-            SerializationIndex* serializationIndex = _entity->getComponentRaw<SerializationIndex>();
-            if (serializationIndex)
-                data.serializationIndex = serializationIndex->getSerializationIndex();
-
             _prefabInstances.emplace_back(data);
             return;
         }
@@ -1357,9 +1405,6 @@ namespace Maze
             }
 
             EntitySerializationData data{ entity, components };
-            SerializationIndex* serializationIndex = entity->getComponentRaw<SerializationIndex>();
-            if (serializationIndex)
-                data.serializationIndex = serializationIndex->getSerializationIndex();
             _entityComponents.emplace_back(data);
         }
     }
@@ -1386,9 +1431,6 @@ namespace Maze
             }
 
             EntitySerializationData data{ entity, components };
-            SerializationIndex* serializationIndex = entity->getComponentRaw<SerializationIndex>();
-            if (serializationIndex)
-                data.serializationIndex = serializationIndex->getSerializationIndex();
             _entityComponents.emplace_back(data);
         }
     }

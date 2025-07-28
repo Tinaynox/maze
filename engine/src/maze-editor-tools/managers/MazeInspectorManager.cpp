@@ -32,7 +32,6 @@
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
-#include "maze-core/ecs/components/MazeSerializationIndex.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
@@ -197,8 +196,6 @@ namespace Maze
     //////////////////////////////////////////
     bool InspectorManager::init()
     {
-        m_hiddenComponents.push_back(ClassInfo<SerializationIndex>::UID());
-
         registerPropertyDrawer<bool, PropertyDrawerBool>();
         registerPropertyDrawer<S32, PropertyDrawerS32>();
         registerPropertyDrawer<U32, PropertyDrawerS32>();
