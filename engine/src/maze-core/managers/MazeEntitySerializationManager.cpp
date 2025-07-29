@@ -212,7 +212,7 @@ namespace Maze
             std::sort(_prefabs.begin(), _prefabs.end(),
                 [](PrefabSerializationData const& _first, PrefabSerializationData const& _second)
                 {
-                    return _first.prefabInstance->getEntityId() < _second.prefabInstance->getEntityId();
+                    return _first.prefabInstance->getEntityRaw()->getSerializationId() < _second.prefabInstance->getEntityRaw()->getSerializationId();
                 });
         }
 
