@@ -192,9 +192,10 @@ namespace Maze
         m_entitiesEnabledToggleButton->setChecked(checkedValue);
 
         m_entityIdText->setTextFormatted(
-            "Entity Id: %s\nWorld: %s",
+            "Entity Id: %s\nWorld: %s\nsid: %d",
             StringHelper::ToString(entityId).c_str(),
-            entity->getEcsWorld() ? entity->getEcsWorld()->getName().c_str() : "None");
+            entity->getEcsWorld() ? entity->getEcsWorld()->getName().c_str() : "None",
+            (S32)entity->getSerializationId());
     }
 
     //////////////////////////////////////////

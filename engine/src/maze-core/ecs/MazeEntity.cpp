@@ -114,6 +114,7 @@ namespace Maze
         setEcsScene(_copyData.getScene());
 
         setFlags(_entity->m_flags);
+        setSerializationId(_entity->getSerializationId());
 
         _copyData.getWorld()->addEntity(getSharedPtr());
 

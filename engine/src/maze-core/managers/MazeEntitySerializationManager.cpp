@@ -108,9 +108,19 @@ namespace Maze
             Vector<Component*> unassginedComponents;
             Vector<PrefabInstance*> unassginedPrefabInstances;
 
+            Set<EcsSerializationId> usedIds;
+
             EcsSerializationId maxSerializationId = 0;
             for (EntitySerializationData const& entityData : _entityComponents)
             {
+                if (entityData.entity->getSerializationId() != c_invalidSerializationId)
+                {
+                    if (usedIds.count(entityData.entity->getSerializationId()) == 0)
+                        usedIds.insert(entityData.entity->getSerializationId());
+                    else
+                        entityData.entity->setSerializationId(c_invalidSerializationId);
+                }
+
                 if (entityData.entity->getSerializationId() == c_invalidSerializationId)
                     unassignedEntities.push_back(entityData.entity.get());
                 else
@@ -123,6 +133,15 @@ namespace Maze
                 }
 
                 for (ComponentPtr const& component : entityData.components)
+                {
+                    if (component->getSerializationId() != c_invalidSerializationId)
+                    {
+                        if (usedIds.count(component->getSerializationId()) == 0)
+                            usedIds.insert(component->getSerializationId());
+                        else
+                            component->setSerializationId(c_invalidSerializationId);
+                    }
+
                     if (component->getSerializationId() == c_invalidSerializationId)
                         unassginedComponents.push_back(component.get());
                     else
@@ -131,10 +150,19 @@ namespace Maze
                             maxSerializationId = Math::Max(maxSerializationId, component->getSerializationId());
                         _outPointerIndices[component.get()] = component->getSerializationId();
                     }
+                }
             }
 
             for (PrefabSerializationData const& prefabData : _prefabs)
             {
+                if (prefabData.prefabInstance->getEntityRaw()->getSerializationId() != c_invalidSerializationId)
+                {
+                    if (usedIds.count(prefabData.prefabInstance->getEntityRaw()->getSerializationId()) == 0)
+                        usedIds.insert(prefabData.prefabInstance->getEntityRaw()->getSerializationId());
+                    else
+                        prefabData.prefabInstance->getEntityRaw()->setSerializationId(c_invalidSerializationId);
+                }
+
                 if (prefabData.prefabInstance->getEntityRaw()->getSerializationId() == c_invalidSerializationId)
                     unassginedPrefabInstances.push_back(prefabData.prefabInstance);
                 else
