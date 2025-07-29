@@ -88,3 +88,60 @@ float MazeNoise3D(vec3 p)
 
     return o4.y * d.y + o4.x * (1.0 - d.y);
 }
+
+//////////////////////////////////////////
+float MazeNoise4D(vec4 p) {
+    const vec4 seed1 = vec4(31.06, 19.86, 30.19, 14.06);
+    const float seed2 = 6640.0;
+
+    return fract(sin(dot(p, seed1)) * seed2);
+}
+
+//////////////////////////////////////////
+float MazePerlinNoise4D(vec4 coords)
+{
+    vec4 floorCoords = floor(coords);
+    vec4 fractCoords = fract(coords);
+
+    float noise0000 = MazeNoise4D(floorCoords + vec4(0,0,0,0));
+    float noise0001 = MazeNoise4D(floorCoords + vec4(0,0,0,1));
+    float noise0010 = MazeNoise4D(floorCoords + vec4(0,0,1,0));
+    float noise0011 = MazeNoise4D(floorCoords + vec4(0,0,1,1));
+    float noise0100 = MazeNoise4D(floorCoords + vec4(0,1,0,0));
+    float noise0101 = MazeNoise4D(floorCoords + vec4(0,1,0,1));
+    float noise0110 = MazeNoise4D(floorCoords + vec4(0,1,1,0));
+    float noise0111 = MazeNoise4D(floorCoords + vec4(0,1,1,1));
+    float noise1000 = MazeNoise4D(floorCoords + vec4(1,0,0,0));
+    float noise1001 = MazeNoise4D(floorCoords + vec4(1,0,0,1));
+    float noise1010 = MazeNoise4D(floorCoords + vec4(1,0,1,0));
+    float noise1011 = MazeNoise4D(floorCoords + vec4(1,0,1,1));
+    float noise1100 = MazeNoise4D(floorCoords + vec4(1,1,0,0));
+    float noise1101 = MazeNoise4D(floorCoords + vec4(1,1,0,1));
+    float noise1110 = MazeNoise4D(floorCoords + vec4(1,1,1,0));
+    float noise1111 = MazeNoise4D(floorCoords + vec4(1,1,1,1));
+
+    // Quintic Hermite interpolation
+    vec4 coefficients = fractCoords * fractCoords * fractCoords * (fractCoords * (6.0 * fractCoords - 15.0) + 10.0);
+
+    float noiseX000 = mix(noise0000, noise1000, coefficients.x);
+    float noiseX001 = mix(noise0001, noise1001, coefficients.x);
+    float noiseX010 = mix(noise0010, noise1010, coefficients.x);
+    float noiseX011 = mix(noise0011, noise1011, coefficients.x);
+    float noiseX100 = mix(noise0100, noise1100, coefficients.x);
+    float noiseX101 = mix(noise0101, noise1101, coefficients.x);
+    float noiseX110 = mix(noise0110, noise1110, coefficients.x);
+    float noiseX111 = mix(noise0111, noise1111, coefficients.x);
+
+    float noiseXX00 = mix(noiseX000, noiseX100, coefficients.y);
+    float noiseXX01 = mix(noiseX001, noiseX101, coefficients.y);
+    float noiseXX10 = mix(noiseX010, noiseX110, coefficients.y);
+    float noiseXX11 = mix(noiseX011, noiseX111, coefficients.y);
+
+    float noiseXXX0 = mix(noiseXX00, noiseXX10, coefficients.z);
+    float noiseXXX1 = mix(noiseXX01, noiseXX11, coefficients.z);
+
+    float noiseXXXX = mix(noiseXXX0, noiseXXX1, coefficients.w);
+
+    return noiseXXXX;
+}
+

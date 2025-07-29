@@ -42,6 +42,11 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(Transform2D);
+    MAZE_USING_SHARED_PTR(Transform3D);
+
+
+    //////////////////////////////////////////
     namespace EcsHelper
     {
         //////////////////////////////////////////
@@ -106,6 +111,15 @@ namespace Maze
             
             return nullptr;
         }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API Entity* FindEntityWithSerializationId(Entity* _entity, EcsSerializationId _sid);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API Entity* FindEntityWithSerializationId(Transform2D* _transform2D, EcsSerializationId _sid);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API Entity* FindEntityWithSerializationId(Transform3D* _transform3D, EcsSerializationId _sid);
 
     } // namespace EcsHelper
     //////////////////////////////////////////

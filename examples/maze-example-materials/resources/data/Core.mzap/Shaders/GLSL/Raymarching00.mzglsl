@@ -1,0 +1,255 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Vertex.mzglsl"
+
+
+//////////////////////////////////////////
+uniform vec4 u_baseMapST;
+
+
+//////////////////////////////////////////
+IN vec3 a_position;
+IN vec3 a_normal;
+IN vec3 a_tangent;
+IN vec3 a_bitangent;
+IN vec4 a_color;
+IN vec2 a_texCoords0;
+
+
+//////////////////////////////////////////
+OUT vec3 v_positionOS;
+OUT vec3 v_positionWS;
+OUT vec3 v_positionVS;
+OUT vec3 v_normalOS;
+OUT vec3 v_normalWS;
+OUT vec4 v_color;
+OUT vec2 v_uv0;
+OUT vec3 v_viewDirWS;
+
+
+//////////////////////////////////////////
+#include "Utils/Core.mzglsl"
+
+
+//////////////////////////////////////////
+// Main
+void main()
+{
+    
+    int instanceId = gl_InstanceID;
+    
+    mat4 modelMatrix = GetModelMatrix(instanceId);
+    mat4 viewMatrix = GetViewMatrix();
+
+    vec4 positionOS = vec4(a_position, 1.0);
+    vec4 positionWS = modelMatrix * positionOS;
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+    vec4 positionVS = viewMatrix * positionWS;
+    vec4 positionCS = u_projectionMatrix * positionVS;
+    
+    vec4 normalOS = vec4(a_normal, 1.0);
+    vec4 tangentOS = vec4(a_tangent, 1.0);
+    vec4 bitangentOS = vec4(a_bitangent, 1.0);
+    
+    mat3 normalMatrix = mat3(modelMatrix);
+    
+        
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+    
+    v_positionOS = positionOS.xyz;
+    v_positionWS = positionWS.xyz;
+    v_positionVS = positionVS.xyz;
+    
+    vec3 normalWS = normalize(normalMatrix * normalOS.xyz).xyz;
+    
+    
+    v_normalOS = normalOS.xyz;
+    v_normalWS = normalWS.xyz;
+    
+    v_color = a_color;
+       
+    v_uv0 = u_baseMapST.xy * a_texCoords0 + u_baseMapST.zw;
+
+    v_viewDirWS = u_viewPosition - v_positionWS;
+
+    gl_Position = positionCS;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Fragment.mzglsl"
+#include "Utils/Core.mzglsl"
+#include "Utils/Math.mzglsl"
+
+
+//////////////////////////////////////////
+uniform sampler2D u_baseMap;
+uniform vec4 u_color;
+uniform vec4 u_ambientLightColor;
+
+
+//////////////////////////////////////////
+IN vec3 v_positionOS;
+IN vec3 v_positionWS;
+IN vec3 v_positionVS;
+IN vec3 v_normalOS;
+IN vec3 v_normalWS;
+IN vec4 v_color;
+IN vec2 v_uv0;
+IN vec3 v_viewDirWS;
+
+
+//////////////////////////////////////////
+MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
+
+
+//////////////////////////////////////////
+// Lambert
+vec3 LambertLighting(
+    vec3 diffuseColor,
+    vec3 normalWS,
+    vec3 fragmentToViewDirection,
+    vec3 lightDirection,
+    vec3 lightColor)
+{
+    // Light
+    vec3 fragmentToLightDirection = -lightDirection;
+    float lightAttenuation = 1.0;
+    
+    // Lambertian
+    float NdotL = dot(normalWS, fragmentToLightDirection);
+    float lambertian = clamp(NdotL, 0.0, 1.0);
+    
+    
+    // Light final
+    vec3 lightColorFinal = lightColor * lightAttenuation;
+    
+    return 
+        diffuseColor * lambertian * lightColorFinal;
+}
+
+
+//////////////////////////////////////////
+float spaceWarp(vec3 position) {
+    float uShape = 1.0;
+    
+    return pow(2.0 * length(position.xyz), uShape) / 2.0;
+}
+
+//////////////////////////////////////////
+float sdfNoise(vec3 position)
+{
+    float uAvoidClipping = 0.5;
+    float uScaling = 0.4;
+    float uThreshold = 1.1;
+
+    float smoothing = 1.0 - uAvoidClipping * smoothstep(0.1, 0.25, dot(position.xyz, position.xyz));
+    position.xyz *= spaceWarp(position) * uScaling;
+    float noise = MazePerlinNoise4D(vec4(position.xyz, u_time)) - 0.5;
+    return (0.5 + 0.5 * noise) - uThreshold * smoothing;
+}
+
+//////////////////////////////////////////
+vec3 computeNormal(vec3 position, vec3 meshNormal, const vec3 fromEyeNormalized)
+{
+    bool uSmoothNormals = true;
+
+    if (uSmoothNormals)
+    {
+        // Adjust position for smooth normals (optional, based on original logic)
+        for (int iStep = 0; iStep < 10; iStep++)
+        {
+            float currentFieldValue = sdfNoise(position);
+            float adaptativeStepSize = 0.1 * currentFieldValue;
+            position.xyz += adaptativeStepSize * fromEyeNormalized;
+        }
+    }
+    
+    // Use mesh normal if smooth normals are disabled, or compute SDF-based normal
+    if (!uSmoothNormals)
+    {
+        return normalize(meshNormal);
+    }
+    
+    const float EPSILON = 0.0001;
+    float base = sdfNoise(position);
+    return normalize(vec3(
+        sdfNoise(position + vec3(EPSILON, 0, 0)) - base,
+        sdfNoise(position + vec3(0, EPSILON, 0)) - base,
+        sdfNoise(position + vec3(0, 0, EPSILON)) - base
+    ));
+}
+
+vec4 computeColor(const vec3 position, const vec3 normal) {
+    const vec3 lightDirection = -vec3(0.26726124191, 0.53452248382, 0.80178372573);
+    const vec3 baseColor = vec3(1.0);
+    
+    float isFacingCenter = 0.5 + 0.5 * dot(-normalize(position.xyz), normal);
+    float isCloseToCenter = 1.0 - smoothstep(0.0, 0.1, dot(position.xyz, position.xyz));
+    float isFacingLight = 0.4 + 0.6 * (0.5 + 0.5 * dot(normal, -lightDirection));
+    float lightness = (1.0 - 0.4 * isFacingCenter) * isFacingLight * (1.0 - 0.2 * isCloseToCenter);
+    
+    return vec4(baseColor * lightness, 1.0);
+}
+
+
+//////////////////////////////////////////
+// Main
+void main()
+{
+    MAZE_CLIP_DISTANCE_FRAGMENT;
+    
+    // View direction
+    vec3 fragmentToViewDirection = normalize(v_viewDirWS);
+
+    // Normal
+    vec3 normalWS = normalize(v_normalWS);
+    normalWS = computeNormal(v_positionWS, normalWS, -fragmentToViewDirection);
+    
+    /*
+    float sdfValue = sdfNoise(v_positionWS);
+    const float EPSILON = 0.0001;
+    if (sdfValue > EPSILON)
+    {
+        discard;
+    }
+    */
+
+    // Ambient light
+    vec3 ambientLightColor = u_ambientLightColor.rgb;
+    
+    // Albedo
+    vec4 albedo = MAZE_GET_TEXEL2D(u_baseMap, v_uv0) * u_color;
+    
+    // Diffuse color
+    vec3 diffuseColor = albedo.rgb * computeColor(v_positionWS, normalWS).xyz;
+        
+    // Linear color
+    vec3 linearColor = diffuseColor * ambientLightColor;
+            
+    // Main light
+    linearColor += LambertLighting(diffuseColor, normalWS, fragmentToViewDirection, normalize(u_mainLightDirection), u_mainLightColor.rgb);
+    
+    // Reset to LDR
+    linearColor.r = min(linearColor.r, 1.0);
+    linearColor.g = min(linearColor.g, 1.0);
+    linearColor.b = min(linearColor.b, 1.0);
+    
+        
+    out_color = vec4(linearColor, albedo.a);
+}

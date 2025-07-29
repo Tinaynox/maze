@@ -485,16 +485,19 @@ namespace Maze
                     else
                     {
                         Entity* entity = _ecsWorld->getEntity(eid).get();
-                        MAZE_ERROR_IF(!entity, "Entity is not found: %d", (S32)eid);
+                        MAZE_ERROR_CONTINUE_IF(!entity, "Entity is not found: %d", (S32)eid);
                         EcsSerializationId entityIndex = _pointerIndices[entity];
 
-                        if (entityIndex == 0)
+                        if (entityIndex == c_invalidSerializationId)
                         {
                             PrefabInstance* prefabInstance = EcsHelper::GetFirstTrunkComponent<PrefabInstance>(entity);
                             if (prefabInstance)
                             {
-                                EcsSerializationId prefabEntityIndex = _pointerIndices[prefabInstance->getEntityRaw()];
-                                MAZE_ERROR_CONTINUE_IF(prefabEntityIndex == 0, "Potential prefab instance is invalid");
+                                EcsSerializationId prefabEntityIndex = prefabInstance->getEntityRaw()->getSerializationId();
+                                MAZE_ERROR_CONTINUE_IF(prefabEntityIndex == c_invalidSerializationId, "Potential prefab instance is invalid");
+                                subBlock->removeParam(MAZE_HCS("value"));
+                                subBlock->setS32(MAZE_HCS("prefabSid"), prefabEntityIndex);
+                                subBlock->setS32(MAZE_HCS("prefabEntitySid"), entity->getSerializationId());
                             }
                             else
                             {
@@ -525,17 +528,41 @@ namespace Maze
         {
             if (StringHelper::IsEndsWith(subBlock->getName().str, ":EntityId"))
             {
-                EcsSerializationId entityIndex = subBlock->getS32(MAZE_HCS("value"), c_invalidSerializationId);
-                if (entityIndex != c_invalidSerializationId)
+                DataBlock::ParamIndex paramIndex = subBlock->findParamIndex(MAZE_HCS("value"));
+                if (paramIndex >= 0)
                 {
-                    EntityPtr const& entity = _outEntities[entityIndex];
-                    if (entity)
-                        subBlock->setS32(MAZE_HCS("value"), (S32)entity->getId());
+                    EcsSerializationId entityIndex = subBlock->getS32(paramIndex);
+                    if (entityIndex != c_invalidSerializationId)
+                    {
+                        EntityPtr const& entity = _outEntities[entityIndex];
+                        if (entity)
+                            subBlock->setS32(MAZE_HCS("value"), (S32)entity->getId());
+                        else
+                            subBlock->setS32(MAZE_HCS("value"), (S32)c_invalidEntityId);
+                    }
                     else
                         subBlock->setS32(MAZE_HCS("value"), (S32)c_invalidEntityId);
                 }
                 else
-                    subBlock->setS32(MAZE_HCS("value"), (S32)c_invalidEntityId);
+                {
+                    EcsSerializationId prefabSid = subBlock->getS32(MAZE_HCS("prefabSid"), c_invalidSerializationId);
+                    if (prefabSid != c_invalidSerializationId)
+                    {
+                        auto it = _outEntities.find(prefabSid);
+                        MAZE_WARNING_CONTINUE_IF(it == _outEntities.end(), "Undefined prefab with sid=%d", prefabSid);
+
+                        EcsSerializationId prefabEntitySid = subBlock->getS32(MAZE_HCS("prefabEntitySid"), c_invalidSerializationId);
+                        if (prefabEntitySid != c_invalidSerializationId)
+                        {
+                            Entity* prefabEntity = it->second.get();
+                            Entity* targetEntity = EcsHelper::FindEntityWithSerializationId(prefabEntity, prefabEntitySid);
+                            MAZE_WARNING_CONTINUE_IF(!targetEntity, "Undefined prefab with prefabSid=%d and prefabEntitySid=%d", prefabSid, prefabEntitySid);
+                            subBlock->removeParam(MAZE_HCS("prefabSid"));
+                            subBlock->removeParam(MAZE_HCS("prefabEntitySid"));
+                            subBlock->setS32(MAZE_HCS("value"), (S32)targetEntity->getId());
+                        }
+                    }
+                }
             }
             else
             if (StringHelper::IsEndsWith(subBlock->getName().str, ":Array<EntityId>"))

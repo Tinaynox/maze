@@ -199,6 +199,44 @@ namespace Maze
             return _data.getDataBlock(HashedCString(buffer));
         }
 
+        //////////////////////////////////////////
+        MAZE_CORE_API Entity* FindEntityWithSerializationId(Entity* _entity, EcsSerializationId _sid)
+        {
+            if (Transform2D* transform2D = _entity->getComponentRaw<Transform2D>())
+                return FindEntityWithSerializationId(transform2D, _sid);
+            else
+            if (Transform3D* transform3D = _entity->getComponentRaw<Transform3D>())
+                return FindEntityWithSerializationId(transform3D, _sid);
+
+            return nullptr;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API Entity* FindEntityWithSerializationId(Transform2D* _transform2D, EcsSerializationId _sid)
+        {
+            if (_transform2D->getEntityRaw()->getSerializationId() == _sid)
+                return _transform2D->getEntityRaw();
+
+            for (Transform2D* child : _transform2D->getChildren())
+                if (Entity* entity = FindEntityWithSerializationId(child, _sid))
+                    return entity;
+
+            return nullptr;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API Entity* FindEntityWithSerializationId(Transform3D* _transform3D, EcsSerializationId _sid)
+        {
+            if (_transform3D->getEntityRaw()->getSerializationId() == _sid)
+                return _transform3D->getEntityRaw();
+
+            for (Transform3D* child : _transform3D->getChildren())
+                if (Entity* entity = FindEntityWithSerializationId(child, _sid))
+                    return entity;
+
+            return nullptr;
+        }
+
     } // namespace EcsHelper
     //////////////////////////////////////////
 

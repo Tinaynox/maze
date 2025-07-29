@@ -271,6 +271,11 @@ namespace Maze
         addMeshPreviewSpace();
 
         /*
+        addMeshPreview("TorusKnot.fbx", "Raymarching00.mzmaterial", "Ray Marching", torusKnotScale);
+        addMeshPreviewSpace();
+        */
+
+        /*
         addMeshPreview("TorusKnot.fbx", "Gem00.mzmaterial", "Gem", torusKnotScale);
         addMeshPreviewSpace();
         */
