@@ -183,9 +183,15 @@ namespace Maze.Core
             return new Quaternion(vec0.X / vec1.X, vec0.Y / vec1.Y, vec0.Z / vec1.Z, vec0.W / vec1.W);
         }
 
-        float Dot(Quaternion q)
+        public float Dot(Quaternion q)
         {
             return W * q.W + X * q.X + Y * q.Y + Z * q.Z;
+        }
+
+        public float AngleBetween(Quaternion b)
+        {
+            float dot = MathHelper.Clamp(Math.Abs(Dot(b)), -1.0f, 1.0f);
+            return (float)Math.Acos(dot) * 2.0f;
         }
 
         public float Length()
