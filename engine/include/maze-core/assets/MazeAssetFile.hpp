@@ -164,6 +164,9 @@ namespace Maze
         void updateAssetUnitsFromMetaData();
 
         //////////////////////////////////////////
+        inline Vector<AssetUnitPtr> const& getAssetUnits() const { return m_assetUnits; }
+
+        //////////////////////////////////////////
         template <typename TAssetUnit>
         inline ManagedSharedPtr<TAssetUnit> getAssetUnit() const
         {

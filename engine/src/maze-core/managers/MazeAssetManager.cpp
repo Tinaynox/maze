@@ -392,7 +392,16 @@ namespace Maze
             }
 
             for (auto movedFileData : movedFiles)
+            {
+                for (AssetUnitPtr const& assetUnit : movedFileData.second->getAssetUnits())
+                    if (assetUnit->isForceSetAssetFileName())
+                    {
+                        assetUnit->setName(HashedString(movedFileData.second->getFileName().toUTF8().c_str()));
+                        updateAndSaveMetaData(movedFileData.second);
+                    }
+
                 eventAssetFileMoved(movedFileData.second, movedFileData.first);
+            }
 
             updateAssets();
         }

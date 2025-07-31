@@ -222,7 +222,24 @@ namespace Maze
         {
             AssetUnitNameChangedEvent* evt = _event->castRaw<AssetUnitNameChangedEvent>();
 
-            MAZE_NOT_IMPLEMENTED
+            auto it = m_assetUnitsByName.find(evt->getPrevName());
+            if (it != m_assetUnitsByName.end())
+            {
+                AssetUnitPtr assetUnit = std::move(it->second);
+
+                m_assetUnitsByName.erase(it);
+
+                if (!evt->getNewName().empty())
+                {
+                    m_assetUnitsByName.emplace(
+                        evt->getNewName(),
+                        std::move(assetUnit));
+                }
+                else
+                {
+                    MAZE_NOT_IMPLEMENTED
+                }
+            }
         }
     }
 

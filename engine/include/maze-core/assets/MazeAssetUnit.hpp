@@ -222,6 +222,10 @@ namespace Maze
         //////////////////////////////////////////
         void unloadNow();
 
+
+        //////////////////////////////////////////
+        virtual bool isForceSetAssetFileName() const { return false; }
+
     protected:
 
         //////////////////////////////////////////
@@ -240,8 +244,7 @@ namespace Maze
         virtual bool unloadNowImpl() MAZE_ABSTRACT;
     
 
-        //////////////////////////////////////////
-        virtual bool isForceSetAssetFileName() const { return false; }
+        
 
     protected:
         AssetUnitId m_auid = 0u;
