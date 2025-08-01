@@ -611,9 +611,10 @@ namespace Maze
         
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(Transform2DEntityRemoved,
+    COMPONENT_SYSTEM_EVENT_HANDLER_EX(Transform2DEntityRemoved,
         {},
         {},
+        (U8)EntitiesSampleFlags::IncludeInactive,
         EntityRemovedEvent const& _event,
         Entity* _entity,
         Transform2D* _transform2D)

@@ -188,6 +188,7 @@ namespace Maze
         }
         else
         {
+            closeContextMenu();
             eventContextMenuClosed(this, _tree->cast<MenuListTree2D>());
         }
     }

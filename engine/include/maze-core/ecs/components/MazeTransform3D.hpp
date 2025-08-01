@@ -455,14 +455,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void processComponentRemoved() MAZE_OVERRIDE;
+        virtual void processComponentRemoved() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void processSceneReset() MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
-        void processEntityEnabled() MAZE_OVERRIDE;
+        virtual void processEntityEnabled() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void processEntityDisabled() MAZE_OVERRIDE;
+        virtual void processEntityDisabled() MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////

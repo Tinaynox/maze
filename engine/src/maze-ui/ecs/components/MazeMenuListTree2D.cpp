@@ -440,6 +440,8 @@ namespace Maze
         for (auto listData : m_lists)
         {
             MenuList2DPtr const& menuList = listData.second;
+            if (!menuList->getEntityRaw()->getActiveInHierarchy())
+                continue;
 
             AABB2D aabb = menuList->getItemsListTransform()->calculateWorldAABB();
             if (aabb.contains(_positionWS))

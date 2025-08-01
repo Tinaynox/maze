@@ -375,6 +375,13 @@ namespace Maze
         removeAllChildren();
     }
 
+    //////////////////////////////////////////
+    void Transform3D::processSceneReset()
+    {
+        //setParent(Transform3DPtr());
+        //removeAllChildren();
+    }
+
 
     //////////////////////////////////////////
     void Transform3D::processEntityEnabled()
@@ -429,9 +436,10 @@ namespace Maze
     
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DEntityRemoved,
+    COMPONENT_SYSTEM_EVENT_HANDLER_EX(Transform3DEntityRemoved,
         {},
         {},
+        (U8)EntitiesSampleFlags::IncludeInactive,
         EntityRemovedEvent const& _event,
         Entity* _entity,
         Transform3D* _transform3D)

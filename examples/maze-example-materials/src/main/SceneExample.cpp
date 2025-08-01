@@ -191,25 +191,25 @@ namespace Maze
 
         F32 const torusKnotScale = 20.0f;
 
-        addMeshPreview("TorusKnot.fbx", "Unlit00.mzmaterial", "Unlit", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "Unlit00.mzmaterial", "Unlit", torusKnotScale);
         addMeshPreviewSpace();
 
-        addMeshPreview("TorusKnot.fbx", "Lambert00.mzmaterial", "Lambert Lighting", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "Lambert00.mzmaterial", "Lambert Lighting", torusKnotScale);
         addMeshPreviewSpace();
 
-        addMeshPreview("TorusKnot.fbx", "BlinnPhong00.mzmaterial", "Blinn-Phong Lighting", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "BlinnPhong00.mzmaterial", "Blinn-Phong Lighting", torusKnotScale);
         addMeshPreviewSpace();
 
-        addMeshPreview("TorusKnot.fbx", "BlinnPhongAdd00.mzmaterial", "Additive Blend", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "BlinnPhongAdd00.mzmaterial", "Additive Blend", torusKnotScale);
         addMeshPreviewSpace();
 
-        addMeshPreview("TorusKnot.fbx", "BlinnPhongAlpha00.mzmaterial", "Alpha Blend", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "BlinnPhongAlpha00.mzmaterial", "Alpha Blend", torusKnotScale);
         addMeshPreviewSpace();
 
-        addMeshPreview("TorusKnot.fbx", "Fresnel00.mzmaterial", "Fresnel", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "Fresnel00.mzmaterial", "Fresnel", torusKnotScale);
         addMeshPreviewSpace();
         
-        addMeshPreview("TorusKnot.fbx", "XRayFront00.mzmaterial", "XRay", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "XRayFront00.mzmaterial", "XRay", torusKnotScale);
         addMeshPreviewSpace();
         m_meshData.back().renderer->addMaterial("XRayBack00.mzmaterial");
         m_meshData.back().renderer->getEntityRaw()->getComponent<Transform3D>()->translate(Vec3F(0.0f, -1.0f, 0.0f));
@@ -218,19 +218,19 @@ namespace Maze
             2.0f,
             1.0f);
 
-        addMeshPreview("TorusKnot.fbx", "Chessboard01.mzmaterial", "Chessboard", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "Chessboard01.mzmaterial", "Chessboard", torusKnotScale);
         addMeshPreviewSpace();
 
-        addMeshPreview("TorusKnot.fbx", "GoldTest.mzmaterial", "Gold (SER)", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "GoldTest.mzmaterial", "Gold (SER)", torusKnotScale);
         addMeshPreviewSpace();
 
-        addMeshPreview("TorusKnot.fbx", "SkyboxReflection.mzmaterial", "Skybox Reflection", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "SkyboxReflection.mzmaterial", "Skybox Reflection", torusKnotScale);
         addMeshPreviewSpace();
 
-        addMeshPreview("TorusKnot.fbx", "Cel00.mzmaterial", "Cel/Toon", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "Cel00.mzmaterial", "Cel/Toon", torusKnotScale);
         addMeshPreviewSpace();
 
-        addMeshPreview("TorusKnot.fbx", "BlinnPhongHDR00.mzmaterial", "Emission (HDR)", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "BlinnPhongHDR00.mzmaterial", "Emission (HDR)", torusKnotScale);
         addMeshPreviewSpace();
 
         {
@@ -249,11 +249,11 @@ namespace Maze
             labelRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault3DOutlined());
         }
 
-        addMeshPreview("TorusKnot.fbx", "Dissolve00.mzmaterial", "Dissolve", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "Dissolve00.mzmaterial", "Dissolve", torusKnotScale);
         addMeshPreviewSpace();
 
         {
-            EntityPtr objectEntity = addMeshPreview("TorusKnot.fbx", "Distortion00.mzmaterial", "Distortion", torusKnotScale);
+            EntityPtr objectEntity = addMeshPreview("TorusKnotUV.fbx", "Distortion00.mzmaterial", "Distortion", torusKnotScale);
             addMeshPreviewSpace();
             m_meshData.back().renderer->getRenderMask()->setMask((S32)DefaultRenderMask::UserMask0);
 
@@ -264,19 +264,19 @@ namespace Maze
                 MAZE_HCS("u_depthMap"), depthTexture);
         }
 
-        addMeshPreview("TorusKnot.fbx", "Snow.mzmaterial", "Snow", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "Snow.mzmaterial", "Snow", torusKnotScale);
         addMeshPreviewSpace();
 
-        addMeshPreview("TorusKnot.fbx", "Hologram00.mzmaterial", "Hologram", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "Hologram00.mzmaterial", "Hologram", torusKnotScale);
         addMeshPreviewSpace();
 
         /*
-        addMeshPreview("TorusKnot.fbx", "Raymarching00.mzmaterial", "Ray Marching", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "Raymarching00.mzmaterial", "Ray Marching", torusKnotScale);
         addMeshPreviewSpace();
         */
 
         /*
-        addMeshPreview("TorusKnot.fbx", "Gem00.mzmaterial", "Gem", torusKnotScale);
+        addMeshPreview("TorusKnotUV.fbx", "Gem00.mzmaterial", "Gem", torusKnotScale);
         addMeshPreviewSpace();
         */
         
