@@ -595,6 +595,8 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorld::processEntityForSamples(Entity* _entity)
     {
+        MAZE_PROFILE_EVENT("EcsWorld::processEntityForSamples");
+
         for (Size i = 0, in = m_samples.size(); i < in; ++i)
             m_samples[i]->processEntity(_entity);
     }

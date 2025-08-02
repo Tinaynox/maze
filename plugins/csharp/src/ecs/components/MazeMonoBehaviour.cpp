@@ -203,7 +203,8 @@ namespace Maze
             setData(m_cachedData);
             m_cachedData.clear();
 
-            getEntityRaw()->getEcsWorld()->sendEventImmediate(getEntityId(), _event);
+            if (getEntityRaw()->getEcsWorld())
+                getEntityRaw()->getEcsWorld()->sendEventImmediate(getEntityId(), _event);
         }
     }
 
