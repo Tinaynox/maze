@@ -43,5 +43,10 @@ namespace Maze.Graphics
         {
             return new Vec4F(R, G, B, A);
         }
+
+        public override string ToString()
+        {
+            return $"{R}, {G}, {B}, {A}";
+        }
     }
 }

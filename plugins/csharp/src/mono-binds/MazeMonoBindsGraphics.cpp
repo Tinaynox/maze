@@ -54,12 +54,33 @@ namespace Maze
 {
     
     //////////////////////////////////////////
-    inline void MeshRendererSetMaterialAssetUnit(Component* _component, AssetUnitId _auid)
+    inline void MeshRendererSetMaterialAssetUnit(Component* _component, S32 _index, AssetUnitId _auid)
     {
         MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
 
         MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(_auid);
-        _component->castRaw<MeshRenderer>()->setMaterial(material);
+        Vector<MaterialAssetRef> materials = _component->castRaw<MeshRenderer>()->getMaterialRefs();
+
+        if (_index >= materials.size())
+            materials.resize(_index + 1);
+        materials[_index] = { MaterialAssetRef(material) };
+
+        _component->castRaw<MeshRenderer>()->setMaterialRefs(materials);
+    }
+
+    //////////////////////////////////////////
+    inline void MeshRendererSetMaterialResourceId(Component* _component, S32 _index, S32 _resourceId)
+    {
+        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
+
+        Material* material = Material::GetResource(_resourceId);
+        Vector<MaterialAssetRef> materials = _component->castRaw<MeshRenderer>()->getMaterialRefs();
+
+        if (_index >= materials.size())
+            materials.resize(_index + 1);
+        materials[_index] = { MaterialAssetRef(material) };
+
+        _component->castRaw<MeshRenderer>()->setMaterialRefs(materials);
     }
 
     //////////////////////////////////////////
@@ -576,6 +597,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void RenderMeshClear(S32 _renderMeshId)
+    {
+        if (RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId))
+            renderMesh->clear();
+    }
+
+    //////////////////////////////////////////
     inline S32 CreateRenderWindow(
         Vec2U const& _size,
         MonoString* _title)
@@ -727,6 +755,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline S32 MaterialCreateCopy(S32 _materialId)
+    {
+        Material* material = Material::GetResource(_materialId);
+        if (material == nullptr)
+            return c_invalidResourceId;
+
+        MaterialPtr materialCopy = material->createCopy();
+        materialCopy.incRef();
+        return materialCopy->getResourceId();
+    }
+
+    //////////////////////////////////////////
+    inline void DestroyMaterial(S32 _materialId)
+    {
+        TaskManager::GetInstancePtr()->addMainThreadTask(
+            [_materialId]()
+            {
+                if (Material* material = Material::GetResource(_materialId))
+                    material->getSharedPtr().decRef();
+            });
+    }
+
+    //////////////////////////////////////////
     inline S32 MaterialEnsureUniformIndex(S32 _materialId, MonoString* _name)
     {
         if (Material* material = Material::GetResource(_materialId))
@@ -754,7 +805,7 @@ namespace Maze
             }                                                                                                 \
         }
     IMPLEMENT_MATERIAL_UNIFORM_SET(S32);
-    // IMPLEMENT_MATERIAL_UNIFORM_SET(F32);
+    IMPLEMENT_MATERIAL_UNIFORM_SET(F32);
     IMPLEMENT_MATERIAL_UNIFORM_SET(F64);
     IMPLEMENT_MATERIAL_UNIFORM_SET(Bool);
     IMPLEMENT_MATERIAL_UNIFORM_SET(Vec2F);
@@ -772,17 +823,16 @@ namespace Maze
     IMPLEMENT_MATERIAL_UNIFORM_SET(Mat3F);
     IMPLEMENT_MATERIAL_UNIFORM_SET(Mat4F);
     IMPLEMENT_MATERIAL_UNIFORM_SET(TMat);
-    IMPLEMENT_MATERIAL_UNIFORM_SET(ColorF128);
 
 
     //////////////////////////////////////////
-    inline void MaterialUniformSetF32(S32 _materialId, S32 _uniformId, F32 const& _value)
+    inline void MaterialUniformSetColorF128(S32 _materialId, S32 _uniformId, Vec4F const& _value)
     {
         if (Material* material = Material::GetResource(_materialId))
         {
             ShaderUniformVariantPtr const& uniform = material->getUniform(_uniformId);
             if (uniform)
-                uniform->set(_value);
+                uniform->set(ColorF128(_value));
         }
     }
 
@@ -792,6 +842,7 @@ namespace Maze
     {
         // MeshRenderer
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetMaterialAssetUnit);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetMaterialResourceId);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetRenderMesh);
@@ -855,6 +906,7 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreateRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(DestroyRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshLoadFromMesh);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshClear);
 
         // RenderWindow
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreateRenderWindow);
@@ -898,6 +950,8 @@ namespace Maze
 
         // Material
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialIsValid);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialCreateCopy);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(DestroyMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialEnsureUniformIndex);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetS32);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetF32);

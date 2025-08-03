@@ -21,9 +21,19 @@ namespace Maze.Graphics
         {  
         }
 
-        public void SetMaterial(AssetUnitId auid)
+        public void SetMaterial(int idx, AssetUnitId auid)
         {
-            InternalCalls.MeshRendererSetMaterialAssetUnit(NativeComponentPtr, auid);
+            InternalCalls.MeshRendererSetMaterialAssetUnit(NativeComponentPtr, idx, auid);
+        }
+
+        public void SetMaterial(int idx, int resourceId)
+        {
+            InternalCalls.MeshRendererSetMaterialResourceId(NativeComponentPtr, idx, resourceId);
+        }
+
+        public void SetMaterial(int idx, Material material)
+        {
+            SetMaterial(idx, material?.ResourceId ?? -1);
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Maze.Graphics
         public SubMesh()
         {
             m_ResourceId = InternalCalls.CreateSubMesh();
+            m_OwnsResourceId = true;
         }
 
         ~SubMesh()
@@ -28,10 +29,11 @@ namespace Maze.Graphics
 
         public override void ReleaseResource()
         {
-            if (m_ResourceId != -1)
+            if (m_OwnsResourceId && m_ResourceId != -1)
             {
                 InternalCalls.DestroySubMesh(m_ResourceId);
                 m_ResourceId = -1;
+                m_OwnsResourceId = false;
             }
         }
 

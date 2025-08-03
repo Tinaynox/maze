@@ -9,6 +9,11 @@ namespace Maze.Graphics
             m_ResourceId = resourceId;
         }
 
+        ~Material()
+        {
+            ReleaseResource();
+        }
+
         public static Material Get(int resourceId)
         {
             if (InternalCalls.MaterialIsValid(resourceId))
@@ -17,7 +22,24 @@ namespace Maze.Graphics
             return null;
         }
 
-        public override void ReleaseResource() { }
+        public override void ReleaseResource()
+        {
+            if (m_OwnsResourceId && m_ResourceId != -1)
+            {
+                InternalCalls.DestroyMaterial(m_ResourceId);
+                m_ResourceId = -1;
+                m_OwnsResourceId = false;
+            }
+        }
+
+
+        public Material Clone()
+        {
+            int resourceId = InternalCalls.MaterialCreateCopy(m_ResourceId);
+            Material newMaterial = new Material(resourceId);
+            newMaterial.m_OwnsResourceId = true;
+            return newMaterial;
+        }
 
 
         public int EnsureUniformIndex(string name)

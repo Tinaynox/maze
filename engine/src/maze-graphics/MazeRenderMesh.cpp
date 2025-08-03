@@ -196,7 +196,7 @@ namespace Maze
         if (currentVaoCount < requiredVaoCount)
         {
             Size extraVao = requiredVaoCount - currentVaoCount;
-            for (Size i = currentVaoCount, in = extraVao; i < in; ++i)
+            for (Size i = currentVaoCount, in = requiredVaoCount; i < in; ++i)
                 m_vertexArrayObjects[i] = VertexArrayObject::Create(m_renderSystem, _renderTarget);
         }
 

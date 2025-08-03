@@ -8,7 +8,10 @@ namespace Maze.Graphics
     {
         #region MeshRenderer
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererSetMaterialAssetUnit(NativePtr nativeComponentPtr, AssetUnitId material);
+        public extern static void MeshRendererSetMaterialAssetUnit(NativePtr nativeComponentPtr, int index, AssetUnitId material);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererSetMaterialResourceId(NativePtr nativeComponentPtr, int index, int materialResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void MeshRendererSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
@@ -191,6 +194,9 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void RenderMeshLoadFromMesh(int renderMeshId, int meshId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void RenderMeshClear(int renderMeshId);
         #endregion
 
         #region RenderWindow
@@ -296,6 +302,12 @@ namespace Maze.Graphics
         #region Material
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool MaterialIsValid(int materialId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int MaterialCreateCopy(int materialId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void DestroyMaterial(int materialId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int MaterialEnsureUniformIndex(int materialId, string name);
