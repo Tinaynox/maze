@@ -89,6 +89,8 @@ namespace Maze
         ScriptField& operator=(ScriptField&&) = default;
 
 
+        //////////////////////////////////////////
+        inline ScriptClassPtr getScriptClass() const { return m_scriptClass.lock(); }
 
         //////////////////////////////////////////
         inline HashedString const& getName() const { return m_name; }

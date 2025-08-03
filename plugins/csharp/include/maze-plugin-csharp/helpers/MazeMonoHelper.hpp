@@ -181,6 +181,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API ResourceId GetIndexedResourceId(MonoObject* _indexedResourceInstance);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* CreateIndexedResource(
+            HashedCString _className,
+            ResourceId _resourceId);
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API ScriptableObject* GetScriptableObject(MonoObject* _scritableObjectInstance);
 
         //////////////////////////////////////////

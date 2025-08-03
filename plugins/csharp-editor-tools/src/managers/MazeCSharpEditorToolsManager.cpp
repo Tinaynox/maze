@@ -43,6 +43,7 @@
 #include "maze-editor-tools/property-drawers/MazePDComponentPtr.hpp"
 #include "maze-editor-tools/property-drawers/MazePDAssetUnitId.hpp"
 #include "maze-editor-tools/property-drawers/MazePDAssetFileId.hpp"
+#include "maze-editor-tools/property-drawers/MazePDMaterial.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
@@ -651,6 +652,36 @@ namespace Maze
         {
             _instance.setFieldValue(_field, _drawer->getValue().toVec4F32());
         });
+
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerMaterial>(MAZE_HCS("Maze.Graphics.Material"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerMaterial* _drawer)
+            {
+                MonoObject* indexedResourceInstance = nullptr;
+                _instance.getPropertyValue(_property, indexedResourceInstance);
+                ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
+                Material* material = Material::GetResource(resourceId);
+                _drawer->setValue(material ? material->getSharedPtr() : nullptr);
+            },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerMaterial const* _drawer)
+            {
+                ResourceId resourceId = _drawer->getValue() ? _drawer->getValue()->getResourceId() : c_invalidResourceId;
+                MonoObject* indexedResourceObj = MonoHelper::CreateIndexedResource(MAZE_HCS("Maze.Graphics.Material"), resourceId);
+                _instance.setPropertyValue(_property, indexedResourceObj);
+            },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerMaterial* _drawer)
+            {
+                MonoObject* indexedResourceInstance = nullptr;
+                _instance.getFieldValue(_field, indexedResourceInstance);
+                ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
+                Material* material = Material::GetResource(resourceId);
+                _drawer->setValue(material ? material->getSharedPtr() : nullptr);
+            },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerMaterial const* _drawer)
+            {
+                ResourceId resourceId = _drawer->getValue() ? _drawer->getValue()->getResourceId() : c_invalidResourceId;
+                MonoObject* indexedResourceObj = MonoHelper::CreateIndexedResource(MAZE_HCS("Maze.Graphics.Material"), resourceId);
+                _instance.setFieldValue(_field, indexedResourceObj);
+            });
 
 
         // Components

@@ -422,23 +422,48 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API ScriptableObject* GetScriptableObject(MonoObject* _scritableObjectInstance)
+        MAZE_PLUGIN_CSHARP_API ResourceId GetIndexedResourceId(MonoObject* _indexedResourceInstance)
         {
-            if (!_scritableObjectInstance)
-                return nullptr;
+            if (!_indexedResourceInstance)
+                return c_invalidResourceId;
 
             MonoProperty* resourceIdMonoProperty = MonoEngine::GetIndexedResourceIdProperty()->getMonoProperty();
-            MonoObject* result = mono_property_get_value(resourceIdMonoProperty, _scritableObjectInstance, nullptr, nullptr);
+            MonoObject* result = mono_property_get_value(resourceIdMonoProperty, _indexedResourceInstance, nullptr, nullptr);
             if (!result)
-                return nullptr;
+                return c_invalidResourceId;
 
-            S32 resourceId = *(S32*)mono_object_unbox(result);
+            return ResourceId(*(S32*)mono_object_unbox(result));
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* CreateIndexedResource(
+            HashedCString _className,
+            ResourceId _resourceId)
+        {
+            ScriptClassPtr const& indexedResourceClass = MonoEngine::GetIndexedResourceSubClass(_className);
+            MonoMethod* indexedResourceConstructor = indexedResourceClass->getMethod(".ctor", 1);
+
+            MonoObject* indexedResourceObj = mono_object_new(
+                MonoEngine::GetMonoDomain(),
+                indexedResourceClass->getMonoClass());
+
+            S32 res = _resourceId;
+            void* args = (void*)&res;
+            MonoHelper::InvokeMethod(indexedResourceObj, indexedResourceConstructor, (void**)&args);
+
+            return indexedResourceObj;
+        }
+
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API ScriptableObject* GetScriptableObject(MonoObject* _scritableObjectInstance)
+        {
+            S32 resourceId = GetIndexedResourceId(_scritableObjectInstance);
             if (ScriptableObject* scriptableObject = ScriptableObject::GetResource(resourceId))
                 return scriptableObject;
 
             return nullptr;
         }
-
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void SerializeScriptableObjectToDataBlock(

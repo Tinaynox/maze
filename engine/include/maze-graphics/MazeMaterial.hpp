@@ -325,6 +325,11 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        MaterialAssetRef(Material* _value)
+            : m_material(_value ? _value->getSharedPtr() : nullptr)
+        {}
+
+        //////////////////////////////////////////
         MaterialAssetRef(MaterialPtr const& _value = nullptr)
             : m_material(_value)
         {}

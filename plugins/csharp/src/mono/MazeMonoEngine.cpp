@@ -79,6 +79,7 @@ namespace Maze
         // IndexedResource
         ScriptClassPtr indexedResourceClass;
         ScriptPropertyPtr indexedResourceIdProperty;
+        StringKeyMap<ScriptClassPtr> indexedResourceSubClasses;
 
 
         // ScriptableObject
@@ -377,6 +378,19 @@ namespace Maze
                     loadedScriptClasses.push_back(scriptClass);
 
                     g_monoEngineData->ecsData.scriptableObjectSubClasses.insert(
+                        HashedCString(fullName.c_str()),
+                        scriptClass);
+                }
+                else
+                // IndexedResource subclasses
+                if (mono_class_is_subclass_of(monoClass, MonoEngine::GetIndexedResourceClass()->getMonoClass(), false) &&
+                    monoClass != MonoEngine::GetIndexedResourceClass()->getMonoClass())
+                {
+                    ScriptClassPtr scriptClass = MonoEngine::CreateScriptClass(fullNamespace, typeName, monoClass);
+                    scriptClass->assignPrivateProperty(MAZE_HCS("ResourceId"));
+                    loadedScriptClasses.push_back(scriptClass);
+
+                    g_monoEngineData->ecsData.indexedResourceSubClasses.insert(
                         HashedCString(fullName.c_str()),
                         scriptClass);
                 }
@@ -850,9 +864,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ScriptClassPtr const& MonoEngine::GetIndexedResourceClass()
+    {
+        return g_monoEngineData->ecsData.indexedResourceClass;
+    }
+
+    //////////////////////////////////////////
     ScriptPropertyPtr const& MonoEngine::GetIndexedResourceIdProperty()
     {
         return g_monoEngineData->ecsData.indexedResourceIdProperty;
+    }
+
+    //////////////////////////////////////////
+    ScriptClassPtr const& MonoEngine::GetIndexedResourceSubClass(HashedCString _name)
+    {
+        static ScriptClassPtr const nullPointer;
+
+        auto it = g_monoEngineData->ecsData.indexedResourceSubClasses.find(_name);
+        if (it != g_monoEngineData->ecsData.indexedResourceSubClasses.end())
+            return it->second;
+        else
+            return nullPointer;
     }
 
     //////////////////////////////////////////
@@ -871,7 +903,7 @@ namespace Maze
             return it->second;
         else
             return nullPointer;
-    }
+    }    
 
     //////////////////////////////////////////
     MonoObject* MonoEngine::InstantiateClass(MonoClass* _monoClass)
