@@ -52,6 +52,10 @@ set(EXAMPLE_MAZE_LIBS
     maze-plugin-physics2d-editor-tools
     maze-plugin-csharp
     maze-plugin-csharp-editor-tools)
+    
+    
+##########################################
+set(MAZE_USE_OPTICK ON CACHE BOOL "Use Optick Profiler" FORCE)
 
 
 ##########################################

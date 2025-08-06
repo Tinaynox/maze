@@ -51,38 +51,39 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Plane() 
-            : m_point(Vec3F::c_zero)
-            , m_normal(Vec3F::c_unitZ)
-        { 
-        }
+        inline MAZE_CONSTEXPR Plane() = default;
 
         //////////////////////////////////////////
-        inline Plane(Plane const& _plane) 
-            : m_point(_plane.m_point)
-            , m_normal(_plane.m_normal)
-        {
-        }
+        inline Plane(Plane const& _plane) = default;
 
         //////////////////////////////////////////
-        inline Plane(Plane&& _plane) noexcept
-            : m_point(std::move(_plane.m_point))
-            , m_normal(std::move(_plane.m_normal))
-        {
-        }
+        inline Plane(Plane&& _plane) noexcept = default;
+
+        //////////////////////////////////////////
+        inline Plane(Vec3F const& _normal, F32 _d)
+            : m_normal(_normal)
+            , m_d(_d)
+        { }
 
         //////////////////////////////////////////
         inline explicit Plane(Vec3F const& _point, Vec3F const& _normal)
-            : m_point(_point)
-            , m_normal(_normal)
+            : m_normal(_normal)
         {
+            setPoint(_point);
         }
 
         //////////////////////////////////////////
-        inline void setPoint(Vec3F const& _normal) { m_point = _normal; }
+        inline void setPoint(Vec3F const& _point) { m_d = -m_normal.dotProduct(_point); }
 
         //////////////////////////////////////////
-        inline Vec3F const& getPoint() const { return m_point; }
+        inline Vec3F getPoint() const { return -m_d * m_normal; }
+
+
+        //////////////////////////////////////////
+        inline F32 getD() const { return m_d; }
+
+        //////////////////////////////////////////
+        inline void setD(F32 _d) { m_d = _d; }
 
         //////////////////////////////////////////
         inline void setNormal(Vec3F const& _normal) { m_normal = _normal; }
@@ -92,51 +93,52 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline void redefine(Vec3F const& _normal, Vec3F const& _point) { setNormal(_normal); setPoint(_point); }
+
+        //////////////////////////////////////////
         bool raycast(Ray const& _ray, F32& _dist);
+
+        //////////////////////////////////////////
+        F32 normalize();
 
 
         //////////////////////////////////////////
         inline Plane& operator=(Plane const& _plane)
         {
-            m_point = _plane.m_point;
+            m_d = _plane.m_d;
             m_normal = _plane.m_normal;
 
             return *this;
         }
 
         //////////////////////////////////////////
-        inline Plane& operator=(Plane&& _plane) noexcept
-        {
-            m_point = std::move(_plane.m_point);
-            m_normal = std::move(_plane.m_normal);
-            return *this;
-        }
+        inline Plane& operator=(Plane&& _plane) noexcept = default;
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR bool operator==(Plane const& _plane) const
         {
-            return (m_point == _plane.m_point && m_normal == _plane.m_normal);
+            return (m_normal == _plane.m_normal && m_d == _plane.m_d);
         }
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR bool operator!=(Plane const& _plane) const
         {
-            return (m_point != _plane.m_point || m_normal != _plane.m_normal);
+            return (m_normal != _plane.m_normal || m_d != _plane.m_d);
         }
 
         //////////////////////////////////////////
-        inline String toString(Char _separator = ';') const { return m_point.toString() + _separator + m_normal.toString(); }
+        inline String toString(Char _separator = ';') const { return m_normal.toString() + _separator + StringHelper::ToString(m_d); }
 
         //////////////////////////////////////////
         static inline CString ParseString(CString _string, Size _size, Plane& _result, Char _separator = ';')
         {
             CString end = _string + _size;
 
-            _string = Vec3F::ParseString(_string, _size, _result.m_point);
+            _string = Vec3F::ParseString(_string, end - _string, _result.m_normal);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ExpectSkipChar(_string, end, _separator);
             _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = Vec3F::ParseString(_string, end - _string, _result.m_normal);
+            _string = StringHelper::ParseNumber<F32>(_string, end, _result.m_d);
             return _string;
         }
 
@@ -155,8 +157,8 @@ namespace Maze
         }
 
     protected:
-        Vec3F m_point;
-        Vec3F m_normal;
+        Vec3F m_normal = Vec3F::c_zero;
+        F32 m_d = 0.0f;
     };
 
 

@@ -35,6 +35,7 @@
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
+#include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -120,6 +121,14 @@ namespace Maze
         F32 h = m_viewport.size.y * m_renderTarget->getRenderTargetHeight();
 
         return w / h;
+    }
+
+    //////////////////////////////////////////
+    void Camera3D::calculateFrustum(Frustum& _outFrustum)
+    {
+        Mat4F projectionMatrix = calculateProjectionMatrix(getRenderTarget());
+        TMat viewMatrix = getTransform()->getWorldTransform().inversed();
+        GraphicsUtilsHelper::CalculateCameraFrustum(viewMatrix, projectionMatrix, _outFrustum);
     }
 
     //////////////////////////////////////////

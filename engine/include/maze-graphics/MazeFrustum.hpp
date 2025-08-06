@@ -24,45 +24,40 @@
 
 
 //////////////////////////////////////////
-#include "MazeCoreHeader.hpp"
+#pragma once
+#if (!defined(_MazeFrustum_hpp_))
+#define _MazeFrustum_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/math/MazePlane.hpp"
-#include "maze-core/math/MazeMathGeometry.hpp"
-#include "maze-core/math/MazeMathRaytracing.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-
     //////////////////////////////////////////
-    // Class Plane
-    //
-    //////////////////////////////////////////
-    bool Plane::raycast(Ray const& _ray, F32& _dist)
+    struct MAZE_GRAPHICS_API Frustum
     {
-        return Math::RaycastPlane(
-            _ray.getPoint(),
-            _ray.getDirection(),
-            m_normal,
-            m_d,
-            _dist);
-    }
+        Plane planes[6]; // 0: left, 1: right, 2: bottom, 3: top, 4: near, 5: far
 
-    //////////////////////////////////////////
-    F32 Plane::normalize()
-    {
-        F32 length = m_normal.length();
-
-        if (length > 0.0f)
+        //////////////////////////////////////////
+        inline bool containsSphere(Vec3F const& _origin, F32 _radius) const
         {
-            F32 invLength = 1.0f / length;
-            m_normal *= invLength;
-            m_d *= invLength;
+            for (const Plane& plane : planes)
+            {
+                float distance = plane.getNormal().dotProduct(_origin) + plane.getD();
+                if (distance < -_radius)
+                    return false;
+            }
+            return true;
         }
-
-        return length;
-    }
-    
+    };
 
 } // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _MazeFrustum_hpp_
 //////////////////////////////////////////

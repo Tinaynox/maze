@@ -39,6 +39,7 @@
 #include "maze-graphics/ecs/MazeLightingSettings.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/config/MazeGraphicsConfig.hpp"
+#include "maze-graphics/MazeFrustum.hpp"
 
 
 //////////////////////////////////////////
@@ -52,7 +53,9 @@ namespace Maze
     {
         S32 renderMask = 0;
         TMat cameraTransform = TMat::c_identity;
+        TMat viewMatrix = TMat::c_identity;
         Mat4F projectionMatrix = Mat4F::c_identity;
+        Frustum cameraFrustum;
         Rect2F viewport = Rect2F(0.0f, 0.0f, 1.0f, 1.0f);
         F32 nearZ = 0.001f;
         F32 farZ = 100.0f;
@@ -78,7 +81,9 @@ namespace Maze
     {
         S32 renderMask = 0;
         TMat mainLightTransform = TMat::c_identity;
+        TMat viewMatrix = TMat::c_identity;
         Mat4F mainLightProjectionMatrix = Mat4F::c_identity;
+        Frustum mainLightFrustum;
         F32 nearZ = 0.001f;
         F32 farZ = 100.0f;
     };

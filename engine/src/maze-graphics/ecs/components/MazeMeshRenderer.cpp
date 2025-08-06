@@ -263,6 +263,10 @@ namespace Maze
 
         if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
         {
+            // #TODO: we need real bounding radius here
+            // if (!_event.getPassParams()->cameraFrustum.containsSphere(_transform3D->getWorldPosition(), 3.0f))
+            //    return;
+
             if (_meshRenderer->getRenderMesh())
             {
                 Vector<MaterialAssetRef> const& materials = _meshRenderer->getMaterialRefs();

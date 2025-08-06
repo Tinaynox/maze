@@ -45,6 +45,7 @@
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 
@@ -137,8 +138,7 @@ namespace Maze
             _renderTarget->setFar(_params.farZ);
 
             // View matrix
-            TMat viewMatrix = _params.cameraTransform.inversed();
-            _renderTarget->setViewMatrix(viewMatrix);
+            _renderTarget->setViewMatrix(_params.viewMatrix);
 
             // View position
             _renderTarget->setViewPosition(cameraPosition);
@@ -298,8 +298,7 @@ namespace Maze
             _shadowBuffer->setFar(_params.farZ);
 
             // View matrix
-            TMat viewMatrix = _params.mainLightTransform.inversed();
-            _shadowBuffer->setViewMatrix(viewMatrix);
+            _shadowBuffer->setViewMatrix(_params.viewMatrix);
 
             // View position
             _shadowBuffer->setViewPosition(lightPosition);
@@ -370,7 +369,12 @@ namespace Maze
 
             defaultParams.renderMask = camera->getRenderMask();
             defaultParams.cameraTransform = camera->getTransform()->getWorldTransform();
+            defaultParams.viewMatrix = defaultParams.cameraTransform.inversed();
             defaultParams.projectionMatrix = camera->calculateProjectionMatrix(renderTarget);
+            GraphicsUtilsHelper::CalculateCameraFrustum(
+                defaultParams.viewMatrix,
+                defaultParams.projectionMatrix,
+                defaultParams.cameraFrustum);
             defaultParams.viewport = camera->getViewport();
             defaultParams.nearZ = camera->getNearZ();
             defaultParams.farZ = camera->getFarZ();
@@ -411,6 +415,7 @@ namespace Maze
                 shadowParams.farZ = mainLight->getShadowCastFarZ();
 
                 shadowParams.mainLightTransform = mainLight->getTransform()->getWorldTransform();
+                shadowParams.viewMatrix = shadowParams.mainLightTransform.inversed();
                 shadowParams.mainLightProjectionMatrix = Mat4F::CreateProjectionOrthographicLHMatrix(
                     -mainLight->getShadowCastSize(),
                     +mainLight->getShadowCastSize(),
@@ -418,6 +423,10 @@ namespace Maze
                     +mainLight->getShadowCastSize(),
                     shadowParams.nearZ,
                     shadowParams.farZ);
+                GraphicsUtilsHelper::CalculateCameraFrustum(
+                    shadowParams.viewMatrix,
+                    shadowParams.mainLightProjectionMatrix,
+                    shadowParams.mainLightFrustum);
 
                 Mat4F mainLightTransformMat4;
                 mainLightTransformMat4.setRow(0, Vec4F(shadowParams.mainLightTransform[0], 0.0f));

@@ -42,6 +42,28 @@ namespace Maze
         MAZE_CORE_API bool RaycastPlane(
             Vec3F const& _rayPoint,
             Vec3F const& _rayDirection,
+            Vec3F const& _planeNormal,
+            F32 _planeD,
+            F32& _dist)
+        {
+            F32 denom = _planeNormal.dotProduct(_rayDirection);
+            if (Math::Abs(denom) > 0.0001f)
+            {
+                F32 t = -(_planeNormal.dotProduct(_rayPoint) + _planeD) / denom;
+                if (t >= 0.0f)
+                {
+                    Vec3F p = _rayPoint + t * _rayDirection;
+                    _dist = (p - _rayPoint).length();
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool RaycastPlane(
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
             Vec3F const& _planePoint,
             Vec3F const& _planeNormal,
             F32& _dist)

@@ -48,6 +48,14 @@ namespace Maze
         MAZE_CORE_API bool RaycastPlane(
             Vec3F const& _rayPoint,
             Vec3F const& _rayDirection,
+            Vec3F const& _planeNormal,
+            F32 _planeD,
+            F32& _dist);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool RaycastPlane(
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
             Vec3F const& _planePoint,
             Vec3F const& _planeNormal,
             F32& _dist);

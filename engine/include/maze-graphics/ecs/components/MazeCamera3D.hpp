@@ -36,6 +36,7 @@
 #include "maze-core/math/MazeRay.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
+#include "maze-graphics/MazeFrustum.hpp"
 #include "maze-graphics/ecs/MazeLightingSettings.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 
@@ -155,6 +156,9 @@ namespace Maze
 
         //////////////////////////////////////////
         F32 getAspectRatio() const;
+
+        //////////////////////////////////////////
+        void calculateFrustum(Frustum& _outFrustum);
 
 
         //////////////////////////////////////////

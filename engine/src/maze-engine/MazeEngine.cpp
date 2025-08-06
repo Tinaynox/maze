@@ -171,11 +171,14 @@ namespace Maze
 
         eventFrame();
 
+        if (m_config.minFrameDeltaTimeMS > 0)
         {
             MAZE_PROFILE_EVENT("Idle");
             U32 timeAfterUpdateMS = updateManager->getMilliseconds();
             while (timeAfterUpdateMS - currentFrameTimeMS < m_config.minFrameDeltaTimeMS)
             {
+                // #TODO: sleep thread test
+                // ThreadHelper::SleepCurrentThread(m_config.minFrameDeltaTimeMS - (timeAfterUpdateMS - currentFrameTimeMS));
                 timeAfterUpdateMS = updateManager->getMilliseconds();
             }
         }

@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazePixelSheet2D.hpp"
+#include "maze-graphics/MazeFrustum.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 
 
@@ -81,6 +82,17 @@ namespace Maze
         MAZE_GRAPHICS_API bool LoadMeshTangentsFromBuffer(
             Mesh& _mesh,
             ByteBuffer const& _byteBuffer);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void CalculateCameraFrustum(
+            TMat const& _viewMatrix,
+            Mat4F const& _projectionMatrix,
+            Frustum& _outFrustum);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void CalculateCameraFrustum(
+            Mat4F const& _viewProjectionMatrix,
+            Frustum& _outFrustum);
 
     } // namespace GraphicsUtilsHelper
     //////////////////////////////////////////

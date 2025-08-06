@@ -25,6 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
+#include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-graphics/MazePixelFormat.hpp"
 #include "maze-graphics/MazePixelSheet2D.hpp"
@@ -33,6 +34,7 @@
 #include "maze-graphics/MazeSubMesh.hpp"
 
 
+#include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 //////////////////////////////////////////
 namespace Maze
 {
@@ -475,6 +477,46 @@ namespace Maze
             return true;
         }
 
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void CalculateCameraFrustum(
+            TMat const& _viewMatrix,
+            Mat4F const& _projectionMatrix,
+            Frustum& _outFrustum)
+        {
+            Mat4F viewMatrixMat4F(
+                _viewMatrix[0][0], _viewMatrix[0][1], _viewMatrix[0][2], 0.0f,
+                _viewMatrix[1][0], _viewMatrix[1][1], _viewMatrix[1][2], 0.0f,
+                _viewMatrix[2][0], _viewMatrix[2][1], _viewMatrix[2][2], 0.0f,
+                _viewMatrix[3][0], _viewMatrix[3][1], _viewMatrix[3][2], 1.0f);
+            
+            CalculateCameraFrustum(viewMatrixMat4F * _projectionMatrix, _outFrustum);
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void CalculateCameraFrustum(
+            Mat4F const& _viewProjectionMatrix,
+            Frustum& _outFrustum)
+        {
+            auto makePlane =
+                [](Vec4F const& _v)
+            {
+                Plane p(_v.xyz(), _v.w);
+                p.normalize();
+                return p;
+            };
+
+            Vec4F rowX = _viewProjectionMatrix.getColumn(0);
+            Vec4F rowY = _viewProjectionMatrix.getColumn(1);
+            Vec4F rowZ = _viewProjectionMatrix.getColumn(2);
+            Vec4F rowW = _viewProjectionMatrix.getColumn(3);
+
+            _outFrustum.planes[0] = makePlane(rowW - rowX); // Left
+            _outFrustum.planes[1] = makePlane(rowW + rowX); // Right
+            _outFrustum.planes[2] = makePlane(rowW - rowY); // Bottom
+            _outFrustum.planes[3] = makePlane(rowW + rowY); // Top
+            _outFrustum.planes[4] = makePlane(rowW - rowZ); // Near
+            _outFrustum.planes[5] = makePlane(rowW + rowZ); // Far
+        }
 
     } // namespace GraphicsUtilsHelper
     //////////////////////////////////////////
