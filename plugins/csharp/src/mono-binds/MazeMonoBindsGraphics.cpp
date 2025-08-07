@@ -32,6 +32,7 @@
 #include "maze-core/helpers/MazeThreadHelper.hpp"
 #include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeSkinnedMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -52,11 +53,11 @@
 //////////////////////////////////////////
 namespace Maze
 {
-    
+
     //////////////////////////////////////////
     inline void MeshRendererSetMaterialAssetUnit(Component* _component, S32 _index, AssetUnitId _auid)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRenderer);
 
         MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(_auid);
         Vector<MaterialAssetRef> materials = _component->castRaw<MeshRenderer>()->getMaterialRefs();
@@ -71,7 +72,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void MeshRendererSetMaterialResourceId(Component* _component, S32 _index, S32 _resourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRenderer);
 
         Material* material = Material::GetResource(_resourceId);
         Vector<MaterialAssetRef> materials = _component->castRaw<MeshRenderer>()->getMaterialRefs();
@@ -86,7 +87,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void MeshRendererSetMaterial(Component* _component, S32 _resourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRenderer);
 
         Material* material = Material::GetResource(_resourceId);
         _component->castRaw<MeshRenderer>()->setMaterial(material ? material->getSharedPtr() : MaterialPtr());
@@ -95,7 +96,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void MeshRendererGetMaterial(Component* _component, S32& _outResourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRenderer);
 
         MaterialPtr const& material = _component->castRaw<MeshRenderer>()->getMaterial();
         if (material)
@@ -107,7 +108,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void MeshRendererSetRenderMesh(Component* _component, S32 _resourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRenderer);
 
         RenderMesh* renderMesh = RenderMesh::GetResource(_resourceId);
         _component->castRaw<MeshRenderer>()->setRenderMesh(renderMesh ? renderMesh->getSharedPtr() : RenderMeshPtr());
@@ -116,7 +117,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void MeshRendererGetRenderMesh(Component* _component, S32& _outResourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<MeshRenderer>::UID(), "Component is not MeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRenderer);
 
         RenderMeshPtr const& renderMesh = _component->castRaw<MeshRenderer>()->getRenderMesh();
         if (renderMesh)
@@ -126,9 +127,79 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void MeshRendererInstancedSetMaterial(Component* _component, S32 _resourceId)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRendererInstanced);
+
+        Material* material = Material::GetResource(_resourceId);
+        _component->castRaw<MeshRendererInstanced>()->setMaterial(material ? material->getSharedPtr() : MaterialPtr());
+    }
+
+    //////////////////////////////////////////
+    inline void MeshRendererInstancedGetMaterial(Component* _component, S32& _outResourceId)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRendererInstanced);
+
+        MaterialPtr const& material = _component->castRaw<MeshRendererInstanced>()->getMaterial();
+        if (material)
+            _outResourceId = material->getResourceId();
+        else
+            _outResourceId = c_invalidResourceId;
+    }
+
+    //////////////////////////////////////////
+    inline void MeshRendererInstancedSetRenderMesh(Component* _component, S32 _resourceId)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRendererInstanced);
+
+        RenderMesh* renderMesh = RenderMesh::GetResource(_resourceId);
+        _component->castRaw<MeshRendererInstanced>()->setRenderMesh(renderMesh ? renderMesh->getSharedPtr() : RenderMeshPtr());
+    }
+
+    //////////////////////////////////////////
+    inline void MeshRendererInstancedGetRenderMesh(Component* _component, S32& _outResourceId)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRendererInstanced);
+
+        RenderMeshPtr const& renderMesh = _component->castRaw<MeshRendererInstanced>()->getRenderMesh();
+        if (renderMesh)
+            _outResourceId = renderMesh->getResourceId();
+        else
+            _outResourceId = c_invalidResourceId;
+    }
+
+    //////////////////////////////////////////
+    inline void MeshRendererInstancedResizeModelMatrices(Component* _component, S32 _size)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRendererInstanced);
+        _component->castRaw<MeshRendererInstanced>()->resizeModelMatrices(_size);
+    }
+
+    //////////////////////////////////////////
+    inline void MeshRendererInstancedSetModelMatrix(Component* _component, S32 _index, TMat const& _tm)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRendererInstanced);
+        _component->castRaw<MeshRendererInstanced>()->setModelMatrix(_index, _tm);
+    }
+
+    //////////////////////////////////////////
+    inline void MeshRendererInstancedResizeColors(Component* _component, S32 _size)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRendererInstanced);
+        _component->castRaw<MeshRendererInstanced>()->resizeColors(_size);
+    }
+
+    //////////////////////////////////////////
+    inline void MeshRendererInstancedSetColor(Component* _component, S32 _index, Vec4F const& _color)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRendererInstanced);
+        _component->castRaw<MeshRendererInstanced>()->setColor(_index, _color);
+    }
+
+    //////////////////////////////////////////
     inline void SkinnedMeshRendererSetMaterialAssetUnit(Component* _component, AssetUnitId _auid)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
 
         MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(_auid);
         _component->castRaw<SkinnedMeshRenderer>()->setMaterial(material);
@@ -137,7 +208,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void SkinnedMeshRendererSetMaterial(Component* _component, S32 _resourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
 
         Material* material = Material::GetResource(_resourceId);
         _component->castRaw<SkinnedMeshRenderer>()->setMaterial(material ? material->getSharedPtr() : MaterialPtr());
@@ -146,7 +217,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void SkinnedMeshRendererGetMaterial(Component* _component, S32& _outResourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
 
         MaterialPtr const& material = _component->castRaw<SkinnedMeshRenderer>()->getMaterial();
         if (material)
@@ -158,7 +229,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void SkinnedMeshRendererSetRenderMesh(Component* _component, S32 _resourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
 
         RenderMesh* renderMesh = RenderMesh::GetResource(_resourceId);
         _component->castRaw<SkinnedMeshRenderer>()->setRenderMesh(renderMesh ? renderMesh->getSharedPtr() : RenderMeshPtr());
@@ -167,7 +238,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void SkinnedMeshRendererGetRenderMesh(Component* _component, S32& _outResourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
 
         RenderMeshPtr const& renderMesh = _component->castRaw<SkinnedMeshRenderer>()->getRenderMesh();
         if (renderMesh)
@@ -183,7 +254,7 @@ namespace Maze
         bool _loop,
         F32 _blendTime)
     {
-        MAZE_ERROR_RETURN_VALUE_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), -1, "Component is not SkinnedMeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshRenderer, -1);
 
         Char* cstr = mono_string_to_utf8(_animationName);
         S32 playerIndex = _component->castRaw<SkinnedMeshRenderer>()->playAnimation(HashedCString(cstr), _loop, _blendTime);
@@ -198,7 +269,7 @@ namespace Maze
         S32 _playerIndex,
         F32& _outAnimationTime)
     {
-        MAZE_ERROR_RETURN_VALUE_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), false, "Component is not SkinnedMeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshRenderer, false);
         MAZE_ERROR_RETURN_VALUE_IF(_playerIndex < 0 || _playerIndex >= MESH_SKELETON_ANIMATOR_PLAYERS_COUNT, false, "PlayerIndex is invalid - %d", _playerIndex);
 
         MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshRenderer>()->getAnimator();
@@ -220,7 +291,7 @@ namespace Maze
         S32 _playerIndex,
         F32& _outCurrentTime)
     {
-        MAZE_ERROR_RETURN_VALUE_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), false, "Component is not SkinnedMeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshRenderer, false);
         MAZE_ERROR_RETURN_VALUE_IF(_playerIndex < 0 || _playerIndex >= MESH_SKELETON_ANIMATOR_PLAYERS_COUNT, false, "PlayerIndex is invalid - %d", _playerIndex);
 
         MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshRenderer>()->getAnimator();
@@ -238,7 +309,7 @@ namespace Maze
         S32 _playerIndex,
         F32 _time)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
         MAZE_ERROR_RETURN_IF(_playerIndex < 0 || _playerIndex >= MESH_SKELETON_ANIMATOR_PLAYERS_COUNT, "PlayerIndex is invalid - %d", _playerIndex);
 
         MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshRenderer>()->getAnimator();
@@ -254,7 +325,7 @@ namespace Maze
         Component* _component,
         S32 _playerIndex)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
         MAZE_ERROR_RETURN_IF(_playerIndex < 0 || _playerIndex >= MESH_SKELETON_ANIMATOR_PLAYERS_COUNT, "PlayerIndex is invalid - %d", _playerIndex);
 
         MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshRenderer>()->getAnimator();
@@ -279,7 +350,7 @@ namespace Maze
         Component* _component,
         F32 _animationSpeed)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), "Component is not SkinnedMeshRenderer!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
 
         MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshRenderer>()->getAnimator();
         animator->setAnimationSpeed(_animationSpeed);
@@ -289,7 +360,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void SpriteRenderer2DSetMaterial(Component* _component, S32 _resourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SpriteRenderer2D>::UID(), "Component is not SpriteRenderer2D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SpriteRenderer2D);
 
         Material* material = Material::GetResource(_resourceId);
         _component->castRaw<SpriteRenderer2D>()->setMaterial(material ? material->getSharedPtr() : MaterialPtr());
@@ -298,7 +369,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void SpriteRenderer2DGetMaterial(Component* _component, S32& _outResourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<SpriteRenderer2D>::UID(), "Component is not SpriteRenderer2D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SpriteRenderer2D);
 
         MaterialPtr const& material = _component->castRaw<SpriteRenderer2D>()->getMaterial();
         if (material)
@@ -310,70 +381,70 @@ namespace Maze
     //////////////////////////////////////////
     inline void Camera3DGetAspectRatio(Component* _component, F32& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
         _outValue = _component->castRaw<Camera3D>()->getAspectRatio();
     }
 
     //////////////////////////////////////////
     inline void Camera3DGetOrthographicSize(Component* _component, F32& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
         _outValue = _component->castRaw<Camera3D>()->getOrthographicSize();
     }
 
     //////////////////////////////////////////
     inline void Camera3DSetOrthographicSize(Component* _component, F32 _value)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
         _component->castRaw<Camera3D>()->setOrthographicSize(_value);
     }
 
     //////////////////////////////////////////
     inline void Camera3DGetNearZ(Component* _component, F32& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
         _outValue = _component->castRaw<Camera3D>()->getNearZ();
     }
 
     //////////////////////////////////////////
     inline void Camera3DSetNearZ(Component* _component, F32 _value)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
         _component->castRaw<Camera3D>()->setNearZ(_value);
     }
 
     //////////////////////////////////////////
     inline void Camera3DGetFarZ(Component* _component, F32& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
         _outValue = _component->castRaw<Camera3D>()->getFarZ();
     }
 
     //////////////////////////////////////////
     inline void Camera3DSetFarZ(Component* _component, F32 _value)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
         _component->castRaw<Camera3D>()->setFarZ(_value);
     }
 
     //////////////////////////////////////////
     inline void Camera3DGetRenderMask(Component* _component, S32& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
         _outValue = _component->castRaw<Camera3D>()->getRenderMask();
     }
 
     //////////////////////////////////////////
     inline void Camera3DSetRenderMask(Component* _component, S32 _value)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
         _component->castRaw<Camera3D>()->setRenderMask(_value);
     }
 
     //////////////////////////////////////////
     inline void Camera3DGetRenderTarget(Component* _component, S32& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
         RenderTargetPtr const& renderTarget = _component->castRaw<Camera3D>()->getRenderTarget();
         _outValue = renderTarget ? renderTarget->getResourceId() : c_invalidResourceId;
     }
@@ -381,7 +452,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void Camera3DSetRenderTarget(Component* _component, S32 _resourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
 
         RenderTarget* renderTarget = RenderWindow::GetResource(_resourceId);
         _component->castRaw<Camera3D>()->setRenderTarget(renderTarget ? renderTarget->getSharedPtr() : nullptr);
@@ -390,7 +461,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void Camera3DConvertViewportCoordsToRay(Component* _component, Vec2F const& _positionV, Ray& _ray)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Camera3D>::UID(), "Component is not Camera3D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
 
         _ray = _component->castRaw<Camera3D>()->convertViewportCoordsToRay(_positionV);
     }
@@ -651,7 +722,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void CanvasGetRenderTarget(Component* _component, S32& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Canvas>::UID(), "Component is not Canvas!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Canvas);
         RenderTargetPtr const& renderTarget = _component->castRaw<Canvas>()->getRenderTarget();
         _outValue = renderTarget ? renderTarget->getResourceId() : c_invalidResourceId;
     }
@@ -659,7 +730,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void CanvasSetRenderTarget(Component* _component, S32 _resourceId)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Canvas>::UID(), "Component is not Canvas!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Canvas);
 
         RenderTarget* renderTarget = RenderWindow::GetResource(_resourceId);
         _component->castRaw<Canvas>()->setRenderTarget(renderTarget ? renderTarget->getSharedPtr() : nullptr);
@@ -668,7 +739,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void CanvasGetRenderTargetRect(Component* _component, Rect2F& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<Canvas>::UID(), "Component is not Canvas!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Canvas);
         _outValue = _component->castRaw<Canvas>()->getRenderTargetRect();
     }
 
@@ -847,6 +918,16 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetRenderMesh);
+
+        // MeshRendererInstanced
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedSetMaterial);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedGetMaterial);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedSetRenderMesh);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedGetRenderMesh);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedResizeModelMatrices);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedSetModelMatrix);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedResizeColors);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedSetColor);
 
         // SkinnedMeshRenderer
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetMaterialAssetUnit);

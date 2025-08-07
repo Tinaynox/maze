@@ -25,6 +25,32 @@ namespace Maze.Graphics
         public extern static void MeshRendererGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
         #endregion
 
+        #region MeshRendererInstanced
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererInstancedSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererInstancedGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererInstancedSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererInstancedGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererInstancedResizeModelMatrices(NativePtr nativeComponentPtr, int size);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererInstancedSetModelMatrix(NativePtr nativeComponentPtr, int index, ref TMat tm);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererInstancedResizeColors(NativePtr nativeComponentPtr, int size);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MeshRendererInstancedSetColor(NativePtr nativeComponentPtr, int index, ref Vec4F color);
+        #endregion
+
         #region SkinnedMeshRenderer
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void SkinnedMeshRendererSetMaterialAssetUnit(NativePtr nativeComponentPtr, AssetUnitId material);

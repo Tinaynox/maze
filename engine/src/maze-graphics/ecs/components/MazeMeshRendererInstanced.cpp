@@ -205,8 +205,11 @@ namespace Maze
 
             Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX];
             memset(uvStreams, 0, sizeof(uvStreams));
-            uvStreams[0] = getUV0Data();
-            uvStreams[1] = getUV1Data();
+            if (!getUV0().empty())
+                uvStreams[0] = getUV0Data();
+
+            if (!getUV1().empty())
+                uvStreams[1] = getUV1Data();
 
             MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null!");
             _renderQueue->addDrawVAOInstancedCommand(

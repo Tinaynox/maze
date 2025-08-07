@@ -45,42 +45,42 @@ namespace Maze
     //////////////////////////////////////////
     inline void UIElement2DSetFlags(Component* _component, S32 _flags)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UIElement2D>::UID(), "Component is not UIElement2D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UIElement2D);
         _component->castRaw<UIElement2D>()->setFlags(_flags);
     }
 
     //////////////////////////////////////////
     inline void UIElement2DGetFlags(Component* _component, S32& _outFlags)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UIElement2D>::UID(), "Component is not UIElement2D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UIElement2D);
         _outFlags = _component->castRaw<UIElement2D>()->getFlags();
     }
 
     //////////////////////////////////////////
     inline void UIElement2DSetFocused(Component* _component, bool _value)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UIElement2D>::UID(), "Component is not UIElement2D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UIElement2D);
         _component->castRaw<UIElement2D>()->setFocused(_value);
     }
 
     //////////////////////////////////////////
     inline void UIElement2DGetFocused(Component* _component, bool& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UIElement2D>::UID(), "Component is not UIElement2D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UIElement2D);
         _outValue = _component->castRaw<UIElement2D>()->getFocused();
     }
 
     //////////////////////////////////////////
     inline void UIElement2DSetPressed(Component* _component, bool _value)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UIElement2D>::UID(), "Component is not UIElement2D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UIElement2D);
         _component->castRaw<UIElement2D>()->setPressed(_value);
     }
 
     //////////////////////////////////////////
     inline void UIElement2DGetPressed(Component* _component, bool& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UIElement2D>::UID(), "Component is not UIElement2D!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UIElement2D);
         _outValue = _component->castRaw<UIElement2D>()->getPressed();
     }
 
@@ -88,56 +88,56 @@ namespace Maze
     //////////////////////////////////////////
     inline void UITweenTransitionAlphaSetHidden(Component* _component, bool _value, bool _resetProgress)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionAlpha);
         _component->castRaw<UITweenTransitionAlpha>()->setHidden(_value, _resetProgress);
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionAlphaGetHidden(Component* _component, bool& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionAlpha);
         _outValue = _component->castRaw<UITweenTransitionAlpha>()->getHidden();
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionAlphaAddDelayTimer(Component* _component, F32 _time)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionAlpha);
         _component->castRaw<UITweenTransitionAlpha>()->addDelayTimer(_time);
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionAlphaSetDelayTimer(Component* _component, F32 _time)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionAlpha);
         _component->castRaw<UITweenTransitionAlpha>()->setDelayTimer(_time);
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionAlphaSetShowTime(Component* _component, F32 _value)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionAlpha);
         _component->castRaw<UITweenTransitionAlpha>()->setShowTime(_value);
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionAlphaGetShowTime(Component* _component, F32& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionAlpha);
         _outValue = _component->castRaw<UITweenTransitionAlpha>()->getShowTime();
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionAlphaSetHideKoef(Component* _component, F32 _value)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionAlpha);
         _component->castRaw<UITweenTransitionAlpha>()->setHideKoef(_value);
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionAlphaGetHideKoef(Component* _component, F32& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionAlpha>::UID(), "Component is not UITweenTransitionAlpha!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionAlpha);
         _outValue = _component->castRaw<UITweenTransitionAlpha>()->getHideKoef();
     }
 
@@ -145,14 +145,14 @@ namespace Maze
     //////////////////////////////////////////
     inline void UITweenTransitionScaleSetHidden(Component* _component, bool _value, bool _resetProgress)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionScale>::UID(), "Component is not UITweenTransitionScale!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionScale);
         _component->castRaw<UITweenTransitionScale>()->setHidden(_value, _resetProgress);
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionScaleGetHidden(Component* _component, bool& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionScale>::UID(), "Component is not UITweenTransitionScale!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionScale);
         _outValue = _component->castRaw<UITweenTransitionScale>()->getHidden();
     }
 
@@ -160,70 +160,70 @@ namespace Maze
     //////////////////////////////////////////
     inline void UITweenTransitionTranslationSetHidden(Component* _component, bool _value, bool _resetProgress)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionTranslation);
         _component->castRaw<UITweenTransitionTranslation>()->setHidden(_value, _resetProgress);
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionTranslationGetHidden(Component* _component, bool& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionTranslation);
         _outValue = _component->castRaw<UITweenTransitionTranslation>()->getHidden();
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionTranslationSetHiddenPosition(Component* _component, Vec2F const& _pos)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionTranslation);
         _component->castRaw<UITweenTransitionTranslation>()->setHiddenPosition(_pos);
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionTranslationGetHiddenPosition(Component* _component, Vec2F& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionTranslation);
         _outValue = _component->castRaw<UITweenTransitionTranslation>()->getHiddenPosition();
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionTranslationSetShownPosition(Component* _component, Vec2F const& _pos)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionTranslation);
         _component->castRaw<UITweenTransitionTranslation>()->setShownPosition(_pos);
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionTranslationGetShownPosition(Component* _component, Vec2F& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionTranslation);
         _outValue = _component->castRaw<UITweenTransitionTranslation>()->getShownPosition();
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionTranslationSetShowTime(Component* _component, F32 _value)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionTranslation);
         _component->castRaw<UITweenTransitionTranslation>()->setShowTime(_value);
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionTranslationGetShowTime(Component* _component, F32& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionTranslation);
         _outValue = _component->castRaw<UITweenTransitionTranslation>()->getShowTime();
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionTranslationSetHideKoef(Component* _component, F32 _value)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionTranslation);
         _component->castRaw<UITweenTransitionTranslation>()->setHideKoef(_value);
     }
 
     //////////////////////////////////////////
     inline void UITweenTransitionTranslationGetHideKoef(Component* _component, F32& _outValue)
     {
-        MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<UITweenTransitionTranslation>::UID(), "Component is not UITweenTransitionTranslation!");
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UITweenTransitionTranslation);
         _outValue = _component->castRaw<UITweenTransitionTranslation>()->getHideKoef();
     }
 

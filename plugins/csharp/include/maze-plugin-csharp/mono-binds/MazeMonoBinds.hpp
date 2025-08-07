@@ -43,6 +43,15 @@ namespace Maze
     //////////////////////////////////////////
     #define MAZE_MONO_BIND_FUNC_WITH_NAME(DNamespace, DFunc, DName) mono_add_internal_call(DNamespace ## ".InternalCalls::" #DName, DFunc);
 
+    //////////////////////////////////////////
+#if (MAZE_DEBUG)
+    #define MAZE_MONO_BIND_VALIDATE_COMPONENT(DClass) MAZE_ERROR_RETURN_IF(_component->getClassUID() != ClassInfo<DClass>::UID(), "Component is not " #DClass " !");
+    #define MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(DClass, DValue) MAZE_ERROR_RETURN_VALUE_IF(_component->getClassUID() != ClassInfo<DClass>::UID(), DValue, "Component is not " #DClass " !");
+#else
+    #define MAZE_MONO_BIND_VALIDATE_COMPONENT(DClass)
+    #define MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(DClass, DValue)
+#endif
+
 } // namespace Maze
 //////////////////////////////////////////
 

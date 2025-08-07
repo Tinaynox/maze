@@ -142,6 +142,9 @@ namespace Maze
         inline Vector<TMat> const& getModelMatrices() const { return m_modelMatricies; }
 
         //////////////////////////////////////////
+        inline void resizeModelMatrices(Size _size) { m_modelMatricies.resize(_size); }
+
+        //////////////////////////////////////////
         inline void setModelMatrices(Vector<TMat> const& _value) { m_modelMatricies = _value; }
 
         //////////////////////////////////////////
@@ -152,6 +155,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline Vector<Vec4F> const& getColors() const { return m_colors; }
+
+        //////////////////////////////////////////
+        inline void resizeColors(Size _size) { m_colors.resize(_size); }
 
         //////////////////////////////////////////
         inline void setColors(Vector<Vec4F> const& _value) { m_colors = _value; }
