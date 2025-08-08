@@ -35,6 +35,15 @@ namespace Maze.Core
             M30 = m30; M31 = m31; M32 = m32;
         }
 
+        public static TMat CreateTranslation(Vec3F pos)
+        {
+            return new TMat(
+                1, 0, 0,
+                0, 1, 0,
+                0, 0, 1,
+                pos.X, pos.Y, pos.Z);
+        }
+
         public static TMat CreateRotationX(float angle)
         {
             // CCW rotation around X axis 
@@ -100,6 +109,24 @@ namespace Maze.Core
                              -sz, cz, 0,
                             0, 0, 1,
                             0, 0, 0));
+        }
+
+        public static TMat CreateScale(Vec3F scale)
+        {
+            return new TMat(
+                scale.X, 0, 0,
+                0, scale.Y, 0,
+                0, 0, scale.Z,
+                0, 0, 0);
+        }
+
+        public static TMat CreateScale(float scale)
+        {
+            return new TMat(
+                scale, 0, 0,
+                0, scale, 0,
+                0, 0, scale,
+                0, 0, 0);
         }
 
         public Vec3F this[int index]
