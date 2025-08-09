@@ -20,5 +20,13 @@ namespace Maze.Graphics
         {  
         }
 
+        public Vec2F ConvertRenderTargetCoordsToViewportCoords(Vec2F renderTargetPosition)
+        {
+            InternalCalls.CanvasConvertRenderTargetCoordsToViewportCoords(
+                NativeComponentPtr,
+                ref renderTargetPosition,
+                out Vec2F outViewportCoords);
+            return outViewportCoords;
+        }
     }
 }
