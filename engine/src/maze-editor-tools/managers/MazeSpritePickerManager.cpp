@@ -27,7 +27,7 @@
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/managers/MazeSpritePickerManager.hpp"
 #include "maze-editor-tools/managers/MazeColorPickerManager.hpp"
-#include "maze-editor-tools/texture-picker/MazeSceneTexturePicker.hpp"
+#include "maze-editor-tools/pickers/MazeSceneTexturePicker.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -35,7 +35,7 @@
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
-#include "maze-editor-tools/sprite-picker/MazeSceneSpritePicker.hpp"
+#include "maze-editor-tools/pickers/MazeSceneSpritePicker.hpp"
 
 
 //////////////////////////////////////////

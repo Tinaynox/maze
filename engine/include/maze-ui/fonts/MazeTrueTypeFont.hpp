@@ -177,16 +177,29 @@ namespace Maze
         virtual TTFPagePtr const& ensureTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
+        virtual TTFPagePtr const& ensureTTFBoldPage(U32 _fontSize) MAZE_ABSTRACT;
+
+
+        //////////////////////////////////////////
         virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize) MAZE_ABSTRACT;
+
 
         //////////////////////////////////////////
         virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr const& _page) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness) MAZE_ABSTRACT;
+
+
+        //////////////////////////////////////////
+        virtual FontGlyph const& ensureBoldGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual FontGlyph const& ensureBoldGlyph(U32 _codePoint, U32 _fontSize) MAZE_ABSTRACT;
+
 
         //////////////////////////////////////////
         virtual F32 getLineSpacing(U32 _fontSize) MAZE_ABSTRACT;

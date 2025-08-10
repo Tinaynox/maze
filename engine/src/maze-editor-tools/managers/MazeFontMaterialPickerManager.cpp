@@ -25,9 +25,9 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/managers/MazeTexturePickerManager.hpp"
+#include "maze-editor-tools/managers/MazeFontMaterialPickerManager.hpp"
 #include "maze-editor-tools/managers/MazeColorPickerManager.hpp"
-#include "maze-editor-tools/pickers/MazeSceneTexturePicker.hpp"
+#include "maze-editor-tools/pickers/MazeSceneFontMaterialPicker.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -41,33 +41,33 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class TexturePickerManager
+    // Class FontMaterialPickerManager
     //
     //////////////////////////////////////////
-    TexturePickerManager* TexturePickerManager::s_instance = nullptr;
+    FontMaterialPickerManager* FontMaterialPickerManager::s_instance = nullptr;
 
     //////////////////////////////////////////
-    TexturePickerManager::TexturePickerManager()
+    FontMaterialPickerManager::FontMaterialPickerManager()
     {
         s_instance = this;
     }
 
     //////////////////////////////////////////
-    TexturePickerManager::~TexturePickerManager()
+    FontMaterialPickerManager::~FontMaterialPickerManager()
     {
-        closeTexturePickerEditorWindow();
+        closeFontMaterialPickerEditorWindow();
 
         s_instance = nullptr;
     }
 
     //////////////////////////////////////////
-    void TexturePickerManager::Initialize(TexturePickerManagerPtr& _uiManager)
+    void FontMaterialPickerManager::Initialize(FontMaterialPickerManagerPtr& _uiManager)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(TexturePickerManager, _uiManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(FontMaterialPickerManager, _uiManager, init());
     }
 
     //////////////////////////////////////////
-    bool TexturePickerManager::init()
+    bool FontMaterialPickerManager::init()
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
@@ -75,46 +75,46 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void TexturePickerManager::update(F32 _dt)
+    void FontMaterialPickerManager::update(F32 _dt)
     {
         
     }
 
     //////////////////////////////////////////
-    void TexturePickerManager::openTexturePicker(
-        TexturePickerCallback _callback,
-        Texture2DPtr const& _texture)
+    void FontMaterialPickerManager::openFontMaterialPicker(
+        FontMaterialPickerCallback _callback,
+        FontMaterialPtr const& _material)
     {
         m_callback = nullptr;
 
-        setTexture(_texture);
+        setFontMaterial(_material);
 
         m_callback = _callback;
 
-        openTexturePickerEditorWindow();
+        openFontMaterialPickerEditorWindow();
     }
 
     //////////////////////////////////////////
-    void TexturePickerManager::setTexture(Texture2DPtr const& _texture)
+    void FontMaterialPickerManager::setFontMaterial(FontMaterialPtr const& _material)
     {
-        m_texture = _texture;
+        m_material = _material;
 
-        eventTextureChanged(m_texture);
+        eventFontMaterialChanged(m_material);
 
         if (m_callback)
-            m_callback(m_texture);
+            m_callback(m_material);
     }
 
     //////////////////////////////////////////
-    void TexturePickerManager::openTexturePickerEditorWindow()
+    void FontMaterialPickerManager::openFontMaterialPickerEditorWindow()
     {
-        if (m_texturePickerRenderWindow &&
-            m_texturePickerRenderWindow->getWindow() &&
-            m_texturePickerRenderWindow->getWindow()->isOpened())
+        if (m_materialPickerRenderWindow &&
+            m_materialPickerRenderWindow->getWindow() &&
+            m_materialPickerRenderWindow->getWindow()->isOpened())
         {
-            m_texturePickerRenderWindow->getWindow()->setFocused(true);
+            m_materialPickerRenderWindow->getWindow()->setFocused(true);
 
-            openTexturePickerEditorScene();
+            openFontMaterialPickerEditorScene();
 
             return;
         }
@@ -124,31 +124,31 @@ namespace Maze
             WindowParams::Create(
                 Vec2U(400, 340),
                 32,
-                "Texture");
+                "FontMaterial");
          
-        m_texturePickerRenderWindow = RenderWindow::Create(params);
+        m_materialPickerRenderWindow = RenderWindow::Create(params);
 
-        m_texturePickerRenderWindow->setName("TexturePicker");
+        m_materialPickerRenderWindow->setName("FontMaterialPicker");
 
-        if (m_texturePickerRenderWindow && m_texturePickerRenderWindow->getWindow())
+        if (m_materialPickerRenderWindow && m_materialPickerRenderWindow->getWindow())
         {
-            m_texturePickerRenderWindow->getWindow()->eventWindowWillClose.subscribe(this, &TexturePickerManager::notifyWindowWillClose);
-            m_texturePickerRenderWindow->getWindow()->eventWindowFocusChanged.subscribe(this, &TexturePickerManager::notifyWindowFocusChanged);
+            m_materialPickerRenderWindow->getWindow()->eventWindowWillClose.subscribe(this, &FontMaterialPickerManager::notifyWindowWillClose);
+            m_materialPickerRenderWindow->getWindow()->eventWindowFocusChanged.subscribe(this, &FontMaterialPickerManager::notifyWindowFocusChanged);
 
-            openTexturePickerEditorScene();
+            openFontMaterialPickerEditorScene();
         }
     }
 
     //////////////////////////////////////////
-    void TexturePickerManager::closeTexturePickerEditorWindow()
+    void FontMaterialPickerManager::closeFontMaterialPickerEditorWindow()
     {
         m_callback = nullptr;
 
-        if (!m_texturePickerRenderWindow)
+        if (!m_materialPickerRenderWindow)
             return;
 
-        RenderWindowPtr renderWindow = m_texturePickerRenderWindow;
-        m_texturePickerRenderWindow.reset();
+        RenderWindowPtr renderWindow = m_materialPickerRenderWindow;
+        m_materialPickerRenderWindow.reset();
 
         if (!renderWindow->getWindow())
             return;
@@ -159,23 +159,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void TexturePickerManager::openTexturePickerEditorScene()
+    void FontMaterialPickerManager::openFontMaterialPickerEditorScene()
     {
-        SceneTexturePickerPtr scene = SceneManager::GetInstancePtr()->getScene<SceneTexturePicker>();
+        SceneFontMaterialPickerPtr scene = SceneManager::GetInstancePtr()->getScene<SceneFontMaterialPicker>();
         if (!scene)
         {
-            scene = SceneManager::GetInstancePtr()->loadScene<SceneTexturePicker>(true, m_texturePickerRenderWindow);
+            scene = SceneManager::GetInstancePtr()->loadScene<SceneFontMaterialPicker>(true, m_materialPickerRenderWindow);
         }
 
         scene->setup();
     }
 
     //////////////////////////////////////////
-    void TexturePickerManager::closeTexturePickerEditorScene()
+    void FontMaterialPickerManager::closeFontMaterialPickerEditorScene()
     {
         if (SceneManager::GetInstancePtr())
         {
-            SceneTexturePickerPtr scene = SceneManager::GetInstancePtr()->getScene<SceneTexturePicker>();
+            SceneFontMaterialPickerPtr scene = SceneManager::GetInstancePtr()->getScene<SceneFontMaterialPicker>();
             if (scene)
             {
                 SceneManager::GetInstancePtr()->destroyScene(scene);
@@ -184,14 +184,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void TexturePickerManager::notifyWindowWillClose(Window* _window)
+    void FontMaterialPickerManager::notifyWindowWillClose(Window* _window)
     {
-        closeTexturePickerEditorScene();
-        closeTexturePickerEditorWindow();
+        closeFontMaterialPickerEditorScene();
+        closeFontMaterialPickerEditorWindow();
     }
 
     //////////////////////////////////////////
-    void TexturePickerManager::notifyWindowFocusChanged(Window* _window)
+    void FontMaterialPickerManager::notifyWindowFocusChanged(Window* _window)
     {
         if (!_window->getFocused())
         {
@@ -200,27 +200,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool TexturePickerManager::isTexturePickerEditorWindowOpened()
+    bool FontMaterialPickerManager::isFontMaterialPickerEditorWindowOpened()
     {
-        if (!m_texturePickerRenderWindow)
+        if (!m_materialPickerRenderWindow)
             return false;
 
-        if (!m_texturePickerRenderWindow->getWindow())
+        if (!m_materialPickerRenderWindow->getWindow())
             return false;
 
-        return m_texturePickerRenderWindow->getWindow()->isOpened();
+        return m_materialPickerRenderWindow->getWindow()->isOpened();
     }
 
     //////////////////////////////////////////
-    bool TexturePickerManager::isTexturePickerEditorWindowFocused()
+    bool FontMaterialPickerManager::isFontMaterialPickerEditorWindowFocused()
     {
-        if (!m_texturePickerRenderWindow)
+        if (!m_materialPickerRenderWindow)
             return false;
 
-        if (!m_texturePickerRenderWindow->getWindow())
+        if (!m_materialPickerRenderWindow->getWindow())
             return false;
 
-        return m_texturePickerRenderWindow->getWindow()->getFocused();
+        return m_materialPickerRenderWindow->getWindow()->getFocused();
     }
     
 } // namespace Maze

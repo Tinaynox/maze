@@ -791,6 +791,11 @@ namespace Maze
                 return m_texture == _variant.m_texture;
                 break;
             }
+            case ShaderUniformType::UniformTexture2DArray:
+            {
+                return m_ptr == _variant.getPtr();
+                break;
+            }
             case ShaderUniformType::UniformVec2S32:
             {
                 return        (m_vectorS.x == _variant.m_vectorS.x)

@@ -352,6 +352,21 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline bool getBold() const { return m_bold; }
+
+        //////////////////////////////////////////
+        inline void setBold(bool _bold)
+        {
+            if (m_bold == _bold)
+                return;
+
+            m_bold = _bold;
+
+            updateMeshData();
+        }
+
+
+        //////////////////////////////////////////
         virtual Vec2F getTextEnd(Size _rowIndex = 0) MAZE_OVERRIDE;
 
 
@@ -445,6 +460,8 @@ namespace Maze
 
         F32 m_outlineThickness = 0.0f;
         ColorU32 m_outlineColor = ColorU32::c_white;
+
+        bool m_bold = false;
 
     private:
         Vector<TMat> m_localMatrices;

@@ -116,6 +116,9 @@ namespace Maze
         for (auto& page : m_outlineThicknessPages)        
             page.second->texture.reset();
 
+        for (auto& page : m_boldPages)
+            page.second->texture.reset();
+
         m_pages.clear();
     }
 
@@ -185,8 +188,24 @@ namespace Maze
         TTFPagePtr& page = m_outlineThicknessPages[key];
         if (!page)
         {
+            Debug::Log("TrueTypeFontFreetype: Creating outline TTFPage...");
             page = std::make_shared<TTFPage>();
             eventTexturesChanged();
+            Debug::Log("TrueTypeFontFreetype: outline TTFPage created.");
+        }
+        return page;
+    }
+
+    //////////////////////////////////////////
+    TTFPagePtr const& TrueTypeFontFreetype::ensureTTFBoldPage(U32 _fontSize)
+    {
+        TTFPagePtr& page = m_boldPages[_fontSize];
+        if (!page)
+        {
+            Debug::Log("TrueTypeFontFreetype: Creating bold TTFPage...");
+            page = std::make_shared<TTFPage>();
+            eventTexturesChanged();
+            Debug::Log("TrueTypeFontFreetype: bold TTFPage created.");
         }
         return page;
     }
@@ -241,6 +260,31 @@ namespace Maze
     FontGlyph const& TrueTypeFontFreetype::ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness)
     {
         return ensureOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, ensureTTFOutlineThicknessPage(_fontSize, _outlineThickness));
+    }
+
+    //////////////////////////////////////////
+    FontGlyph const& TrueTypeFontFreetype::ensureBoldGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page)
+    {
+        // Get the page corresponding to the character size
+        TTFGlyphTable<GlyphKeyType>& glyphs = _page->glyphs;
+
+        // Search the glyph into the cache
+        auto it = glyphs.find(_codePoint);
+        if (it != glyphs.end())
+        {
+            return it->second;
+        }
+        else
+        {
+            FontGlyph glyph = loadGlyph(_page, _codePoint, _fontSize, 0.0f, true);
+            return glyphs.insert(std::make_pair(_codePoint, glyph)).first->second;
+        }
+    }
+
+    //////////////////////////////////////////
+    FontGlyph const& TrueTypeFontFreetype::ensureBoldGlyph(U32 _codePoint, U32 _fontSize)
+    {
+        return ensureBoldGlyph(_codePoint, _fontSize, ensureTTFBoldPage(_fontSize));
     }
 
     //////////////////////////////////////////
@@ -338,6 +382,7 @@ namespace Maze
     //////////////////////////////////////////
     void TrueTypeFontFreetype::collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result)
     {
+        // Regular
         {
             auto it = m_pages.find(_fontSize);
             if (it != m_pages.end())
@@ -350,9 +395,29 @@ namespace Maze
                 }
             }
         }
+        // Outline
         {
             for (TTFPageTable<U64>::iterator it = m_outlineThicknessPages.begin(),
                                              end = m_outlineThicknessPages.end();
+                                             it != end;
+                                             ++it)
+            {
+                U32 fontSize = *((U32*)&it->first);
+                if (fontSize == _fontSize)
+                {
+                    TTFPagePtr const& page = it->second;
+                    if (page->texture)
+                    {
+                        if (std::find(_result.begin(), _result.end(), page->texture) == _result.end())
+                            _result.push_back(page->texture);
+                    }
+                }
+            }
+        }
+        // Bold
+        {
+            for (TTFPageTable<U32>::iterator it = m_boldPages.begin(),
+                                             end = m_boldPages.end();
                                              it != end;
                                              ++it)
             {

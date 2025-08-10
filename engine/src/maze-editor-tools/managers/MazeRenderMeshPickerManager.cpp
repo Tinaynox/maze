@@ -27,7 +27,7 @@
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/managers/MazeRenderMeshPickerManager.hpp"
 #include "maze-editor-tools/managers/MazeColorPickerManager.hpp"
-#include "maze-editor-tools/render-mesh-picker/MazeSceneRenderMeshPicker.hpp"
+#include "maze-editor-tools/pickers/MazeSceneRenderMeshPicker.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"

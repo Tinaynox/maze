@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/material-picker/MazeSceneMaterialPicker.hpp"
+#include "maze-editor-tools/pickers/MazeSceneFontMaterialPicker.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
@@ -48,9 +48,11 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
@@ -73,7 +75,7 @@
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
-#include "maze-editor-tools/managers/MazeMaterialPickerManager.hpp"
+#include "maze-editor-tools/managers/MazeFontMaterialPickerManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
@@ -93,21 +95,21 @@ namespace Maze
 {
 
     //////////////////////////////////////////
-    // Class SceneMaterialPicker
+    // Class SceneFontMaterialPicker
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneMaterialPicker, EcsRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneFontMaterialPicker, EcsRenderScene);
 
     //////////////////////////////////////////
-    SceneMaterialPicker::SceneMaterialPicker()
+    SceneFontMaterialPicker::SceneFontMaterialPicker()
     {
     }
 
     //////////////////////////////////////////
-    SceneMaterialPicker::~SceneMaterialPicker()
+    SceneFontMaterialPicker::~SceneFontMaterialPicker()
     {
-        if (MaterialPickerManager::GetInstancePtr())
-            MaterialPickerManager::GetInstancePtr()->eventMaterialChanged.unsubscribe(this);
+        if (FontMaterialPickerManager::GetInstancePtr())
+            FontMaterialPickerManager::GetInstancePtr()->eventFontMaterialChanged.unsubscribe(this);
 
         if (m_filterEditBox)
             m_filterEditBox->eventTextInput.unsubscribe(this);
@@ -124,41 +126,41 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SceneMaterialPickerPtr SceneMaterialPicker::Create(RenderTargetPtr const& _renderTarget)
+    SceneFontMaterialPickerPtr SceneFontMaterialPicker::Create(RenderTargetPtr const& _renderTarget)
     {
-        SceneMaterialPickerPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneMaterialPicker, object, init(_renderTarget));
+        SceneFontMaterialPickerPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneFontMaterialPicker, object, init(_renderTarget));
         return object;
     }
 
     //////////////////////////////////////////
-    bool SceneMaterialPicker::init(RenderTargetPtr const& _renderTarget)
+    bool SceneFontMaterialPicker::init(RenderTargetPtr const& _renderTarget)
     {
         if (!EcsRenderScene::init(_renderTarget))
             return false;
 
         create2D();
         
-        MaterialPickerManager::GetInstancePtr()->eventMaterialChanged.subscribe(this, &SceneMaterialPicker::notifyMaterialChanged);
+        FontMaterialPickerManager::GetInstancePtr()->eventFontMaterialChanged.subscribe(this, &SceneFontMaterialPicker::notifyFontMaterialChanged);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::setup()
+    void SceneFontMaterialPicker::setup()
     {
         
         updateUI();
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::update(F32 _dt)
+    void SceneFontMaterialPicker::update(F32 _dt)
     {
         
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::create2D()
+    void SceneFontMaterialPicker::create2D()
     {
         ColorU32 bandColor(176, 176, 176);
 
@@ -169,8 +171,8 @@ namespace Maze
         m_canvas->setClearColor(ColorU32(203, 203, 203, 255));
         m_canvas->setRenderTarget(m_renderTarget);
         m_canvasUIElement = canvasEntity->ensureComponent<UIElement2D>();
-        m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneMaterialPicker::notifyCanvasCursorReleaseIn);
-        m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneMaterialPicker::notifyCanvasCursorReleaseOut);
+        m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneFontMaterialPicker::notifyCanvasCursorReleaseIn);
+        m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneFontMaterialPicker::notifyCanvasCursorReleaseOut);
 
         m_filterEditBox = UIHelper::CreateDefaultEditBox(
             "",
@@ -182,7 +184,7 @@ namespace Maze
             m_canvas->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
-        m_filterEditBox->eventTextInput.subscribe(this, &SceneMaterialPicker::notifyFilterTextInput);
+        m_filterEditBox->eventTextInput.subscribe(this, &SceneFontMaterialPicker::notifyFilterTextInput);
         m_filterEditBox->getTransform()->setZ(100000);
         SizePolicy2DPtr filterSizePolicy = m_filterEditBox->getEntityRaw()->ensureComponent<SizePolicy2D>();
         filterSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
@@ -212,30 +214,30 @@ namespace Maze
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         layoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
-        MaterialManager::GetCurrentInstance()->loadAllAssetMaterials();
+        FontMaterialManager::GetInstancePtr()->loadAllAssetFontMaterials();
 
-        updateMaterials();
+        updateFontMaterials();
         updateUI();
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::notifyMaterialChanged(MaterialPtr const& _material)
+    void SceneFontMaterialPicker::notifyFontMaterialChanged(FontMaterialPtr const& _material)
     {
         updateUI();
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::updateMaterials()
+    void SceneFontMaterialPicker::updateFontMaterials()
     {
         clearPreviews();
 
         String const& filterText = m_filterEditBox->getText();
 
-        Vector<MaterialPtr> materials;
-        for (MaterialPtr const& material : MaterialManager::GetCurrentInstance()->getMaterialsSorted())
+        Vector<FontMaterialPtr> materials;
+        for (FontMaterialPtr const& material : FontMaterialManager::GetInstancePtr()->getFontMaterialsSorted())
             if (filterText.empty() || material->getName().getString().find(filterText) != String::npos)
                 materials.push_back(material);
-        materials.insert(materials.begin(), MaterialPtr());
+        materials.insert(materials.begin(), FontMaterialPtr());
 
         m_layout->getTransform()->removeAllChildren();
 
@@ -243,7 +245,7 @@ namespace Maze
 
         for (S32 i = 0; i < (S32)materials.size(); ++i)
         {
-            MaterialPtr const& material = materials[i];
+            FontMaterialPtr const& material = materials[i];
 
             if (i % 4 == 0)
                 horizontalLayout.reset();
@@ -263,28 +265,28 @@ namespace Maze
                 horizontalLayout->setPaddingRight(4.0f);
             }
 
-            MaterialPreviewData data = createMaterialPreview(material);
+            FontMaterialPreviewData data = createFontMaterialPreview(material);
             data.bodyTransform->setParent(horizontalLayout->getTransform());
-            data.button->eventClick.subscribe(this, &SceneMaterialPicker::notifyButtonClick);
+            data.button->eventClick.subscribe(this, &SceneFontMaterialPicker::notifyButtonClick);
 
             m_previews.push_back(data);
         }
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::updateUI()
+    void SceneFontMaterialPicker::updateUI()
     {
         if (getState() == EcsSceneState::Destroy)
             return;
 
-        MaterialPtr const& currentMaterial = MaterialPickerManager::GetInstancePtr()->getMaterial();
+        FontMaterialPtr const& currentFontMaterial = FontMaterialPickerManager::GetInstancePtr()->getFontMaterial();
 
         for (Size i = 0; i < m_previews.size(); ++i)
         {
-            MaterialPreviewData const& previewData = m_previews[i];        
-            MaterialPtr const& material = previewData.material;
+            FontMaterialPreviewData const& previewData = m_previews[i];        
+            FontMaterialPtr const& material = previewData.material;
 
-            bool checked = (material == currentMaterial);
+            bool checked = (material == currentFontMaterial);
             previewData.button->setChecked(checked);
 
             if (checked)
@@ -295,21 +297,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event)
+    void SceneFontMaterialPicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::notifyCanvasCursorReleaseOut(CursorInputEvent& _event)
+    void SceneFontMaterialPicker::notifyCanvasCursorReleaseOut(CursorInputEvent& _event)
     {
         
     }
 
     //////////////////////////////////////////
-    SceneMaterialPicker::MaterialPreviewData SceneMaterialPicker::createMaterialPreview(MaterialPtr const& _material)
+    SceneFontMaterialPicker::FontMaterialPreviewData SceneFontMaterialPicker::createFontMaterialPreview(FontMaterialPtr const& _material)
     {
-        MaterialPreviewData data;
+        FontMaterialPreviewData data;
         data.material = _material;
 
         data.bodyTransform = SpriteHelper::CreateTransform2D(
@@ -336,47 +338,6 @@ namespace Maze
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getSpriteMaterial(),
             data.button->getTransform(),
             data.bodyTransform->getEntityRaw()->getEcsScene());
-
-        if (_material && _material->getFirstRenderPass())
-        {
-            MaterialPtr materialCopy = _material->createCopy();
-            
-            RenderPassPtr const& renderPass = materialCopy->getFirstRenderPass();
-
-            ShaderPtr shader0 = renderPass->getShader();
-            if (shader0)
-            {
-                ShaderPtr shader = shader0->createCopy();
-                renderPass->setShader(shader);
-
-                renderPass->getShader()->removeLocalFeature("MAZE_COLOR_STREAM");
-                renderPass->getShader()->removeLocalFeature("MAZE_UV0_STREAM");
-                renderPass->getShader()->recompile();
-
-
-                // #TODO: REWORK
-                if (materialCopy->getUniform(MAZE_HCS("u_baseMap")))
-                {
-                    renderPass->getShader()->ensureUniform(MAZE_HCS("u_baseMapST"));
-
-                    TexturePtr const& texture = materialCopy->getUniform(MAZE_HCS("u_baseMap"))->getTexture();
-
-                    if (texture)
-                    {
-                        if (texture->getClassUID() == ClassInfo<Texture2D>::UID())
-                        {
-                            Texture2DPtr texture2D = texture->cast<Texture2D>();
-                            SpritePtr fakeSprite = Sprite::Create(texture2D);
-                            fakeSprite->setName(MAZE_HS("MaterialPickerSprite"));
-                            sprite->setSprite(fakeSprite);
-                        }
-                    }
-                }
-
-                sprite->setRenderMode(SpriteRenderMode::Simple);
-                sprite->setMaterialCopy(materialCopy);
-            }
-        }
 
         String materialName = _material ? _material->getName().getString() : "None";
 
@@ -406,31 +367,31 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::clearPreviews()
+    void SceneFontMaterialPicker::clearPreviews()
     {
-        for (MaterialPreviewData const& preview : m_previews)
+        for (FontMaterialPreviewData const& preview : m_previews)
             preview.button->eventClick.unsubscribe(this);
 
         m_previews.clear();
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::notifyButtonClick(Button2D* _button, CursorInputEvent& _event)
+    void SceneFontMaterialPicker::notifyButtonClick(Button2D* _button, CursorInputEvent& _event)
     {
-        for (MaterialPreviewData const& preview : m_previews)
+        for (FontMaterialPreviewData const& preview : m_previews)
         {
             if (_button == preview.button.get())
             {
-                MaterialPickerManager::GetInstancePtr()->setMaterial(preview.material);
+                FontMaterialPickerManager::GetInstancePtr()->setFontMaterial(preview.material);
                 break;
             }
         }
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::notifyFilterTextInput(EditBox2D* _editBox)
+    void SceneFontMaterialPicker::notifyFilterTextInput(EditBox2D* _editBox)
     {
-        updateMaterials();
+        updateFontMaterials();
     }
 
 } // namespace Maze

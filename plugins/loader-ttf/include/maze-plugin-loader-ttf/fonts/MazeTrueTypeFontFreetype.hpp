@@ -84,6 +84,10 @@ namespace Maze
         virtual TTFPagePtr const& ensureTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        virtual TTFPagePtr const& ensureTTFBoldPage(U32 _fontSize) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
         virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
@@ -94,6 +98,13 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual FontGlyph const& ensureBoldGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual FontGlyph const& ensureBoldGlyph(U32 _codePoint, U32 _fontSize) MAZE_OVERRIDE;
+
 
         //////////////////////////////////////////
         virtual F32 getLineSpacing(U32 _fontSize) MAZE_OVERRIDE;
@@ -140,7 +151,8 @@ namespace Maze
             TTFPagePtr const& _page,
             U32 _codePoint,
             U32 _fontSize,
-            F32 _outlineThickness = 0.0f);
+            F32 _outlineThickness = 0.0f,
+            bool _bold = false);
 
         //////////////////////////////////////////
         inline Rect2S findGlyphRect(TTFPagePtr const& _page, U32 _width, U32 _height);
@@ -160,6 +172,7 @@ namespace Maze
 
         TTFPageTable<U32> m_pages;
         TTFPageTable<U64> m_outlineThicknessPages;
+        TTFPageTable<U32> m_boldPages;
 
     private:
         ByteBuffer m_memoryBuffer;
@@ -171,7 +184,8 @@ namespace Maze
         TTFPagePtr const& _page,
         U32 _codePoint,
         U32 _fontSize,
-        F32 _outlineThickness)
+        F32 _outlineThickness,
+        bool _bold)
     {
         S32 scale = 1;
 
@@ -188,7 +202,15 @@ namespace Maze
         // Load the glyph corresponding to the code point
         FT_Int32 flags = FT_LOAD_TARGET_NORMAL | FT_LOAD_FORCE_AUTOHINT;
         if (_outlineThickness != 0)
+        {
+            if (_bold)
+            {
+                MAZE_ERROR("Outline+bold glyph is not supported!");
+                return glyph;
+            }
+
             flags |= FT_LOAD_NO_BITMAP;
+        }
 
         if (FT_Load_Char(m_face, _codePoint, flags) != 0)
             return glyph;
@@ -202,7 +224,7 @@ namespace Maze
         }
 
         // Apply outline (there is no fallback for outline) if necessary -- first technique using outline (highest quality)
-        // FT_Pos weight = 1 << 6;
+        FT_Pos weight = 1 << 6;
         bool outline = (glyphDesc->format == FT_GLYPH_FORMAT_OUTLINE);
         if (outline)
         {
@@ -222,9 +244,15 @@ namespace Maze
         FT_Glyph_To_Bitmap(&glyphDesc, FT_RENDER_MODE_NORMAL, 0, 1);
         FT_Bitmap& bitmap = reinterpret_cast<FT_BitmapGlyph>(glyphDesc)->bitmap;
 
+        // Bold
+        if (_bold)
+            FT_Bitmap_Embolden(m_library, &bitmap, weight, weight);
+
         // Compute the glyph's advance offset
         F32 invGlyphMetricsDiv = 1.0f / static_cast<F32>(scale * (1 << 6));
         glyph.advance = static_cast<F32>(m_face->glyph->metrics.horiAdvance) * invGlyphMetricsDiv;
+        if (_bold)
+            glyph.advance += static_cast<float>(weight) / float{ 1 << 6 };
 
         S32 width = bitmap.width;
         S32 height = bitmap.rows;

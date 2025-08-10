@@ -52,6 +52,7 @@
 #include "maze-editor-tools/managers/MazeRenderMeshPickerManager.hpp"
 #include "maze-editor-tools/managers/MazeTexturePickerManager.hpp"
 #include "maze-editor-tools/managers/MazeSpritePickerManager.hpp"
+#include "maze-editor-tools/managers/MazeFontMaterialPickerManager.hpp"
 #include "maze-editor-tools/ecs/components/MazeColorEdit2D.hpp"
 #include "maze-editor-tools/ecs/components/MazeColorHDREdit2D.hpp"
 #include "maze-editor-tools/ecs/components/MazeColorGradientEdit2D.hpp"
@@ -142,6 +143,10 @@ namespace Maze
             return false;
 
         SpritePickerManager::Initialize(m_spritePickerManager);
+        if (!m_spritePickerManager)
+            return false;
+
+        FontMaterialPickerManager::Initialize(m_fontMaterialPickerManager);
         if (!m_spritePickerManager)
             return false;
 

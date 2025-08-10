@@ -25,11 +25,12 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorHelper_hpp_))
-#define _EditorHelper_hpp_
+#if (!defined(_MazeSceneFontMaterialPicker_hpp_))
+#define _MazeSceneFontMaterialPicker_hpp_
 
 
 //////////////////////////////////////////
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -39,7 +40,7 @@
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/MazeMaterial.hpp"
+#include "maze-ui/fonts/MazeFontMaterial.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
@@ -47,123 +48,116 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
-#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
-#include "maze-editor-tools/editor-actions/MazeEditorActionEntityAdd.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
+#include "maze-graphics/MazeColorGradient.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "maze-ui/ecs/components/MazeSlider2D.hpp"
+#include "maze-ui/ecs/components/MazeColorSliderTag2D.hpp"
+#include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Transform3D);
-    
+    MAZE_USING_SHARED_PTR(SceneFontMaterialPicker);
+    MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(UIElement2D);
+    MAZE_USING_SHARED_PTR(ToggleButton2D);
+    MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
+
 
     //////////////////////////////////////////
-    namespace EditorHelper
+    // Class SceneFontMaterialPicker
+    //
+    //////////////////////////////////////////
+    class MAZE_EDITOR_TOOLS_API SceneFontMaterialPicker
+        : public EcsRenderScene
     {
-        //////////////////////////////////////////
-        bool IsValidSceneMode();
+    public:
 
         //////////////////////////////////////////
-        EntityPtr CreateNewPrefab2D(
-            Transform2DPtr const& _parent = nullptr,
-            bool _select = true);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneFontMaterialPicker, EcsRenderScene);
+
+    public:
 
         //////////////////////////////////////////
-        EntityPtr CreateNewPrefab3D(
-            Transform3DPtr const& _parent = nullptr,
-            bool _select = true);
+        struct FontMaterialPreviewData
+        {
+            FontMaterialPtr material;
+            Transform2DPtr bodyTransform;
+            ToggleButton2DPtr button;
+            AbstractTextRenderer2DPtr titleText;
+        };
+
+    public:
 
         //////////////////////////////////////////
-        EntityPtr CreateEntity(CString _entityName);
+        static SceneFontMaterialPickerPtr Create(RenderTargetPtr const& _renderTarget);
+    
+        //////////////////////////////////////////
+        virtual ~SceneFontMaterialPicker();
 
         //////////////////////////////////////////
-        EntityPtr CreateEntity2D(CString _entityName);
+        void setup();
 
         //////////////////////////////////////////
-        EntityPtr CreateEntity2D(
-            CString _entityName,
-            Transform2DPtr const& _parent,
-            bool _select = true);
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
+
+
+    protected:
 
         //////////////////////////////////////////
-        EntityPtr CreateSprite2D(
-            CString _entityName,
-            Transform2DPtr const& _parent = nullptr,
-            bool _select = true);
+        SceneFontMaterialPicker();
+
 
         //////////////////////////////////////////
-        EntityPtr CreateToggleButton2D(
-            CString _entityName,
-            Transform2DPtr const& _parent = nullptr,
-            bool _select = true);
+        virtual bool init(RenderTargetPtr const& _renderTarget);
+
 
         //////////////////////////////////////////
-        EntityPtr CreateClickButton2D(
-            CString _entityName,
-            Transform2DPtr const& _parent = nullptr,
-            bool _select = true);
+        void create2D();
 
         //////////////////////////////////////////
-        EntityPtr CreateText(
-            CString _entityName,
-            Transform2DPtr const& _parent,
-            bool _select = true);
+        void notifyFontMaterialChanged(FontMaterialPtr const& _material);
 
         //////////////////////////////////////////
-        EntityPtr CreateEntity3D(CString _entityName);
+        void updateFontMaterials();
 
         //////////////////////////////////////////
-        EntityPtr CreateBuiltinMesh(
-            BuiltinRenderMeshType _meshType,
-            Transform3DPtr const& _parent = nullptr,
-            bool _select = true);
+        void updateUI();
+
 
         //////////////////////////////////////////
-        EntityPtr CreateDirectionalLight(
-            CString _entityName,
-            Transform3DPtr const& _parent = nullptr,
-            bool _select = true);
+        void notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event);
 
         //////////////////////////////////////////
-        EntityPtr CreateCamera3D(
-            CString _entityName,
-            Transform3DPtr const& _parent = nullptr,
-            bool _select = true);
+        void notifyCanvasCursorReleaseOut(CursorInputEvent& _event);
+
 
         //////////////////////////////////////////
-        EntityPtr CreateNewParticleSystem3D(
-            CString _entityName,
-            Transform3DPtr const& _parent = nullptr,
-            bool _select = true);
+        FontMaterialPreviewData createFontMaterialPreview(FontMaterialPtr const& _material);
+
 
         //////////////////////////////////////////
-        bool SaveValidate();
+        void clearPreviews();
 
         //////////////////////////////////////////
-        void Save();
+        void notifyButtonClick(Button2D* _button, CursorInputEvent& _event);
 
         //////////////////////////////////////////
-        bool SaveAsValidate();
+        void notifyFilterTextInput(EditBox2D* _editBox);
 
-        //////////////////////////////////////////
-        void SaveAs();
+    protected:
+        CanvasPtr m_canvas;
+        UIElement2DPtr m_canvasUIElement;
 
-        //////////////////////////////////////////
-        bool LoadValidate();
+        EditBox2DPtr m_filterEditBox;
 
-        //////////////////////////////////////////
-        void Load();
-
-        //////////////////////////////////////////
-        bool ClearValidate();
-
-        //////////////////////////////////////////
-        void Clear();
+        Vector<FontMaterialPreviewData> m_previews;
+        VerticalLayout2DPtr m_layout;
     };
 
 
@@ -171,5 +165,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorHelper_hpp_
+#endif // _MazeSceneFontMaterialPicker_hpp_
 //////////////////////////////////////////

@@ -485,6 +485,7 @@ namespace Maze
         return ensureGlyphFromStorage(glyphStorageData, _codePoint, _fontSize);
     }
 
+
     //////////////////////////////////////////
     FontGlyph const& Font::ensureOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness)
     {
@@ -549,6 +550,73 @@ namespace Maze
         FontGlyphStorageData* glyphStorageData = getGlyphStorageData(_codePoint);
         return ensureOutlinedGlyphFromStorage(glyphStorageData, _codePoint, _fontSize, _outlineThickness);
     }
+
+
+    //////////////////////////////////////////
+    FontGlyph const& Font::ensureBoldGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize)
+    {
+        static FontGlyph nullGlyph;
+
+        if (!_storage)
+        {
+            if (m_defaultGlyphsData.getTrueTypeFont())
+                return m_defaultGlyphsData.getTrueTypeFont()->ensureBoldGlyph(_codePoint, _fontSize);
+
+            return nullGlyph;
+        }
+
+        switch (_storage->type)
+        {
+            case FontGlyphStorageType::None: return nullGlyph;
+            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->ensureBoldGlyph(_codePoint, _fontSize);
+            case FontGlyphStorageType::Sprite: return _storage->spriteData.ensureGlyph(_fontSize);
+            case FontGlyphStorageType::Entity: return _storage->entityData.ensureGlyph(_fontSize);
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+                break;
+            }
+        }
+
+        return nullGlyph;
+    }
+
+    //////////////////////////////////////////
+    FontGlyph const& Font::ensureBoldGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, TTFPagePtr const& _ttfPage)
+    {
+        static FontGlyph nullGlyph;
+
+        if (!_storage)
+        {
+            if (m_defaultGlyphsData.getTrueTypeFont())
+                return m_defaultGlyphsData.getTrueTypeFont()->ensureBoldGlyph(_codePoint, _fontSize, _ttfPage);
+
+            return nullGlyph;
+        }
+
+        switch (_storage->type)
+        {
+            case FontGlyphStorageType::None: return nullGlyph;
+            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->ensureBoldGlyph(_codePoint, _fontSize, _ttfPage);
+            case FontGlyphStorageType::Sprite: return _storage->spriteData.ensureGlyph(_fontSize);
+            case FontGlyphStorageType::Entity: return _storage->entityData.ensureGlyph(_fontSize);
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+                break;
+            }
+        }
+
+        return nullGlyph;
+    }
+
+    //////////////////////////////////////////
+    FontGlyph const& Font::ensureBoldGlyph(U32 _codePoint, U32 _fontSize)
+    {
+        FontGlyphStorageData* glyphStorageData = getGlyphStorageData(_codePoint);
+        return ensureBoldGlyphFromStorage(glyphStorageData, _codePoint, _fontSize);
+    }
+
 
     //////////////////////////////////////////
     F32 Font::getLineSpacing(U32 _fontSize) const

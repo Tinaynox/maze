@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/sprite-picker/MazeSceneSpritePicker.hpp"
+#include "maze-editor-tools/pickers/MazeSceneMaterialPicker.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
@@ -44,13 +44,13 @@
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
-#include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
@@ -68,16 +68,16 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
-#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/helpers/MazeColorHelper.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
-#include "maze-editor-tools/managers/MazeSpritePickerManager.hpp"
+#include "maze-editor-tools/managers/MazeMaterialPickerManager.hpp"
+#include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
-#include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -93,21 +93,21 @@ namespace Maze
 {
 
     //////////////////////////////////////////
-    // Class SceneSpritePicker
+    // Class SceneMaterialPicker
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneSpritePicker, EcsRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneMaterialPicker, EcsRenderScene);
 
     //////////////////////////////////////////
-    SceneSpritePicker::SceneSpritePicker()
+    SceneMaterialPicker::SceneMaterialPicker()
     {
     }
 
     //////////////////////////////////////////
-    SceneSpritePicker::~SceneSpritePicker()
+    SceneMaterialPicker::~SceneMaterialPicker()
     {
-        if (SpritePickerManager::GetInstancePtr())
-            SpritePickerManager::GetInstancePtr()->eventSpriteChanged.unsubscribe(this);
+        if (MaterialPickerManager::GetInstancePtr())
+            MaterialPickerManager::GetInstancePtr()->eventMaterialChanged.unsubscribe(this);
 
         if (m_filterEditBox)
             m_filterEditBox->eventTextInput.unsubscribe(this);
@@ -124,42 +124,41 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SceneSpritePickerPtr SceneSpritePicker::Create(RenderTargetPtr const& _renderTarget)
+    SceneMaterialPickerPtr SceneMaterialPicker::Create(RenderTargetPtr const& _renderTarget)
     {
-        SceneSpritePickerPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneSpritePicker, object, init(_renderTarget));
+        SceneMaterialPickerPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneMaterialPicker, object, init(_renderTarget));
         return object;
     }
 
     //////////////////////////////////////////
-    bool SceneSpritePicker::init(RenderTargetPtr const& _renderTarget)
+    bool SceneMaterialPicker::init(RenderTargetPtr const& _renderTarget)
     {
         if (!EcsRenderScene::init(_renderTarget))
             return false;
 
         create2D();
         
-        SpritePickerManager::GetInstancePtr()->eventSpriteChanged.subscribe(this, &SceneSpritePicker::notifySpriteChanged);
+        MaterialPickerManager::GetInstancePtr()->eventMaterialChanged.subscribe(this, &SceneMaterialPicker::notifyMaterialChanged);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void SceneSpritePicker::setup()
+    void SceneMaterialPicker::setup()
     {
         
         updateUI();
     }
 
     //////////////////////////////////////////
-    void SceneSpritePicker::update(F32 _dt)
+    void SceneMaterialPicker::update(F32 _dt)
     {
         
     }
 
-
     //////////////////////////////////////////
-    void SceneSpritePicker::create2D()
+    void SceneMaterialPicker::create2D()
     {
         ColorU32 bandColor(176, 176, 176);
 
@@ -170,8 +169,8 @@ namespace Maze
         m_canvas->setClearColor(ColorU32(203, 203, 203, 255));
         m_canvas->setRenderTarget(m_renderTarget);
         m_canvasUIElement = canvasEntity->ensureComponent<UIElement2D>();
-        m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneSpritePicker::notifyCanvasCursorReleaseIn);
-        m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneSpritePicker::notifyCanvasCursorReleaseOut);
+        m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneMaterialPicker::notifyCanvasCursorReleaseIn);
+        m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneMaterialPicker::notifyCanvasCursorReleaseOut);
 
         m_filterEditBox = UIHelper::CreateDefaultEditBox(
             "",
@@ -183,7 +182,7 @@ namespace Maze
             m_canvas->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
-        m_filterEditBox->eventTextInput.subscribe(this, &SceneSpritePicker::notifyFilterTextInput);
+        m_filterEditBox->eventTextInput.subscribe(this, &SceneMaterialPicker::notifyFilterTextInput);
         m_filterEditBox->getTransform()->setZ(100000);
         SizePolicy2DPtr filterSizePolicy = m_filterEditBox->getEntityRaw()->ensureComponent<SizePolicy2D>();
         filterSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
@@ -213,38 +212,38 @@ namespace Maze
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         layoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
-        SpriteManager::GetCurrentInstance()->loadAllAssetSprites();
+        MaterialManager::GetCurrentInstance()->loadAllAssetMaterials();
 
-        updateSprites();
+        updateMaterials();
         updateUI();
     }
 
     //////////////////////////////////////////
-    void SceneSpritePicker::notifySpriteChanged(SpritePtr const& _sprite)
+    void SceneMaterialPicker::notifyMaterialChanged(MaterialPtr const& _material)
     {
         updateUI();
     }
 
     //////////////////////////////////////////
-    void SceneSpritePicker::updateSprites()
+    void SceneMaterialPicker::updateMaterials()
     {
         clearPreviews();
 
         String const& filterText = m_filterEditBox->getText();
 
-        Vector<SpritePtr> sprites;
-        for (SpritePtr const& sprite : SpriteManager::GetCurrentInstance()->getSpritesSorted())
-            if (filterText.empty() || sprite->getName().getString().find(filterText) != String::npos)
-                sprites.push_back(sprite);
-        sprites.insert(sprites.begin(), SpritePtr());
+        Vector<MaterialPtr> materials;
+        for (MaterialPtr const& material : MaterialManager::GetCurrentInstance()->getMaterialsSorted())
+            if (filterText.empty() || material->getName().getString().find(filterText) != String::npos)
+                materials.push_back(material);
+        materials.insert(materials.begin(), MaterialPtr());
 
         m_layout->getTransform()->removeAllChildren();
 
         HorizontalLayout2DPtr horizontalLayout;
 
-        for (S32 i = 0; i < (S32)sprites.size(); ++i)
+        for (S32 i = 0; i < (S32)materials.size(); ++i)
         {
-            SpritePtr const& sprite = sprites[i];
+            MaterialPtr const& material = materials[i];
 
             if (i % 4 == 0)
                 horizontalLayout.reset();
@@ -264,28 +263,28 @@ namespace Maze
                 horizontalLayout->setPaddingRight(4.0f);
             }
 
-            SpritePreviewData data = createSpritePreview(sprite);
+            MaterialPreviewData data = createMaterialPreview(material);
             data.bodyTransform->setParent(horizontalLayout->getTransform());
-            data.button->eventClick.subscribe(this, &SceneSpritePicker::notifyButtonClick);
+            data.button->eventClick.subscribe(this, &SceneMaterialPicker::notifyButtonClick);
 
             m_previews.push_back(data);
         }
     }
 
     //////////////////////////////////////////
-    void SceneSpritePicker::updateUI()
+    void SceneMaterialPicker::updateUI()
     {
         if (getState() == EcsSceneState::Destroy)
             return;
 
-        SpritePtr const& currentSprite = SpritePickerManager::GetInstancePtr()->getSprite();
+        MaterialPtr const& currentMaterial = MaterialPickerManager::GetInstancePtr()->getMaterial();
 
         for (Size i = 0; i < m_previews.size(); ++i)
         {
-            SpritePreviewData const& previewData = m_previews[i];        
-            SpritePtr const& sprite = previewData.sprite;
+            MaterialPreviewData const& previewData = m_previews[i];        
+            MaterialPtr const& material = previewData.material;
 
-            bool checked = (sprite == currentSprite);
+            bool checked = (material == currentMaterial);
             previewData.button->setChecked(checked);
 
             if (checked)
@@ -296,22 +295,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneSpritePicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event)
+    void SceneMaterialPicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         
     }
 
     //////////////////////////////////////////
-    void SceneSpritePicker::notifyCanvasCursorReleaseOut(CursorInputEvent& _event)
+    void SceneMaterialPicker::notifyCanvasCursorReleaseOut(CursorInputEvent& _event)
     {
         
     }
 
     //////////////////////////////////////////
-    SceneSpritePicker::SpritePreviewData SceneSpritePicker::createSpritePreview(SpritePtr const& _sprite)
+    SceneMaterialPicker::MaterialPreviewData SceneMaterialPicker::createMaterialPreview(MaterialPtr const& _material)
     {
-        SpritePreviewData data;
-        data.sprite = _sprite;
+        MaterialPreviewData data;
+        data.material = _material;
 
         data.bodyTransform = SpriteHelper::CreateTransform2D(
             { 94.0f, 110.0f },
@@ -338,19 +337,53 @@ namespace Maze
             data.button->getTransform(),
             data.bodyTransform->getEntityRaw()->getEcsScene());
 
-        if (_sprite)
+        if (_material && _material->getFirstRenderPass())
         {
-            // #TODO: REWORK
-            sprite->setSprite(_sprite);
+            MaterialPtr materialCopy = _material->createCopy();
             
+            RenderPassPtr const& renderPass = materialCopy->getFirstRenderPass();
+
+            ShaderPtr shader0 = renderPass->getShader();
+            if (shader0)
+            {
+                ShaderPtr shader = shader0->createCopy();
+                renderPass->setShader(shader);
+
+                renderPass->getShader()->removeLocalFeature("MAZE_COLOR_STREAM");
+                renderPass->getShader()->removeLocalFeature("MAZE_UV0_STREAM");
+                renderPass->getShader()->recompile();
+
+
+                // #TODO: REWORK
+                if (materialCopy->getUniform(MAZE_HCS("u_baseMap")))
+                {
+                    renderPass->getShader()->ensureUniform(MAZE_HCS("u_baseMapST"));
+
+                    TexturePtr const& texture = materialCopy->getUniform(MAZE_HCS("u_baseMap"))->getTexture();
+
+                    if (texture)
+                    {
+                        if (texture->getClassUID() == ClassInfo<Texture2D>::UID())
+                        {
+                            Texture2DPtr texture2D = texture->cast<Texture2D>();
+                            SpritePtr fakeSprite = Sprite::Create(texture2D);
+                            fakeSprite->setName(MAZE_HS("MaterialPickerSprite"));
+                            sprite->setSprite(fakeSprite);
+                        }
+                    }
+                }
+
+                sprite->setRenderMode(SpriteRenderMode::Simple);
+                sprite->setMaterialCopy(materialCopy);
+            }
         }
 
-        String spriteName = _sprite ? _sprite->getName().getString() : "None";
+        String materialName = _material ? _material->getName().getString() : "None";
 
-        spriteName = FileHelper::GetFileNameWithoutExtension(spriteName);
+        materialName = EditorToolsHelper::GetNameWithoutExtension(materialName);
 
         data.titleText = EditorToolsUIHelper::CreateText(
-            spriteName.c_str(),
+            materialName.c_str(),
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             12,
             HorizontalAlignment2D::Center,
@@ -363,7 +396,7 @@ namespace Maze
             { 0.5f, 0.5f });
         data.titleText->setColor(ColorU32::c_black);
 
-        F32 scalar = data.bodyTransform->getWidth() / (spriteName.size() * 8.0f);
+        F32 scalar = data.bodyTransform->getWidth() / (materialName.size() * 8.0f);
         if (scalar < 1.0f)
             data.titleText->getTransform()->setLocalScale(scalar);
         else
@@ -373,31 +406,31 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneSpritePicker::clearPreviews()
+    void SceneMaterialPicker::clearPreviews()
     {
-        for (SpritePreviewData const& preview : m_previews)
+        for (MaterialPreviewData const& preview : m_previews)
             preview.button->eventClick.unsubscribe(this);
 
         m_previews.clear();
     }
 
     //////////////////////////////////////////
-    void SceneSpritePicker::notifyButtonClick(Button2D* _button, CursorInputEvent& _event)
+    void SceneMaterialPicker::notifyButtonClick(Button2D* _button, CursorInputEvent& _event)
     {
-        for (SpritePreviewData const& preview : m_previews)
+        for (MaterialPreviewData const& preview : m_previews)
         {
             if (_button == preview.button.get())
             {
-                SpritePickerManager::GetInstancePtr()->setSprite(preview.sprite);
+                MaterialPickerManager::GetInstancePtr()->setMaterial(preview.material);
                 break;
             }
         }
     }
 
     //////////////////////////////////////////
-    void SceneSpritePicker::notifyFilterTextInput(EditBox2D* _editBox)
+    void SceneMaterialPicker::notifyFilterTextInput(EditBox2D* _editBox)
     {
-        updateSprites();
+        updateMaterials();
     }
 
 } // namespace Maze

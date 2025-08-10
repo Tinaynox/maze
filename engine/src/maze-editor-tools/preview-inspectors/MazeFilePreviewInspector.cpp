@@ -166,10 +166,12 @@ namespace Maze
             String text;
             StringHelper::FormatString(
                 text,
+                "%s\n"
                 "Created: %s\n"
                 "Modified: %s\n"
                 "Accessed: %s\n"
                 "Size: %u bytes",
+                assetFile->getFileName().toUTF8().c_str(),
                 creationDateLocal.formatDateTime().c_str(),
                 modifiedDateLocal.formatDateTime().c_str(),
                 accessedDateLocal.formatDateTime().c_str(),

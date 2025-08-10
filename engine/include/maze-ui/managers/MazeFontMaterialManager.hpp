@@ -122,6 +122,11 @@ namespace Maze
             bool _syncLoad = true);
 
         //////////////////////////////////////////
+        FontMaterialPtr const& getOrLoadFontMaterial(
+            AssetFilePtr const& _assetFile,
+            bool _syncLoad = true);
+
+        //////////////////////////////////////////
         inline FontMaterialPtr const& getOrLoadFontMaterial(String const& _assetFileName, bool _syncLoad = true) { return getOrLoadFontMaterial(MAZE_HASHED_CSTRING(_assetFileName.c_str()), _syncLoad); }
 
         //////////////////////////////////////////
@@ -156,7 +161,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void loadAllAssetFontMaterials();
+
+        //////////////////////////////////////////
         void unloadAssetFontMaterials(Set<String> const& _tags);
+
+        //////////////////////////////////////////
+        Vector<FontMaterialPtr> getFontMaterialsSorted();
 
     protected:
 

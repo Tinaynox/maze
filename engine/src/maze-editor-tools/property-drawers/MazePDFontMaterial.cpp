@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/property-drawers/MazePDRenderMesh.hpp"
+#include "maze-editor-tools/property-drawers/MazePDFontMaterial.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
@@ -35,18 +35,16 @@
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
-#include "maze-editor-tools/managers/MazeRenderMeshPickerManager.hpp"
-#include "maze-editor-tools/pickers/MazeSceneRenderMeshPicker.hpp"
+#include "maze-editor-tools/managers/MazeFontMaterialPickerManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
-#include "maze-graphics/managers/MazeMaterialManager.hpp"
-#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
@@ -59,40 +57,42 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class PropertyDrawerRenderMesh
+    // Class PropertyDrawerFontMaterial
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerRenderMesh, PropertyDrawer);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerFontMaterial, PropertyDrawer);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerRenderMesh);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerFontMaterial);
 
     //////////////////////////////////////////
-    PropertyDrawerRenderMesh::PropertyDrawerRenderMesh()
+    PropertyDrawerFontMaterial::PropertyDrawerFontMaterial()
     {
         
     }
 
     //////////////////////////////////////////
-    PropertyDrawerRenderMesh::~PropertyDrawerRenderMesh()
+    PropertyDrawerFontMaterial::~PropertyDrawerFontMaterial()
     {
-        if (m_renderMeshButton)
-            m_renderMeshButton->eventClick.unsubscribe(this);
+        if (m_fontMaterialButton)
+        {
+            m_fontMaterialButton->eventClick.unsubscribe(this);
+        }
 
         if (m_selectAssetButton)
             m_selectAssetButton->eventClick.unsubscribe(this);
     }
 
     //////////////////////////////////////////
-    PropertyDrawerRenderMeshPtr PropertyDrawerRenderMesh::Create(DataBlock const& _dataBlock)
+    PropertyDrawerFontMaterialPtr PropertyDrawerFontMaterial::Create(DataBlock const& _dataBlock)
     {
-        PropertyDrawerRenderMeshPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerRenderMesh, object, init(_dataBlock));
+        PropertyDrawerFontMaterialPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerFontMaterial, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerRenderMesh::init(DataBlock const& _dataBlock)
+    bool PropertyDrawerFontMaterial::init(DataBlock const& _dataBlock)
     {
         if (!PropertyDrawer::init(_dataBlock))
             return false;
@@ -101,12 +101,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRenderMesh::buildUI(
+    void PropertyDrawerFontMaterial::buildUI(
         Transform2DPtr const& _parent,
         CString _label)
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
+        FontMaterialManager* fontMaterialManager = FontMaterialManager::GetInstancePtr();
 
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
@@ -136,28 +136,27 @@ namespace Maze
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
 
 
-        m_renderMeshButton = UIHelper::CreateClickButton(
+        m_fontMaterialButton = UIHelper::CreateClickButton(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Focused),
             Vec2F(180, 18),
             Vec2F::c_zero,
             layout->getTransform(),
             _parent->getEntityRaw()->getEcsScene());
-        m_renderMeshButton->eventClick.subscribe(this, &PropertyDrawerRenderMesh::notifyRenderMeshButtonClick);
-
+        m_fontMaterialButton->eventClick.subscribe(this, &PropertyDrawerFontMaterial::notifyFontMaterialButtonClick);
 
         m_dragAndDropFrame = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Focused),
-            m_renderMeshButton->getTransform()->getSize(),
+            m_fontMaterialButton->getTransform()->getSize(),
             Vec2F::c_zero,
             nullptr,
-            m_renderMeshButton->getTransform(),
+            m_fontMaterialButton->getTransform(),
             _parent->getEntityRaw()->getEcsScene());
         m_dragAndDropFrame->setColor(255, 200, 40);
         m_dragAndDropFrame->getEntityRaw()->ensureComponent<SizePolicy2D>();
         m_dragAndDropFrame->getMeshRenderer()->setEnabled(false);
 
-        m_dragAndDropZone = m_renderMeshButton->getEntityRaw()->ensureComponent<DragAndDropZone>();
+        m_dragAndDropZone = m_fontMaterialButton->getEntityRaw()->ensureComponent<DragAndDropZone>();
         m_dragAndDropZone->eventDragAndDropValidate.subscribe(
             [this](DataBlock const& _data, EntityId _viewEid, bool& _outDropAllowed)
             {
@@ -168,8 +167,8 @@ namespace Maze
                     if (!assetFile)
                         return;
 
-                    RenderMeshPtr const& renderMesh = RenderMeshManager::GetCurrentInstancePtr()->getOrLoadRenderMesh(assetFile);
-                    if (!renderMesh)
+                    FontMaterialPtr const& material = FontMaterialManager::GetInstancePtr()->getOrLoadFontMaterial(assetFile);
+                    if (!material)
                         return;
 
                     _outDropAllowed = true;
@@ -185,11 +184,11 @@ namespace Maze
                     if (!assetFile)
                         return;
 
-                    RenderMeshPtr const& renderMesh = RenderMeshManager::GetCurrentInstancePtr()->getOrLoadRenderMesh(assetFile);
-                    if (!renderMesh)
+                    FontMaterialPtr const& material = FontMaterialManager::GetInstancePtr()->getOrLoadFontMaterial(assetFile);
+                    if (!material)
                         return;
 
-                    setValue(renderMesh);
+                    setValue(material);
                     eventUIData();
                 }
             });
@@ -199,106 +198,127 @@ namespace Maze
                 this->m_dragAndDropFrame->getMeshRenderer()->setEnabled(_active);
             });
 
-
         m_selectAssetButton = UIHelper::CreateClickButton(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::SelectAsset),
             Vec2F(18, 18),
             Vec2F(-9.0f, 0.0f),
-            m_renderMeshButton->getTransform(),
+            m_fontMaterialButton->getTransform(),
             _parent->getEntityRaw()->getEcsScene(),
             Vec2F(1.0f, 0.5f),
             Vec2F(0.5f, 0.5f));
-        m_selectAssetButton->setNormalColor(ColorU32{ 50, 50, 50 });
-        m_selectAssetButton->setFocusedColor(ColorU32{ 100, 100, 100 });
-        m_selectAssetButton->setSelectedColor(ColorU32{ 150, 150, 150 });
-        m_selectAssetButton->setPressedColor(ColorU32{ 100, 150, 100 });
-        m_selectAssetButton->eventClick.subscribe(this, &PropertyDrawerRenderMesh::notifySelectAssetClick);
+            m_selectAssetButton->setNormalColor(ColorU32{ 50, 50, 50 });
+            m_selectAssetButton->setFocusedColor(ColorU32{ 100, 100, 100 });
+            m_selectAssetButton->setSelectedColor(ColorU32{ 150, 150, 150 });
+            m_selectAssetButton->setPressedColor(ColorU32{ 100, 150, 100 });
+            m_selectAssetButton->eventClick.subscribe(this, &PropertyDrawerFontMaterial::notifySelectAssetClick);
 
-        m_renderMeshIcon = SpriteHelper::CreateSprite(
-            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Mesh),
-            Vec2F(12, 12),
-            Vec2F(9.0f, 0.0f),
-            materialManager->getSpriteMaterial(),
-            m_renderMeshButton->getTransform(),
-            _parent->getEntityRaw()->getEcsScene(),
-            Vec2F(0.0f, 0.5f),
-            Vec2F(0.5f, 0.5f));
+            m_fontMaterialIcon = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Material),
+                Vec2F(12, 12),
+                Vec2F(9.0f, 0.0f),
+                MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
+                m_fontMaterialButton->getTransform(),
+                _parent->getEntityRaw()->getEcsScene(),
+                Vec2F(0.0f, 0.5f),
+                Vec2F(0.5f, 0.5f));
 
-        m_renderMeshNameDrawer = EditorToolsUIHelper::CreateText(
-            "",
-            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
-            12,
-            HorizontalAlignment2D::Left,
-            VerticalAlignment2D::Middle,
-            Vec2F(160.0f, 0.0f),
-            Vec2F(18.0f, 0.0f),
-            m_renderMeshButton->getTransform(),
-            _parent->getEntityRaw()->getEcsScene(),
-            Vec2F(0.0f, 0.5f),
-            Vec2F(0.0f, 0.5f));
-        m_renderMeshNameDrawer->setColor(ColorU32::c_black);
+            m_fontMaterialNameDrawer = EditorToolsUIHelper::CreateText(
+                "",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                12,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                Vec2F(160.0f, 0.0f),
+                Vec2F(18.0f, 0.0f),
+                m_fontMaterialButton->getTransform(),
+                _parent->getEntityRaw()->getEcsScene(),
+                Vec2F(0.0f, 0.5f),
+                Vec2F(0.0f, 0.5f));
+            m_fontMaterialNameDrawer->setColor(ColorU32::c_black);
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRenderMesh::setValue(RenderMeshPtr const& _value)
+    void PropertyDrawerFontMaterial::setValue(FontMaterialPtr const& _value)
     {
-        m_renderMesh = _value;
+        m_fontMaterial = _value;
 
-        m_renderMeshIcon->getMeshRenderer()->setEnabled(m_renderMesh != nullptr);
+        m_fontMaterialIcon->getMeshRenderer()->setEnabled(m_fontMaterial != nullptr);
 
-        if (m_renderMesh)
-            m_renderMeshNameDrawer->setText(EditorToolsHelper::GetNameWithoutExtension(m_renderMesh->getName()));
+        if (m_fontMaterial)
+            m_fontMaterialNameDrawer->setText(EditorToolsHelper::GetNameWithoutExtension(m_fontMaterial->getName()));
         else
-            m_renderMeshNameDrawer->setText("None");
+            m_fontMaterialNameDrawer->setText("None");
     }
 
     //////////////////////////////////////////
-    RenderMeshPtr PropertyDrawerRenderMesh::getValue() const
+    FontMaterialPtr PropertyDrawerFontMaterial::getValue() const
     {
-        return m_renderMesh;
+        return m_fontMaterial;
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRenderMesh::notifyRenderMeshButtonClick(Button2D* _button, CursorInputEvent& _event)
+    void PropertyDrawerFontMaterial::notifyFontMaterialButtonClick(Button2D* _button, CursorInputEvent& _event)
     {
-
-    }
-
-    //////////////////////////////////////////
-    void PropertyDrawerRenderMesh::notifySelectAssetClick(Button2D* _button, CursorInputEvent& _event)
-    {
-        PropertyDrawerRenderMeshWPtr weakPtr = cast<PropertyDrawerRenderMesh>();
-        RenderMeshPickerManager::GetInstancePtr()->openRenderMeshPicker(
-            [weakPtr](RenderMeshPtr const& _renderMesh)
+        if (m_fontMaterial)
+        {
+            RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+            FontMaterialManager* fontMaterialManager = FontMaterialManager::GetInstancePtr();
+            String const& materialName = fontMaterialManager->getFontMaterialName(m_fontMaterial.get());
+            if (!materialName.empty())
             {
-                PropertyDrawerRenderMeshPtr ptr = weakPtr.lock();
+                AssetFilePtr const& materialAsset = AssetManager::GetInstancePtr()->getAssetFileByFileName(materialName);
+                if (materialAsset)
+                {
+                    SelectionManager::GetInstancePtr()->selectObject(materialAsset);
+                }
+                else
+                {
+                    // SelectionManager::GetInstancePtr()->selectObject(m_fontMaterial);
+                }
+            }
+            else
+            {
+                // SelectionManager::GetInstancePtr()->selectObject(m_fontMaterial);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerFontMaterial::notifySelectAssetClick(Button2D* _button, CursorInputEvent& _event)
+    {
+        PropertyDrawerFontMaterialWPtr weakPtr = cast<PropertyDrawerFontMaterial>();
+        FontMaterialPickerManager::GetInstancePtr()->openFontMaterialPicker(
+            [weakPtr](FontMaterialPtr const& _material)
+            {
+                PropertyDrawerFontMaterialPtr ptr = weakPtr.lock();
                 if (ptr)
                 {
-                    ptr->setValue(_renderMesh);
+                    ptr->setValue(_material);
                     ptr->eventUIData();
                 }
             },
-            m_renderMesh);
+            m_fontMaterial);
     }
 
 
+
     //////////////////////////////////////////
-    // Class PropertyDrawerRenderMeshAssetRef
+    // Class PropertyDrawerFontMaterialAssetRef
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerRenderMeshAssetRef, PropertyDrawer);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerFontMaterialAssetRef, PropertyDrawer);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerRenderMeshAssetRef);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerFontMaterialAssetRef);
 
     //////////////////////////////////////////
-    PropertyDrawerRenderMeshAssetRef::PropertyDrawerRenderMeshAssetRef()
+    PropertyDrawerFontMaterialAssetRef::PropertyDrawerFontMaterialAssetRef()
     {
 
     }
 
     //////////////////////////////////////////
-    PropertyDrawerRenderMeshAssetRef::~PropertyDrawerRenderMeshAssetRef()
+    PropertyDrawerFontMaterialAssetRef::~PropertyDrawerFontMaterialAssetRef()
     {
         if (m_drawer)
             m_drawer->eventUIData.unsubscribe(this);
@@ -307,27 +327,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PropertyDrawerRenderMeshAssetRefPtr PropertyDrawerRenderMeshAssetRef::Create(DataBlock const& _dataBlock)
+    PropertyDrawerFontMaterialAssetRefPtr PropertyDrawerFontMaterialAssetRef::Create(DataBlock const& _dataBlock)
     {
-        PropertyDrawerRenderMeshAssetRefPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerRenderMeshAssetRef, object, init(_dataBlock));
+        PropertyDrawerFontMaterialAssetRefPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerFontMaterialAssetRef, object, init(_dataBlock));
         return object;
     }
 
     //////////////////////////////////////////
-    bool PropertyDrawerRenderMeshAssetRef::init(DataBlock const& _dataBlock)
+    bool PropertyDrawerFontMaterialAssetRef::init(DataBlock const& _dataBlock)
     {
         if (!PropertyDrawer::init(_dataBlock))
             return false;
 
-        m_drawer = PropertyDrawerRenderMesh::Create(_dataBlock);
-        m_drawer->eventUIData.subscribe(this, &PropertyDrawerRenderMeshAssetRef::processDataFromUI);
+        m_drawer = PropertyDrawerFontMaterial::Create(_dataBlock);
+        m_drawer->eventUIData.subscribe(this, &PropertyDrawerFontMaterialAssetRef::processDataFromUI);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRenderMeshAssetRef::buildUI(
+    void PropertyDrawerFontMaterialAssetRef::buildUI(
         Transform2DPtr const& _parent,
         CString _label)
     {
@@ -335,19 +355,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRenderMeshAssetRef::setValue(RenderMeshAssetRef const& _value)
+    void PropertyDrawerFontMaterialAssetRef::setValue(FontMaterialAssetRef const& _value)
     {
-        m_drawer->setValue(_value.getRenderMesh());
+        m_drawer->setValue(_value.getFontMaterial());
     }
 
     //////////////////////////////////////////
-    RenderMeshAssetRef PropertyDrawerRenderMeshAssetRef::getValue() const
+    FontMaterialAssetRef PropertyDrawerFontMaterialAssetRef::getValue() const
     {
-        return RenderMeshAssetRef(m_drawer->getValue());
+        return FontMaterialAssetRef(m_drawer->getValue());
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRenderMeshAssetRef::processDataFromUI()
+    void PropertyDrawerFontMaterialAssetRef::processDataFromUI()
     {
         eventUIData();
     }

@@ -90,6 +90,7 @@ namespace Maze
         //////////////////////////////////////////
         FontGlyphStorageData* getGlyphStorageData(U32 _codePoint);
 
+
         //////////////////////////////////////////
         FontGlyph const& ensureGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize);
 
@@ -99,6 +100,7 @@ namespace Maze
         //////////////////////////////////////////
         FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize);
 
+
         //////////////////////////////////////////
         FontGlyph const& ensureOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness);
 
@@ -107,6 +109,17 @@ namespace Maze
 
         //////////////////////////////////////////
         FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness);
+
+
+        //////////////////////////////////////////
+        FontGlyph const& ensureBoldGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize);
+
+        //////////////////////////////////////////
+        FontGlyph const& ensureBoldGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, TTFPagePtr const& _ttfPage);
+
+        //////////////////////////////////////////
+        FontGlyph const& ensureBoldGlyph(U32 _codePoint, U32 _fontSize);
+
 
         //////////////////////////////////////////
         F32 getLineSpacing(U32 _fontSize) const;

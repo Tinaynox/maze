@@ -681,6 +681,11 @@ namespace Maze
                                 "Add Child/2D/Click Button",
                                 [transform2D](String const& _text)
                                 { EditorHelper::CreateClickButton2D("Click Button", transform2D->cast<Transform2D>()); });
+
+                            _menuListTree->addItem(
+                                "Add Child/2D/Text",
+                                [transform2D](String const& _text)
+                            { EditorHelper::CreateText("Text", transform2D->cast<Transform2D>()); });
                         }
                     }
 

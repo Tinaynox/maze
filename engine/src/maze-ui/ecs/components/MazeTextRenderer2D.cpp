@@ -67,6 +67,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(VerticalAlignment2D, verticalAlignment, VerticalAlignment2D::Top, getVerticalAlignment, setVerticalAlignment),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(TextRenderer2DWidthPolicy, widthPolicy, TextRenderer2DWidthPolicy::None, getWidthPolicy, setWidthPolicy),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, outlineThickness, 0.0f, getOutlineThickness, setOutlineThickness),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, bold, false, getBold, setBold),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, outlineColor, ColorU32::c_white, getOutlineColor, setOutlineColor));
 
     //////////////////////////////////////////
@@ -90,10 +91,12 @@ namespace Maze
         TempGlyphData(
             FontGlyphStorageData* _glyphStorageData = nullptr,
             FontGlyph const* _glyph = nullptr,
-            FontGlyph const* _outlineThicknessGlyph = nullptr)
+            FontGlyph const* _outlineThicknessGlyph = nullptr,
+            FontGlyph const* _boldGlyph = nullptr)
             : glyphStorageData(_glyphStorageData)
             , glyph(_glyph)
             , outlineThicknessGlyph(_outlineThicknessGlyph)
+            , boldGlyph(_boldGlyph)
         {
 
         }
@@ -101,6 +104,7 @@ namespace Maze
         FontGlyphStorageData* glyphStorageData;
         FontGlyph const* glyph;
         FontGlyph const* outlineThicknessGlyph;
+        FontGlyph const* boldGlyph;
     };
 
 
@@ -306,6 +310,7 @@ namespace Maze
 
         auto ttfPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFPage(m_fontSize);
         auto ttfOutlineThicknessPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFOutlineThicknessPage(m_fontSize, m_outlineThickness);
+        auto ttfBoldPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFBoldPage(m_fontSize);
 
         getFontMaterial()->getFont()->getDefaultFont()->ensureGlyph(L'x', m_fontSize, *ttfPage);
         getFontMaterial()->getFont()->getDefaultFont()->ensureGlyph(L' ', m_fontSize, *ttfPage);
@@ -330,6 +335,9 @@ namespace Maze
 
                     if (m_outlineThickness)
                         ttfOutlineThicknessPage = &glyphStorageData->getTrueTypeFont()->ensureTTFOutlineThicknessPage(m_fontSize, m_outlineThickness);
+                    else
+                    if (m_bold)
+                        ttfBoldPage = &glyphStorageData->getTrueTypeFont()->ensureTTFBoldPage(m_fontSize);
                 }
             }
             else
@@ -338,12 +346,18 @@ namespace Maze
 
                 if (m_outlineThickness)
                     ttfOutlineThicknessPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFOutlineThicknessPage(m_fontSize, m_outlineThickness);
+                else
+                if (m_bold)
+                    ttfBoldPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFBoldPage(m_fontSize);
             }
            
             getFontMaterial()->getFont()->ensureGlyphFromStorage(glyphStorageData, curChar, m_fontSize, *ttfPage);
 
             if (m_outlineThickness)
                 getFontMaterial()->getFont()->ensureOutlinedGlyphFromStorage(glyphStorageData, curChar, m_fontSize, m_outlineThickness, *ttfOutlineThicknessPage);
+            else
+            if (m_bold)
+                getFontMaterial()->getFont()->ensureBoldGlyphFromStorage(glyphStorageData, curChar, m_fontSize, *ttfBoldPage);
         }
     }
 
@@ -438,6 +452,7 @@ namespace Maze
         FontGlyphStorageData* glyphStorageData = nullptr;
         auto ttfPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFPage(m_fontSize);
         auto ttfOutlineThicknessPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFOutlineThicknessPage(m_fontSize, m_outlineThickness);
+        auto ttfBoldPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFBoldPage(m_fontSize);
 
         F32 ascent = getFontMaterial()->getFont()->getDefaultFont()->getAscender(m_fontSize);
         F32 descent = getFontMaterial()->getFont()->getDefaultFont()->getDescender(m_fontSize);
@@ -507,9 +522,10 @@ namespace Maze
                             ttfPage = &glyphStorageData->getTrueTypeFont()->ensureTTFPage(m_fontSize);
 
                             if (m_outlineThickness)
-                            {
                                 ttfOutlineThicknessPage = &glyphStorageData->getTrueTypeFont()->ensureTTFOutlineThicknessPage(m_fontSize, m_outlineThickness);
-                            }
+                            else
+                            if (m_bold)
+                                ttfBoldPage = &glyphStorageData->getTrueTypeFont()->ensureTTFBoldPage(m_fontSize);
                         }
                     }
                     else
@@ -518,6 +534,9 @@ namespace Maze
 
                         if (m_outlineThickness)
                             ttfOutlineThicknessPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFOutlineThicknessPage(m_fontSize, m_outlineThickness);
+                        else
+                        if (m_bold)
+                            ttfBoldPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFBoldPage(m_fontSize);
                     }
                 }
                 glyphData.glyph = &(getFontMaterial()->getFont()->ensureGlyphFromStorage(glyphStorageData, curChar, m_fontSize, *ttfPage));
@@ -539,6 +558,10 @@ namespace Maze
                     if (m_outlineThickness)
                         glyphData.outlineThicknessGlyph = &(getFontMaterial()->getFont()->ensureOutlinedGlyphFromStorage(
                             glyphStorageData, curChar, m_fontSize, m_outlineThickness, *ttfOutlineThicknessPage));
+                    else
+                    if (m_bold)
+                        glyphData.boldGlyph = &(getFontMaterial()->getFont()->ensureBoldGlyphFromStorage(
+                            glyphStorageData, curChar, m_fontSize, *ttfBoldPage));
 
                 
                     if (glyphData.glyphStorageData)
@@ -691,7 +714,10 @@ namespace Maze
                         }
                     }
 
-                    setGlyphQuad(outlineQuadsCount + curQuadIndex, Vec2F(glyphX, glyphY), currentGlyphColor, (*glyphData.glyph));
+                    if (m_bold)
+                        setGlyphQuad(outlineQuadsCount + curQuadIndex, Vec2F(glyphX, glyphY), currentGlyphColor, (*glyphData.boldGlyph));
+                    else
+                        setGlyphQuad(outlineQuadsCount + curQuadIndex, Vec2F(glyphX, glyphY), currentGlyphColor, (*glyphData.glyph));
                     ++curQuadIndex;
                 }
             }

@@ -56,6 +56,7 @@
 #include "maze-editor-tools/property-drawers/MazePDRadians.hpp"
 #include "maze-editor-tools/property-drawers/MazePDTexture2D.hpp"
 #include "maze-editor-tools/property-drawers/MazePDSprite.hpp"
+#include "maze-editor-tools/property-drawers/MazePDFontMaterial.hpp"
 #include "maze-editor-tools/property-drawers/MazePDEntityId.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDBool.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDS32.hpp"
@@ -161,6 +162,22 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    using MetaPropertyDrawerFontMaterial =
+        MetaPropertyDrawerDefault<
+        FontMaterialPtr,
+        PropertyDrawerFontMaterial>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerFontMaterial, MetaPropertyDrawer);
+
+
+    //////////////////////////////////////////
+    using MetaPropertyDrawerFontMaterialAssetRef =
+        MetaPropertyDrawerDefault<
+        FontMaterialAssetRef,
+        PropertyDrawerFontMaterialAssetRef>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerFontMaterialAssetRef, MetaPropertyDrawer);
+
+
+    //////////////////////////////////////////
     using MetaPropertyDrawerEntityId =
         MetaPropertyDrawerDefault<
         EntityId,
@@ -218,6 +235,8 @@ namespace Maze
         registerPropertyDrawer<Texture2DPtr, PropertyDrawerTexture2D>();
         registerPropertyDrawer<SpritePtr, PropertyDrawerSprite>();
         registerPropertyDrawer<SpriteAssetRef, PropertyDrawerSpriteAssetRef>();
+        registerPropertyDrawer<FontMaterialPtr, PropertyDrawerFontMaterial>();
+        registerPropertyDrawer<FontMaterialAssetRef, PropertyDrawerFontMaterialAssetRef>();
         registerPropertyDrawer<EntityId, PropertyDrawerEntityId>();
 
         registerMetaPropertyDrawer<bool, MetaPropertyDrawerBool>();
@@ -242,6 +261,8 @@ namespace Maze
         registerMetaPropertyDrawer<Texture2DPtr, MetaPropertyDrawerTexture2D>();
         registerMetaPropertyDrawer<SpritePtr, MetaPropertyDrawerSprite>();
         registerMetaPropertyDrawer<SpriteAssetRef, MetaPropertyDrawerSpriteAssetRef>();
+        registerMetaPropertyDrawer<FontMaterialPtr, MetaPropertyDrawerFontMaterial>();
+        registerMetaPropertyDrawer<FontMaterialAssetRef, MetaPropertyDrawerFontMaterialAssetRef>();
         registerMetaPropertyDrawer<EntityId, MetaPropertyDrawerEntityId>();
 
         registerComponentEditor<Transform3D, ComponentEditorTransform3D>();

@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/texture-picker/MazeSceneTexturePicker.hpp"
+#include "maze-editor-tools/pickers/MazeSceneRenderMeshPicker.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
@@ -44,13 +44,14 @@
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
-#include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
@@ -68,13 +69,12 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
-#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/helpers/MazeColorHelper.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
-#include "maze-editor-tools/managers/MazeTexturePickerManager.hpp"
+#include "maze-editor-tools/managers/MazeRenderMeshPickerManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
@@ -92,22 +92,23 @@
 namespace Maze
 {
 
-    //////////////////////////////////////////
-    // Class SceneTexturePicker
-    //
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneTexturePicker, EcsRenderScene);
 
     //////////////////////////////////////////
-    SceneTexturePicker::SceneTexturePicker()
+    // Class SceneRenderMeshPicker
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneRenderMeshPicker, EcsRenderScene);
+
+    //////////////////////////////////////////
+    SceneRenderMeshPicker::SceneRenderMeshPicker()
     {
     }
 
     //////////////////////////////////////////
-    SceneTexturePicker::~SceneTexturePicker()
+    SceneRenderMeshPicker::~SceneRenderMeshPicker()
     {
-        if (TexturePickerManager::GetInstancePtr())
-            TexturePickerManager::GetInstancePtr()->eventTextureChanged.unsubscribe(this);
+        if (RenderMeshPickerManager::GetInstancePtr())
+            RenderMeshPickerManager::GetInstancePtr()->eventRenderMeshChanged.unsubscribe(this);
 
         if (m_filterEditBox)
             m_filterEditBox->eventTextInput.unsubscribe(this);
@@ -124,42 +125,41 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SceneTexturePickerPtr SceneTexturePicker::Create(RenderTargetPtr const& _renderTarget)
+    SceneRenderMeshPickerPtr SceneRenderMeshPicker::Create(RenderTargetPtr const& _renderTarget)
     {
-        SceneTexturePickerPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneTexturePicker, object, init(_renderTarget));
+        SceneRenderMeshPickerPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneRenderMeshPicker, object, init(_renderTarget));
         return object;
     }
 
     //////////////////////////////////////////
-    bool SceneTexturePicker::init(RenderTargetPtr const& _renderTarget)
+    bool SceneRenderMeshPicker::init(RenderTargetPtr const& _renderTarget)
     {
         if (!EcsRenderScene::init(_renderTarget))
             return false;
 
         create2D();
         
-        TexturePickerManager::GetInstancePtr()->eventTextureChanged.subscribe(this, &SceneTexturePicker::notifyTextureChanged);
+        RenderMeshPickerManager::GetInstancePtr()->eventRenderMeshChanged.subscribe(this, &SceneRenderMeshPicker::notifyRenderMeshChanged);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::setup()
+    void SceneRenderMeshPicker::setup()
     {
         
         updateUI();
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::update(F32 _dt)
+    void SceneRenderMeshPicker::update(F32 _dt)
     {
         
     }
 
-
     //////////////////////////////////////////
-    void SceneTexturePicker::create2D()
+    void SceneRenderMeshPicker::create2D()
     {
         ColorU32 bandColor(176, 176, 176);
 
@@ -170,8 +170,8 @@ namespace Maze
         m_canvas->setClearColor(ColorU32(203, 203, 203, 255));
         m_canvas->setRenderTarget(m_renderTarget);
         m_canvasUIElement = canvasEntity->ensureComponent<UIElement2D>();
-        m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneTexturePicker::notifyCanvasCursorReleaseIn);
-        m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneTexturePicker::notifyCanvasCursorReleaseOut);
+        m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneRenderMeshPicker::notifyCanvasCursorReleaseIn);
+        m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneRenderMeshPicker::notifyCanvasCursorReleaseOut);
 
         m_filterEditBox = UIHelper::CreateDefaultEditBox(
             "",
@@ -183,7 +183,7 @@ namespace Maze
             m_canvas->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
-        m_filterEditBox->eventTextInput.subscribe(this, &SceneTexturePicker::notifyFilterTextInput);
+        m_filterEditBox->eventTextInput.subscribe(this, &SceneRenderMeshPicker::notifyFilterTextInput);
         m_filterEditBox->getTransform()->setZ(100000);
         SizePolicy2DPtr filterSizePolicy = m_filterEditBox->getEntityRaw()->ensureComponent<SizePolicy2D>();
         filterSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
@@ -213,38 +213,36 @@ namespace Maze
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         layoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
-        TextureManager::GetCurrentInstancePtr()->loadAllAssetTextures();
-
-        updateTextures();
+        updateRenderMeshs();
         updateUI();
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::notifyTextureChanged(Texture2DPtr const& _texture)
+    void SceneRenderMeshPicker::notifyRenderMeshChanged(RenderMeshPtr const& _material)
     {
         updateUI();
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::updateTextures()
+    void SceneRenderMeshPicker::updateRenderMeshs()
     {
         clearPreviews();
 
         String const& filterText = m_filterEditBox->getText();
 
-        Vector<Texture2DPtr> textures;
-        for (Texture2DPtr const& texture : TextureManager::GetCurrentInstancePtr()->getTextures2DSorted())
-            if (filterText.empty() || texture->getName().getString().find(filterText) != String::npos)
-                textures.push_back(texture);
-        textures.insert(textures.begin(), Texture2DPtr());
+        Vector<RenderMeshPtr> meshes;
+        for (RenderMeshPtr const& mesh : RenderMeshManager::GetCurrentInstancePtr()->getRenderMeshesSorted())
+            if (filterText.empty() || mesh->getName().getString().find(filterText) != String::npos)
+                meshes.push_back(mesh);
+        meshes.insert(meshes.begin(), RenderMeshPtr());
 
         m_layout->getTransform()->removeAllChildren();
 
         HorizontalLayout2DPtr horizontalLayout;
 
-        for (S32 i = 0; i < (S32)textures.size(); ++i)
+        for (S32 i = 0; i < (S32)meshes.size(); ++i)
         {
-            Texture2DPtr const& texture = textures[i];
+            RenderMeshPtr const& mesh = meshes[i];
 
             if (i % 4 == 0)
                 horizontalLayout.reset();
@@ -264,28 +262,28 @@ namespace Maze
                 horizontalLayout->setPaddingRight(4.0f);
             }
 
-            TexturePreviewData data = createTexturePreview(texture);
+            RenderMeshPreviewData data = createRenderMeshPreview(mesh);
             data.bodyTransform->setParent(horizontalLayout->getTransform());
-            data.button->eventClick.subscribe(this, &SceneTexturePicker::notifyButtonClick);
+            data.button->eventClick.subscribe(this, &SceneRenderMeshPicker::notifyButtonClick);
 
             m_previews.push_back(data);
         }
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::updateUI()
+    void SceneRenderMeshPicker::updateUI()
     {
         if (getState() == EcsSceneState::Destroy)
             return;
 
-        Texture2DPtr const& currentTexture = TexturePickerManager::GetInstancePtr()->getTexture();
+        RenderMeshPtr const& currentRenderMesh = RenderMeshPickerManager::GetInstancePtr()->getRenderMesh();
 
         for (Size i = 0; i < m_previews.size(); ++i)
         {
-            TexturePreviewData const& previewData = m_previews[i];        
-            Texture2DPtr const& material = previewData.texture;
+            RenderMeshPreviewData const& previewData = m_previews[i];        
+            RenderMeshPtr const& material = previewData.renderMesh;
 
-            bool checked = (material == currentTexture);
+            bool checked = (material == currentRenderMesh);
             previewData.button->setChecked(checked);
 
             if (checked)
@@ -296,22 +294,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event)
+    void SceneRenderMeshPicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent& _event)
     {
         
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::notifyCanvasCursorReleaseOut(CursorInputEvent& _event)
+    void SceneRenderMeshPicker::notifyCanvasCursorReleaseOut(CursorInputEvent& _event)
     {
         
     }
 
     //////////////////////////////////////////
-    SceneTexturePicker::TexturePreviewData SceneTexturePicker::createTexturePreview(Texture2DPtr const& _texture)
+    SceneRenderMeshPicker::RenderMeshPreviewData SceneRenderMeshPicker::createRenderMeshPreview(RenderMeshPtr const& _material)
     {
-        TexturePreviewData data;
-        data.texture = _texture;
+        RenderMeshPreviewData data;
+        data.renderMesh = _material;
 
         data.bodyTransform = SpriteHelper::CreateTransform2D(
             { 94.0f, 110.0f },
@@ -338,21 +336,11 @@ namespace Maze
             data.button->getTransform(),
             data.bodyTransform->getEntityRaw()->getEcsScene());
 
-        if (_texture)
-        {
-            // #TODO: REWORK
-            SpritePtr fakeSprite = Sprite::Create(_texture);
-            fakeSprite->setName(MAZE_HS("TexturePickerSprite"));
-            sprite->setSprite(fakeSprite);
-            
-        }
-
-        String textureName = _texture ? _texture->getName().getString() : "None";
-
-        textureName = FileHelper::GetFileNameWithoutExtension(textureName);
+        String renderMeshName = _material ? _material->getName().getString() : "None";
+        renderMeshName = FileHelper::GetFileNameWithoutExtension(renderMeshName);
 
         data.titleText = EditorToolsUIHelper::CreateText(
-            textureName.c_str(),
+            renderMeshName.c_str(),
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             12,
             HorizontalAlignment2D::Center,
@@ -365,7 +353,7 @@ namespace Maze
             { 0.5f, 0.5f });
         data.titleText->setColor(ColorU32::c_black);
 
-        F32 scalar = data.bodyTransform->getWidth() / (textureName.size() * 8.0f);
+        F32 scalar = data.bodyTransform->getWidth() / (renderMeshName.size() * 8.0f);
         if (scalar < 1.0f)
             data.titleText->getTransform()->setLocalScale(scalar);
         else
@@ -375,31 +363,31 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::clearPreviews()
+    void SceneRenderMeshPicker::clearPreviews()
     {
-        for (TexturePreviewData const& preview : m_previews)
+        for (RenderMeshPreviewData const& preview : m_previews)
             preview.button->eventClick.unsubscribe(this);
 
         m_previews.clear();
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::notifyButtonClick(Button2D* _button, CursorInputEvent& _event)
+    void SceneRenderMeshPicker::notifyButtonClick(Button2D* _button, CursorInputEvent& _event)
     {
-        for (TexturePreviewData const& preview : m_previews)
+        for (RenderMeshPreviewData const& preview : m_previews)
         {
             if (_button == preview.button.get())
             {
-                TexturePickerManager::GetInstancePtr()->setTexture(preview.texture);
+                RenderMeshPickerManager::GetInstancePtr()->setRenderMesh(preview.renderMesh);
                 break;
             }
         }
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::notifyFilterTextInput(EditBox2D* _editBox)
+    void SceneRenderMeshPicker::notifyFilterTextInput(EditBox2D* _editBox)
     {
-        updateTextures();
+        updateRenderMeshs();
     }
 
 } // namespace Maze

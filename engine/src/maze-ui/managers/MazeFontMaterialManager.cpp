@@ -189,6 +189,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    FontMaterialPtr const& FontMaterialManager::getOrLoadFontMaterial(
+        AssetFilePtr const& _assetFile,
+        bool _syncLoad)
+    {
+        static FontMaterialPtr const nullPointer;
+
+        if (!_assetFile)
+            return nullPointer;
+
+        return getOrLoadFontMaterial(_assetFile->getFileName().toUTF8().c_str(), _syncLoad);
+    }
+
+    //////////////////////////////////////////
     FontMaterialLibraryData* FontMaterialManager::addFontMaterialToLibrary(
         FontMaterialPtr const& _trueTypeFont,
         FontMaterialLibraryDataCallbacks const& _callbacks,
@@ -221,6 +234,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void FontMaterialManager::loadAllAssetFontMaterials()
+    {
+        MAZE_PROFILE_EVENT("FontMaterialManager::loadAllAssetMaterials");
+
+        Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtension("mzfontmaterial");
+        for (AssetFilePtr const& assetFile : assetFiles)
+        {
+            getOrLoadFontMaterial(assetFile);
+        }
+    }
+
+    //////////////////////////////////////////
     void FontMaterialManager::unloadAssetFontMaterials(Set<String> const& _tags)
     {
         Vector<std::function<void(bool)>> unloadCallbacks;
@@ -236,6 +261,25 @@ namespace Maze
 
         for (std::function<void(bool)> const& unloadCallback : unloadCallbacks)
             unloadCallback(true);
+    }
+
+    //////////////////////////////////////////
+    Vector<FontMaterialPtr> FontMaterialManager::getFontMaterialsSorted()
+    {
+        Vector<FontMaterialPtr> result;
+
+        for (auto const& value : m_fontMaterialsLibrary)
+            result.emplace_back(value.second.fontMaterial);
+
+        std::sort(
+            result.begin(),
+            result.end(),
+            [](FontMaterialPtr const& _a, FontMaterialPtr const& _b)
+        {
+            return _a->getName() < _b->getName();
+        });
+
+        return result;
     }
 
 

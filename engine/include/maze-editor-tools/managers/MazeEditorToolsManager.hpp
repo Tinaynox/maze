@@ -63,6 +63,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderMeshPickerManager);
     MAZE_USING_SHARED_PTR(TexturePickerManager);
     MAZE_USING_SHARED_PTR(SpritePickerManager);
+    MAZE_USING_SHARED_PTR(FontMaterialPickerManager);
 
 
     //////////////////////////////////////////
@@ -156,6 +157,7 @@ namespace Maze
         RenderMeshPickerManagerPtr m_renderMeshPickerManager;
         TexturePickerManagerPtr m_texturePickerManager;
         SpritePickerManagerPtr m_spritePickerManager;
+        FontMaterialPickerManagerPtr m_fontMaterialPickerManager;
 
         EditorToolsStylesPtr m_styles;
         SelectionManagerPtr m_selectionManager;

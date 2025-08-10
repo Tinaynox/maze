@@ -71,6 +71,7 @@
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -317,6 +318,35 @@ namespace Maze
                 gameObject->getEcsScene());
             iconSprite->setColor(85, 85, 85);
             iconSprite->getEntityRaw()->ensureComponent<Name>("Icon");
+
+            ProcessEditorActionsForCreatedEntity(gameObject, _select);
+
+            return gameObject;
+        }
+
+        //////////////////////////////////////////
+        EntityPtr CreateText(
+            CString _entityName,
+            Transform2DPtr const& _parent,
+            bool _select)
+        {
+            EntityPtr gameObject = CreateEntity2D(_entityName);
+            if (!gameObject)
+                return EntityPtr();
+
+            TextRenderer2DPtr textRenderer = gameObject->createComponent<TextRenderer2D>();
+            textRenderer->setText("Text");
+            textRenderer->setFontSize(12u);
+            textRenderer->setHorizontalAlignment(HorizontalAlignment2D::Center);
+            textRenderer->setVerticalAlignment(VerticalAlignment2D::Middle);
+
+            FontMaterialPtr const& fontMaterial = FontMaterialManager::GetInstancePtr()->getDefaultFontMaterial();
+            if (fontMaterial)
+                textRenderer->setFontMaterial(fontMaterial);
+
+            Transform2DPtr transform = gameObject->ensureComponent<Transform2D>();
+            transform->setParent(_parent);
+            transform->setSize(60.0f, 14.0f);
 
             ProcessEditorActionsForCreatedEntity(gameObject, _select);
 
