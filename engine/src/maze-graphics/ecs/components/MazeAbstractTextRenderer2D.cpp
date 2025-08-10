@@ -101,6 +101,7 @@ namespace Maze
     {
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
         m_canvasRenderer = getEntityRaw()->ensureComponent<CanvasRenderer>();
+        m_canvasRenderer->setFlag(Component::Flags::SerializationDisabled, true);
     }            
     
 } // namespace Maze

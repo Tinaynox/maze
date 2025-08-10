@@ -87,6 +87,7 @@ namespace Maze
             MetaInstance objMetaInstance;
         };
 
+
     public:
 
         //////////////////////////////////////////
@@ -183,6 +184,14 @@ namespace Maze
         //////////////////////////////////////////
         friend class Entity;
 
+        //////////////////////////////////////////
+        enum class Flags
+        {
+            None = 0,
+
+            SerializationDisabled = MAZE_BIT(0)
+        };
+
     public:
 
         //////////////////////////////////////////
@@ -224,6 +233,25 @@ namespace Maze
 
         //////////////////////////////////////////
         inline S64 getMaskFlag() const { return (S64)1 << U32(getClassUID() % 64); }
+
+
+        //////////////////////////////////////////
+        inline U8 getFlags() const { return m_flags; }
+
+        //////////////////////////////////////////
+        void setFlags(U8 flags);
+
+        //////////////////////////////////////////
+        inline void setFlag(Flags flag, bool value)
+        {
+            if (value)
+                setFlags(m_flags | static_cast<U8>(flag));
+            else
+                setFlags(m_flags & ~static_cast<U8>(flag));
+        }
+
+        //////////////////////////////////////////
+        inline bool getFlag(Flags flag) const { return (m_flags & static_cast<U8>(flag)) != 0; }
 
 
         //////////////////////////////////////////
@@ -317,6 +345,7 @@ namespace Maze
     protected:
         Entity* m_entityRaw = nullptr;
         EcsSerializationId m_serializationId = c_invalidSerializationId;
+        U8 m_flags = 0u;
     };
 
     //////////////////////////////////////////

@@ -95,6 +95,7 @@ namespace Maze
     {
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
         m_bounds = getEntityRaw()->ensureComponent<Bounds2D>();
+        m_bounds->setFlag(Component::Flags::SerializationDisabled, true);
     }        
 
     //////////////////////////////////////////

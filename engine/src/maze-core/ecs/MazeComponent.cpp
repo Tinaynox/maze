@@ -75,6 +75,8 @@ namespace Maze
     {
         _copyData.getComponents()[_component] = this;
 
+        setFlags(_component->getFlags());
+
         MAZE_DEBUG_BP_IF(getMetaClass() != _component->getMetaClass())
         MetaInstance metaInstance = getMetaInstance();
         MetaInstance objMetaInstance = _component->getMetaInstance();
@@ -175,6 +177,15 @@ namespace Maze
             processComponentAdded();
         else
             processComponentRemoved();
+    }
+
+    //////////////////////////////////////////
+    void Component::setFlags(U8 _flags)
+    {
+        if (m_flags == _flags)
+            return;
+
+        m_flags = _flags;
     }
 
     //////////////////////////////////////////

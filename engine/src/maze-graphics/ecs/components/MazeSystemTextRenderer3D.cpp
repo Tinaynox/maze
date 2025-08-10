@@ -393,6 +393,7 @@ namespace Maze
 
         m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
         m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadMesh());
+        m_meshRenderer->setFlag(Component::Flags::SerializationDisabled, true);
 
         updateMaterial();
         updateMeshData();

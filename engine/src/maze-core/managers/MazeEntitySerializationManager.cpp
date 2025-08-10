@@ -420,6 +420,12 @@ namespace Maze
                 if (componentData.first == ClassInfo<PrefabInstance>::UID())
                     continue;
 
+                if (m_componentsToIgnore.count(componentData.first) > 0)
+                    continue;
+
+                if (componentData.second->getFlag(Component::Flags::SerializationDisabled))
+                    continue;
+
                 ComponentPtr const& identityComponent = identityPrefabEntity->getComponentById(componentData.first);
                 if (identityComponent)
                 {
@@ -479,9 +485,6 @@ namespace Maze
                 }
                 else
                 {
-                    if (m_componentsToIgnore.count(componentData.first) > 0)
-                        continue;
-
                     saveComponentFunc(componentData.second, *entityBlock);
                 }
             }
@@ -1456,6 +1459,9 @@ namespace Maze
                 if (m_componentsToIgnore.count(componentData.first) > 0)
                     continue;
 
+                if (componentData.second->getFlag(Component::Flags::SerializationDisabled))
+                    continue;
+
                 components.push_back(componentData.second);
             }
 
@@ -1480,6 +1486,9 @@ namespace Maze
             for (auto const& componentData : entity->getComponents())
             {
                 if (m_componentsToIgnore.count(componentData.first) > 0)
+                    continue;
+
+                if (componentData.second->getFlag(Component::Flags::SerializationDisabled))
                     continue;
 
                 components.push_back(componentData.second);
