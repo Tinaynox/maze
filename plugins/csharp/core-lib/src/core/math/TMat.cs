@@ -284,6 +284,11 @@ namespace Maze.Core
             return matrix.Transform(vector);
         }
 
+        public static Vec2F operator *(Vec2F vector, TMat matrix)
+        {
+            return matrix.Transform(new Vec3F(vector)).XY;
+        }
+
         public static Vec3F operator *(TMat matrix, Vec3F vector)
         {
             return new Vec3F(
@@ -291,6 +296,11 @@ namespace Maze.Core
                 matrix.M10 * vector.X + matrix.M11 * vector.Y + matrix.M12 * vector.Z + matrix.M31,
                 matrix.M20 * vector.X + matrix.M21 * vector.Y + matrix.M22 * vector.Z + matrix.M32
             );
+        }
+
+        public static Vec2F operator *(TMat matrix, Vec2F vector)
+        {
+            return (matrix * new Vec3F(vector)).XY;
         }
 
         public Mat3F GetMat3()

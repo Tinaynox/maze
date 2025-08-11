@@ -123,6 +123,30 @@ namespace Maze.Core
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform2DGetChild(NativePtr nativeComponentPtr, int index, out NativePtr outChild);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DGetPosition(NativePtr nativeComponentPtr, out Vec2F outPosition);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DSetPosition(NativePtr nativeComponentPtr, ref Vec2F pos);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DGetScale(NativePtr nativeComponentPtr, out Vec2F outScale);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DSetScale(NativePtr nativeComponentPtr, ref Vec2F scale);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DSetParent(NativePtr nativeComponentPtr, NativePtr parentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DGetLocalTransform(NativePtr nativeComponentPtr, out TMat outTMat);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DSetLocalTransform(NativePtr nativeComponentPtr, TMat tm);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DGetWorldTransform(NativePtr nativeComponentPtr, out TMat outTMat);
         #endregion
 
 

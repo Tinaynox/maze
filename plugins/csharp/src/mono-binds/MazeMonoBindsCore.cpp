@@ -436,6 +436,55 @@ namespace Maze
         *_outComponent = _component->castRaw<Transform2D>()->getChild(_index);
     }
 
+    //////////////////////////////////////////
+    inline void Transform2DGetPosition(Component* _component, Vec2F& _outPosition)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _outPosition = _component->castRaw<Transform2D>()->getLocalPosition();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform2DSetPosition(Component* _component, Vec2F const& _position)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _component->castRaw<Transform2D>()->setLocalPosition(_position);
+    }
+
+    //////////////////////////////////////////
+    inline void Transform2DGetScale(Component* _component, Vec2F& _outScale)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _outScale = _component->castRaw<Transform2D>()->getLocalScale();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform2DSetScale(Component* _component, Vec2F const& _scale)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _component->castRaw<Transform2D>()->setLocalScale(_scale);
+    }
+
+    //////////////////////////////////////////
+    inline void Transform2DGetLocalTransform(Component* _component, TMat& _outTMat)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _outTMat = _component->castRaw<Transform2D>()->getLocalTransform();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform2DSetLocalTransform(Component* _component, TMat const& _tm)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _component->castRaw<Transform2D>()->setLocalTransform(_tm);
+    }
+
+    //////////////////////////////////////////
+    inline void Transform2DGetWorldTransform(Component* _component, TMat& _outTMat)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _outTMat = _component->castRaw<Transform2D>()->getWorldTransform();
+    }
+
 
     //////////////////////////////////////////
     inline void Transform3DTranslate(Component* _component, Vec3F const& _delta)
@@ -502,6 +551,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void Transform3DSetScale(Component* _component, Vec3F const& _scale)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform3D);
+        _component->castRaw<Transform3D>()->setLocalScale(_scale);
+    }
+
+    //////////////////////////////////////////
     inline void Transform3DGetLocalTransform(Component* _component, TMat& _outTMat)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform3D);
@@ -527,14 +583,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform3D);
         _component->castRaw<Transform3D>()->setWorldTransform(_tm);
-    }
-
-    //////////////////////////////////////////
-    inline void Transform3DSetScale(Component* _component, Vec3F const& _scale)
-    {
-        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform3D);
-        _component->castRaw<Transform3D>()->setLocalScale(_scale);
-    }
+    }    
 
 
     //////////////////////////////////////////
@@ -606,6 +655,13 @@ namespace Maze
         // Transform2D
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChildCount);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChild);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetPosition);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DSetPosition);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetScale);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DSetScale);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetLocalTransform);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DSetLocalTransform);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetWorldTransform);
 
         // Transform3D
         MAZE_CORE_MONO_BIND_FUNC(Transform3DTranslate);

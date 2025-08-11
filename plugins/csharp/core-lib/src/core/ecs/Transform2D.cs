@@ -8,6 +8,32 @@ namespace Maze.Core
         : NativeComponent
         , IEnumerable<Transform2D>
     {
+        public Vec2F Position
+        {
+            get { InternalCalls.Transform2DGetPosition(NativeComponentPtr, out Vec2F pos); return pos; }
+            set { InternalCalls.Transform2DSetPosition(NativeComponentPtr, ref value); }
+        }
+
+        public float X { get => Position.X; set { Vec2F v = Position; v.X = value; Position = v; } }
+        public float Y { get => Position.Y; set { Vec2F v = Position; v.Y = value; Position = v; } }
+
+        public Vec2F Scale
+        {
+            get { InternalCalls.Transform2DGetScale(NativeComponentPtr, out Vec2F scale); return scale; }
+            set { InternalCalls.Transform2DSetScale(NativeComponentPtr, ref value); }
+        }
+
+        public TMat Transform
+        {
+            get { InternalCalls.Transform2DGetLocalTransform(NativeComponentPtr, out TMat tm); return tm; }
+            set { InternalCalls.Transform2DSetLocalTransform(NativeComponentPtr, value); }
+        }
+
+        public TMat WorldTransform
+        {
+            get { InternalCalls.Transform2DGetWorldTransform(NativeComponentPtr, out TMat tm); return tm; }
+        }
+
         public int ChildCount
         {
             get => InternalCalls.Transform2DGetChildCount(NativeComponentPtr);
