@@ -36,6 +36,7 @@
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionTranslation.hpp"
+#include "maze-ui/ecs/components/MazeTextRenderer2D.hpp"
 
 
 //////////////////////////////////////////
@@ -82,6 +83,24 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(UIElement2D);
         _outValue = _component->castRaw<UIElement2D>()->getPressed();
+    }
+
+
+    //////////////////////////////////////////
+    inline MonoString* TextRenderer2DGetText(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(TextRenderer2D, nullptr);
+        return mono_string_new(mono_domain_get(), _component->castRaw<TextRenderer2D>()->getText().c_str());
+    }
+
+    //////////////////////////////////////////
+    inline void TextRenderer2DSetText(Component* _component, MonoString* _name)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(TextRenderer2D);
+
+        Char* cstr = mono_string_to_utf8(_name);
+        _component->castRaw<TextRenderer2D>()->setText(cstr);
+        mono_free(cstr);
     }
 
 
@@ -263,6 +282,10 @@ namespace Maze
         MAZE_UI_MONO_BIND_FUNC(UIElement2DGetFocused);
         MAZE_UI_MONO_BIND_FUNC(UIElement2DSetPressed);
         MAZE_UI_MONO_BIND_FUNC(UIElement2DGetPressed);
+
+        // TextRenderer2D
+        MAZE_UI_MONO_BIND_FUNC(TextRenderer2DGetText);
+        MAZE_UI_MONO_BIND_FUNC(TextRenderer2DSetText);
 
         // UITweenTransitionAlpha
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaSetHidden);

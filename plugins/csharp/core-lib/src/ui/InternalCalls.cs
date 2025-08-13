@@ -26,6 +26,14 @@ namespace Maze.UI
         public extern static void UIElement2DGetPressed(NativePtr nativeComponentPtr, out bool outValue);
         #endregion
 
+        #region TextRenderer2D
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static string TextRenderer2DGetText(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void TextRenderer2DSetText(NativePtr nativeComponentPtr, string text);
+        #endregion
+
         #region UITweenTransitionAlpha
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void UITweenTransitionAlphaSetHidden(NativePtr nativeComponentPtr, bool value, bool resetProgress = false);

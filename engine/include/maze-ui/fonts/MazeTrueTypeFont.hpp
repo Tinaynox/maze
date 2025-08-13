@@ -171,34 +171,25 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual TTFPagePtr const& ensureTTFPage(U32 _fontSize) MAZE_ABSTRACT;
+        virtual TTFPagePtr const& ensureTTFPage(U32 _fontSize, bool _bold) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual TTFPagePtr const& ensureTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness) MAZE_ABSTRACT;
-
-        //////////////////////////////////////////
-        virtual TTFPagePtr const& ensureTTFBoldPage(U32 _fontSize) MAZE_ABSTRACT;
+        virtual TTFPagePtr const& ensureTTFOutlineThicknessPage(U32 _fontSize, bool _bold, F32 _outlineThickness) MAZE_ABSTRACT;
 
 
         //////////////////////////////////////////
-        virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page) MAZE_ABSTRACT;
+        virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize, bool _bold, TTFPagePtr const& _page) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize) MAZE_ABSTRACT;
-
-
-        //////////////////////////////////////////
-        virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr const& _page) MAZE_ABSTRACT;
-
-        //////////////////////////////////////////
-        virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness) MAZE_ABSTRACT;
+        virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize, bool _bold) MAZE_ABSTRACT;
 
 
         //////////////////////////////////////////
-        virtual FontGlyph const& ensureBoldGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page) MAZE_ABSTRACT;
+        virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, bool _bold, F32 _outlineThickness, TTFPagePtr const& _page) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual FontGlyph const& ensureBoldGlyph(U32 _codePoint, U32 _fontSize) MAZE_ABSTRACT;
+        virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, bool _bold, F32 _outlineThickness) MAZE_ABSTRACT;
+
 
 
         //////////////////////////////////////////
@@ -223,7 +214,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) MAZE_ABSTRACT;
+        virtual void collectAllTextures(U32 _fontSize, bool _bold, Vector<Texture2DPtr>& _result) MAZE_ABSTRACT;
 
     public:
 

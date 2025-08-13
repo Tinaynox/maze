@@ -85,7 +85,7 @@ namespace Maze
         FontGlyph const& ensureGlyph(U32 _fontSize);
 
         //////////////////////////////////////////
-        void collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const;
+        void collectAllTextures(U32 _fontSize, bool _bold, Vector<Texture2DPtr>& _result) const;
 
         U32 spriteGlyphFontSize = 0u;
         FontGlyph spriteGlyph;
@@ -154,7 +154,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const;
+        void collectAllTextures(U32 _fontSize, bool _bold, Vector<Texture2DPtr>& _result) const;
 
 
         //////////////////////////////////////////

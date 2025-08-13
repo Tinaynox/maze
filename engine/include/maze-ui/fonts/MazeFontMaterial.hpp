@@ -115,10 +115,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        FontMaterialRenderData const& fetchRenderData(U32 _fontSize);
+        FontMaterialRenderData const& fetchRenderData(U32 _fontSize, bool _bold);
 
         //////////////////////////////////////////
-        MaterialPtr const& fetchMaterial(U32 _fontSize);
+        MaterialPtr const& fetchMaterial(U32 _fontSize, bool _bold);
 
         //////////////////////////////////////////
         virtual bool loadFromAssetFile(
@@ -129,7 +129,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        S32 getTextureIndex(U32 _fontSize, Texture2D* _texture);
+        S32 getTextureIndex(U32 _fontSize, bool _bold, Texture2D* _texture);
 
     public:
 
@@ -171,7 +171,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void updateFontTextures(U32 _fontSize);
+        void updateFontTextures(U32 _fontSize, bool _bold);
 
         //////////////////////////////////////////
         void notifyTexturesChanged();

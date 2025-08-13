@@ -274,37 +274,39 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FontMaterialRenderData const& FontMaterial::fetchRenderData(U32 _fontSize)
+    FontMaterialRenderData const& FontMaterial::fetchRenderData(U32 _fontSize, bool _bold)
     {
-        auto it = m_renderData.find(_fontSize);
+        U32 key = _fontSize | (_bold ? 0x80000000u : 0u);
+        auto it = m_renderData.find(key);
         if (it != m_renderData.end())
         {
             if (it->second->texturesDirty)
-                updateFontTextures(_fontSize);
+                updateFontTextures(_fontSize, _bold);
 
             return *it->second;
         }
 
-        FontMaterialRenderDataPtr& data = m_renderData[_fontSize];
+        FontMaterialRenderDataPtr& data = m_renderData[key];
         if (!data)
             data = MakeShared<FontMaterialRenderData>();
 
         if (m_assetMaterial)
             data->material = m_assetMaterial->createCopy();
-        updateFontTextures(_fontSize);
+        updateFontTextures(_fontSize, _bold);
         return *data;
     }
 
     //////////////////////////////////////////
-    MaterialPtr const& FontMaterial::fetchMaterial(U32 _fontSize)
+    MaterialPtr const& FontMaterial::fetchMaterial(U32 _fontSize, bool _bold)
     {
-        return fetchRenderData(_fontSize).material;
+        return fetchRenderData(_fontSize, _bold).material;
     }
 
     //////////////////////////////////////////
-    void FontMaterial::updateFontTextures(U32 _fontSize)
+    void FontMaterial::updateFontTextures(U32 _fontSize, bool _bold)
     {
-        FontMaterialRenderDataPtr& data = m_renderData[_fontSize];
+        U32 key = _fontSize | (_bold ? 0x80000000u : 0u);
+        FontMaterialRenderDataPtr& data = m_renderData[key];
         if (!data)
             data = MakeShared<FontMaterialRenderData>();
 
@@ -317,7 +319,7 @@ namespace Maze
         data->texturesDirty = false;
 
         Vector<Texture2DPtr> textures;
-        m_font->collectAllTextures(_fontSize, textures);
+        m_font->collectAllTextures(_fontSize, _bold, textures);
         data->textures.resize(textures.size());
         for (S32 i = 0, in = (S32)data->textures.size(); i < in; ++i)
             data->textures[i] = textures[i].get();
@@ -338,9 +340,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    S32 FontMaterial::getTextureIndex(U32 _fontSize, Texture2D* _texture)
+    S32 FontMaterial::getTextureIndex(U32 _fontSize, bool _bold, Texture2D* _texture)
     {
-        FontMaterialRenderData const& renderData = fetchRenderData(_fontSize);
+        FontMaterialRenderData const& renderData = fetchRenderData(_fontSize, _bold);
         auto it = renderData.textureIndices.find(_texture);
         if (it == renderData.textureIndices.end())
             return -1;

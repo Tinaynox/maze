@@ -92,33 +92,24 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        FontGlyph const& ensureGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize);
+        FontGlyph const& ensureGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, bool _bold);
 
         //////////////////////////////////////////
-        FontGlyph const& ensureGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, TTFPagePtr const& _ttfPage);
+        FontGlyph const& ensureGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, bool _bold, TTFPagePtr const& _ttfPage);
 
         //////////////////////////////////////////
-        FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize);
-
-
-        //////////////////////////////////////////
-        FontGlyph const& ensureOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness);
-
-        //////////////////////////////////////////
-        FontGlyph const& ensureOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr const& _ttfPage);
-
-        //////////////////////////////////////////
-        FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness);
+        FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize, bool _bold);
 
 
         //////////////////////////////////////////
-        FontGlyph const& ensureBoldGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize);
+        FontGlyph const& ensureOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, bool _bold, F32 _outlineThickness);
 
         //////////////////////////////////////////
-        FontGlyph const& ensureBoldGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, TTFPagePtr const& _ttfPage);
+        FontGlyph const& ensureOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, bool _bold, F32 _outlineThickness, TTFPagePtr const& _ttfPage);
 
         //////////////////////////////////////////
-        FontGlyph const& ensureBoldGlyph(U32 _codePoint, U32 _fontSize);
+        FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, bool _bold, F32 _outlineThickness);
+
 
 
         //////////////////////////////////////////
@@ -138,7 +129,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const;
+        void collectAllTextures(U32 _fontSize, bool _bold, Vector<Texture2DPtr>& _result) const;
 
     public:
 

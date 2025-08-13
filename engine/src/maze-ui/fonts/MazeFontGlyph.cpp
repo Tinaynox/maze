@@ -55,7 +55,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SpriteFontGlyphData::collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const
+    void SpriteFontGlyphData::collectAllTextures(U32 _fontSize, bool _bold, Vector<Texture2DPtr>& _result) const
     {
         if (spriteGlyph.texture)
         {
@@ -96,11 +96,11 @@ namespace Maze
     // Struct FontGlyphStorageData
     //
     //////////////////////////////////////////
-    void FontGlyphStorageData::collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const
+    void FontGlyphStorageData::collectAllTextures(U32 _fontSize, bool _bold, Vector<Texture2DPtr>& _result) const
     {
         if (trueTypeFont)
-            trueTypeFont->collectAllTextures(_fontSize, _result);
-        spriteData.collectAllTextures(_fontSize, _result);
+            trueTypeFont->collectAllTextures(_fontSize, _bold, _result);
+        spriteData.collectAllTextures(_fontSize, _bold, _result);
     }
 
     //////////////////////////////////////////
