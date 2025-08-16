@@ -208,12 +208,16 @@ namespace Maze
 
             
             Vec3F boneTranslationFinal = Vec3F::c_zero;
-            Quaternion boneRotationFinal(0.0f, 0.0f, 0.0f, 0.0f);
+            Quaternion boneRotationFinal = Quaternion::c_identity;
+            bool firstRotation = true;
+            F32 accumulatedRotationWeight = 0.0f;
+
             Vec3F boneScaleFinal = Vec3F::c_zero;
 
             for (S32 i = 0; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
             {
-                if (m_players[i]->getCurrentWeight() == 0.0f)
+                F32 weight = m_playersBlendWeights[i];
+                if (weight == 0.0f)
                     continue;
 
                 Vec3F boneTranslation;
@@ -226,9 +230,23 @@ namespace Maze
                     boneRotation,
                     boneScale);
 
-                boneTranslationFinal += boneTranslation * m_playersBlendWeights[i];
-                boneRotationFinal = boneRotationFinal + boneRotation * m_playersBlendWeights[i];
-                boneScaleFinal += boneScale * m_playersBlendWeights[i];
+                boneTranslationFinal += boneTranslation * weight;
+
+                
+                if (firstRotation)
+                {
+                    boneRotationFinal = boneRotation;
+                    firstRotation = false;
+                    accumulatedRotationWeight = weight;
+                }
+                else
+                {
+                    F32 t = weight / (weight + accumulatedRotationWeight);
+                    boneRotationFinal = Quaternion::Slerp(t, boneRotationFinal, boneRotation);
+                    accumulatedRotationWeight += weight;
+                }
+
+                boneScaleFinal += boneScale * weight;
             }
 
             boneRotationFinal.toRotationMatrix(boneRotationMatrix);

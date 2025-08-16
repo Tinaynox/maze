@@ -594,6 +594,11 @@ namespace Maze
                         if (meshSkeletonAnimationNamePrefixIndex != String::npos)
                             meshSkeletonAnimationName = meshSkeletonAnimationName.substr(meshSkeletonAnimationNamePrefixIndex + 1);
 
+                        if (_mesh.getSkeleton()->getAnimation(HashedCString(meshSkeletonAnimationName.c_str())))
+                        {
+                            MAZE_WARNING_CONTINUE("Animation duplicate %s - %s!", animName, meshSkeletonAnimationName.c_str());
+                        }
+
                         MeshSkeletonAnimationPtr const& meshSkeletonAnimation = _mesh.getSkeleton()->ensureAnimation(meshSkeletonAnimationName);
                         meshSkeletonAnimation->setAnimationTime(animationTime);
 
