@@ -2,7 +2,40 @@ using Maze.Core;
 
 namespace Maze.Graphics
 {
-    public class SkinnedMeshRenderer : NativeComponent
+    public enum MeshSkeletonAnimationStartFlags
+    {
+        None = 0,
+        Looped                      = 1 << (0),
+        Additive                    = 1 << (1),
+        StopCurrentAnimations       = 1 << (2),
+        Important                   = 1 << (3)
+    };
+
+    public struct MeshSkeletonAnimationStartParams
+    {
+        public float BlendTime;
+        public float Weight;
+        public float Speed;
+        public MeshSkeletonAnimationStartFlags Flags;
+
+        public MeshSkeletonAnimationStartParams(
+            float blendTime = 0.2f,
+            float weight = 1.0f,
+            float speed = 1.0f,
+            MeshSkeletonAnimationStartFlags flags = 
+                MeshSkeletonAnimationStartFlags.Looped |
+                MeshSkeletonAnimationStartFlags.StopCurrentAnimations |
+                MeshSkeletonAnimationStartFlags.Important)
+        {
+            BlendTime = blendTime;
+            Weight = weight;
+            Speed = speed;
+            Flags = flags;
+        }
+    };
+
+
+public class SkinnedMeshRenderer : NativeComponent
     {
         public RenderMesh RenderMesh
         {
@@ -34,10 +67,40 @@ namespace Maze.Graphics
 
         public int PlayAnimation(
             string animationName,
+            float blendTime = 0.2f,
+            float weight = 1.0f,
+            float speed = 1.0f,
             bool loop = true,
-            float blendTime = 0.2f)
+            bool additive = false,
+            bool stopCurrentAnimations = true,
+            bool important = true)
         {
-            return InternalCalls.SkinnedMeshRendererPlayAnimation(NativeComponentPtr, animationName, loop, blendTime);
+            return InternalCalls.SkinnedMeshRendererPlayAnimation(
+                NativeComponentPtr,
+                animationName,
+                blendTime,
+                weight,
+                speed,
+                loop,
+                additive,
+                stopCurrentAnimations,
+                important);
+        }
+
+        public int PlayAnimation(
+            string animationName,
+            MeshSkeletonAnimationStartParams param)
+        {
+            return InternalCalls.SkinnedMeshRendererPlayAnimation(
+                NativeComponentPtr,
+                animationName,
+                param.BlendTime,
+                param.Weight,
+                param.Speed,
+                (param.Flags & MeshSkeletonAnimationStartFlags.Looped) != 0u,
+                (param.Flags & MeshSkeletonAnimationStartFlags.Additive) != 0u,
+                (param.Flags & MeshSkeletonAnimationStartFlags.StopCurrentAnimations) != 0u,
+                (param.Flags & MeshSkeletonAnimationStartFlags.Important) != 0u);
         }
 
         public float GetPlayerAnimationTime(int playerIndex)

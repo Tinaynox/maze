@@ -251,13 +251,27 @@ namespace Maze
     inline S32 SkinnedMeshRendererPlayAnimation(
         Component* _component,
         MonoString* _animationName,
+        F32 _blendTime,
+        F32 _weight,
+        F32 _speed,
         bool _loop,
-        F32 _blendTime)
+        bool _additive,
+        bool _stopCurrentAnimations,
+        bool _important)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshRenderer, -1);
 
         Char* cstr = mono_string_to_utf8(_animationName);
-        S32 playerIndex = _component->castRaw<SkinnedMeshRenderer>()->playAnimation(HashedCString(cstr), _loop, _blendTime);
+        MeshSkeletonAnimationStartParams params;
+        params.blendTime = _blendTime;
+        params.weight = _weight;
+        params.speed = _speed;
+        params.flags =
+            (_loop ? U8(MeshSkeletonAnimationStartFlags::Looped) : 0u) |
+            (_additive ? U8(MeshSkeletonAnimationStartFlags::Additive) : 0u) |
+            (_stopCurrentAnimations ? U8(MeshSkeletonAnimationStartFlags::StopCurrentAnimations) : 0u) |
+            (_important ? U8(MeshSkeletonAnimationStartFlags::Important) : 0u);
+        S32 playerIndex = _component->castRaw<SkinnedMeshRenderer>()->playAnimation(HashedCString(cstr), params);
         mono_free(cstr);
 
         return playerIndex;

@@ -36,6 +36,7 @@
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
+#include "maze-graphics/MazeMeshSkeletonAnimator.hpp"
 
 
 //////////////////////////////////////////
@@ -83,8 +84,7 @@ namespace Maze
         //////////////////////////////////////////
         S32 playAnimation(
             HashedCString _animationName,
-            bool _loop = true,
-            F32 _blendTime = 0.2f);
+            MeshSkeletonAnimationStartParams _startParams = MeshSkeletonAnimationStartParams());
 
 
         //////////////////////////////////////////

@@ -588,8 +588,9 @@ namespace Maze
                     if (animLayer && takeInfo)
                     {
                         F32 animationTime = F32(takeInfo->local_time_to - takeInfo->local_time_from);
-
+                        /*
                         String meshSkeletonAnimationName = animName;
+                        
                         Size meshSkeletonAnimationNamePrefixIndex = meshSkeletonAnimationName.find_last_of('|');
                         if (meshSkeletonAnimationNamePrefixIndex != String::npos)
                             meshSkeletonAnimationName = meshSkeletonAnimationName.substr(meshSkeletonAnimationNamePrefixIndex + 1);
@@ -598,8 +599,9 @@ namespace Maze
                         {
                             MAZE_WARNING_CONTINUE("Animation duplicate %s - %s!", animName, meshSkeletonAnimationName.c_str());
                         }
+                        */
 
-                        MeshSkeletonAnimationPtr const& meshSkeletonAnimation = _mesh.getSkeleton()->ensureAnimation(meshSkeletonAnimationName);
+                        MeshSkeletonAnimationPtr const& meshSkeletonAnimation = _mesh.getSkeleton()->ensureAnimation(animName);
                         meshSkeletonAnimation->setAnimationTime(animationTime);
 
                         Vector<MeshSkeletonAnimationBone> meshSkeletonAnimationBones;

@@ -60,6 +60,29 @@ namespace Maze
     
 
     //////////////////////////////////////////
+    enum class MAZE_GRAPHICS_API MeshSkeletonAnimationStartFlags : U8
+    {
+        None = 0,
+
+        Looped                      = MAZE_BIT(0),
+        Additive                    = MAZE_BIT(1),
+        StopCurrentAnimations       = MAZE_BIT(2),
+        Important                   = MAZE_BIT(3)
+    };
+
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API MeshSkeletonAnimationStartParams
+    {
+        F32 blendTime = 0.2f;
+        F32 weight = 1.0f;
+        F32 speed = 1.0f;
+        U8 flags = U8(MeshSkeletonAnimationStartFlags::Looped) |
+                   U8(MeshSkeletonAnimationStartFlags::StopCurrentAnimations) |
+                   U8(MeshSkeletonAnimationStartFlags::Important);
+    };
+
+
+    //////////////////////////////////////////
     // Class MeshSkeletonAnimator
     //
     //////////////////////////////////////////
@@ -97,8 +120,7 @@ namespace Maze
         //////////////////////////////////////////
         S32 playAnimation(
             HashedCString _name,
-            bool _loop = true,
-            F32 _blendTime = 0.2f);
+            MeshSkeletonAnimationStartParams _startParams = MeshSkeletonAnimationStartParams());
 
         //////////////////////////////////////////
         MeshSkeletonAnimatorPlayerPtr const& getCurrentAnimation();
@@ -120,18 +142,20 @@ namespace Maze
         MeshSkeletonAnimator();
 
         //////////////////////////////////////////
-        bool init();    
-    
+        bool init();
+
         //////////////////////////////////////////
-        TMat const& calculateBoneGlobalTransform(MeshSkeleton::BoneIndex _i);
+        void calculateBoneTransforms(MeshSkeleton::BoneIndex _i);
 
         //////////////////////////////////////////
         S32 findPlayerIndexForNewAnimation(
-            MeshSkeletonAnimationPtr const& _animation);
+            MeshSkeletonAnimationPtr const& _animation,
+            bool _important);
 
         //////////////////////////////////////////
         MeshSkeletonAnimatorPlayerPtr const& findPlayerForNewAnimation(
-            MeshSkeletonAnimationPtr const& _animation);
+            MeshSkeletonAnimationPtr const& _animation,
+            bool _important = true);
 
         //////////////////////////////////////////
         MeshSkeletonAnimatorPlayerPtr const& findPlayerWith();
@@ -141,8 +165,9 @@ namespace Maze
         F32 m_animationSpeed = 1.0f;
 
         Vector<TMat> m_bonesGlobalTransforms; // Mesh space
-        Vector<TMat> m_bonesSkinningTransforms; // Animation delta, Mesh space
         FastVector<bool> m_bonesTransformsDirty;
+
+        Vector<TMat> m_bonesSkinningTransforms; // Animation delta, Mesh space
 
         MeshSkeletonAnimatorPlayerPtr m_players[MESH_SKELETON_ANIMATOR_PLAYERS_COUNT];
         F32 m_playersBlendWeights[MESH_SKELETON_ANIMATOR_PLAYERS_COUNT];
@@ -187,9 +212,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline bool getAdditive() const { return m_additive; }
+
+
+        //////////////////////////////////////////
         void play(
             MeshSkeletonAnimationPtr const& _animation,
-            bool _loop = true);
+            bool _loop = true,
+            bool _additive = false);
 
         //////////////////////////////////////////
         void stop();
@@ -206,10 +236,28 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline F32 getSpeedMult() const { return m_speedMult; }
+
+        //////////////////////////////////////////
+        inline void setSpeedMult(F32 _value) { m_speedMult = _value; }
+
+
+        //////////////////////////////////////////
+        inline F32 getWeightMult() const { return m_weightMult; }
+
+        //////////////////////////////////////////
+        inline void setWeightMult(F32 _value) { m_weightMult = _value; }
+
+
+        //////////////////////////////////////////
         inline F32 getCurrentWeight() const { return m_currentWeight; }
 
         //////////////////////////////////////////
         inline void setCurrentWeight(F32 _value) { m_currentWeight = _value; }
+
+
+        //////////////////////////////////////////
+        inline F32 getTotalWeight() const { return m_currentWeight * m_weightMult; }
 
 
         //////////////////////////////////////////
@@ -242,7 +290,11 @@ namespace Maze
         F32 m_currentTime = 0.0f;
         
         bool m_looped = true;
+        bool m_additive = false;
 
+        F32 m_speedMult = 1.0f;
+
+        F32 m_weightMult = 1.0f;
         F32 m_currentWeight = 0.0f;
         F32 m_weightSpeed = 5.0f;
         State m_state = State::None;

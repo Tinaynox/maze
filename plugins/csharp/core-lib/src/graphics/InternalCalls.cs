@@ -71,8 +71,13 @@ namespace Maze.Graphics
         public extern static int SkinnedMeshRendererPlayAnimation(
             NativePtr nativeComponentPtr,
             string animationName,
+            float blendTime,
+            float weight,
+            float speed,
             bool loop,
-            float blendTime);
+            bool additive,
+            bool stopCurrentAnimations,
+            bool important);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool SkinnedMeshRendererGetPlayerAnimationTime(

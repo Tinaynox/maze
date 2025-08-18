@@ -127,11 +127,10 @@ namespace Maze
     //////////////////////////////////////////
     S32 SkinnedMeshRenderer::playAnimation(
         HashedCString _animationName,
-        bool _loop,
-        F32 _blendTime)
+        MeshSkeletonAnimationStartParams _startParams)
     {
         if (m_animator)
-            return m_animator->playAnimation(_animationName, _loop, _blendTime);
+            return m_animator->playAnimation(_animationName, _startParams);
 
         return -1;
     }
