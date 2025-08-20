@@ -8,7 +8,8 @@ namespace Maze.Graphics
         Looped                      = 1 << (0),
         Additive                    = 1 << (1),
         StopCurrentAnimations       = 1 << (2),
-        Important                   = 1 << (3)
+        Important                   = 1 << (3),
+        PauseEnding                 = 1 << (4),
     };
 
     public struct MeshSkeletonAnimationStartParams
@@ -73,7 +74,8 @@ public class SkinnedMeshRenderer : NativeComponent
             bool loop = true,
             bool additive = false,
             bool stopCurrentAnimations = true,
-            bool important = true)
+            bool important = true,
+            bool pauseEnding = false)
         {
             return InternalCalls.SkinnedMeshRendererPlayAnimation(
                 NativeComponentPtr,
@@ -84,7 +86,8 @@ public class SkinnedMeshRenderer : NativeComponent
                 loop,
                 additive,
                 stopCurrentAnimations,
-                important);
+                important,
+                pauseEnding);
         }
 
         public int PlayAnimation(
@@ -100,7 +103,8 @@ public class SkinnedMeshRenderer : NativeComponent
                 (param.Flags & MeshSkeletonAnimationStartFlags.Looped) != 0u,
                 (param.Flags & MeshSkeletonAnimationStartFlags.Additive) != 0u,
                 (param.Flags & MeshSkeletonAnimationStartFlags.StopCurrentAnimations) != 0u,
-                (param.Flags & MeshSkeletonAnimationStartFlags.Important) != 0u);
+                (param.Flags & MeshSkeletonAnimationStartFlags.Important) != 0u,
+                (param.Flags & MeshSkeletonAnimationStartFlags.PauseEnding) != 0u);
         }
 
         public float GetPlayerAnimationTime(int playerIndex)

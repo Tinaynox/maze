@@ -169,9 +169,10 @@ namespace Maze
 
         bool looped = _startParams.flags & U8(MeshSkeletonAnimationStartFlags::Looped);
         bool additive = _startParams.flags & U8(MeshSkeletonAnimationStartFlags::Additive);
+        bool pauseEnding = _startParams.flags & U8(MeshSkeletonAnimationStartFlags::PauseEnding);
         bool stopCurrentAnimations = _startParams.flags & U8(MeshSkeletonAnimationStartFlags::StopCurrentAnimations);
 
-        player->play(animation, looped, additive);
+        player->play(animation, looped, additive, pauseEnding);
         player->setWeightMult(_startParams.weight);
         player->setWeightSpeed(blendWeightSpeed);
         player->setSpeedMult(_startParams.speed);
@@ -437,7 +438,7 @@ namespace Maze
                 break;
         }
 
-        if (m_state != State::None)
+        if (m_state != State::None && m_state != State::Pause)
         {
             m_currentTime += _dt;
             if (m_currentTime >= m_animation->getAnimationTime())
@@ -447,7 +448,11 @@ namespace Maze
                 else
                 {
                     m_currentTime = m_animation->getAnimationTime();
-                    stop();
+
+                    if (m_pauseEnding)
+                        pause();
+                    else
+                        stop();
                 }
             }
         }
@@ -476,7 +481,8 @@ namespace Maze
     void MeshSkeletonAnimatorPlayer::play(
         MeshSkeletonAnimationPtr const& _animation,
         bool _loop,
-        bool _additive)
+        bool _additive,
+        bool _pauseEnding)
     {
         if (m_state != State::Active)
             setState(State::In);
@@ -487,6 +493,14 @@ namespace Maze
         m_animation = _animation;
         m_looped = _loop;
         m_additive = _additive;
+        m_pauseEnding = _pauseEnding;
+    }
+
+    //////////////////////////////////////////
+    void MeshSkeletonAnimatorPlayer::pause()
+    {
+        if (m_state != State::None)
+            setState(State::Pause);
     }
 
     //////////////////////////////////////////
