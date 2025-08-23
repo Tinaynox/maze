@@ -155,7 +155,11 @@ namespace Maze
             return false;
 
         MeshSkeletonAnimationPtr const& animation = m_skeleton->getAnimation(_name);
-        MAZE_WARNING_RETURN_VALUE_IF(!animation, -1, "Undefined animation - %s!", _name.str);
+        if (!animation)
+        {
+            Debug::LogError("Undefined animation - %s!", _name.str);
+            return -1;
+        }
 
         F32 blendWeightSpeed = _startParams.blendTime > 0.0f ? 1.0f / _startParams.blendTime : F32_VERY_BIG_NUMBER;
 
@@ -333,13 +337,13 @@ namespace Maze
         {
             S32 playerIndex = 0;
             F32 bestWeight = m_players[playerIndex]->getTotalWeight();
-            if (_animation == m_players[playerIndex]->getAnimation() || (!m_players[playerIndex]->isActive() && bestWeight == 0.0f))
+            if (/*_animation == m_players[playerIndex]->getAnimation() || */(!m_players[playerIndex]->isActive() && bestWeight == 0.0f))
                 return playerIndex;
 
             // Find best inactive player or player with lowest current weight
             for (S32 i = 1; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
             {
-                if (_animation == m_players[i]->getAnimation() ||
+                if (/*_animation == m_players[i]->getAnimation() ||*/
                     (m_players[playerIndex]->isActive() && !m_players[i]->isActive()) ||
                     m_players[i]->getTotalWeight() < bestWeight)
                     {
@@ -356,7 +360,7 @@ namespace Maze
         else
         {
             for (S32 i = 0; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
-                if (_animation == m_players[i]->getAnimation() || !m_players[i]->isActive())
+                if (/*_animation == m_players[i]->getAnimation() || */!m_players[i]->isActive())
                     return i;
 
             return -1;
@@ -484,11 +488,13 @@ namespace Maze
         bool _additive,
         bool _pauseEnding)
     {
-        if (m_state != State::Active)
-            setState(State::In);
+        // if (m_state != State::Active)
+        //    setState(State::In);
+        setState(State::In);
 
-        if (m_animation != _animation)
-            m_currentTime = 0.0f;
+        //if (m_animation != _animation)
+        //    m_currentTime = 0.0f;
+        m_currentTime = 0.0f;
 
         m_animation = _animation;
         m_looped = _loop;
