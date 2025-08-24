@@ -45,6 +45,7 @@
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/math/MazePlane.hpp"
+#include "maze-core/helpers/MazeWindowHelper.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
@@ -261,6 +262,24 @@ namespace Maze
         }
 
         // m_mainRenderWindow->getWindow()->maximizeFullscreen();
+
+
+        {
+            WindowPtr const& window = m_mainRenderWindow->getWindow();
+            WindowParams::Flags windowFlags = window->getFlags();
+
+            windowFlags &= ~(WindowStyleFlags::Titlebar | WindowStyleFlags::CloseButton | WindowStyleFlags::Resizable);
+            windowFlags |= (WindowStyleFlags::Topmost);
+            window->setFlags(windowFlags);
+
+            window->setFullscreen(false);
+
+            DisplayPtr const& relatedDisplay = window->getRelatedDisplay();
+            WindowVideoMode windowVideoMode = WindowHelper::GetDisplayCurrentMode(relatedDisplay);
+            window->setClientSize(Vec2U(windowVideoMode.width, windowVideoMode.height/* + 1u*/)); // + 1u - OBS screen capture hack
+
+        }
+
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN) || \
     (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)

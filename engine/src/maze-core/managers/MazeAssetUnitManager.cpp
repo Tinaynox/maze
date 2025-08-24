@@ -88,7 +88,7 @@ namespace Maze
         if (it != m_assetUnitProcessors.end())
             return it->second(_assetFile, _data);        
 
-        MAZE_ERROR("Unsupported asset unit type - '%s'!", assetUnitType.c_str());
+        // MAZE_ERROR("Unsupported asset unit type - '%s'!", assetUnitType.c_str());
 
         return nullptr;
     }
