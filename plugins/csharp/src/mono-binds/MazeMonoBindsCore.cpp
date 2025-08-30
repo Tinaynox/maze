@@ -437,6 +437,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void Transform2DGetSize(Component* _component, Vec2F& _outSize)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _outSize = _component->castRaw<Transform2D>()->getSize();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform2DSetSize(Component* _component, Vec2F const& _size)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _component->castRaw<Transform2D>()->setSize(_size);
+    }
+
+    //////////////////////////////////////////
     inline void Transform2DGetPosition(Component* _component, Vec2F& _outPosition)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
@@ -655,6 +669,8 @@ namespace Maze
         // Transform2D
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChildCount);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChild);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetSize);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DSetSize);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetPosition);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DSetPosition);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetScale);

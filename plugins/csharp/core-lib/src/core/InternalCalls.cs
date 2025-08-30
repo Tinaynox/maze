@@ -125,6 +125,12 @@ namespace Maze.Core
         public extern static void Transform2DGetChild(NativePtr nativeComponentPtr, int index, out NativePtr outChild);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DGetSize(NativePtr nativeComponentPtr, out Vec2F outSize);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DSetSize(NativePtr nativeComponentPtr, ref Vec2F size);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform2DGetPosition(NativePtr nativeComponentPtr, out Vec2F outPosition);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

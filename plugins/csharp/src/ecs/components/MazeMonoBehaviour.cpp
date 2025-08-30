@@ -271,6 +271,8 @@ namespace Maze
 
         if (m_monoClass && m_monoInstance)
         {
+            MAZE_BP_RETURN_IF(!getEntityRaw()->getEcsWorld());
+
             MonoHelper::IterateSerializableFields(m_monoClass,
                 [&](ScriptFieldPtr const& _field)
                 {

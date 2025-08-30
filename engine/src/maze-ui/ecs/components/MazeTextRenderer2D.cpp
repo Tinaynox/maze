@@ -299,7 +299,7 @@ namespace Maze
         if (!m_meshRenderer)
             return;
 
-        if (!getFontMaterial())
+        if (!getFontMaterial() || !getFontMaterial()->getFont())
             return;
 
         if (!getFontMaterial()->getFont()->getDefaultFont())
