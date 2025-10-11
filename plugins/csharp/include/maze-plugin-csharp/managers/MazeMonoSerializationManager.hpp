@@ -174,6 +174,19 @@ namespace Maze
             registerFieldDataBlockSubClassSerialization(_monoClass, _fieldPropToDataBlockCb, _fieldPropFromDataBlockCb);
         }
 
+        //////////////////////////////////////////
+        inline void registerPropertyAndFieldDataBlockEnumSerialization(
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, DataBlock&)> const& _propertyPropToDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, DataBlock const&)> const& _propertyPropFromDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, DataBlock&)> const& _fieldPropToDataBlockCb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> const& _fieldPropFromDataBlockCb)
+        {
+            m_propertyDataBlockEnumSerializationData.propToDataBlockCb = _propertyPropToDataBlockCb;
+            m_propertyDataBlockEnumSerializationData.propFromDataBlockCb = _propertyPropFromDataBlockCb;
+            m_fieldDataBlockEnumSerializationData.propToDataBlockCb = _fieldPropToDataBlockCb;
+            m_fieldDataBlockEnumSerializationData.propFromDataBlockCb = _fieldPropFromDataBlockCb;
+        }
+
 
         //////////////////////////////////////////
         inline WriteMetaPropertyToMonoClassFieldFunction const& getWriteMetaPropertyToMonoClassFieldFunction(ClassUID _typeUID)
@@ -210,6 +223,9 @@ namespace Maze
 
         UnorderedMap<MonoClass*, ScriptPropertyDataBlockSerializationData> m_propertyDataBlockSubClassSerializationData;
         UnorderedMap<MonoClass*, ScriptFieldDataBlockSerializationData> m_fieldDataBlockSubClassSerializationData;
+
+        ScriptPropertyDataBlockSerializationData m_propertyDataBlockEnumSerializationData;
+        ScriptFieldDataBlockSerializationData m_fieldDataBlockEnumSerializationData;
 
         UnorderedMap<ClassUID, WriteMetaPropertyToMonoClassFieldFunction> m_writeMetaPropertyToMonoClassFieldFunctions;
     };

@@ -89,7 +89,7 @@ namespace Maze
         m_scriptProperty = _scriptProperty;
         m_callbacks = _callbacks;
         
-        m_drawer = m_callbacks.createDrawerCb(_data);
+        m_drawer = m_callbacks.createDrawerCb(_scriptProperty->getMonoType(), _data);
         m_drawer->eventUIData.subscribe(this, &ScriptPropertyDrawer::processDataFromUI);
 
         return true;

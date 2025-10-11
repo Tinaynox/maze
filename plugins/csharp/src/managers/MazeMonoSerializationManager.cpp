@@ -495,6 +495,33 @@ namespace Maze
                     else
                         _instance.resetFieldValue(_field);
                 });
+
+            // System.Enum
+            registerPropertyAndFieldDataBlockEnumSerialization(
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+                {
+                    S32 value;
+                    _instance.getPropertyValue(_prop, value);
+                    _dataBlock.setS32(_prop->getName(), value);
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+                {
+                    DataBlock::ParamIndex idx = _dataBlock.findParamIndex(_prop->getName());
+                    if (idx >= 0)
+                        _instance.setPropertyValue(_prop, _dataBlock.getS32(idx));
+                },
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+                {
+                    S32 value;
+                    _instance.getFieldValue(_field, value);
+                    _dataBlock.setS32(_field->getName(), value);
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+                {
+                    DataBlock::ParamIndex idx = _dataBlock.findParamIndex(_field->getName());
+                    if (idx >= 0)
+                        _instance.setFieldValue(_field, _dataBlock.getS32(idx));
+                });
         }
         else
         if (_eventUID == ClassInfo<MonoShutdownEvent>::UID())
@@ -555,6 +582,12 @@ namespace Maze
                         return true;
                     }
                 }
+
+                if (mono_class_is_enum(monoClass))
+                {
+                    m_propertyDataBlockEnumSerializationData.propToDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
+                    return true;
+                }
             }
         }
 
@@ -587,6 +620,12 @@ namespace Maze
                         data.second.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
                         return true;
                     }
+                }
+
+                if (mono_class_is_enum(monoClass))
+                {
+                    m_propertyDataBlockEnumSerializationData.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
+                    return true;
                 }
             }
         }
@@ -660,6 +699,12 @@ namespace Maze
                             return true;
                         }
                     }
+
+                    if (mono_class_is_enum(monoClass))
+                    {
+                        m_fieldDataBlockEnumSerializationData.propToDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
+                        return true;
+                    }
                 }
             }
         }
@@ -693,6 +738,12 @@ namespace Maze
                         data.second.propFromDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
                         return true;
                     }
+                }
+
+                if (mono_class_is_enum(monoClass))
+                {
+                    m_fieldDataBlockEnumSerializationData.propFromDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
+                    return true;
                 }
             }
         }

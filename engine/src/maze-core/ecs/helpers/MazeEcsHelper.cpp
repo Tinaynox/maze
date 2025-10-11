@@ -45,13 +45,13 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API CString GetName(Entity* _entity)
         {
-            StaticName* staticName = _entity->getComponentRaw<StaticName>();
-            if (staticName)
-                return staticName->getName();
-
             Name* name = _entity->getComponentRaw<Name>();
             if (name)
                 return name->getName().c_str();
+
+            StaticName* staticName = _entity->getComponentRaw<StaticName>();
+            if (staticName)
+                return staticName->getName();
 
             return "";
         }

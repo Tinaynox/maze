@@ -50,6 +50,7 @@
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp-editor-tools/property-drawers/MazePDScriptableObject.hpp"
+#include "maze-plugin-csharp-editor-tools/property-drawers/MazePDCSharpEnum.hpp"
 
 
 //////////////////////////////////////////
@@ -128,6 +129,11 @@ namespace Maze
                         return &data.second;
                     }
                 }
+
+                if (mono_class_is_enum(monoClass))
+                {
+                    return &m_monoPropertyDrawerEnumCallbacks;
+                }
             }
         }
 
@@ -150,7 +156,7 @@ namespace Maze
                 _instance.setPropertyValue(_property, _drawer->getValue());
             });
         callbacks.createDrawerCb =
-            [_from, _to](DataBlock const& _data)
+            [_from, _to](MonoType* _monoType, DataBlock const& _data)
             {
                 PropertyDrawerSliderF32Ptr drawer = PropertyDrawerSliderF32::Create(_data);
                 drawer->setFromValue(_from);
@@ -180,6 +186,11 @@ namespace Maze
                         return &data.second;
                     }
                 }
+
+                if (mono_class_is_enum(monoClass))
+                {
+                    return &m_monoFieldDrawerEnumCallbacks;
+                }
             }
         }
 
@@ -202,7 +213,7 @@ namespace Maze
                 _instance.setFieldValue(_field, _drawer->getValue());
             });
         callbacks.createDrawerCb =
-            [_from, _to](DataBlock const& _dataBlock)
+            [_from, _to](MonoType* _monoType, DataBlock const& _dataBlock)
             {
                 PropertyDrawerSliderF32Ptr drawer = PropertyDrawerSliderF32::Create(_dataBlock);
                 drawer->setFromValue(_from);
@@ -798,6 +809,33 @@ namespace Maze
                 else
                     _instance.resetFieldValue(_field);
             });
+
+        // System.Enum
+        registerScriptPropertyAndFieldDrawerEnumCallbacks<PropertyDrawerCSharpEnum>(
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerCSharpEnum* _drawer)
+                {
+                    S32 enumValue = 0;
+                    _instance.getPropertyValue(_property, enumValue);
+                    _drawer->setValue(enumValue);
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerCSharpEnum const* _drawer)
+                {
+                    _instance.setPropertyValue(_property, _drawer->getValue());
+                },
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerCSharpEnum* _drawer)
+                {
+                    S32 enumValue = 0;
+                    _instance.getFieldValue(_field, enumValue);
+                    _drawer->setValue(enumValue);
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerCSharpEnum const* _drawer)
+                {
+                    _instance.setFieldValue(_field, _drawer->getValue());
+                },
+                [](MonoType* _monoType, DataBlock const& _dataBlock)
+                {
+                    return PropertyDrawerCSharpEnum::Create(_monoType, _dataBlock);
+                });
     }
 
 } // namespace Maze
