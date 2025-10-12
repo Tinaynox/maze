@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazePropertyDrawerCSharpEnum_hpp_))
-#define _MazePropertyDrawerCSharpEnum_hpp_
+#if (!defined(_MazePropertyDrawerCSharpList_hpp_))
+#define _MazePropertyDrawerCSharpList_hpp_
 
 
 //////////////////////////////////////////
@@ -37,6 +37,7 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
+#include "maze-editor-tools/property-drawers/MazePDVector.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-plugin-csharp/MazeMonoHeader.hpp"
 
@@ -45,65 +46,44 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(PropertyDrawerCSharpEnum);
+    MAZE_USING_SHARED_PTR(PropertyDrawerCSharpList);
     MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(DragAndDropZone);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
-    MAZE_USING_SHARED_PTR(PropertyDrawerCSharpEnumAssetRef);
+    MAZE_USING_SHARED_PTR(PropertyDrawerCSharpListAssetRef);
     MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
-    MAZE_USING_SHARED_PTR(Dropdown2D);
 
 
     //////////////////////////////////////////
-    // Class PropertyDrawerCSharpEnum
+    // Class PropertyDrawerCSharpList
     //
     //////////////////////////////////////////
-    class MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API PropertyDrawerCSharpEnum
-        : public PropertyDrawer
-        , public MultiDelegateCallbackReceiver
+    class MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API PropertyDrawerCSharpList
+        : public PropertyDrawerVector
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(PropertyDrawerCSharpEnum, PropertyDrawer);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PropertyDrawerCSharpList, PropertyDrawerVector);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(PropertyDrawerCSharpEnum);
+        MAZE_DECLARE_MEMORY_ALLOCATION(PropertyDrawerCSharpList);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~PropertyDrawerCSharpEnum();
+        virtual ~PropertyDrawerCSharpList();
 
         //////////////////////////////////////////
-        static PropertyDrawerCSharpEnumPtr Create(
+        static PropertyDrawerCSharpListPtr Create(
             MonoType* _monoType,
             DataBlock const& _dataBlock);
 
 
-        ////////////////////////////////////////////
-        S32 getValue() const;
-
-        ////////////////////////////////////////////
-        void setValue(S32 _value);
-
-
-        ////////////////////////////////////////////
-        virtual bool toDataBlock(DataBlock& _value) const MAZE_OVERRIDE;
-
-        ////////////////////////////////////////////
-        virtual bool setDataBlock(DataBlock const& _value) MAZE_OVERRIDE;
-
-
-        //////////////////////////////////////////
-        virtual void buildUI(
-            Transform2DPtr const& _parent,
-            CString _label = nullptr) MAZE_OVERRIDE;
-
     protected:
 
         //////////////////////////////////////////
-        PropertyDrawerCSharpEnum();
+        PropertyDrawerCSharpList();
 
         //////////////////////////////////////////
         bool init(
@@ -111,13 +91,8 @@ namespace Maze
             DataBlock const& _dataBlock);
 
 
-        //////////////////////////////////////////
-        void notifyValueChanged(Dropdown2D* _dropdown, S32 _value);
-
     protected:
-        Vector<String> m_enumNames;
-        Vector<S32> m_enumValues;
-        Dropdown2DPtr m_dropdown;        
+        
     };
 
 
@@ -125,5 +100,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazePropertyDrawerCSharpEnum_hpp_
+#endif // _MazePropertyDrawerCSharpList_hpp_
 //////////////////////////////////////////

@@ -51,6 +51,7 @@
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp-editor-tools/property-drawers/MazePDScriptableObject.hpp"
 #include "maze-plugin-csharp-editor-tools/property-drawers/MazePDCSharpEnum.hpp"
+#include "maze-plugin-csharp-editor-tools/property-drawers/MazePDCSharpList.hpp"
 
 
 //////////////////////////////////////////
@@ -170,6 +171,20 @@ namespace Maze
     //////////////////////////////////////////
     ScriptFieldDrawerCallbacks const* CSharpEditorToolsManager::getScriptFieldDrawerCallbacks(ScriptFieldPtr const& _field)
     {
+        if (_field->isGenericType())
+        {
+            Size genericSubTypeIndex = _field->getTypeName().getString().find('<');
+            if (genericSubTypeIndex == String::npos)
+                return false;
+
+            HashedString genericBaseType = HashedString(_field->getTypeName().getString().substr(0, genericSubTypeIndex));
+            auto it = m_monoFieldDrawerCallbacksPerGenericClass.find(genericBaseType);
+            if (it != m_monoFieldDrawerCallbacksPerGenericClass.end())
+                return &it->second;
+
+            return nullptr;
+        }
+
         auto it = m_monoFieldDrawerCallbacksPerMonoType.find(_field->getTypeName());
         if (it != m_monoFieldDrawerCallbacksPerMonoType.end())
             return &it->second;
@@ -466,6 +481,60 @@ namespace Maze
         {
             _instance.setFieldValue(_field, (F64)_drawer->getValue());
         });
+
+        // System.Enum
+        registerScriptPropertyAndFieldDrawerEnumCallbacks<PropertyDrawerCSharpEnum>(
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerCSharpEnum* _drawer)
+            {
+                S32 enumValue = 0;
+                _instance.getPropertyValue(_property, enumValue);
+                _drawer->setValue(enumValue);
+            },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerCSharpEnum const* _drawer)
+            {
+                _instance.setPropertyValue(_property, _drawer->getValue());
+            },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerCSharpEnum* _drawer)
+            {
+                S32 enumValue = 0;
+                _instance.getFieldValue(_field, enumValue);
+                _drawer->setValue(enumValue);
+            },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerCSharpEnum const* _drawer)
+            {
+                _instance.setFieldValue(_field, _drawer->getValue());
+            },
+            [](MonoType* _monoType, DataBlock const& _dataBlock)
+            {
+                return PropertyDrawerCSharpEnum::Create(_monoType, _dataBlock);
+            });
+
+
+        // System.Collections.Generic.List
+        registerScriptPropertyAndFieldDrawerGenericClassCallbacks<PropertyDrawerCSharpList>(
+            MAZE_HCS("System.Collections.Generic.List"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerCSharpList* _drawer)
+            {
+                
+            },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerCSharpList const* _drawer)
+            {
+                
+            },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerCSharpList* _drawer)
+            {
+                MonoObject* value = nullptr;
+                _instance.getFieldValue(_field, value);
+                int a = 0;
+            },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerCSharpList const* _drawer)
+            {
+                
+            },
+            [](MonoType* _monoType, DataBlock const& _dataBlock)
+            {
+                return PropertyDrawerCSharpList::Create(_monoType, _dataBlock);
+            });
 
         // Maze Core
         registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerEntityPtr>(MAZE_HCS("Maze.Core.Entity"),
@@ -810,32 +879,7 @@ namespace Maze
                     _instance.resetFieldValue(_field);
             });
 
-        // System.Enum
-        registerScriptPropertyAndFieldDrawerEnumCallbacks<PropertyDrawerCSharpEnum>(
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerCSharpEnum* _drawer)
-                {
-                    S32 enumValue = 0;
-                    _instance.getPropertyValue(_property, enumValue);
-                    _drawer->setValue(enumValue);
-                },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerCSharpEnum const* _drawer)
-                {
-                    _instance.setPropertyValue(_property, _drawer->getValue());
-                },
-                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerCSharpEnum* _drawer)
-                {
-                    S32 enumValue = 0;
-                    _instance.getFieldValue(_field, enumValue);
-                    _drawer->setValue(enumValue);
-                },
-                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerCSharpEnum const* _drawer)
-                {
-                    _instance.setFieldValue(_field, _drawer->getValue());
-                },
-                [](MonoType* _monoType, DataBlock const& _dataBlock)
-                {
-                    return PropertyDrawerCSharpEnum::Create(_monoType, _dataBlock);
-                });
+        
     }
 
 } // namespace Maze

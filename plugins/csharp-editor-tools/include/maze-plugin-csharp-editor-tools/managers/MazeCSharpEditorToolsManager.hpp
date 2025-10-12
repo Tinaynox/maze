@@ -234,6 +234,27 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TDrawer>
+        inline void registerScriptPropertyAndFieldDrawerGenericClassCallbacks(
+            HashedCString _genericClassFullName,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, TDrawer*)> _propertyProcessDataToUICb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, TDrawer const*)> _propertyProcessDataFromUICb,
+            std::function<void(EcsWorld*, ScriptInstance const&, ScriptFieldPtr const&, TDrawer*)> _fieldProcessDataToUICb,
+            std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, TDrawer const*)> _fieldProcessDataFromUICb,
+            std::function<PropertyDrawerPtr(MonoType* _monoType, DataBlock const&)> _createDrawerCb = CreateScriptPropertyDrawerDefault<TDrawer>)
+        {
+            m_monoPropertyDrawerCallbacksPerGenericClass[_genericClassFullName] = BuildScriptPropertyDrawerCallbacks<TDrawer>(
+                _createDrawerCb,
+                _propertyProcessDataToUICb,
+                _propertyProcessDataFromUICb);
+
+            m_monoFieldDrawerCallbacksPerGenericClass[_genericClassFullName] = BuildScriptFieldDrawerCallbacks<TDrawer>(
+                _createDrawerCb,
+                _fieldProcessDataToUICb,
+                _fieldProcessDataFromUICb);
+        }
+
+        //////////////////////////////////////////
+        template <typename TDrawer>
         inline void registerScriptPropertyAndFieldDrawerEnumCallbacks(
             std::function<void(EcsWorld*, ScriptInstance const&, ScriptPropertyPtr const&, TDrawer*)> _propertyProcessDataToUICb,
             std::function<void(EcsWorld*, ScriptInstance&, ScriptPropertyPtr const&, TDrawer const*)> _propertyProcessDataFromUICb,
@@ -289,6 +310,9 @@ namespace Maze
 
         UnorderedMap<MonoClass*, ScriptPropertyDrawerCallbacks> m_monoPropertyDrawerCallbacksPerMonoSuperClass;
         UnorderedMap<MonoClass*, ScriptFieldDrawerCallbacks> m_monoFieldDrawerCallbacksPerMonoSuperClass;
+
+        StringKeyMap<ScriptPropertyDrawerCallbacks> m_monoPropertyDrawerCallbacksPerGenericClass;
+        StringKeyMap<ScriptFieldDrawerCallbacks> m_monoFieldDrawerCallbacksPerGenericClass;
 
         ScriptPropertyDrawerCallbacks m_monoPropertyDrawerEnumCallbacks;
         ScriptFieldDrawerCallbacks m_monoFieldDrawerEnumCallbacks;

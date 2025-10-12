@@ -104,6 +104,20 @@ namespace Maze
     };
 
     //////////////////////////////////////////
+    struct MAZE_PLUGIN_CSHARP_API CppTypeBindingData
+    {
+        HashedCString cppTypeName;
+        ClassUID cppTypeClassUID = 0u;
+
+        CppTypeBindingData(
+            HashedCString const& _cppTypeName,
+            ClassUID _cppTypeClassUID)
+            : cppTypeName(_cppTypeName)
+            , cppTypeClassUID(_cppTypeClassUID)
+        {}
+    };
+
+    //////////////////////////////////////////
     struct MAZE_PLUGIN_CSHARP_API MonoEngineData
     {
         MonoDomain* monoDomain = nullptr;
@@ -116,6 +130,8 @@ namespace Maze
         bool debugEnabled = false;
 
         MonoEcsData ecsData;
+
+        StringKeyMap<CppTypeBindingData> cppTypeBindingDataPerCSharpTypeName;
     };
 
 
@@ -438,6 +454,20 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    template <typename TCppType>
+    inline void RegisterCppTypeBindingData(HashedCString _csharpTypeFullName)
+    {
+        ClassUID typeUID = ClassInfo<TCppType>::UID();
+
+        g_monoEngineData->cppTypeBindingDataPerCSharpTypeName.insert(
+            _csharpTypeFullName,
+            CppTypeBindingData(
+                ClassInfo<TCppType>::QualifiedName(),
+                typeUID));
+    };
+
+
+    //////////////////////////////////////////
     // Class MonoEngine
     //
     //////////////////////////////////////////
@@ -454,6 +484,29 @@ namespace Maze
             return false;
 
         LoadCoreAssembly(MAZE_HCS("maze-csharp-core-lib.dll"));
+
+
+        RegisterCppTypeBindingData<U16>(MAZE_HS("System.Char")); // Wide char
+        RegisterCppTypeBindingData<Bool>(MAZE_HS("System.Boolean"));
+        RegisterCppTypeBindingData<S8>(MAZE_HS("System.SByte"));
+        RegisterCppTypeBindingData<S16>(MAZE_HS("System.Int16"));
+        RegisterCppTypeBindingData<S32>(MAZE_HS("System.Int32"));
+        RegisterCppTypeBindingData<S64>(MAZE_HS("System.Int64"));
+        RegisterCppTypeBindingData<U8>(MAZE_HS("System.Byte"));
+        RegisterCppTypeBindingData<U16>(MAZE_HS("System.UInt16"));
+        RegisterCppTypeBindingData<U32>(MAZE_HS("System.UInt32"));
+        RegisterCppTypeBindingData<U64>(MAZE_HS("System.UInt64"));
+        RegisterCppTypeBindingData<F32>(MAZE_HS("System.Single"));
+        RegisterCppTypeBindingData<F64>(MAZE_HS("System.Double"));
+        RegisterCppTypeBindingData<Vec2S>(MAZE_HS("Maze.Core.Vec2S"));
+        RegisterCppTypeBindingData<Vec3S>(MAZE_HS("Maze.Core.Vec3S"));
+        RegisterCppTypeBindingData<Vec4S>(MAZE_HS("Maze.Core.Vec4S"));
+        RegisterCppTypeBindingData<Vec2F>(MAZE_HS("Maze.Core.Vec2F"));
+        RegisterCppTypeBindingData<Vec3F>(MAZE_HS("Maze.Core.Vec3F"));
+        RegisterCppTypeBindingData<Vec4F>(MAZE_HS("Maze.Core.Vec4F"));
+        RegisterCppTypeBindingData<Vec2U>(MAZE_HS("Maze.Core.Vec2U"));
+        RegisterCppTypeBindingData<Vec3U>(MAZE_HS("Maze.Core.Vec3U"));
+        RegisterCppTypeBindingData<Vec4U>(MAZE_HS("Maze.Core.Vec4U"));
 
         return true;
     }
@@ -955,6 +1008,16 @@ namespace Maze
             scriptClass);
 
         return scriptClass;
+    }
+
+    //////////////////////////////////////////
+    ClassUID MonoEngine::GetCppTypeBindingClassUID(HashedCString _csharpTypeFullName)
+    {
+        auto it = g_monoEngineData->cppTypeBindingDataPerCSharpTypeName.find(_csharpTypeFullName);
+        if (it == g_monoEngineData->cppTypeBindingDataPerCSharpTypeName.end())
+            return 0;
+
+        return it->second.cppTypeClassUID;
     }
 
 } // namespace Maze

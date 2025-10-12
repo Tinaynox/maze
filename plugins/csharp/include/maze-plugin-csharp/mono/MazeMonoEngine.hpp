@@ -156,6 +156,9 @@ namespace Maze
             MonoImage* _monoImage);
 
 
+        //////////////////////////////////////////
+        static ClassUID GetCppTypeBindingClassUID(HashedCString _csharpTypeFullName);
+
     protected:
 
         //////////////////////////////////////////
