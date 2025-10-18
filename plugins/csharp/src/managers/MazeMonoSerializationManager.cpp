@@ -32,6 +32,7 @@
 #include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 #include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/serialization/MazeDataBlockBinarySerialization.hpp"
+#include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
@@ -182,46 +183,53 @@ namespace Maze
             registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("System.Collections.Generic.List"),
                 [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
                 {
-                    MAZE_WARNING("NOT IMPLEMENTED");
+                    MonoObject* listMonoObject = nullptr;
+                    _instance.getPropertyValue(_prop, listMonoObject);
+                    if (listMonoObject)
+                    {
+                        DataBlock* listDataBlock = _dataBlock.addNewDataBlock(_prop->getName());
+                        MonoHelper::SerializeMonoObjectListToDataBlock(listMonoObject, *listDataBlock);
+                    }
                 },
                 [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
                 {
-                    MAZE_WARNING("NOT IMPLEMENTED");
+                    DataBlock const* listDataBlock = _dataBlock.getDataBlock(_prop->getName().asHashedCString());
+                    if (listDataBlock)
+                    {
+                        MonoObject* listMonoObject = nullptr;
+                        _instance.getPropertyValue(_prop, listMonoObject);
+                        if (listMonoObject)
+                            MonoHelper::DeserializeDataBlockToMonoObjectList(*listDataBlock, listMonoObject);
+                    }
+                    else
+                    {
+                        MAZE_NOT_IMPLEMENTED;
+                    }
                 },
                 [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
                 {
-                    MAZE_WARNING("NOT IMPLEMENTED");
-
                     MonoObject* listMonoObject = nullptr;
                     _instance.getFieldValue(_field, listMonoObject);
                     if (listMonoObject)
                     {
-                        MonoClass* listMonoClass = mono_object_get_class(listMonoObject);
-                        MonoMethod* getEnumeratorMethod = mono_class_get_method_from_name(listMonoClass, "GetEnumerator", 0);
-                        MonoObject* enumerator = MonoHelper::InvokeMethod(listMonoObject, getEnumeratorMethod, nullptr);
-                        if (enumerator)
-                        {
-                            MonoClass* enumeratorClass = mono_object_get_class(enumerator);
-                            MonoMethod* moveNextMethod = mono_class_get_method_from_name(enumeratorClass, "MoveNext", 0);
-                            MonoMethod* getCurrentMethod = mono_class_get_method_from_name(enumeratorClass, "get_Current", 0);
-
-                            // #TODO:
-                            /*
-                            while (MonoHelper::InvokeMethod(enumerator, moveNextMethod, nullptr))
-                            {
-                                MonoObject* current = MonoHelper::InvokeMethod(enumerator, getCurrentMethod, nullptr);
-                                if (current)
-                                {
-                                    
-                                }
-                            }
-                            */
-                        }
+                        DataBlock* listDataBlock = _dataBlock.addNewDataBlock(_field->getName());
+                        MonoHelper::SerializeMonoObjectListToDataBlock(listMonoObject, *listDataBlock);
                     }
                 },
                 [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
                 {
-                    MAZE_WARNING("NOT IMPLEMENTED");
+                    DataBlock const* listDataBlock = _dataBlock.getDataBlock(_field->getName().asHashedCString());
+                    if (listDataBlock)
+                    {
+                        MonoObject* listMonoObject = nullptr;
+                        _instance.getFieldValue(_field, listMonoObject);
+                        if (listMonoObject)
+                            MonoHelper::DeserializeDataBlockToMonoObjectList(*listDataBlock, listMonoObject);
+                    }
+                    else
+                    {
+                        MAZE_NOT_IMPLEMENTED;
+                    }
                 });
 
 
@@ -522,6 +530,9 @@ namespace Maze
                     if (idx >= 0)
                         _instance.setFieldValue(_field, _dataBlock.getS32(idx));
                 });
+
+
+            registerMonoObjectSerializationFunctions();
         }
         else
         if (_eventUID == ClassInfo<MonoShutdownEvent>::UID())
@@ -530,6 +541,8 @@ namespace Maze
             m_fieldDataBlockSerializationData.clear();
             m_propertyDataBlockSubClassSerializationData.clear();
             m_fieldDataBlockSubClassSerializationData.clear();
+
+            m_serializeMonoObjectToDataBlockFunctions.clear();
         }
     }
 
@@ -562,31 +575,50 @@ namespace Maze
         ScriptPropertyPtr const& _property,
         DataBlock& _dataBlock)
     {
-        auto it = m_propertyDataBlockSerializationData.find(_property->getTypeName());
-        if (it != m_propertyDataBlockSerializationData.end())
+        if (_property->isGenericType())
         {
+            Size genericSubTypeIndex = _property->getTypeName().getString().find('<');
+            if (genericSubTypeIndex == String::npos)
+                return false;
+
+            // #TODO: Rework without string copying
+            HashedString genericBaseType = HashedString(_property->getTypeName().getString().substr(0, genericSubTypeIndex));
+
+            auto it = m_propertyDataBlockSerializationData.find(genericBaseType);
+            if (it == m_propertyDataBlockSerializationData.end())
+                return false;
+
             it->second.propToDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
             return true;
         }
         else
         {
-            MonoClass* monoClass = mono_class_from_mono_type(_property->getMonoType());
-            if (monoClass)
+            auto it = m_propertyDataBlockSerializationData.find(_property->getTypeName());
+            if (it != m_propertyDataBlockSerializationData.end())
             {
-                for (auto const& data : m_propertyDataBlockSubClassSerializationData)
+                it->second.propToDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
+                return true;
+            }
+            else
+            {
+                MonoClass* monoClass = mono_class_from_mono_type(_property->getMonoType());
+                if (monoClass)
                 {
-                    MonoClass* baseClass = data.first;
-                    if (mono_class_is_subclass_of(monoClass, baseClass, false))
+                    for (auto const& data : m_propertyDataBlockSubClassSerializationData)
                     {
-                        data.second.propToDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
+                        MonoClass* baseClass = data.first;
+                        if (mono_class_is_subclass_of(monoClass, baseClass, false))
+                        {
+                            data.second.propToDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
+                            return true;
+                        }
+                    }
+
+                    if (mono_class_is_enum(monoClass))
+                    {
+                        m_propertyDataBlockEnumSerializationData.propToDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
                         return true;
                     }
-                }
-
-                if (mono_class_is_enum(monoClass))
-                {
-                    m_propertyDataBlockEnumSerializationData.propToDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
-                    return true;
                 }
             }
         }
@@ -601,31 +633,50 @@ namespace Maze
         ScriptPropertyPtr const& _property,
         DataBlock const& _dataBlock)
     {
-        auto it = m_propertyDataBlockSerializationData.find(_property->getTypeName());
-        if (it != m_propertyDataBlockSerializationData.end())
+        if (_property->isGenericType())
         {
+            Size genericSubTypeIndex = _property->getTypeName().getString().find('<');
+            if (genericSubTypeIndex == String::npos)
+                return false;
+
+            // #TODO: Rework without string copying
+            HashedString genericBaseType = HashedString(_property->getTypeName().getString().substr(0, genericSubTypeIndex));
+
+            auto it = m_propertyDataBlockSerializationData.find(genericBaseType);
+            if (it == m_propertyDataBlockSerializationData.end())
+                return false;
+
             it->second.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
             return true;
         }
         else
         {
-            MonoClass* monoClass = mono_class_from_mono_type(_property->getMonoType());
-            if (monoClass)
+            auto it = m_propertyDataBlockSerializationData.find(_property->getTypeName());
+            if (it != m_propertyDataBlockSerializationData.end())
             {
-                for (auto const& data : m_propertyDataBlockSubClassSerializationData)
+                it->second.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
+                return true;
+            }
+            else
+            {
+                MonoClass* monoClass = mono_class_from_mono_type(_property->getMonoType());
+                if (monoClass)
                 {
-                    MonoClass* baseClass = data.first;
-                    if (mono_class_is_subclass_of(monoClass, baseClass, false))
+                    for (auto const& data : m_propertyDataBlockSubClassSerializationData)
                     {
-                        data.second.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
+                        MonoClass* baseClass = data.first;
+                        if (mono_class_is_subclass_of(monoClass, baseClass, false))
+                        {
+                            data.second.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
+                            return true;
+                        }
+                    }
+
+                    if (mono_class_is_enum(monoClass))
+                    {
+                        m_propertyDataBlockEnumSerializationData.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
                         return true;
                     }
-                }
-
-                if (mono_class_is_enum(monoClass))
-                {
-                    m_propertyDataBlockEnumSerializationData.propFromDataBlockCb(_ecsWorld, _instance, _property, _dataBlock);
-                    return true;
                 }
             }
         }
@@ -668,6 +719,7 @@ namespace Maze
             if (genericSubTypeIndex == String::npos)
                 return false;
 
+            // #TODO: Rework without string copying
             HashedString genericBaseType = HashedString(_field->getTypeName().getString().substr(0, genericSubTypeIndex));
 
             auto it = m_fieldDataBlockSerializationData.find(genericBaseType);
@@ -719,31 +771,50 @@ namespace Maze
         ScriptFieldPtr const& _field,
         DataBlock const& _dataBlock)
     {
-        auto it = m_fieldDataBlockSerializationData.find(_field->getTypeName());
-        if (it != m_fieldDataBlockSerializationData.end())
+        if (_field->isGenericType())
         {
+            Size genericSubTypeIndex = _field->getTypeName().getString().find('<');
+            if (genericSubTypeIndex == String::npos)
+                return false;
+
+            // #TODO: Rework without string copying
+            HashedString genericBaseType = HashedString(_field->getTypeName().getString().substr(0, genericSubTypeIndex));
+
+            auto it = m_fieldDataBlockSerializationData.find(genericBaseType);
+            if (it == m_fieldDataBlockSerializationData.end())
+                return false;
+
             it->second.propFromDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
             return true;
         }
         else
         {
-            MonoClass* monoClass = mono_class_from_mono_type(_field->getMonoType());
-            if (monoClass)
+            auto it = m_fieldDataBlockSerializationData.find(_field->getTypeName());
+            if (it != m_fieldDataBlockSerializationData.end())
             {
-                for (auto const& data : m_fieldDataBlockSubClassSerializationData)
+                it->second.propFromDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
+                return true;
+            }
+            else
+            {
+                MonoClass* monoClass = mono_class_from_mono_type(_field->getMonoType());
+                if (monoClass)
                 {
-                    MonoClass* baseClass = data.first;
-                    if (mono_class_is_subclass_of(monoClass, baseClass, false))
+                    for (auto const& data : m_fieldDataBlockSubClassSerializationData)
                     {
-                        data.second.propFromDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
+                        MonoClass* baseClass = data.first;
+                        if (mono_class_is_subclass_of(monoClass, baseClass, false))
+                        {
+                            data.second.propFromDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
+                            return true;
+                        }
+                    }
+
+                    if (mono_class_is_enum(monoClass))
+                    {
+                        m_fieldDataBlockEnumSerializationData.propFromDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
                         return true;
                     }
-                }
-
-                if (mono_class_is_enum(monoClass))
-                {
-                    m_fieldDataBlockEnumSerializationData.propFromDataBlockCb(_ecsWorld, _instance, _field, _dataBlock);
-                    return true;
                 }
             }
         }
@@ -792,6 +863,145 @@ namespace Maze
         // UI
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(CursorInputEvent);
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(CursorWheelInputEvent);
+    }
+
+    //////////////////////////////////////////
+    void MonoSerializationManager::registerMonoObjectSerializationFunctions()
+    {
+        auto registerMonoObjectSerializationFunction = 
+            [&](
+                MonoImage* _image,
+                CString _namespaceName,
+                CString _typeName,
+                SerializeMonoObjectToDataBlockFunc _func)
+            {
+                MonoClass* monoClass = mono_class_from_name(_image, _namespaceName, _typeName);
+                MAZE_ERROR_RETURN_IF(!monoClass, "Undefined type - %s.%s", _namespaceName, _typeName);
+                m_serializeMonoObjectToDataBlockFunctions[monoClass] = _func;
+            };
+
+        auto registerGenericMonoObjectSerializationFunction =
+            [&](
+                HashedCString _genericFullName,
+                SerializeMonoObjectToDataBlockFunc _func)
+            {
+                m_serializeGenericMonoObjectToDataBlockFunctions.insert(_genericFullName, _func);
+            };
+
+        // System
+        MonoImage* systemCoreImage = mono_get_corlib();
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "String", MonoHelper::SerializeMonoObjectStringToDataBlock);
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "Char", MonoHelper::SerializeMonoObjectU16ToDataBlock);
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "Boolean", MonoHelper::SerializeMonoObjectBoolToDataBlock);
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "SByte", MonoHelper::SerializeMonoObjectS8ToDataBlock);
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "Int16", MonoHelper::SerializeMonoObjectS16ToDataBlock);
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "Int32", MonoHelper::SerializeMonoObjectS32ToDataBlock);
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "Int64", MonoHelper::SerializeMonoObjectS64ToDataBlock);
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "Byte", MonoHelper::SerializeMonoObjectU8ToDataBlock);
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "UInt16", MonoHelper::SerializeMonoObjectU16ToDataBlock);
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "UInt32", MonoHelper::SerializeMonoObjectU32ToDataBlock);
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "UInt64", MonoHelper::SerializeMonoObjectU64ToDataBlock);
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "Single", MonoHelper::SerializeMonoObjectF32ToDataBlock);
+        registerMonoObjectSerializationFunction(systemCoreImage, "System", "Double", MonoHelper::SerializeMonoObjectF64ToDataBlock);
+
+        registerGenericMonoObjectSerializationFunction(MAZE_HCS("System.Collections.Generic.List"), MonoHelper::SerializeMonoObjectListToDataBlock);
+
+
+        // Maze.Core
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Vec2F", MonoHelper::SerializeMonoObjectVec2FToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Vec3F", MonoHelper::SerializeMonoObjectVec3FToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Vec4F", MonoHelper::SerializeMonoObjectVec4FToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Vec2S", MonoHelper::SerializeMonoObjectVec2SToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Vec3S", MonoHelper::SerializeMonoObjectVec3SToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Vec4S", MonoHelper::SerializeMonoObjectVec4SToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Vec2U", MonoHelper::SerializeMonoObjectVec2UToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Vec3U", MonoHelper::SerializeMonoObjectVec3UToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Vec4U", MonoHelper::SerializeMonoObjectVec4UToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Mat3F", MonoHelper::SerializeMonoObjectMat3FToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Mat4F", MonoHelper::SerializeMonoObjectMat4FToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "TMat", MonoHelper::SerializeMonoObjectTMatToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Rect2F", MonoHelper::SerializeMonoObjectRect2FToDataBlock);
+    }
+
+    //////////////////////////////////////////
+    void MonoSerializationManager::serializeMonoObjectToDataBlock(
+        MonoObject* _object,
+        DataBlock& _dataBlock)
+    {
+        MonoClass* objectClass = mono_object_get_class(_object);
+        auto it = m_serializeMonoObjectToDataBlockFunctions.find(objectClass);
+        if (it != m_serializeMonoObjectToDataBlockFunctions.end())
+        {
+            it->second(_object, _dataBlock);
+        }
+        else
+        {
+            MonoType* monoType = mono_class_get_byref_type(objectClass);
+            S32 monoTypeType = mono_type_get_type(monoType);
+
+            if (monoTypeType == MONO_TYPE_GENERICINST)
+            {
+                // CString monoClassName = mono_class_get_name(objectClass);
+                CString monoTypeName = mono_type_get_name(monoType);
+                CString genericSubTypeStartPtr = strchr(monoTypeName, '<');
+                MAZE_ERROR_RETURN_IF(genericSubTypeStartPtr == nullptr, "Invalid generic class - %s", monoTypeName);
+                // CString genericSubTypeEndPtr = strrchr(monoClassName, '>');
+                // MAZE_ERROR_RETURN_IF(genericSubTypeEndPtr == nullptr, "Invalid generic class[2] - %s", monoClassName);
+
+                HashedString monoClassBaseName(monoTypeName, genericSubTypeStartPtr - monoTypeName);
+                
+                auto it2 = m_serializeGenericMonoObjectToDataBlockFunctions.find(monoClassBaseName.asHashedCString());
+                if (it2 != m_serializeGenericMonoObjectToDataBlockFunctions.end())
+                {
+                    it2->second(_object, _dataBlock);
+                }
+                else
+                {
+                    MAZE_WARNING("Unsupported generic type serialization - %s!", monoClassBaseName.c_str());
+                }
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void MonoSerializationManager::deserializeDataBlockToMonoObject(
+        DataBlock const& _dataBlock,
+        MonoObject* _object)
+    {
+
+    }
+
+    //////////////////////////////////////////
+    MonoObject* MonoSerializationManager::createMonoObjectFromDataBlock(DataBlock const& _dataBlock)
+    {
+        if (_dataBlock.getParamsCount() == 1)
+        {
+            DataBlock::Param const& paramData = _dataBlock.getParam(0);
+            switch ((DataBlockParamType)paramData.type)
+            {
+                case DataBlockParamType::ParamVec2F32:
+                {
+                    MonoClass* monoClass = mono_class_from_name(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Vec2F");
+                    return mono_value_box(mono_get_root_domain(), monoClass, &_dataBlock.getVec2F(0));
+                }
+                default:
+                {
+                    Debug::LogError("Unsupported param type - %d", (S32)paramData.type);
+                    break;
+                }
+            }
+        }
+        else
+        if (_dataBlock.getDataBlocksCount() == 1)
+        {
+            MAZE_NOT_IMPLEMENTED;
+        }
+        else
+        {
+            MAZE_ERROR("Invalid data block! params count = %d, blocks count = %d", _dataBlock.getParamsCount(), _dataBlock.getDataBlocksCount());
+        }
+
+        return nullptr;
     }
 
 } // namespace Maze

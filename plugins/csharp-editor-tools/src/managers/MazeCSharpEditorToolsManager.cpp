@@ -49,6 +49,7 @@
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-plugin-csharp/managers/MazeMonoSerializationManager.hpp"
 #include "maze-plugin-csharp-editor-tools/property-drawers/MazePDScriptableObject.hpp"
 #include "maze-plugin-csharp-editor-tools/property-drawers/MazePDCSharpEnum.hpp"
 #include "maze-plugin-csharp-editor-tools/property-drawers/MazePDCSharpList.hpp"
@@ -515,7 +516,16 @@ namespace Maze
             MAZE_HCS("System.Collections.Generic.List"),
             [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerCSharpList* _drawer)
             {
-                
+                MonoObject* value = nullptr;
+                _instance.getPropertyValue(_property, value);
+                if (value)
+                {
+                    DataBlock dataBlock;
+                    MonoSerializationManager::GetInstancePtr()->serializeMonoObjectToDataBlock(value, dataBlock);
+                    _drawer->setDataBlock(dataBlock);
+                }
+                else
+                    _drawer->setDataBlock(DataBlock::c_empty);
             },
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerCSharpList const* _drawer)
             {
@@ -525,11 +535,25 @@ namespace Maze
             {
                 MonoObject* value = nullptr;
                 _instance.getFieldValue(_field, value);
-                int a = 0;
+                if (value)
+                {
+                    DataBlock dataBlock;
+                    MonoSerializationManager::GetInstancePtr()->serializeMonoObjectToDataBlock(value, dataBlock);
+                    _drawer->setDataBlock(dataBlock);
+                }
+                else
+                    _drawer->setDataBlock(DataBlock::c_empty);
             },
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerCSharpList const* _drawer)
             {
-                
+                MonoObject* listMonoObject = nullptr;
+                _instance.getFieldValue(_field, listMonoObject);
+                if (listMonoObject)
+                {
+                    DataBlock dataBlock;
+                    _drawer->toDataBlock(dataBlock);
+                    MonoHelper::DeserializeDataBlockToMonoObjectList(dataBlock, listMonoObject);
+                }
             },
             [](MonoType* _monoType, DataBlock const& _dataBlock)
             {

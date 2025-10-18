@@ -181,6 +181,49 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        #define MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(DType)                              \
+            MAZE_PLUGIN_CSHARP_API void SerializeMonoObject ## DType ##ToDataBlock(                  \
+                MonoObject* _boxedValue,                                                             \
+                DataBlock& _dataBlock);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(String);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Bool);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(F32);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(F64);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(S8);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(S16);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(S32);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(S64);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(U8);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(U16);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(U32);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(U64);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec2F);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec3F);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec4F);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec2S);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec3S);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec4S);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec2U);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec3U);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec4U);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Mat3F);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Mat4F);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(TMat);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Rect2F);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(EntityId);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(ColorU32);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(ColorF128);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void SerializeMonoObjectListToDataBlock(MonoObject* _value, DataBlock& _dataBlock);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void DeserializeDataBlockToMonoObjectList(DataBlock const& _dataBlock, MonoObject* _value);
+
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API ResourceId GetIndexedResourceId(MonoObject* _indexedResourceInstance);
 
         //////////////////////////////////////////

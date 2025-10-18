@@ -69,6 +69,9 @@ namespace Maze
         std::function<void(EcsWorld*, ScriptInstance&, ScriptFieldPtr const&, DataBlock const&)> propFromDataBlockCb;
     };
 
+    //////////////////////////////////////////
+    using SerializeMonoObjectToDataBlockFunc = std::function<void(MonoObject*, DataBlock&)>;
+
 
     //////////////////////////////////////////
     // Class MonoSerializationManager
@@ -200,6 +203,19 @@ namespace Maze
             return nullValue;
         }
 
+        //////////////////////////////////////////
+        void serializeMonoObjectToDataBlock(
+            MonoObject* _object,
+            DataBlock& _dataBlock);
+
+        //////////////////////////////////////////
+        void deserializeDataBlockToMonoObject(
+            DataBlock const& _dataBlock,
+            MonoObject* _object);
+
+        //////////////////////////////////////////
+        MonoObject* createMonoObjectFromDataBlock(DataBlock const& _dataBlock);
+
     protected:
 
         //////////////////////////////////////////
@@ -215,9 +231,13 @@ namespace Maze
         //////////////////////////////////////////
         void registerWriteMetaPropertyToMonoClassFieldFunctions();
 
+        //////////////////////////////////////////
+        void registerMonoObjectSerializationFunctions();
+
     protected:
         static MonoSerializationManager* s_instance;
 
+        // Property and fields serialization
         StringKeyMap<ScriptPropertyDataBlockSerializationData> m_propertyDataBlockSerializationData;
         StringKeyMap<ScriptFieldDataBlockSerializationData> m_fieldDataBlockSerializationData;
 
@@ -228,6 +248,11 @@ namespace Maze
         ScriptFieldDataBlockSerializationData m_fieldDataBlockEnumSerializationData;
 
         UnorderedMap<ClassUID, WriteMetaPropertyToMonoClassFieldFunction> m_writeMetaPropertyToMonoClassFieldFunctions;
+
+
+        // MonoObject serialization
+        UnorderedMap<MonoClass*, SerializeMonoObjectToDataBlockFunc> m_serializeMonoObjectToDataBlockFunctions;
+        StringKeyMap<SerializeMonoObjectToDataBlockFunc> m_serializeGenericMonoObjectToDataBlockFunctions;
     };
 
 } // namespace Maze

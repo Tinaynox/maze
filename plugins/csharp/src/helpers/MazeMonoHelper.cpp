@@ -31,6 +31,8 @@
 #include "maze-plugin-csharp/mono/MazeScriptField.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptableObject.hpp"
 #include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
+#include "maze-plugin-csharp/managers/MazeMonoSerializationManager.hpp"
+#include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
 #include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 
@@ -414,11 +416,148 @@ namespace Maze
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(TMat);
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Rect2F);
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(EntityId);
-        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(ColorU32);
-        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(ColorF128);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void WriteMetaPropertyToMonoClassFieldColorU32(
+            ConstMetaInstance const& _metaInstance,
+            MetaProperty const* _metaProperty,
+            MonoObject* _monoObj,
+            MonoClassField* _field)
+        {
+            ColorU32 value;
+            _metaProperty->getValue<ColorU32>(_metaInstance, value);
+            mono_field_set_value(_monoObj, _field, &value.r);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void WriteMetaPropertyToMonoClassFieldColorF128(
+            ConstMetaInstance const& _metaInstance,
+            MetaProperty const* _metaProperty,
+            MonoObject* _monoObj,
+            MonoClassField* _field)
+        {
+            ColorF128 value;
+            _metaProperty->getValue<ColorF128>(_metaInstance, value);
+            mono_field_set_value(_monoObj, _field, &value.value);
+        }
 
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorInputEvent);
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorWheelInputEvent);
+
+
+
+        //////////////////////////////////////////
+        #define MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(DType)                                \
+            MAZE_PLUGIN_CSHARP_API void SerializeMonoObject ## DType ##ToDataBlock(                      \
+                MonoObject* _boxedValue,                                                                 \
+                DataBlock& _dataBlock)                                                                   \
+            {                                                                                            \
+                ValueToDataBlock(*reinterpret_cast<DType*>(mono_object_unbox(_boxedValue)), _dataBlock); \
+            }
+
+        //////////////////////////////////////////
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Bool);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(F32);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(F64);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(S8);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(S16);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(S32);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(S64);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(U8);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(U16);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(U32);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(U64);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec2F);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec3F);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec4F);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec2S);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec3S);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec4S);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec2U);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec3U);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Vec4U);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Mat3F);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Mat4F);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(TMat);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Rect2F);
+        MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(EntityId);
+
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void SerializeMonoObjectStringToDataBlock(
+            MonoObject* _boxedValue,
+            DataBlock& _dataBlock)
+        {
+            MAZE_NOT_IMPLEMENTED;
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void SerializeMonoObjectColorU32ToDataBlock(
+            MonoObject* _boxedValue,
+            DataBlock& _dataBlock)
+        {
+            ValueToDataBlock(ColorU32(*reinterpret_cast<U32*>(mono_object_unbox(_boxedValue))), _dataBlock);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void SerializeMonoObjectColorF128ToDataBlock(
+            MonoObject* _boxedValue,
+            DataBlock& _dataBlock)
+        {
+            ValueToDataBlock(ColorF128(*reinterpret_cast<Vec4F*>(mono_object_unbox(_boxedValue))), _dataBlock);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void SerializeMonoObjectListToDataBlock(
+            MonoObject* _value,
+            DataBlock& _dataBlock)
+        {
+            MonoClass* listMonoClass = mono_object_get_class(_value);
+            MonoMethod* getCountMethod = mono_class_get_method_from_name(listMonoClass, "get_Count", 0);
+            MonoMethod* getItemMethod = mono_class_get_method_from_name(listMonoClass, "get_Item", 1);
+
+            MonoObject* boxedCount = MonoHelper::InvokeMethod(_value, getCountMethod, nullptr);
+            S32 count = *reinterpret_cast<S32*>(mono_object_unbox(boxedCount));
+
+            _dataBlock.clearData();
+            for (S32 i = 0; i < count; ++i)
+            {
+                void* args[1];
+                args[0] = &i; // Index
+                MonoObject* elementValue = MonoHelper::InvokeMethod(_value, getItemMethod, args);
+                                
+                DataBlock elementDataBlock;
+                MonoSerializationManager::GetInstancePtr()->serializeMonoObjectToDataBlock(elementValue, elementDataBlock);
+                AddDataToDataBlock(_dataBlock, MAZE_HCS("item"), elementDataBlock);
+            }
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void DeserializeDataBlockToMonoObjectList(
+            DataBlock const& _dataBlock,
+            MonoObject* _value)
+        {
+            MonoClass* listMonoClass = mono_object_get_class(_value);
+            MonoMethod* addMethod = mono_class_get_method_from_name(listMonoClass, "Add", 1);
+            MonoMethod* clearMethod = mono_class_get_method_from_name(listMonoClass, "Clear", 0);
+            
+            MonoHelper::InvokeMethod(_value, clearMethod, nullptr);
+
+            for (DataBlock const* childData : _dataBlock)
+            {
+                MonoObject* elementValue = MonoSerializationManager::GetInstancePtr()->createMonoObjectFromDataBlock(*childData);
+            
+                if (elementValue != nullptr)
+                {
+                    MonoClass* klass = mono_object_get_class(elementValue);
+                    bool isValueType = mono_class_is_valuetype(klass) != 0;
+
+                    // #TODO: Optimize for value types - remove unnecessary boxing and unboxing
+                    void* args[1] = { isValueType ? (void*)mono_object_unbox(elementValue) : (void*)&elementValue };
+                    MonoHelper::InvokeMethod(_value, addMethod, args);
+                }
+            }
+        }
 
 
         //////////////////////////////////////////

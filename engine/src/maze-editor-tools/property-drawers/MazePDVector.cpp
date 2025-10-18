@@ -119,7 +119,7 @@ namespace Maze
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
-
+        /*
         HorizontalLayout2DPtr titleLayout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
@@ -147,6 +147,7 @@ namespace Maze
         m_expandButtonSprite->setColor(ColorU32::c_black);
         m_expandButton = m_expandButtonSprite->getEntityRaw()->ensureComponent<ClickButton2D>();
         m_expandButton->eventClick.subscribe(this, &PropertyDrawerVector::notifyExpandButtonClick);
+        */
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
             _label,
@@ -236,7 +237,7 @@ namespace Maze
         {
             DataBlock const* childDataBlock = _dataBlock.getDataBlock(DataBlock::DataBlockIndex(i));
             PropertyDrawerPtr const& propertyDrawer = m_itemDrawers[i];
-            propertyDrawer->setDataBlock(*childDataBlock);
+            propertyDrawer->setDataBlock(childDataBlock ? *childDataBlock : DataBlock::c_empty);
         }
 
         return true;
@@ -250,9 +251,9 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerVector::notifyVectorSizeChanged()
     {
-        eventUIData();
-
         ensureItemDrawers(m_vectorSizeDrawer->getValue());
+
+        eventUIData();
     }
 
     //////////////////////////////////////////
@@ -262,6 +263,12 @@ namespace Maze
 
         if (itemDrawersCount == _count)
             return;
+
+        Vector<DataBlock> prevData;
+        prevData.resize(Math::Min(itemDrawersCount, _count));
+
+        for (S32 i = 0, in = (S32)prevData.size(); i < in; ++i)
+            m_itemDrawers[i]->toDataBlock(prevData[i]);
 
 
         if (itemDrawersCount > _count)
@@ -298,9 +305,13 @@ namespace Maze
 
         if (m_itemDrawers.size() == _count)
         {
-            for (PropertyDrawerPtr const& itemDrawer : m_itemDrawers)
+            for (S32 i = 0, in = (S32)m_itemDrawers.size(); i < in; ++i)
             {
+                PropertyDrawerPtr const& itemDrawer = m_itemDrawers[i];
                 itemDrawer->buildUI(m_itemsLayout->getTransform());
+
+                if (i < (S32)prevData.size())
+                    itemDrawer->setDataBlock(prevData[i]);
             }
         }
 
