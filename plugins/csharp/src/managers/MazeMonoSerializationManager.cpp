@@ -203,7 +203,7 @@ namespace Maze
                     }
                     else
                     {
-                        MAZE_NOT_IMPLEMENTED;
+                        Debug::LogWarning("Not implemented - empty list object!");
                     }
                 },
                 [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
@@ -228,7 +228,7 @@ namespace Maze
                     }
                     else
                     {
-                        MAZE_NOT_IMPLEMENTED;
+                        Debug::LogWarning("Not implemented - empty list object!");
                     }
                 });
 
@@ -998,7 +998,7 @@ namespace Maze
         }
         else
         {
-            MAZE_ERROR("Invalid data block! params count = %d, blocks count = %d", _dataBlock.getParamsCount(), _dataBlock.getDataBlocksCount());
+            MAZE_WARNING("Invalid data block! params count = %d, blocks count = %d", _dataBlock.getParamsCount(), _dataBlock.getDataBlocksCount());
         }
 
         return nullptr;
