@@ -30,6 +30,7 @@
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-core/assets/MazeAssetUnitId.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
+#include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 
 
 
@@ -58,6 +59,24 @@ namespace Maze
             GizmosDrawer::GizmosMode(_gizmosMode),
             GizmosDrawer::MeshRenderMode(_renderMode));
     }
+
+    //////////////////////////////////////////
+    inline void DrawWireCircle(
+        Vec3F const& _position,
+        Vec3F const& _direction,
+        F32 _radius,
+        F32 _duration = 0.0f,
+        S32 _gizmosMode = 0,
+        S32 _renderMode = 0)
+    {
+        GizmosHelper::DrawWireCircle(
+            _position,
+            _direction,
+            _radius,
+            _duration,
+            GizmosDrawer::GizmosMode(_gizmosMode),
+            GizmosDrawer::MeshRenderMode(_renderMode));
+    }
     
     //////////////////////////////////////////
     inline void DrawWireSphere(
@@ -78,13 +97,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool MAZE_PLUGIN_CSHARP_API IsEntitySelected(S32 _entityId)
+    {
+        return SelectionManager::GetInstancePtr()->isObjectSelected(EntityId(_entityId));
+    }
+
+
+    //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsEditorTools()
     {
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC_WITH_NAME(GizmosHelper::PushTransform, PushTransform);
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC_WITH_NAME(GizmosHelper::PopTransform, PopTransform);
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(SetColor);
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(DrawLine);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(DrawWireCircle);
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(DrawWireSphere);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(IsEntitySelected);
     }
 
 } // namespace Maze

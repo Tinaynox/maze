@@ -59,6 +59,17 @@ namespace Maze.EditorTools
             InternalCalls.DrawLine(point0, point1, duration, (int)gizmosMode, (int)renderMode);
         }
 
+        public static void DrawWireCircle(
+            Vec3F position,
+            Vec3F direction,
+            float radius,
+            float duration = 0.0f,
+            GizmosMode gizmosMode = GizmosMode.Debug,
+            MeshRenderMode renderMode = MeshRenderMode.Opaque)
+        {
+            InternalCalls.DrawWireCircle(position, direction, radius, duration, (int)gizmosMode, (int)renderMode);
+        }
+
         public static void DrawWireSphere(
             Vec3F position,
             float radius,

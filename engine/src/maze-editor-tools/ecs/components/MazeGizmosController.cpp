@@ -28,6 +28,7 @@
 #include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
 #include "maze-editor-tools/ecs/components/MazeGizmosDrawer.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#include "maze-editor-tools/ecs/events/MazeEcsEditorToolsEvents.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
@@ -208,6 +209,8 @@ namespace Maze
             {
                 haveGizmosMask |= (bool)(_camera->getRenderMask() & S32(DefaultRenderMask::Gizmos));
             });
+
+        _entity->getEcsWorld()->broadcastEventImmediate<DrawGizmosEvent>(_event.getDt());
 
         _gizmosController->drawGizmos(_event.getDt(), haveGizmosMask);
     }

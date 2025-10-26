@@ -45,7 +45,7 @@ namespace Maze
     // Class SceneDebugEditorInitEvent
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API SceneDebugEditorInitEvent
+    class MAZE_EDITOR_TOOLS_API SceneDebugEditorInitEvent
         : public GenericEvent<SceneDebugEditorInitEvent>
     {
     public:
@@ -64,6 +64,35 @@ namespace Maze
 
     private:
         SceneDebugEditor* m_scene = nullptr;
+    };
+
+
+    //////////////////////////////////////////
+    // Class DrawGizmosEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_EDITOR_TOOLS_API DrawGizmosEvent
+        : public GenericEvent<DrawGizmosEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(DrawGizmosEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline DrawGizmosEvent(F32 _dt = 0.0f)
+            : dt(_dt)
+        {}
+
+        //////////////////////////////////////////
+        inline F32 getDt() const { return dt; }
+
+        //////////////////////////////////////////
+        inline void setDt(F32 _dt) { dt = _dt; }
+
+    public:
+        F32 dt = 0.0f;
     };
 
 

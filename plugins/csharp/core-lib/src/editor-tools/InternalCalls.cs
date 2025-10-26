@@ -27,6 +27,15 @@ namespace Maze.EditorTools
             int renderMode);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void DrawWireCircle(
+            Vec3F position,
+            Vec3F direction,
+            float radius,
+            float duration,
+            int gizmosMode,
+            int renderMode);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void DrawWireSphere(
             Vec3F position,
             float radius,
@@ -34,6 +43,9 @@ namespace Maze.EditorTools
             float duration,
             int gizmosMode,
             int renderMode);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool IsEntitySelected(int entityId);
         #endregion
     }
 }

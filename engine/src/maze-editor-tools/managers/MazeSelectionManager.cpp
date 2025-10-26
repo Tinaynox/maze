@@ -143,6 +143,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool SelectionManager::isObjectSelected(EntityId _eid) const
+    {
+        Set<EntityPtr>::const_iterator it = std::find_if(
+            m_selectedEntities.begin(),
+            m_selectedEntities.end(),
+            [_eid](EntityPtr const& _entity) { return _entity->getId() == _eid; });
+
+        return it != m_selectedEntities.end();
+    }
+
+    //////////////////////////////////////////
     inline Set<EntityId> SelectionManager::getSelectedEntityIds()
     {
         Set<EntityId> entityIds;

@@ -34,6 +34,8 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneDebugEditorInitEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(DrawGizmosEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, dt, 0.0f, getDt, setDt));
     
 } // namespace Maze
 //////////////////////////////////////////

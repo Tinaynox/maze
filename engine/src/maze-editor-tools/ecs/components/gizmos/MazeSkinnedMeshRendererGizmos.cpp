@@ -95,8 +95,6 @@ namespace Maze
         ComponentPtr const& _component,
         GizmosDrawer* _drawer)
     {
-        // return;
-
         SkinnedMeshRenderer* meshRenderer = _component->castRaw<SkinnedMeshRenderer>();    
         MeshSkeletonAnimatorPtr const& animator = meshRenderer->getAnimator();
         if (!animator)

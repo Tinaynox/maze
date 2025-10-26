@@ -110,6 +110,9 @@ namespace Maze
         bool isObjectSelected(EntityPtr const& _object) const;
 
         //////////////////////////////////////////
+        bool isObjectSelected(EntityId _eid) const;
+
+        //////////////////////////////////////////
         void selectObject(
             EntityPtr const& _object,
             bool _clearSelectionList = true,
