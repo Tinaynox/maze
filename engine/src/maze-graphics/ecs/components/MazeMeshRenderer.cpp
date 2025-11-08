@@ -287,8 +287,10 @@ namespace Maze
                         material = &_meshRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial();
 
                     RenderPassPtr const& firstRenderPass = (*material)->getFirstRenderPass();
+                    if (!firstRenderPass)
+                        continue;
 #if (MAZE_DEBUG)
-                    if (!firstRenderPass || !firstRenderPass->getShader())
+                    if (!firstRenderPass->getShader())
                     {
                         Debug::LogError("Mesh(EID: %u): Shader is null!", _entity->getId());
                         return;

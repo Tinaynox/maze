@@ -1188,6 +1188,84 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        SubMeshPtr MAZE_GRAPHICS_API CreateCircleSubMesh(
+            F32 _radius,
+            Vec4F const& _color)
+        {
+            SubMeshPtr mesh = SubMesh::Create();
+            mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
+
+            Vector<U16> indices;
+            Vector<Vec3F> positions;
+            Vector<Vec3F> normals;
+            Vector<Vec4F> colors;
+            Vector<Vec2F> uv0;
+
+            Vec3F prevPos = Vec3F(Math::Cos(0.0f), 0.0f, Math::Sin(0.0f)) * _radius;
+            for (S32 i = 1; i <= 24; ++i)
+            {
+                F32 a = (i / 24.0f) * Math::c_twoPi;
+                Vec3F pos = Vec3F(Math::Cos(a), Math::Sin(a), 0.0f) * _radius;
+
+                positions.push_back(Vec3F::c_zero);
+                positions.push_back(pos);
+                positions.push_back(prevPos);
+
+                for (S32 j = 0; j < 3; ++j)
+                    normals.push_back(Vec3F::c_negativeUnitZ);
+
+                prevPos = pos;
+            }
+
+            indices.resize(positions.size());
+            colors.resize(positions.size());
+            uv0.resize(positions.size());
+            for (Size i = 0; i < positions.size(); i++)
+            {
+                indices[i] = (U16)i;
+                colors[i] = _color;
+                uv0[i] = (Vec2F(positions[i].x / _radius, positions[i].y / _radius) + 1.0f) * 0.5f;
+            }
+
+            mesh->setPositions(&positions[0], positions.size());
+            mesh->setNormals(&normals[0], normals.size());
+            mesh->setTexCoords(0, &uv0[0], uv0.size());
+            mesh->setColors(&colors[0], colors.size());
+            mesh->setIndices(&indices[0], indices.size());
+
+            // Generate tangents and bitangents
+            Vector<Vec3F> tangents;
+            Vector<Vec3F> bitangents;
+            if (SubMeshHelper::GenerateTangentsAndBitangents(
+                &indices[0],
+                indices.size(),
+                &positions[0],
+                &uv0[0],
+                &normals[0],
+                positions.size(),
+                tangents,
+                bitangents))
+            {
+                mesh->setTangents(&tangents[0], tangents.size());
+                mesh->setBitangents(&bitangents[0], bitangents.size());
+            }
+
+
+            return mesh;
+        }
+
+        //////////////////////////////////////////
+        MeshPtr MAZE_GRAPHICS_API CreateCircleMesh(
+            F32 _radius,
+            Vec4F const& _color)
+        {
+            MeshPtr mesh = Mesh::Create();
+            mesh->addSubMesh(CreateCircleSubMesh(_radius, _color));
+            return mesh;
+        }
+
+
+        //////////////////////////////////////////
         SubMeshPtr MAZE_GRAPHICS_API CreateConeSubMesh(
             F32 _radius,
             F32 _height,

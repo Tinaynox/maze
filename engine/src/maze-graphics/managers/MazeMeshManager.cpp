@@ -123,6 +123,11 @@ namespace Maze
                 mesh = MeshHelper::CreateSpherifiedCubeMesh();
                 break;
             }
+            case BuiltinMeshType::Circle:
+            {
+                mesh = MeshHelper::CreateCircleMesh();
+                break;
+            }
             case BuiltinMeshType::Cone:
             {
                 mesh = MeshHelper::CreateConeMesh();

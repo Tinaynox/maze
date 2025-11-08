@@ -400,6 +400,7 @@ namespace Maze
                                 entity->getEcsWorld(),
                                 entity->getEcsScene());
                             newEntity->ensureComponent<Transform3D>()->setParent(entityParent);
+                            SelectionManager::GetInstancePtr()->selectObject(newEntity);
                             return;
                         }
 
@@ -420,6 +421,7 @@ namespace Maze
                             MeshRendererPtr const& meshRenderer = newEntity->ensureComponent<MeshRenderer>();
                             meshRenderer->setRenderMesh(renderMesh);
                             meshRenderer->setMaterial("Specular");
+                            SelectionManager::GetInstancePtr()->selectObject(newEntity);
                         }
                     }
                 }
@@ -466,6 +468,7 @@ namespace Maze
                                 scene->getWorld(),
                                 scene.get());
                             newEntity->ensureComponent<Transform3D>()->setParent(Transform3DPtr());
+                            SelectionManager::GetInstancePtr()->selectObject(newEntity);
                             return;
                         }
 
@@ -480,6 +483,7 @@ namespace Maze
                             MeshRendererPtr const& meshRenderer = newEntity->ensureComponent<MeshRenderer>();
                             meshRenderer->setRenderMesh(renderMesh);
                             meshRenderer->setMaterial("Specular");
+                            SelectionManager::GetInstancePtr()->selectObject(newEntity);
                         }
                     }
                 }

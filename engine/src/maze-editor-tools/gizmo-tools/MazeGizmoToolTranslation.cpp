@@ -33,6 +33,7 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
 #include "maze-core/math/MazeMathRaytracing.hpp"
+#include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 
@@ -252,7 +253,18 @@ namespace Maze
 
                 TMat parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
                                                                      : TMat::c_identity;
-                EditorActionHelper::Translate(entity, parentWorldScale.inversed().transform(newWorldPosition));
+
+                Vec3F newPosLS = parentWorldScale.inversed().transform(newWorldPosition);
+
+                if (InputManager::GetInstancePtr()->getKeyState(KeyCode::LAlt) ||
+                    InputManager::GetInstancePtr()->getKeyState(KeyCode::RAlt))
+                {
+                    newPosLS.x = Math::Round(newPosLS.x);
+                    newPosLS.y = Math::Round(newPosLS.y);
+                    newPosLS.z = Math::Round(newPosLS.z);
+                }
+
+                EditorActionHelper::Translate(entity, newPosLS);
             }
         }
         else

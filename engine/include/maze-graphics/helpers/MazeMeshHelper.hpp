@@ -108,6 +108,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        SubMeshPtr MAZE_GRAPHICS_API CreateCircleSubMesh(
+            F32 _radius = 0.5f,
+            Vec4F const& _color = Vec4F::c_one);
+
+        //////////////////////////////////////////
+        MeshPtr MAZE_GRAPHICS_API CreateCircleMesh(
+            F32 _radius = 0.5f,
+            Vec4F const& _color = Vec4F::c_one);
+
+
+        //////////////////////////////////////////
         SubMeshPtr MAZE_GRAPHICS_API CreateConeSubMesh(
             F32 _radius = 0.5f,
             F32 _height = 1.0f,

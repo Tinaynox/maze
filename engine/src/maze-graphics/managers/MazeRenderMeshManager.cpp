@@ -197,6 +197,13 @@ namespace Maze
                     m_renderSystemRaw);
                 break;
             }
+            case BuiltinRenderMeshType::Circle:
+            {
+                renderMesh = RenderMesh::Create(
+                    MeshManager::GetInstancePtr()->ensureBuiltinMesh(BuiltinMeshType::Circle),
+                    m_renderSystemRaw);
+                break;
+            }
             case BuiltinRenderMeshType::Cone:
             {
                 renderMesh = RenderMesh::Create(
