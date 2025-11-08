@@ -30,13 +30,14 @@
 #include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionEntityAdd.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionSelectEntities.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
 #include "maze-core/math/MazeMathRaytracing.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
-
 
 
 //////////////////////////////////////////
@@ -238,6 +239,20 @@ namespace Maze
                 m_useRequest = false;
                 m_startPosition = pos;
                 m_startPoint = Math::ClosestPointOnLineBToLineA(cursorRay, Ray(m_startPosition, axis));
+
+                if (InputManager::GetInstancePtr()->getKeyState(KeyCode::LShift) ||
+                    InputManager::GetInstancePtr()->getKeyState(KeyCode::RShift))
+                {
+                    EntityPtr entityCopy = entity->createCopy();
+                    entityCopy->ensureComponent<Transform3D>()->setParent(
+                        entity->ensureComponent<Transform3D>()->getParent());
+
+                    if (EditorToolsActionManager::GetInstancePtr())
+                        EditorToolsActionManager::GetInstancePtr()->applyActions(
+                            EditorActionEntityAdd::Create(entityCopy),
+                            EditorActionSelectEntities::Create(true, entityCopy));
+                }
+
             }
             else
             {

@@ -34,6 +34,7 @@
 #include "maze-core/math/MazeMathGeometry.hpp"
 #include "maze-core/math/MazeMathRaytracing.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 
@@ -261,7 +262,17 @@ namespace Maze
                             parentWorldTransform.inversed().transform(m_startVector).normalizedCopy(),
                             parentWorldTransform.inversed().transform(vector).normalizedCopy());
 
-                        EditorActionHelper::Rotate(entity, newLocalRotation* m_startRotation);
+                        if (InputManager::GetInstancePtr()->getKeyState(KeyCode::LAlt) ||
+                            InputManager::GetInstancePtr()->getKeyState(KeyCode::RAlt))
+                        {
+                            Vec3F euler = newLocalRotation.getEuler();
+                            euler.x = Math::DegreesToRadians(Math::Round(Math::RadiansToDegrees(euler.x) / 5.0f) * 5.0f);
+                            euler.y = Math::DegreesToRadians(Math::Round(Math::RadiansToDegrees(euler.y) / 5.0f) * 5.0f);
+                            euler.z = Math::DegreesToRadians(Math::Round(Math::RadiansToDegrees(euler.z) / 5.0f) * 5.0f);
+                            newLocalRotation = Quaternion::FromEuler(euler);
+                        }
+
+                        EditorActionHelper::Rotate(entity, newLocalRotation * m_startRotation);
                     }
                 }
             }
