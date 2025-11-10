@@ -51,7 +51,8 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditBox2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, selected, false, getSelected, setSelected),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, systemTextRenderer, ComponentPtr(), getTextRendererComponent, setTextRenderer),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, flags, 0, getFlags, setFlags));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(EditBox2D);
@@ -162,6 +163,9 @@ namespace Maze
                     }
                     case KeyCode::Enter:
                     {
+                        if (!(m_flags & S32(Flags::DontDeselectOnTextInput)))
+                            setSelected(false);
+
                         eventTextInput(this);
                         break;
                     }

@@ -68,6 +68,12 @@ namespace Maze
         //////////////////////////////////////////
         friend class Entity;
 
+        //////////////////////////////////////////
+        enum class MAZE_UI_API Flags
+        {
+            DontDeselectOnTextInput = MAZE_BIT(0)
+        };
+
     public:
 
         //////////////////////////////////////////
@@ -96,6 +102,13 @@ namespace Maze
 
         //////////////////////////////////////////
         void setSelected(bool _selected);
+
+
+        //////////////////////////////////////////
+        inline S32 getFlags() const { return m_flags; }
+
+        //////////////////////////////////////////
+        inline void setFlags(S32 _flags) { m_flags = _flags; }
 
 
         //////////////////////////////////////////
@@ -277,6 +290,8 @@ namespace Maze
         String m_text;
 
         bool m_selected;
+
+        S32 m_flags = 0;
 
         F32 m_cursorBlinkTimer;
         F32 m_cursorBlinkTime;
