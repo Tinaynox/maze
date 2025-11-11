@@ -123,6 +123,29 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleEffectInfo::update(F32 _dt)
     {
+        Set<EntityPtr> const& selectedEntities = SelectionManager::GetInstancePtr()->getSelectedEntities();
+
+        if (selectedEntities.size() == 1)
+        {
+            ParticleSystem3D* particleSystem = (*selectedEntities.begin())->getComponentRaw<ParticleSystem3D>();
+            if (particleSystem)
+            {
+                
+                Set<HashedString> const& tags = particleSystem->getEntityRaw()->getEcsWorld()->getTags();
+                if (std::find_if(
+                    tags.begin(),
+                    tags.end(),
+                    [](HashedString const& _str)
+                    {
+                        static Size const c_editorHash = MAZE_HCS("editor").hash;
+                        return _str.getHash() == c_editorHash;
+                    }) != tags.end())
+                {
+                    particleSystem->update(_dt);
+                }
+            }
+        }
+
         processDataToUI();
     }
 

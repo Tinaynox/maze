@@ -204,7 +204,7 @@ namespace Maze
                     auto filePath = Path(addFile->getFullPath().getPath().substr(0, addFile->getFullPath().getPath().length() - Path(".mzmeta").size()));
                     if (!FileHelper::IsFileExists(filePath))
                     {
-                        MAZE_WARNING("Cleaning single meta file: %s", addFile->getFullPath().toUTF8());
+                        MAZE_WARNING("Cleaning single meta file: %s", addFile->getFullPath().toUTF8().c_str());
                         FileHelper::DeleteRegularFile(addFile->getFullPath());
                         it = addedFiles.erase(it);
                         end = addedFiles.end();
