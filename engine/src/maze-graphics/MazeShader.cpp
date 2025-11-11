@@ -1012,6 +1012,9 @@ namespace Maze
     void ShaderAssetRef::setString(CString _data, Size _count)
     {
         ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->getOrLoadShader(_data);
+
+        MAZE_ERROR_IF(!shader && _count > 0, "Failed to load RenderPass shader - %s", _data);
+
         setShader(shader);
     }
 
@@ -1043,6 +1046,9 @@ namespace Maze
                 {
                     String const& name = _dataBlock.getString(paramIndex);
                     ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->getOrLoadShader(name);
+
+                    MAZE_ERROR_IF(!shader && !name.empty(), "Failed to load RenderPass shader - %s", name.c_str());
+
                     setShader(shader);
                     return true;
                 }

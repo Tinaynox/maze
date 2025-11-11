@@ -138,6 +138,9 @@ namespace Maze
     void RenderPass::setShader(Path const& _shaderResourceName)
     {
         ShaderPtr const& shader = m_renderSystem->getShaderSystem()->getOrLoadShader(_shaderResourceName);
+
+        MAZE_ERROR_IF(!shader && !_shaderResourceName.empty(), "Failed to load RenderPass shader - %s", _shaderResourceName.toUTF8().c_str());
+
         setShader(shader);
     }
 
