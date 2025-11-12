@@ -933,7 +933,11 @@ namespace Maze
                             uniformData.second->getName());
 
                         if (shaderUniform)
+                        {
                             m_uniformsPerGlobalUniform[shaderUniform->getResourceId()] = uniformData.first;
+                            uniformData.second->set(
+                                shaderUniform->getVariant());
+                        }
                     }
                 }
             }

@@ -68,7 +68,7 @@ namespace Maze
     
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_23_API(MAZE_GRAPHICS_API, ShaderUniformType,
+    MAZE_DECLARE_ENUMCLASS_26_API(MAZE_GRAPHICS_API, ShaderUniformType,
         UniformS32,
         UniformF32,
         UniformF64,
@@ -85,6 +85,9 @@ namespace Maze
         UniformVec2F32,
         UniformVec3F32,
         UniformVec4F32,
+        UniformVec2F32Array,
+        UniformVec3F32Array,
+        UniformVec4F32Array,
         UniformVec2B,
         UniformVec3B,
         UniformVec4B,
@@ -128,16 +131,16 @@ namespace Maze
         ShaderUniformVariant(RenderSystem* _renderSystem, bool _value);
 
         //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D* _value);
+        ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D const* _value);
 
         //////////////////////////////////////////
         ShaderUniformVariant(RenderSystem* _renderSystem, Texture2DPtr const& _value);
 
         //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D** _value, U32 _count);
+        ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D const** _value, U32 _count);
 
         //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, TextureCube* _value);
+        ShaderUniformVariant(RenderSystem* _renderSystem, TextureCube const* _value);
 
         //////////////////////////////////////////
         ShaderUniformVariant(RenderSystem* _renderSystem, TextureCubePtr const& _value);
@@ -215,7 +218,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_FORCEINLINE void* getPtr() const { return m_ptr; }
+        MAZE_FORCEINLINE void const* getPtr() const { return m_ptr; }
 
         //////////////////////////////////////////
         MAZE_FORCEINLINE U32 getCount() const { return m_count; }
@@ -330,10 +333,10 @@ namespace Maze
         MAZE_FORCEINLINE void set(TextureCubePtr const& _texture) { m_texture = _texture; m_type = ShaderUniformType::UniformTextureCube; }
 
         //////////////////////////////////////////
-        MAZE_FORCEINLINE void set(Texture2D** _textures, U32 _count) { m_ptr = _textures; m_count = _count; m_type = ShaderUniformType::UniformTexture2DArray; }
+        MAZE_FORCEINLINE void set(Texture2D const** _textures, U32 _count) { m_ptr = _textures; m_count = _count; m_type = ShaderUniformType::UniformTexture2DArray; }
 
         //////////////////////////////////////////
-        MAZE_FORCEINLINE void set(Texture2D* _texture2D) { return set(_texture2D ? _texture2D->cast<Texture2D>() : nullptr); }
+        MAZE_FORCEINLINE void set(Texture2D const* _texture2D) { return set(_texture2D ? const_cast<Texture2D*>(_texture2D)->cast<Texture2D>() : nullptr); }
 
         //////////////////////////////////////////
         MAZE_FORCEINLINE void set(TextureCube* _textureCube) { return set(_textureCube ? _textureCube->cast<TextureCube>() : nullptr); }
@@ -346,6 +349,15 @@ namespace Maze
         
         //////////////////////////////////////////
         MAZE_FORCEINLINE void set(Vec4F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec4F32; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE void set(Vec2F const* _ptr, U32 _count) { m_ptr = reinterpret_cast<void const*>(_ptr); m_count = _count; m_type = ShaderUniformType::UniformVec2F32Array; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE void set(Vec3F const* _ptr, U32 _count) { m_ptr = reinterpret_cast<void const*>(_ptr); m_count = _count; m_type = ShaderUniformType::UniformVec3F32Array; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE void set(Vec4F const* _ptr, U32 _count) { m_ptr = reinterpret_cast<void const*>(_ptr); m_count = _count; m_type = ShaderUniformType::UniformVec4F32Array; }
 
 
         //////////////////////////////////////////
@@ -467,13 +479,13 @@ namespace Maze
 
         ShaderUniformType m_type = ShaderUniformType::None;
 
-        TexturePtr m_texture;
+        TexturePtr m_texture; // #TODO: Replace with ResourceId (m_S32)
 
         union
         {
             struct
             {
-                void* m_ptr;
+                void const* m_ptr;
                 U32 m_count;
             };
 

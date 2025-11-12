@@ -382,42 +382,49 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderUniformOpenGL::upload(F32 const* _value, Size _count)
     {
+        ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
         MAZE_GL_CALL(mzglUniform1fv((MZGLint)m_location, (MZGLsizei)_count, (MZGLfloat const*)_value));
     }
 
     //////////////////////////////////////////
     void ShaderUniformOpenGL::upload(Vec2F const* _vectors, Size _count)
     {
+        ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
         MAZE_GL_CALL(mzglUniform2fv((MZGLint)m_location, (MZGLsizei)_count, (MZGLfloat const*)_vectors));
     }
 
     //////////////////////////////////////////
     void ShaderUniformOpenGL::upload(Vec3F const* _vectors, Size _count)
     {
+        ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
         MAZE_GL_CALL(mzglUniform3fv((MZGLint)m_location, (MZGLsizei)_count, (MZGLfloat const*)_vectors));
     }
 
     //////////////////////////////////////////
     void ShaderUniformOpenGL::upload(Vec4F const* _vectors, Size _count)
     {
+        ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
         MAZE_GL_CALL(mzglUniform4fv((MZGLint)m_location, (MZGLsizei)_count, (MZGLfloat const*)_vectors));
     }
 
     //////////////////////////////////////////
     void ShaderUniformOpenGL::upload(Mat3F const* _matrices, Size _count)
     {
+        ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
         MAZE_GL_CALL(mzglUniformMatrix3fv((MZGLint)m_location, (MZGLsizei)_count, MAZE_GL_FALSE, _matrices[0].getPlaneMatrix()));
     }
 
     //////////////////////////////////////////
     void ShaderUniformOpenGL::upload(Mat4F const* _matrices, Size _count)
     {
+        ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
         MAZE_GL_CALL(mzglUniformMatrix4fv((MZGLint)m_location, (MZGLsizei)_count, MAZE_GL_FALSE, _matrices[0].getPlaneMatrix()));
     }
 
     //////////////////////////////////////////
     void ShaderUniformOpenGL::upload(TMat const* _matrices, Size _count)
     {
+        ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
         // 4 * Vec3F
         MAZE_GL_CALL(mzglUniform3fv((MZGLint)m_location, (MZGLsizei)_count * 4, (MZGLfloat const*)_matrices));
     }

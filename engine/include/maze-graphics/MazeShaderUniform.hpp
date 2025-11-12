@@ -82,7 +82,7 @@ namespace Maze
         inline ShaderUniformType const& getType() const { return m_value.getType(); }
 
         //////////////////////////////////////////
-        inline void* getPtr() const { return m_value.getPtr(); }
+        inline void const* getPtr() const { return m_value.getPtr(); }
 
         //////////////////////////////////////////
         inline U32 getCount() const { return m_value.getCount(); }
@@ -189,21 +189,21 @@ namespace Maze
         bool set(Texture2DPtr const& _texture2D);
         
         //////////////////////////////////////////
-        inline bool set(Texture2D* _texture2D)
+        inline bool set(Texture2D const* _texture2D)
         {
-            return set(_texture2D->cast<Texture2D>());
+            return set(const_cast<Texture2D*>(_texture2D)->cast<Texture2D>());
         }
 
         //////////////////////////////////////////
-        bool set(Texture2D** _textures, U32 _count);
+        bool set(Texture2D const** _textures, U32 _count);
 
         //////////////////////////////////////////
         bool set(TextureCubePtr const& _textureCube);
 
         //////////////////////////////////////////
-        inline bool set(TextureCube* _textureCube)
+        inline bool set(TextureCube const* _textureCube)
         {
-            return set(_textureCube->cast<TextureCube>());
+            return set(const_cast<TextureCube*>(_textureCube)->cast<TextureCube>());
         }
         
         //////////////////////////////////////////

@@ -101,6 +101,24 @@ namespace Maze
             EventManager::GetInstancePtr()->broadcastEventImmediate<GlobalShaderUniformChangedEvent>(getResourceId());
     }
 
+    //////////////////////////////////////////
+    void GlobalShaderUniform::setValue(Vector<Vec3F> const& _vec)
+    {
+        S32 size = S32(_vec.size() * sizeof(Vec3F));
+        m_heapData.resize(size);
+        m_heapData.copyFrom(reinterpret_cast<U8 const*>(&_vec[0]), size);
+        m_variant.set((Vec3F const*)m_heapData.getDataRO(), (U32)_vec.size());
+    }
+
+    //////////////////////////////////////////
+    void GlobalShaderUniform::setValue(Vector<Vec4F> const& _vec)
+    {
+        S32 size = S32(_vec.size() * sizeof(Vec4F));
+        m_heapData.resize(size);
+        m_heapData.copyFrom(reinterpret_cast<U8 const*>(&_vec[0]), size);
+        m_variant.set((Vec4F const*)m_heapData.getDataRO(), (U32)_vec.size());
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

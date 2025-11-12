@@ -48,12 +48,12 @@ namespace Maze
 
         if (textures.empty())
         {
-            Texture2D** errorTexture = (Texture2D**)TextureManager::GetCurrentInstancePtr()->getErrorTexture().get();
+            Texture2D const** errorTexture = (Texture2D const**)TextureManager::GetCurrentInstancePtr()->getErrorTexture().get();
             material->ensureUniform(MAZE_HASHED_CSTRING("u_baseMaps"))->set(errorTexture, 1);
         }
         else
         {
-            material->ensureUniform(MAZE_HASHED_CSTRING("u_baseMaps"))->set(&textures[0], (U32)textures.size());
+            material->ensureUniform(MAZE_HASHED_CSTRING("u_baseMaps"))->set((Texture2D const**)&textures[0], (U32)textures.size());
         }
     }
 

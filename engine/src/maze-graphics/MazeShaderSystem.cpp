@@ -119,6 +119,11 @@ namespace Maze
                 });
         }
 
+        m_lightsCountUniform = ensureGlobalShaderUniform(MAZE_HCS("u_global_lightsCount"));
+        m_lightsCountUniform->setValue(0);
+        m_lightsPosRadiusUniform = ensureGlobalShaderUniform(MAZE_HCS("u_global_lightsPosRadius"));
+        m_lightsColorUniform = ensureGlobalShaderUniform(MAZE_HCS("u_global_lightsColor"));
+
         return true;
     }
 

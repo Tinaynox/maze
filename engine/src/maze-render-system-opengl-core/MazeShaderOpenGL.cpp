@@ -390,6 +390,8 @@ namespace Maze
         shaderVersion += "\n#define MAZE_SKELETON_BONES_MAX ";
         shaderVersion += StringHelper::ToString(MAZE_SKELETON_BONES_MAX);
 
+        shaderVersion += "\n#define MAZE_DYNAMIC_LIGHTS_MAX ";
+        shaderVersion += StringHelper::ToString(MAZE_DYNAMIC_LIGHTS_MAX);
 
         String shaderFeatures = 
             m_renderSystemRaw->getShaderSystem()->ensureGlobalFeaturesString() + '\n' +
@@ -979,7 +981,26 @@ namespace Maze
         {
             mzglGetActiveUniform(m_programId, (MZGLuint)i, bufSize, &length, &size, &type, name);
             ShaderUniformType uniformType = GetShaderUniformTypeFromOpenGL(type);
-            ensureUniform(HashedCString(name), uniformType);
+
+            if (MZGLchar* p = strchr(name, '['))
+            {
+                ShaderUniformType arrayType = ShaderUniformType::None;
+                switch (uniformType)
+                {
+                    case ShaderUniformType::UniformTexture2D: arrayType = ShaderUniformType::UniformTexture2DArray; break;
+                    case ShaderUniformType::UniformVec2F32: arrayType = ShaderUniformType::UniformVec2F32Array; break;
+                    case ShaderUniformType::UniformVec3F32: arrayType = ShaderUniformType::UniformVec3F32Array; break;
+                    case ShaderUniformType::UniformVec4F32: arrayType = ShaderUniformType::UniformVec4F32Array; break;
+                    default: break;
+                }
+
+                *p = 0;
+                ensureUniform(HashedCString(name), arrayType);
+            }
+            else
+            {
+                ensureUniform(HashedCString(name), uniformType);
+            }
         }
     }
 

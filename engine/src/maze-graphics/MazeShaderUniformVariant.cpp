@@ -93,10 +93,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D* _value)
+    ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D const* _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTexture2D)
-        , m_texture(_value ? _value->cast<Texture2D>() : nullptr)
+        , m_texture(_value ? const_cast<Texture2D*>(_value)->cast<Texture2D>() : nullptr)
     {
     }
 
@@ -110,7 +110,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D** _value, U32 _count)
+    ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D const** _value, U32 _count)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTexture2DArray)
         , m_ptr(_value)
@@ -120,10 +120,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, TextureCube* _value)
+    ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, TextureCube const* _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTextureCube)
-        , m_texture(_value ? _value->cast<TextureCube>() : nullptr)
+        , m_texture(_value ? const_cast<TextureCube*>(_value)->cast<TextureCube>() : nullptr)
     {
     }
 
@@ -792,6 +792,9 @@ namespace Maze
                 break;
             }
             case ShaderUniformType::UniformTexture2DArray:
+            case ShaderUniformType::UniformVec2F32Array:
+            case ShaderUniformType::UniformVec3F32Array:
+            case ShaderUniformType::UniformVec4F32Array:
             {
                 return m_ptr == _variant.getPtr();
                 break;
@@ -925,14 +928,14 @@ namespace Maze
 
         switch (_variant.getType())
         {
-            case ShaderUniformType::None:                  m_type = ShaderUniformType::None; break;
-            case ShaderUniformType::UniformS32:            set(_variant.getS32()); break;
-            case ShaderUniformType::UniformF32:            set(_variant.getF32()); break;
-            case ShaderUniformType::UniformF64:            set(_variant.getF64()); break;
-            case ShaderUniformType::UniformBool:           set(_variant.getBool()); break;
-            case ShaderUniformType::UniformTexture2D:      set(Maze::static_pointer_cast<Texture2D>(_variant.getTexture())); break;
-            case ShaderUniformType::UniformTextureCube:    set(Maze::static_pointer_cast<TextureCube>(_variant.getTexture())); break;
-            case ShaderUniformType::UniformTexture2DArray: set(static_cast<Texture2D**>(_variant.getPtr()), _variant.getCount()); break;
+            case ShaderUniformType::None:                   m_type = ShaderUniformType::None; break;
+            case ShaderUniformType::UniformS32:             set(_variant.getS32()); break;
+            case ShaderUniformType::UniformF32:             set(_variant.getF32()); break;
+            case ShaderUniformType::UniformF64:             set(_variant.getF64()); break;
+            case ShaderUniformType::UniformBool:            set(_variant.getBool()); break;
+            case ShaderUniformType::UniformTexture2D:       set(Maze::static_pointer_cast<Texture2D>(_variant.getTexture())); break;
+            case ShaderUniformType::UniformTextureCube:     set(Maze::static_pointer_cast<TextureCube>(_variant.getTexture())); break;
+            case ShaderUniformType::UniformTexture2DArray:  set((Texture2D const**)_variant.getPtr(), _variant.getCount()); break;
             case ShaderUniformType::UniformVec2S32:         set(_variant.getVec2S32()); break;
             case ShaderUniformType::UniformVec3S32:         set(_variant.getVec3S32()); break;
             case ShaderUniformType::UniformVec4S32:         set(_variant.getVec4S32()); break;
@@ -942,9 +945,12 @@ namespace Maze
             case ShaderUniformType::UniformVec2F32:         set(_variant.getVec2F32()); break;
             case ShaderUniformType::UniformVec3F32:         set(_variant.getVec3F32()); break;
             case ShaderUniformType::UniformVec4F32:         set(_variant.getVec4F32()); break;
-            case ShaderUniformType::UniformVec2B:         set(_variant.getVec2B()); break;
-            case ShaderUniformType::UniformVec3B:         set(_variant.getVec3B()); break;
-            case ShaderUniformType::UniformVec4B:         set(_variant.getVec4B()); break;
+            case ShaderUniformType::UniformVec2F32Array:    set((Vec2F const*)_variant.getPtr(), _variant.getCount()); break;
+            case ShaderUniformType::UniformVec3F32Array:    set((Vec3F const*)_variant.getPtr(), _variant.getCount()); break;
+            case ShaderUniformType::UniformVec4F32Array:    set((Vec4F const*)_variant.getPtr(), _variant.getCount()); break;
+            case ShaderUniformType::UniformVec2B:           set(_variant.getVec2B()); break;
+            case ShaderUniformType::UniformVec3B:           set(_variant.getVec3B()); break;
+            case ShaderUniformType::UniformVec4B:           set(_variant.getVec4B()); break;
             case ShaderUniformType::UniformMat3F32:         set(_variant.getMat3F32()); break;
             case ShaderUniformType::UniformMat4F32:         set(_variant.getMat4F32()); break;
             case ShaderUniformType::UniformTMat:         set(_variant.getTMat()); break;

@@ -143,14 +143,12 @@ namespace Maze
         processUniformWillBeChanged();
         
         m_value.set(_texture2D); 
-        
-        // processSimpleUniformChanged();
 
         return true;
     }
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Texture2D** _textures, U32 _count)
+    bool ShaderUniform::set(Texture2D const** _textures, U32 _count)
     {
         if (getPtr() == _textures &&
             getType() == ShaderUniformType::UniformTexture2DArray)
@@ -159,8 +157,6 @@ namespace Maze
         processUniformWillBeChanged();
 
         m_value.set(_textures, _count);
-
-        // processSimpleUniformChanged();
 
         return true;
     }
@@ -472,7 +468,7 @@ namespace Maze
             case ShaderUniformType::UniformF64:            return set(_variant.getF64());
             case ShaderUniformType::UniformTexture2D:      return set(Maze::static_pointer_cast<Texture2D>(_variant.getTexture()));
             case ShaderUniformType::UniformTextureCube:    return set(Maze::static_pointer_cast<TextureCube>(_variant.getTexture()));
-            case ShaderUniformType::UniformTexture2DArray: return set(static_cast<Texture2D**>(_variant.getPtr()), _variant.getCount());
+            case ShaderUniformType::UniformTexture2DArray: return set((Texture2D const**)(_variant.getPtr()), _variant.getCount());
             case ShaderUniformType::UniformVec2S32:         return set(_variant.getVec2S32());
             case ShaderUniformType::UniformVec3S32:         return set(_variant.getVec3S32());
             case ShaderUniformType::UniformVec4S32:         return set(_variant.getVec4S32());
@@ -482,6 +478,24 @@ namespace Maze
             case ShaderUniformType::UniformVec2F32:         return set(_variant.getVec2F32());
             case ShaderUniformType::UniformVec3F32:         return set(_variant.getVec3F32());
             case ShaderUniformType::UniformVec4F32:         return set(_variant.getVec4F32());
+            case ShaderUniformType::UniformVec2F32Array:
+            {
+                m_value.reset();
+                upload((Vec2F const*)_variant.getPtr(), _variant.getCount());
+                break;
+            }
+            case ShaderUniformType::UniformVec3F32Array:
+            {
+                m_value.reset();
+                upload((Vec3F const*)_variant.getPtr(), _variant.getCount());
+                break;
+            }
+            case ShaderUniformType::UniformVec4F32Array:
+            {
+                m_value.reset();
+                upload((Vec4F const*)_variant.getPtr(), _variant.getCount());
+                break;
+            }
             case ShaderUniformType::UniformVec2B:         return set(_variant.getVec2B());
             case ShaderUniformType::UniformVec3B:         return set(_variant.getVec3B());
             case ShaderUniformType::UniformVec4B:         return set(_variant.getVec4B());

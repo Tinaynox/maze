@@ -47,6 +47,7 @@ namespace Maze
     //////////////////////////////////////////
     #define MAZE_UV_CHANNELS_MAX (8)
     #define MAZE_SKELETON_BONES_MAX (128)
+    #define MAZE_DYNAMIC_LIGHTS_MAX (32)
 
 
 } // namespace Maze

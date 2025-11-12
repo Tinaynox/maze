@@ -230,6 +230,16 @@ namespace Maze
         //////////////////////////////////////////
         GlobalShaderUniformPtr const& getGlobalShaderUniform(HashedCString _name) const;
 
+
+        //////////////////////////////////////////
+        inline GlobalShaderUniformPtr const& getLightsCountUniform() const { return m_lightsCountUniform; }
+
+        //////////////////////////////////////////
+        inline GlobalShaderUniformPtr const& getLightsPosRadiusUniform() const { return m_lightsPosRadiusUniform; }
+
+        //////////////////////////////////////////
+        inline GlobalShaderUniformPtr const& getLightsColorUniform() const { return m_lightsColorUniform; }
+
     public:
 
         MultiDelegate<> eventSystemInited;
@@ -267,6 +277,10 @@ namespace Maze
         String m_globalFeaturesString;
 
         StringKeyMap<GlobalShaderUniformPtr> m_globalShaderUniforms;
+
+        GlobalShaderUniformPtr m_lightsCountUniform;
+        GlobalShaderUniformPtr m_lightsPosRadiusUniform;
+        GlobalShaderUniformPtr m_lightsColorUniform;
     };
 
 } // namespace Maze

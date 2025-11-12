@@ -37,6 +37,7 @@
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeManagedSharedObject.hpp"
 #include "maze-core/utils/MazeIndexedResource.hpp"
+#include "maze-core/data/MazeByteBuffer.hpp"
 
 
 //////////////////////////////////////////
@@ -154,6 +155,12 @@ namespace Maze
         //////////////////////////////////////////
         void setValue(ColorF128 const& _value) { setVariant(ShaderUniformVariant(m_renderSystem, _value)); }
 
+        //////////////////////////////////////////
+        void setValue(Vector<Vec3F> const& _vec);
+
+        //////////////////////////////////////////
+        void setValue(Vector<Vec4F> const& _vec);
+
     protected:
 
         //////////////////////////////////////////
@@ -170,6 +177,7 @@ namespace Maze
 
         HashedString m_name;
         ShaderUniformVariant m_variant;
+        ByteBuffer m_heapData;
     };
 
 } // namespace Maze
