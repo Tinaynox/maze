@@ -431,6 +431,29 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        EntityPtr CreatePointLight(
+            CString _entityName,
+            Transform3DPtr const& _parent,
+            bool _select)
+        {
+            EntityPtr gameObject = CreateEntity3D(_entityName);
+            if (!gameObject)
+                return EntityPtr();
+
+            Light3DPtr light3D = gameObject->ensureComponent<Light3D>();
+            light3D->setLightType(Light3DType::Point);
+            light3D->setRadius(5.0f);
+            light3D->setColor(ColorU32(255, 244, 214));
+
+            if (_parent)
+                light3D->getTransform()->setParent(_parent);
+
+            ProcessEditorActionsForCreatedEntity(gameObject, _select);
+
+            return gameObject;
+        }
+
+        //////////////////////////////////////////
         EntityPtr CreateCamera3D(
             CString _entityName,
             Transform3DPtr const& _parent,

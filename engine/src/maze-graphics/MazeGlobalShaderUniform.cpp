@@ -102,21 +102,36 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GlobalShaderUniform::setValue(Vector<Vec3F> const& _vec)
+    void GlobalShaderUniform::setValue(Vec3F const* _vec, U32 _size)
     {
-        S32 size = S32(_vec.size() * sizeof(Vec3F));
+        U32 size = _size * U32(sizeof(Vec3F));
+        
+        if (m_heapData.getSize() == size && memcmp(m_heapData.getDataRO(), reinterpret_cast<U8 const*>(_vec), size) == 0)
+            return;
+
         m_heapData.resize(size);
-        m_heapData.copyFrom(reinterpret_cast<U8 const*>(&_vec[0]), size);
-        m_variant.set((Vec3F const*)m_heapData.getDataRO(), (U32)_vec.size());
+        m_heapData.copyFrom(reinterpret_cast<U8 const*>(_vec), size);
+        m_variant.set((Vec3F const*)m_heapData.getDataRO(), _size);
+
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->broadcastEvent<GlobalShaderUniformChangedEvent>(getResourceId());
+        
     }
 
     //////////////////////////////////////////
-    void GlobalShaderUniform::setValue(Vector<Vec4F> const& _vec)
+    void GlobalShaderUniform::setValue(Vec4F const* _vec, U32 _size)
     {
-        S32 size = S32(_vec.size() * sizeof(Vec4F));
+        U32 size = _size * U32(sizeof(Vec4F));
+
+        if (m_heapData.getSize() == size && memcmp(m_heapData.getDataRO(), reinterpret_cast<U8 const*>(_vec), size) == 0)
+            return;
+
         m_heapData.resize(size);
-        m_heapData.copyFrom(reinterpret_cast<U8 const*>(&_vec[0]), size);
-        m_variant.set((Vec4F const*)m_heapData.getDataRO(), (U32)_vec.size());
+        m_heapData.copyFrom(reinterpret_cast<U8 const*>(_vec), size);
+        m_variant.set((Vec4F const*)m_heapData.getDataRO(), _size);
+
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->broadcastEvent<GlobalShaderUniformChangedEvent>(getResourceId());
     }
 
 

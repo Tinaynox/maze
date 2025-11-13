@@ -46,6 +46,8 @@
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
+#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeGlobalShaderUniform.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 
@@ -387,6 +389,8 @@ namespace Maze
             defaultParams.clipViewport = camera->getClipViewport();
             defaultParams.lightingSettings = camera->getLightingSettings().get();
 
+            S32 dynLightsCount = 0;
+
             // Find main light for this camera
             // Vector<Light3D*> lights3D;
             Light3D* mainLight = nullptr;
@@ -397,15 +401,47 @@ namespace Maze
                     {
                         // lights3D.emplace_back(_light3D);
 
-                        if (!mainLight && _light3D->getLightType() == Light3DType::Directional)
+                        if (_light3D->getLightType() == Light3DType::Directional)
                         {
-                            mainLight = _light3D;
-                            defaultParams.mainLightColor = mainLight->getColor().toVec4F32();
-                            defaultParams.mainLightDirection = mainLight->getTransform()->getWorldForwardDirection();
+                            if (!mainLight)
+                            {
+                                mainLight = _light3D;
+                                defaultParams.mainLightColor = mainLight->getColor().toVec4F32();
+                                defaultParams.mainLightDirection = mainLight->getTransform()->getWorldForwardDirection();
+                            }
+                        }
+                        else
+                        if (_light3D->getLightType() == Light3DType::Point)
+                        {
+                            if (defaultParams.lightsCount < MAZE_DYNAMIC_LIGHTS_MAX)
+                            {
+                                TMat const& lightTm = _light3D->getTransform()->getWorldTransform();
+                                F32 lightRadiusWS = _light3D->getRadius() * lightTm.getScaleXSignless();
+                                Vec3F lightPosWS = lightTm.getTranslation();
+
+                                if (!defaultParams.cameraFrustum.containsSphere(lightPosWS, lightRadiusWS))
+                                    return;
+
+                                defaultParams.lightsPosRadius[dynLightsCount] = Vec4F(lightPosWS, lightRadiusWS);
+                                defaultParams.lightsColor[dynLightsCount] = _light3D->getColor().toVec3F32();
+                                ++dynLightsCount;
+                            }
                         }
                     }
                 });
 
+            defaultParams.lightsCount = dynLightsCount;
+
+            if (defaultParams.drawFlag)
+            {
+                ShaderSystemPtr const& shaderSystem = _renderTarget->getRenderSystem()->getShaderSystem();
+                if (shaderSystem)
+                {
+                    shaderSystem->getLightsCountUniform()->setValue(dynLightsCount);
+                    shaderSystem->getLightsPosRadiusUniform()->setValue(defaultParams.lightsPosRadius, dynLightsCount);
+                    shaderSystem->getLightsColorUniform()->setValue(defaultParams.lightsColor, dynLightsCount);
+                }
+            }
 
             if (defaultParams.drawFlag && camera->getShadowBuffer() && mainLight && mainLight->getShadowCast())
             {

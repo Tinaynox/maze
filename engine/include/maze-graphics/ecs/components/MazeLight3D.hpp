@@ -133,6 +133,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline void setRadius(F32 _value) { m_radius = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getRadius() const { return m_radius; }
+
+
+        //////////////////////////////////////////
         inline Transform3DPtr const& getTransform() const { return m_transform; }
 
         //////////////////////////////////////////
@@ -183,13 +190,15 @@ namespace Maze
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
     protected:
-        RenderSystem* m_renderSystem;
+        RenderSystem* m_renderSystem = nullptr;
 
         Transform3DPtr m_transform;
         RenderMaskPtr m_renderMask;
 
-        Light3DType m_lightType;
-        ColorF128 m_color;
+        Light3DType m_lightType = Light3DType::Directional;
+        ColorF128 m_color = ColorF128::c_white;
+
+        F32 m_radius = 5.0f;
 
         bool m_shadowCast = false;
         F32 m_shadowCastSize = 10.0f;

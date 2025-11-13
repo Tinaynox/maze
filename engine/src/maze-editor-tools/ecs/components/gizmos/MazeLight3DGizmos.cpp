@@ -107,38 +107,53 @@ namespace Maze
         Vec3F const& position = transform3D->getWorldPosition();
 
         TMat mat = transform3D->getWorldTransform();
-        mat.setTranslation(Vec3F(0.0f, 0.0f, 0.0f));
+        Vec3F posWS = mat.getTranslation();
 
-        Vec3F directionForward = mat.transform(Vec3F::c_unitZ).normalizedCopy();
+        mat.setTranslation(Vec3F(0.0f, 0.0f, 0.0f));
 
         _drawer->setColor(light3D->getColor());
 
-        
-        F32 const radius = 0.33f;
-        
-        MAZE_CONSTEXPR F32 const angleDelta = Math::DegreesToRadians(30.0f);
-        Size pointsCount = (Size)Math::Ceil((Math::c_twoPi / angleDelta) - angleDelta * 0.5f);
-        Vector<Vec3F> circlePoints;
-        for (F32 i = 0; i < Math::c_twoPi - angleDelta * 0.5f; i += angleDelta)
+        switch (light3D->getLightType())
         {
-            F32 c = Math::Cos(i);
-            F32 s = Math::Sin(i);
+            case Light3DType::Directional:
+            {
+                Vec3F directionForward = mat.transform(Vec3F::c_unitZ).normalizedCopy();
 
-            Vec3F d = directionForward.crossProduct(Vec3F(c, s, 0.0f) * radius);
-            circlePoints.emplace_back(position + d);
+                F32 const radius = 0.33f;
+
+                MAZE_CONSTEXPR F32 const angleDelta = Math::DegreesToRadians(30.0f);
+                Size pointsCount = (Size)Math::Ceil((Math::c_twoPi / angleDelta) - angleDelta * 0.5f);
+                Vector<Vec3F> circlePoints;
+                for (F32 i = 0; i < Math::c_twoPi - angleDelta * 0.5f; i += angleDelta)
+                {
+                    F32 c = Math::Cos(i);
+                    F32 s = Math::Sin(i);
+
+                    Vec3F d = directionForward.crossProduct(Vec3F(c, s, 0.0f) * radius);
+                    circlePoints.emplace_back(position + d);
+                }
+
+                for (Size i = 0; i < pointsCount - 1; ++i)
+                {
+                    Vec3F const& circlePoint0 = circlePoints[i];
+                    Vec3F const& circlePoint1 = circlePoints[i + 1];
+
+                    _drawer->drawLine(circlePoint0, circlePoint1);
+                    _drawer->drawLine(circlePoint0, circlePoint0 + directionForward);
+                }
+
+                _drawer->drawLine(circlePoints.back(), circlePoints.front());
+                _drawer->drawLine(circlePoints.back(), circlePoints.back() + directionForward);
+                break;
+            }
+            case Light3DType::Point:
+            {
+                _drawer->drawWireSphere(posWS, light3D->getRadius() * mat.getScaleXSignless(), light3D->getColor());
+                break;
+            }
+            default:
+                break;
         }
-        
-        for (Size i = 0; i < pointsCount - 1; ++i)
-        {
-            Vec3F const& circlePoint0 = circlePoints[i];
-            Vec3F const& circlePoint1 = circlePoints[i + 1];
-
-            _drawer->drawLine(circlePoint0, circlePoint1);
-            _drawer->drawLine(circlePoint0, circlePoint0 + directionForward);
-        }
-
-        _drawer->drawLine(circlePoints.back(), circlePoints.front());
-        _drawer->drawLine(circlePoints.back(), circlePoints.back() + directionForward);
     }
 
 } // namespace Maze

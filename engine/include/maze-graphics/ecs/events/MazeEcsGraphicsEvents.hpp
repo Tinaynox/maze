@@ -70,7 +70,10 @@ namespace Maze
         Vec4F mainLightColor = Vec4F::c_zero;
         Vec3F mainLightDirection = Vec3F::c_negativeUnitY;
         Mat4F mainLightViewProjectionMatrix = Mat4F::c_identity;
-        Texture2DPtr mainLightShadowMap;
+        Texture2DPtr mainLightShadowMap; // #TODO: Replace with ResourceId?
+        S32 lightsCount = 0;
+        Vec4F lightsPosRadius[MAZE_DYNAMIC_LIGHTS_MAX];
+        Vec3F lightsColor[MAZE_DYNAMIC_LIGHTS_MAX];
     };
 
     //////////////////////////////////////////

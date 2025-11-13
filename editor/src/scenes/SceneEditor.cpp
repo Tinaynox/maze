@@ -304,6 +304,10 @@ namespace Maze
                 "Entity", "Create/3D/Light/Directional",
                 [](String const& _text) { EditorHelper::CreateDirectionalLight("Directional Light"); },
                 EditorHelper::IsValidSceneMode);
+            m_menuBar->addOption(
+                "Entity", "Create/3D/Light/Point",
+                [](String const& _text) { EditorHelper::CreatePointLight("Point Light"); },
+                EditorHelper::IsValidSceneMode);
 
             for (BuiltinRenderMeshType meshType = BuiltinRenderMeshType(1); meshType != BuiltinRenderMeshType::MAX; ++meshType)
             {
@@ -350,6 +354,14 @@ namespace Maze
                                     "Directional Light",
                                     transform3D->cast<Transform3D>());
                             });
+                        _menuListTree->addItem(
+                            "Add Child/3D/Light/Point",
+                            [_entity, transform3D](String const& _text)
+                            {
+                                EntityPtr child = EditorHelper::CreatePointLight(
+                                    "Point Light",
+                                    transform3D->cast<Transform3D>());
+                            });
 
                         for (BuiltinRenderMeshType meshType = BuiltinRenderMeshType(1); meshType != BuiltinRenderMeshType::MAX; ++meshType)
                         {
@@ -384,6 +396,13 @@ namespace Maze
                         {
                             EditorHelper::CreateDirectionalLight("Directional Light");
                         });
+
+                    _menuListTree->addItem(
+                        "Add Child/3D/Light/Point",
+                        [](String const& _text)
+                    {
+                        EditorHelper::CreatePointLight("Point Light");
+                    });
 
                     _menuListTree->addItem(
                         "Add Child/3D/Camera 3D",

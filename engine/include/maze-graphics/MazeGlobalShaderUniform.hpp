@@ -156,10 +156,10 @@ namespace Maze
         void setValue(ColorF128 const& _value) { setVariant(ShaderUniformVariant(m_renderSystem, _value)); }
 
         //////////////////////////////////////////
-        void setValue(Vector<Vec3F> const& _vec);
+        void setValue(Vec3F const* _vec, U32 _size);
 
         //////////////////////////////////////////
-        void setValue(Vector<Vec4F> const& _vec);
+        void setValue(Vec4F const* _vec, U32 _size);
 
     protected:
 
