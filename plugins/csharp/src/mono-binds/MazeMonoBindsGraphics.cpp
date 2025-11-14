@@ -35,6 +35,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeSkinnedMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeAbstractTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeAbstractTextRenderer3D.hpp"
@@ -480,6 +481,20 @@ namespace Maze
         MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
 
         _ray = _component->castRaw<Camera3D>()->convertViewportCoordsToRay(_positionV);
+    }
+
+    //////////////////////////////////////////
+    inline void Light3DGetRadius(Component* _component, F32& _outValue)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Light3D);
+        _outValue = _component->castRaw<Light3D>()->getRadius();
+    }
+
+    //////////////////////////////////////////
+    inline void Light3DSetRadius(Component* _component, F32 _value)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Light3D);
+        _component->castRaw<Light3D>()->setRadius(_value);
     }
 
     //////////////////////////////////////////
@@ -986,6 +1001,10 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DGetRenderTarget);
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DSetRenderTarget);
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DConvertViewportCoordsToRay);
+
+        // Light3D
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Light3DGetRadius);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Light3DSetRadius);        
         
         // SubMesh
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreateSubMesh);

@@ -159,6 +159,14 @@ namespace Maze.Graphics
         public extern static void Camera3DConvertViewportCoordsToRay(NativePtr nativeComponentPtr, ref Vec2F positionViewport, out Ray ray);
         #endregion
 
+        #region Light3D
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Light3DGetRadius(NativePtr nativeComponentPtr, out float outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Light3DSetRadius(NativePtr nativeComponentPtr, float value);
+        #endregion
+
         #region Mesh
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int CreateMesh();
