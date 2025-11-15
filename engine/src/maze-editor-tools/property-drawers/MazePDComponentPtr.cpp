@@ -194,10 +194,13 @@ namespace Maze
             }
         });
         m_dragAndDropZone->eventDragAndDropZoneOnDragAndDropCurrentZoneChanged.subscribe(
-            [this](bool _active)
+            [weakPtr = (PropertyDrawerComponentPtrWPtr)cast<PropertyDrawerComponentPtr>()](bool _active)
         {
-            if (this->m_dragAndDropFrame->getMeshRenderer())
-                this->m_dragAndDropFrame->getMeshRenderer()->setEnabled(_active);
+            if (PropertyDrawerComponentPtrPtr ptr = weakPtr.lock())
+            {
+                if (ptr->m_dragAndDropFrame->getMeshRenderer())
+                    ptr->m_dragAndDropFrame->getMeshRenderer()->setEnabled(_active);
+            }
         });
 
         m_text = EditorToolsUIHelper::CreateText(

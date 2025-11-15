@@ -213,9 +213,19 @@ namespace Maze
                             return false;
 
                         if (a.renderPass->getRenderQueueIndex() < (S32)RenderQueueIndex::Transparent)
-                            return a.sqrDistanceToCamera < b.sqrDistanceToCamera;
+                        {
+                            if (a.renderPass.get() == b.renderPass.get())
+                            {
+                                // #TODO: Sort by VAO? (drawer)
+                                return a.sqrDistanceToCamera < b.sqrDistanceToCamera;
+                            }
+                            else
+                                return a.renderPass.get() < b.renderPass.get();
+                        }
                         else
+                        {
                             return a.sqrDistanceToCamera > b.sqrDistanceToCamera;
+                        }
                     });
                 }
 
@@ -413,7 +423,7 @@ namespace Maze
                         else
                         if (_light3D->getLightType() == Light3DType::Point)
                         {
-                            if (defaultParams.lightsCount < MAZE_DYNAMIC_LIGHTS_MAX)
+                            if (dynLightsCount < MAZE_DYNAMIC_LIGHTS_MAX)
                             {
                                 TMat const& lightTm = _light3D->getTransform()->getWorldTransform();
                                 F32 lightRadiusWS = _light3D->getRadius() * lightTm.getScaleXSignless();
