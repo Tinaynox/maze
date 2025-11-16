@@ -216,7 +216,7 @@ namespace Maze
                         {
                             if (a.renderPass.get() == b.renderPass.get())
                             {
-                                // #TODO: Sort by VAO? (drawer)
+                                // #TODO: Sort by VAO? (drawerSortIndex?)
                                 return a.sqrDistanceToCamera < b.sqrDistanceToCamera;
                             }
                             else
