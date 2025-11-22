@@ -45,6 +45,14 @@ namespace Maze.Core
         public bool IsTopmost() => (m_Flags & (uint)DataBlockFlags.TopmostBlock) != 0u;
         public bool IsEmpty() => ParamsCount == 0 && DataBlocksCount == 0;
 
+        public bool IsComment()
+        {
+            if (Name == null || Name.Length == 0)
+                return false;
+
+            return Name.StartsWith(DataBlockSerializationUtils.CommentPrefixString);
+        }
+
         public void ClearData()
         {
             m_Params?.Clear();
