@@ -347,6 +347,13 @@ namespace Maze
 
             ofbx::Geometry const& geom = *mesh.getGeometry();
 
+            S32 indexCount = geom.getIndexCount();
+            if (indexCount == 0)
+            {
+                // Not a real mesh - skip
+                continue;
+            }
+
             MAZE_ERROR_RETURN_VALUE_IF(geom.getVertexCount() >= 65535, false, "Vertices count is over 65535 - %d!", geom.getVertexCount());
 
             auto meshParent = mesh.getParent();
@@ -360,10 +367,7 @@ namespace Maze
             TMat transformMat = convertUnitsMat.transform(fixOrientationMat.transform(meshGeometricTransformMat).transform(meshGlobalTransformMat));
             
 
-            
-
             // Indices
-            S32 indexCount = geom.getIndexCount();
             S32 const* indicesPtr = (S32 const*)geom.getFaceIndices();
             indices.reserve(indices.capacity() + indexCount);
             for (S32 i = 0; i < indexCount; ++i)
@@ -686,9 +690,12 @@ namespace Maze
 
         ofbx::u16 flags = ConstructLoadFlags();        
         ofbx::IScene* scene = ofbx::load(_fileData.getDataRO(), (S32)_fileData.getSize(), flags);
+        MAZE_ERROR_IF(!scene, "Failed to load FBX - '%s'!", ofbx::getError());
+
         bool result = LoadFBX(scene, _mesh, _props);
         if (scene)
             scene->destroy();
+
 
         return result;
     }
