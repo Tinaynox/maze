@@ -282,7 +282,7 @@ namespace Maze
                     material->getFirstRenderPass().get(),
                     _transform3D->getWorldPosition(),
                     _meshRenderer,
-                    -1, 0u, vao->getResourceId());
+                    -1, 0u, vao->getResourceId().getIndex());
             }
         }
     }
@@ -323,7 +323,7 @@ namespace Maze
                     firstShadowRenderPass.get(),
                     _transform3D->getWorldPosition(),
                     _meshRenderer,
-                    -1, 0u, vao->getResourceId());
+                    -1, 0u, vao->getResourceId().getIndex());
             }
         }
     }

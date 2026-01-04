@@ -126,6 +126,8 @@ namespace Maze
 
         SharedPtr<GenericInclusiveEntitiesSample<Camera3D>> m_cameras3DSample;
         SharedPtr<GenericInclusiveEntitiesSample<Light3D>> m_lights3DSample;
+
+        Vector<RenderUnit> m_renderData;
     };
 
 

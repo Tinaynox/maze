@@ -161,6 +161,8 @@ namespace Maze
                 {
                     case RenderCommandType::ClearCurrentRenderTarget:
                     {
+                        MAZE_PROFILE_EVENT("Clear");
+
                         RenderCommandClearCurrentRenderTarget* command = static_cast<RenderCommandClearCurrentRenderTarget*>(_command);
 
                         m_context->getRenderSystem()->clearCurrentRenderTarget(
@@ -171,6 +173,8 @@ namespace Maze
                     }
                     case RenderCommandType::SetRenderPass:
                     {
+                        MAZE_PROFILE_EVENT("SetRenderPass");
+
                         RenderCommandSetRenderPass* command = static_cast<RenderCommandSetRenderPass*>(_command);
 
                         bindRenderPass(command->renderPass);
@@ -178,6 +182,8 @@ namespace Maze
                     }
                     case RenderCommandType::DrawVAOInstanced:
                     {
+                        MAZE_PROFILE_EVENT("DrawVAOInstanced");
+
                         RenderCommandDrawVAOInstanced* command = static_cast<RenderCommandDrawVAOInstanced*>(_command);
 
                         do

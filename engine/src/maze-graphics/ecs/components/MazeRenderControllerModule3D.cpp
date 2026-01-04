@@ -56,6 +56,28 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    U64 BuildRenderUnitSortKey(RenderUnit const& _unit)
+    {
+        U64 key = 0;
+
+        key |= (U64(_unit.renderPass->getRenderQueueIndex()) & 0xFF) << 56;
+
+        if (_unit.renderPass->getRenderQueueIndex() < (S32)RenderQueueIndex::Transparent)
+        {
+            key |= (U64(_unit.sortIndex) & 0xFFFF) << 40;
+            key |= (U64(_unit.sqrDistanceToCamera * 1000.0f) & 0xFFFFFFFF);
+        }
+        else
+        {
+            // Reverse distance for transparent
+            key |= (U64(0xFFFFFFFF - U32(_unit.sqrDistanceToCamera * 1000.0f)));
+        }
+
+        return key;
+    }
+
+
+    //////////////////////////////////////////
     // Class RenderControllerModule3D
     //
     //////////////////////////////////////////
@@ -177,54 +199,40 @@ namespace Maze
             // Draw render units
             if (_params.drawFlag)
             {
-                Vector<RenderUnit> renderData;
+                m_renderData.clear();
+                Vector<RenderUnit*> renderDataSorted;
 
                 {
                     MAZE_PROFILE_EVENT("3D Default GatherRenderUnits");
-                    m_world->broadcastEventImmediate<Render3DDefaultPassGatherRenderUnitsEvent>(_renderTarget, &_params, &renderData);
+                    m_world->broadcastEventImmediate<Render3DDefaultPassGatherRenderUnitsEvent>(_renderTarget, &_params, &m_renderData);
                 }
 
-                S32 renderDataSize = (S32)renderData.size();
-                // Vector<S32> indices;
-                // indices.resize(renderDataSize);
+                S32 renderDataSize = (S32)m_renderData.size();
 
-                Vector<RenderUnit*> sorted;
-                sorted.reserve(renderDataSize);
-
-                for (S32 i = 0; i < renderDataSize; ++i)
                 {
-                    // indices[i] = i;
-                    RenderUnit& data = renderData[i];
-                    sorted.push_back(&renderData[i]);
-                    data.sqrDistanceToCamera = (cameraPosition - data.worldPosition).squaredLength();
+                    MAZE_PROFILE_EVENT("3D Prepare Render Queue");
+
+                    renderDataSorted.reserve(renderDataSize);
+
+                    for (S32 i = 0; i < renderDataSize; ++i)
+                    {
+                        RenderUnit& data = m_renderData[i];
+                        renderDataSorted.push_back(&m_renderData[i]);
+                        data.sqrDistanceToCamera = (cameraPosition - data.worldPosition).squaredLength();
+                        data.sortKey = BuildRenderUnitSortKey(data);
+                    }
                 }
 
                 {
                     MAZE_PROFILE_EVENT("3D Sort Render Queue");
                     // Sort render queue
                     std::sort(
-                        sorted.begin(),
-                        sorted.end(),
+                        renderDataSorted.begin(),
+                        renderDataSorted.end(),
                         [](RenderUnit const* _a, RenderUnit const* _b)
-                    {
-                        if (_a->renderPass->getRenderQueueIndex() != _b->renderPass->getRenderQueueIndex())
-                            return _a->renderPass->getRenderQueueIndex() < _b->renderPass->getRenderQueueIndex();
-
-                        if (_a->renderPass->getRenderQueueIndex() < (U8)RenderQueueIndex::Transparent)
                         {
-                            if (_a->renderPass == _b->renderPass)
-                            {
-                                if (_a->sortIndex != _b->sortIndex)
-                                    return _a->sortIndex < _b->sortIndex;
-
-                                return _a->sqrDistanceToCamera < _b->sqrDistanceToCamera;
-                            }
-
-                            return _a->renderPass < _b->renderPass;
-                        }
-                        
-                        return _a->sqrDistanceToCamera > _b->sqrDistanceToCamera;
-                    });
+                            return _a->sortKey < _b->sortKey;
+                        });
                 }
 
 
@@ -237,8 +245,7 @@ namespace Maze
                     MAZE_PROFILE_EVENT("3D Default Render Queue");
                     for (S32 i = 0; i < renderDataSize; ++i)
                     {
-                        // RenderUnit const& renderUnit = renderData[indices[i]];
-                        RenderUnit const& renderUnit = *sorted[i];
+                        RenderUnit const& renderUnit = *renderDataSorted[i];
 
                         RenderPass* renderPass = renderUnit.renderPass;
                         ShaderPtr const& shader = renderPass->getShader();
@@ -315,20 +322,20 @@ namespace Maze
             _shadowBuffer->setViewPosition(lightPosition);
 
 
-            Vector<RenderUnit> renderData;
+            m_renderData.clear();
 
             {
                 MAZE_PROFILE_EVENT("3D Shadow GatherRenderUnits");
-                m_world->broadcastEventImmediate<Render3DShadowPassGatherRenderUnitsEvent>(_shadowBuffer, &_params, &renderData);
+                m_world->broadcastEventImmediate<Render3DShadowPassGatherRenderUnitsEvent>(_shadowBuffer, &_params, &m_renderData);
             }
 
-            S32 renderDataSize = (S32)renderData.size();
+            S32 renderDataSize = (S32)m_renderData.size();
 
             {
                 MAZE_PROFILE_EVENT("3D Default Render Queue");
                 for (S32 i = 0; i < renderDataSize; ++i)
                 {
-                    RenderUnit const& renderUnit = renderData[i];
+                    RenderUnit const& renderUnit = m_renderData[i];
 
                     RenderPass* renderPass = renderUnit.renderPass;
                     ShaderPtr const& shader = renderPass->getShader();

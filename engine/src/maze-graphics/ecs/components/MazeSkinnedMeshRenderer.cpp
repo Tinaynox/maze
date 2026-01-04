@@ -376,7 +376,7 @@ namespace Maze
                         _meshRenderer,
                         i,
                         reinterpret_cast<U64>(&_transform3D->getWorldTransform()),
-                        vao->getResourceId());
+                        vao->getResourceId().getIndex());
                 }
             }
         }
@@ -434,7 +434,7 @@ namespace Maze
                         _meshRenderer,
                         i,
                         reinterpret_cast<U64>(&_transform3D->getWorldTransform()),
-                        vao->getResourceId());
+                        vao->getResourceId().getIndex());
                 }
             }
         }

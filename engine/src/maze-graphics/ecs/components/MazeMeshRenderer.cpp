@@ -305,7 +305,7 @@ namespace Maze
                         _meshRenderer,
                         i,
                         reinterpret_cast<U64>(&_transform3D->getWorldTransform()),
-                        static_cast<S32>(vao->getResourceId()));
+                        static_cast<S32>(vao->getResourceId().getIndex()));
                 }
             }
         }
@@ -362,7 +362,7 @@ namespace Maze
                         _meshRenderer,
                         i,
                         reinterpret_cast<U64>(&_transform3D->getWorldTransform()),
-                        static_cast<S32>(vao->getResourceId()));
+                        static_cast<S32>(vao->getResourceId().getIndex()));
                 }
             }
         }

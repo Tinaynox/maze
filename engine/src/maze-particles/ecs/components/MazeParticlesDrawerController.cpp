@@ -185,7 +185,7 @@ namespace Maze
                 _particlesDrawerController,
                 -1,
                 reinterpret_cast<U64>(_particleSystem),
-                vao->getResourceId());
+                vao->getResourceId().getIndex());
         });
     }
     
