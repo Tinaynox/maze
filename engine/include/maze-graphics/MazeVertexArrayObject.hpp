@@ -39,6 +39,7 @@
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/containers/MazeFastVector.hpp"
 
@@ -58,6 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API VertexArrayObject
         : public SharedObject<VertexArrayObject>
+        , public IndexedResource<VertexArrayObject>
         , public MultiDelegateCallbackReceiver
     {
     public:

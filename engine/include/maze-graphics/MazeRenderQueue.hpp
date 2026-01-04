@@ -51,10 +51,11 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class MAZE_GRAPHICS_API RenderQueueIndex
+    enum class MAZE_GRAPHICS_API RenderQueueIndex : U8
     {
-        Opaque = 2000,
-        Transparent = 3000
+        Skybox = 20,
+        Opaque = 50,
+        Transparent = 150
     };
 
 

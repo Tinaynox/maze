@@ -29,7 +29,7 @@ uniform
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:S32 = 5000
+  renderQueueIndex:U8 = 250
   shader:String = "Distortion00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"

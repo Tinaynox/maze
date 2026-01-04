@@ -78,7 +78,7 @@ uniform
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:S32 = 2500
+  renderQueueIndex:U8 = 60
   shader:String = "Water00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "SrcAlpha"

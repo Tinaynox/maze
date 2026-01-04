@@ -169,12 +169,23 @@ namespace Maze
                 cameraForward,
                 cameraUp);
 
+            RenderMesh const* renderMesh = _particleSystem->getRendererModule().getRenderMesh().get();
+            if (!renderMesh)
+            {
+                RenderMeshPtr const& quad = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getDefaultQuadMesh();
+                renderMesh = quad.get();
+            }
+
+            Vector<VertexArrayObjectPtr> const& vaos = renderMesh->getVertexArrayObjects();
+            VertexArrayObjectPtr const& vao = vaos[0];
+
             _event.getRenderUnits()->emplace_back(
                 (*material)->getFirstRenderPass().get(),
                 _particleSystem->getTransform()->getWorldPosition(),
                 _particlesDrawerController,
                 -1,
-                reinterpret_cast<U64>(_particleSystem));
+                reinterpret_cast<U64>(_particleSystem),
+                vao->getResourceId());
         });
     }
     

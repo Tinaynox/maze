@@ -185,13 +185,17 @@ namespace Maze
                 }
 
                 S32 renderDataSize = (S32)renderData.size();
-                Vector<S32> indices;
-                indices.resize(renderDataSize);
+                // Vector<S32> indices;
+                // indices.resize(renderDataSize);
+
+                Vector<RenderUnit*> sorted;
+                sorted.reserve(renderDataSize);
 
                 for (S32 i = 0; i < renderDataSize; ++i)
                 {
-                    indices[i] = i;
+                    // indices[i] = i;
                     RenderUnit& data = renderData[i];
+                    sorted.push_back(&renderData[i]);
                     data.sqrDistanceToCamera = (cameraPosition - data.worldPosition).squaredLength();
                 }
 
@@ -199,33 +203,27 @@ namespace Maze
                     MAZE_PROFILE_EVENT("3D Sort Render Queue");
                     // Sort render queue
                     std::sort(
-                        indices.begin(),
-                        indices.end(),
-                        [&renderData](S32 _idxA, S32 _idxB)
+                        sorted.begin(),
+                        sorted.end(),
+                        [](RenderUnit const* _a, RenderUnit const* _b)
                     {
-                        RenderUnit const& a = renderData[_idxA];
-                        RenderUnit const& b = renderData[_idxB];
+                        if (_a->renderPass->getRenderQueueIndex() != _b->renderPass->getRenderQueueIndex())
+                            return _a->renderPass->getRenderQueueIndex() < _b->renderPass->getRenderQueueIndex();
 
-                        if (a.renderPass->getRenderQueueIndex() < b.renderPass->getRenderQueueIndex())
-                            return true;
-
-                        if (a.renderPass->getRenderQueueIndex() > b.renderPass->getRenderQueueIndex())
-                            return false;
-
-                        if (a.renderPass->getRenderQueueIndex() < (S32)RenderQueueIndex::Transparent)
+                        if (_a->renderPass->getRenderQueueIndex() < (U8)RenderQueueIndex::Transparent)
                         {
-                            if (a.renderPass == b.renderPass)
+                            if (_a->renderPass == _b->renderPass)
                             {
-                                // #TODO: Sort by VAO? (drawerSortIndex?)
-                                return a.sqrDistanceToCamera < b.sqrDistanceToCamera;
+                                if (_a->sortIndex != _b->sortIndex)
+                                    return _a->sortIndex < _b->sortIndex;
+
+                                return _a->sqrDistanceToCamera < _b->sqrDistanceToCamera;
                             }
-                            else
-                                return a.renderPass < b.renderPass;
+
+                            return _a->renderPass < _b->renderPass;
                         }
-                        else
-                        {
-                            return a.sqrDistanceToCamera > b.sqrDistanceToCamera;
-                        }
+                        
+                        return _a->sqrDistanceToCamera > _b->sqrDistanceToCamera;
                     });
                 }
 
@@ -233,18 +231,19 @@ namespace Maze
                 if (_beginDrawCallback)
                     _beginDrawCallback(renderQueue);
 
-                S32 prevRenderQueueIndex = -1;
+                U8 prevRenderQueueIndex = 0;
 
                 {
                     MAZE_PROFILE_EVENT("3D Default Render Queue");
                     for (S32 i = 0; i < renderDataSize; ++i)
                     {
-                        RenderUnit const& renderUnit = renderData[indices[i]];
+                        // RenderUnit const& renderUnit = renderData[indices[i]];
+                        RenderUnit const& renderUnit = *sorted[i];
 
                         RenderPass* renderPass = renderUnit.renderPass;
                         ShaderPtr const& shader = renderPass->getShader();
 
-                        S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
+                        U8 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
 
                         if (shader->getMainLightColorUniform())
                             shader->getMainLightColorUniform()->set(_params.mainLightColor);

@@ -368,13 +368,15 @@ namespace Maze
                         return;
                     }
 #endif
+                    VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
 
                     _event.getRenderUnits()->emplace_back(
                         firstRenderPass.get(),
                         _transform3D->getWorldPosition(),
                         _meshRenderer,
                         i,
-                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()));
+                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()),
+                        vao->getResourceId());
                 }
             }
         }
@@ -424,12 +426,15 @@ namespace Maze
                     if (!firstShadowRenderPass)
                         continue;
 
+                    VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
+
                     _event.getRenderUnits()->emplace_back(
                         firstShadowRenderPass.get(),
                         _transform3D->getWorldPosition(),
                         _meshRenderer,
                         i,
-                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()));
+                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()),
+                        vao->getResourceId());
                 }
             }
         }

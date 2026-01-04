@@ -173,6 +173,7 @@ namespace Maze
 
         Queue<EcsWorldEventType> m_eventTypes;
         Deque<EntityPtr> m_addingEntities;
+        Map<EntityId, EntityPtr> m_addingEntitiesById;
 
         Queue<EntityId> m_removingEntities;
         // Queue<Pair<ComponentSystemEventHandlerPtr, EntityId>> m_addingToSampleEntities;

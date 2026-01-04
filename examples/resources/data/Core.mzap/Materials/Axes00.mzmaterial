@@ -1,7 +1,7 @@
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:S32 = 2000
+  renderQueueIndex:U8 = 50
   shader:String = "UnlitColor00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"

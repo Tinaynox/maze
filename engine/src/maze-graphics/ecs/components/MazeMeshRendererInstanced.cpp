@@ -275,10 +275,14 @@ namespace Maze
                     _meshRenderer->getModelMatrices().empty())
                     return;
 
+                Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+                VertexArrayObjectPtr const& vao = vaos[0];
+
                 _event.getRenderUnits()->emplace_back(
                     material->getFirstRenderPass().get(),
                     _transform3D->getWorldPosition(),
-                    _meshRenderer);
+                    _meshRenderer,
+                    -1, 0u, vao->getResourceId());
             }
         }
     }
@@ -312,10 +316,14 @@ namespace Maze
                 if (!firstShadowRenderPass)
                     return;
 
+                Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+                VertexArrayObjectPtr const& vao = vaos[0];
+
                 _event.getRenderUnits()->emplace_back(
                     firstShadowRenderPass.get(),
                     _transform3D->getWorldPosition(),
-                    _meshRenderer);
+                    _meshRenderer,
+                    -1, 0u, vao->getResourceId());
             }
         }
     }

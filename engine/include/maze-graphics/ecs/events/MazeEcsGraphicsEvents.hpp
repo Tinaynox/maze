@@ -108,12 +108,14 @@ namespace Maze
             Vec3F const& _worldPosition = Vec3F::c_zero,
             IRenderUnitDrawer* _drawer = nullptr,
             S32 _index = -1,
-            U64 _userData = 0u)
+            U64 _userData = 0u,
+            S32 _sortIndex = -1)
             : renderPass(_renderPass)
             , worldPosition(_worldPosition)
             , drawer(_drawer)
             , index(_index)
             , userData(_userData)
+            , sortIndex(_sortIndex)
         {}
 
         RenderPass* renderPass;
@@ -121,8 +123,11 @@ namespace Maze
         IRenderUnitDrawer* drawer = nullptr;
         S32 index = 0;
         U64 userData = 0u;
+        S32 sortIndex = -1;
 
+        // Calculating values
         F32 sqrDistanceToCamera = 0.0f;
+        U64 sortKey = 0u;
     };
 
 

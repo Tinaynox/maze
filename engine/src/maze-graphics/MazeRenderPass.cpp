@@ -46,7 +46,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(RenderPass,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderPassType, passType, RenderPassType::None, getPassType, setPassType),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, renderQueueIndex, (S32)RenderQueueIndex::Opaque, getRenderQueueIndex, setRenderQueueIndex),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(U8, renderQueueIndex, (U8)RenderQueueIndex::Opaque, getRenderQueueIndex, setRenderQueueIndex),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ShaderAssetRef, shader, ShaderAssetRef(), getShaderRef, setShaderRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(BlendOperation, blendOperation, BlendOperation::Add, getBlendOperation, setBlendOperation),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(BlendFactor, blendSrcFactor, BlendFactor::One, getBlendSrcFactor, setBlendSrcFactor),
@@ -56,18 +56,9 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(CullMode, cullMode, CullMode::Off, getCullMode, setCullMode)
     )
 
-        //////////////////////////////////////////
-        RenderPass::RenderPass()
-        : m_renderSystem(nullptr)
-        , m_material(nullptr)
-        , m_passType(RenderPassType::None)
-        , m_renderQueueIndex((S32)RenderQueueIndex::Opaque)
-        , m_blendOperation(BlendOperation::Add)
-        , m_blendSrcFactor(BlendFactor::One)
-        , m_blendDestFactor(BlendFactor::Zero)
-        , m_depthTestCompareFunction(CompareFunction::Disabled)
-        , m_depthWriteEnabled(true)
-        , m_cullMode(CullMode::Off)
+    //////////////////////////////////////////
+    RenderPass::RenderPass()
+        : m_renderQueueIndex((U8)RenderQueueIndex::Opaque)
     {
     }
 

@@ -39,6 +39,9 @@ namespace Maze
     // Class VertexArrayObject
     //
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(VertexArrayObject);
+
+    //////////////////////////////////////////
     VertexArrayObject::VertexArrayObject()
     {
     }

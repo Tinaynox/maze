@@ -36,6 +36,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeShader.hpp"
+#include "maze-graphics/MazeRenderQueue.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 
 
@@ -130,7 +131,7 @@ namespace Maze
         m_defaultParticleMaterial->setName(MAZE_HS("DefaultParticle"));
 
         RenderPassPtr const& renderPass = m_defaultParticleMaterial->getFirstRenderPass();
-        renderPass->setRenderQueueIndex(3000);
+        renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Transparent);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
         ShaderPtr shader = renderPass->getShader()->createCopy();

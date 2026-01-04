@@ -82,8 +82,8 @@ namespace Maze
         if (m_instancesListNext)
             m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
         else
-            if (s_instancesList == this)
-                s_instancesList = m_instancesListPrev;
+        if (s_instancesList == this)
+            s_instancesList = m_instancesListPrev;
     }
 
     //////////////////////////////////////////

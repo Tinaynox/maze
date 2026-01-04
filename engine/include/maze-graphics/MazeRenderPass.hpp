@@ -107,13 +107,13 @@ namespace Maze
 
         
         //////////////////////////////////////////
-        inline RenderPassType getPassType() const { return m_passType; }
+        MAZE_FORCEINLINE RenderPassType getPassType() const { return m_passType; }
 
         //////////////////////////////////////////
-        inline void setRenderQueueIndex(S32 _renderQueueIndex) { m_renderQueueIndex = _renderQueueIndex; }
+        MAZE_FORCEINLINE void setRenderQueueIndex(U8 _renderQueueIndex) { m_renderQueueIndex = _renderQueueIndex; }
 
         //////////////////////////////////////////
-        inline S32 getRenderQueueIndex() const { return m_renderQueueIndex; }
+        MAZE_FORCEINLINE U8 getRenderQueueIndex() const { return m_renderQueueIndex; }
 
 
         //////////////////////////////////////////
@@ -137,32 +137,32 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setBlendOperation(BlendOperation _blendOperation) { m_blendOperation = _blendOperation; }
+        MAZE_FORCEINLINE void setBlendOperation(BlendOperation _blendOperation) { m_blendOperation = _blendOperation; }
 
         //////////////////////////////////////////
-        inline BlendOperation getBlendOperation() const { return m_blendOperation; }
+        MAZE_FORCEINLINE BlendOperation getBlendOperation() const { return m_blendOperation; }
 
         //////////////////////////////////////////
-        inline void setBlendSrcFactor(BlendFactor _blendSrcFactor) { m_blendSrcFactor = _blendSrcFactor; }
+        MAZE_FORCEINLINE void setBlendSrcFactor(BlendFactor _blendSrcFactor) { m_blendSrcFactor = _blendSrcFactor; }
 
         //////////////////////////////////////////
-        inline BlendFactor getBlendSrcFactor() const { return m_blendSrcFactor; }
+        MAZE_FORCEINLINE BlendFactor getBlendSrcFactor() const { return m_blendSrcFactor; }
 
         //////////////////////////////////////////
-        inline void setBlendDestFactor(BlendFactor _blendDestFactor) { m_blendDestFactor = _blendDestFactor; }    
+        MAZE_FORCEINLINE void setBlendDestFactor(BlendFactor _blendDestFactor) { m_blendDestFactor = _blendDestFactor; }
 
         //////////////////////////////////////////
-        inline BlendFactor getBlendDestFactor() const { return m_blendDestFactor; }        
+        MAZE_FORCEINLINE BlendFactor getBlendDestFactor() const { return m_blendDestFactor; }
 
         //////////////////////////////////////////
-        inline void setBlendFactors(BlendFactor _src, BlendFactor _dest)
+        MAZE_FORCEINLINE void setBlendFactors(BlendFactor _src, BlendFactor _dest)
         {
             setBlendSrcFactor(_src);
             setBlendDestFactor(_dest);
         }
 
         //////////////////////////////////////////
-        inline void setBlend(BlendOperation _blendOperation, BlendFactor _src, BlendFactor _dest)
+        MAZE_FORCEINLINE void setBlend(BlendOperation _blendOperation, BlendFactor _src, BlendFactor _dest)
         {
             setBlendOperation(_blendOperation);
             setBlendSrcFactor(_src);
@@ -170,22 +170,22 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void setDepthTestCompareFunction(CompareFunction _depthTestCompareFunction) { m_depthTestCompareFunction = _depthTestCompareFunction; }
+        MAZE_FORCEINLINE void setDepthTestCompareFunction(CompareFunction _depthTestCompareFunction) { m_depthTestCompareFunction = _depthTestCompareFunction; }
 
         //////////////////////////////////////////
-        inline CompareFunction getDepthTestCompareFunction() const { return m_depthTestCompareFunction; }
+        MAZE_FORCEINLINE CompareFunction getDepthTestCompareFunction() const { return m_depthTestCompareFunction; }
 
         //////////////////////////////////////////
-        inline void setDepthWriteEnabled(bool _value) { m_depthWriteEnabled = _value; }
+        MAZE_FORCEINLINE void setDepthWriteEnabled(bool _value) { m_depthWriteEnabled = _value; }
 
         //////////////////////////////////////////
-        inline bool getDepthWriteEnabled() const { return m_depthWriteEnabled; }
+        MAZE_FORCEINLINE bool getDepthWriteEnabled() const { return m_depthWriteEnabled; }
 
         //////////////////////////////////////////
-        inline void setCullMode(CullMode _cullMode) { m_cullMode = _cullMode; }
+        MAZE_FORCEINLINE void setCullMode(CullMode _cullMode) { m_cullMode = _cullMode; }
 
         //////////////////////////////////////////
-        inline CullMode getCullMode() const { return m_cullMode; }
+        MAZE_FORCEINLINE CullMode getCullMode() const { return m_cullMode; }
 
         //////////////////////////////////////////
         void applyRenderPassUniforms();
@@ -198,7 +198,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void dirtyShaderUniforms() { m_shaderUniformsDirty = true; }
+        MAZE_FORCEINLINE void dirtyShaderUniforms() { m_shaderUniformsDirty = true; }
 
     public:
 
@@ -241,26 +241,26 @@ namespace Maze
         void updateShaderUniforms();
 
     protected:
-        RenderSystem* m_renderSystem;
+        RenderSystem* m_renderSystem = nullptr;
 
-        Material* m_material;
+        Material* m_material = nullptr;
 
-        RenderPassType m_passType;
+        RenderPassType m_passType = RenderPassType::None;
 
-        S32 m_renderQueueIndex;
+        U8 m_renderQueueIndex;
 
         ShaderAssetRef m_shaderRef;
         FastVector<ShaderUniformPtr> m_shaderUniforms;
         bool m_shaderUniformsDirty = true;
 
-        BlendOperation m_blendOperation;
-        BlendFactor m_blendSrcFactor;
-        BlendFactor m_blendDestFactor;
+        BlendOperation m_blendOperation = BlendOperation::Add;
+        BlendFactor m_blendSrcFactor = BlendFactor::One;
+        BlendFactor m_blendDestFactor = BlendFactor::Zero;
 
-        CompareFunction m_depthTestCompareFunction;
-        bool m_depthWriteEnabled;
+        CompareFunction m_depthTestCompareFunction = CompareFunction::Disabled;
+        bool m_depthWriteEnabled = true;
 
-        CullMode m_cullMode;
+        CullMode m_cullMode = CullMode::Off;
     };
 
 } // namespace Maze

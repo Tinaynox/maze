@@ -39,6 +39,7 @@
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeShader.hpp"
+#include "maze-graphics/MazeRenderQueue.hpp"
 
 
 //////////////////////////////////////////
@@ -233,7 +234,7 @@ namespace Maze
         systemFont->material->ensureUniform(MAZE_HCS("u_baseMapTexelSize"))->set(1.0f / (Vec2F)systemFont->texture->getSize());
 
         RenderPassPtr const& renderPass = systemFont->material->getFirstRenderPass();
-        renderPass->setRenderQueueIndex(3000);
+        renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Transparent);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Always);
         ShaderPtr shader = renderPass->getShader()->createCopy();

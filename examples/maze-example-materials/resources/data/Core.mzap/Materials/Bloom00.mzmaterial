@@ -22,7 +22,7 @@ uniform
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:S32 = 3000
+  renderQueueIndex:U8 = 150
   shader:String = "BloomFirstPass00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"
@@ -35,7 +35,7 @@ renderPass
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:S32 = 3000
+  renderQueueIndex:U8 = 150
   shader:String = "BloomDownscale00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"
@@ -48,7 +48,7 @@ renderPass
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:S32 = 3000
+  renderQueueIndex:U8 = 150
   shader:String = "BloomUpscale00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"
@@ -61,7 +61,7 @@ renderPass
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:S32 = 3000
+  renderQueueIndex:U8 = 150
   shader:String = "BloomFinalPass00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"

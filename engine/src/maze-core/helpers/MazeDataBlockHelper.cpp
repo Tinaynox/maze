@@ -249,21 +249,45 @@ namespace Maze
 
             if (_dataBlock.isParamExists(_propertyName))
             {
+                if (valueClassUID == ClassInfo<S8>::UID())
+                {
+                    S8 value = _dataBlock.getS8(_propertyName);
+                    _metaProperty->setValue(_metaInstance, &value);
+                }
+                else
+                if (valueClassUID == ClassInfo<U8>::UID())
+                {
+                    U8 value = _dataBlock.getU8(_propertyName);
+                    _metaProperty->setValue(_metaInstance, &value);
+                }
+                else
+                if (valueClassUID == ClassInfo<S16>::UID())
+                {
+                    S16 value = _dataBlock.getS16(_propertyName);
+                    _metaProperty->setValue(_metaInstance, &value);
+                }
+                else
+                if (valueClassUID == ClassInfo<U16>::UID())
+                {
+                    U16 value = _dataBlock.getU16(_propertyName);
+                    _metaProperty->setValue(_metaInstance, &value);
+                }
+                else
                 if (valueClassUID == ClassInfo<S32>::UID())
                 {
                     S32 value = _dataBlock.getS32(_propertyName);
                     _metaProperty->setValue(_metaInstance, &value);
                 }
                 else
-                if (valueClassUID == ClassInfo<S64>::UID())
-                {
-                    S64 value = _dataBlock.getS64(_propertyName);
-                    _metaProperty->setValue(_metaInstance, &value);
-                }
-                else
                 if (valueClassUID == ClassInfo<U32>::UID())
                 {
                     U32 value = _dataBlock.getU32(_propertyName);
+                    _metaProperty->setValue(_metaInstance, &value);
+                }
+                else
+                if (valueClassUID == ClassInfo<S64>::UID())
+                {
+                    S64 value = _dataBlock.getS64(_propertyName);
                     _metaProperty->setValue(_metaInstance, &value);
                 }
                 else

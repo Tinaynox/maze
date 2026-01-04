@@ -289,6 +289,7 @@ namespace Maze
                     RenderPassPtr const& firstRenderPass = (*material)->getFirstRenderPass();
                     if (!firstRenderPass)
                         continue;
+
 #if (MAZE_DEBUG)
                     if (!firstRenderPass->getShader())
                     {
@@ -296,12 +297,15 @@ namespace Maze
                         return;
                     }
 #endif
+                    VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
+
                     _event.getRenderUnits()->emplace_back(
                         firstRenderPass.get(),
                         _transform3D->getWorldPosition(),
                         _meshRenderer,
                         i,
-                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()));
+                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()),
+                        static_cast<S32>(vao->getResourceId()));
                 }
             }
         }
@@ -350,12 +354,15 @@ namespace Maze
                         return;
                     }
 #endif
+                    VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
+
                     _event.getRenderUnits()->emplace_back(
                         firstShadowRenderPass.get(),
                         _transform3D->getWorldPosition(),
                         _meshRenderer,
                         i,
-                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()));
+                        reinterpret_cast<U64>(&_transform3D->getWorldTransform()),
+                        static_cast<S32>(vao->getResourceId()));
                 }
             }
         }

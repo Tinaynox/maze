@@ -29,7 +29,7 @@ uniform
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:S32 = 3000
+  renderQueueIndex:U8 = 150
   shader:String = "Particle00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "SrcAlpha"

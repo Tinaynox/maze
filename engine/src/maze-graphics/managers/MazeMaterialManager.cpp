@@ -37,6 +37,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeRenderQueue.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
@@ -319,7 +320,7 @@ namespace Maze
                 renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Error));
                 renderPass->setDepthWriteEnabled(true);
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
-                renderPass->setRenderQueueIndex(2000);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Opaque);
                 break;
             }
             case BuiltinMaterialType::UV:
@@ -330,7 +331,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(true);
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(2000);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Opaque);
                 break;
             }
             case BuiltinMaterialType::Normal:
@@ -341,7 +342,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(true);
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(2000);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Opaque);
                 break;
             }
             case BuiltinMaterialType::Color:
@@ -354,7 +355,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(false);
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(3000);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Transparent);
                 material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 break;
             }
@@ -368,7 +369,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(false);
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(3000);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Transparent);
                 material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
                 material->setUniform(MAZE_HCS("u_baseMapST"), Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
@@ -384,7 +385,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(false);
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(3000);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Transparent);
                 material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
                 material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 break;
@@ -428,7 +429,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(false);
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(3000);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Transparent);
                 material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 material->setUniform(MAZE_HCS("u_intensity"), 0.0f);
                 break;
@@ -488,7 +489,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(false);
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(3000);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Transparent);
                 break;
             }
             case BuiltinMaterialType::DebugGrid:
@@ -501,7 +502,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(false);
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(2998);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Transparent - 2);
                 material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 break;
             }
@@ -516,7 +517,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(false);
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(2999);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Transparent - 1);
                 material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 break;
             }
@@ -530,7 +531,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(false);
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Back);
-                renderPass->setRenderQueueIndex(1000);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Skybox);
                 material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteCubeTexture());
                 break;
@@ -545,7 +546,7 @@ namespace Maze
                 defaultRenderPass->setDepthWriteEnabled(true);
                 defaultRenderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 defaultRenderPass->setCullMode(CullMode::Back);
-                defaultRenderPass->setRenderQueueIndex(2000);
+                defaultRenderPass->setRenderQueueIndex(50);
                 material->setUniform(MAZE_HCS("u_baseMapST"), Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
                 material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
                 material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
@@ -560,7 +561,7 @@ namespace Maze
                 shadowRenderPass->setDepthWriteEnabled(true);
                 shadowRenderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 shadowRenderPass->setCullMode(CullMode::Back);
-                shadowRenderPass->setRenderQueueIndex(2000);
+                shadowRenderPass->setRenderQueueIndex((U8)RenderQueueIndex::Opaque);
                 break;
             }
             case BuiltinMaterialType::SpecularDS:
@@ -584,7 +585,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(true);
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(2000);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Opaque);
                 material->setUniform(MAZE_HCS("u_baseMapST"), Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
                 material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
                 material->setUniform(MAZE_HCS("u_color"), ColorF128(0.77f, 0.77f, 0.77f, 1.0f));
@@ -604,7 +605,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(false);
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(3000);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Transparent);
                 material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
                 break;
