@@ -106,11 +106,26 @@ namespace Maze
         //////////////////////////////////////////
         inline MultiDelegate<GizmoToolType const&>& getSelectedGizmoToolChangedEvent() { return m_selectedGizmoTool.eventValueChanged; }
 
+
+        //////////////////////////////////////////
+        void setGizmosBillboards(bool _value) { m_gizmosBillboards = _value; }
+
+        //////////////////////////////////////////
+        inline bool getGizmosBillboards() const { return m_gizmosBillboards.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<bool const&>& getGizmosBillboardsChangedEvent() { return m_gizmosBillboards.eventValueChanged; }
+
+        //////////////////////////////////////////
+        inline void switchGizmosBillboards() { setGizmosBillboards(!getGizmosBillboards()); }
+
     protected:
 
         ObservableValue<bool> m_active = true;
         ObservableValue<bool> m_pause = false;
         ObservableValue<GizmoToolType> m_selectedGizmoTool = GizmoToolType::Translate;
+
+        ObservableValue<bool> m_gizmosBillboards = true;
     };
 
 

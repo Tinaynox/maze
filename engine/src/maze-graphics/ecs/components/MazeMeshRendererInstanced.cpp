@@ -276,7 +276,7 @@ namespace Maze
                     return;
 
                 _event.getRenderUnits()->emplace_back(
-                    material->getFirstRenderPass(),
+                    material->getFirstRenderPass().get(),
                     _transform3D->getWorldPosition(),
                     _meshRenderer);
             }
@@ -313,7 +313,7 @@ namespace Maze
                     return;
 
                 _event.getRenderUnits()->emplace_back(
-                    firstShadowRenderPass,
+                    firstShadowRenderPass.get(),
                     _transform3D->getWorldPosition(),
                     _meshRenderer);
             }

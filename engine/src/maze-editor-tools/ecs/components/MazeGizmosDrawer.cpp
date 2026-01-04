@@ -27,6 +27,7 @@
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/ecs/components/MazeGizmosDrawer.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
@@ -52,6 +53,7 @@
 #include "maze-core/math/MazeRay.hpp"
 #include "maze-core/math/MazePlane.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 
 
 //////////////////////////////////////////
@@ -1038,6 +1040,16 @@ namespace Maze
         SpritePtr const& _sprite,
         ColorF128 const& _color)
     {
+        if (SettingsManager::GetInstancePtr())
+        {
+            EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+            if (debbugerSettings)
+            {
+                if (!debbugerSettings->getGizmosBillboards())
+                    return;
+            }
+        }
+
         m_billboardsData.emplace_back(
             BillboardData
             {

@@ -86,14 +86,18 @@ namespace Maze
         S32 height = cinfo.output_height;
         S32 channels = cinfo.output_components;
 
-        if (channels != 3)
+        if (channels == 1)
+            pixelSheet.setFormat(PixelFormat::R_U8);
+        else
+        if (channels == 3)
+            pixelSheet.setFormat(PixelFormat::RGB_U8);
+        else
         {
-            jpeg_finish_decompress(&cinfo);
-            jpeg_destroy_decompress(&cinfo);
+            jpeg_destroy_decompress(&cinfo);    
             MAZE_ERROR_RETURN_VALUE(false, "Unsupported channels count! cinfo.output_components=%d", cinfo.output_components);
         }
 
-        pixelSheet.setFormat(PixelFormat::RGB_U8);
+        
         pixelSheet.setSize(width, height);
 
         // Read scanlines

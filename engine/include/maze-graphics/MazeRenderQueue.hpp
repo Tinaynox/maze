@@ -102,12 +102,6 @@ namespace Maze
         void addSelectRenderPassCommand(RenderPass* _materialPass);
 
         //////////////////////////////////////////
-        inline void addSelectRenderPassCommand(RenderPassPtr const& _materialPass)
-        {
-            addSelectRenderPassCommand(_materialPass.get());
-        }
-
-        //////////////////////////////////////////
         static inline U8 ConstructUVMask(Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX])
         {
             if (_uvs == nullptr)
@@ -370,10 +364,10 @@ namespace Maze
             S32 _count);
 
     protected:
-        RenderTarget* m_renderTarget;
+        RenderTarget* m_renderTarget = nullptr;
         RenderCommandsBuffer m_renderCommandsBuffer;
 
-        RenderPass* m_currentRenderPass;
+        RenderPass* m_currentRenderPass = nullptr;
 
         RenderCommandDrawVAOInstanced* m_lastDrawVAOInstancedCommand = nullptr;
 

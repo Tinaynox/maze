@@ -497,7 +497,7 @@ namespace Maze
 #endif
 
                     _event.getRenderUnits()->emplace_back(
-                        (*material)->getFirstRenderPass(),
+                        (*material)->getFirstRenderPass().get(),
                         _transform3D->getWorldPosition(),
                         _trailRenderer,
                         i,

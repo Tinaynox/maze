@@ -81,6 +81,7 @@
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
+#include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "Editor.hpp"
 #include "layout/EditorLayout.hpp"
@@ -212,7 +213,7 @@ namespace Maze
             ColorU32::c_white);
         m_axesButton->setChecked(true);
         m_axesButton->eventClick.subscribe(
-            [this](Button2D* _button, CursorInputEvent& _event)
+            [](Button2D* _button, CursorInputEvent& _event)
         {
             SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchSceneDebugAxesEnabled();
             SettingsManager::GetInstancePtr()->saveSettings();
@@ -227,7 +228,7 @@ namespace Maze
             ColorU32::c_white);
         m_gridButton->setChecked(true);
         m_gridButton->eventClick.subscribe(
-            [this](Button2D* _button, CursorInputEvent& _event)
+            [](Button2D* _button, CursorInputEvent& _event)
         {
             SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchSceneDebugGridEnabled();
             SettingsManager::GetInstancePtr()->saveSettings();
@@ -235,6 +236,25 @@ namespace Maze
         updateDebugGrid();
         SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getSceneDebugGridEnabledChangedEvent().subscribe(
             this, &EditorSceneModeControllerScene::notifyDebugGridEnabledChanged);
+
+
+        m_gizmosBillboardsButton = createBarButton(
+            m_topBarLeftLayout->getTransform(),
+            GizmosManager::GetInstancePtr()->getDefaultGizmosSprite(DefaultGizmosSprite::CameraGizmo),
+            ColorU32::c_white);
+        m_gizmosBillboardsButton->eventClick.subscribe(
+            [](Button2D* _button, CursorInputEvent& _event)
+            {
+                SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>()->switchGizmosBillboards();
+                SettingsManager::GetInstancePtr()->saveSettings();
+            });
+        updateGizmosBillboards();
+        SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>()->getGizmosBillboardsChangedEvent().subscribe(
+            [weakPtr = (EditorSceneModeControllerSceneWPtr)cast<EditorSceneModeControllerScene>()](bool const& _value)
+            {
+                if (EditorSceneModeControllerScenePtr scene = weakPtr.lock())
+                    scene->updateGizmosBillboards();
+            });
 
 
         m_topBarRightLayout = UIHelper::CreateHorizontalLayout(
@@ -357,6 +377,13 @@ namespace Maze
         bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getSceneDebugGridEnabled();
         scene->getDebugGridRenderer()->getEntityRaw()->setActiveSelf(value);
         m_gridButton->setChecked(value);
+    }
+
+    //////////////////////////////////////////
+    void EditorSceneModeControllerScene::updateGizmosBillboards()
+    {
+        bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>()->getGizmosBillboards();
+        m_gizmosBillboardsButton->setChecked(value);
     }
 
     //////////////////////////////////////////

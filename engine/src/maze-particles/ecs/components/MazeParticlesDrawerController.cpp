@@ -170,7 +170,7 @@ namespace Maze
                 cameraUp);
 
             _event.getRenderUnits()->emplace_back(
-                (*material)->getFirstRenderPass(),
+                (*material)->getFirstRenderPass().get(),
                 _particleSystem->getTransform()->getWorldPosition(),
                 _particlesDrawerController,
                 -1,

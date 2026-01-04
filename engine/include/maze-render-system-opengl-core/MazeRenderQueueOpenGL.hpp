@@ -93,11 +93,6 @@ namespace Maze
         //////////////////////////////////////////
         void bindRenderPass(RenderPass* _materialPass);
 
-        //////////////////////////////////////////
-        inline void bindRenderPass(RenderPassPtr const& _materialPass)
-        {
-            bindRenderPass(_materialPass.get());
-        }
 
         //////////////////////////////////////////
         void bindVertexArrayObject(VertexArrayObject* _vao);

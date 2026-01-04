@@ -38,47 +38,108 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API String ConvertUCS2ToUTF8(CWString _text)
         {
-            std::wstring_convert< 
-                std::codecvt_utf8<wchar_t>,
-                wchar_t,
-                WStringAllocator,
-                StringAllocator> myconv;
-            return myconv.to_bytes(_text);
+            // Deprecated?
+            //std::wstring_convert< 
+            //    std::codecvt_utf8<wchar_t>,
+            //    wchar_t,
+            //    WStringAllocator,
+            //    StringAllocator> myconv;
+            //return myconv.to_bytes(_text);
+            if (!_text)
+                return String();
+
+            // Calculate required buffer size (using -1 for null-terminated length, no null terminator in output)
+            int cbMulti = WideCharToMultiByte(CP_UTF8, 0, _text, -1, nullptr, 0, nullptr, nullptr);
+            if (cbMulti == 0)
+                return String();
+
+            // Allocate exact size (cbMulti includes space for output null, but we trim it)
+            String str(static_cast<size_t>(cbMulti - 1), '\0');
+
+            // Perform the conversion (includes null terminator in output buffer)
+            if (WideCharToMultiByte(CP_UTF8, 0, _text, -1, &str[0], cbMulti, nullptr, nullptr) == 0)
+                return String();  // Conversion failed
+
+            // Trim the null terminator
+            str.resize(cbMulti - 1);
+            return str;
         }
 
         //////////////////////////////////////////
         MAZE_CORE_API String ConvertUCS2ToUTF8(CWString _text, Size _size)
         {
-            WString w(_text, _size);
-            std::wstring_convert<
-                std::codecvt_utf8<wchar_t>,
-                wchar_t,
-                WStringAllocator,
-                StringAllocator> myconv;
-            return myconv.to_bytes(w);
+            if (!_text || _size == 0u)
+                return String();
+
+            // Calculate required buffer size (no null terminator)
+            int cbMulti = WideCharToMultiByte(CP_UTF8, 0, _text, static_cast<S32>(_size), nullptr, 0, nullptr, nullptr);
+            if (cbMulti == 0)
+                return String();
+
+            // Allocate exact size
+            String str(static_cast<size_t>(cbMulti), '\0');
+
+            // Perform the conversion
+            if (WideCharToMultiByte(CP_UTF8, 0, _text, static_cast<S32>(_size), &str[0], cbMulti, nullptr, nullptr) == 0)
+                return String();
+
+            return str;
         }
     
         //////////////////////////////////////////
         MAZE_CORE_API WString ConvertUTF8ToUCS2(CString _text)
         {
-            std::wstring_convert< 
-                std::codecvt_utf8_utf16<wchar_t>,
-                wchar_t,
-                WStringAllocator,
-                StringAllocator> myconv;
-            return myconv.from_bytes(_text);
+            // Deprecated?
+            //std::wstring_convert< 
+            //    std::codecvt_utf8_utf16<wchar_t>,
+            //    wchar_t,
+            //    WStringAllocator,
+            //    StringAllocator> myconv;
+            //return myconv.from_bytes(_text);
+            
+            if (!_text)
+                return WString();
+
+            // Calculate required buffer size (including null terminator)
+            int cbWide = MultiByteToWideChar(CP_UTF8, 0, _text, -1, nullptr, 0);
+            if (cbWide == 0)
+                return WString();
+
+            WString wstr(static_cast<size_t>(cbWide), L'\0');
+
+            // Perform the conversion (writes null-terminated string)
+            if (MultiByteToWideChar(CP_UTF8, 0, _text, -1, &wstr[0], cbWide) == 0)
+                return WString();
+
+            // Trim the null terminator
+            wstr.resize(cbWide - 1);
+            return wstr;
         }
         
         //////////////////////////////////////////
         MAZE_CORE_API WString ConvertUTF8ToUCS2(CString _text, Size _size)
         {
-            String w(_text, _size);
-            std::wstring_convert< 
-                std::codecvt_utf8_utf16<wchar_t>,
-                wchar_t,
-                WStringAllocator,
-                StringAllocator> myconv;
-            return myconv.from_bytes(w);
+            //String w(_text, _size);
+            //std::wstring_convert< 
+            //    std::codecvt_utf8_utf16<wchar_t>,
+            //    wchar_t,
+            //    WStringAllocator,
+            //    StringAllocator> myconv;
+            //return myconv.from_bytes(w);
+            if (!_text || _size == 0)
+                return WString();
+
+            // Calculate required buffer size (no null terminator)
+            int cbWide = MultiByteToWideChar(CP_UTF8, 0, _text, static_cast<S32>(_size), nullptr, 0);
+            if (cbWide == 0)
+                return WString();
+
+            WString wstr(static_cast<Size>(cbWide), L'\0');
+
+            if (MultiByteToWideChar(CP_UTF8, 0, _text, static_cast<S32>(_size), &wstr[0], cbWide) == 0)
+                return WString();
+
+            return wstr;
         }
 
         //////////////////////////////////////////

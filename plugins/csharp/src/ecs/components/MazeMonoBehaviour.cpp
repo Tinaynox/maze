@@ -200,7 +200,9 @@ namespace Maze
         else
         if (_eventUID == ClassInfo<MonoReloadEvent>::UID())
         {
-            setData(m_cachedData);
+            if (getEntityRaw()->getEcsWorld())
+                setData(m_cachedData);
+
             m_cachedData.clear();
 
             if (getEntityRaw()->getEcsWorld())

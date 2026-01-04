@@ -172,7 +172,7 @@ namespace Maze
 
             RenderMeshPtr const& quad = m_renderSystem->getRenderMeshManager()->getDefaultQuadMesh();
             VertexArrayObject* vao = quad->getVertexArrayObjects().front().get();
-            renderQueue->addSelectRenderPassCommand(_material->getRenderPass(RenderPassType::Default, _renderPassIndex));
+            renderQueue->addSelectRenderPassCommand(_material->getRenderPass(RenderPassType::Default, _renderPassIndex).get());
             renderQueue->addDrawVAOInstancedCommand(
                 vao, 
                 TMat(

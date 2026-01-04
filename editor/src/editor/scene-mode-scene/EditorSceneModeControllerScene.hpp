@@ -71,6 +71,7 @@ namespace Maze
     //////////////////////////////////////////
     class EditorSceneModeControllerScene
         : public EditorSceneModeController
+        , public SharedObject<EditorSceneModeControllerScene>
         , public MultiDelegateCallbackReceiver
     {
     public:
@@ -111,6 +112,9 @@ namespace Maze
         void updateDebugGrid();
 
         //////////////////////////////////////////
+        void updateGizmosBillboards();
+
+        //////////////////////////////////////////
         void notifyDebugLightEnabledChanged(bool const& _value);
 
         //////////////////////////////////////////
@@ -135,6 +139,7 @@ namespace Maze
         ToggleButton2DPtr m_lightButton;
         ToggleButton2DPtr m_axesButton;
         ToggleButton2DPtr m_gridButton;
+        ToggleButton2DPtr m_gizmosBillboardsButton;
 
         SpriteRenderer2DPtr m_topBarBackground;
         HorizontalLayout2DPtr m_topBarLeftLayout;

@@ -57,9 +57,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     RenderQueue::RenderQueue()
-        : m_renderTarget(nullptr)
-        , m_currentRenderPass(nullptr)
-        , m_lastDrawVAOInstancedCommand(nullptr)
+        : m_lastDrawVAOInstancedCommand(nullptr)
         , m_maxInstancesPerDrawCall(0)
         , m_maxInstancesPerDraw(0)
         , m_drawCalls(0)
@@ -97,14 +95,6 @@ namespace Maze
     {
         if (m_currentRenderPass == _renderPass)
             return;
-        // TODO
-        /*
-        else
-        if (m_currentRenderPass && m_currentRenderPass->calculateCRC32() == _renderPass->calculateCRC32())
-        {
-            return;
-        }
-        */
 
         m_currentRenderPass = _renderPass;
 

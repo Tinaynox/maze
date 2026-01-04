@@ -102,56 +102,9 @@ namespace Maze
     //////////////////////////////////////////
     struct MAZE_GRAPHICS_API RenderUnit
     {
-        /*
-        //////////////////////////////////////////
-        RenderUnit()
-        {
-            memset(uvStreams, 0, sizeof(uvStreams));
-        }
-
         //////////////////////////////////////////
         RenderUnit(
-            RenderPassPtr const& _renderPass,
-            VertexArrayObjectPtr const& _vao,
-            Vec3F const& _worldPosition,
-            S32 _count,
-            TMat const* _modelMatricies,
-            Vec4F const* _colorStream,
-            Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX])
-            : renderPass(_renderPass)
-            , vao(_vao)
-            , worldPosition(_worldPosition)
-            , count(_count)
-            , modelMatricies(_modelMatricies)
-            , colorStream(_colorStream)
-        {
-            memcpy(uvStreams, _uvs, sizeof(uvStreams));
-        }
-
-        //////////////////////////////////////////
-        RenderUnit(
-            RenderPassPtr const& _renderPass,
-            VertexArrayObjectPtr const& _vao,
-            Vec3F const& _worldPosition,
-            S32 _count,
-            TMat const* _modelMatricies,
-            Vec4F const* _colorStream = nullptr,
-            Vec4F const* _uv0 = nullptr)
-            : renderPass(_renderPass)
-            , vao(_vao)
-            , worldPosition(_worldPosition)
-            , count(_count)
-            , modelMatricies(_modelMatricies)
-            , colorStream(_colorStream)
-        {
-            memset(uvStreams, 0, sizeof(uvStreams));
-            uvStreams[0] = _uv0;
-        }
-        */
-
-        //////////////////////////////////////////
-        RenderUnit(
-            RenderPassPtr const& _renderPass = RenderPassPtr(),
+            RenderPass* _renderPass = nullptr,
             Vec3F const& _worldPosition = Vec3F::c_zero,
             IRenderUnitDrawer* _drawer = nullptr,
             S32 _index = -1,
@@ -163,21 +116,13 @@ namespace Maze
             , userData(_userData)
         {}
 
-        RenderPassPtr renderPass;
+        RenderPass* renderPass;
         Vec3F worldPosition;
         IRenderUnitDrawer* drawer = nullptr;
         S32 index = 0;
         U64 userData = 0u;
 
         F32 sqrDistanceToCamera = 0.0f;
-
-        /*
-        VertexArrayObjectPtr vao;
-        S32 count = 0;
-        TMat const* modelMatricies = nullptr;
-        Vec4F const* colorStream = nullptr;
-        Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX] = { nullptr };
-        */
     };
 
 

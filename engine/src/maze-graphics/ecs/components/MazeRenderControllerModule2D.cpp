@@ -236,7 +236,7 @@ namespace Maze
                                 if (!material || !*material)
                                     material = &renderTarget->getRenderSystem()->getMaterialManager()->getErrorMaterial();
 
-                                renderQueue->addSelectRenderPassCommand((*material)->getFirstRenderPass());
+                                renderQueue->addSelectRenderPassCommand((*material)->getFirstRenderPass().get());
 
                                 TMat const& worldTransform = transform2D->getWorldTransform();
 
@@ -269,7 +269,7 @@ namespace Maze
                                     continue;
                             }
 
-                            renderQueue->addSelectRenderPassCommand(material->getFirstRenderPass());
+                            renderQueue->addSelectRenderPassCommand(material->getFirstRenderPass().get());
 
                             for (Size i = 0, in = vaos.size(); i < in; ++i)
                             {

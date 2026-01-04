@@ -157,7 +157,7 @@ namespace Maze
                         RenderMeshPtr const& cubeMesh = m_renderSystem->getRenderMeshManager()->getDefaultCubeMesh();
                         Vector<VertexArrayObjectPtr> const& vaos = cubeMesh->getVertexArrayObjects();
 
-                        renderQueue->addSelectRenderPassCommand(skyBoxMaterial->getFirstRenderPass());
+                        renderQueue->addSelectRenderPassCommand(skyBoxMaterial->getFirstRenderPass().get());
 
                         F32 skyboxScale = (2.0f * _params.farZ / Math::Sqrt(3.0f)) - 1.0f;
 
@@ -214,13 +214,13 @@ namespace Maze
 
                         if (a.renderPass->getRenderQueueIndex() < (S32)RenderQueueIndex::Transparent)
                         {
-                            if (a.renderPass.get() == b.renderPass.get())
+                            if (a.renderPass == b.renderPass)
                             {
                                 // #TODO: Sort by VAO? (drawerSortIndex?)
                                 return a.sqrDistanceToCamera < b.sqrDistanceToCamera;
                             }
                             else
-                                return a.renderPass.get() < b.renderPass.get();
+                                return a.renderPass < b.renderPass;
                         }
                         else
                         {
@@ -241,7 +241,7 @@ namespace Maze
                     {
                         RenderUnit const& renderUnit = renderData[indices[i]];
 
-                        RenderPassPtr const& renderPass = renderUnit.renderPass;
+                        RenderPass* renderPass = renderUnit.renderPass;
                         ShaderPtr const& shader = renderPass->getShader();
 
                         S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
@@ -331,7 +331,7 @@ namespace Maze
                 {
                     RenderUnit const& renderUnit = renderData[i];
 
-                    RenderPassPtr const& renderPass = renderUnit.renderPass;
+                    RenderPass* renderPass = renderUnit.renderPass;
                     ShaderPtr const& shader = renderPass->getShader();
 
                     S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();

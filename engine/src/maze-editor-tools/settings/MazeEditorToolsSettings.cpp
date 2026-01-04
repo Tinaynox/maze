@@ -40,7 +40,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditorToolsSettings, Settings,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, active, false, getActive, setActive));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, active, false, getActive, setActive),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, gizmosBillboards, true, getGizmosBillboards, setGizmosBillboards));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(EditorToolsSettings);

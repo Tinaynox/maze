@@ -370,7 +370,7 @@ namespace Maze
 #endif
 
                     _event.getRenderUnits()->emplace_back(
-                        firstRenderPass,
+                        firstRenderPass.get(),
                         _transform3D->getWorldPosition(),
                         _meshRenderer,
                         i,
@@ -425,7 +425,7 @@ namespace Maze
                         continue;
 
                     _event.getRenderUnits()->emplace_back(
-                        firstShadowRenderPass,
+                        firstShadowRenderPass.get(),
                         _transform3D->getWorldPosition(),
                         _meshRenderer,
                         i,
