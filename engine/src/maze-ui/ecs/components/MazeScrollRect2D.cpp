@@ -157,6 +157,8 @@ namespace Maze
         if (!m_contentTransform)
             return;
 
+        // #TODO: Optimize this
+
         updateBounds();
 
         Vec2F offset = calculateOffset(Vec2F::c_zero);
