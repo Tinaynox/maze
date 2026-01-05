@@ -419,96 +419,94 @@ namespace Maze
         struct Layout2DSortData
         {
             Layout2D* layout;
-            Size nestingLevel;
+            U64 sortKey;
         };
 
         Vector<Layout2DSortData> layouts;
-        m_horizontalLayouts2D->query(
-            [&](Entity* _entity, HorizontalLayout2D* _layout)
-            {
-                layouts.emplace_back(
-                    Layout2DSortData
-                    {
-                        _layout,
-                        _layout->getTransform()->getNestingLevel()
-                    });
-            });
-
-        m_verticalLayouts2D->query(
-            [&](Entity* _entity, VerticalLayout2D* _layout)
-            {
-                layouts.emplace_back(
-                    Layout2DSortData
-                    {
-                        _layout,
-                        _layout->getTransform()->getNestingLevel()
-                    });
-            });
-
-        std::sort(
-            layouts.begin(),
-            layouts.end(),
-            [](Layout2DSortData const& _layoutData0, Layout2DSortData const& _layoutData1)
-            {
-                Size nestingLevel0 = _layoutData0.nestingLevel;
-                Size zOrder0 = _layoutData0.layout->getTransform()->getZ();
-                Size orderOfArrival0 = _layoutData0.layout->getTransform()->getOrderOfArrival();
-
-                Size nestingLevel1 = _layoutData1.nestingLevel;
-                Size zOrder1 = _layoutData1.layout->getTransform()->getZ();
-                Size orderOfArrival1 = _layoutData1.layout->getTransform()->getOrderOfArrival();
-
-                if (nestingLevel0 > nestingLevel1)
-                    return true;
-                else
-                if (nestingLevel0 == nestingLevel1)
+        {
+            MAZE_PROFILE_EVENT("Layouts sort");
+            m_horizontalLayouts2D->query(
+                [&](Entity* _entity, HorizontalLayout2D* _layout)
                 {
-                    if (zOrder0 > zOrder1)
-                        return true;
-                    else
-                    if (zOrder0 == zOrder1)
-                    {
-                        if (orderOfArrival0 > orderOfArrival1)
-                            return true;
-                    }
-                }            
+                    Size nestingLevel = _layout->getTransform()->getNestingLevel();
+                    S32 zOrder = _layout->getTransform()->getZ();
+                    U32 orderOfArrival = _layout->getTransform()->getOrderOfArrival();
+                    U64 sortKey = (static_cast<U64>(nestingLevel) << 40) | (static_cast<U64>(zOrder) << 20) | orderOfArrival;
 
-                return false;
-            });
+                    layouts.emplace_back(Layout2DSortData { _layout, sortKey });
+                });
 
-        m_canvasScalersSample->query(
-            [&](Entity* _entity, CanvasScaler* _canvasScaler)
-            {
-                _canvasScaler->updateCanvasScale();
-            });
+            m_verticalLayouts2D->query(
+                [&](Entity* _entity, VerticalLayout2D* _layout)
+                {
+                    Size nestingLevel = _layout->getTransform()->getNestingLevel();
+                    S32 zOrder = _layout->getTransform()->getZ();
+                    U32 orderOfArrival = _layout->getTransform()->getOrderOfArrival();
+                    U64 sortKey = (static_cast<U64>(nestingLevel) << 40) | (static_cast<U64>(zOrder) << 20) | orderOfArrival;
 
-        m_sizePolicy2D->query(
-            [](Entity* entity, SizePolicy2D* _sizePolicy, Transform2D* _transform)
+                    layouts.emplace_back(Layout2DSortData{ _layout, sortKey });
+                });
+
+            std::sort(
+                layouts.begin(),
+                layouts.end(),
+                [](Layout2DSortData const& _layoutData0, Layout2DSortData const& _layoutData1)
+                {
+                    return _layoutData0.sortKey > _layoutData1.sortKey;
+                });
+        }
+
+        {
+            MAZE_PROFILE_EVENT("canvasScalersQueue");
+            m_canvasScalersSample->query(
+                [&](Entity* _entity, CanvasScaler* _canvasScaler)
+                {
+                    _canvasScaler->updateCanvasScale();
+                });
+        }
+
+        {
+            MAZE_PROFILE_EVENT("sizePolicy2DQueue");
+            m_sizePolicy2D->query(
+                [](Entity* entity, SizePolicy2D* _sizePolicy, Transform2D* _transform)
             {
                 if (_transform->isWorldTransformChanged())
                     _sizePolicy->updateSize();
             });
+        }
 
-        for (Layout2DSortData const& layoutData : layouts)
-            layoutData.layout->update();
+        {
+            MAZE_PROFILE_EVENT("Layouts update");
+            for (Layout2DSortData const& layoutData : layouts)
+                layoutData.layout->update();
+        }
 
-        m_systemTextEditBoxesSample->query(
-            [&](Entity* _entity, EditBox2D* _editBox)
+        {
+            MAZE_PROFILE_EVENT("systemTextEditBoxesQueue");
+            m_systemTextEditBoxesSample->query(
+                [&](Entity* _entity, EditBox2D* _editBox)
             {
                 _editBox->update(dt);
             });
+        }
 
-        m_systemTextDropdownsSample->query(
-            [&](Entity* _entity, Dropdown2D* _dropdown)
+        {
+            MAZE_PROFILE_EVENT("systemTextDropdownsQueue");
+            m_systemTextDropdownsSample->query(
+                [&](Entity* _entity, Dropdown2D* _dropdown)
             {
                 _dropdown->update(dt);
             });
+        }
 
-        m_scrollRects2D->query(
-            [&](Entity* _entity, ScrollRect2D* _scrollRect)
+        {
+            MAZE_PROFILE_EVENT("scrollRects2DQueue");
+            m_scrollRects2D->query(
+                [&](Entity* _entity, ScrollRect2D* _scrollRect)
             {
                 _scrollRect->update(dt);
             });
+        }
     }
 
     //////////////////////////////////////////
