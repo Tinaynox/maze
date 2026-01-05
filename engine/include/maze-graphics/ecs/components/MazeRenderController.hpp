@@ -34,6 +34,7 @@
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
+#include "maze-core/utils/MazeDelegate.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 
@@ -166,6 +167,9 @@ namespace Maze
 
         bool m_renderTargetsDirty;
         Vector<RenderTarget*> m_renderTargets;
+
+        Delegate<void, RenderTarget*, S32> m_delegateRenderTargetOrderChanged;
+        Delegate<void, RenderTarget*> m_delegateRenderTargetDestroyed;
     };
 
 

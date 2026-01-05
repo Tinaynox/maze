@@ -70,6 +70,7 @@ namespace Maze
         , m_originPosition(Vec2F::c_zero)
         , m_viewportTransformPolicy(ViewportTransformPolicy::ViewportToTransform)
     {
+        m_delegateRenderTargetResized = CreateDelegate(this, &Canvas::notifyRenderTargetResized);
     }
 
     //////////////////////////////////////////
@@ -109,14 +110,14 @@ namespace Maze
 
         if (m_renderTarget)
         {
-            m_renderTarget->eventRenderTargetResized.unsubscribe(this);
+            m_renderTarget->eventRenderTargetResized.unsubscribe(m_delegateRenderTargetResized);
         }
 
         m_renderTarget = _renderTarget;
 
         if (m_renderTarget)
         {
-            m_renderTarget->eventRenderTargetResized.subscribe(this, &Canvas::notifyRenderTargetResized);
+            m_renderTarget->eventRenderTargetResized.subscribe(m_delegateRenderTargetResized);
 
             if (m_viewportTransformPolicy == ViewportTransformPolicy::ViewportToTransform)
                 updateCanvasTransform();

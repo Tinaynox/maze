@@ -138,26 +138,35 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    static inline ClassUID CalculateClassUID(StdString const& _name)
+    static inline ClassUID CalculateClassUID(CString _name, Size _len)
     {
-        ClassUID classUID = Hash::CalculateFNV1(_name.c_str(), _name.size());
+        if (_len == 0)
+            return 0u;
+
+        ClassUID classUID = Hash::CalculateFNV1(_name, _len);
         auto it = g_classUIDByName.find(classUID);
         if (it != g_classUIDByName.end())
         {
-            if (_name == it->second)
+            if (static_cast<Size>(it->second.length()) == _len && strncmp(_name, it->second.c_str(), _len) == 0)
                 return classUID;
-
             do
             {
                 ++classUID;
             }
-            while (g_classUIDByName.find(classUID) != g_classUIDByName.end());
+            while(g_classUIDByName.find(classUID) != g_classUIDByName.end());
         }
 
-        g_classUIDByName[classUID] = _name;
+        StdString nameStr(_name, _len);
+        g_classUIDByName[classUID] = std::move(nameStr);
         g_classNameByUID[_name] = classUID;
 
         return classUID;
+    }
+
+    //////////////////////////////////////////
+    static inline ClassUID CalculateClassUID(CString _name)
+    {
+        return CalculateClassUID(_name, strlen(_name));
     }
 
     //////////////////////////////////////////

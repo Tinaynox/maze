@@ -210,14 +210,13 @@ namespace Maze
         {
             
 #if ((MAZE_DEBUG) && (MAZE_DEBUG_DELEGATES))
-            auto delegate = DelegateType::From(::std::forward<TFunctor>(_f));
             for (DelegateType& d : m_delegatesList)
             {
-                MAZE_ERROR_IF(d == delegate, "Trying to add same delegate twice!");
+                MAZE_ERROR_IF(d == _f, "Trying to add same delegate twice!");
             }
-            m_delegatesList.push_back(delegate);
+            m_delegatesList.emplace_back(std::move(_f));
 #else
-            m_delegatesList.emplace_back(::std::forward<TFunctor>(_f));
+            m_delegatesList.emplace_back(std::move(_f));
 #endif
 
             if MAZE_CONSTEXPR17 (_updateDelegatesList)
@@ -238,13 +237,17 @@ namespace Maze
             bool _updateDelegatesList = false)
         {
             bool result = false;
-            for (DelegateType& d : m_delegatesList)
+            for (auto it = m_delegatesList.begin(); it != m_delegatesList.end(); ++it)
             {
-                if (d == _delegate)
+                if (*it == _delegate)
                 {
-                    d.reset();
-                    m_containsEmptyDelegates = true;
+                    it->reset();
                     result = true;
+                    
+                    if (_updateDelegatesList && m_callLock == 0)
+                        ((&m_delegatesList)->*m_delegatesListErase)(it);
+                    else
+                        m_containsEmptyDelegates = false;
                     break;
                 }
             }
@@ -256,29 +259,6 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline bool unsubscribe(
-            DelegateType& _delegate,
-            bool _updateDelegatesList = false)
-        {
-            bool result = false;
-            for (DelegateType& d : m_delegatesList)
-            {
-                if (d == _delegate)
-                {
-                    d.reset();
-                    m_containsEmptyDelegates = true;
-                    result = true;
-                    break;
-                }
-            }
-
-            if MAZE_CONSTEXPR17 (_updateDelegatesList)
-                updateDelegatesList();
-
-            return result;
-        }        
-
-        //////////////////////////////////////////
         template <typename C>
         inline bool unsubscribe(
             C* _object,
@@ -287,23 +267,36 @@ namespace Maze
             static_assert(std::is_base_of<MultiDelegateCallbackReceiver,C>::value, "C must derive from MultiDelegateCallbackReceiver");
 
             bool result = false;
-            for (DelegateType& d : m_delegatesList)
+            for (auto it = m_delegatesList.begin(); it != m_delegatesList.end(); )
             {
-                if (d.getObjectAddress() == _object)
+                if (it->getObjectAddress() == _object)
                 {
-                    d.reset();
-                    m_containsEmptyDelegates = true;
+                    it->reset();
+                    result = true;
+                    
+                    if (m_callLock == 0)
+                    {
+                        it = ((&m_delegatesList)->*m_delegatesListErase)(it);
+                    }
+                    else
+                    {
+                        m_containsEmptyDelegates = true;
+                        ++it;
+                    }
 
 #if (MAZE_USE_DELEGATES_PROTECTION)
-                    unsubscribeDelegate(_object);
+                    if (result)
+                        unsubscribeDelegate(_object);
 #endif
-
-                    result = true;
+                }
+                else
+                {
+                    ++it;
                 }
             }
 
             if MAZE_CONSTEXPR17 (_updateDelegatesList)
-                updateDelegatesList();
+                 updateDelegatesList();
 
             return result;
         }
@@ -318,22 +311,28 @@ namespace Maze
             static_assert(std::is_base_of<MultiDelegateCallbackReceiver,C>::value, "C must derive from MultiDelegateCallbackReceiver");
 
             bool result = false;
-
-            for (DelegateType& d : m_delegatesList)
+            for (auto it = m_delegatesList.begin(); it != m_delegatesList.end(); ++it)
             {
-                if (d.isEqual(_object, _method))
+                if (it->isEqual(_object, _method))
                 {
-                    d.reset();
-                    m_containsEmptyDelegates = true;
+                    it->reset();
+                    result = true;
+                    
+                    if (_updateDelegatesList && m_callLock == 0)
+                        ((&m_delegatesList)->*m_delegatesListErase)(it);
+                    else
+                        m_containsEmptyDelegates = true;
 
 #if (MAZE_USE_DELEGATES_PROTECTION)
-                    unsubscribeDelegate(_object);
+                    if (result)
+                        unsubscribeDelegate(_object);
 #endif
 
-                    result = true;
                     break;
                 }
             }
+
+
 
             if MAZE_CONSTEXPR17 (_updateDelegatesList)
                 updateDelegatesList();
@@ -346,26 +345,37 @@ namespace Maze
             void(*const _function)(TArgs...),
             bool _updateDelegatesList = false)
         {
-            for (DelegateType& d : m_delegatesList)
+            bool result = false;
+            for (auto it = m_delegatesList.begin(); it != m_delegatesList.end(); ++it)
             {
-                if (d.isEqual(_function))
+                if (it->isEqual(_function))
                 {
-                    d.reset();
-                    m_containsEmptyDelegates = true;
-                    return true;
+                    it->reset();
+                    result = true;
+                    
+                    if (_updateDelegatesList && m_callLock == 0)
+                        ((&m_delegatesList)->*m_delegatesListErase)(it);
+                    else
+                        m_containsEmptyDelegates = true;
+                    break;
                 }
             }
 
             if MAZE_CONSTEXPR17 (_updateDelegatesList)
-                updateDelegatesList();
+                if (!result)
+                    updateDelegatesList();
 
-            return false;
+            return result;
         }
 
         //////////////////////////////////////////
         template <
             typename TFunctor,
-            typename = typename ::std::enable_if<!(::std::is_pointer<TFunctor>{})>::type>
+            typename = std::enable_if_t<
+                !std::is_pointer_v<std::decay_t<TFunctor>> &&
+                !std::is_same_v<std::decay_t<TFunctor>, DelegateType>
+            >
+        >
         bool unsubscribe(
             TFunctor&& _f,
             bool _updateDelegatesList = false)
@@ -442,6 +452,7 @@ namespace Maze
         { 
             for (DelegateType& d : m_delegatesList)
                 d.reset();
+            m_delegatesList.clear();
 
 #if (MAZE_USE_DELEGATES_PROTECTION)
             unsubscribeAllReceivers();

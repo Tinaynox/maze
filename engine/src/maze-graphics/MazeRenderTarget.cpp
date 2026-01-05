@@ -86,8 +86,8 @@ namespace Maze
 
         m_renderSystem = _renderSystem;
 
-        m_renderBufferPool = MakeShared<RenderBufferPool>(m_renderSystem);
-        m_renderMeshPool = MakeShared<RenderMeshPool>(m_renderSystem);
+        m_renderBufferPool = MakeUnique<RenderBufferPool>(m_renderSystem);
+        m_renderMeshPool = MakeUnique<RenderMeshPool>(m_renderSystem);
 
         return true;
     }

@@ -297,6 +297,16 @@ namespace Maze
         struct IsQueue<Maze::Queue<_Ty>> : std::true_type {};
 
 
+
+    //////////////////////////////////////////
+    template <class T, class... Args>
+    std::shared_ptr<T> MakeShared(Args&&... args)
+    {
+        using Alloc = StdMemoryAllocator<T, NedMemoryAllocator>;
+        return std::allocate_shared<T>(Alloc{}, std::forward<Args>(args)...);
+    }
+
+
     //////////////////////////////////////////
     namespace Hash
     {

@@ -76,6 +76,27 @@
 
 
 //////////////////////////////////////////
+// For debug of global allocations
+#if 0
+void* operator new(std::size_t size)
+{
+    if (void* p = std::malloc(size))
+    {
+        return p;
+    }
+    throw std::bad_alloc();
+}
+
+//////////////////////////////////////////
+void operator delete(void* p) noexcept
+{
+    std::free(p);
+}
+#endif
+
+
+
+//////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////

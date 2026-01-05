@@ -223,6 +223,8 @@ namespace Maze
         Vec2F m_originPosition;
 
         ViewportTransformPolicy m_viewportTransformPolicy;
+
+        Delegate<void, RenderTarget*> m_delegateRenderTargetResized;
     };
 
 

@@ -59,8 +59,8 @@ namespace Maze
     MAZE_USING_MANAGED_SHARED_PTR(Material);
     MAZE_USING_MANAGED_SHARED_PTR(RenderBuffer);
     MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(RenderBufferPool);
-    MAZE_USING_SHARED_PTR(RenderMeshPool);
+    MAZE_USING_UNIQUE_PTR(RenderBufferPool);
+    MAZE_USING_UNIQUE_PTR(RenderMeshPool);
 
 
     //////////////////////////////////////////
@@ -274,8 +274,8 @@ namespace Maze
         F32 m_near;
         F32 m_far;
 
-        RenderMeshPoolPtr m_renderMeshPool;
-        RenderBufferPoolPtr m_renderBufferPool;
+        RenderMeshPoolUPtr m_renderMeshPool;
+        RenderBufferPoolUPtr m_renderBufferPool;
     };
 
 } // namespace Maze

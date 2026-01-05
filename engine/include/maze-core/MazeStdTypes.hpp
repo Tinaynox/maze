@@ -152,10 +152,6 @@ namespace Maze
     using SharedPtr = std::shared_ptr<_Ty>;
 
     //////////////////////////////////////////
-    template <class _Ty, typename ...Args>
-    inline SharedPtr<_Ty> MakeShared(Args&& ..._args) { return std::make_shared<_Ty>(std::forward<Args>(_args)...); }
-
-    //////////////////////////////////////////
     template <typename>
     struct IsSharedPtr : std::false_type {};
     template <class _Ty>

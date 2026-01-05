@@ -61,6 +61,8 @@ namespace Maze
     RenderController::RenderController()
         : m_renderTargetsDirty(true)
     {
+        m_delegateRenderTargetOrderChanged = CreateDelegate(this, &RenderController::notifyRenderTargetOrderChanged);
+        m_delegateRenderTargetDestroyed = CreateDelegate(this, &RenderController::notifyRenderTargetDestroyed);
     }
 
     //////////////////////////////////////////
@@ -233,8 +235,8 @@ namespace Maze
 
         m_renderTargets.push_back(_renderTarget);
 
-        _renderTarget->eventRenderTargetOrderChanged.subscribe(this, &RenderController::notifyRenderTargetOrderChanged);
-        _renderTarget->eventRenderTargetDestroyed.subscribe(this, &RenderController::notifyRenderTargetDestroyed);
+        _renderTarget->eventRenderTargetOrderChanged.subscribe(m_delegateRenderTargetOrderChanged);
+        _renderTarget->eventRenderTargetDestroyed.subscribe(m_delegateRenderTargetDestroyed);
     }
 
     //////////////////////////////////////////
@@ -248,8 +250,8 @@ namespace Maze
         if (it == m_renderTargets.end())
             return;
 
-        (*it)->eventRenderTargetOrderChanged.unsubscribe(this, &RenderController::notifyRenderTargetOrderChanged);
-        (*it)->eventRenderTargetDestroyed.unsubscribe(this, &RenderController::notifyRenderTargetDestroyed);
+        (*it)->eventRenderTargetOrderChanged.unsubscribe(m_delegateRenderTargetOrderChanged);
+        (*it)->eventRenderTargetDestroyed.unsubscribe(m_delegateRenderTargetDestroyed);
 
         m_renderTargets.erase(it);
     }
@@ -260,8 +262,8 @@ namespace Maze
         while (!m_renderTargets.empty())
         {
             RenderTarget* renderTarget = m_renderTargets.back();
-            renderTarget->eventRenderTargetOrderChanged.unsubscribe(this, &RenderController::notifyRenderTargetOrderChanged);
-            renderTarget->eventRenderTargetDestroyed.unsubscribe(this, &RenderController::notifyRenderTargetDestroyed);
+            renderTarget->eventRenderTargetOrderChanged.unsubscribe(m_delegateRenderTargetOrderChanged);
+            renderTarget->eventRenderTargetDestroyed.unsubscribe(m_delegateRenderTargetDestroyed);
 
             m_renderTargets.pop_back();
         }

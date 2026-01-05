@@ -56,7 +56,7 @@ namespace Maze
         Thread_std(Delegate<S32> const& _entryPoint)
             : Thread_std()
         {
-            m_entryPoint = MakeShared<TaskDelegate0>(_entryPoint);
+            m_entryPoint = MakeUnique<TaskDelegate0>(_entryPoint);
         }
 
         //////////////////////////////////////////
@@ -113,12 +113,12 @@ namespace Maze
         void entryPoint();
 
     protected:
-        SharedPtr<TaskDelegate> m_entryPoint;
+        UniquePtr<TaskDelegate> m_entryPoint;
         Mutex m_mutex;
         
 
     protected:
-        SharedPtr<std::thread> m_thread;
+        UniquePtr<std::thread> m_thread;
     };
 
     

@@ -57,7 +57,7 @@ namespace Maze
             return false;
         }
 
-        m_thread = MakeShared<std::thread>(&Thread_std::entryPoint, this);
+        m_thread = MakeUnique<std::thread>(&Thread_std::entryPoint, this);
 
         if (!m_thread)
             return false;
