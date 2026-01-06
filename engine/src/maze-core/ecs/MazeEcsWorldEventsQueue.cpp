@@ -239,9 +239,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool EcsWorldEventsQueue::addBroadcastEvent(EventPtr&& _event)
+    {
+        m_broadcastEvents.emplace(std::move(_event));
+        m_eventTypes.push(EcsWorldEventType::Broadcast);
+        return true;
+    }
+
+    //////////////////////////////////////////
     bool EcsWorldEventsQueue::addUnicastEvent(EntityId _eid, EventPtr const& _event)
     {
-        m_unicastEvents.push(std::make_pair(_eid, _event));
+        m_unicastEvents.emplace(_eid, _event);
+        m_eventTypes.push(EcsWorldEventType::Unicast);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool EcsWorldEventsQueue::addUnicastEvent(EntityId _eid, EventPtr&& _event)
+    {
+        m_unicastEvents.emplace(_eid, std::move(_event));
         m_eventTypes.push(EcsWorldEventType::Unicast);
         return true;
     }

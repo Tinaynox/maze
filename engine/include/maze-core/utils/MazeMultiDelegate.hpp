@@ -214,9 +214,9 @@ namespace Maze
             {
                 MAZE_ERROR_IF(d == _f, "Trying to add same delegate twice!");
             }
-            m_delegatesList.emplace_back(std::move(_f));
+            m_delegatesList.emplace_back(std::forward<TFunctor>(_f));
 #else
-            m_delegatesList.emplace_back(std::move(_f));
+            m_delegatesList.emplace_back(std::forward<TFunctor>(_f));
 #endif
 
             if MAZE_CONSTEXPR17 (_updateDelegatesList)
@@ -247,7 +247,7 @@ namespace Maze
                     if (_updateDelegatesList && m_callLock == 0)
                         ((&m_delegatesList)->*m_delegatesListErase)(it);
                     else
-                        m_containsEmptyDelegates = false;
+                        m_containsEmptyDelegates = true;
                     break;
                 }
             }
@@ -285,8 +285,7 @@ namespace Maze
                     }
 
 #if (MAZE_USE_DELEGATES_PROTECTION)
-                    if (result)
-                        unsubscribeDelegate(_object);
+                    unsubscribeDelegate(_object);
 #endif
                 }
                 else
@@ -324,8 +323,7 @@ namespace Maze
                         m_containsEmptyDelegates = true;
 
 #if (MAZE_USE_DELEGATES_PROTECTION)
-                    if (result)
-                        unsubscribeDelegate(_object);
+                    unsubscribeDelegate(_object);
 #endif
 
                     break;

@@ -107,7 +107,13 @@ namespace Maze
         bool addBroadcastEvent(EventPtr const& _event);
 
         //////////////////////////////////////////
+        bool addBroadcastEvent(EventPtr&& _event);
+
+        //////////////////////////////////////////
         bool addUnicastEvent(EntityId _eid, EventPtr const& _event);
+
+        //////////////////////////////////////////
+        bool addUnicastEvent(EntityId _eid, EventPtr&& _event);
 
         //////////////////////////////////////////
         void processEntityAddedToSample(

@@ -52,7 +52,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    extern void SendEvent(EcsWorld* _ecsWorld, EntityId _id, EventPtr const& _event);
+    extern void SendEvent(EcsWorld* _ecsWorld, EntityId _id, EventPtr&& _event);
 
     //////////////////////////////////////////
     extern void SendEventImmediate(EcsWorld* _ecsWorld, EntityId _id, Event* _event);
@@ -310,8 +310,7 @@ namespace Maze
         {
             if (getEcsWorld())
             {
-                SharedPtr<TEvent> evt = MakeShared<TEvent>(_args...);
-                SendEvent(getEcsWorld(), getId(), evt);
+                SendEvent(getEcsWorld(), getId(), std::move(std::static_pointer_cast<Event>(MakeShared<TEvent>(_args...))));
             }
         }
 
