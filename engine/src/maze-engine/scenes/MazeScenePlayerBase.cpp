@@ -292,15 +292,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ScenePlayerBase::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
+    void ScenePlayerBase::updateViewport(bool _updateRenderBufferSize)
     {
         if (!m_renderTarget->isReadyToRender())
             return;
 
         m_canvas->setViewport(getMainViewport());
-        m_canvasUI->setViewport(_mainRenderWindowViewport);
+        m_canvasUI->setViewport(getMainViewport());
 
-        // if (!Engine::GetInstancePtr()->isDebugEditorProgress())
+        if (_updateRenderBufferSize)
         {
             updateRenderBuffersSize();
 

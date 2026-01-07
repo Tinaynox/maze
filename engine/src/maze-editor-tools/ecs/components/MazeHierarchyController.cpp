@@ -364,7 +364,7 @@ namespace Maze
 
         HierarchyLinePtr hierarchyLine = createHierarchyLine(HierarchyLineType::Scene);
         hierarchyLine->setWorld(m_world);
-        hierarchyLine->setText(_scene->getMetaClass()->getName().str);
+        hierarchyLine->setText(_scene->getSceneName().str);
         hierarchyLine->getTransform()->setParent(m_hierarchyMainLayoutEntity);
         hierarchyLine->setUserData(reinterpret_cast<void*>((Size)(S32)_scene->getId()));
 
