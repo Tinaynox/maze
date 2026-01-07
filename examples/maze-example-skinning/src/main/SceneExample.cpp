@@ -210,9 +210,10 @@ namespace Maze
             SkinnedMeshRendererPtr skinTest2MeshRenderer = skinTest2->createComponent<SkinnedMeshRenderer>();
             skinTest2MeshRenderer->setRenderMesh("SkinTest2.fbx");
             skinTest2MeshRenderer->setMaterial("SkinTest1.mzmaterial");
-            skinTest2MeshRenderer->playAnimation(MAZE_HCS("Action0"));
+            skinTest2MeshRenderer->playAnimation(MAZE_HCS("Armature|Action0"));
             skinTest2MeshRenderer->getAnimator()->setAnimationSpeed(0.75f);
-            skinTest2MeshRenderer->getAnimator()->getCurrentAnimation()->rewindToRandom();
+            if (skinTest2MeshRenderer->getAnimator()->getCurrentAnimation())
+                skinTest2MeshRenderer->getAnimator()->getCurrentAnimation()->rewindToRandom();
         }
         
 
@@ -224,8 +225,9 @@ namespace Maze
         m_skinnedMeshRenderer = skinnedMeshEntity->createComponent<SkinnedMeshRenderer>();
         m_skinnedMeshRenderer->setRenderMesh("Buckethead.fbx");
         m_skinnedMeshRenderer->setMaterial("Buckethead.mzmaterial");
-        m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Run"));
-        m_skinnedMeshRenderer->getAnimator()->getCurrentAnimation()->rewindToRandom();
+        m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Buckethead|Run"));
+        if (m_skinnedMeshRenderer->getAnimator()->getCurrentAnimation())
+            m_skinnedMeshRenderer->getAnimator()->getCurrentAnimation()->rewindToRandom();
 
         
         /*
@@ -235,7 +237,7 @@ namespace Maze
         SkinnedMeshRendererPtr skinTest2MeshRenderer = skinTest2->createComponent<SkinnedMeshRenderer>();
         skinTest2MeshRenderer->setRenderMesh("SkinTest3.fbx");
         skinTest2MeshRenderer->setMaterial("SkinTest1.mzmaterial");
-        skinTest2MeshRenderer->playAnimation(MAZE_HCS("Bind"));
+        skinTest2MeshRenderer->playAnimation(MAZE_HCS("Armature|Bind"));
         */
         return true;
     }
@@ -265,17 +267,17 @@ namespace Maze
             {
                 if (_data.keyCode == KeyCode::Number1)
                 {
-                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Bind"));
+                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Buckethead|Bind"));
                 }
                 else
                 if (_data.keyCode == KeyCode::Number2)
                 {
-                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Idle"));
+                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Buckethead|Idle"));
                 }
                 else
                 if (_data.keyCode == KeyCode::Number3)
                 {
-                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Run"));
+                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Buckethead|Run"));
                 }
 
                 break;

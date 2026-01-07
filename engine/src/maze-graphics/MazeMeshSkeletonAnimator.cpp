@@ -157,7 +157,10 @@ namespace Maze
         MeshSkeletonAnimationPtr const& animation = m_skeleton->getAnimation(_name);
         if (!animation)
         {
-            Debug::LogError("Undefined animation - %s!", _name.str);
+            Debug::LogError("Undefined animation - %s! Available animations:", _name.str);
+            for (auto const& animationData : m_skeleton->getAnimations())
+                Debug::LogError("  %s", animationData.first.c_str());
+
             return -1;
         }
 
@@ -465,13 +468,15 @@ namespace Maze
     //////////////////////////////////////////
     void MeshSkeletonAnimatorPlayer::rewindToEnd()
     {
-        rewindTo(m_animation->getAnimationTime());
+        if (m_animation)
+            rewindTo(m_animation->getAnimationTime());
     }
 
     //////////////////////////////////////////
     void MeshSkeletonAnimatorPlayer::rewindToRandom()
     {
-        rewindTo(Random::UnitRandom() * m_animation->getAnimationTime());
+        if (m_animation)
+            rewindTo(Random::UnitRandom() * m_animation->getAnimationTime());
     }
 
     //////////////////////////////////////////
