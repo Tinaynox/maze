@@ -103,7 +103,7 @@ namespace Maze
         bool init(ScenePlayerBaseConfig const& _config);
 
         //////////////////////////////////////////
-        void notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport);
+        void updateViewport(bool _updateRenderBufferSize);
 
         //////////////////////////////////////////
         void notifyRenderTargetResized(RenderTarget* _renderTarget);
