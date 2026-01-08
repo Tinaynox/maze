@@ -54,7 +54,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ContextMenuCanvas2D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, menuListTreePrefab, ComponentPtr(), getMenuListTreePrefabComponent, setMenuListTreePrefab));
+        MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(menuListTreePrefab, MenuListTreePrefab));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(ContextMenuCanvas2D);
@@ -173,7 +173,7 @@ namespace Maze
                 Vec2F(0.0f, 0.0f),
                 Vec2F(0.0f, 1.0f));
             menuListTree->getEntityRaw()->setActiveSelf(false);
-            contextMenuCanvas->setMenuListPrefab(menuListTree);
+            contextMenuCanvas->setMenuListTreePrefab(menuListTree);
         }
 
         return contextMenuCanvas;

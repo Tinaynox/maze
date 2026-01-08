@@ -48,8 +48,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ColorSliderTag2D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, colorRenderer, ComponentPtr(), getColorRendererComponent, setColorRenderer),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, toggleButton, ComponentPtr(), getToggleButtonComponent, setToggleButton));
+        MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(colorRenderer, ColorRenderer),
+        MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(toggleButton, ToggleButton));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(ColorSliderTag2D);

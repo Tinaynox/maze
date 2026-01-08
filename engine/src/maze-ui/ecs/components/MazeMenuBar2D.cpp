@@ -56,8 +56,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(MenuBar2D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, layoutTransform, ComponentPtr(), getLayoutTransformComponent, setLayoutTransform),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, menuButtonPrefab, ComponentPtr(), getMenuButtonPrefabComponent, setMenuButtonPrefab),
+        MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(layoutTransform, LayoutTransform),
+        MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(menuButtonPrefab, MenuButtonPrefab)
     );
 
     //////////////////////////////////////////

@@ -31,6 +31,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -59,6 +60,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SkinnedMeshRenderer, Component,
+        MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(skeleton, Skeleton),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderMeshAssetRef, renderMesh, RenderMeshAssetRef(), getRenderMeshRef, setRenderMeshRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<MaterialAssetRef>, materials, Vector<MaterialAssetRef>(), getMaterialRefs, setMaterialRefs),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, true, getEnabled, setEnabled));
@@ -97,7 +99,6 @@ namespace Maze
             return false;
 
         m_renderSystem = _renderSystem;
-        m_animator = MeshSkeletonAnimator::Create();
 
         return true;
     }
@@ -108,7 +109,6 @@ namespace Maze
         EntityCopyData _copyData)
     {
         m_renderSystem = _component->castRaw<SkinnedMeshRenderer>()->m_renderSystem;
-        m_animator = MeshSkeletonAnimator::Create();
 
         if (!Component::init(
             _component,
@@ -121,18 +121,6 @@ namespace Maze
     //////////////////////////////////////////
     void SkinnedMeshRenderer::update(F32 _dt)
     {
-        m_animator->update(_dt);
-    }
-
-    //////////////////////////////////////////
-    S32 SkinnedMeshRenderer::playAnimation(
-        HashedCString _animationName,
-        MeshSkeletonAnimationStartParams _startParams)
-    {
-        if (m_animator)
-            return m_animator->playAnimation(_animationName, _startParams);
-
-        return -1;
     }
 
     //////////////////////////////////////////
@@ -224,6 +212,9 @@ namespace Maze
     void SkinnedMeshRenderer::processEntityAwakened()
     {
         m_renderMask = getEntityRaw()->ensureComponent<RenderMask>();
+
+        if (!m_skeleton)
+            m_skeleton = EcsHelper::GetFirstTrunkComponent<SkinnedMeshSkeleton>(getEntityRaw())->cast<SkinnedMeshSkeleton>();
     }
 
     //////////////////////////////////////////
@@ -236,18 +227,6 @@ namespace Maze
     void SkinnedMeshRenderer::setRenderMeshRef(RenderMeshAssetRef const& _renderMesh)
     {
         m_renderMeshRef.setRenderMesh(_renderMesh.getRenderMesh());
-
-        if (m_animator)
-        {
-            RenderMeshPtr const& renderMesh = getRenderMesh();
-            if (renderMesh && renderMesh->getMesh() && renderMesh->getMesh()->getSkeleton())
-            {
-                m_animator->setSkeleton(renderMesh->getMesh()->getSkeleton());
-                m_animator->update(0.0f);
-            }
-            else
-                m_animator->setSkeleton(nullptr);
-        }
     }
 
     //////////////////////////////////////////
@@ -262,6 +241,9 @@ namespace Maze
         DefaultPassParams const& _params,
         RenderUnit const& _renderUnit)
     {
+        if (!m_skeleton)
+            return;
+
         Vector<VertexArrayObjectPtr> const& vaos = getRenderMesh()->getVertexArrayObjects();
         VertexArrayObjectPtr const& vao = vaos[_renderUnit.index % vaos.size()];
 
@@ -269,10 +251,11 @@ namespace Maze
 
         TMat const* tm = reinterpret_cast<TMat const*>(_renderUnit.userData);
         
-        U16 bonesCount = Math::Min((U16)MAZE_SKELETON_BONES_MAX, (U16)m_animator->getBonesCount());
+        auto const& animator = m_skeleton->getAnimator();
+        U16 bonesCount = Math::Min((U16)MAZE_SKELETON_BONES_MAX, (U16)animator->getBonesCount());
         _renderQueue->addUploadShaderUniformCommand(
             MAZE_HCS("u_boneSkinningTransforms"),
-            (TMat const*)&m_animator->getBonesSkinningTransforms()[0],
+            (TMat const*)&animator->getBonesSkinningTransforms()[0],
             bonesCount);
         
         _renderQueue->addDrawVAOInstancedCommand(
@@ -287,6 +270,9 @@ namespace Maze
         ShadowPassParams const& _params,
         RenderUnit const& _renderUnit)
     {
+        if (!m_skeleton)
+            return;
+
         Vector<VertexArrayObjectPtr> const& vaos = getRenderMesh()->getVertexArrayObjects();
         VertexArrayObjectPtr const& vao = vaos[_renderUnit.index % vaos.size()];
 
@@ -294,10 +280,11 @@ namespace Maze
 
         TMat const* tm = reinterpret_cast<TMat const*>(_renderUnit.userData);
 
-        U16 bonesCount = Math::Min((U16)MAZE_SKELETON_BONES_MAX, (U16)m_animator->getBonesCount());
+        auto const& animator = m_skeleton->getAnimator();
+        U16 bonesCount = Math::Min((U16)MAZE_SKELETON_BONES_MAX, (U16)animator->getBonesCount());
         _renderQueue->addUploadShaderUniformCommand(
             MAZE_HCS("u_boneSkinningTransforms"),
-            (TMat const*)&m_animator->getBonesSkinningTransforms()[0],
+            (TMat const*)&animator->getBonesSkinningTransforms()[0],
             bonesCount);
 
         _renderQueue->addDrawVAOInstancedCommand(
@@ -332,9 +319,12 @@ namespace Maze
         if (!_meshRenderer->getEnabled())
             return;
 
+        if (!_meshRenderer->getSkeleton())
+            return;
+
         if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
         {
-            if (!_meshRenderer->getAnimator() || _meshRenderer->getAnimator()->getBonesSkinningTransforms().empty())
+            if (!_meshRenderer->getSkeleton()->getAnimator() || _meshRenderer->getSkeleton()->getAnimator()->getBonesSkinningTransforms().empty())
                 return;
 
             // #TODO: we need real bounding radius here
@@ -394,9 +384,12 @@ namespace Maze
         if (!_meshRenderer->getEnabled())
             return;
 
+        if (!_meshRenderer->getSkeleton())
+            return;
+
         if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
         {
-            if (!_meshRenderer->getAnimator() || _meshRenderer->getAnimator()->getBonesSkinningTransforms().empty())
+            if (!_meshRenderer->getSkeleton()->getAnimator() || _meshRenderer->getSkeleton()->getAnimator()->getBonesSkinningTransforms().empty())
                 return;
 
             // #TODO: we need real bounding radius here

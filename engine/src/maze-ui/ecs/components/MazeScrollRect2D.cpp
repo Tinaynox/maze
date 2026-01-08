@@ -73,8 +73,8 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, scrollSensitivity, 1.0f, getScrollSensitivity, setScrollSensitivity),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ScrollRect2DScrollbarVisibility, horizontalScrollbarVisibility, ScrollRect2DScrollbarVisibility::AutoHideAndExpandViewport, getHorizontalScrollbarVisibility, setHorizontalScrollbarVisibility),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ScrollRect2DScrollbarVisibility, verticalScrollbarVisibility, ScrollRect2DScrollbarVisibility::AutoHideAndExpandViewport, getVerticalScrollbarVisibility, setVerticalScrollbarVisibility),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, contentTransform, nullptr, getContentTransformComponent, setContentTransform),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, viewportTransform, nullptr, getViewportTransformComponent, setViewportTransform),
+        MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(contentTransform, ContentTransform),
+        MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(viewportTransform, ViewportTransform),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, horizontalScrollbar, nullptr, getHorizontalScrollbarComponent, setHorizontalScrollbar),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, verticalScrollbar, nullptr, getVerticalScrollbarComponent, setVerticalScrollbar));
 

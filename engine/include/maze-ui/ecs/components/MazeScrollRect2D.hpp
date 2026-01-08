@@ -198,41 +198,8 @@ namespace Maze
         void setNormalizedPosition(F32 _value, Size _axis);
 
         //////////////////////////////////////////
-        inline void setContentTransform(Transform2DPtr const& _value)
-        {
-            if (m_contentTransform == _value)
-                return;
-
-            m_contentTransform = _value;
-        }
-
-        //////////////////////////////////////////
-        inline Transform2DPtr const& getContentTransform() const { return m_contentTransform; }
-
-        //////////////////////////////////////////
-        inline void setContentTransform(ComponentPtr _value) { setContentTransform(_value ? _value->safeCast<Transform2D>() : nullptr); }
-
-        //////////////////////////////////////////
-        inline ComponentPtr getContentTransformComponent() const { return m_contentTransform; }
-
-
-        //////////////////////////////////////////
-        inline void setViewportTransform(Transform2DPtr const& _value)
-        {
-            if (m_viewportTransform == _value)
-                return;
-
-            m_viewportTransform = _value;
-        }
-
-        //////////////////////////////////////////
-        inline Transform2DPtr const& getViewportTransform() const { return m_viewportTransform; }
-
-        //////////////////////////////////////////
-        inline void setViewportTransform(ComponentPtr _value) { setViewportTransform(_value ? _value->safeCast<Transform2D>() : nullptr); }
-
-        //////////////////////////////////////////
-        inline ComponentPtr getViewportTransformComponent() const { return m_viewportTransform; }
+        MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(Transform2D, contentTransform, ContentTransform);
+        MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(Transform2D, viewportTransform, ViewportTransform);
 
 
         //////////////////////////////////////////

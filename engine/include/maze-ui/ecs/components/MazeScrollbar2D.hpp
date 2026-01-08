@@ -129,22 +129,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setHandleSpriteRenderer(SpriteRenderer2DPtr const& _value)
-        {
-            if (m_handleSpriteRenderer == _value)
-                return;
-
-            m_handleSpriteRenderer = _value;
-        }
-
-        //////////////////////////////////////////
-        inline SpriteRenderer2DPtr const& getHandleSpriteRenderer() const { return m_handleSpriteRenderer; }
-
-        //////////////////////////////////////////
-        inline void setHandleSpriteRenderer(ComponentPtr _value) { setHandleSpriteRenderer(_value ? _value->safeCast<SpriteRenderer2D>() : nullptr); }
-
-        //////////////////////////////////////////
-        inline ComponentPtr getHandleSpriteRendererComponent() const { return m_handleSpriteRenderer; }
+        MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(SpriteRenderer2D, handleSpriteRenderer, HandleSpriteRenderer);
 
 
         //////////////////////////////////////////

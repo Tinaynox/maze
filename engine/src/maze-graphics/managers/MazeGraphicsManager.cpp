@@ -135,6 +135,7 @@ namespace Maze
         // Renderer
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MeshRenderer>("Renderer");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MeshRendererInstanced>("Renderer");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SkinnedMeshSkeleton>("Renderer");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SkinnedMeshRenderer>("Renderer");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<RenderMask>("Renderer");
         

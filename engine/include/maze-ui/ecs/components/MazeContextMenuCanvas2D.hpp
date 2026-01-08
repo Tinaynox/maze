@@ -97,22 +97,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setMenuListPrefab(MenuListTree2DPtr const& _value)
-        {
-            if (m_menuListTreePrefab == _value)
-                return;
-
-            m_menuListTreePrefab = _value;
-        }
-
-        //////////////////////////////////////////
-        inline MenuListTree2DPtr const& getMenuListTreePrefab() const { return m_menuListTreePrefab; }
-
-        //////////////////////////////////////////
-        inline void setMenuListTreePrefab(ComponentPtr _value) { setMenuListPrefab(_value ? _value->safeCast<MenuListTree2D>() : nullptr); }
-
-        //////////////////////////////////////////
-        inline ComponentPtr getMenuListTreePrefabComponent() const { return m_menuListTreePrefab; }
+        MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(MenuListTree2D, menuListTreePrefab, MenuListTreePrefab);
 
 
         //////////////////////////////////////////

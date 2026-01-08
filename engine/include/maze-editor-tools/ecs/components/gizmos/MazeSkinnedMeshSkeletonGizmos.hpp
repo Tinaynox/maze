@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeSkinnedMeshRendererGizmos_hpp_))
-#define _MazeSkinnedMeshRendererGizmos_hpp_
+#if (!defined(_MazeSkinnedMeshSkeletonGizmos_hpp_))
+#define _MazeSkinnedMeshSkeletonGizmos_hpp_
 
 
 //////////////////////////////////////////
@@ -38,23 +38,23 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SkinnedMeshRendererGizmos);
+    MAZE_USING_SHARED_PTR(SkinnedMeshSkeletonGizmos);
 
 
     //////////////////////////////////////////
-    // Class SkinnedMeshRendererGizmos
+    // Class SkinnedMeshSkeletonGizmos
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API SkinnedMeshRendererGizmos
+    class MAZE_EDITOR_TOOLS_API SkinnedMeshSkeletonGizmos
         : public ComponentGizmos
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SkinnedMeshRendererGizmos, ComponentGizmos);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SkinnedMeshSkeletonGizmos, ComponentGizmos);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(SkinnedMeshRendererGizmos);
+        MAZE_DECLARE_MEMORY_ALLOCATION(SkinnedMeshSkeletonGizmos);
 
     public:
 
@@ -73,16 +73,16 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~SkinnedMeshRendererGizmos();
+        virtual ~SkinnedMeshSkeletonGizmos();
 
         //////////////////////////////////////////
-        static SkinnedMeshRendererGizmosPtr Create();
+        static SkinnedMeshSkeletonGizmosPtr Create();
 
 
     protected:
 
         //////////////////////////////////////////
-        SkinnedMeshRendererGizmos();
+        SkinnedMeshSkeletonGizmos();
 
         //////////////////////////////////////////
         bool init();
@@ -95,5 +95,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeSkinnedMeshRendererGizmos_hpp_
+#endif // _MazeSkinnedMeshSkeletonGizmos_hpp_
 //////////////////////////////////////////

@@ -82,41 +82,8 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setColorRenderer(SpriteRenderer2DPtr const& _value)
-        {
-            if (m_colorRenderer == _value)
-                return;
-
-            m_colorRenderer = _value;
-        }
-
-        //////////////////////////////////////////
-        inline SpriteRenderer2DPtr const& getColorRenderer() const { return m_colorRenderer; }
-
-        //////////////////////////////////////////
-        inline void setColorRenderer(ComponentPtr _value) { setColorRenderer(_value ? _value->cast<SpriteRenderer2D>() : nullptr); }
-
-        //////////////////////////////////////////
-        inline ComponentPtr getColorRendererComponent() const { return m_colorRenderer; }
-
-
-        //////////////////////////////////////////
-        inline void setToggleButton(ToggleButton2DPtr const& _value)
-        {
-            if (m_toggleButton == _value)
-                return;
-
-            m_toggleButton = _value;
-        }
-
-        //////////////////////////////////////////
-        inline ToggleButton2DPtr const& getToggleButton() const { return m_toggleButton; }
-
-        //////////////////////////////////////////
-        inline void setToggleButton(ComponentPtr _value) { setToggleButton(_value ? _value->cast<ToggleButton2D>() : nullptr); }
-
-        //////////////////////////////////////////
-        inline ComponentPtr getToggleButtonComponent() const { return m_toggleButton; }
+        MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(SpriteRenderer2D, colorRenderer, ColorRenderer);
+        MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(ToggleButton2D, toggleButton, ToggleButton);
 
 
     protected:

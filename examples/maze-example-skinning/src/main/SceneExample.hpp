@@ -60,6 +60,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ExampleFPSCameraController);
     MAZE_USING_SHARED_PTR(Rotor3D);
     MAZE_USING_SHARED_PTR(SystemTextRenderer3D);
+    MAZE_USING_SHARED_PTR(SkinnedMeshSkeleton);
     MAZE_USING_SHARED_PTR(SkinnedMeshRenderer);
 
 
@@ -104,6 +105,7 @@ namespace Maze
         void notifyKeyboard(InputEventKeyboardData const& _data);
 
     protected:
+        SkinnedMeshSkeletonPtr m_skinnedMeshSkeleton;
         SkinnedMeshRendererPtr m_skinnedMeshRenderer;
     };
 

@@ -121,41 +121,8 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setLayoutTransform(Transform2DPtr const& _value)
-        {
-            if (m_layoutTransform == _value)
-                return;
-
-            m_layoutTransform = _value;
-        }
-
-        //////////////////////////////////////////
-        inline Transform2DPtr const& getLayoutTransform() const { return m_layoutTransform; }
-
-        //////////////////////////////////////////
-        inline void setLayoutTransform(ComponentPtr _value) { setLayoutTransform(_value ? _value->safeCast<Transform2D>() : nullptr); }
-
-        //////////////////////////////////////////
-        inline ComponentPtr getLayoutTransformComponent() const { return m_layoutTransform; }
-
-
-        //////////////////////////////////////////
-        inline void setMenuButtonPrefab(ToggleButton2DPtr const& _value)
-        {
-            if (m_menuButtonPrefab == _value)
-                return;
-
-            m_menuButtonPrefab = _value;
-        }
-
-        //////////////////////////////////////////
-        inline ToggleButton2DPtr const& getMenuButtonPrefab() const { return m_menuButtonPrefab; }
-
-        //////////////////////////////////////////
-        inline void setMenuButtonPrefab(ComponentPtr _value) { setMenuButtonPrefab(_value ? _value->safeCast<ToggleButton2D>() : nullptr); }
-
-        //////////////////////////////////////////
-        inline ComponentPtr getMenuButtonPrefabComponent() const { return m_menuButtonPrefab; }
+        MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(Transform2D, layoutTransform, LayoutTransform);
+        MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(ToggleButton2D, menuButtonPrefab, MenuButtonPrefab);
 
 
         /*

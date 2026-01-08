@@ -207,13 +207,15 @@ namespace Maze
             skinTest2Transform->setLocalX(i == 0 ? 5.0f : -5.0f);
             skinTest2Transform->setLocalRotationDegrees(0.0f, i == 0 ? 0.0f : 180.0f, 0.0f);
             skinTest2Transform->setLocalScale(0.66f);
+            SkinnedMeshSkeletonPtr skinTest2MeshSkeleton = skinTest2->createComponent<SkinnedMeshSkeleton>();
             SkinnedMeshRendererPtr skinTest2MeshRenderer = skinTest2->createComponent<SkinnedMeshRenderer>();
+            skinTest2MeshSkeleton->setRenderMesh("SkinTest2.fbx");
             skinTest2MeshRenderer->setRenderMesh("SkinTest2.fbx");
             skinTest2MeshRenderer->setMaterial("SkinTest1.mzmaterial");
-            skinTest2MeshRenderer->playAnimation(MAZE_HCS("Armature|Action0"));
-            skinTest2MeshRenderer->getAnimator()->setAnimationSpeed(0.75f);
-            if (skinTest2MeshRenderer->getAnimator()->getCurrentAnimation())
-                skinTest2MeshRenderer->getAnimator()->getCurrentAnimation()->rewindToRandom();
+            skinTest2MeshSkeleton->playAnimation(MAZE_HCS("Armature|Action0"));
+            skinTest2MeshSkeleton->getAnimator()->setAnimationSpeed(0.75f);
+            if (skinTest2MeshSkeleton->getAnimator()->getCurrentAnimation())
+                skinTest2MeshSkeleton->getAnimator()->getCurrentAnimation()->rewindToRandom();
         }
         
 
@@ -222,12 +224,20 @@ namespace Maze
         skinnedMeshTransform->setLocalZ(0.0f);
         skinnedMeshTransform->setLocalScale(0.2f);
         skinnedMeshTransform->setLocalX(0.0f);
-        m_skinnedMeshRenderer = skinnedMeshEntity->createComponent<SkinnedMeshRenderer>();
+
+        EntityPtr skinnedChildMeshEntity = createEntity("BucketheadMesh");
+        Transform3DPtr skinnedChildMeshTransform = skinnedChildMeshEntity->createComponent<Transform3D>();
+        skinnedChildMeshTransform->setParent(skinnedMeshTransform);
+
+        m_skinnedMeshSkeleton = skinnedMeshEntity->createComponent<SkinnedMeshSkeleton>();
+        m_skinnedMeshRenderer = skinnedChildMeshEntity->createComponent<SkinnedMeshRenderer>();
+
+        m_skinnedMeshSkeleton->setRenderMesh("Buckethead.fbx");
         m_skinnedMeshRenderer->setRenderMesh("Buckethead.fbx");
         m_skinnedMeshRenderer->setMaterial("Buckethead.mzmaterial");
-        m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Buckethead|Run"));
-        if (m_skinnedMeshRenderer->getAnimator()->getCurrentAnimation())
-            m_skinnedMeshRenderer->getAnimator()->getCurrentAnimation()->rewindToRandom();
+        m_skinnedMeshSkeleton->playAnimation(MAZE_HCS("Buckethead|Run"));
+        if (m_skinnedMeshSkeleton->getAnimator()->getCurrentAnimation())
+            m_skinnedMeshSkeleton->getAnimator()->getCurrentAnimation()->rewindToRandom();
 
         
         /*
@@ -267,17 +277,17 @@ namespace Maze
             {
                 if (_data.keyCode == KeyCode::Number1)
                 {
-                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Buckethead|Bind"));
+                    m_skinnedMeshSkeleton->playAnimation(MAZE_HCS("Buckethead|Bind"));
                 }
                 else
                 if (_data.keyCode == KeyCode::Number2)
                 {
-                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Buckethead|Idle"));
+                    m_skinnedMeshSkeleton->playAnimation(MAZE_HCS("Buckethead|Idle"));
                 }
                 else
                 if (_data.keyCode == KeyCode::Number3)
                 {
-                    m_skinnedMeshRenderer->playAnimation(MAZE_HCS("Buckethead|Run"));
+                    m_skinnedMeshSkeleton->playAnimation(MAZE_HCS("Buckethead|Run"));
                 }
 
                 break;

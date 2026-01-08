@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/ecs/components/gizmos/MazeSkinnedMeshRendererGizmos.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeSkinnedMeshSkeletonGizmos.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
@@ -44,44 +44,44 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class SkinnedMeshRendererGizmos
+    // Class SkinnedMeshSkeletonGizmos
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SkinnedMeshRendererGizmos, ComponentGizmos);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SkinnedMeshSkeletonGizmos, ComponentGizmos);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SkinnedMeshRendererGizmos);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SkinnedMeshSkeletonGizmos);
 
 
     //////////////////////////////////////////
-    SkinnedMeshRendererGizmos::SkinnedMeshRendererGizmos()
+    SkinnedMeshSkeletonGizmos::SkinnedMeshSkeletonGizmos()
     {
 
     }
 
     //////////////////////////////////////////
-    SkinnedMeshRendererGizmos::~SkinnedMeshRendererGizmos()
+    SkinnedMeshSkeletonGizmos::~SkinnedMeshSkeletonGizmos()
     {
 
     }
 
     //////////////////////////////////////////
-    SkinnedMeshRendererGizmosPtr SkinnedMeshRendererGizmos::Create()
+    SkinnedMeshSkeletonGizmosPtr SkinnedMeshSkeletonGizmos::Create()
     {
-        SkinnedMeshRendererGizmosPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SkinnedMeshRendererGizmos, object, init());
+        SkinnedMeshSkeletonGizmosPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SkinnedMeshSkeletonGizmos, object, init());
         return object;
     }
 
     //////////////////////////////////////////
-    bool SkinnedMeshRendererGizmos::init()
+    bool SkinnedMeshSkeletonGizmos::init()
     {
 
         return true;
     }
 
     //////////////////////////////////////////
-    void SkinnedMeshRendererGizmos::drawGizmos(
+    void SkinnedMeshSkeletonGizmos::drawGizmos(
         Entity* _entity,
         ComponentPtr const& _component,
         GizmosDrawer* _drawer)
@@ -90,13 +90,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SkinnedMeshRendererGizmos::drawGizmosSelected(
+    void SkinnedMeshSkeletonGizmos::drawGizmosSelected(
         Entity* _entity,
         ComponentPtr const& _component,
         GizmosDrawer* _drawer)
     {
-        SkinnedMeshRenderer* meshRenderer = _component->castRaw<SkinnedMeshRenderer>();    
-        MeshSkeletonAnimatorPtr const& animator = meshRenderer->getAnimator();
+        SkinnedMeshSkeleton* meshSkeleton = _component->castRaw<SkinnedMeshSkeleton>();
+        MeshSkeletonAnimatorPtr const& animator = meshSkeleton->getAnimator();
         if (!animator)
             return;
 
@@ -115,14 +115,15 @@ namespace Maze
                 MeshSkeleton::Bone& bone = skeleton->getBone(i);
 
                 TMat const& boneGlobalTransform = bonesGlobalTransform[i];
-                TMat boneWorldTm = transform3D->getWorldTransform().transform(boneGlobalTransform);
+                TMat boneWorldTm = transform3D->getWorldTransform().transform(
+                    skeleton->getRootTransform().transform(boneGlobalTransform));
                 
                 F32 boneLen = 1.0f;
 
                 if (bone.parentBoneIndex != -1)
                 {
                     TMat parentBoneWorldTm = transform3D->getWorldTransform().transform(
-                        bonesGlobalTransform[bone.parentBoneIndex]);
+                        skeleton->getRootTransform().transform(bonesGlobalTransform[bone.parentBoneIndex]));
 
                     Vec3F toChild = boneWorldTm[3] - parentBoneWorldTm[3];
                     F32 toChildLen = toChild.length();

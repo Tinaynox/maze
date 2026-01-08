@@ -56,7 +56,7 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Scrollbar2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Scrollbar2DDirection, direction, Scrollbar2DDirection::LeftToRight, getDirection, setDirection),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, handleTransform, nullptr, getHandleTransformComponent, setHandleTransform),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, handleSpriteRenderer, nullptr, getHandleSpriteRendererComponent, setHandleSpriteRenderer),
+        MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(handleSpriteRenderer, HandleSpriteRenderer),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, normalColor, ColorU32(255, 255, 255, 255), getNormalColor, setNormalColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, focusedColor, ColorU32(245, 245, 245, 255), getFocusedColor, setFocusedColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, pressedColor, ColorU32(200, 200, 200, 255), getPressedColor, setPressedColor),

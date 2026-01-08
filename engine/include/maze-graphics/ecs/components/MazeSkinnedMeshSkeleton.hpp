@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeSkinnedMeshRenderer_hpp_))
-#define _MazeSkinnedMeshRenderer_hpp_
+#if (!defined(_MazeSkinnedMeshSkeleton_hpp_))
+#define _MazeSkinnedMeshSkeleton_hpp_
 
 
 //////////////////////////////////////////
@@ -36,7 +36,6 @@
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
-#include "maze-graphics/ecs/components/MazeSkinnedMeshSkeleton.hpp"
 #include "maze-graphics/MazeMeshSkeletonAnimator.hpp"
 
 
@@ -45,26 +44,25 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(SkinnedMeshRenderer);
+    MAZE_USING_SHARED_PTR(SkinnedMeshSkeleton);
     MAZE_USING_SHARED_PTR(RenderMask);
     MAZE_USING_SHARED_PTR(MeshSkeletonAnimator);
 
 
     //////////////////////////////////////////
-    // Class SkinnedMeshRenderer
+    // Class SkinnedMeshSkeleton
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API SkinnedMeshRenderer
+    class MAZE_GRAPHICS_API SkinnedMeshSkeleton
         : public Component
-        , public IRenderUnitDrawer
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SkinnedMeshRenderer, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SkinnedMeshSkeleton, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(SkinnedMeshRenderer);
+        MAZE_DECLARE_MEMORY_ALLOCATION(SkinnedMeshSkeleton);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -72,14 +70,20 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~SkinnedMeshRenderer();
+        virtual ~SkinnedMeshSkeleton();
 
         //////////////////////////////////////////
-        static SkinnedMeshRendererPtr Create(RenderSystem* _renderSystem = nullptr);
+        static SkinnedMeshSkeletonPtr Create(RenderSystem* _renderSystem = nullptr);
 
 
         //////////////////////////////////////////
         void update(F32 _dt);
+
+
+        //////////////////////////////////////////
+        S32 playAnimation(
+            HashedCString _animationName,
+            MeshSkeletonAnimationStartParams _startParams = MeshSkeletonAnimationStartParams());
 
 
         //////////////////////////////////////////
@@ -112,45 +116,6 @@ namespace Maze
         void clearMesh();
 
 
-        //////////////////////////////////////////
-        inline Vector<MaterialAssetRef> const& getMaterialRefs() const { return m_materialRefs; }
-
-        //////////////////////////////////////////
-        inline MaterialPtr const& getMaterial() const
-        {
-            static MaterialPtr const nullPointer;
-
-            if (!m_materialRefs.empty())
-                return m_materialRefs.front().getMaterial();
-            
-            return nullPointer;
-        }
-
-        //////////////////////////////////////////
-        inline MaterialPtr const& getMaterial(Size _i) const { return m_materialRefs[_i].getMaterial(); }
-
-        //////////////////////////////////////////
-        inline void setMaterialRefs(Vector<MaterialAssetRef> const& _materialRefs) { m_materialRefs = _materialRefs; }
-
-        //////////////////////////////////////////
-        void setMaterial(MaterialPtr const& _material);
-
-        //////////////////////////////////////////
-        void setMaterial(String const& _materialName);
-
-        //////////////////////////////////////////
-        void setMaterials(Vector<String> const& _materialNames);
-
-        //////////////////////////////////////////
-        void addMaterial(MaterialPtr const& _material);
-
-        //////////////////////////////////////////
-        void addMaterial(String const& _materialName);
-
-
-        //////////////////////////////////////////
-        inline RenderMaskPtr const& getRenderMask() const { return m_renderMask; }
-
 
         //////////////////////////////////////////
         inline void setEnabled(bool _enabled) { m_enabled = _enabled; }
@@ -160,12 +125,12 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(SkinnedMeshSkeleton, skeleton, Skeleton);
+        inline MeshSkeletonAnimatorPtr const& getAnimator() const { return m_animator; }
 
     protected:
 
         //////////////////////////////////////////
-        SkinnedMeshRenderer();
+        SkinnedMeshSkeleton();
 
         //////////////////////////////////////////
         using Component::init;
@@ -182,28 +147,12 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
-
-        //////////////////////////////////////////
-        virtual void drawDefaultPass(
-            RenderQueuePtr const& _renderQueue,
-            DefaultPassParams const& _params,
-            RenderUnit const& _renderUnit) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void drawShadowPass(
-            RenderQueuePtr const& _renderQueue,
-            ShadowPassParams const& _params,
-            RenderUnit const& _renderUnit) MAZE_OVERRIDE;
-
     protected:
         RenderSystem* m_renderSystem = nullptr;
 
-        SkinnedMeshSkeletonPtr m_skeleton;
-
         RenderMeshAssetRef m_renderMeshRef;
-        Vector<MaterialAssetRef> m_materialRefs;
         
-        RenderMaskPtr m_renderMask;
+        MeshSkeletonAnimatorPtr m_animator;
 
         bool m_enabled = true;
     };
@@ -213,5 +162,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeSkinnedMeshRenderer_hpp_
+#endif // _MazeSkinnedMeshSkeleton_hpp_
 //////////////////////////////////////////
