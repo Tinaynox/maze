@@ -66,9 +66,16 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void SkinnedMeshRendererGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
+        #endregion
+
+        #region SkinnedMeshSkeleton
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SkinnedMeshSkeletonSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static int SkinnedMeshRendererPlayAnimation(
+        public extern static void SkinnedMeshSkeletonGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int SkinnedMeshSkeletonPlayAnimation(
             NativePtr nativeComponentPtr,
             string animationName,
             float blendTime,
@@ -81,33 +88,33 @@ namespace Maze.Graphics
             bool pauseEnding);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static bool SkinnedMeshRendererGetPlayerAnimationTime(
+        public extern static bool SkinnedMeshSkeletonGetPlayerAnimationTime(
             NativePtr nativeComponentPtr,
             int playerIndex,
             out float outAnimationTime);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static bool SkinnedMeshRendererGetPlayerCurrentTime(
+        public extern static bool SkinnedMeshSkeletonGetPlayerCurrentTime(
             NativePtr nativeComponentPtr,
             int playerIndex,
             out float outCurrentTime);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshRendererPlayerRewindTo(
+        public extern static void SkinnedMeshSkeletonPlayerRewindTo(
             NativePtr nativeComponentPtr,
             int playerIndex,
             float time);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshRendererPlayerStop(
+        public extern static void SkinnedMeshSkeletonPlayerStop(
             NativePtr nativeComponentPtr,
             int playerIndex);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static float SkinnedMeshRendererGetAnimationSpeed(NativePtr nativeComponentPtr);
+        public extern static float SkinnedMeshSkeletonGetAnimationSpeed(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshRendererSetAnimationSpeed(
+        public extern static void SkinnedMeshSkeletonSetAnimationSpeed(
             NativePtr nativeComponentPtr,
             float animationSpeed);
         #endregion

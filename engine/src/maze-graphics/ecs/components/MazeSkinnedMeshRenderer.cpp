@@ -214,7 +214,10 @@ namespace Maze
         m_renderMask = getEntityRaw()->ensureComponent<RenderMask>();
 
         if (!m_skeleton)
-            m_skeleton = EcsHelper::GetFirstTrunkComponent<SkinnedMeshSkeleton>(getEntityRaw())->cast<SkinnedMeshSkeleton>();
+        {
+            if (SkinnedMeshSkeleton* skeletonRaw = EcsHelper::GetFirstTrunkComponent<SkinnedMeshSkeleton>(getEntityRaw()))
+                m_skeleton = skeletonRaw->cast<SkinnedMeshSkeleton>();
+        }
     }
 
     //////////////////////////////////////////

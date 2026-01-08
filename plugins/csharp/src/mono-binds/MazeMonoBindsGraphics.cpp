@@ -249,7 +249,28 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline S32 SkinnedMeshRendererPlayAnimation(
+    inline void SkinnedMeshSkeletonSetRenderMesh(Component* _component, S32 _resourceId)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshSkeleton);
+
+        RenderMesh* renderMesh = RenderMesh::GetResource(_resourceId);
+        _component->castRaw<SkinnedMeshSkeleton>()->setRenderMesh(renderMesh ? renderMesh->getSharedPtr() : RenderMeshPtr());
+    }
+
+    //////////////////////////////////////////
+    inline void SkinnedMeshSkeletonGetRenderMesh(Component* _component, S32& _outResourceId)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshSkeleton);
+
+        RenderMeshPtr const& renderMesh = _component->castRaw<SkinnedMeshSkeleton>()->getRenderMesh();
+        if (renderMesh)
+            _outResourceId = renderMesh->getResourceId();
+        else
+            _outResourceId = c_invalidResourceId;
+    }
+
+    //////////////////////////////////////////
+    inline S32 SkinnedMeshSkeletonPlayAnimation(
         Component* _component,
         MonoString* _animationName,
         F32 _blendTime,
@@ -261,7 +282,7 @@ namespace Maze
         bool _important,
         bool _pauseEnding)
     {
-        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshRenderer, -1);
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshSkeleton, -1);
 
         Char* cstr = mono_string_to_utf8(_animationName);
         MeshSkeletonAnimationStartParams params;
@@ -274,22 +295,22 @@ namespace Maze
             (_stopCurrentAnimations ? U8(MeshSkeletonAnimationStartFlags::StopCurrentAnimations) : 0u) |
             (_important ? U8(MeshSkeletonAnimationStartFlags::Important) : 0u) |
             (_pauseEnding ? U8(MeshSkeletonAnimationStartFlags::PauseEnding) : 0u);
-        S32 playerIndex = _component->castRaw<SkinnedMeshRenderer>()->playAnimation(HashedCString(cstr), params);
+        S32 playerIndex = _component->castRaw<SkinnedMeshSkeleton>()->playAnimation(HashedCString(cstr), params);
         mono_free(cstr);
 
         return playerIndex;
     }
 
     //////////////////////////////////////////
-    inline bool SkinnedMeshRendererGetPlayerAnimationTime(
+    inline bool SkinnedMeshSkeletonGetPlayerAnimationTime(
         Component* _component,
         S32 _playerIndex,
         F32& _outAnimationTime)
     {
-        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshRenderer, false);
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshSkeleton, false);
         MAZE_ERROR_RETURN_VALUE_IF(_playerIndex < 0 || _playerIndex >= MESH_SKELETON_ANIMATOR_PLAYERS_COUNT, false, "PlayerIndex is invalid - %d", _playerIndex);
 
-        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshRenderer>()->getAnimator();
+        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshSkeleton>()->getAnimator();
         MeshSkeletonAnimatorPlayerPtr const& player = animator->getPlayer(_playerIndex);
         if (!player)
             return false;
@@ -303,15 +324,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline bool SkinnedMeshRendererGetPlayerCurrentTime(
+    inline bool SkinnedMeshSkeletonGetPlayerCurrentTime(
         Component* _component,
         S32 _playerIndex,
         F32& _outCurrentTime)
     {
-        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshRenderer, false);
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshSkeleton, false);
         MAZE_ERROR_RETURN_VALUE_IF(_playerIndex < 0 || _playerIndex >= MESH_SKELETON_ANIMATOR_PLAYERS_COUNT, false, "PlayerIndex is invalid - %d", _playerIndex);
 
-        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshRenderer>()->getAnimator();
+        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshSkeleton>()->getAnimator();
         MeshSkeletonAnimatorPlayerPtr const& player = animator->getPlayer(_playerIndex);
         if (!player)
             return false;
@@ -321,15 +342,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline void SkinnedMeshRendererPlayerRewindTo(
+    inline void SkinnedMeshSkeletonPlayerRewindTo(
         Component* _component,
         S32 _playerIndex,
         F32 _time)
     {
-        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshSkeleton);
         MAZE_ERROR_RETURN_IF(_playerIndex < 0 || _playerIndex >= MESH_SKELETON_ANIMATOR_PLAYERS_COUNT, "PlayerIndex is invalid - %d", _playerIndex);
 
-        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshRenderer>()->getAnimator();
+        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshSkeleton>()->getAnimator();
         MeshSkeletonAnimatorPlayerPtr const& player = animator->getPlayer(_playerIndex);
         if (!player)
             return;
@@ -338,14 +359,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline void SkinnedMeshRendererPlayerStop(
+    inline void SkinnedMeshSkeletonPlayerStop(
         Component* _component,
         S32 _playerIndex)
     {
-        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshSkeleton);
         MAZE_ERROR_RETURN_IF(_playerIndex < 0 || _playerIndex >= MESH_SKELETON_ANIMATOR_PLAYERS_COUNT, "PlayerIndex is invalid - %d", _playerIndex);
 
-        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshRenderer>()->getAnimator();
+        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshSkeleton>()->getAnimator();
         MeshSkeletonAnimatorPlayerPtr const& player = animator->getPlayer(_playerIndex);
         if (!player)
             return;
@@ -354,22 +375,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline F32 SkinnedMeshRendererGetAnimationSpeed(Component* _component)
+    inline F32 SkinnedMeshSkeletonGetAnimationSpeed(Component* _component)
     {
-        MAZE_ERROR_RETURN_VALUE_IF(_component->getClassUID() != ClassInfo<SkinnedMeshRenderer>::UID(), 0.0f, "Component is not SkinnedMeshRenderer!");
+        MAZE_ERROR_RETURN_VALUE_IF(_component->getClassUID() != ClassInfo<SkinnedMeshSkeleton>::UID(), 0.0f, "Component is not SkinnedMeshSkeleton!");
 
-        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshRenderer>()->getAnimator();
+        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshSkeleton>()->getAnimator();
         return animator->getAnimationSpeed();
     }
 
     //////////////////////////////////////////
-    inline void SkinnedMeshRendererSetAnimationSpeed(
+    inline void SkinnedMeshSkeletonSetAnimationSpeed(
         Component* _component,
         F32 _animationSpeed)
     {
-        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshSkeleton);
 
-        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshRenderer>()->getAnimator();
+        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshSkeleton>()->getAnimator();
         animator->setAnimationSpeed(_animationSpeed);
     }
 
@@ -976,13 +997,17 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetRenderMesh);
-        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererPlayAnimation);
-        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetPlayerAnimationTime);
-        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetPlayerCurrentTime);
-        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererPlayerRewindTo);
-        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererPlayerStop);
-        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetAnimationSpeed);
-        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetAnimationSpeed);
+
+        // SkinnedMeshSkeleton
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonSetRenderMesh);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonGetRenderMesh);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonPlayAnimation);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonGetPlayerAnimationTime);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonGetPlayerCurrentTime);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonPlayerRewindTo);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonPlayerStop);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonGetAnimationSpeed);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonSetAnimationSpeed);
 
         // SpriteRenderer2D
         MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DSetMaterial);
