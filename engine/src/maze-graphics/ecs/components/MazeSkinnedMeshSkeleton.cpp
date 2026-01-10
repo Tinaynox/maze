@@ -217,14 +217,14 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshUpdateSystem,
-        MAZE_ECS_TAGS(MAZE_HS("default"), MAZE_HS("render")),
+    COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshSkeletonUpdateSystem,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
         {},
         UpdateEvent const& _event,
         Entity* _entity,
-        SkinnedMeshSkeleton* _meshRenderer)
+        SkinnedMeshSkeleton* _meshSkeleton)
     {
-        _meshRenderer->update(_event.getDt());
+        _meshSkeleton->update(_event.getDt());
     }
 
 

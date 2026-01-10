@@ -290,6 +290,9 @@ namespace Maze
         inline Vec2<ValueType> getScale2DSignless() const;
 
         //////////////////////////////////////////
+        inline void resetScale();
+
+        //////////////////////////////////////////
         inline Rotation2D getRotation2D() const;
 
 

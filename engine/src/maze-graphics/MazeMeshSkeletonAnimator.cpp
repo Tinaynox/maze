@@ -113,9 +113,10 @@ namespace Maze
             for (auto& boneTransformsDirty : m_bonesTransformsDirty)
                 boneTransformsDirty = false;
 
+            TMat rootTransformInv = m_skeleton->getRootTransform().inversed();
             for (MeshSkeleton::BoneIndex i = 0, in = (MeshSkeleton::BoneIndex)m_bonesGlobalTransforms.size(); i < in; ++i)
             {
-                m_bonesGlobalTransforms[i] = m_skeleton->getBone(i).inversedBindPoseTransformMS.inversed();
+                m_bonesGlobalTransforms[i] = rootTransformInv.transform(m_skeleton->getBone(i).inversedBindPoseTransformMS.inversed());
                 m_bonesSkinningTransforms[i] = TMat::c_identity;
             }
         }

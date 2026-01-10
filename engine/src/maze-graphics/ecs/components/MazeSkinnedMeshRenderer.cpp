@@ -209,15 +209,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SkinnedMeshRenderer::processEntityAwakened()
+    void SkinnedMeshRenderer::assignSkeletonIfRequired()
     {
-        m_renderMask = getEntityRaw()->ensureComponent<RenderMask>();
-
         if (!m_skeleton)
         {
             if (SkinnedMeshSkeleton* skeletonRaw = EcsHelper::GetFirstTrunkComponent<SkinnedMeshSkeleton>(getEntityRaw()))
                 m_skeleton = skeletonRaw->cast<SkinnedMeshSkeleton>();
         }
+    }
+
+    //////////////////////////////////////////
+    void SkinnedMeshRenderer::processEntityAwakened()
+    {
+        m_renderMask = getEntityRaw()->ensureComponent<RenderMask>();
+
+        assignSkeletonIfRequired();
     }
 
     //////////////////////////////////////////
@@ -297,9 +303,19 @@ namespace Maze
     }
     
 
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshRendererAdded,
+        {},
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        SkinnedMeshRenderer* _renderer)
+    {
+        _renderer->assignSkeletonIfRequired();
+    }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshUpdateSystem,
+    COMPONENT_SYSTEM_EVENT_HANDLER(SkinnedMeshRendererUpdateSystem,
         MAZE_ECS_TAGS(MAZE_HS("default"), MAZE_HS("render")),
         {},
         UpdateEvent const& _event,

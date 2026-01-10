@@ -304,13 +304,13 @@ void main()
     // Reflected direction
     vec3 reflectedDirection = reflect(-fragmentToViewDirection, v_normalWS);
     
-    // Fake reflection dir
-    vec3 fakeReflectionDir = reflectedDirection;
-    float m = 2.0 * sqrt(
-        pow(fakeReflectionDir.x, 2.0) +
-        pow(fakeReflectionDir.y, 2.0) +
-        pow(-fakeReflectionDir.z + 1.0, 2.0));
+     // Fake reflection dir
+    vec3 clampedReflection = abs(reflectedDirection);
+    clampedReflection = normalize(clampedReflection);
+    vec3 fakeReflectionDir = clampedReflection;
+    float m = 2.0 * length(fakeReflectionDir);
     vec2 fakeReflectionUV = fakeReflectionDir.xy / m + vec2(0.5, 0.5);
+    fakeReflectionUV = clamp(fakeReflectionUV, 0.0, 1.0);
     
     // Environment color
     float reflectionMask = 1.0;
@@ -334,8 +334,10 @@ void main()
     linearColor += BlinnPhongLighting(
         diffuseColor, normalWS, fragmentToViewDirection, normalize(u_mainLightDirection),
         mainLightColor, fakeReflectionColor, reflectionMask);
-        
-    linearColor += 2.0 * (fakeReflectionColor + u_reflectionBaseColor.rgb) * reflectionMask;
+    
+    float NdotV = dot(normalWS, fragmentToViewDirection);
+    float fresnel = clamp(1.0 - NdotV, 0.0, 1.0);
+    linearColor += 2.0 * (fakeReflectionColor + u_reflectionBaseColor.rgb) * reflectionMask * (1.0 - pow(fresnel, 2.5));
     
     // Emission map
     float emissionPower = 1.0;

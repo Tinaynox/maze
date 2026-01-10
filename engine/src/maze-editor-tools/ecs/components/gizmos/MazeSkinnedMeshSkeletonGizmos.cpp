@@ -116,14 +116,14 @@ namespace Maze
 
                 TMat const& boneGlobalTransform = bonesGlobalTransform[i];
                 TMat boneWorldTm = transform3D->getWorldTransform().transform(
-                    /*skeleton->getRootTransform().transform*/(boneGlobalTransform));
+                    skeleton->getRootTransform().transform(boneGlobalTransform));
                 
                 F32 boneLen = 1.0f;
 
                 if (bone.parentBoneIndex != -1)
                 {
                     TMat parentBoneWorldTm = transform3D->getWorldTransform().transform(
-                        /*skeleton->getRootTransform().transform*/(bonesGlobalTransform[bone.parentBoneIndex]));
+                        skeleton->getRootTransform().transform(bonesGlobalTransform[bone.parentBoneIndex]));
 
                     Vec3F toChild = boneWorldTm[3] - parentBoneWorldTm[3];
                     F32 toChildLen = toChild.length();
@@ -169,7 +169,7 @@ namespace Maze
 
 
                 // Bind pose
-                if (true)
+                if (false)
                 {
                     TMat boneBindPoseTransformMS = bone.inversedBindPoseTransformMS.inversed();
                     TMat boneBindPoseTransformWS = transform3D->getWorldTransform().transform(boneBindPoseTransformMS);

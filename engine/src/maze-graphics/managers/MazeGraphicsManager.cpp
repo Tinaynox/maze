@@ -56,6 +56,7 @@
 #include "maze-graphics/ecs/components/MazeTrailRenderer3D.hpp"
 #include "maze-graphics/ecs/components/MazeTrailRenderer3DHider.hpp"
 #include "maze-graphics/ecs/components/MazeTerrainMesh3D.hpp"
+#include "maze-graphics/ecs/components/MazeSkinnedMeshAttach3D.hpp"
 
 
 //////////////////////////////////////////
@@ -131,11 +132,12 @@ namespace Maze
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<TrailRenderer3DHider>("3D");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<LineRenderer3D>("3D");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<TerrainMesh3D>("3D");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SkinnedMeshSkeleton>("3D");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SkinnedMeshAttach3D>("3D");
 
         // Renderer
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MeshRenderer>("Renderer");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MeshRendererInstanced>("Renderer");
-        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SkinnedMeshSkeleton>("Renderer");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SkinnedMeshRenderer>("Renderer");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<RenderMask>("Renderer");
         

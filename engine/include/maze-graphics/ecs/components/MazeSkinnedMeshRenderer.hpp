@@ -113,6 +113,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void assignSkeletonIfRequired();
+
+
+        //////////////////////////////////////////
         inline Vector<MaterialAssetRef> const& getMaterialRefs() const { return m_materialRefs; }
 
         //////////////////////////////////////////

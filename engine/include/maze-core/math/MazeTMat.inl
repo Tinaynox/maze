@@ -632,6 +632,28 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void TMat::resetScale()
+    {
+        ValueType rightLen = getRight().length();
+        if (rightLen > c_epsilon)
+            setRow(0, getRight() / rightLen);
+        else
+            setRow(0, Vec3<ValueType>(1, 0, 0));
+
+        ValueType upLen = getUp().length();
+        if (upLen > c_epsilon)
+            setRow(1, getUp() / upLen);
+        else
+            setRow(1, Vec3<ValueType>(0, 1, 0));
+
+        ValueType forwardLen = getForward().length();
+        if (forwardLen > c_epsilon)
+            setRow(2, getForward() / forwardLen);
+        else
+            setRow(2, Vec3<ValueType>(0, 0, 1));
+    }
+
+    //////////////////////////////////////////
     inline Rotation2D TMat::getRotation2D() const 
     { 
         return Rotation2D((F32)m[0][1] / getScaleXSignless(), (F32)m[0][0] / getScaleXSignless());
