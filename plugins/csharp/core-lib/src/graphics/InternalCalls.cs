@@ -424,6 +424,52 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void MaterialUniformSetColorF128(int materialId, int uniformIndex, ref ColorF128 value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MaterialUniformSetTexture2D(int materialId, int uniformIndex, int textureId); 
+        #endregion
+
+        #region PixelSheet2D
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int CreatePixelSheet2D();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void DestroyPixelSheet2D(int sheetId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void PixelSheet2DSaveToFileAsTGA(int sheetId, string filename, bool resetAlpha);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void PixelSheet2DGetSize(int sheetId, out Vec2S value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void PixelSheet2DSetSize(int sheetId, ref Vec2S value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int PixelSheet2DGetFormat(int sheetId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void PixelSheet2DSetFormat(int sheetId, int format);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static uint PixelSheet2DGetPixelU32(int sheetId, int x, int y);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void PixelSheet2DSetPixelU32(int sheetId, int x, int y, uint pixel);
+        #endregion
+
+        #region Texture2D
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int CreateTexture2D();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void DestroyTexture2D(int textureId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int Texture2DReadAsPixelSheet(int textureId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Texture2DLoad(int textureId, int pixelSheetId);
         #endregion
     }
 }

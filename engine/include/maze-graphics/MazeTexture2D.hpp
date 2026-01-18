@@ -58,6 +58,7 @@ namespace Maze
     class MAZE_GRAPHICS_API Texture2D
         : public Texture
         , public IStringSerializable
+        , public IndexedResource<Texture2D>
     {
     public:
 
@@ -221,7 +222,12 @@ namespace Maze
             bool _resetAlpha = false) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual PixelSheet2D readAsPixelSheet(PixelFormat::Enum _outputFormat = PixelFormat::None) MAZE_ABSTRACT;
+        virtual bool readAsPixelSheet(
+            PixelSheet2D& _outResult,
+            PixelFormat::Enum _outputFormat = PixelFormat::None) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        PixelSheet2D readAsPixelSheet(PixelFormat::Enum _outputFormat = PixelFormat::None);
 
         //////////////////////////////////////////
         virtual void generateMipmaps() MAZE_ABSTRACT;
@@ -275,9 +281,17 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        Texture2DAssetRef(Texture2D* _value)
+            : m_texture2D(_value ? _value->getSharedPtr() : nullptr)
+        {}
+
+        //////////////////////////////////////////
         Texture2DAssetRef(Texture2DPtr const& _value = nullptr)
             : m_texture2D(_value)
         {}
+
+        //////////////////////////////////////////
+        void setTexture2D(Texture2D* _value) { m_texture2D = _value ? _value->getSharedPtr() : nullptr; }
 
         //////////////////////////////////////////
         void setTexture2D(Texture2DPtr const& _value) { m_texture2D = _value; }

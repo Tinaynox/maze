@@ -53,6 +53,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API PixelSheet2D MAZE_FINAL
+        : public IndexedResource<PixelSheet2D>
     {
     public:
 
@@ -91,10 +92,10 @@ namespace Maze
         inline Vec2S const& getSize() const { return m_size; }
 
         //////////////////////////////////////////
-        inline S32 const& getWidth() const { return m_size.x; }
+        inline S32 getWidth() const { return m_size.x; }
 
         //////////////////////////////////////////
-        inline S32 const& getHeight() const { return m_size.y; }
+        inline S32 getHeight() const { return m_size.y; }
 
         //////////////////////////////////////////
         inline S32 getRowsCount() const { return m_size.y; }
@@ -274,7 +275,7 @@ namespace Maze
         U8* getDataRW();
 
         //////////////////////////////////////////
-        U8 const* getDataRW() const;
+        U8 const* getDataRO() const;
 
         //////////////////////////////////////////
         inline Size getDataSize() { return m_data.getSize(); }
@@ -312,11 +313,11 @@ namespace Maze
         void updateDataSize();
 
     protected:
-        Vec2S m_size;
+        Vec2S m_size = Vec2U::c_zero;
         ByteBuffer m_data;
-        PixelFormat::Enum m_format;
-        S32 m_bytesPerPixel;
-        S32 m_bytesPerRow;
+        PixelFormat::Enum m_format = PixelFormat::None;
+        S32 m_bytesPerPixel = 0;
+        S32 m_bytesPerRow = 0;
     };
     
 

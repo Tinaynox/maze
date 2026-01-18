@@ -54,6 +54,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API Texture3D
         : public Texture
+        , public IndexedResource<Texture3D>
     {
     public:
 

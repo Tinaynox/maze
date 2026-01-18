@@ -47,6 +47,8 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(TextureWrap, wrapT, TextureWrap::ClampToEdge, getWrapT, setWrapT),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, anisotropyLevel, 0.0f, getAnisotropyLevel, setAnisotropyLevel));
 
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(Texture2D);
 
     //////////////////////////////////////////
     // Class Texture2D
@@ -285,6 +287,14 @@ namespace Maze
         MAZE_TODO;
     }
 
+    //////////////////////////////////////////
+    PixelSheet2D Texture2D::readAsPixelSheet(PixelFormat::Enum _outputFormat)
+    {
+        PixelSheet2D sheet;
+        readAsPixelSheet(sheet, _outputFormat);
+        return std::move(sheet);
+    }
+
 
     //////////////////////////////////////////
     // Class Texture2DAssetRef
@@ -312,12 +322,24 @@ namespace Maze
 
                     break;
                 }
+                // by ResourceId
+                case DataBlockParamType::ParamS32:
+                {
+                    ResourceId resourceId(_dataBlock.getS32(paramIndex));
+                    setTexture2D(Texture2D::GetResource(resourceId));
+                    return true;
+                }
                 // by name
                 case DataBlockParamType::ParamString:
                 {
                     String const& name = _dataBlock.getString(paramIndex);
-                    Texture2DPtr const& texture = TextureManager::GetCurrentInstancePtr()->getOrLoadTexture2D(name);
-                    setTexture2D(texture);
+                    if (!name.empty())
+                    {
+                        Texture2DPtr const& texture = TextureManager::GetCurrentInstancePtr()->getOrLoadTexture2D(name);
+                        setTexture2D(texture);
+                    }
+                    else
+                        setTexture2D(nullptr);
                     return true;
                 }
                 default:
@@ -341,7 +363,7 @@ namespace Maze
             return;
         }
 
-        // Save as AUID
+        // Static asset (AUID)
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_texture2D->getName());
@@ -356,8 +378,21 @@ namespace Maze
             }
         }
 
-        // Save as string
-        ValueToDataBlock(m_texture2D->getName().c_str(), _dataBlock);
+        // Built-in asset (name)
+        if (TextureManager::GetCurrentInstancePtr())
+        {
+            for (S32 i = 1; i < BuiltinTexture2DType::MAX; ++i)
+            {
+                if (TextureManager::GetCurrentInstancePtr()->getBuiltinTexture2D((BuiltinTexture2DType)i) == m_texture2D)
+                {
+                    ValueToDataBlock(m_texture2D->getName().c_str(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Runtime resource (ResourceId)
+        ValueToDataBlock((S32)m_texture2D->getResourceId().getId(), _dataBlock);
     }
 
 } // namespace Maze

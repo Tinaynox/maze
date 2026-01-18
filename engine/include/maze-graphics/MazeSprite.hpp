@@ -89,6 +89,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API Sprite
         : public SharedObject<Sprite>
+        , public IndexedResource<Sprite>
         , public MultiDelegateCallbackReceiver
         , public IStringSerializable
     {
@@ -218,7 +219,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        static void IterateSprites(std::function<bool(Sprite*)> _cb);
+        // static void IterateSprites(std::function<bool(Sprite*)> _cb);
 
     protected:
 
@@ -251,9 +252,9 @@ namespace Maze
         SpriteSliceBorder m_sliceBorder;
 
     protected:
-        static Sprite* s_instancesList;
-        Sprite* m_instancesListNext = nullptr;
-        Sprite* m_instancesListPrev = nullptr;
+        // static Sprite* s_instancesList;
+        // Sprite* m_instancesListNext = nullptr;
+        // Sprite* m_instancesListPrev = nullptr;
     };
         
 
@@ -268,9 +269,17 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        SpriteAssetRef(Sprite* _value)
+            : m_sprite(_value ? _value->getSharedPtr() : nullptr)
+        {}
+
+        //////////////////////////////////////////
         SpriteAssetRef(SpritePtr const& _value = nullptr)
             : m_sprite(_value)
         {}
+
+        //////////////////////////////////////////
+        void setSprite(Sprite* _value) { m_sprite = _value ? _value->getSharedPtr() : nullptr; }
 
         //////////////////////////////////////////
         void setSprite(SpritePtr const& _value) { m_sprite = _value; }

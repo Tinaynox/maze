@@ -14,10 +14,34 @@ namespace Maze.Core
             set { InternalCalls.EntitySetActive(NativeEntityPtr, value); }
         }
 
+        public string Name
+        {
+            get => GetComponent<Name>()?.Title ?? string.Empty;
+        }
+
         public Entity(NativePtr ptr)
         {
             NativeEntityPtr = ptr;
         }
+
+        public static bool operator ==(Entity value0, Entity value1)
+        {
+            return value0.Id == value1.Id;
+        }
+
+        public static bool operator !=(Entity value0, Entity value1)
+        {
+            return value0.Id != value1.Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Entity other)
+                return this == other;
+            return false;
+        }
+
+        public override int GetHashCode() => Id;
 
         public int GetEntityId()
         {

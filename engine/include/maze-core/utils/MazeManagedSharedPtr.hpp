@@ -250,7 +250,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TDeleter = std::default_delete<T>>
-        inline ManagedSharedPtr(
+        inline explicit ManagedSharedPtr(
             T* _ptr,
             std::function<void(T*)> _deleter = TDeleter())
         {

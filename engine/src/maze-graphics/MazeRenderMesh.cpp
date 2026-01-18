@@ -306,6 +306,13 @@ namespace Maze
 
                     break;
                 }
+                // by ResourceId
+                case DataBlockParamType::ParamS32:
+                {
+                    ResourceId resourceId(_dataBlock.getS32(paramIndex));
+                    setRenderMesh(RenderMesh::GetResource(resourceId));
+                    return true;
+                }
                 // by name
                 case DataBlockParamType::ParamString:
                 {
@@ -335,7 +342,7 @@ namespace Maze
             return;
         }
 
-        // Save as AUID
+        // Static asset (AUID)
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_renderMesh->getName());
@@ -350,8 +357,21 @@ namespace Maze
             }
         }
 
-        // Save as string
-        ValueToDataBlock(m_renderMesh->getName().c_str(), _dataBlock);
+        // Built-in asset (name)
+        if (RenderMeshManager::GetCurrentInstancePtr())
+        {
+            for (S32 i = 1; i < BuiltinRenderMeshType::MAX; ++i)
+            {
+                if (RenderMeshManager::GetCurrentInstancePtr()->getBuiltinRenderMesh((BuiltinRenderMeshType)i) == m_renderMesh)
+                {
+                    ValueToDataBlock(m_renderMesh->getName().c_str(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Runtime resource (ResourceId)
+        ValueToDataBlock((S32)m_renderMesh->getResourceId().getId(), _dataBlock);
     }
     
 

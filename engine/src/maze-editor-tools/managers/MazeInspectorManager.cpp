@@ -37,6 +37,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-editor-tools/property-drawers/MazePDBool.hpp"
+#include "maze-editor-tools/property-drawers/MazePDU8.hpp"
 #include "maze-editor-tools/property-drawers/MazePDS32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDF32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDVec2F32.hpp"
@@ -119,6 +120,10 @@ namespace Maze
         F32,
         PropertyDrawerRadians>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerF32Radians, MetaPropertyDrawer);
+
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerU8, MetaPropertyDrawer);
 
 
     //////////////////////////////////////////
@@ -214,6 +219,7 @@ namespace Maze
     bool InspectorManager::init()
     {
         registerPropertyDrawer<bool, PropertyDrawerBool>();
+        registerPropertyDrawer<U8, PropertyDrawerU8>();
         registerPropertyDrawer<S32, PropertyDrawerS32>();
         registerPropertyDrawer<U32, PropertyDrawerS32>();
         registerPropertyDrawer<F32, PropertyDrawerF32>();
@@ -243,6 +249,7 @@ namespace Maze
         registerMetaPropertyDrawer<S32, MetaPropertyDrawerS32>();
         registerMetaPropertyDrawer<U32, MetaPropertyDrawerS32>();
         registerMetaPropertyDrawer<F32, MetaPropertyDrawerF32>();
+        registerMetaPropertyDrawer<U8, MetaPropertyDrawerU8>();
         registerMetaPropertyDrawer<Vec2F, MetaPropertyDrawerVec2F32>();
         registerMetaPropertyDrawer<Vec2S, MetaPropertyDrawerVec2S32>();
         registerMetaPropertyDrawer<Vec2U, MetaPropertyDrawerVec2U32>();

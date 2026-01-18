@@ -1,8 +1,12 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Maze.Core
 {
-    public class Transform3D : NativeComponent
+    public class Transform3D
+        : NativeComponent
+        , IEnumerable<Transform3D>
     {
         public Vec3F Position
         {
@@ -43,10 +47,29 @@ namespace Maze.Core
             set { InternalCalls.Transform3DSetWorldTransform(NativeComponentPtr, value); }
         }
 
+        public int ChildrenCount => InternalCalls.Transform3DGetChildrenCount(NativeComponentPtr);
+
         public Transform3D(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
         {  
         }
+
+        public Transform3D GetChild(int index)
+        {
+            InternalCalls.Transform3DGetChild(NativeComponentPtr, index, out NativePtr outChildComponent);
+            if (outChildComponent != null)
+                return new Transform3D(outChildComponent);
+
+            return null;
+        }
+
+        public IEnumerator<Transform3D> GetEnumerator()
+        {
+            for (int i = 0, k = ChildrenCount; i < k; i++)
+                yield return GetChild(i);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public void Translate(Vec3F delta)
         {

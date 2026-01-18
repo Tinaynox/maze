@@ -38,6 +38,7 @@
 #include "maze-editor-tools/property-drawers/MazePDMaterial.hpp"
 #include "maze-editor-tools/property-drawers/MazePDRenderMesh.hpp"
 #include "maze-editor-tools/property-drawers/MazePDRadians.hpp"
+#include "maze-editor-tools/property-drawers/MazePDU8.hpp"
 #include "maze-editor-tools/property-drawers/MazePDVec2U32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDTexture2D.hpp"
 #include "maze-editor-tools/property-drawers/MazePDFontMaterial.hpp"
@@ -62,9 +63,14 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    using MetaPropertyDrawerU8 = MetaPropertyDrawerDefault<U8, PropertyDrawerU8>;
+
+
+    //////////////////////////////////////////
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<MaterialPtr, PropertyDrawerMaterial>;
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<RenderMeshPtr, PropertyDrawerRenderMesh>;
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<F32, PropertyDrawerRadians>;
+    template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<U8, PropertyDrawerU8>;
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Vec2S, PropertyDrawerVec2U32>;
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Vec2U, PropertyDrawerVec2U32>;
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Texture2DPtr, PropertyDrawerTexture2D>;

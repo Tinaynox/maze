@@ -34,14 +34,13 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(PixelSheet2D);
+
+    //////////////////////////////////////////
     // Class PixelSheet2D
     //
     //////////////////////////////////////////
     PixelSheet2D::PixelSheet2D()
-        : m_size(Vec2U::c_zero)
-        , m_format(PixelFormat::None)
-        , m_bytesPerPixel(0)
-        , m_bytesPerRow(0)
     {
     }
 
@@ -767,9 +766,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    U8 const* PixelSheet2D::getDataRW() const
+    U8 const* PixelSheet2D::getDataRO() const
     {
-        return m_data.getDataRW();
+        return m_data.getDataRO();
     }
 
     //////////////////////////////////////////

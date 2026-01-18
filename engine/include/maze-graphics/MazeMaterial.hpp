@@ -281,7 +281,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        static void IterateMaterials(std::function<bool(Material*)> _cb);
+        // static void IterateMaterials(std::function<bool(Material*)> _cb);
 
     protected:
 
@@ -308,9 +308,9 @@ namespace Maze
         FastVector<ShaderUniformVariantPtr> m_uniforms;
 
     protected:
-        static Material* s_instancesList;
-        Material* m_instancesListNext = nullptr;
-        Material* m_instancesListPrev = nullptr;
+        // static Material* s_instancesList;
+        // Material* m_instancesListNext = nullptr;
+        // Material* m_instancesListPrev = nullptr;
     };
 
 
@@ -335,7 +335,10 @@ namespace Maze
         {}
 
         //////////////////////////////////////////
-        void setMaterial(MaterialPtr const& _value) { m_material = _value; }
+        inline void setMaterial(Material* _value) { m_material = _value ? _value->getSharedPtr() : nullptr; }
+
+        //////////////////////////////////////////
+        inline void setMaterial(MaterialPtr const& _value) { m_material = _value; }
 
         //////////////////////////////////////////
         inline MaterialPtr const& getMaterial() const { return m_material; }

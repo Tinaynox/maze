@@ -39,9 +39,30 @@ namespace Maze.Graphics
             A = a;
         }
 
+        public ColorU32(uint pixel)
+        {
+            R = (byte)pixel;
+            G = (byte)(pixel >> 8);
+            B = (byte)(pixel >> 16);
+            A = (byte)(pixel >> 24);
+        }
+
+        public void Blend(ColorU32 color)
+        {
+            R = (byte)((R * color.R) / 255);
+            G = (byte)((G * color.G) / 255);
+            B = (byte)((B * color.B) / 255);
+            A = (byte)((A * color.A) / 255);
+        }
+
         public override string ToString()
         {
             return $"{R}, {G}, {B}, {A}";
+        }
+
+        public uint ToUInt()
+        {
+            return (uint)((A << 24) | (B << 16) | (G << 8) | R);
         }
     }
 }

@@ -69,6 +69,151 @@ namespace Maze
             return true;
         }
 
+        //////////////////////////////////////////
+        inline U8 ConvertPixelChannelDataToU8(
+            const U8* _channelPointer, PixelFormat::Enum _pixelFormat)
+        {
+            switch (_pixelFormat)
+            {
+                case PixelFormat::R_S8:
+                case PixelFormat::RG_S8:
+                case PixelFormat::RGB_S8:
+                case PixelFormat::RGBA_S8:
+                case PixelFormat::R_U8:
+                case PixelFormat::RG_U8:
+                case PixelFormat::RGB_U8:
+                case PixelFormat::RGBA_U8:
+                {
+                    U8 sourcePixel = *_channelPointer;
+                    return sourcePixel;
+                }
+
+                case PixelFormat::R_S16:
+                case PixelFormat::RG_S16:
+                case PixelFormat::RGBA_S16:
+                case PixelFormat::R_U16:
+                case PixelFormat::RG_U16:
+                case PixelFormat::RGBA_U16:
+                {
+                    U16 sourcePixel = *(U16*)_channelPointer;
+                    return static_cast<U8>(sourcePixel);
+                }
+
+                case PixelFormat::R_S32:
+                case PixelFormat::RG_S32:
+                case PixelFormat::R_U32:
+                case PixelFormat::RG_U32:
+                {
+                    U32 sourcePixel = *(U32*)_channelPointer;
+                    return static_cast<U8>(sourcePixel);
+                }
+
+                case PixelFormat::R_F16:
+                case PixelFormat::RG_F16:
+                case PixelFormat::RGBA_F16:
+                {
+                    F32 sourcePixel = *(F32*)_channelPointer;
+                    return static_cast<U8>(sourcePixel * 255.0f);
+                }
+
+                case PixelFormat::R_F32:
+                case PixelFormat::RG_F32:
+                case PixelFormat::RGB_F32:
+                case PixelFormat::RGBA_F32:
+                {
+                    F32 sourcePixel = *(F32*)_channelPointer;
+                    return static_cast<U8>(sourcePixel * 255.0f);
+                }
+                default:
+                {
+                    MAZE_ERROR("Unsupported PixelFormat!");
+                }
+            }
+
+            return 0;
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API bool SaveTGA(
+            PixelSheet2D const& _pixelSheet,
+            CString _fileName,
+            bool _resetAlpha)
+        {
+            PixelFormat::Enum pixelFormat = _pixelSheet.getFormat();
+            U32 bytesPerPixel = (U32)_pixelSheet.getBytesPerPixel();
+            if (bytesPerPixel == 0u)
+                return false;
+
+            U32 channelsPerPixel = PixelFormat::GetChannelsPerPixel(pixelFormat);
+            U32 bytesPerChannel = bytesPerPixel / channelsPerPixel;
+
+            U32 bytesPerRow = _pixelSheet.getBytesPerRow();
+
+            S32 weight = _pixelSheet.getWidth();
+            S32 height = _pixelSheet.getHeight();
+            if (weight == 0 || height == 0)
+                return false;
+
+            Debug::Log("Saving tga file - %s...", _fileName);
+            
+            ByteBuffer tgaData(weight * height * 4);
+            U8* tgaDataPointer = tgaData.getDataRW();
+
+            for (Size r = 0; r < height; ++r)
+            {
+                for (Size c = 0; c < weight; ++c)
+                {
+                    U32 offset = bytesPerRow * (U32)r + bytesPerPixel * (U32)c;
+                    const U8* pixel = _pixelSheet.getDataRO() + offset;
+
+                    U8 r = 0;
+                    U8 g = 0;
+                    U8 b = 0;
+                    U8 a = 0;
+
+                    if (channelsPerPixel > 0)
+                        r = ConvertPixelChannelDataToU8(pixel + 0 * bytesPerChannel, pixelFormat);
+
+                    if (channelsPerPixel > 1)
+                        g = ConvertPixelChannelDataToU8(pixel + 1 * bytesPerChannel, pixelFormat);
+
+                    if (channelsPerPixel > 2)
+                        b = ConvertPixelChannelDataToU8(pixel + 2 * bytesPerChannel, pixelFormat);
+
+                    if (!_resetAlpha)
+                    {
+                        if (channelsPerPixel > 3)
+                            a = ConvertPixelChannelDataToU8(pixel + 3 * bytesPerChannel, pixelFormat);
+                    }
+                    else
+                    {
+                        a = 255;
+                    }
+
+                    // BGRA
+                    *(tgaDataPointer++) = b;
+                    *(tgaDataPointer++) = g;
+                    *(tgaDataPointer++) = r;
+                    *(tgaDataPointer++) = a;
+                }
+            }
+
+            U32 xa = weight % 256;
+            U32 xb = (weight - xa) / 256;
+            U32 ya = height % 256;
+            U32 yb = (height - ya) / 256;
+
+            U8 header[18] = { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, (U8)xa, (U8)xb, (U8)ya, (U8)yb, 32, 0 };
+
+            std::fstream file(_fileName, std::ios::out | std::ios::binary);
+            file.write(reinterpret_cast<CString>(header), sizeof(S8) * 18);
+            file.write(reinterpret_cast<CString>(tgaData.getDataRO()), sizeof(S8) * tgaData.getSize());
+            file.close();
+
+            Debug::Log("%s saved.", _fileName);
+
+            return true;
+        }
 
     } // namespace PixelSheet2DHelper
     //////////////////////////////////////////

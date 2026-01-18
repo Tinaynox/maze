@@ -423,7 +423,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    inline S32 Transform2DGetChildCount(Component* _component)
+    inline S32 Transform2DGetChildrenCount(Component* _component)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(Transform2D, 0);
         return (S32)_component->castRaw<Transform2D>()->getChildren().size();
@@ -499,6 +499,23 @@ namespace Maze
         _outTMat = _component->castRaw<Transform2D>()->getWorldTransform();
     }
 
+
+    //////////////////////////////////////////
+    inline S32 Transform3DGetChildrenCount(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(Transform3D, 0);
+        return (S32)_component->castRaw<Transform3D>()->getChildren().size();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform3DGetChild(
+        Component* _component,
+        S32 _index,
+        Component** _outComponent)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform3D);
+        *_outComponent = _component->castRaw<Transform3D>()->getChildren()[_index];
+    }
 
     //////////////////////////////////////////
     inline void Transform3DTranslate(Component* _component, Vec3F const& _delta)
@@ -597,7 +614,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform3D);
         _component->castRaw<Transform3D>()->setWorldTransform(_tm);
-    }    
+    }
 
 
     //////////////////////////////////////////
@@ -667,7 +684,7 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(ComponentIsEditorMode);
 
         // Transform2D
-        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChildCount);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChildrenCount);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChild);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetSize);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DSetSize);
@@ -680,6 +697,8 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetWorldTransform);
 
         // Transform3D
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DGetChildrenCount);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DGetChild);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DTranslate);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DRotate);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetParent);

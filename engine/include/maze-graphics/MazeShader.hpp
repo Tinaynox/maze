@@ -66,6 +66,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API Shader
         : public SharedObject<Shader>
+        , public IndexedResource<Shader>
         , public MultiDelegateCallbackReceiver
         , public ISharedCopyable<Shader>
         , public IDataBlockSerializable
@@ -309,7 +310,7 @@ namespace Maze
         static void FromString(ShaderPtr& _value, CString _data, Size _count);
 
         //////////////////////////////////////////
-        static void IterateShaders(std::function<bool(Shader*)> _cb);
+        // static void IterateShaders(std::function<bool(Shader*)> _cb);
 
     protected:
 
@@ -384,9 +385,9 @@ namespace Maze
         Vector<ShaderUniformVariant> m_cachedUniformVariants;
 
     protected:
-        static Shader* s_instancesList;
-        Shader* m_instancesListNext = nullptr;
-        Shader* m_instancesListPrev = nullptr;
+        // static Shader* s_instancesList;
+        // Shader* m_instancesListNext = nullptr;
+        // Shader* m_instancesListPrev = nullptr;
     };
 
 
@@ -399,6 +400,9 @@ namespace Maze
         , public IDataBlockSerializable
     {
     public:
+
+        //////////////////////////////////////////
+        void setShader(Shader* _shader) { m_shader = _shader ? _shader->getSharedPtr() : nullptr; }
 
         //////////////////////////////////////////
         void setShader(ShaderPtr const& _shader) { m_shader = _shader; }

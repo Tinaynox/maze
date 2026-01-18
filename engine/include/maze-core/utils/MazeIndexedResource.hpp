@@ -73,6 +73,9 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_FORCEINLINE static T* GetResourceUnsafe(S32 _id) { return GetResourceUnsafe(ResourceId(_id)); }
 
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE static void IterateResources(std::function<bool(T*)> _cb);
+
     private:
 
         //////////////////////////////////////////

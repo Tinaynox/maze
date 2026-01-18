@@ -119,7 +119,7 @@ namespace Maze.Core
 
         #region Transform2D
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static int Transform2DGetChildCount(NativePtr nativeComponentPtr);
+        public extern static int Transform2DGetChildrenCount(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform2DGetChild(NativePtr nativeComponentPtr, int index, out NativePtr outChild);
@@ -198,6 +198,12 @@ namespace Maze.Core
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform3DSetWorldTransform(NativePtr nativeComponentPtr, TMat tm);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int Transform3DGetChildrenCount(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform3DGetChild(NativePtr nativeComponentPtr, int index, out NativePtr outChild);
         #endregion
 
         #region Name

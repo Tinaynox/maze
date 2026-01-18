@@ -260,6 +260,7 @@ namespace Maze
     {
         if (m_material)
         {
+            /*
             RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
             MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
             HashedCString materialName = materialManager->getMaterialName(m_material.get());
@@ -279,6 +280,8 @@ namespace Maze
             {
                 SelectionManager::GetInstancePtr()->selectObject(m_material);
             }
+            */
+            SelectionManager::GetInstancePtr()->selectObject(m_material);
         }
     }
 

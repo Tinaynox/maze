@@ -47,6 +47,11 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_GRAPHICS_API bool ConvertA1RGB5ToRGB5A1(PixelSheet2D& _pixelSheet);
 
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API bool SaveTGA(
+            PixelSheet2D const& _pixelSheet,
+            CString _fileName,
+            bool _resetAlpha = false);
 
     } // namespace PixelSheet2DHelper
     //////////////////////////////////////////

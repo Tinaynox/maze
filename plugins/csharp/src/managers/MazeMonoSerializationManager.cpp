@@ -465,6 +465,54 @@ namespace Maze
                         _instance.resetFieldValue(_field);
                 });
 
+            // Texture2D
+            registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("Maze.Graphics.Texture2D"),
+                [monoDataBlockToDataBlock](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+                {
+                    MonoObject* indexedResourceInstance = nullptr;
+                    _instance.getPropertyValue(_prop, indexedResourceInstance);
+                    ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
+                    if (Texture2D* texture = Texture2D::GetResource(resourceId))
+                        Texture2DAssetRef(texture).toDataBlock(*_dataBlock.ensureDataBlock(_prop->getName()));
+
+                },
+                [dataBlockToMonoDataBlock](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+                {
+                    DataBlock const* dataBlock = _dataBlock.getDataBlock(_prop->getName());
+                    if (dataBlock)
+                    {
+                        Texture2DAssetRef textureAssetRef;
+                        textureAssetRef.loadFromDataBlock(*dataBlock);
+                        ResourceId resourceId = textureAssetRef.getTexture2D() ? textureAssetRef.getTexture2D()->getResourceId() : c_invalidResourceId;
+                        MonoObject* indexedResourceObj = MonoHelper::CreateIndexedResource(MAZE_HCS("Maze.Graphics.Texture2D"), resourceId);
+                        _instance.setPropertyValue(_prop, indexedResourceObj);
+                    }
+                    else
+                        _instance.resetPropertyValue(_prop);
+                },
+                [monoDataBlockToDataBlock](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+                {
+                    MonoObject* indexedResourceInstance = nullptr;
+                    _instance.getFieldValue(_field, indexedResourceInstance);
+                    ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
+                    if (Texture2D* texture = Texture2D::GetResource(resourceId))
+                        Texture2DAssetRef(texture).toDataBlock(*_dataBlock.ensureDataBlock(_field->getName()));
+                },
+                [dataBlockToMonoDataBlock, monoDataBlockToDataBlock](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+                {
+                    DataBlock const* dataBlock = _dataBlock.getDataBlock(_field->getName());
+                    if (dataBlock)
+                    {
+                        Texture2DAssetRef textureAssetRef;
+                        textureAssetRef.loadFromDataBlock(*dataBlock);
+                        ResourceId resourceId = textureAssetRef.getTexture2D() ? textureAssetRef.getTexture2D()->getResourceId() : c_invalidResourceId;
+                        MonoObject* indexedResourceObj = MonoHelper::CreateIndexedResource(MAZE_HCS("Maze.Graphics.Texture2D"), resourceId);
+                        _instance.setFieldValue(_field, indexedResourceObj);
+                    }
+                    else
+                        _instance.resetFieldValue(_field);
+                });
+
 #undef MAZE_MONO_SERIALIZATION_TYPE
 
 

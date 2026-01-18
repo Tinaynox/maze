@@ -126,6 +126,9 @@ namespace Maze
         //////////////////////////////////////////
         void notifyWindowFocusChanged(Window* _window);
 
+        //////////////////////////////////////////
+        void notifyKeyboardEvent(InputEventKeyboardData const& _event);
+
 
         //////////////////////////////////////////
         void registerAssetFileCallbacks();
@@ -148,6 +151,7 @@ namespace Maze
         void fixAssetFilesNow();
 
         //////////////////////////////////////////
+        void reloadChangedTextures();
 
     protected:
         static EditorAssetsManager* s_instance;
@@ -155,6 +159,8 @@ namespace Maze
         Set<AssetFilePtr> m_assetFilesToFix;
 
         StringKeyMap<Vector<EditorAssetContextOption>> m_editorAssetContextOptions;
+
+        UnorderedMap<AssetFilePtr, UnixTime> m_assetFilesModifiedTimeUTC;
     };
 
 

@@ -67,10 +67,14 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(Sprite);
+
+
+    //////////////////////////////////////////
     // Class Sprite
     //
     //////////////////////////////////////////
-    Sprite* Sprite::s_instancesList = nullptr;
+    // Sprite* Sprite::s_instancesList = nullptr;
 
     //////////////////////////////////////////
     Sprite::Sprite()
@@ -81,22 +85,22 @@ namespace Maze
         , m_textureCoordLB(Vec2F::c_zero)
         , m_textureCoordRT(Vec2F::c_one)
     {
-        if (s_instancesList)
-            s_instancesList->m_instancesListNext = this;
-        m_instancesListPrev = s_instancesList;
-        s_instancesList = this;
+        //if (s_instancesList)
+        //    s_instancesList->m_instancesListNext = this;
+        //m_instancesListPrev = s_instancesList;
+        //s_instancesList = this;
     }
 
     //////////////////////////////////////////
     Sprite::~Sprite()
     {
-        if (m_instancesListPrev)
-            m_instancesListPrev->m_instancesListNext = m_instancesListNext;
-        if (m_instancesListNext)
-            m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
-        else
-        if (s_instancesList == this)
-            s_instancesList = m_instancesListPrev;
+        //if (m_instancesListPrev)
+        //    m_instancesListPrev->m_instancesListNext = m_instancesListNext;
+        //if (m_instancesListNext)
+        //    m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
+        //else
+        //if (s_instancesList == this)
+        //    s_instancesList = m_instancesListPrev;
     }
 
     //////////////////////////////////////////
@@ -316,17 +320,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Sprite::IterateSprites(std::function<bool(Sprite*)> _cb)
-    {
-        Sprite* instance = s_instancesList;
-        while (instance)
-        {
-            if (!_cb(instance))
-                break;
+    //void Sprite::IterateSprites(std::function<bool(Sprite*)> _cb)
+    //{
+    //    Sprite* instance = s_instancesList;
+    //    while (instance)
+    //    {
+    //        if (!_cb(instance))
+    //            break;
 
-            instance = instance->m_instancesListPrev;
-        }
-    }
+    //        instance = instance->m_instancesListPrev;
+    //    }
+    //}
 
 
     //////////////////////////////////////////
@@ -372,6 +376,13 @@ namespace Maze
 
                     break;
                 }
+                // by ResourceId
+                case DataBlockParamType::ParamS32:
+                {
+                    ResourceId resourceId(_dataBlock.getS32(paramIndex));
+                    setSprite(Sprite::GetResource(resourceId));
+                    return true;
+                }
                 // by name
                 case DataBlockParamType::ParamString:
                 {
@@ -401,7 +412,7 @@ namespace Maze
             return;
         }
 
-        // Save as AUID
+        // Static asset (AUID)
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_sprite->getName());
@@ -416,8 +427,21 @@ namespace Maze
             }
         }
 
-        // Save as string
-        ValueToDataBlock(m_sprite->getName().c_str(), _dataBlock);
+        // Built-in asset (name)
+        if (SpriteManager::GetCurrentInstance())
+        {
+            for (S32 i = 1; i < BuiltinSpriteType::MAX; ++i)
+            {
+                if (SpriteManager::GetCurrentInstance()->getBuiltinSprite((BuiltinSpriteType)i) == m_sprite)
+                {
+                    ValueToDataBlock(m_sprite->getName().c_str(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Runtime resource (ResourceId)
+        ValueToDataBlock((S32)m_sprite->getResourceId().getId(), _dataBlock);
     }
 
 

@@ -277,7 +277,7 @@ namespace Maze
         U8 const** rowPointers = MAZE_NEW_ARRAY(U8 const*, _pixelSheet.getHeight());
         for (S32 i = 0; i < _pixelSheet.getHeight(); i++)
         {
-            U8 const* rowPointer = (_pixelSheet.getDataRW() + _pixelSheet.getBytesPerRow() * (_pixelSheet.getHeight() - i - 1));
+            U8 const* rowPointer = (_pixelSheet.getDataRO() + _pixelSheet.getBytesPerRow() * (_pixelSheet.getHeight() - i - 1));
             rowPointers[i] = rowPointer;
         }
 

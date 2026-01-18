@@ -49,9 +49,9 @@ namespace Maze
     namespace PixelFormat
     {
         //////////////////////////////////////////
-        enum Enum
+        enum Enum : U16
         {
-            Unknown                 = -1,
+            Unknown                 = 0xFFFF,
             None                    = 0,
             
             // R

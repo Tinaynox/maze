@@ -87,6 +87,21 @@ namespace Maze
         _id.incrementGeneration();
         s_freeResourceIndices.push(_id);
     }
+
+    //////////////////////////////////////////
+    template <typename T>
+    MAZE_FORCEINLINE void IndexedResource<T>::IterateResources(std::function<bool(T*)> _cb)
+    {
+        S32 resourcesCount = s_resources.size();
+
+        for (S32 i = 0; i < resourcesCount; ++i)
+        {
+            T* resource = s_resources[i];
+
+            if (!_cb(resource))
+                break;
+        }
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

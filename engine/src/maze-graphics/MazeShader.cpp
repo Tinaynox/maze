@@ -55,28 +55,31 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(HashedString, name, HashedString(), getName, setName));
 
     //////////////////////////////////////////
-    Shader* Shader::s_instancesList = nullptr;
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(Shader);
+
+    //////////////////////////////////////////
+    // Shader* Shader::s_instancesList = nullptr;
 
     //////////////////////////////////////////
     Shader::Shader()
         : m_renderSystemRaw(nullptr)
     {
-        if (s_instancesList)
-            s_instancesList->m_instancesListNext = this;
-        m_instancesListPrev = s_instancesList;
-        s_instancesList = this;
+        //if (s_instancesList)
+        //    s_instancesList->m_instancesListNext = this;
+        //m_instancesListPrev = s_instancesList;
+        //s_instancesList = this;
     }
 
     //////////////////////////////////////////
     Shader::~Shader()
     {
-        if (m_instancesListPrev)
-            m_instancesListPrev->m_instancesListNext = m_instancesListNext;
-        if (m_instancesListNext)
-            m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
-        else
-        if (s_instancesList == this)
-            s_instancesList = m_instancesListPrev;
+        //if (m_instancesListPrev)
+        //    m_instancesListPrev->m_instancesListNext = m_instancesListNext;
+        //if (m_instancesListNext)
+        //    m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
+        //else
+        //if (s_instancesList == this)
+        //    s_instancesList = m_instancesListPrev;
 
         if (EventManager::GetInstancePtr())
         {
@@ -875,17 +878,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::IterateShaders(std::function<bool(Shader*)> _cb)
-    {
-        Shader* instance = s_instancesList;
-        while (instance)
-        {
-            if (!_cb(instance))
-                break;
+    //void Shader::IterateShaders(std::function<bool(Shader*)> _cb)
+    //{
+    //    Shader* instance = s_instancesList;
+    //    while (instance)
+    //    {
+    //        if (!_cb(instance))
+    //            break;
 
-            instance = instance->m_instancesListPrev;
-        }
-    }
+    //        instance = instance->m_instancesListPrev;
+    //    }
+    //}
 
     //////////////////////////////////////////
     bool Shader::haveGlobalUniforms()
@@ -1045,6 +1048,13 @@ namespace Maze
 
                     break;
                 }
+                // by ResourceId
+                case DataBlockParamType::ParamS32:
+                {
+                    ResourceId resourceId(_dataBlock.getS32(paramIndex));
+                    setShader(Shader::GetResource(resourceId));
+                    return true;
+                }
                 // by name
                 case DataBlockParamType::ParamString:
                 {
@@ -1077,7 +1087,7 @@ namespace Maze
             return;
         }
 
-        // Save as AUID
+        // Static asset (AUID)
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_shader->getName());
@@ -1092,8 +1102,21 @@ namespace Maze
             }
         }
 
-        // Save as string
-        ValueToDataBlock(m_shader->getName().c_str(), _dataBlock);
+        // Built-in asset (name)
+        if (ShaderSystem::GetCurrentInstancePtr())
+        {
+            for (S32 i = 1; i < BuiltinShaderType::MAX; ++i)
+            {
+                if (ShaderSystem::GetCurrentInstancePtr()->getBuiltinShader((BuiltinShaderType)i) == m_shader)
+                {
+                    ValueToDataBlock(m_shader->getName().c_str(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Runtime resource (ResourceId)
+        ValueToDataBlock((S32)m_shader->getResourceId().getId(), _dataBlock);
     }
 
 } // namespace Maze

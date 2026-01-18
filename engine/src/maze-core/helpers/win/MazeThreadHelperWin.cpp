@@ -31,6 +31,7 @@
 #include <ShlObj.h>
 #include <process.h>
 #include <timeapi.h>
+#include <intrin.h>
 
 
 //////////////////////////////////////////
@@ -48,12 +49,38 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API void SleepCurrentThread(U32 _ms)
         {
+#if 0
+            // #TODO: Need to be tested first
+            if (_ms == 0)
+                return;
+
+            static LARGE_INTEGER frequency =
+                [] {
+                    LARGE_INTEGER f;
+                    QueryPerformanceFrequency(&f);
+                    return f;
+                }();
+
+            LARGE_INTEGER start, current;
+            QueryPerformanceCounter(&start);
+
+            // Calculate end time in ticks (for ms precision).
+            LONGLONG targetTicks = start.QuadPart + (_ms * frequency.QuadPart) / 1000LL;
+
+            do
+            {
+                QueryPerformanceCounter(&current);
+                _mm_pause();
+            }
+            while (current.QuadPart < targetTicks);
+#else
             TIMECAPS tc;
             timeGetDevCaps(&tc, sizeof(TIMECAPS));
 
             timeBeginPeriod(tc.wPeriodMin);
             ::Sleep(_ms);
             timeEndPeriod(tc.wPeriodMin);
+#endif
         }
 
         //////////////////////////////////////////

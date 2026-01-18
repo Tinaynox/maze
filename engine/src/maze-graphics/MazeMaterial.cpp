@@ -62,28 +62,28 @@ namespace Maze
     MAZE_IMPLEMENT_INDEXED_RESOURCE(Material);
 
     //////////////////////////////////////////
-    Material* Material::s_instancesList = nullptr;
+    // Material* Material::s_instancesList = nullptr;
 
     //////////////////////////////////////////
     Material::Material()
         : m_renderSystem(nullptr)
     {
-        if (s_instancesList)
-            s_instancesList->m_instancesListNext = this;
-        m_instancesListPrev = s_instancesList;
-        s_instancesList = this;
+        //if (s_instancesList)
+        //    s_instancesList->m_instancesListNext = this;
+        //m_instancesListPrev = s_instancesList;
+        //s_instancesList = this;
     }
 
     //////////////////////////////////////////
     Material::~Material()
     {
-        if (m_instancesListPrev)
-            m_instancesListPrev->m_instancesListNext = m_instancesListNext;
-        if (m_instancesListNext)
-            m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
-        else
-        if (s_instancesList == this)
-            s_instancesList = m_instancesListPrev;
+        //if (m_instancesListPrev)
+        //    m_instancesListPrev->m_instancesListNext = m_instancesListNext;
+        //if (m_instancesListNext)
+        //    m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
+        //else
+        //if (s_instancesList == this)
+        //    s_instancesList = m_instancesListPrev;
     }
 
     //////////////////////////////////////////
@@ -789,17 +789,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Material::IterateMaterials(std::function<bool(Material*)> _cb)
-    {
-        Material* instance = s_instancesList;
-        while (instance)
-        {
-            if (!_cb(instance))
-                break;
+    //void Material::IterateMaterials(std::function<bool(Material*)> _cb)
+    //{
+    //    Material* instance = s_instancesList;
+    //    while (instance)
+    //    {
+    //        if (!_cb(instance))
+    //            break;
 
-            instance = instance->m_instancesListPrev;
-        }
-    }
+    //        instance = instance->m_instancesListPrev;
+    //    }
+    //}
 
     //////////////////////////////////////////
     void Material::dirtyRenderPassShaderUniforms()
@@ -858,6 +858,13 @@ namespace Maze
 
                     break;
                 }
+                // by ResourceId
+                case DataBlockParamType::ParamS32:
+                {
+                    ResourceId resourceId(_dataBlock.getS32(paramIndex));
+                    setMaterial(Material::GetResource(resourceId));
+                    return true;
+                }
                 // by name
                 case DataBlockParamType::ParamString:
                 {
@@ -887,7 +894,7 @@ namespace Maze
             return;
         }
 
-        // Save as AUID
+        // Static asset (AUID)
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_material->getName());
@@ -901,9 +908,22 @@ namespace Maze
                 }
             }
         }
+        
+        // Built-in asset (name)
+        if (MaterialManager::GetCurrentInstance())
+        {
+            for (S32 i = 1; i < BuiltinMaterialType::MAX; ++i)
+            {
+                if (MaterialManager::GetCurrentInstance()->getBuiltinMaterial((BuiltinMaterialType)i) == m_material)
+                {
+                    ValueToDataBlock(m_material->getName().c_str(), _dataBlock);
+                    return;
+                }
+            }
+        }
 
-        // Save as string
-        ValueToDataBlock(m_material->getName().c_str(), _dataBlock);
+        // Runtime resource (ResourceId)
+        ValueToDataBlock((S32)m_material->getResourceId().getId(), _dataBlock);
     }
 
 } // namespace Maze

@@ -465,7 +465,7 @@ namespace Maze.Core
             }
             Debug.LogError($"Not implemented DataBlockParamType: {type}");
 
-            return "";
+            return string.Empty;
         }
     }
 

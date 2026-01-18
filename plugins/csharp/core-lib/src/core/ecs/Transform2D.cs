@@ -43,10 +43,7 @@ namespace Maze.Core
             get { InternalCalls.Transform2DGetWorldTransform(NativeComponentPtr, out TMat tm); return tm; }
         }
 
-        public int ChildCount
-        {
-            get => InternalCalls.Transform2DGetChildCount(NativeComponentPtr);
-        }
+        public int ChildrenCount => InternalCalls.Transform2DGetChildrenCount(NativeComponentPtr);
 
         public Transform2D(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
@@ -55,6 +52,8 @@ namespace Maze.Core
 
         public void SetParent(Transform2D parent)
         {
+            // #TODO: Implement
+            Debug.LogWarning("Transform2D.SetParent not implemented");
             // InternalCalls.Transform2DSetParent(NativeComponentPtr, parent.NativeComponentPtr);
         }
 
@@ -69,13 +68,10 @@ namespace Maze.Core
 
         public IEnumerator<Transform2D> GetEnumerator()
         {
-            for (int i = 0, k = ChildCount; i < k; i++)
+            for (int i = 0, k = ChildrenCount; i < k; i++)
                 yield return GetChild(i);
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

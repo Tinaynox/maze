@@ -49,6 +49,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(TextureCube);
+
+
+    //////////////////////////////////////////
     // Class TextureCube
     //
     //////////////////////////////////////////
@@ -224,6 +228,13 @@ namespace Maze
 
                     break;
                 }
+                // by ResourceId
+                case DataBlockParamType::ParamS32:
+                {
+                    ResourceId resourceId(_dataBlock.getS32(paramIndex));
+                    setTextureCube(TextureCube::GetResource(resourceId));
+                    return true;
+                }
                 // by name
                 case DataBlockParamType::ParamString:
                 {
@@ -253,7 +264,7 @@ namespace Maze
             return;
         }
 
-        // Save as AUID
+        // Static asset (AUID)
         if (AssetUnitManager::GetInstancePtr())
         {
             AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_textureCube->getName());
@@ -268,8 +279,21 @@ namespace Maze
             }
         }
 
-        // Save as string
-        ValueToDataBlock(m_textureCube->getName().c_str(), _dataBlock);
+        // Built-in asset (name)
+        if (TextureManager::GetCurrentInstancePtr())
+        {
+            for (S32 i = 1; i < BuiltinTextureCubeType::MAX; ++i)
+            {
+                if (TextureManager::GetCurrentInstancePtr()->getBuiltinTextureCube((BuiltinTextureCubeType)i) == m_textureCube)
+                {
+                    ValueToDataBlock(m_textureCube->getName().c_str(), _dataBlock);
+                    return;
+                }
+            }
+        }
+
+        // Runtime resource (ResourceId)
+        ValueToDataBlock((S32)m_textureCube->getResourceId().getId(), _dataBlock);
     }
 
 } // namespace Maze

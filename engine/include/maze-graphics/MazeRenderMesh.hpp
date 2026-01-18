@@ -220,10 +220,17 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        RenderMeshAssetRef(RenderMesh* _renderMesh)
+            : m_renderMesh(_renderMesh ? _renderMesh->getSharedPtr() : nullptr)
+        {}
+
+        //////////////////////////////////////////
         RenderMeshAssetRef(RenderMeshPtr const& _renderMesh = nullptr)
             : m_renderMesh(_renderMesh)
         {}
 
+        //////////////////////////////////////////
+        void setRenderMesh(RenderMesh* _renderMesh) { m_renderMesh = _renderMesh ? _renderMesh->getSharedPtr() : nullptr; }
 
         //////////////////////////////////////////
         void setRenderMesh(RenderMeshPtr const& _renderMesh) { m_renderMesh = _renderMesh; }

@@ -58,6 +58,7 @@ namespace Maze
     class MAZE_GRAPHICS_API Texture2DMS
         : public Texture
         , public IStringSerializable
+        , public IndexedResource<Texture2DMS>
     {
     public:
 

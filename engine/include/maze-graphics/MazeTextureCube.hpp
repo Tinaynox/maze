@@ -55,6 +55,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API TextureCube
         : public Texture
+        , public IndexedResource<TextureCube>
     {
     public:
 
@@ -197,12 +198,20 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        TextureCubeAssetRef(TextureCubePtr const& _value = nullptr)
+        inline TextureCubeAssetRef(TextureCube* _value)
+            : m_textureCube(_value ? _value->getSharedPtr() : nullptr)
+        {}
+
+        //////////////////////////////////////////
+        inline TextureCubeAssetRef(TextureCubePtr const& _value = nullptr)
             : m_textureCube(_value)
         {}
 
         //////////////////////////////////////////
-        void setTextureCube(TextureCubePtr const& _value) { m_textureCube = _value; }
+        inline void setTextureCube(TextureCube* _value) { m_textureCube = _value ? _value->getSharedPtr() : nullptr; }
+
+        //////////////////////////////////////////
+        inline void setTextureCube(TextureCubePtr const& _value) { m_textureCube = _value; }
 
         //////////////////////////////////////////
         inline TextureCubePtr const& getTextureCube() const { return m_textureCube; }

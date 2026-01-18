@@ -31,6 +31,7 @@
 #include "maze-core/assets/MazeAssetUnitId.hpp"
 #include "maze-core/helpers/MazeThreadHelper.hpp"
 #include "maze-core/managers/MazeTaskManager.hpp"
+#include "maze-core/memory/MazeMemory.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeSkinnedMeshRenderer.hpp"
@@ -48,6 +49,7 @@
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeMeshSkeletonAnimator.hpp"
 #include "maze-graphics/MazeMeshSkeletonAnimation.hpp"
+#include "maze-graphics/helpers/MazePixelSheet2DHelper.hpp"
 
 
 
@@ -969,6 +971,158 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    inline void MaterialUniformSetTexture2D(S32 _materialId, S32 _uniformId, S32 _texture2DId)
+    {
+        if (Material* material = Material::GetResource(_materialId))
+        {
+            ShaderUniformVariantPtr const& uniform = material->getUniform(_uniformId);
+            if (uniform)
+            {
+                if (Texture2D* texture2D = Texture2D::GetResource(_texture2DId))
+                    uniform->set(texture2D);
+            }
+        }
+    }
+
+
+    //////////////////////////////////////////
+    inline S32 CreateTexture2D()
+    {
+        Texture2DPtr texture = Texture2D::Create();
+        texture.incRef();
+        return texture->getResourceId();
+    }
+
+    //////////////////////////////////////////
+    inline void DestroyTexture2D(S32 _textureId)
+    {
+        TaskManager::GetInstancePtr()->addMainThreadTask(
+            [_textureId]()
+        {
+            if (Texture2D* texture = Texture2D::GetResource(_textureId))
+                texture->getSharedPtr().decRef();
+        });
+    }
+
+    //////////////////////////////////////////
+    inline S32 Texture2DReadAsPixelSheet(S32 _textureId)
+    {
+        if (Texture2D* texture = Texture2D::GetResource(_textureId))
+        {
+            PixelSheet2D* sheet = MemoryBlockAllocationNew<PixelSheet2D>();
+            if (texture->readAsPixelSheet(*sheet))
+                return sheet->getResourceId();
+            MemoryBlockAllocationDelete(sheet);
+        }
+
+        return c_invalidResourceId;
+    }
+
+    //////////////////////////////////////////
+    inline void Texture2DLoad(S32 _textureId, S32 _pixelSheetId)
+    {
+        if (Texture2D* texture = Texture2D::GetResource(_textureId))
+            if (PixelSheet2D const* pixelSheet = PixelSheet2D::GetResource(_pixelSheetId))
+                texture->loadTexture(*pixelSheet);
+    }
+
+
+    //////////////////////////////////////////
+    inline S32 CreatePixelSheet2D()
+    {
+        PixelSheet2D* sheet = MemoryBlockAllocationNew<PixelSheet2D>();
+        return sheet->getResourceId();
+    }
+
+    //////////////////////////////////////////
+    inline void DestroyPixelSheet2D(S32 _sheet2DId)
+    {
+        TaskManager::GetInstancePtr()->addMainThreadTask(
+            [_sheet2DId]()
+            {
+                if (PixelSheet2D* sheet = PixelSheet2D::GetResource(_sheet2DId))
+                    MemoryBlockAllocationDelete<PixelSheet2D>(sheet);
+            });
+    }
+
+    //////////////////////////////////////////
+    inline void PixelSheet2DSaveToFileAsTGA(
+        S32 _sheet2DId,
+        MonoString* _filename,
+        bool _resetAlpha)
+    {
+        if (PixelSheet2D const* sheet = PixelSheet2D::GetResource(_sheet2DId))
+        {
+            Char* cstr = mono_string_to_utf8(_filename);
+            PixelSheet2DHelper::SaveTGA(*sheet, cstr, _resetAlpha);
+            mono_free(cstr);
+        }
+    }
+
+    //////////////////////////////////////////
+    inline void PixelSheet2DGetSize(
+        S32 _sheet2DId,
+        Vec2S& _outValue)
+    {
+        if (PixelSheet2D const* sheet = PixelSheet2D::GetResource(_sheet2DId))
+            _outValue = sheet->getSize();
+    }
+
+    //////////////////////////////////////////
+    inline void PixelSheet2DSetSize(
+        S32 _sheet2DId,
+        Vec2S const& _value)
+    {
+        if (PixelSheet2D* sheet = PixelSheet2D::GetResource(_sheet2DId))
+            sheet->setSize(_value);
+    }
+
+    //////////////////////////////////////////
+    inline S32 PixelSheet2DGetFormat(S32 _sheet2DId)
+    {
+        if (PixelSheet2D const* sheet = PixelSheet2D::GetResource(_sheet2DId))
+            return (S32)sheet->getFormat();
+        return S32(PixelFormat::Unknown);
+    }
+
+    //////////////////////////////////////////
+    inline void PixelSheet2DSetFormat(
+        S32 _sheet2DId,
+        S32 _format)
+    {
+        if (PixelSheet2D* sheet = PixelSheet2D::GetResource(_sheet2DId))
+            return sheet->setFormat(PixelFormat::Enum(_format));
+    }
+
+    //////////////////////////////////////////
+    inline U32 PixelSheet2DGetPixelU32(
+        S32 _sheet2DId,
+        S32 _x,
+        S32 _y)
+    {
+        if (PixelSheet2D const* sheet = PixelSheet2D::GetResource(_sheet2DId))
+        {
+            MAZE_DEBUG_ASSERT(sheet->getBytesPerPixel() == 4);
+            return *((U32 const*)sheet->getPixel(_x, _y));
+        }
+
+        return 0u;
+    }
+
+    //////////////////////////////////////////
+    inline void PixelSheet2DSetPixelU32(
+        S32 _sheet2DId,
+        S32 _x,
+        S32 _y,
+        U32 _pixel)
+    {
+        if (PixelSheet2D* sheet = PixelSheet2D::GetResource(_sheet2DId))
+        {
+            MAZE_DEBUG_ASSERT(sheet->getBytesPerPixel() == 4);
+            sheet->setPixel(_x, _y, _pixel);
+        }
+    }
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsGraphics()
@@ -1125,7 +1279,24 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetMat4F);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetTMat);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetColorF128);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetTexture2D);
+
+        // Texture2D
+        MAZE_GRAPHICS_MONO_BIND_FUNC(CreateTexture2D);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(DestroyTexture2D);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Texture2DReadAsPixelSheet);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Texture2DLoad);
         
+        // PixelSheet2D
+        MAZE_GRAPHICS_MONO_BIND_FUNC(CreatePixelSheet2D);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(DestroyPixelSheet2D);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DSaveToFileAsTGA);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DGetSize);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DSetSize);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DGetFormat);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DSetFormat);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DGetPixelU32);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DSetPixelU32);
     }
 
 } // namespace Maze

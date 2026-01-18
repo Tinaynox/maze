@@ -56,6 +56,7 @@
 #include "maze-editor-tools/meta-property-drawers/MazeMPDEnumClass.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDBool.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
+#include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorActionHelper.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionActionsGroup.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionCustom.hpp"
@@ -236,7 +237,7 @@ namespace Maze
         }
 
         {
-            MetaPropertyDrawerPtr propertyDrawer = MetaPropertyDrawerS32::Create(
+            MetaPropertyDrawerPtr propertyDrawer = MetaPropertyDrawerU8::Create(
                 RenderPass::GetMetaClass()->getProperty("renderQueueIndex"));
             propertyDrawer->buildUI(m_topBlock, "Render Queue");
             m_propertyDrawers.push_back(propertyDrawer);

@@ -135,6 +135,9 @@ namespace Maze
             Editor::GetInstancePtr()->eventCoreEditorResourcesLoaded.unsubscribe(this);
         }
 
+        if (InputManager::GetInstancePtr())
+            InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
+
         s_instance = nullptr;
     }
 
@@ -147,6 +150,8 @@ namespace Maze
     //////////////////////////////////////////
     bool EditorAssetsManager::init()
     {
+        InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &EditorAssetsManager::notifyKeyboardEvent);
+
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
         EventManager::GetInstancePtr()->subscribeEvent<EditorProjectOpenedEvent>(this, &EditorAssetsManager::notifyEvent);
@@ -190,6 +195,23 @@ namespace Maze
 
         registerAssetFileCallbacks();
 
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Assets",
+            "Texture/Reload All Textures",
+            [](String const& _text)
+            {
+                TextureManager::GetCurrentInstancePtr()->reloadAllAssetTextures();
+            },
+            []() { return true; });
+
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Assets",
+            "Texture/Reload Changed Textures",
+            [](String const& _text)
+            {
+                EditorAssetsManager::GetInstancePtr()->reloadChangedTextures();
+            },
+            []() { return true; });
 
         EditorUIManager::GetInstancePtr()->addTopBarOption(
             "Assets",
@@ -215,6 +237,28 @@ namespace Maze
         if (_window->getFocused())
         {
             AssetManager::GetInstancePtr()->updateAssets();
+        }
+    }
+
+    //////////////////////////////////////////
+    void EditorAssetsManager::notifyKeyboardEvent(InputEventKeyboardData const& _event)
+    {
+        switch (_event.type)
+        {
+            case InputEventKeyboardType::KeyDown:
+            {
+                switch (_event.keyCode)
+                {
+                    case KeyCode::T:
+                    {
+                        if (_event.isAltDown())
+                            reloadChangedTextures();
+                        break;
+                    }
+                }
+            }
+            default:
+                break;
         }
     }
 
@@ -413,6 +457,37 @@ namespace Maze
         m_assetFilesToFix.clear();
 
         AssetManager::GetInstancePtr()->updateAssets();
+    }
+
+    //////////////////////////////////////////
+    void EditorAssetsManager::reloadChangedTextures()
+    {
+        // #TODO: Rework
+        for (auto const& textureData : TextureManager::GetCurrentInstancePtr()->getTextures2DLibrary())
+        {
+            if (!textureData.second.texture)
+                continue;
+
+            if (textureData.second.texture->getSize() == Vec2S(1))
+                continue;
+
+            if (textureData.second.callbacks.requestReload)
+            {
+                AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(textureData.first);
+
+                if (assetFile)
+                {
+                    UnixTime& prevModifiedTimeUTC = m_assetFilesModifiedTimeUTC[assetFile];
+                    UnixTime curModifiedTimeUTC = assetFile->getFileStats().getLastChangeTimeUTC();
+
+                    if (prevModifiedTimeUTC != curModifiedTimeUTC)
+                    {
+                        textureData.second.texture->loadFromAssetFile(assetFile);
+                        prevModifiedTimeUTC = curModifiedTimeUTC;
+                    }
+                }
+            }
+        }
     }
 
 } // namespace Maze

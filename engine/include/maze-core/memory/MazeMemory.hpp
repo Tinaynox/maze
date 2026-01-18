@@ -156,6 +156,13 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class T>
+    inline T* MemoryBlockAllocationNew()
+    {
+        return new(reinterpret_cast<T*>(MemoryBlockAllocationNew<T>(sizeof(T)))) T();
+    }
+
+    //////////////////////////////////////////
+    template <class T>
     inline void MemoryBlockAllocationDelete(void* _m, Size _s)
     {
 #if (MAZE_BLOCK_MEMORY_ALLOCATION_ENABLED)
@@ -177,6 +184,13 @@ namespace Maze
 #   endif
         
 #endif
+    }
+
+    //////////////////////////////////////////
+    template <class T>
+    inline void MemoryBlockAllocationDelete(T* _m)
+    {
+        MemoryBlockAllocationDelete<T>(_m, sizeof(T));
     }
 
     //////////////////////////////////////////

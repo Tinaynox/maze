@@ -295,7 +295,7 @@ namespace Maze
             MZGLint dataType = GetOpenGLDataType(mipmapPixelFormat);
 
             MZGLsizei dataSize = (MZGLsizei)pixelSheet.getTotalBytesCount();
-            U8 const* data = pixelSheet.getDataRW();
+            U8 const* data = pixelSheet.getDataRO();
 
             if (PixelFormat::IsCompressed(mipmapPixelFormat))
             {
@@ -591,12 +591,13 @@ namespace Maze
 
         std::fstream file(_fileName.c_str(), std::ios::out | std::ios::binary);
         file.write(reinterpret_cast<CString>(header), sizeof(S8) * 18);
-        file.write(reinterpret_cast<CString>(tgaData.getDataRW()), sizeof(S8) * tgaData.getSize());
+        file.write(reinterpret_cast<CString>(tgaData.getDataRO()), sizeof(S8) * tgaData.getSize());
         file.close();
     }
 
     //////////////////////////////////////////
-    PixelSheet2D Texture2DOpenGL::readAsPixelSheet(
+    bool Texture2DOpenGL::readAsPixelSheet(
+        PixelSheet2D& _outResult,
         PixelFormat::Enum _outputFormat)
     {   
         if (_outputFormat == PixelFormat::None)
@@ -604,10 +605,8 @@ namespace Maze
 
         if (mzglGetTexImage)
         {
-            PixelSheet2D result;
-
-            result.setFormat(_outputFormat);
-            result.setSize(m_size);
+            _outResult.setFormat(_outputFormat);
+            _outResult.setSize(m_size);
 
             MZGLint originFormat = GetOpenGLOriginFormat(_outputFormat);
             MZGLint dataType = GetOpenGLDataType(_outputFormat);
@@ -616,9 +615,9 @@ namespace Maze
             MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
             Texture2DOpenGLScopeBind textureScopedBind(this);
 
-            MAZE_GL_CALL(mzglGetTexImage(MAZE_GL_TEXTURE_2D, 0, originFormat, dataType, result.getDataRW()));
+            MAZE_GL_CALL(mzglGetTexImage(MAZE_GL_TEXTURE_2D, 0, originFormat, dataType, _outResult.getDataRW()));
 
-            return result;
+            return true;
         }
 
         if (mzglFramebufferTexture2D)
@@ -633,9 +632,8 @@ namespace Maze
             MAZE_GL_CALL(mzglGenFramebuffers(1, &tempFBO));
             MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_FRAMEBUFFER, tempFBO));
 
-            PixelSheet2D result;
-            result.setFormat(PixelFormat::RGBA_U8);
-            result.setSize(m_size);
+            _outResult.setFormat(PixelFormat::RGBA_U8);
+            _outResult.setSize(m_size);
 
             MAZE_GL_CALL(mzglFramebufferTexture2D(MAZE_GL_FRAMEBUFFER, MAZE_GL_COLOR_ATTACHMENT0, MAZE_GL_TEXTURE_2D, m_glTexture, 0));
             MAZE_GL_CALL(mzglCheckFramebufferStatus(MAZE_GL_FRAMEBUFFER));
@@ -643,17 +641,17 @@ namespace Maze
                 mzglReadPixels(
                     0,
                     0,
-                    result.getWidth(),
-                    result.getHeight(),
+                    _outResult.getWidth(),
+                    _outResult.getHeight(),
                     MAZE_GL_RGBA,
                     MAZE_GL_UNSIGNED_BYTE,
-                    result.getDataRW()));
+                    _outResult.getDataRW()));
 
             MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_PACK_ALIGNMENT, 4));
             MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_FRAMEBUFFER, currentFBO));
             MAZE_GL_CALL(mzglDeleteFramebuffers(1, &tempFBO));
 
-            return result;
+            return true;
         }
 
         /*
@@ -701,7 +699,7 @@ namespace Maze
 
         MAZE_WARNING("Not supported!");
 
-        return PixelSheet2D();
+        return false;
     }
 
     //////////////////////////////////////////
