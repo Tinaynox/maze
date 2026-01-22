@@ -41,10 +41,10 @@ namespace Maze
 {
     struct MAZE_CORE_API GeoLocationData
     {
-        String name;
+        String name; // #TODO: Replace with CString
         S32 callingCode;
-        String iso2;
-        String iso3;
+        String iso2; // #TODO: Replace with CString
+        String iso3; // #TODO: Replace with CString
     };
 
 

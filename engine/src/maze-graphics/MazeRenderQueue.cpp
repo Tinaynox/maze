@@ -96,6 +96,7 @@ namespace Maze
         if (m_currentRenderPass == _renderPass)
             return;
 
+        MAZE_BP_IF(!_renderPass);
         m_currentRenderPass = _renderPass;
 
         m_renderCommandsBuffer.createCommand<RenderCommandSetRenderPass>(_renderPass);

@@ -199,6 +199,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline static CString GetOfbxRootBoneName(ofbx::Object const* _bone)
+    {
+        if (!_bone->getParent() || !_bone->getParent()->getParent() || _bone->getParent()->getParent()->getType() != ofbx::Object::Type::NULL_NODE)
+            return _bone->name;
+        return GetOfbxRootBoneName(_bone->getParent());
+    }
+
+    //////////////////////////////////////////
     static bool LoadFBX(
         ofbx::IScene* _scene,
         Mesh& _mesh,
@@ -462,6 +470,12 @@ namespace Maze
                         continue;
 
                     CString boneName = bone->name;
+                    if (StringHelper::IsStartsWith(boneName, "Ctrl_"))
+                        continue;
+
+                    CString rootBoneName = GetOfbxRootBoneName(bone);
+                    if (StringHelper::IsStartsWith(rootBoneName, "Ctrl_"))
+                        continue;
 
                     auto meshSkeletonBoneIndex = meshSkeleton->ensureBoneIndex(HashedCString(boneName));
 
@@ -475,7 +489,6 @@ namespace Maze
                     
                     auto& meshSkeletonBone = meshSkeleton->getBone(meshSkeletonBoneIndex);
                     meshSkeletonBone.parentBoneIndex = parentBoneIndex;
-
                     
                     TMat bindPoseTransformMS = ConvertOpenFBXMatrixToTMat(cluster->getTransformLinkMatrix());
                     bindPoseTransformMS = convertUnitsMat.transform(bindPoseTransformMS);

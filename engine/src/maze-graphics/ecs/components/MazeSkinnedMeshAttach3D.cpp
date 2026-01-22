@@ -148,6 +148,9 @@ namespace Maze
             return;
 
         MeshSkeletonPtr const& skeleton = m_skeleton->getRenderMesh()->getMesh()->getSkeleton();
+        if (!skeleton)
+            return;
+
         m_boneIndex = skeleton->findBoneIndex(HashedCString(m_boneName.c_str()));
         if (m_boneIndex == -1)
         {

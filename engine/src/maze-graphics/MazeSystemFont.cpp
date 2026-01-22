@@ -82,6 +82,7 @@ namespace Maze
         }
         else
         {
+            // #TODO: Replace with ResourceId
             StringHelper::FormatString(_data, "ptr:%p", _value);
         }
     }
