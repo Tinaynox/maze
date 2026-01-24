@@ -529,36 +529,43 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void drawAABB(
+        void drawWireAABB(
             AABB2D const& _aabb,
             F32 _duration,
             GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
-        inline void drawAABB(
+        inline void drawWireAABB(
             AABB2D const& _aabb,
             GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawAABB(_aabb, -1.0f, _gizmosMode, _renderMode);
+            drawWireAABB(_aabb, -1.0f, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
-        void drawAABB(
+        void drawWireAABB(
             AABB3D const& _aabb,
             F32 _duration,
             GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
-        void drawAABB(
+        void drawWireAABB(
             AABB3D const& _aabb,
             GizmosMode _gizmosMode = GizmosMode::Debug,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawAABB(_aabb, -1.0f, _gizmosMode, _renderMode);
+            drawWireAABB(_aabb, -1.0f, _gizmosMode, _renderMode);
         }
+
+        //////////////////////////////////////////
+        void drawSolidAABB(
+            AABB3D const& _aabb,
+            F32 _duration,
+            GizmosMode _gizmosMode = GizmosMode::Debug,
+            MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
 
         //////////////////////////////////////////

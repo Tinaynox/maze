@@ -222,6 +222,9 @@ namespace Maze
         
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR F32 const getMaxY() const { return m_max.y; }
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR F32 const getMaxZ() const { return m_max.z; }
         
         //////////////////////////////////////////
         inline AABB3D& operator=(AABB3D const& _aabb)
@@ -245,6 +248,12 @@ namespace Maze
         inline MAZE_CONSTEXPR bool operator==(AABB3D const& _aabb) const
         {
             return m_min == _aabb.m_min && m_max == _aabb.m_max;
+        }
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR bool operator!=(AABB3D const& _aabb) const
+        {
+            return !operator==(_aabb);
         }
         
         //////////////////////////////////////////

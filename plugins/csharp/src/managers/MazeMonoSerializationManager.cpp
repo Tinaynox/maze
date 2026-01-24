@@ -33,6 +33,8 @@
 #include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/serialization/MazeDataBlockBinarySerialization.hpp"
 #include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
+#include "maze-core/math/MazeAABB2D.hpp"
+#include "maze-core/math/MazeAABB3D.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
@@ -313,6 +315,74 @@ namespace Maze
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.Rect2F", Vec4F);
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.AssetUnitId", U32);
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Core.AssetFileId", U32);
+
+            // AABB2D
+            registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("Maze.Core.AABB2D"),
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+                {
+                    AABB2D value;
+                    _instance.getPropertyValue(_prop, value);
+                    ValueToDataBlock(value, *_dataBlock.ensureDataBlock(_prop->getName()));
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+                {
+                    AABB2D value;
+
+                    if (DataBlock const* dataBlock = _dataBlock.getDataBlock(_prop->getName()))
+                        ValueFromDataBlock(value, *dataBlock);
+                   
+                    _instance.setPropertyValue(_prop, value);
+                },
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+                {
+                    AABB2D value;
+                    _instance.getFieldValue(_field, value);
+                    ValueToDataBlock(value, *_dataBlock.ensureDataBlock(_field->getName()));
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+                {
+                    AABB2D value;
+
+                    DataBlock const* dataBlock = _dataBlock.getDataBlock(_field->getName());
+                    if (dataBlock)
+                        ValueFromDataBlock(value, *dataBlock);
+
+                    _instance.setFieldValue(_field, value);
+                });
+
+            // AABB3D
+            registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("Maze.Core.AABB3D"),
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+                {
+                    AABB3D value;
+                    _instance.getPropertyValue(_prop, value);
+                    ValueToDataBlock(value, *_dataBlock.ensureDataBlock(_prop->getName()));
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+                {
+                    AABB3D value;
+
+                    if (DataBlock const* dataBlock = _dataBlock.getDataBlock(_prop->getName()))
+                        ValueFromDataBlock(value, *dataBlock);
+
+                    _instance.setPropertyValue(_prop, value);
+                },
+                [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+                {
+                    AABB3D value;
+                    _instance.getFieldValue(_field, value);
+                    ValueToDataBlock(value, *_dataBlock.ensureDataBlock(_field->getName()));
+                },
+                [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+                {
+                    AABB3D value;
+
+                    DataBlock const* dataBlock = _dataBlock.getDataBlock(_field->getName());
+                    if (dataBlock)
+                        ValueFromDataBlock(value, *dataBlock);
+
+                    _instance.setFieldValue(_field, value);
+                });
 
 
             // DataBlock

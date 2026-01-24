@@ -137,18 +137,18 @@ namespace Maze
             Vec3F sphereCenter = Vec3F(4.0f, 6.0f, 1.0f);
             F32 sphereRadius = 1.0f;
             if (Math::RaycastSphere(r.getPoint(), r.getDirection(), sphereCenter, sphereRadius, dist))
-                GizmosHelper::DrawSphere(sphereCenter, sphereRadius, ColorF128::c_yellow);
+                GizmosHelper::DrawSolidSphere(sphereCenter, sphereRadius, ColorF128::c_yellow);
             else
-                GizmosHelper::DrawSphere(sphereCenter, sphereRadius, ColorF128::c_red);
+                GizmosHelper::DrawSolidSphere(sphereCenter, sphereRadius, ColorF128::c_red);
 
             Vec3F cylinderCenter = Vec3F(7.0f, 6.0f, 1.0f);
             Vec3F cylinderForward = (Vec3F::c_unitY + Vec3F::c_unitZ).normalizedCopy();
             F32 cylinderRadius = 1.5f;
             F32 cylinderHeight = 3.0f;
             if (Math::RaycastCylinder(r.getPoint(), r.getDirection(), cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, dist))
-                GizmosHelper::DrawCylinder(cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, ColorF128::c_yellow);
+                GizmosHelper::DrawSolidCylinder(cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, ColorF128::c_yellow);
             else
-                GizmosHelper::DrawCylinder(cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, ColorF128::c_red);
+                GizmosHelper::DrawSolidCylinder(cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, ColorF128::c_red);
 
 
             Vec3F coneCenter = Vec3F(1.0f, 6.0f, 1.0f);
@@ -156,9 +156,9 @@ namespace Maze
             F32 coneRadius = 1.5f;
             F32 coneHeight = 3.0f;
             if (Math::RaycastCone(r.getPoint(), r.getDirection(), coneCenter, coneForward, coneRadius, coneHeight, dist))
-                GizmosHelper::DrawCone(coneCenter, coneForward, coneRadius, coneHeight, ColorF128::c_yellow);
+                GizmosHelper::DrawSolidCone(coneCenter, coneForward, coneRadius, coneHeight, ColorF128::c_yellow);
             else
-                GizmosHelper::DrawCone(coneCenter, coneForward, coneRadius, coneHeight, ColorF128::c_red);
+                GizmosHelper::DrawSolidCone(coneCenter, coneForward, coneRadius, coneHeight, ColorF128::c_red);
 
 
             Vec3F cubeCenter = Vec3F(-3.0f, 3.0f, 0.0f);
@@ -166,9 +166,9 @@ namespace Maze
             Vec3F cubeUp = cubeForward.crossProduct((Vec3F::c_unitY + Vec3F::c_unitX).normalizedCopy());
             Vec3F cubeScale = Vec3F(3.0f, 0.5f, 5.0f);
             if (Math::RaycastCube(r.getPoint(), r.getDirection(), cubeCenter, cubeForward, cubeUp, cubeScale, dist))
-                GizmosHelper::DrawCube(cubeCenter, cubeForward, cubeUp, cubeScale, ColorF128::c_yellow);
+                GizmosHelper::DrawSolidCube(cubeCenter, cubeForward, cubeUp, cubeScale, ColorF128::c_yellow);
             else
-                GizmosHelper::DrawCube(cubeCenter, cubeForward, cubeUp, cubeScale, ColorF128::c_red);
+                GizmosHelper::DrawSolidCube(cubeCenter, cubeForward, cubeUp, cubeScale, ColorF128::c_red);
 
 
             Vec3F torusCenter = Vec3F(-3.0f, -3.0f, 0.0f);
@@ -176,9 +176,9 @@ namespace Maze
             F32 torusRadius = 0.5f;
             F32 torusCsRadius = 0.1f;
             if (Math::RaycastTorus(r.getPoint(), r.getDirection(), torusCenter, torusForward, torusRadius, torusCsRadius, dist))
-                GizmosHelper::DrawTorus(torusCenter, torusForward, torusRadius, ColorF128::c_yellow);
+                GizmosHelper::DrawSolidTorus(torusCenter, torusForward, torusRadius, ColorF128::c_yellow);
             else
-                GizmosHelper::DrawTorus(torusCenter, torusForward, torusRadius, ColorF128::c_red);
+                GizmosHelper::DrawSolidTorus(torusCenter, torusForward, torusRadius, ColorF128::c_red);
 
 
             GizmosHelper::SetColor(ColorF128::c_green);

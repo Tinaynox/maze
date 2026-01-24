@@ -106,7 +106,7 @@ namespace Maze
                 }
                 case MeshRenderMode::Transparent:
                 {
-                    material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::Always);
+                    material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
                     material->getFirstRenderPass()->setRenderQueueIndex(200);
                     break;
                 }
@@ -768,7 +768,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawAABB(
+    void GizmosDrawer::drawWireAABB(
         AABB2D const& _aabb,
         F32 _duration,
         GizmosMode _gizmosMode,
@@ -781,7 +781,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawAABB(
+    void GizmosDrawer::drawWireAABB(
         AABB3D const& _aabb,
         F32 _duration,
         GizmosMode _gizmosMode,
@@ -801,6 +801,86 @@ namespace Maze
         drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z, _duration, _gizmosMode, _renderMode);
         drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z, _duration, _gizmosMode, _renderMode);
         drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z, _duration, _gizmosMode, _renderMode);
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawSolidAABB(
+        AABB3D const& _aabb,
+        F32 _duration,
+        GizmosMode _gizmosMode,
+        MeshRenderMode _renderMode)
+    {
+        // Top face (y = maxY)
+        drawTriangle(
+            Vec3F(_aabb.getMinX(), _aabb.getMaxY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMinX(), _aabb.getMaxY(), _aabb.getMaxZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMaxY(), _aabb.getMinZ()),
+            _duration, _gizmosMode, _renderMode);
+        drawTriangle(
+            Vec3F(_aabb.getMaxX(), _aabb.getMaxY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMinX(), _aabb.getMaxY(), _aabb.getMaxZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMaxY(), _aabb.getMaxZ()),
+            _duration, _gizmosMode, _renderMode);
+
+        // Bottom face (y = minY)
+        drawTriangle(
+            Vec3F(_aabb.getMinX(), _aabb.getMinY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMinY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMinX(), _aabb.getMinY(), _aabb.getMaxZ()),
+            _duration, _gizmosMode, _renderMode);
+        drawTriangle(
+            Vec3F(_aabb.getMaxX(), _aabb.getMinY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMinY(), _aabb.getMaxZ()),
+            Vec3F(_aabb.getMinX(), _aabb.getMinY(), _aabb.getMaxZ()),
+            _duration, _gizmosMode, _renderMode);
+
+        // Front face (z = minZ)
+        drawTriangle(
+            Vec3F(_aabb.getMinX(), _aabb.getMinY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMinX(), _aabb.getMaxY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMinY(), _aabb.getMinZ()),
+            _duration, _gizmosMode, _renderMode);
+        drawTriangle(
+            Vec3F(_aabb.getMinX(), _aabb.getMaxY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMaxY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMinY(), _aabb.getMinZ()),
+            _duration, _gizmosMode, _renderMode);
+
+        // Back face (z = maxZ)
+        drawTriangle(
+            Vec3F(_aabb.getMinX(), _aabb.getMinY(), _aabb.getMaxZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMinY(), _aabb.getMaxZ()),
+            Vec3F(_aabb.getMinX(), _aabb.getMaxY(), _aabb.getMaxZ()),
+            _duration, _gizmosMode, _renderMode);
+        drawTriangle(
+            Vec3F(_aabb.getMaxX(), _aabb.getMinY(), _aabb.getMaxZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMaxY(), _aabb.getMaxZ()),
+            Vec3F(_aabb.getMinX(), _aabb.getMaxY(), _aabb.getMaxZ()),
+            _duration, _gizmosMode, _renderMode);
+
+        // Left face (x = minX)
+        drawTriangle(
+            Vec3F(_aabb.getMinX(), _aabb.getMinY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMinX(), _aabb.getMinY(), _aabb.getMaxZ()),
+            Vec3F(_aabb.getMinX(), _aabb.getMaxY(), _aabb.getMinZ()),
+            _duration, _gizmosMode, _renderMode);
+        drawTriangle(
+            Vec3F(_aabb.getMinX(), _aabb.getMinY(), _aabb.getMaxZ()),
+            Vec3F(_aabb.getMinX(), _aabb.getMaxY(), _aabb.getMaxZ()),
+            Vec3F(_aabb.getMinX(), _aabb.getMaxY(), _aabb.getMinZ()),
+            _duration, _gizmosMode, _renderMode);
+
+        // Right face (x = maxX)
+        drawTriangle(
+            Vec3F(_aabb.getMaxX(), _aabb.getMinY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMaxY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMinY(), _aabb.getMaxZ()),
+            _duration, _gizmosMode, _renderMode);
+        drawTriangle(
+            Vec3F(_aabb.getMaxX(), _aabb.getMaxY(), _aabb.getMinZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMaxY(), _aabb.getMaxZ()),
+            Vec3F(_aabb.getMaxX(), _aabb.getMinY(), _aabb.getMaxZ()),
+            _duration, _gizmosMode, _renderMode);
     }
 
     //////////////////////////////////////////
@@ -839,7 +919,7 @@ namespace Maze
         GizmosMode _gizmosMode,
         MeshRenderMode _renderMode)
     {
-        if (_duration <= 0.0f)
+        if MAZE_CONSTEXPR17 (_duration <= 0.0f)
         {
             drawTriangle(_point0, _point1, _point2, _gizmosMode, _renderMode);
             return;

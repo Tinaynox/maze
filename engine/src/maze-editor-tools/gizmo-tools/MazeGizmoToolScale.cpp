@@ -100,7 +100,7 @@ namespace Maze
                 //    len += m_deltaLength / scale;
             }
 
-            GizmosHelper::DrawCylinder(
+            GizmosHelper::DrawSolidCylinder(
                 _axis * ((len - GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize * 0.5f) * 0.5f + GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize * 0.5f),
                 _axis,
                 GizmoToolConfig::c_transformGizmoToolArrowLineRadius,
@@ -109,7 +109,7 @@ namespace Maze
                 0.0f,
                 gizmosMode,
                 renderMode);
-            GizmosHelper::DrawCube(
+            GizmosHelper::DrawSolidCube(
                 _axis * (len + GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f),
                 _axis,
                 _axis.perpendicular(),
@@ -122,7 +122,7 @@ namespace Maze
 
         auto drawCenterAll = [&, this](ColorF128 const& _color)
         {
-            GizmosHelper::DrawCube(
+            GizmosHelper::DrawSolidCube(
                 Vec3F::c_zero,
                 Vec3F::c_unitZ,
                 Vec3F::c_unitY,
@@ -139,7 +139,7 @@ namespace Maze
             Vec3F const& _axis)
         {
             /*
-            GizmosHelper::DrawCylinder(
+            GizmosHelper::DrawSolidCylinder(
                 transform.transformAffine(_axis * length * 0.5f),
                 basisTransform.transformAffine(_axis).normalizedCopy(),
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
@@ -148,7 +148,7 @@ namespace Maze
                 0.0f,
                 renderMode);
 
-            GizmosHelper::DrawCube(
+            GizmosHelper::DrawSolidCube(
                 transform.transformAffine(_axis * (length + GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f)),
                 basisTransform.transformAffine(_axis).normalizedCopy(),
                 basisTransform.transformAffine(_axis.perpendicular()).normalizedCopy(),
@@ -298,8 +298,8 @@ namespace Maze
                 Vec3F delta = endPoint - m_startPoint;
 
 #if 0
-                GizmosHelper::DrawSphere(m_startPoint, 0.1f, ColorF128::c_red, 0.1f);
-                GizmosHelper::DrawSphere(endPoint, 0.1f, ColorF128::c_green, 0.1f);
+                GizmosHelper::DrawSolidSphere(m_startPoint, 0.1f, ColorF128::c_red, 0.1f);
+                GizmosHelper::DrawSolidSphere(endPoint, 0.1f, ColorF128::c_green, 0.1f);
 #endif
 
                 if (m_usingAxis == 3)

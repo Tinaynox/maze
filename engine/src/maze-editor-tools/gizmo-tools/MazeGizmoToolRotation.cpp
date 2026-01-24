@@ -94,7 +94,7 @@ namespace Maze
         {
             GizmosHelper::SetColor(_color);
 
-            GizmosHelper::DrawCylinder(
+            GizmosHelper::DrawSolidCylinder(
                 _axis * length * 0.5f,
                 _axis,
                 GizmoToolConfig::c_transformGizmoToolArrowLineRadius,
@@ -119,7 +119,7 @@ namespace Maze
             Vec3F const& _axis)
         {
             /*
-            GizmosHelper::DrawTorus(
+            GizmosHelper::DrawSolidTorus(
                 Vec3F::c_zero,
                 basisTransform.transformAffine(_axis).normalizedCopy(),
                 scale * GizmoToolConfig::c_transformGizmoToolRotationRadius,

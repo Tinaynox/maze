@@ -134,7 +134,7 @@ namespace Maze
                     aabb3D.applyUnion(vertices[i]);
 
                 _drawer->setColor(ColorF128::c_white);
-                _drawer->drawAABB(aabb3D);
+                _drawer->drawWireAABB(aabb3D);
             }
             */
         }

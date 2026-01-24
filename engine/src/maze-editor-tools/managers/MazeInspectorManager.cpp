@@ -124,6 +124,8 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerU8, MetaPropertyDrawer);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerAABB2D, MetaPropertyDrawer);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerAABB3D, MetaPropertyDrawer);
 
 
     //////////////////////////////////////////
@@ -228,6 +230,8 @@ namespace Maze
         registerPropertyDrawer<Vec2U, PropertyDrawerVec2U32>();
         registerPropertyDrawer<Vec3F, PropertyDrawerVec3F32>();
         registerPropertyDrawer<Rect2F, PropertyDrawerRect2F>();
+        registerPropertyDrawer<AABB2D, PropertyDrawerAABB2D>();
+        registerPropertyDrawer<AABB3D, PropertyDrawerAABB3D>();
         registerPropertyDrawer<String, PropertyDrawerString>();
         registerPropertyDrawer<Quaternion, PropertyDrawerQuaternion>();
         registerPropertyDrawer<ColorU32, PropertyDrawerColorU32>();
@@ -255,6 +259,8 @@ namespace Maze
         registerMetaPropertyDrawer<Vec2U, MetaPropertyDrawerVec2U32>();
         registerMetaPropertyDrawer<Vec3F, MetaPropertyDrawerVec3F32>();
         registerMetaPropertyDrawer<Rect2F, MetaPropertyDrawerRect2F>();
+        registerMetaPropertyDrawer<AABB2D, MetaPropertyDrawerAABB2D>();
+        registerMetaPropertyDrawer<AABB3D, MetaPropertyDrawerAABB3D>();
         registerMetaPropertyDrawer<String, MetaPropertyDrawerString>();
         registerMetaPropertyDrawer<Quaternion, MetaPropertyDrawerQuaternion>();
         registerMetaPropertyDrawer<ColorU32, MetaPropertyDrawerColorU32>();

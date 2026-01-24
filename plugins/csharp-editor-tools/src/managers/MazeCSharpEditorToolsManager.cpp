@@ -37,6 +37,8 @@
 #include "maze-editor-tools/property-drawers/MazePDVec2S32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDVec2U32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDRect2F.hpp"
+#include "maze-editor-tools/property-drawers/MazePDAABB2D.hpp"
+#include "maze-editor-tools/property-drawers/MazePDAABB3D.hpp"
 #include "maze-editor-tools/property-drawers/MazePDColorU32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDColorF128.hpp"
 #include "maze-editor-tools/property-drawers/MazePDEntityPtr.hpp"
@@ -681,6 +683,42 @@ namespace Maze
             Rect2F value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
         },
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerRect2F const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerAABB2D>(MAZE_HCS("Maze.Core.AABB2D"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerAABB2D* _drawer)
+        {
+            AABB2D value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerAABB2D const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerAABB2D* _drawer)
+        {
+            AABB2D value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerAABB2D const* _drawer)
+        {
+            _instance.setFieldValue(_field, _drawer->getValue());
+        });
+
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerAABB3D>(MAZE_HCS("Maze.Core.AABB3D"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerAABB3D* _drawer)
+        {
+            AABB3D value; _instance.getPropertyValue(_property, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerAABB3D const* _drawer)
+        {
+            _instance.setPropertyValue(_property, _drawer->getValue());
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerAABB3D* _drawer)
+        {
+            AABB3D value; _instance.getFieldValue(_field, value); _drawer->setValue(value);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerAABB3D const* _drawer)
         {
             _instance.setFieldValue(_field, _drawer->getValue());
         });

@@ -95,7 +95,7 @@ namespace Maze
         {
             GizmosHelper::SetColor(_color);
 
-            GizmosHelper::DrawCylinder(
+            GizmosHelper::DrawSolidCylinder(
                 scale * _axis * length * 0.5f,
                 _axis,
                 scale * GizmoToolConfig::c_transformGizmoToolArrowLineRadius,
@@ -104,7 +104,7 @@ namespace Maze
                 0.0f,
                 gizmosMode,
                 renderMode);
-            GizmosHelper::DrawCone(
+            GizmosHelper::DrawSolidCone(
                 scale * _axis * length,
                 _axis,
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
@@ -121,7 +121,7 @@ namespace Maze
             Vec3F const& _axis)
         {
 #if 0
-            GizmosHelper::DrawCylinder(
+            GizmosHelper::DrawSolidCylinder(
                 transform.transform(scale * _axis * length * 0.5f),
                 basisTransform.transform(_axis).normalizedCopy(),
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
@@ -131,7 +131,7 @@ namespace Maze
                 gizmosMode,
                 renderMode);
 
-            GizmosHelper::DrawCone(
+            GizmosHelper::DrawSolidCone(
                 transform.transform(scale * _axis * length),
                 basisTransform.transform(_axis).normalizedCopy(),
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius * 4.0f,
@@ -262,8 +262,8 @@ namespace Maze
                 Vec3F newWorldPosition = m_startPosition + delta;
                 
 #if 0
-                GizmosHelper::DrawSphere(m_startPoint, 0.1f, ColorF128::c_red, 0.1f);
-                GizmosHelper::DrawSphere(endPoint, 0.1f, ColorF128::c_green, 0.1f);
+                GizmosHelper::DrawSolidSphere(m_startPoint, 0.1f, ColorF128::c_red, 0.1f);
+                GizmosHelper::DrawSolidSphere(endPoint, 0.1f, ColorF128::c_green, 0.1f);
 #endif
 
                 TMat parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()

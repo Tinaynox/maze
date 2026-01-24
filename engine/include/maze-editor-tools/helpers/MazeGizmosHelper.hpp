@@ -241,21 +241,28 @@ namespace Maze
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawAABB(
+        MAZE_EDITOR_TOOLS_API void DrawWireAABB(
             AABB2D const& _aabb,
             F32 _duration = 0.0f,
             GizmosDrawer::GizmosMode _gizmosMode = GizmosDrawer::GizmosMode::Debug,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawAABB(
+        MAZE_EDITOR_TOOLS_API void DrawWireAABB(
             AABB3D const& _aabb,
             F32 _duration = 0.0f,
             GizmosDrawer::GizmosMode _gizmosMode = GizmosDrawer::GizmosMode::Debug,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawTriangle(
+        MAZE_EDITOR_TOOLS_API void DrawSolidAABB(
+            AABB3D const& _aabb,
+            F32 _duration,
+            GizmosDrawer::GizmosMode _gizmosMode = GizmosDrawer::GizmosMode::Debug,
+            GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawSolidTriangle(
             Vec3F const& _point0,
             Vec3F const& _point1,
             Vec3F const& _point2,
@@ -264,7 +271,7 @@ namespace Maze
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawQuad(
+        MAZE_EDITOR_TOOLS_API void DrawSolidQuad(
             Vec3F const& _position,
             Vec3F const& _forward,
             Vec3F const& _up,
@@ -275,7 +282,7 @@ namespace Maze
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawCube(
+        MAZE_EDITOR_TOOLS_API void DrawSolidCube(
             Vec3F const& _position,
             Vec3F const& _forward,
             Vec3F const& _up,
@@ -286,7 +293,7 @@ namespace Maze
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawSphere(
+        MAZE_EDITOR_TOOLS_API void DrawSolidSphere(
             Vec3F const& _position,
             F32 _radius,
             ColorF128 const& _color,
@@ -295,7 +302,7 @@ namespace Maze
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawCone(
+        MAZE_EDITOR_TOOLS_API void DrawSolidCone(
             Vec3F const& _position,
             Vec3F const& _forward,
             Vec3F const& _up,
@@ -307,7 +314,7 @@ namespace Maze
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
-        inline void DrawCone(
+        inline void DrawSolidCone(
             Vec3F const& _position,
             Vec3F const& _forward,
             F32 _radius,
@@ -317,11 +324,11 @@ namespace Maze
             GizmosDrawer::GizmosMode _gizmosMode = GizmosDrawer::GizmosMode::Debug,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque)
         {
-            DrawCone(_position, _forward, _forward.perpendicular(), _radius, _height, _color, _duration, _gizmosMode, _renderMode);
+            DrawSolidCone(_position, _forward, _forward.perpendicular(), _radius, _height, _color, _duration, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawCylinder(
+        MAZE_EDITOR_TOOLS_API void DrawSolidCylinder(
             Vec3F const& _position,
             Vec3F const& _forward,
             Vec3F const& _up,
@@ -333,7 +340,7 @@ namespace Maze
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
-        inline void DrawCylinder(
+        inline void DrawSolidCylinder(
             Vec3F const& _position,
             Vec3F const& _forward,
             F32 _radius,
@@ -343,11 +350,11 @@ namespace Maze
             GizmosDrawer::GizmosMode _gizmosMode = GizmosDrawer::GizmosMode::Debug,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque)
         {
-            DrawCylinder(_position, _forward, _forward.perpendicular(), _radius, _height, _color, _duration, _gizmosMode, _renderMode);
+            DrawSolidCylinder(_position, _forward, _forward.perpendicular(), _radius, _height, _color, _duration, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawTorus(
+        MAZE_EDITOR_TOOLS_API void DrawSolidTorus(
             Vec3F const& _position,
             Vec3F const& _forward,
             F32 _radius,

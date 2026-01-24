@@ -334,7 +334,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawAABB(
+        MAZE_EDITOR_TOOLS_API void DrawWireAABB(
             AABB2D const& _aabb,
             F32 _duration,
             GizmosDrawer::GizmosMode _gizmosMode,
@@ -342,11 +342,11 @@ namespace Maze
         {
             GizmosDrawerPtr const& drawer = GetDrawer();
             if (drawer)
-                drawer->drawAABB(_aabb, _duration, _gizmosMode, _renderMode);
+                drawer->drawWireAABB(_aabb, _duration, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawAABB(
+        MAZE_EDITOR_TOOLS_API void DrawWireAABB(
             AABB3D const& _aabb,
             F32 _duration,
             GizmosDrawer::GizmosMode _gizmosMode,
@@ -354,11 +354,23 @@ namespace Maze
         {
             GizmosDrawerPtr const& drawer = GetDrawer();
             if (drawer)
-                drawer->drawAABB(_aabb, _duration, _gizmosMode, _renderMode);
+                drawer->drawWireAABB(_aabb, _duration, _gizmosMode, _renderMode);
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawTriangle(
+        MAZE_EDITOR_TOOLS_API void DrawSolidAABB(
+            AABB3D const& _aabb,
+            F32 _duration,
+            GizmosDrawer::GizmosMode _gizmosMode,
+            GizmosDrawer::MeshRenderMode _renderMode)
+        {
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawSolidAABB(_aabb, _duration, _gizmosMode, _renderMode);
+        }
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawSolidTriangle(
             Vec3F const& _point0,
             Vec3F const& _point1,
             Vec3F const& _point2,
@@ -372,7 +384,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawQuad(
+        MAZE_EDITOR_TOOLS_API void DrawSolidQuad(
             Vec3F const& _position,
             Vec3F const& _forward,
             Vec3F const& _up,
@@ -389,7 +401,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawCube(
+        MAZE_EDITOR_TOOLS_API void DrawSolidCube(
             Vec3F const& _position,
             Vec3F const& _forward,
             Vec3F const& _up,
@@ -406,7 +418,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawSphere(
+        MAZE_EDITOR_TOOLS_API void DrawSolidSphere(
             Vec3F const& _position,
             F32 _radius,
             ColorF128 const& _color,
@@ -420,7 +432,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawCone(
+        MAZE_EDITOR_TOOLS_API void DrawSolidCone(
             Vec3F const& _position,
             Vec3F const& _forward,
             Vec3F const& _up,
@@ -437,7 +449,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawCylinder(
+        MAZE_EDITOR_TOOLS_API void DrawSolidCylinder(
             Vec3F const& _position,
             Vec3F const& _forward,
             Vec3F const& _up,
@@ -454,7 +466,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void DrawTorus(
+        MAZE_EDITOR_TOOLS_API void DrawSolidTorus(
             Vec3F const& _position,
             Vec3F const& _forward,
             F32 _radius,
