@@ -114,6 +114,7 @@ namespace Maze
         {
             while (!renderMeshPool.second.empty())
             {
+                Debug::Log("Deleting render mesh: %s...", renderMeshPool.second.top()->getName().c_str());
                 MAZE_DELETE(renderMeshPool.second.top());
                 renderMeshPool.second.pop();
             }
