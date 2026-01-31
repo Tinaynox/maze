@@ -84,7 +84,7 @@ namespace Maze
             }
         }
 
-        if (m_typeName.getString().find("<") != String::npos)
+        if (m_typeName.getString().find('<') != String::npos)
             m_flags |= (U8)ScriptFieldFlags::GenericType;
     }
 

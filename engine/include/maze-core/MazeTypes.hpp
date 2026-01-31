@@ -35,6 +35,7 @@
 #include "maze-core/hash/MazeHashCRC.hpp"
 #include "maze-core/hash/MazeHashSuperFast.hpp"
 #include "maze-core/hash/MazeHashFNV1.hpp"
+#include "maze-core/data/MazeSpan.hpp"
 #include <string>
 #include <vector>
 #include <list>
@@ -54,6 +55,9 @@ namespace Maze
     using StringAllocator = StdMemoryAllocator<char, NedMemoryAllocator>;
     using WStringAllocator = StdMemoryAllocator<wchar_t, NedMemoryAllocator>;
 
+
+    //////////////////////////////////////////
+    using CStringSpan = Span<Char const>;
 
     //////////////////////////////////////////
     using String = std::basic_string<char, std::char_traits<char>, StringAllocator>;

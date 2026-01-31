@@ -60,6 +60,18 @@ namespace Maze
     namespace MonoHelper
     {
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API CStringSpan GetMonoGenericClassBaseName(CString _genericClassName);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API CStringSpan GetMonoGenericClassFirstGenericArgumentName(CString _genericClassName);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoClass* GetMonoGenericClassFirstGenericArgumentClass(MonoClass* _monoClass);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API CStringSpan GetMonoGenericClassGenericArgumentName(CString _genericClassName, Size _index);
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API HashedString BuildMonoClassFullName(
             MonoClass* _class);
 

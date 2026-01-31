@@ -524,6 +524,7 @@ namespace Maze
     inline S32 CreateSubMesh()
     {
         SubMeshPtr subMesh = SubMesh::Create();
+        subMesh->setName("Mono Mesh");
         subMesh.incRef();
         return subMesh->getResourceId();
     }
@@ -698,7 +699,9 @@ namespace Maze
     inline S32 CreateRenderMesh()
     {
         RenderMeshPtr renderMesh = RenderMesh::Create();
+        renderMesh->setName(MAZE_HS("Mono Mesh"));
         renderMesh.incRef();
+        Debug::Log("Mono Mesh created(%x).", renderMesh.get());
         return renderMesh->getResourceId();
     }
 
@@ -709,7 +712,10 @@ namespace Maze
             [_renderMeshId]()
             {
                 if (RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId))
+                {
+                    Debug::Log("Mono Mesh destroyed(%x).", renderMesh);
                     renderMesh->getSharedPtr().decRef();
+                }
             });
     }
 
@@ -897,7 +903,9 @@ namespace Maze
             return c_invalidResourceId;
 
         MaterialPtr materialCopy = material->createCopy();
+        materialCopy->setName(MAZE_HS("Mono Material"));
         materialCopy.incRef();
+        Debug::Log("Mono Material created(%x).", materialCopy.get());
         return materialCopy->getResourceId();
     }
 
@@ -908,7 +916,10 @@ namespace Maze
             [_materialId]()
             {
                 if (Material* material = Material::GetResource(_materialId))
+                {
+                    Debug::Log("Mono Material destroyed(%x).", material);
                     material->getSharedPtr().decRef();
+                }
             });
     }
 
@@ -990,6 +1001,7 @@ namespace Maze
     inline S32 CreateTexture2D()
     {
         Texture2DPtr texture = Texture2D::Create();
+        texture->setName("Mono Texture");
         texture.incRef();
         return texture->getResourceId();
     }

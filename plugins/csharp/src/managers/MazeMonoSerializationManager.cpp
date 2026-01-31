@@ -695,14 +695,16 @@ namespace Maze
     {
         if (_property->isGenericType())
         {
-            Size genericSubTypeIndex = _property->getTypeName().getString().find('<');
-            if (genericSubTypeIndex == String::npos)
+            CStringSpan monoTypeBaseName = MonoHelper::GetMonoGenericClassBaseName(_property->getTypeName().c_str());
+            if (monoTypeBaseName.empty())
                 return false;
 
-            // #TODO: Rework without string copying
-            HashedString genericBaseType = HashedString(_property->getTypeName().getString().substr(0, genericSubTypeIndex));
+            Char monoTypeBaseNameBuffer[256];
+            memcpy_s(monoTypeBaseNameBuffer, sizeof(monoTypeBaseNameBuffer), monoTypeBaseName.ptr(), monoTypeBaseName.size());
+            monoTypeBaseNameBuffer[monoTypeBaseName.size()] = 0;
+            HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
 
-            auto it = m_propertyDataBlockSerializationData.find(genericBaseType);
+            auto it = m_propertyDataBlockSerializationData.find(monoTypeBaseNameHCS);
             if (it == m_propertyDataBlockSerializationData.end())
                 return false;
 
@@ -753,14 +755,16 @@ namespace Maze
     {
         if (_property->isGenericType())
         {
-            Size genericSubTypeIndex = _property->getTypeName().getString().find('<');
-            if (genericSubTypeIndex == String::npos)
+            CStringSpan monoTypeBaseName = MonoHelper::GetMonoGenericClassBaseName(_property->getTypeName().c_str());
+            if (monoTypeBaseName.empty())
                 return false;
 
-            // #TODO: Rework without string copying
-            HashedString genericBaseType = HashedString(_property->getTypeName().getString().substr(0, genericSubTypeIndex));
+            Char monoTypeBaseNameBuffer[256];
+            memcpy_s(monoTypeBaseNameBuffer, sizeof(monoTypeBaseNameBuffer), monoTypeBaseName.ptr(), monoTypeBaseName.size());
+            monoTypeBaseNameBuffer[monoTypeBaseName.size()] = 0;
+            HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
 
-            auto it = m_propertyDataBlockSerializationData.find(genericBaseType);
+            auto it = m_propertyDataBlockSerializationData.find(monoTypeBaseNameHCS);
             if (it == m_propertyDataBlockSerializationData.end())
                 return false;
 
@@ -833,14 +837,16 @@ namespace Maze
     {
         if (_field->isGenericType())
         {
-            Size genericSubTypeIndex = _field->getTypeName().getString().find('<');
-            if (genericSubTypeIndex == String::npos)
+            CStringSpan monoTypeBaseName = MonoHelper::GetMonoGenericClassBaseName(_field->getTypeName().c_str());
+            if (monoTypeBaseName.empty())
                 return false;
 
-            // #TODO: Rework without string copying
-            HashedString genericBaseType = HashedString(_field->getTypeName().getString().substr(0, genericSubTypeIndex));
+            Char monoTypeBaseNameBuffer[256];
+            memcpy_s(monoTypeBaseNameBuffer, sizeof(monoTypeBaseNameBuffer), monoTypeBaseName.ptr(), monoTypeBaseName.size());
+            monoTypeBaseNameBuffer[monoTypeBaseName.size()] = 0;
+            HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
 
-            auto it = m_fieldDataBlockSerializationData.find(genericBaseType);
+            auto it = m_fieldDataBlockSerializationData.find(monoTypeBaseNameHCS);
             if (it == m_fieldDataBlockSerializationData.end())
                 return false;
             
@@ -891,14 +897,16 @@ namespace Maze
     {
         if (_field->isGenericType())
         {
-            Size genericSubTypeIndex = _field->getTypeName().getString().find('<');
-            if (genericSubTypeIndex == String::npos)
+            CStringSpan monoTypeBaseName = MonoHelper::GetMonoGenericClassBaseName(_field->getTypeName().c_str());
+            if (monoTypeBaseName.empty())
                 return false;
 
-            // #TODO: Rework without string copying
-            HashedString genericBaseType = HashedString(_field->getTypeName().getString().substr(0, genericSubTypeIndex));
+            Char monoTypeBaseNameBuffer[256];
+            memcpy_s(monoTypeBaseNameBuffer, sizeof(monoTypeBaseNameBuffer), monoTypeBaseName.ptr(), monoTypeBaseName.size());
+            monoTypeBaseNameBuffer[monoTypeBaseName.size()] = 0;
+            HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
 
-            auto it = m_fieldDataBlockSerializationData.find(genericBaseType);
+            auto it = m_fieldDataBlockSerializationData.find(monoTypeBaseNameHCS);
             if (it == m_fieldDataBlockSerializationData.end())
                 return false;
 
@@ -1061,21 +1069,23 @@ namespace Maze
             {
                 // CString monoClassName = mono_class_get_name(objectClass);
                 CString monoTypeName = mono_type_get_name(monoType);
-                CString genericSubTypeStartPtr = strchr(monoTypeName, '<');
-                MAZE_ERROR_RETURN_IF(genericSubTypeStartPtr == nullptr, "Invalid generic class - %s", monoTypeName);
-                // CString genericSubTypeEndPtr = strrchr(monoClassName, '>');
-                // MAZE_ERROR_RETURN_IF(genericSubTypeEndPtr == nullptr, "Invalid generic class[2] - %s", monoClassName);
 
-                HashedString monoClassBaseName(monoTypeName, genericSubTypeStartPtr - monoTypeName);
+                CStringSpan monoTypeBaseName = MonoHelper::GetMonoGenericClassBaseName(monoTypeName);
+                MAZE_ERROR_RETURN_IF(monoTypeBaseName.size() == 0, "Invalid generic class - %s", monoTypeName);
+
+                Char monoTypeBaseNameBuffer[256];
+                memcpy_s(monoTypeBaseNameBuffer, sizeof(monoTypeBaseNameBuffer), monoTypeBaseName.ptr(), monoTypeBaseName.size());
+                monoTypeBaseNameBuffer[monoTypeBaseName.size()] = 0;
+                HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
                 
-                auto it2 = m_serializeGenericMonoObjectToDataBlockFunctions.find(monoClassBaseName.asHashedCString());
+                auto it2 = m_serializeGenericMonoObjectToDataBlockFunctions.find(monoTypeBaseNameHCS);
                 if (it2 != m_serializeGenericMonoObjectToDataBlockFunctions.end())
                 {
                     it2->second(_object, _dataBlock);
                 }
                 else
                 {
-                    MAZE_WARNING("Unsupported generic type serialization - %s!", monoClassBaseName.c_str());
+                    MAZE_WARNING("Unsupported generic type serialization - %s!", monoTypeBaseNameBuffer);
                 }
             }
         }

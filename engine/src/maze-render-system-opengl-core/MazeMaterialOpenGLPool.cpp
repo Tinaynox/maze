@@ -57,9 +57,9 @@ namespace Maze
     {
         MAZE_MUTEX_SCOPED_LOCK(m_mutex);
 
-        Stack<MaterialOpenGL*>* materialPool = nullptr;
+        Deque<MaterialOpenGL*>* materialPool = nullptr;
 
-        Map<ContextOpenGL*, Stack<MaterialOpenGL*>>::iterator it = m_materialPools.find(_contextOpenGL);
+        Map<ContextOpenGL*, Deque<MaterialOpenGL*>>::iterator it = m_materialPools.find(_contextOpenGL);
         if (it == m_materialPools.end())
         {
             _contextOpenGL->eventDestroyed.subscribe(this, &MaterialOpenGLPool::notifyContextDestroyed);
@@ -79,9 +79,10 @@ namespace Maze
 
         if (!materialPool->empty())
         {
-            MaterialOpenGL* ptr = materialPool->top();
-            materialPool->pop();
+            MaterialOpenGL* ptr = materialPool->back();
+            materialPool->pop_back();
 
+            Debug::Log("Reusing material %s(%x)...", ptr->getName().c_str(), ptr);
             MaterialOpenGLPtr sharedPtr(
                 ptr,
                 deleter);
@@ -95,6 +96,8 @@ namespace Maze
                 _contextOpenGL,
                 deleter);
 
+            Debug::Log("New material created - %x...", sharedPtr->getName().c_str(), sharedPtr.get());
+
             return sharedPtr;
         }
     }
@@ -106,6 +109,8 @@ namespace Maze
     {
         MAZE_MUTEX_SCOPED_LOCK(m_mutex);
 
+        Debug::Log("Releasing material %s(%x)...", _ptr->getName().c_str(), _ptr);
+
         auto& materialPool = m_materialPools[_contextOpenGL];
 #if (MAZE_DEBUG)
         _ptr->setName(MAZE_HS("PoolMaterialOpenGL"));
@@ -113,7 +118,13 @@ namespace Maze
         _ptr->setName(HashedString());
 #endif
         _ptr->clear();
-        materialPool.push(_ptr);
+
+        // #TODO: Remove later
+        MAZE_ERROR_RETURN_IF(
+            std::find(materialPool.begin(), materialPool.end(), _ptr) != materialPool.end(),
+            "Material %s(%x) double release!", _ptr->getName().c_str(), _ptr);
+
+        materialPool.push_back(_ptr);
     }
 
     //////////////////////////////////////////
@@ -121,12 +132,16 @@ namespace Maze
     {
         MAZE_MUTEX_SCOPED_LOCK(m_mutex);
 
+        Debug::Log("MaterialOpenGLPool::clear()");
+
         for (auto& materialPool : m_materialPools)
         {
             while (!materialPool.second.empty())
             {
-                MAZE_DELETE(materialPool.second.top());
-                materialPool.second.pop();
+                MaterialOpenGL* material = materialPool.second.back();
+                Debug::Log("Deleting material %s(%x)...", material->getName().c_str(), material);
+                MAZE_DELETE(material);
+                materialPool.second.pop_back();
             }
 
             materialPool.first->eventDestroyed.unsubscribe(this);
@@ -143,8 +158,8 @@ namespace Maze
 
         while (!materialPool.empty())
         {
-            MAZE_DELETE(materialPool.top());
-            materialPool.pop();
+            MAZE_DELETE(materialPool.back());
+            materialPool.pop_back();
         }
 
         m_materialPools.erase(_contextOpenGL);

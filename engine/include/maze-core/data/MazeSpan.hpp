@@ -91,10 +91,26 @@ namespace Maze
         inline void setSize(Size _size) { m_size = _size; }
 
         //////////////////////////////////////////
-        inline TValue* getPtr() const { return m_ptr; }
+        inline Size getSize() const { return m_size; }
 
         //////////////////////////////////////////
-        inline Size getSize() const { return m_size; }
+        inline Size size() const { return m_size; }
+
+        //////////////////////////////////////////
+        inline bool empty() const { return m_size == 0; }
+
+
+        //////////////////////////////////////////
+        inline TValue* getPtr() { return m_ptr; }
+
+        //////////////////////////////////////////
+        inline TValue* ptr() { return m_ptr; }
+
+        //////////////////////////////////////////
+        inline TValue const* getPtr() const { return m_ptr; }
+
+        //////////////////////////////////////////
+        inline TValue const* ptr() const { return m_ptr; }
 
 
         //////////////////////////////////////////

@@ -25,5 +25,12 @@ namespace Maze.Core
                 list.AddRange(Enumerable.Repeat(element, size - count));
             }
         }
+
+        public static void AddDefault<T>(this List<T> list)
+        {
+            Debug.LogError("AddDefaut!!");
+            Debug.LogError($"list={list}");
+            list.Add(default(T));
+        }
     }
 }

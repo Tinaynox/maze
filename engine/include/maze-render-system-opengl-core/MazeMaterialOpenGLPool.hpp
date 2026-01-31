@@ -79,7 +79,7 @@ namespace Maze
 
         Mutex m_mutex;
 
-        Map<ContextOpenGL*, Stack<MaterialOpenGL*>> m_materialPools;
+        Map<ContextOpenGL*, Deque<MaterialOpenGL*>> m_materialPools;
     };
 
 } // namespace Maze

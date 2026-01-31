@@ -607,6 +607,21 @@ namespace Maze
         BindCppFunctionsEngine();
         BindCppFunctionsEditorTools();
 
+        MonoImage* systemImage = mono_get_corlib();
+        CreateScriptClass("System", "String", systemImage);
+        CreateScriptClass("System", "Char", systemImage);
+        CreateScriptClass("System", "Boolean", systemImage);
+        CreateScriptClass("System", "SByte", systemImage);
+        CreateScriptClass("System", "Int16", systemImage);
+        CreateScriptClass("System", "Int32", systemImage);
+        CreateScriptClass("System", "Int64", systemImage);
+        CreateScriptClass("System", "Byte", systemImage);
+        CreateScriptClass("System", "UInt16", systemImage);
+        CreateScriptClass("System", "UInt32", systemImage);
+        CreateScriptClass("System", "UInt64", systemImage);
+        CreateScriptClass("System", "Single", systemImage);
+        CreateScriptClass("System", "Double", systemImage);
+
         EventManager::GetInstancePtr()->broadcastEventImmediate<MonoInitializationEvent>();
 
         return true;

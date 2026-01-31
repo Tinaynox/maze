@@ -44,6 +44,134 @@ namespace Maze
     namespace MonoHelper
     {
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API CStringSpan GetMonoGenericClassBaseName(CString _genericClassName)
+        {
+            CString genericSubTypeStartPtr = strchr(_genericClassName, '<');
+            return CStringSpan(_genericClassName, genericSubTypeStartPtr - _genericClassName);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API CStringSpan GetMonoGenericClassFirstGenericArgumentName(CString _genericClassName)
+        {
+            CString start = strchr(_genericClassName, '<');
+            if (!start)
+                return CStringSpan();
+
+            start++;
+
+            if (*start == '\0')
+                return CStringSpan();
+
+            CString p = start;
+            S32 depth = 0;
+
+            while (*p != '\0')
+            {
+                if (*p == '<')
+                    depth++;
+                else
+                if (*p == '>')
+                {
+                    if (depth == 0)
+                        return CStringSpan(start, p - start);
+                    depth--;
+                }
+                else
+                if (*p == ',' && depth == 0)
+                    return CStringSpan(start, p - start);
+
+                p++;
+            }
+
+            return CStringSpan(start, p - start);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoClass* GetMonoGenericClassFirstGenericArgumentClass(MonoClass* _monoClass)
+        {
+            MonoType* monoType = mono_class_get_byref_type(_monoClass);
+            S32 monoTypeType = mono_type_get_type(monoType);
+
+            if (monoTypeType != MONO_TYPE_GENERICINST)
+                return nullptr;
+
+            CString monoTypeName = mono_type_get_name(monoType);
+
+            CStringSpan genericClassName = GetMonoGenericClassFirstGenericArgumentName(monoTypeName);
+            if (genericClassName.empty())
+                return nullptr;
+
+            Char monoTypeBaseNameBuffer[256];
+            memcpy_s(monoTypeBaseNameBuffer, sizeof(monoTypeBaseNameBuffer), genericClassName.ptr(), genericClassName.size());
+            monoTypeBaseNameBuffer[genericClassName.size()] = 0;
+            HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
+
+            ScriptClassPtr const& scriptClass = MonoEngine::GetScriptClass(monoTypeBaseNameHCS);
+            if (!scriptClass)
+                return nullptr;
+
+            return scriptClass->getMonoClass();
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API CStringSpan GetMonoGenericClassGenericArgumentName(CString _genericClassName, Size _index)
+        {
+            CString p = strchr(_genericClassName, '<');
+            if (!p)
+                return CStringSpan();
+
+            p++;
+
+            S32 currentIndex = 0;
+
+            while (*p != '\0' && *p != '>')
+            {
+                // Skip nested <...> if any
+                if (*p == '<')
+                {
+                    S32 depth = 1;
+                    p++;
+                    while (*p != '\0' && depth > 0)
+                    {
+                        if (*p == '<')
+                            depth++;
+                        else
+                        if (*p == '>')
+                            depth--;
+                        p++;
+                    }
+                    continue;
+                }
+
+                CString argStart = p;
+
+                // Find end of current argument (comma or >)
+                while (*p != '\0' && *p != ',' && *p != '>')
+                    p++;
+
+                if (currentIndex == _index)
+                {
+                    // Trim possible surrounding whitespace
+                    while (argStart < p && *argStart == ' ') argStart++;
+                    CString argEnd = p;
+                    while (argEnd > argStart && *(argEnd - 1) == ' ') argEnd--;
+                    return CStringSpan(argStart, argEnd - argStart);
+                }
+
+                currentIndex++;
+
+                if (*p == ',')
+                    p++;
+                
+                while (*p == ' ')
+                    p++;
+            }
+
+            return CStringSpan();
+        }
+
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API HashedString BuildMonoClassFullName(
             MonoClass* _class)
         {
@@ -538,23 +666,39 @@ namespace Maze
             MonoObject* _value)
         {
             MonoClass* listMonoClass = mono_object_get_class(_value);
-            MonoMethod* addMethod = mono_class_get_method_from_name(listMonoClass, "Add", 1);
             MonoMethod* clearMethod = mono_class_get_method_from_name(listMonoClass, "Clear", 0);
-            
+
             MonoHelper::InvokeMethod(_value, clearMethod, nullptr);
 
             for (DataBlock const* childData : _dataBlock)
             {
-                MonoObject* elementValue = MonoSerializationManager::GetInstancePtr()->createMonoObjectFromDataBlock(*childData);
+                MonoObject* elementValue = nullptr;
+                if (!childData->isEmpty())
+                    elementValue = MonoSerializationManager::GetInstancePtr()->createMonoObjectFromDataBlock(*childData);
             
                 if (elementValue != nullptr)
                 {
+                    MonoMethod* addMethod = mono_class_get_method_from_name(listMonoClass, "Add", 1);
+
                     MonoClass* klass = mono_object_get_class(elementValue);
                     bool isValueType = mono_class_is_valuetype(klass) != 0;
 
                     // #TODO: Optimize for value types - remove unnecessary boxing and unboxing
                     void* args[1] = { isValueType ? (void*)mono_object_unbox(elementValue) : (void*)&elementValue };
                     MonoHelper::InvokeMethod(_value, addMethod, args);
+                }
+                else
+                {
+                    MonoClass* elementClass = GetMonoGenericClassFirstGenericArgumentClass(listMonoClass);
+                    int S32 = 0;
+                    /*
+                    MonoImage* image = MonoEngine::GetCoreAssemblyImage();
+                    MonoClass* extensionsClass = mono_class_from_name(image, "Maze.Core", "ListExtra");
+                    MonoMethod* addDefaultStatic = mono_class_get_method_from_name(extensionsClass, "AddDefault", 1);
+
+                    void* args[1] = { _value };
+                    MonoHelper::InvokeMethod(nullptr, addDefaultStatic, args);
+                    */
                 }
             }
         }
