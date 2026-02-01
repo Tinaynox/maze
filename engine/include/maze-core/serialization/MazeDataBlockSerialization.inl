@@ -113,6 +113,8 @@ namespace Maze
     template <>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, CString const& _value) { _dataBlock.addCString(_name, _value); return true; }
     template <>
+    MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, Char* const& _value) { _dataBlock.addCString(_name, _value); return true; }
+    template <>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, HashedCString const& _value) { _dataBlock.addCString(_name, _value.str); return true; }
     template <>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, HashedString const& _value) { _dataBlock.addString(_name, _value.getString()); return true; }

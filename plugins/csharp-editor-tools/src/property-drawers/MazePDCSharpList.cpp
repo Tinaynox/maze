@@ -49,6 +49,7 @@
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
+#include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -92,12 +93,18 @@ namespace Maze
         MonoType* _monoType,
         DataBlock const& _dataBlock)
     {
-        String typeName = mono_type_get_name(_monoType);
-        Size index0 = typeName.find('<');
-        Size index1 = typeName.find_last_of('>');
-        HashedString subTypeName(typeName.substr(index0 + 1, index1 - index0 - 1));
+        CString monoTypeName = mono_type_get_name(_monoType);
+
+        CStringSpan monoTypeBaseName = MonoHelper::GetMonoGenericClassFirstGenericArgumentName(monoTypeName);
+        MAZE_ERROR_RETURN_VALUE_IF(monoTypeBaseName.size() == 0, false, "Invalid generic class - %s", monoTypeName);
+
+        Char monoTypeBaseNameBuffer[256];
+        memcpy_s(monoTypeBaseNameBuffer, sizeof(monoTypeBaseNameBuffer), monoTypeBaseName.ptr(), monoTypeBaseName.size());
+        monoTypeBaseNameBuffer[monoTypeBaseName.size()] = 0;
+        HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
         
-        ClassUID childPropertyClassUID = MonoEngine::GetCppTypeBindingClassUID(subTypeName);
+        ClassUID childPropertyClassUID = MonoEngine::GetCppTypeBindingClassUID(monoTypeBaseNameHCS);
+        MAZE_ERROR_RETURN_VALUE_IF(childPropertyClassUID == 0, false, "Undefined binding for monoType=%s", monoTypeBaseNameBuffer);
 
         if (!PropertyDrawerVector::init(childPropertyClassUID, _dataBlock))
             return false;

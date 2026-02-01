@@ -532,7 +532,14 @@ namespace Maze
             },
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerCSharpList const* _drawer)
             {
-                
+                MonoObject* listMonoObject = nullptr;
+                _instance.getPropertyValue(_property, listMonoObject);
+                if (listMonoObject)
+                {
+                    DataBlock dataBlock;
+                    _drawer->toDataBlock(dataBlock);
+                    MonoHelper::DeserializeDataBlockToMonoObjectList(dataBlock, listMonoObject);
+                }
             },
             [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerCSharpList* _drawer)
             {

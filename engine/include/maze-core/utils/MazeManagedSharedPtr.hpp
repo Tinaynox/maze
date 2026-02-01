@@ -543,14 +543,19 @@ namespace Maze
         //////////////////////////////////////////
         inline ManagedWeakPtr<T> const& weakFromThis()
         {
+            assert(isSharedExists());
             return m_thisPtr;
         }
 
         //////////////////////////////////////////
         inline ManagedSharedPtr<T> sharedFromThis()
         {
+            assert(isSharedExists());
             return ManagedSharedPtr<T>(m_thisPtr);
         }
+
+        //////////////////////////////////////////
+        inline Bool isSharedExists() const { return m_thisPtr.useCount() > 0; }
 
     private:
 

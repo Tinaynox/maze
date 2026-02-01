@@ -486,6 +486,7 @@ namespace Maze
         LoadCoreAssembly(MAZE_HCS("maze-csharp-core-lib.dll"));
 
 
+        RegisterCppTypeBindingData<String>(MAZE_HS("System.String"));
         RegisterCppTypeBindingData<U16>(MAZE_HS("System.Char")); // Wide char
         RegisterCppTypeBindingData<Bool>(MAZE_HS("System.Boolean"));
         RegisterCppTypeBindingData<S8>(MAZE_HS("System.SByte"));

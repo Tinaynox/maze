@@ -613,10 +613,13 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void SerializeMonoObjectStringToDataBlock(
-            MonoObject* _boxedValue,
+            MonoObject* _element,
             DataBlock& _dataBlock)
         {
-            MAZE_NOT_IMPLEMENTED;
+            MonoString* str = (MonoString*)_element;
+            Char* cstr = mono_string_to_utf8(str);
+            ValueToDataBlock(cstr, _dataBlock);
+            mono_free(cstr);
         }
 
         //////////////////////////////////////////
@@ -667,6 +670,7 @@ namespace Maze
         {
             MonoClass* listMonoClass = mono_object_get_class(_value);
             MonoMethod* clearMethod = mono_class_get_method_from_name(listMonoClass, "Clear", 0);
+            MonoMethod* addMethod = mono_class_get_method_from_name(listMonoClass, "Add", 1);
 
             MonoHelper::InvokeMethod(_value, clearMethod, nullptr);
 
@@ -678,27 +682,52 @@ namespace Maze
             
                 if (elementValue != nullptr)
                 {
-                    MonoMethod* addMethod = mono_class_get_method_from_name(listMonoClass, "Add", 1);
-
                     MonoClass* klass = mono_object_get_class(elementValue);
                     bool isValueType = mono_class_is_valuetype(klass) != 0;
 
                     // #TODO: Optimize for value types - remove unnecessary boxing and unboxing
-                    void* args[1] = { isValueType ? (void*)mono_object_unbox(elementValue) : (void*)&elementValue };
+                    void* args[1] = { isValueType ? (void*)mono_object_unbox(elementValue) : (void*)elementValue };
                     MonoHelper::InvokeMethod(_value, addMethod, args);
                 }
                 else
                 {
                     MonoClass* elementClass = GetMonoGenericClassFirstGenericArgumentClass(listMonoClass);
-                    int S32 = 0;
+                    
+                    if (mono_class_is_valuetype(elementClass))
+                    {
+                        // Create default struct (zeroed or default-constructed)
+                        MonoObject* def = mono_object_new(mono_domain_get(), elementClass);
+                        mono_runtime_object_init(def);  // important for structs with default ctor
+                        void* args[1] = { mono_object_unbox(def) };
+                        MonoHelper::InvokeMethod(_value, addMethod, args);
+                    }
+                    else
+                    {
+                        // null for reference types
+                        MonoObject* n = nullptr;
+                        void* args[1] = { n };
+                        MonoHelper::InvokeMethod(_value, addMethod, args);
+                    }
+
                     /*
                     MonoImage* image = MonoEngine::GetCoreAssemblyImage();
                     MonoClass* extensionsClass = mono_class_from_name(image, "Maze.Core", "ListExtra");
-                    MonoMethod* addDefaultStatic = mono_class_get_method_from_name(extensionsClass, "AddDefault", 1);
+                    MonoMethod* addDefaultStaticOpen = mono_class_get_method_from_name(extensionsClass, "AddDefault", 1);
 
-                    void* args[1] = { _value };
-                    MonoHelper::InvokeMethod(nullptr, addDefaultStatic, args);
+                    MonoType* typeArg[1] = { mono_class_get_type(elementClass) };
+
+                    mono_class_inflate_generic_method(
                     */
+                    /*
+                    MonoMethod* addDefaultStaticClosed = mono_class_inflate_generic_method(
+                        addDefaultStaticOpen,
+                        mono_method_get_class(addDefaultStaticOpen),   // usually the declaring class
+                        mono_method_get_context(addDefaultStaticOpen), // or mono_method_get_context(addDefaultOpen)
+                        typeArg);
+                    */
+
+                    //void* args[1] = { _value };
+                    //MonoHelper::InvokeMethod(nullptr, addDefaultStatic, args);
                 }
             }
         }

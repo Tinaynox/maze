@@ -1054,6 +1054,9 @@ namespace Maze
         MonoObject* _object,
         DataBlock& _dataBlock)
     {
+        if (!_object)
+            return;
+
         MonoClass* objectClass = mono_object_get_class(_object);
         auto it = m_serializeMonoObjectToDataBlockFunctions.find(objectClass);
         if (it != m_serializeMonoObjectToDataBlockFunctions.end())
@@ -1112,9 +1115,14 @@ namespace Maze
                     MonoClass* monoClass = mono_class_from_name(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Vec2F");
                     return mono_value_box(mono_get_root_domain(), monoClass, &_dataBlock.getVec2F(0));
                 }
+                case DataBlockParamType::ParamString:
+                {
+                    CString str = _dataBlock.getCString(0);
+                    return (MonoObject*)mono_string_new(mono_domain_get(), str);
+                }
                 default:
                 {
-                    Debug::LogError("Unsupported param type - %d", (S32)paramData.type);
+                    MAZE_ERROR("Unsupported param type - %d", (S32)paramData.type);
                     break;
                 }
             }

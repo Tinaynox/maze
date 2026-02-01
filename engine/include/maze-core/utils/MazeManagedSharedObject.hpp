@@ -74,7 +74,7 @@ namespace Maze
         template <class U>
         inline ManagedSharedPtr<U> cast()
         { 
-            MAZE_DEBUG_BP_IF(!weakFromThis());
+            MAZE_DEBUG_BP_IF(!isSharedExists());
             return Maze::static_pointer_cast<U>(getSharedPtr()); 
         }
 
@@ -102,7 +102,7 @@ namespace Maze
         //////////////////////////////////////////
         inline TPtr getSharedPtr()
         {
-            return sharedFromThis();
+            return isSharedExists() ? sharedFromThis() : nullptr;
         }
         
     protected:
