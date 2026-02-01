@@ -31,6 +31,7 @@
 #include "maze-render-system-opengl-core/MazePixelFormatOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeMaterialOpenGL.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
 
 
 //////////////////////////////////////////
@@ -96,7 +97,7 @@ namespace Maze
                 _contextOpenGL,
                 deleter);
 
-            Debug::Log("New material created - %x...", sharedPtr->getName().c_str(), sharedPtr.get());
+            Debug::Log("New material created - %s(%x)...", sharedPtr->getName().c_str(), sharedPtr.get());
 
             return sharedPtr;
         }
