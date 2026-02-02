@@ -701,7 +701,7 @@ namespace Maze
         RenderMeshPtr renderMesh = RenderMesh::Create();
         renderMesh->setName(MAZE_HS("Mono Mesh"));
         renderMesh.incRef();
-        Debug::Log("Mono Mesh created(%x).", renderMesh.get());
+        // Debug::Log("Mono Mesh created(%x).", renderMesh.get());
         return renderMesh->getResourceId();
     }
 
@@ -713,7 +713,7 @@ namespace Maze
             {
                 if (RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId))
                 {
-                    Debug::Log("Mono Mesh destroyed(%x).", renderMesh);
+                    // Debug::Log("Mono Mesh destroyed(%x).", renderMesh);
                     renderMesh->getSharedPtr().decRef();
                 }
             });
@@ -905,7 +905,7 @@ namespace Maze
         MaterialPtr materialCopy = material->createCopy();
         materialCopy->setName(MAZE_HS("Mono Material"));
         materialCopy.incRef();
-        Debug::Log("Mono Material created(%x).", materialCopy.get());
+        // Debug::Log("Mono Material created(%x).", materialCopy.get());
         return materialCopy->getResourceId();
     }
 
@@ -917,7 +917,7 @@ namespace Maze
             {
                 if (Material* material = Material::GetResource(_materialId))
                 {
-                    Debug::Log("Mono Material destroyed(%x).", material);
+                    // Debug::Log("Mono Material destroyed(%x).", material);
                     material->getSharedPtr().decRef();
                 }
             });

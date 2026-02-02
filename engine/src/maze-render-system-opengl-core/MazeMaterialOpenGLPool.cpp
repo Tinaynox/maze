@@ -83,7 +83,7 @@ namespace Maze
             MaterialOpenGL* ptr = materialPool->back();
             materialPool->pop_back();
 
-            Debug::Log("Reusing material %s(%x)...", ptr->getName().c_str(), ptr);
+            // Debug::Log("Reusing material %s(%x)...", ptr->getName().c_str(), ptr);
             MaterialOpenGLPtr sharedPtr(
                 ptr,
                 deleter);
@@ -97,7 +97,7 @@ namespace Maze
                 _contextOpenGL,
                 deleter);
 
-            Debug::Log("New material created - %s(%x)...", sharedPtr->getName().c_str(), sharedPtr.get());
+            // Debug::Log("New material created - %s(%x)...", sharedPtr->getName().c_str(), sharedPtr.get());
 
             return sharedPtr;
         }
@@ -110,7 +110,7 @@ namespace Maze
     {
         MAZE_MUTEX_SCOPED_LOCK(m_mutex);
 
-        Debug::Log("Releasing material %s(%x)...", _ptr->getName().c_str(), _ptr);
+        // Debug::Log("Releasing material %s(%x)...", _ptr->getName().c_str(), _ptr);
 
         auto& materialPool = m_materialPools[_contextOpenGL];
 #if (MAZE_DEBUG)
@@ -120,11 +120,6 @@ namespace Maze
 #endif
         _ptr->clear();
 
-        // #TODO: Remove later
-        MAZE_ERROR_RETURN_IF(
-            std::find(materialPool.begin(), materialPool.end(), _ptr) != materialPool.end(),
-            "Material %s(%x) double release!", _ptr->getName().c_str(), _ptr);
-
         materialPool.push_back(_ptr);
     }
 
@@ -133,14 +128,14 @@ namespace Maze
     {
         MAZE_MUTEX_SCOPED_LOCK(m_mutex);
 
-        Debug::Log("MaterialOpenGLPool::clear()");
+        // Debug::Log("MaterialOpenGLPool::clear()");
 
         for (auto& materialPool : m_materialPools)
         {
             while (!materialPool.second.empty())
             {
                 MaterialOpenGL* material = materialPool.second.back();
-                Debug::Log("Deleting material %s(%x)...", material->getName().c_str(), material);
+                // Debug::Log("Deleting material %s(%x)...", material->getName().c_str(), material);
                 MAZE_DELETE(material);
                 materialPool.second.pop_back();
             }
