@@ -231,20 +231,26 @@ namespace Maze
 
         U32 color = _color.toRGBA_U8();
 
-        for (S32 _r = 0; _r < m_size.y; ++_r)
-        {
-            Size offset = (Size)_r * (Size)m_bytesPerRow;
+        S32 pixelCount = m_size.x * m_size.y;
+        S32 bpp = m_bytesPerPixel;
 
-            for (S32 _c = 0; _c < m_size.x; ++_c)
-            {
-                void* pixelData = &m_data[offset + (Size)_c * (Size)m_bytesPerPixel];
+        for (Size i = 0; i < pixelCount; ++i)
+            reinterpret_cast<U32&>(m_data[i * bpp]) = color;
 
-                for (S32 b = 0; b < m_bytesPerPixel; ++b)
-                {
-                    *((U8*)pixelData + b) = (color >> b * 8) & 0xFF;
-                }
-            }
-        }
+        //for (S32 _r = 0; _r < m_size.y; ++_r)
+        //{
+        //    Size offset = (Size)_r * (Size)m_bytesPerRow;
+
+        //    for (S32 _c = 0; _c < m_size.x; ++_c)
+        //    {
+        //        void* pixelData = &m_data[offset + (Size)_c * (Size)m_bytesPerPixel];
+
+        //        for (S32 b = 0; b < m_bytesPerPixel; ++b)
+        //        {
+        //            *((U8*)pixelData + b) = (color >> b * 8) & 0xFF;
+        //        }
+        //    }
+        //}
     }
 
     //////////////////////////////////////////

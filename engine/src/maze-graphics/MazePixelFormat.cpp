@@ -34,7 +34,7 @@ namespace Maze
 {
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API String PixelFormat::ToString(PixelFormat::Enum _value)
+    MAZE_GRAPHICS_API CString PixelFormat::ToCString(PixelFormat::Enum _value)
     {
         switch (_value)
         {
@@ -136,99 +136,111 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API PixelFormat::Enum PixelFormat::FromString(String const& _value)
+    MAZE_GRAPHICS_API String PixelFormat::ToString(PixelFormat::Enum _value)
     {
-        if (_value == "R_S8") return R_S8;
-        if (_value == "R_U8") return R_U8;
-        if (_value == "R_S16") return R_S16;
-        if (_value == "R_U16") return R_U16;
-        if (_value == "R_F16") return R_F16;
-        if (_value == "R_S32") return R_S32;
-        if (_value == "R_U32") return R_U32;
-        if (_value == "R_F32") return R_F32;
-        
-        if (_value == "RG_S8") return RG_S8;
-        if (_value == "RG_U8") return RG_U8;
-        if (_value == "RG_S16") return RG_S16;
-        if (_value == "RG_U16") return RG_U16;
-        if (_value == "RG_F16") return RG_F16;
-        if (_value == "RG_S32") return RG_S32;
-        if (_value == "RG_U32") return RG_U32;
-        if (_value == "RG_F32") return RG_F32;
-        
-        if (_value == "RGB_U3_3_2") return RGB_U3_3_2;
-        if (_value == "RGB_U5_6_5") return RGB_U5_6_5;
-        if (_value == "RGB_S8") return RGB_S8;
-        if (_value == "RGB_U8") return RGB_U8;
-        if (_value == "RGB_F32") return RGB_F32;
-        
-        if (_value == "BGR_U5_6_5") return BGR_U5_6_5;
-        if (_value == "BGR_U8") return BGR_U8;
-        
-        if (_value == "RGBA_U5_5_5_1") return RGBA_U5_5_5_1;
-        if (_value == "RGBA_S8") return RGBA_S8;
-        if (_value == "RGBA_U8") return RGBA_U8;
-        if (_value == "RGBA_S16") return RGBA_S16;
-        if (_value == "RGBA_U16") return RGBA_U16;
-        if (_value == "RGBA_F16") return RGBA_F16;
-        if (_value == "RGBA_F32") return RGBA_F32;
-        
-        if (_value == "BGRA_U8") return BGRA_U8;
+        return PixelFormat::ToCString(_value);
+    }
 
-        if ("DXT1_RGB" == _value) return DXT1_RGB;
-        // if ("DXT2_RGBA" == _value) return DXT2_RGBA;
-        if ("DXT3_RGBA" == _value) return DXT3_RGBA;
-        // if ("DXT4_RGBA" == _value) return DXT4_RGBA;
-        if ("DXT5_RGBA" == _value) return DXT5_RGBA;
+    //////////////////////////////////////////
+    MAZE_GRAPHICS_API PixelFormat::Enum PixelFormat::FromString(CString _value)
+    {
+        if (strcmp(_value, "R_S8") == 0) return R_S8;
+        if (strcmp(_value, "R_U8") == 0) return R_U8;
+        if (strcmp(_value, "R_S16") == 0) return R_S16;
+        if (strcmp(_value, "R_U16") == 0) return R_U16;
+        if (strcmp(_value, "R_F16") == 0) return R_F16;
+        if (strcmp(_value, "R_S32") == 0) return R_S32;
+        if (strcmp(_value, "R_U32") == 0) return R_U32;
+        if (strcmp(_value, "R_F32") == 0) return R_F32;
         
-        if ("PVRTC1_RGBA4" == _value) return PVRTC1_RGBA4;
-        if ("PVRTC1_RGB4" == _value) return PVRTC1_RGB4;
-        if ("PVRTC1_RGBA2" == _value) return PVRTC1_RGBA2;
-        if ("PVRTC1_RGB2" == _value) return PVRTC1_RGB2;
-        if ("PVRTC2_RGBA2" == _value) return PVRTC2_RGBA2;
-        if ("PVRTC2_RGBA4" == _value) return PVRTC2_RGBA4;
+        if (strcmp(_value, "RG_S8") == 0) return RG_S8;
+        if (strcmp(_value, "RG_U8") == 0) return RG_U8;
+        if (strcmp(_value, "RG_S16") == 0) return RG_S16;
+        if (strcmp(_value, "RG_U16") == 0) return RG_U16;
+        if (strcmp(_value, "RG_F16") == 0) return RG_F16;
+        if (strcmp(_value, "RG_S32") == 0) return RG_S32;
+        if (strcmp(_value, "RG_U32") == 0) return RG_U32;
+        if (strcmp(_value, "RG_F32") == 0) return RG_F32;
         
-        if ("ETC2_RGB" == _value) return ETC2_RGB;
-        if ("ETC2_RGBA" == _value) return ETC2_RGBA;
-        if ("ETC2_RGB_A1" == _value) return ETC2_RGB_A1;
+        if (strcmp(_value, "RGB_U3_3_2") == 0) return RGB_U3_3_2;
+        if (strcmp(_value, "RGB_U5_6_5") == 0) return RGB_U5_6_5;
+        if (strcmp(_value, "RGB_S8") == 0) return RGB_S8;
+        if (strcmp(_value, "RGB_U8") == 0) return RGB_U8;
+        if (strcmp(_value, "RGB_F32") == 0) return RGB_F32;
         
-        if ("ASTC_RGBA_4x4" == _value) return ASTC_RGBA_4x4;
-        if ("ASTC_RGBA_5x4" == _value) return ASTC_RGBA_5x4;
-        if ("ASTC_RGBA_5x5" == _value) return ASTC_RGBA_5x5;
-        if ("ASTC_RGBA_6x5" == _value) return ASTC_RGBA_6x5;
-        if ("ASTC_RGBA_6x6" == _value) return ASTC_RGBA_6x6;
-        if ("ASTC_RGBA_8x5" == _value) return ASTC_RGBA_8x5;
-        if ("ASTC_RGBA_8x6" == _value) return ASTC_RGBA_8x6;
-        if ("ASTC_RGBA_8x8" == _value) return ASTC_RGBA_8x8;
-        if ("ASTC_RGBA_10x5" == _value) return ASTC_RGBA_10x5;
-        if ("ASTC_RGBA_10x6" == _value) return ASTC_RGBA_10x6;
-        if ("ASTC_RGBA_10x8" == _value) return ASTC_RGBA_10x8;
-        if ("ASTC_RGBA_10x10" == _value) return ASTC_RGBA_10x10;
-        if ("ASTC_RGBA_12x10" == _value) return ASTC_RGBA_12x10;
-        if ("ASTC_RGBA_12x12" == _value) return ASTC_RGBA_12x12;
-        if ("ASTC_SRGBA_4x4" == _value) return ASTC_SRGBA_4x4;
-        if ("ASTC_SRGBA_5x4" == _value) return ASTC_SRGBA_5x4;
-        if ("ASTC_SRGBA_5x5" == _value) return ASTC_SRGBA_5x5;
-        if ("ASTC_SRGBA_6x5" == _value) return ASTC_SRGBA_6x5;
-        if ("ASTC_SRGBA_6x6" == _value) return ASTC_SRGBA_6x6;
-        if ("ASTC_SRGBA_8x5" == _value) return ASTC_SRGBA_8x5;
-        if ("ASTC_SRGBA_8x6" == _value) return ASTC_SRGBA_8x6;
-        if ("ASTC_SRGBA_8x8" == _value) return ASTC_SRGBA_8x8;
-        if ("ASTC_SRGBA_10x5" == _value) return ASTC_SRGBA_10x5;
-        if ("ASTC_SRGBA_10x6" == _value) return ASTC_SRGBA_10x6;
-        if ("ASTC_SRGBA_10x8" == _value) return ASTC_SRGBA_10x8;
-        if ("ASTC_SRGBA_10x10" == _value) return ASTC_SRGBA_10x10;
-        if ("ASTC_SRGBA_12x10" == _value) return ASTC_SRGBA_12x10;
-        if ("ASTC_SRGBA_12x12" == _value) return ASTC_SRGBA_12x12;
+        if (strcmp(_value, "BGR_U5_6_5") == 0) return BGR_U5_6_5;
+        if (strcmp(_value, "BGR_U8") == 0) return BGR_U8;
         
-        if ("DEPTH_U16" == _value) return DEPTH_U16;
-        if ("DEPTH_U24" == _value) return DEPTH_U24;
-        if ("DEPTH_U32" == _value) return DEPTH_U32;
-        if ("DEPTH_F32" == _value) return DEPTH_F32;
-        if ("DEPTH_STENCIL_U24_8" == _value) return DEPTH_STENCIL_U24_8;
-        if ("DEPTH_STENCIL_F32_U8" == _value) return DEPTH_STENCIL_F32_U8;
+        if (strcmp(_value, "RGBA_U5_5_5_1") == 0) return RGBA_U5_5_5_1;
+        if (strcmp(_value, "RGBA_S8") == 0) return RGBA_S8;
+        if (strcmp(_value, "RGBA_U8") == 0) return RGBA_U8;
+        if (strcmp(_value, "RGBA_S16") == 0) return RGBA_S16;
+        if (strcmp(_value, "RGBA_U16") == 0) return RGBA_U16;
+        if (strcmp(_value, "RGBA_F16") == 0) return RGBA_F16;
+        if (strcmp(_value, "RGBA_F32") == 0) return RGBA_F32;
+        
+        if (strcmp(_value, "BGRA_U8") == 0) return BGRA_U8;
+
+        if (strcmp(_value, "DXT1_RGB") == 0) return DXT1_RGB;
+        // if (strcmp(_value, "DXT2_RGBA") == 0) return DXT2_RGBA;
+        if (strcmp(_value, "DXT3_RGBA") == 0) return DXT3_RGBA;
+        // if (strcmp(_value, "DXT4_RGBA") == 0) return DXT4_RGBA;
+        if (strcmp(_value, "DXT5_RGBA") == 0) return DXT5_RGBA;
+        
+        if (strcmp(_value, "PVRTC1_RGBA4") == 0) return PVRTC1_RGBA4;
+        if (strcmp(_value, "PVRTC1_RGB4") == 0) return PVRTC1_RGB4;
+        if (strcmp(_value, "PVRTC1_RGBA2") == 0) return PVRTC1_RGBA2;
+        if (strcmp(_value, "PVRTC1_RGB2") == 0) return PVRTC1_RGB2;
+        if (strcmp(_value, "PVRTC2_RGBA2") == 0) return PVRTC2_RGBA2;
+        if (strcmp(_value, "PVRTC2_RGBA4") == 0) return PVRTC2_RGBA4;
+        
+        if (strcmp(_value, "ETC2_RGB") == 0) return ETC2_RGB;
+        if (strcmp(_value, "ETC2_RGBA") == 0) return ETC2_RGBA;
+        if (strcmp(_value, "ETC2_RGB_A1") == 0) return ETC2_RGB_A1;
+        
+        if (strcmp(_value, "ASTC_RGBA_4x4") == 0) return ASTC_RGBA_4x4;
+        if (strcmp(_value, "ASTC_RGBA_5x4") == 0) return ASTC_RGBA_5x4;
+        if (strcmp(_value, "ASTC_RGBA_5x5") == 0) return ASTC_RGBA_5x5;
+        if (strcmp(_value, "ASTC_RGBA_6x5") == 0) return ASTC_RGBA_6x5;
+        if (strcmp(_value, "ASTC_RGBA_6x6") == 0) return ASTC_RGBA_6x6;
+        if (strcmp(_value, "ASTC_RGBA_8x5") == 0) return ASTC_RGBA_8x5;
+        if (strcmp(_value, "ASTC_RGBA_8x6") == 0) return ASTC_RGBA_8x6;
+        if (strcmp(_value, "ASTC_RGBA_8x8") == 0) return ASTC_RGBA_8x8;
+        if (strcmp(_value, "ASTC_RGBA_10x5") == 0) return ASTC_RGBA_10x5;
+        if (strcmp(_value, "ASTC_RGBA_10x6") == 0) return ASTC_RGBA_10x6;
+        if (strcmp(_value, "ASTC_RGBA_10x8") == 0) return ASTC_RGBA_10x8;
+        if (strcmp(_value, "ASTC_RGBA_10x10") == 0) return ASTC_RGBA_10x10;
+        if (strcmp(_value, "ASTC_RGBA_12x10") == 0) return ASTC_RGBA_12x10;
+        if (strcmp(_value, "ASTC_RGBA_12x12") == 0) return ASTC_RGBA_12x12;
+        if (strcmp(_value, "ASTC_SRGBA_4x4") == 0) return ASTC_SRGBA_4x4;
+        if (strcmp(_value, "ASTC_SRGBA_5x4") == 0) return ASTC_SRGBA_5x4;
+        if (strcmp(_value, "ASTC_SRGBA_5x5") == 0) return ASTC_SRGBA_5x5;
+        if (strcmp(_value, "ASTC_SRGBA_6x5") == 0) return ASTC_SRGBA_6x5;
+        if (strcmp(_value, "ASTC_SRGBA_6x6") == 0) return ASTC_SRGBA_6x6;
+        if (strcmp(_value, "ASTC_SRGBA_8x5") == 0) return ASTC_SRGBA_8x5;
+        if (strcmp(_value, "ASTC_SRGBA_8x6") == 0) return ASTC_SRGBA_8x6;
+        if (strcmp(_value, "ASTC_SRGBA_8x8") == 0) return ASTC_SRGBA_8x8;
+        if (strcmp(_value, "ASTC_SRGBA_10x5") == 0) return ASTC_SRGBA_10x5;
+        if (strcmp(_value, "ASTC_SRGBA_10x6") == 0) return ASTC_SRGBA_10x6;
+        if (strcmp(_value, "ASTC_SRGBA_10x8") == 0) return ASTC_SRGBA_10x8;
+        if (strcmp(_value, "ASTC_SRGBA_10x10") == 0) return ASTC_SRGBA_10x10;
+        if (strcmp(_value, "ASTC_SRGBA_12x10") == 0) return ASTC_SRGBA_12x10;
+        if (strcmp(_value, "ASTC_SRGBA_12x12") == 0) return ASTC_SRGBA_12x12;
+        
+        if (strcmp(_value, "DEPTH_U16") == 0) return DEPTH_U16;
+        if (strcmp(_value, "DEPTH_U24") == 0) return DEPTH_U24;
+        if (strcmp(_value, "DEPTH_U32") == 0) return DEPTH_U32;
+        if (strcmp(_value, "DEPTH_F32") == 0) return DEPTH_F32;
+        if (strcmp(_value, "DEPTH_STENCIL_U24_8") == 0) return DEPTH_STENCIL_U24_8;
+        if (strcmp(_value, "DEPTH_STENCIL_F32_U8") == 0) return DEPTH_STENCIL_F32_U8;
 
         return PixelFormat::None;
+    }
+
+    //////////////////////////////////////////
+    MAZE_GRAPHICS_API PixelFormat::Enum PixelFormat::FromString(String const& _value)
+    {
+        return PixelFormat::FromString(_value.c_str());
     }
     
     //////////////////////////////////////////

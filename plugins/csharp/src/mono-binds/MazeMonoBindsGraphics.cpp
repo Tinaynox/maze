@@ -1127,14 +1127,59 @@ namespace Maze
         S32 _sheet2DId,
         S32 _x,
         S32 _y,
-        U32 _pixel)
+        U32 _color)
     {
         if (PixelSheet2D* sheet = PixelSheet2D::GetResource(_sheet2DId))
         {
             MAZE_DEBUG_ASSERT(sheet->getBytesPerPixel() == 4);
-            sheet->setPixel(_x, _y, _pixel);
+            sheet->setPixel(_x, _y, _color);
         }
     }
+
+    //////////////////////////////////////////
+    inline void PixelSheet2DFillU32(S32 _sheet2DId, U32 _color)
+    {
+        if (PixelSheet2D* sheet = PixelSheet2D::GetResource(_sheet2DId))
+            sheet->fill(ColorU32(_color));
+    }
+
+    //////////////////////////////////////////
+    inline void PixelSheet2DBlend(S32 _sheet2DBaseId, S32 _sheet2DApplyId)
+    {
+        if (PixelSheet2D* sheetBase = PixelSheet2D::GetResource(_sheet2DBaseId))
+        {
+            if (PixelSheet2D* sheetApply = PixelSheet2D::GetResource(_sheet2DApplyId))
+            {
+                MAZE_ERROR_RETURN_IF(sheetBase->getFormat() != sheetApply->getFormat(), "Failed to blend pixel sheets because of different format %s vs %s",
+                    PixelFormat::ToCString(sheetBase->getFormat()), PixelFormat::ToCString(sheetApply->getFormat()));
+
+                MAZE_ERROR_RETURN_IF(sheetBase->getSize() != sheetApply->getSize(), "Failed to blend pixel sheets because of different size %dx%d vs %dx%d",
+                    sheetBase->getSize().x, sheetBase->getSize().y, sheetApply->getSize().x, sheetApply->getSize().y);
+
+                MAZE_ERROR_RETURN_IF(sheetBase->getFormat() != PixelFormat::RGBA_U8, "Failed to blend pixel sheets because of unsupported formal - %s", PixelFormat::ToCString(sheetBase->getFormat()));
+
+                S32 bpp = sheetBase->getBytesPerPixel();
+                Size pixelCount = sheetBase->getSize().x * sheetBase->getSize().y;
+
+                U8* dst = sheetBase->getDataRW();
+                U8 const* src = sheetApply->getDataRO();
+
+                for (Size i = 0; i < pixelCount; ++i)
+                {
+                    U32& d = reinterpret_cast<U32&>(dst[i * bpp]);
+                    U32  s = reinterpret_cast<U32 const&>(src[i * bpp]);
+
+                    U32 r = ((d & 0xFFu) * (s & 0xFFu)) / 255u;
+                    U32 g = (((d & 0xFF00u) >> 8) * ((s & 0xFF00u) >> 8)) / 255u;
+                    U32 b = (((d & 0xFF0000u) >> 16) * ((s & 0xFF0000u) >> 16)) / 255u;
+                    U32 a = (((d & 0xFF000000u) >> 24) * ((s & 0xFF000000u) >> 24)) / 255u;
+
+                    d = (a << 24) | (b << 16) | (g << 8) | r;
+                }
+            }
+        }
+    }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsGraphics()
@@ -1309,6 +1354,8 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DSetFormat);
         MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DGetPixelU32);
         MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DSetPixelU32);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DFillU32);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DBlend);
     }
 
 } // namespace Maze

@@ -455,7 +455,13 @@ namespace Maze.Graphics
         public extern static uint PixelSheet2DGetPixelU32(int sheetId, int x, int y);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void PixelSheet2DSetPixelU32(int sheetId, int x, int y, uint pixel);
+        public extern static void PixelSheet2DSetPixelU32(int sheetId, int x, int y, uint color);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void PixelSheet2DFillU32(int sheetId, uint color);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void PixelSheet2DBlend(int sheetBaseId, int sheetApplyId);
         #endregion
 
         #region Texture2D

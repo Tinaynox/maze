@@ -161,7 +161,13 @@ namespace Maze
         
 
         //////////////////////////////////////////
+        MAZE_GRAPHICS_API CString ToCString(Enum _value);
+
+        //////////////////////////////////////////
         MAZE_GRAPHICS_API String ToString(Enum _value);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API Enum FromString(CString _value);
 
         //////////////////////////////////////////
         MAZE_GRAPHICS_API Enum FromString(String const& _value);

@@ -48,6 +48,16 @@ namespace Maze.Graphics
             }
         }
 
+        public void Fill(ColorU32 color)
+        {
+            InternalCalls.PixelSheet2DFillU32(m_ResourceId, color.ToUInt());
+        }
+
+        public void BlendWith(PixelSheet2D otherSheet)
+        {
+            InternalCalls.PixelSheet2DBlend(m_ResourceId, otherSheet.ResourceId);
+        }
+
         public void SaveToFileAsTGA(string filename, bool resetAlpha = false)
         {
             InternalCalls.PixelSheet2DSaveToFileAsTGA(m_ResourceId, filename, resetAlpha);
