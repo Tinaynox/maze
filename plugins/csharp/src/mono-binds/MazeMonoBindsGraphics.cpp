@@ -1161,8 +1161,8 @@ namespace Maze
                 S32 bpp = sheetBase->getBytesPerPixel();
                 Size pixelCount = sheetBase->getSize().x * sheetBase->getSize().y;
 
-                U8* dst = sheetBase->getDataRW();
-                U8 const* src = sheetApply->getDataRO();
+                U8* __restrict dst = sheetBase->getDataRW();
+                U8 const* __restrict src = sheetApply->getDataRO();
 
                 for (Size i = 0; i < pixelCount; ++i)
                 {

@@ -234,8 +234,9 @@ namespace Maze
         S32 pixelCount = m_size.x * m_size.y;
         S32 bpp = m_bytesPerPixel;
 
+        U32* __restrict pixels = reinterpret_cast<U32*>(m_data.getDataRW());
         for (Size i = 0; i < pixelCount; ++i)
-            reinterpret_cast<U32&>(m_data[i * bpp]) = color;
+            pixels[i] = color;
 
         //for (S32 _r = 0; _r < m_size.y; ++_r)
         //{
