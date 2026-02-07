@@ -162,26 +162,24 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    MAZE_CORE_API String const& GeoLanguageToString(GeoLanguage _location)
+    MAZE_CORE_API CString GeoLanguageToString(GeoLanguage _location)
     {
-        static String const nullString = "Unknown";
-
         Map<GeoLanguage, GeoLanguageData>::const_iterator it = c_geoLanguages.find(_location);
         if (it != c_geoLanguages.end())
             return it->second.name;
 
-        return nullString;
+        return "Unknown";
     }
     
     //////////////////////////////////////////
-    MAZE_CORE_API GeoLanguage StringToGeoLanguage(String const& _str)
+    MAZE_CORE_API GeoLanguage StringToGeoLanguage(CString _str)
     {
         for (Map<GeoLanguage, GeoLanguageData>::const_iterator  it = c_geoLanguages.begin(),
                                                                 end = c_geoLanguages.end();
                                                                 it != end;
                                                                 ++it)
         {
-            if (it->second.name == _str)
+            if (strcmp(it->second.name, _str) == 0)
                 return it->first;
         }
 
@@ -189,26 +187,42 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_CORE_API String const& GeoLanguageToIETFTag(GeoLanguage _location)
+    MAZE_CORE_API GeoLanguage StringToGeoLanguage(CString _str, Size _count)
     {
-        static String const nullString = "";
+        if (!_str || _count == 0)
+            return GeoLanguage::Unknown;
 
+        for (Map<GeoLanguage, GeoLanguageData>::const_iterator  it = c_geoLanguages.begin(),
+            end = c_geoLanguages.end();
+            it != end;
+            ++it)
+        {
+            if (strncmp(it->second.name, _str, _count) == 0)
+                return it->first;
+        }
+
+        return GeoLanguage::Unknown;
+    }
+
+    //////////////////////////////////////////
+    MAZE_CORE_API CString GeoLanguageToIETFTag(GeoLanguage _location)
+    {
         Map<GeoLanguage, GeoLanguageData>::const_iterator it = c_geoLanguages.find(_location);
         if (it != c_geoLanguages.end())
             return it->second.ietfTag;
 
-        return nullString;
+        return "";
     }
     
     //////////////////////////////////////////
-    MAZE_CORE_API GeoLanguage IETFTagToGeoLanguage(String const& _str)
+    MAZE_CORE_API GeoLanguage IETFTagToGeoLanguage(CString _str)
     {
         for (Map<GeoLanguage, GeoLanguageData>::const_iterator  it = c_geoLanguages.begin(),
                                                                 end = c_geoLanguages.end();
                                                                 it != end;
                                                                 ++it)
         {
-            if (it->second.ietfTag == _str)
+            if (strcmp(it->second.ietfTag, _str) == 0)
                 return it->first;
         }
 
@@ -249,7 +263,7 @@ namespace Maze
             return;
         }
 
-        m_value = StringToGeoLanguage(String(_data, _data + _count));
+        m_value = StringToGeoLanguage(_data, _count);
     }
 
 } // namespace Maze

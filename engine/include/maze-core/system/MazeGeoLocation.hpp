@@ -41,10 +41,10 @@ namespace Maze
 {
     struct MAZE_CORE_API GeoLocationData
     {
-        String name; // #TODO: Replace with CString
+        CString name;
         S32 callingCode;
-        String iso2; // #TODO: Replace with CString
-        String iso3; // #TODO: Replace with CString
+        CString iso2;
+        CString iso3;
     };
 
 
@@ -355,10 +355,13 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    MAZE_CORE_API String const& GeoLocationToString(GeoLocation _location);
+    MAZE_CORE_API CString GeoLocationToString(GeoLocation _location);
     
     //////////////////////////////////////////
-    MAZE_CORE_API GeoLocation StringToGeoLocation(String const& _str);
+    MAZE_CORE_API GeoLocation StringToGeoLocation(CString _str);
+
+    //////////////////////////////////////////
+    MAZE_CORE_API GeoLocation StringToGeoLocation(CString _str, Size _count);
 
     //////////////////////////////////////////
     MAZE_CORE_API S32 GeoLocationToCallingCode(GeoLocation _location);
@@ -367,16 +370,16 @@ namespace Maze
     MAZE_CORE_API GeoLocation CallingCodeToGeoLocation(S32 _code);
 
     //////////////////////////////////////////
-    MAZE_CORE_API String const& GeoLocationToISO2(GeoLocation _location);
+    MAZE_CORE_API CString GeoLocationToISO2(GeoLocation _location);
 
     //////////////////////////////////////////
-    MAZE_CORE_API GeoLocation ISO2ToGeoLocation(String const& _code);
+    MAZE_CORE_API GeoLocation ISO2ToGeoLocation(CString _code);
 
     //////////////////////////////////////////
-    MAZE_CORE_API String const& GeoLocationToISO3(GeoLocation _location);
+    MAZE_CORE_API CString GeoLocationToISO3(GeoLocation _location);
 
     //////////////////////////////////////////
-    MAZE_CORE_API GeoLocation ISO3ToGeoLocation(String const& _code);
+    MAZE_CORE_API GeoLocation ISO3ToGeoLocation(CString _code);
 
 
     //////////////////////////////////////////

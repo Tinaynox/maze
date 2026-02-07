@@ -338,26 +338,39 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    MAZE_CORE_API String const& GeoLocationToString(GeoLocation _location)
+    MAZE_CORE_API CString GeoLocationToString(GeoLocation _location)
     {
-        static String const nullString = "Unknown";
-
         Map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
         if (it != c_geoLocations.end())
             return it->second.name;
 
-        return nullString;
+        return "Unknown";
     }
     
     //////////////////////////////////////////
-    MAZE_CORE_API GeoLocation StringToGeoLocation(String const& _str)
+    MAZE_CORE_API GeoLocation StringToGeoLocation(CString _str)
     {
         for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
                                                                 end = c_geoLocations.end();
                                                                 it != end;
                                                                 ++it)
         {
-            if (it->second.name == _str)
+            if (strcmp(it->second.name, _str) == 0)
+                return it->first;
+        }
+
+        return GeoLocation::Unknown;
+    }
+
+    //////////////////////////////////////////
+    MAZE_CORE_API GeoLocation StringToGeoLocation(CString _str, Size _count)
+    {
+        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
+            end = c_geoLocations.end();
+            it != end;
+            ++it)
+        {
+            if (strncmp(it->second.name, _str, _count) == 0)
                 return it->first;
         }
 
@@ -390,26 +403,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_CORE_API String const& GeoLocationToISO2(GeoLocation _location)
+    MAZE_CORE_API CString GeoLocationToISO2(GeoLocation _location)
     {
-        static String const nullString = "";
-
         Map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
         if (it != c_geoLocations.end())
             return it->second.iso2;
 
-        return nullString;
+        return "";
     }
     
     //////////////////////////////////////////
-    MAZE_CORE_API GeoLocation ISO2ToGeoLocation(String const& _str)
+    MAZE_CORE_API GeoLocation ISO2ToGeoLocation(CString _str)
     {
         for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
                                                                 end = c_geoLocations.end();
                                                                 it != end;
                                                                 ++it)
         {
-            if (it->second.iso2 == _str)
+            if (strcmp(it->second.iso2, _str) == 0)
                 return it->first;
         }
 
@@ -417,26 +428,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_CORE_API String const& GeoLocationToISO3(GeoLocation _location)
+    MAZE_CORE_API CString GeoLocationToISO3(GeoLocation _location)
     {
-        static String const nullString = "";
-
         Map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
         if (it != c_geoLocations.end())
             return it->second.iso3;
 
-        return nullString;
+        return "";
     }
     
     //////////////////////////////////////////
-    MAZE_CORE_API GeoLocation ISO3ToGeoLocation(String const& _str)
+    MAZE_CORE_API GeoLocation ISO3ToGeoLocation(CString _str)
     {
         for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
                                                                 end = c_geoLocations.end();
                                                                 it != end;
                                                                 ++it)
         {
-            if (it->second.iso3 == _str)
+            if (strcmp(it->second.iso3, _str))
                 return it->first;
         }
 
@@ -462,7 +471,7 @@ namespace Maze
             return;
         }
 
-        m_value = StringToGeoLocation(String(_data, _data + _count));
+        m_value = StringToGeoLocation(_data, _count);
     }
 
 } // namespace Maze

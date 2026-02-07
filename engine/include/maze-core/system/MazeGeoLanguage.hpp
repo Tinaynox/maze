@@ -42,8 +42,8 @@ namespace Maze
     //////////////////////////////////////////
     struct MAZE_CORE_API GeoLanguageData
     {
-        String name;
-        String ietfTag;
+        CString name;
+        CString ietfTag;
         Set<S32> localeCodes;
     };
 
@@ -182,17 +182,20 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    MAZE_CORE_API String const& GeoLanguageToString(GeoLanguage _location);
+    MAZE_CORE_API CString GeoLanguageToString(GeoLanguage _location);
     
     //////////////////////////////////////////
-    MAZE_CORE_API GeoLanguage StringToGeoLanguage(String const& _str);
+    MAZE_CORE_API GeoLanguage StringToGeoLanguage(CString _str);
+
+    //////////////////////////////////////////
+    MAZE_CORE_API GeoLanguage StringToGeoLanguage(CString _str, Size _count);
 
 
     //////////////////////////////////////////
-    MAZE_CORE_API String const& GeoLanguageToIETFTag(GeoLanguage _location);
+    MAZE_CORE_API CString GeoLanguageToIETFTag(GeoLanguage _location);
 
     //////////////////////////////////////////
-    MAZE_CORE_API GeoLanguage IETFTagToGeoLanguage(String const& _code);
+    MAZE_CORE_API GeoLanguage IETFTagToGeoLanguage(CString _code);
 
 
     //////////////////////////////////////////
