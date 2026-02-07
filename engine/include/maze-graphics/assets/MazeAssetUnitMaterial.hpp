@@ -82,6 +82,9 @@ namespace Maze
         //////////////////////////////////////////
         MaterialPtr const& initMaterial();
 
+        //////////////////////////////////////////
+        virtual bool isForceSetAssetFileName() const { return true; }
+
     protected:
 
         //////////////////////////////////////////

@@ -126,7 +126,7 @@ namespace Maze
             return m_material;
 
         m_material = Material::Create();
-        m_material->setName(HashedString(m_data.getString(MAZE_HCS("name"), assetFile->getFileName().toUTF8())));
+        m_material->setName(m_name);        
 
         if (MaterialManager::GetCurrentInstance())
         {
