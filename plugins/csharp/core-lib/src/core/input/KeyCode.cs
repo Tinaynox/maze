@@ -2,7 +2,7 @@ using System;
 
 namespace Maze.Core
 {
-    public enum KeyCode
+    public enum KeyCode : ushort
     {
         None                  = 0,            //
         Escape                = 1,            //

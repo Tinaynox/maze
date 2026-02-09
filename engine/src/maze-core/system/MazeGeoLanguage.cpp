@@ -32,7 +32,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    static Map<GeoLanguage, GeoLanguageData> const c_geoLanguages = 
+    static std::map<GeoLanguage, GeoLanguageData> const c_geoLanguages = 
     {
         std::make_pair(GeoLanguage::Afrikaans, GeoLanguageData{ "Afrikaans", "af", {1078} }),
         std::make_pair(GeoLanguage::Amharic, GeoLanguageData{ "Amharic", "am", {1118} }),
@@ -164,7 +164,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API CString GeoLanguageToString(GeoLanguage _location)
     {
-        Map<GeoLanguage, GeoLanguageData>::const_iterator it = c_geoLanguages.find(_location);
+        std::map<GeoLanguage, GeoLanguageData>::const_iterator it = c_geoLanguages.find(_location);
         if (it != c_geoLanguages.end())
             return it->second.name;
 
@@ -174,7 +174,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API GeoLanguage StringToGeoLanguage(CString _str)
     {
-        for (Map<GeoLanguage, GeoLanguageData>::const_iterator  it = c_geoLanguages.begin(),
+        for (std::map<GeoLanguage, GeoLanguageData>::const_iterator  it = c_geoLanguages.begin(),
                                                                 end = c_geoLanguages.end();
                                                                 it != end;
                                                                 ++it)
@@ -192,7 +192,7 @@ namespace Maze
         if (!_str || _count == 0)
             return GeoLanguage::Unknown;
 
-        for (Map<GeoLanguage, GeoLanguageData>::const_iterator  it = c_geoLanguages.begin(),
+        for (std::map<GeoLanguage, GeoLanguageData>::const_iterator  it = c_geoLanguages.begin(),
             end = c_geoLanguages.end();
             it != end;
             ++it)
@@ -207,7 +207,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API CString GeoLanguageToIETFTag(GeoLanguage _location)
     {
-        Map<GeoLanguage, GeoLanguageData>::const_iterator it = c_geoLanguages.find(_location);
+        std::map<GeoLanguage, GeoLanguageData>::const_iterator it = c_geoLanguages.find(_location);
         if (it != c_geoLanguages.end())
             return it->second.ietfTag;
 
@@ -217,7 +217,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API GeoLanguage IETFTagToGeoLanguage(CString _str)
     {
-        for (Map<GeoLanguage, GeoLanguageData>::const_iterator  it = c_geoLanguages.begin(),
+        for (std::map<GeoLanguage, GeoLanguageData>::const_iterator  it = c_geoLanguages.begin(),
                                                                 end = c_geoLanguages.end();
                                                                 it != end;
                                                                 ++it)
@@ -232,7 +232,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API GeoLanguage LocaleCodeToGeoLanguage(S32 _value)
     {
-        for (Map<GeoLanguage, GeoLanguageData>::const_iterator  it = c_geoLanguages.begin(),
+        for (std::map<GeoLanguage, GeoLanguageData>::const_iterator  it = c_geoLanguages.begin(),
             end = c_geoLanguages.end();
             it != end;
             ++it)

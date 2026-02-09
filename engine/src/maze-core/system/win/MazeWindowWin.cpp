@@ -312,7 +312,7 @@ namespace Maze
                 event.type = InputEventMouseType::Move;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
 
                 for (S32 i = 0; i < 3; ++i)
@@ -324,7 +324,7 @@ namespace Maze
                         event2.buttonId = i;
                         event2.x = event.x;
                         event2.y = event.y;
-                        event2.window = this;
+                        event2.windowId = getResourceId();
                         inputManager->generateInputEvent(event2);
                     }
                 }
@@ -345,7 +345,7 @@ namespace Maze
                 event.x = pt.x;
                 event.y = m_params->clientSize.y - pt.y;
                 event.z = GET_WHEEL_DELTA_WPARAM(_wParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }
@@ -359,7 +359,7 @@ namespace Maze
                 event.buttonId = 0;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }
@@ -371,7 +371,7 @@ namespace Maze
                 event.buttonId = 0;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }
@@ -385,7 +385,7 @@ namespace Maze
                 event.buttonId = 0;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }
@@ -399,7 +399,7 @@ namespace Maze
                 event.buttonId = 1;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }
@@ -411,7 +411,7 @@ namespace Maze
                 event.buttonId = 1;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }
@@ -425,7 +425,7 @@ namespace Maze
                 event.buttonId = 1;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }
@@ -439,7 +439,7 @@ namespace Maze
                 event.buttonId = 2;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }
@@ -451,7 +451,7 @@ namespace Maze
                 event.buttonId = 2;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }
@@ -466,7 +466,7 @@ namespace Maze
                 event.buttonId = 2;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }
@@ -481,7 +481,7 @@ namespace Maze
                 event.buttonId = GET_XBUTTON_WPARAM(_wParam) + 2;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }
@@ -493,7 +493,7 @@ namespace Maze
                 event.buttonId = GET_XBUTTON_WPARAM(_wParam) + 2;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }
@@ -508,7 +508,7 @@ namespace Maze
                 event.buttonId = GET_XBUTTON_WPARAM(_wParam) + 2;
                 event.x = GET_X_LPARAM(_lParam);
                 event.y = m_params->clientSize.y - GET_Y_LPARAM(_lParam);
-                event.window = this;
+                event.windowId = getResourceId();
                 inputManager->generateInputEvent(event);
                 break;
             }

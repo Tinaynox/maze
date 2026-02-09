@@ -36,7 +36,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    enum class KeyCode
+    enum class KeyCode : U16
     {
         None                  = 0,            //
         Escape                = 1,            //

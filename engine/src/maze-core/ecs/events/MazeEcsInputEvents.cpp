@@ -33,10 +33,20 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputMouseEvent, Event);
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputKeyboardEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputKeyboardEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(InputEventKeyboardType, type, InputEventKeyboardType::None, getType, setType),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S64, scanCode, 0, getScanCode, setScanCode),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S64, virtualCode, 0, getVirtualCode, setVirtualCode),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(KeyCode, keyCode, KeyCode::None, getKeyCode, setKeyCode),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(U32, modifiers, 0u, getModifiers, setModifiers),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S64, data, 0, getData, setData));
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputTouchEvent, Event);
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputVirtualCursorEvent, Event);
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputCursorReleaseEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputCursorReleaseEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, cursorId, 0, getCursorId, setCursorId),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, buttonId, 0, getButtonId, setButtonId),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2S, position, Vec2S::c_zero, getPosition, setPosition),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, windowResourceId, c_invalidResourceId, getWindowId, setWindowId));
 
     
 } // namespace Maze

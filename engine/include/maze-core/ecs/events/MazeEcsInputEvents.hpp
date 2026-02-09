@@ -36,6 +36,7 @@
 #include "maze-core/math/MazeRotation2D.hpp"
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 
 
 //////////////////////////////////////////
@@ -82,15 +83,75 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        inline InputKeyboardEvent(InputEventKeyboardData const& _data = InputEventKeyboardData())
-            : m_data(_data)
-        {}
+        inline InputKeyboardEvent(
+            InputEventKeyboardType _type = InputEventKeyboardType::None,
+            S64 _scanCode = 0,
+            S64 _virtualCode = 0,
+            KeyCode _keyCode = KeyCode::None,
+            S8 const* _textUtf8 = "",
+            U32 _modifiers = 0u,
+            S64 _data = 0)
+            : m_type(_type)
+            , m_scanCode(_scanCode)
+            , m_virtualCode(_virtualCode)
+            , m_keyCode(_keyCode)
+            , m_modifiers(_modifiers)
+            , m_data(_data)
+        {
+            memcpy(m_textUtf8, _textUtf8, 5);
+        }
 
         //////////////////////////////////////////
-        inline InputEventKeyboardData const& getData() const { return m_data; }
+        inline InputEventKeyboardType getType() const { return m_type; }
+
+        //////////////////////////////////////////
+        inline void setType(InputEventKeyboardType _value) { m_type = _value; }
+
+        //////////////////////////////////////////
+        inline S64 getScanCode() const { return m_scanCode; }
+
+        //////////////////////////////////////////
+        inline void setScanCode(S64 _value) { m_scanCode = _value; }
+
+        //////////////////////////////////////////
+        inline S64 getVirtualCode() const { return m_virtualCode; }
+
+        //////////////////////////////////////////
+        inline void setVirtualCode(S64 _value) { m_virtualCode = _value; }
+
+        //////////////////////////////////////////
+        inline KeyCode getKeyCode() const { return m_keyCode; }
+
+        //////////////////////////////////////////
+        inline void setKeyCode(KeyCode _value) { m_keyCode = _value; }
+
+        //////////////////////////////////////////
+        inline S8 const* getTextUtf8() const { return &m_textUtf8[0]; }
+
+        //////////////////////////////////////////
+        inline void setTextUtf8(S8 const* _textUtf8) { memcpy(m_textUtf8, _textUtf8, 5); }
+
+        //////////////////////////////////////////
+        inline U32 getModifiers() const { return m_modifiers; }
+
+        //////////////////////////////////////////
+        inline void setModifiers(U32 _value) { m_modifiers = _value; }
+
+        //////////////////////////////////////////
+        inline S64 getData() const { return m_data; }
+
+        //////////////////////////////////////////
+        inline void setData(S64 _value) { m_data = _value; }
 
     private:
-        InputEventKeyboardData m_data;
+        InputEventKeyboardType m_type = InputEventKeyboardType::None;
+        S64 m_scanCode = 0;
+        S64 m_virtualCode = 0;
+        KeyCode m_keyCode = KeyCode::None;
+        S8 m_textUtf8[5] = { 0 };
+        U32 m_modifiers = 0u;
+
+        S64 m_data = 0;
     };
 
 
@@ -164,30 +225,42 @@ namespace Maze
             S32 _cursorId = 0,
             S32 _buttonId = 0,
             Vec2S const& _position = Vec2S(),
-            Window* _window = nullptr)
+            S32 _windowId = c_invalidResourceId)
             : m_cursorId(_cursorId)
             , m_buttonId(_buttonId)
             , m_position(_position)
-            , m_window(_window)
+            , m_windowId(_windowId)
         {}
 
         //////////////////////////////////////////
         inline S32 getCursorId() const { return m_cursorId; }
 
         //////////////////////////////////////////
+        inline void setCursorId(S32 _value) { m_cursorId = _value; }
+
+        //////////////////////////////////////////
         inline S32 getButtonId() const { return m_buttonId; }
+
+        //////////////////////////////////////////
+        inline void setButtonId(S32 _value) { m_buttonId = _value; }
 
         //////////////////////////////////////////
         inline Vec2S const& getPosition() const { return m_position; }
 
         //////////////////////////////////////////
-        inline Window* getWindow() const { return m_window; }
+        inline void setPosition(Vec2S const& _value) { m_position = _value; }
+
+        //////////////////////////////////////////
+        inline S32 getWindowId() const { return m_windowId; }
+
+        //////////////////////////////////////////
+        inline void setWindowId(S32 _value) { m_windowId = _value; }
 
     private:
         S32 m_cursorId = 0;
         S32 m_buttonId = 0;
         Vec2S m_position = Vec2S::c_zero;
-        Window* m_window = nullptr;
+        S32 m_windowId = c_invalidResourceId;
     };
 
 

@@ -35,6 +35,7 @@
 #include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/math/MazeAABB3D.hpp"
+#include "maze-core/ecs/events/MazeEcsInputEvents.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
@@ -981,6 +982,8 @@ namespace Maze
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(TMat);
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Rect2F);
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(EntityId);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(InputEventKeyboardType);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(KeyCode);
 
         // Graphics
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(ColorU32);

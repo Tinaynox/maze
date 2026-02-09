@@ -32,7 +32,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    static Map<GeoLocation, GeoLocationData> const c_geoLocations =
+    static std::map<GeoLocation, GeoLocationData> const c_geoLocations =
     {
         std::make_pair(GeoLocation::AntiguaAndBarbuda, GeoLocationData{ "AntiguaAndBarbuda", 268, "AG", "ATG" }),
         std::make_pair(GeoLocation::Afghanistan, GeoLocationData{ "Afghanistan", 93, "AF", "AFG" }),
@@ -340,7 +340,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API CString GeoLocationToString(GeoLocation _location)
     {
-        Map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
+        std::map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
         if (it != c_geoLocations.end())
             return it->second.name;
 
@@ -350,7 +350,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API GeoLocation StringToGeoLocation(CString _str)
     {
-        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
+        for (std::map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
                                                                 end = c_geoLocations.end();
                                                                 it != end;
                                                                 ++it)
@@ -365,7 +365,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API GeoLocation StringToGeoLocation(CString _str, Size _count)
     {
-        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
+        for (std::map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
             end = c_geoLocations.end();
             it != end;
             ++it)
@@ -380,7 +380,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API S32 GeoLocationToCallingCode(GeoLocation _location)
     {
-        Map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
+        std::map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
         if (it != c_geoLocations.end())
             return it->second.callingCode;
 
@@ -390,7 +390,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API GeoLocation CallingCodeToGeoLocation(S32 _code)
     {
-        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
+        for (std::map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
                                                                 end = c_geoLocations.end();
                                                                 it != end;
                                                                 ++it)
@@ -405,7 +405,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API CString GeoLocationToISO2(GeoLocation _location)
     {
-        Map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
+        std::map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
         if (it != c_geoLocations.end())
             return it->second.iso2;
 
@@ -415,7 +415,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API GeoLocation ISO2ToGeoLocation(CString _str)
     {
-        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
+        for (std::map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
                                                                 end = c_geoLocations.end();
                                                                 it != end;
                                                                 ++it)
@@ -430,7 +430,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API CString GeoLocationToISO3(GeoLocation _location)
     {
-        Map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
+        std::map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
         if (it != c_geoLocations.end())
             return it->second.iso3;
 
@@ -440,7 +440,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API GeoLocation ISO3ToGeoLocation(CString _str)
     {
-        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
+        for (std::map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
                                                                 end = c_geoLocations.end();
                                                                 it != end;
                                                                 ++it)

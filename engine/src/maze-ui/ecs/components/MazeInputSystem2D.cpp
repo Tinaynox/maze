@@ -607,33 +607,34 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyMouse(Maze::InputEventMouseData const& _mouseData)
     {
-        Vec2F mousePosition = m_coordsConverter(_mouseData.window, Vec2F((F32)_mouseData.x, (F32)_mouseData.y));
+        Window* window = Window::GetResource(_mouseData.windowId);
+        Vec2F mousePosition = m_coordsConverter(window, Vec2F((F32)_mouseData.x, (F32)_mouseData.y));
 
         switch (_mouseData.type)
         {
             case InputEventMouseType::ButtonDown:
             {
-                processCursorPress(_mouseData.window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
+                processCursorPress(window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
                 break;
             }
             case InputEventMouseType::ButtonUp:
             {
-                processCursorRelease(_mouseData.window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
+                processCursorRelease(window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
                 break;
             }
             case InputEventMouseType::Move:
             {
-                processCursorMove(_mouseData.window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
+                processCursorMove(window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
                 break;
             }
             case InputEventMouseType::Drag:
             {
-                processCursorDrag(_mouseData.window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
+                processCursorDrag(window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
                 break;
             }
             case InputEventMouseType::Wheel:
             {
-                processCursorWheel(_mouseData.window, 0, (F32)_mouseData.z, mousePosition, CursorInputSource::Mouse);
+                processCursorWheel(window, 0, (F32)_mouseData.z, mousePosition, CursorInputSource::Mouse);
                 break;
             }
             default:
@@ -646,25 +647,26 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyTouch(Maze::InputEventTouchData const& _touchData)
     {
-        Vec2F touchPosition = m_coordsConverter(_touchData.window, Vec2F((F32)_touchData.x, (F32)_touchData.y));
+        Window* window = Window::GetResource(_touchData.windowId);
+        Vec2F touchPosition = m_coordsConverter(window, Vec2F((F32)_touchData.x, (F32)_touchData.y));
 
         switch (_touchData.type)
         {
             case InputEventTouchType::Press:
             {
-                processCursorMove(_touchData.window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
-                processCursorPress(_touchData.window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
+                processCursorMove(window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
+                processCursorPress(window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
                 break;
             }
             case InputEventTouchType::Release:
             {
-                processCursorRelease(_touchData.window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
+                processCursorRelease(window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
                 break;
             }
             case InputEventTouchType::Move:
             {
-                processCursorMove(_touchData.window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
-                processCursorDrag(_touchData.window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
+                processCursorMove(window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
+                processCursorDrag(window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
                 break;
             }
             default:
@@ -677,28 +679,29 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyVirtualCursor(Maze::InputEventVirtualCursorData const& _virtualCursorData)
     {
-        Vec2F mousePosition = m_coordsConverter(_virtualCursorData.window, Vec2F((F32)_virtualCursorData.x, (F32)_virtualCursorData.y));
+        Window* window = Window::GetResource(_virtualCursorData.windowId);
+        Vec2F mousePosition = m_coordsConverter(window, Vec2F((F32)_virtualCursorData.x, (F32)_virtualCursorData.y));
 
         switch (_virtualCursorData.type)
         {
             case InputEventVirtualCursorType::Press:
             {
-                processCursorPress(_virtualCursorData.window, 0, 0, mousePosition, CursorInputSource::VirtualCursor);
+                processCursorPress(window, 0, 0, mousePosition, CursorInputSource::VirtualCursor);
                 break;
             }
             case InputEventVirtualCursorType::Release:
             {
-                processCursorRelease(_virtualCursorData.window, 0, 0, mousePosition, CursorInputSource::VirtualCursor);
+                processCursorRelease(window, 0, 0, mousePosition, CursorInputSource::VirtualCursor);
                 break;
             }
             case InputEventVirtualCursorType::Move:
             {
-                processCursorMove(_virtualCursorData.window, 0, 0, mousePosition, CursorInputSource::VirtualCursor);
+                processCursorMove(window, 0, 0, mousePosition, CursorInputSource::VirtualCursor);
                 break;
             }
             case InputEventVirtualCursorType::Drag:
             {
-                processCursorDrag(_virtualCursorData.window, 0, 0, mousePosition, CursorInputSource::VirtualCursor);
+                processCursorDrag(window, 0, 0, mousePosition, CursorInputSource::VirtualCursor);
                 break;
             }
             default:

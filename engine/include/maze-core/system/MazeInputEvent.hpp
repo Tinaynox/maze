@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/system/MazeKeyCode.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 #include <memory>
 #include <cstring>
 
@@ -45,7 +46,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class InputEventType
+    enum class InputEventType : U8
     {
         None = 0,
         Mouse,
@@ -58,7 +59,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class InputEventMouseType
+    enum class InputEventMouseType : U8
     {
         None = 0,
         Move,
@@ -72,7 +73,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class InputEventKeyboardType
+    enum class InputEventKeyboardType : U8
     {
         None = 0,
         KeyDown,
@@ -82,7 +83,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class InputEventTouchType
+    enum class InputEventTouchType : U8
     {
         None = 0,
         Move,
@@ -93,7 +94,7 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    enum class InputEventVirtualCursorType
+    enum class InputEventVirtualCursorType : U8
     {
         None = 0,
         Move,
@@ -105,7 +106,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class InputEventTextType
+    enum class InputEventTextType : U8
     {
         None = 0,
         Input,
@@ -125,7 +126,7 @@ namespace Maze
         S32 y;
         S32 z;
 
-        Window* window;
+        S32 windowId = c_invalidResourceId;
     };
 
 
@@ -160,12 +161,6 @@ namespace Maze
 
         //////////////////////////////////////////
         InputEventKeyboardData()
-            : type(InputEventKeyboardType::None)
-            , scanCode(0)
-            , virtualCode(0)
-            , keyCode(KeyCode::None)
-            , modifiers(0)
-            , data(0)
         {
             memset(textUtf8, 0, 5);
         }
@@ -207,14 +202,15 @@ namespace Maze
         inline bool isKeyRepeat() const { return (modifiers & InputEventKeyboardModifiers::IsKeyRepeat) != 0; }
 
     public:
-        InputEventKeyboardType type;
-        S64 scanCode;
-        S64 virtualCode;
-        KeyCode keyCode;
-        S8 textUtf8[5];
-        U32 modifiers;
+        // #TODO: Reorder fields for better alignment
+        InputEventKeyboardType type = InputEventKeyboardType::None;
+        S64 scanCode = 0;
+        S64 virtualCode = 0;
+        KeyCode keyCode = KeyCode::None;
+        S8 textUtf8[5] = { 0 };
+        U32 modifiers = 0u;
 
-        S64 data;
+        S64 data = 0;
     };
 
 
@@ -226,7 +222,7 @@ namespace Maze
         S32 x;
         S32 y;
 
-        Window* window;
+        S32 windowId = c_invalidResourceId;
     };
 
     //////////////////////////////////////////
@@ -236,7 +232,7 @@ namespace Maze
         S32 x;
         S32 y;
 
-        Window* window;
+        S32 windowId = c_invalidResourceId;
     };
 
 

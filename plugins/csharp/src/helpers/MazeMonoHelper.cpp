@@ -34,6 +34,7 @@
 #include "maze-plugin-csharp/managers/MazeMonoSerializationManager.hpp"
 #include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
 #include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
+#include "maze-core/ecs/events/MazeEcsInputEvents.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 
 
@@ -544,6 +545,8 @@ namespace Maze
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(TMat);
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Rect2F);
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(EntityId);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(InputEventKeyboardType);
+        MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(KeyCode);
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void WriteMetaPropertyToMonoClassFieldColorU32(

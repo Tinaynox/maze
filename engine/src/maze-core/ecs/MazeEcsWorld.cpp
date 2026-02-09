@@ -703,7 +703,7 @@ namespace Maze
                     0,
                     _data.buttonId,
                     Vec2S(_data.x, _data.y),
-                    _data.window);
+                    _data.windowId);
                 break;
             }
             default:
@@ -714,7 +714,8 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorld::notifyKeyboard(InputEventKeyboardData const& _data)
     {
-
+        broadcastEventImmediate<InputKeyboardEvent>(
+            _data.type, _data.scanCode, _data.virtualCode, _data.keyCode, _data.textUtf8, _data.modifiers, _data.data);
     }
 
     //////////////////////////////////////////
@@ -728,7 +729,7 @@ namespace Maze
                     _data.index,
                     0,
                     Vec2S(_data.x, _data.y),
-                    _data.window);
+                    _data.windowId);
                 break;
             }
             default:
@@ -747,7 +748,7 @@ namespace Maze
                     0,
                     0,
                     Vec2S(_data.x, _data.y),
-                    _data.window);
+                    _data.windowId);
 
                 break;
             }
