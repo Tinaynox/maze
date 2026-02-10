@@ -4,9 +4,12 @@ namespace Maze.Core
 {
     public struct Entity
     {
+        public static readonly Entity Invalid = new Entity(NativePtr.Zero);
+
         public int Id => GetEntityId();
 
         public NativePtr NativeEntityPtr { get; private set; }
+        public bool Valid => NativeEntityPtr != NativePtr.Zero;
 
         public bool Active
         {

@@ -14,6 +14,11 @@ namespace Maze.Core
             m_Id = id;
         }
 
+        public static AssetUnitId Get(string assetUnitName)
+        {
+            return new AssetUnitId(InternalCalls.GetAssetUnitId(assetUnitName));
+        }
+
         public override bool Equals(object obj)
         {
             return m_Id.Equals(obj);

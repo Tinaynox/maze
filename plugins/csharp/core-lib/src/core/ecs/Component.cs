@@ -81,6 +81,35 @@ namespace Maze.Core
             return new Entity(InternalCalls.InstantiateEntity(NativeComponentPtr, auid));
         }
 
+        public Entity InstantiateEntity(string prefabName)
+        {
+            AssetUnitId prefabAUID = AssetUnitId.Get(prefabName);
+            if (prefabAUID == AssetUnitId.InvalidId)
+                return Entity.Invalid;
+
+            return InstantiateEntity(prefabAUID);
+        }
+
+        public Entity InstantiateEntity(string prefabName, Transform2D parent)
+        {
+            Entity entity = InstantiateEntity(prefabName);
+            if (!entity.Valid)
+                return Entity.Invalid;
+
+            entity.EnsureComponent<Transform2D>().SetParent(parent);
+            return entity;
+        }
+
+        public Entity InstantiateEntity(string prefabName, Transform3D parent)
+        {
+            Entity entity = InstantiateEntity(prefabName);
+            if (!entity.Valid)
+                return Entity.Invalid;
+
+            entity.EnsureComponent<Transform3D>().SetParent(parent);
+            return entity;
+        }
+
         public void SendEvent(Entity entity, MonoEvent monoEvent)
         {
             GCHandle handle = GCHandle.Alloc(monoEvent);

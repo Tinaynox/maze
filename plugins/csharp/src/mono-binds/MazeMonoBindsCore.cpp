@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeTaskManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
@@ -135,6 +136,21 @@ namespace Maze
             return nullptr;
 
         return mono_string_new(mono_domain_get(), file->getFullPath().toUTF8().c_str());
+    }
+
+    //////////////////////////////////////////
+    inline AssetUnitId GetAssetUnitId(MonoString* _assetUnitName)
+    {
+        AssetUnitId auid = c_invalidAssetUnitId;
+
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            Char* cstr = mono_string_to_utf8(_assetUnitName);
+            auid = AssetUnitManager::GetInstancePtr()->getAssetUnitId(MAZE_HCS(cstr));
+            mono_free(cstr);
+        }
+
+        return auid;
     }
 
     //////////////////////////////////////////
@@ -717,6 +733,9 @@ namespace Maze
         // Name
         MAZE_CORE_MONO_BIND_FUNC(NameGetName);
         MAZE_CORE_MONO_BIND_FUNC(NameSetName);
+
+        // AssetUnit
+        MAZE_CORE_MONO_BIND_FUNC(GetAssetUnitId);
 
         // AssetFile
         MAZE_CORE_MONO_BIND_FUNC(AssetFileIdIsValid);

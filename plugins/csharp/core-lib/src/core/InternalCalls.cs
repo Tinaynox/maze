@@ -214,6 +214,11 @@ namespace Maze.Core
         public extern static void NameSetName(NativePtr nativeComponentPtr, string name);
         #endregion
 
+        #region AssetUnit
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static uint GetAssetUnitId(string assetUnitName);
+        #endregion
+
         #region AssetFile
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool AssetFileIdIsValid(uint assetFileId);
