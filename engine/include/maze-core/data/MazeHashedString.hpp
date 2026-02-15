@@ -200,6 +200,9 @@ namespace Maze
         //////////////////////////////////////////
         inline bool empty() const { return m_string.empty(); }
 
+        //////////////////////////////////////////
+        inline StdString toStdString() const { return StdString(m_string.begin(), m_string.end()); }
+
     protected:
         String m_string;
         U32 m_hash;

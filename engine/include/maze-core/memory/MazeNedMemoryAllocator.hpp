@@ -40,6 +40,15 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    #define MAZE_NEDMALLOC_DEBUG (0)
+
+#if (MAZE_NEDMALLOC_DEBUG)
+    //////////////////////////////////////////
+    std::set<void*>& GetNedAllocations();
+#endif
+
+
+    //////////////////////////////////////////
     // Class NedMemoryAllocator
     //
     //////////////////////////////////////////
@@ -69,6 +78,11 @@ namespace Maze
             ::Maze::MemoryTrackerService::TrackAlloc(ptr, _count, _type, _file, _ln, _func);
 #endif
 
+#if (MAZE_NEDMALLOC_DEBUG)
+            GetNedAllocations().insert(ptr);
+            MAZE_BP_IF(GetNedAllocations().find(ptr) != GetNedAllocations().end()); // Double allocation!
+#endif
+
             return ptr;
         }
 
@@ -82,6 +96,11 @@ namespace Maze
             ::Maze::MemoryTrackerService::TrackDealloc(_ptr);
 #endif
 
+#if (MAZE_NEDMALLOC_DEBUG)
+            MAZE_BP_IF(GetNedAllocations().find(_ptr) == GetNedAllocations().end()); // Double deallocation!
+            GetNedAllocations().erase(_ptr);
+#endif
+
             nedalloc::nedfree(_ptr);
         }
 
@@ -89,6 +108,12 @@ namespace Maze
         static inline void* AllocateBytesAligned(Size _align, Size _count)
         {
             void* ptr = nedalloc::nedmemalign(_align, _count);
+            
+#if (MAZE_NEDMALLOC_DEBUG)
+            MAZE_BP_IF(GetNedAllocations().find(ptr) != GetNedAllocations().end()); // Double allocation!
+            GetNedAllocations().insert(ptr);
+#endif
+
             return ptr;
         }
 
@@ -97,6 +122,11 @@ namespace Maze
         {
             if (!_ptr)
                 return;
+
+#if (MAZE_NEDMALLOC_DEBUG)
+            MAZE_BP_IF(GetNedAllocations().find(_ptr) == GetNedAllocations().end()); // Double deallocation!
+            GetNedAllocations().erase(_ptr);
+#endif
 
             nedalloc::nedfree(_ptr);
         }

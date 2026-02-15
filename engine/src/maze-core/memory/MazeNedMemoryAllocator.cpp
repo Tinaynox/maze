@@ -32,5 +32,14 @@
 namespace Maze
 {
 
+#if (MAZE_NEDMALLOC_DEBUG)
+    //////////////////////////////////////////
+    std::set<void*>& GetNedAllocations()
+    {
+        static std::set<void*> s_instance;
+        return s_instance;
+    }
+#endif
+
 } // namespace Maze
 //////////////////////////////////////////

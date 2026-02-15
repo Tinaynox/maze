@@ -117,6 +117,9 @@ namespace Maze.Editor
         [EntitySystem, EnableInEditor]
         public void OnUpdate(float _dt)
         {
+            if (m_Editors == null)
+                return;
+
             foreach (Editor editor in m_Editors)
                 if (editor != null)
                     editor.Update(_dt);

@@ -48,10 +48,10 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        static Set<ComponentSystemHolder*>& GetSystemHolders()
+        static StdSet<ComponentSystemHolder*>& GetSystemHolders()
         {
             //////////////////////////////////////////
-            static Set<ComponentSystemHolder*> s_systemHolders;
+            static StdSet<ComponentSystemHolder*> s_systemHolders;
             return s_systemHolders;
         }
 
@@ -93,10 +93,17 @@ namespace Maze
             U8 _sampleFlags = 0)
             : m_name(_name)
             , m_func((ComponentSystemEventHandler::Func)_func)
-            , m_tags(_tags)
-            , m_order(_order)
             , m_sampleFlags(_sampleFlags)
         {
+            for (HashedString const& tag : _tags)
+                m_tags.insert(tag.toStdString());
+
+            for (HashedString const& order : _order.after)
+                m_orderAfter.insert(order.toStdString());
+
+            for (HashedString const& order : _order.before)
+                m_orderBefore.insert(order.toStdString());
+
             m_type = Type::Default;
 
             auto address = &EcsWorld::addSystemEventHandler<TEventType, TComponents...>;
@@ -114,9 +121,16 @@ namespace Maze
             ComponentSystemOrder const& _order = ComponentSystemOrder())
             : m_name(_name)
             , m_func((ComponentSystemEventHandler::Func)_func)
-            , m_tags(_tags)
-            , m_order(_order)
         {
+            for (HashedString const& tag : _tags)
+                m_tags.insert(tag.toStdString());
+
+            for (HashedString const& order : _order.after)
+                m_orderAfter.insert(order.toStdString());
+
+            for (HashedString const& order : _order.before)
+                m_orderBefore.insert(order.toStdString());
+
             m_type = Type::Global;
 
             auto address = &EcsWorld::addSystemEventHandlerGlobal<TEventType>;
@@ -134,16 +148,29 @@ namespace Maze
         //////////////////////////////////////////
         inline void attach(EcsWorld* _world)
         {
+            Set<HashedString> tags;
+            for (StdString const& tag : m_tags)
+                tags.insert(HashedString(tag.c_str(), tag.size()));
+
+            Set<HashedString> orderAfter;
+            for (StdString const& order : m_orderAfter)
+                orderAfter.insert(HashedString(order.c_str(), order.size()));
+
+            Set<HashedString> orderBefore;
+            for (StdString const& order : m_orderBefore)
+                orderBefore.insert(HashedString(order.c_str(), order.size()));
+
+            ComponentSystemOrder order(orderAfter, orderBefore);
             switch (m_type)
             {
                 case Type::Default:
                 {
-                    m_systems[_world] = (_world->*m_addSystemFunc)(m_name, m_func, m_tags, m_order, m_sampleFlags);
+                    m_systems[_world] = (_world->*m_addSystemFunc)(m_name, m_func, std::move(tags), std::move(order), m_sampleFlags);
                     break;
                 }
                 case Type::Global:
                 {
-                    m_systems[_world] = (_world->*m_addSystemGlobalFunc)(m_name, m_func, m_tags, m_order);
+                    m_systems[_world] = (_world->*m_addSystemGlobalFunc)(m_name, m_func, std::move(tags), std::move(order));
                     break;
                 }
                 default:
@@ -163,13 +190,14 @@ namespace Maze
     protected:
         Type m_type = Type::Default;
         HashedCString m_name;
-        Set<HashedString> m_tags;
+        StdSet<StdString> m_tags;
         typename ComponentSystemEventHandler::Func m_func;
-        ComponentSystemOrder m_order;
+        StdSet<StdString> m_orderAfter;
+        StdSet<StdString> m_orderBefore;
         U8 m_sampleFlags = 0;
         AddSystemFunc m_addSystemFunc;
         AddSystemGlobalFunc m_addSystemGlobalFunc;
-        Map<EcsWorld*, WeakPtr<ComponentSystemEventHandler>> m_systems;
+        StdMap<EcsWorld*, WeakPtr<ComponentSystemEventHandler>> m_systems;
     };
 
 
