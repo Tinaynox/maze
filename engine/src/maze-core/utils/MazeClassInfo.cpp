@@ -32,7 +32,7 @@
 namespace Maze
 {
     StdMap<ClassUID, StdString> g_classUIDByName;
-    UnorderedMap<StdString, ClassUID> g_classNameByUID;
+    StdUnorderedMap<StdString, ClassUID> g_classNameByUID;
 
 } // namespace Maze
 //////////////////////////////////////////

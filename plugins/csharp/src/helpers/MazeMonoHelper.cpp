@@ -695,6 +695,8 @@ namespace Maze
                 else
                 {
                     MonoClass* elementClass = GetMonoGenericClassFirstGenericArgumentClass(listMonoClass);
+                    if (!elementClass)
+                        return;
                     
                     if (mono_class_is_valuetype(elementClass))
                     {

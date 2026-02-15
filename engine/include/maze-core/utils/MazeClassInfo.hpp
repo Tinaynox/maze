@@ -47,7 +47,7 @@ namespace Maze
 
     //////////////////////////////////////////
     extern StdMap<ClassUID, StdString> g_classUIDByName;
-    extern UnorderedMap<StdString, ClassUID> g_classNameByUID;
+    extern StdUnorderedMap<StdString, ClassUID> g_classNameByUID;
     
 
     //////////////////////////////////////////
