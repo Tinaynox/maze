@@ -185,6 +185,7 @@ namespace Maze
         inline void detach(EcsWorld* _world)
         {
             _world->removeSystemEventHandler(m_systems[_world].lock());
+            m_systems.erase(_world);
         }
 
     protected:
