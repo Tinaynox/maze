@@ -46,7 +46,7 @@ namespace Maze
     // Class MetaClass
     //
     //////////////////////////////////////////
-    Map<ClassUID, MetaClass*> MetaClass::s_metaClassByUID = Map<ClassUID, MetaClass*>();
+    StdMap<ClassUID, MetaClass*> MetaClass::s_metaClassByUID = StdMap<ClassUID, MetaClass*>();
 
     //////////////////////////////////////////
     MetaClass::MetaClass(

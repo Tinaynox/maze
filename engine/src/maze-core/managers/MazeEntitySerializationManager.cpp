@@ -53,7 +53,6 @@
 #include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
 
 
-
 //////////////////////////////////////////
 namespace Maze
 {
@@ -255,127 +254,197 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EntitySerializationManager::saveEntitiesToDataBlock(
-        EcsWorld* _ecsWorld,
-        Vector<EntitySerializationData> const& _entityComponents,
-        Vector<PrefabSerializationData> const& _prefabs,
-        Map<void*, EcsSerializationId>& _pointerIndices,
-        Map<EntityId, EcsSerializationId>& _entityIndices,
-        Map<AssetUnitId, EntityPtr>& _identityPrefabs,
-        DataBlock& _dataBlock) const
+    void EntitySerializationManager::saveComponentToDataBlockDefault(
+        EntitiesToDataBlockContext& _context,
+        ComponentPtr const& _component,
+        DataBlock& _parentBlock) const
     {
-        auto saveComponentFunc =
-            [&](ComponentPtr const& _component, DataBlock& _parentBlock)
+        DataBlock* componentBlock = _parentBlock.addNewDataBlock(MAZE_HCS("component"));
+
+        auto propertyValueIndexIt = _context.pointerIndices.find(_component.get());
+
+        componentBlock->setCString(MAZE_HCS("_t"), static_cast<CString>(_component->getMetaClass()->getName()));
+
+        if (strcmp(_component->getClassQualifiedName().str, _component->getComponentClassName()) != 0)
+        {
+            componentBlock->setCString(MAZE_HCS("_ct"), static_cast<CString>(_component->getComponentClassName()));
+        }
+
+        MetaClass const* metaClass = _component->getMetaClass();
+        MetaInstance metaInstance = _component->getMetaInstance();
+
+        for (MetaClass* metaClass : metaClass->getAllSuperMetaClasses())
+        {
+            for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
             {
-                DataBlock* componentBlock = _parentBlock.addNewDataBlock(MAZE_HCS("component"));
+                MetaProperty* metaProperty = metaClass->getProperty(i);
 
-                auto propertyValueIndexIt = _pointerIndices.find(_component.get());
-                // if (propertyValueIndexIt != _pointerIndices.end())
-                //    componentBlock->setS32(MAZE_HCS("_sid"), propertyValueIndexIt->second);
-                componentBlock->setCString(MAZE_HCS("_t"), static_cast<CString>(_component->getMetaClass()->getName()));
+                HashedCString propertyName = metaProperty->getName();
 
-                if (strcmp(_component->getClassQualifiedName().str, _component->getComponentClassName()) != 0)
+                ClassUID metaPropertyUID = metaProperty->getValueClassUID();
+                if (metaPropertyUID != 0)
                 {
-                    componentBlock->setCString(MAZE_HCS("_ct"), static_cast<CString>(_component->getComponentClassName()));
+                    MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
+                    if (metaPropertyMetaClass)
+                    {
+                        if (metaPropertyMetaClass->isInheritedFrom<Component>())
+                        {
+                            void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
+                            if (propertyValuePointer)
+                            {
+                                EcsSerializationId propertyValueIndex = _context.pointerIndices[propertyValuePointer];
+                                EcsHelper::EnsureComponentBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
+                            }
+                            continue;
+                        }
+                        else
+                        if (metaPropertyMetaClass == Entity::GetMetaClass())
+                        {
+                            void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
+                            if (propertyValuePointer)
+                            {
+                                EcsSerializationId propertyValueIndex = _context.pointerIndices[propertyValuePointer];
+                                EcsHelper::EnsureEntityIdBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
+                            }
+                            continue;
+                        }
+                    }
+                    else
+                    if (metaPropertyUID == ClassInfo<EntityId>::UID())
+                    {
+                        EntityId eid;
+                        metaProperty->getValue(metaInstance, eid);
+                        EcsSerializationId propertyValueIndex = _context.entityIndices[eid];
+                        EcsHelper::EnsureEntityIdBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
+                        continue;
+                    }
+                    else
+                    if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
+                    {
+                        Vector<ComponentPtr> comps;
+                        metaProperty->getValue<Vector<ComponentPtr>>(metaInstance, comps);
+
+                        if (!comps.empty())
+                        {
+                            Vector<EcsSerializationId> compIndices;
+                            compIndices.resize(comps.size());
+                            for (S32 i = 0, in = S32(comps.size()); i < in; ++i)
+                                compIndices[i] = comps[i]->getSerializationId();
+
+                            Char newPropertyName[128];
+                            StringHelper::FormatString(newPropertyName, sizeof(newPropertyName), "%s:Array<EntityId>", propertyName);
+                            AddDataToDataBlock(*componentBlock, HashedCString(newPropertyName), compIndices);
+                        }
+
+                        continue;
+                    }
+                    else
+                    if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
+                    {
+                        Vector<EntityPtr> ents;
+                        metaProperty->getValue<Vector<EntityPtr>>(metaInstance, ents);
+
+                        if (!ents.empty())
+                        {
+                            Vector<EcsSerializationId> entIndices;
+                            entIndices.resize(ents.size());
+                            for (S32 i = 0, in = S32(ents.size()); i < in; ++i)
+                                entIndices[i] = ents[i]->getSerializationId();
+
+                            Char newPropertyName[128];
+                            StringHelper::FormatString(newPropertyName, sizeof(newPropertyName), "%s:Array<Component>", propertyName);
+                            AddDataToDataBlock(*componentBlock, HashedCString(newPropertyName), entIndices);
+                        }
+
+                        continue;
+                    }
                 }
 
-                MetaClass const* metaClass = _component->getMetaClass();
-                MetaInstance metaInstance = _component->getMetaInstance();
+                DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, *componentBlock);
+            }
+        }
+    }
 
-                for (MetaClass* metaClass : metaClass->getAllSuperMetaClasses())
+    //////////////////////////////////////////
+    void EntitySerializationManager::saveComponentModificationsToDataBlockDefault(
+        EntitiesToDataBlockContext& _context,
+        ComponentPtr const& _component,
+        ComponentPtr const& _identityComponent,
+        DataBlock& _parentBlock) const
+    {
+        MetaClass const* metaClass = _component->getMetaClass();
+        MetaInstance metaInstance = _component->getMetaInstance();
+        MetaInstance identityComponentMetaInstance = _identityComponent->getMetaInstance();
+
+        for (MetaClass* metaClass : metaClass->getAllSuperMetaClasses())
+        {
+            for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+            {
+                MetaProperty* metaProperty = metaClass->getProperty(i);
+
+                HashedCString propertyName = metaProperty->getName();
+
+                if (!metaProperty->hasOperatorEquals())
+                    continue;
+
+                if (!metaProperty->isEqual(metaInstance, identityComponentMetaInstance))
                 {
-                    for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+                    MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
+                    if (metaPropertyMetaClass && (metaPropertyMetaClass->isInheritedFrom<Component>() || metaPropertyMetaClass->isInheritedFrom<Entity>()))
                     {
-                        MetaProperty* metaProperty = metaClass->getProperty(i);
-
-                        HashedCString propertyName = metaProperty->getName();
-
-                        ClassUID metaPropertyUID = metaProperty->getValueClassUID();
-                        if (metaPropertyUID != 0)
+                        void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
+                        if (propertyValuePointer)
                         {
-                            MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
-                            if (metaPropertyMetaClass)
+                            auto propertyValueIndexIt = _context.pointerIndices.find(propertyValuePointer);
+                            if (propertyValueIndexIt != _context.pointerIndices.end())
                             {
-                                if (metaPropertyMetaClass->isInheritedFrom<Component>())
-                                {
-                                    void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
-                                    if (propertyValuePointer)
-                                    {
-                                        EcsSerializationId propertyValueIndex = _pointerIndices[propertyValuePointer];
-                                        EcsHelper::EnsureComponentBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
-                                    }
-                                    continue;
-                                }
-                                else
-                                if (metaPropertyMetaClass == Entity::GetMetaClass())
-                                {
-                                    void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
-                                    if (propertyValuePointer)
-                                    {
-                                        EcsSerializationId propertyValueIndex = _pointerIndices[propertyValuePointer];
-                                        EcsHelper::EnsureEntityIdBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
-                                    }
-                                    continue;
-                                }
-                            }
-                            else
-                            if (metaPropertyUID == ClassInfo<EntityId>::UID())
-                            {
-                                EntityId eid;
-                                metaProperty->getValue(metaInstance, eid);
-                                EcsSerializationId propertyValueIndex = _entityIndices[eid];
-                                EcsHelper::EnsureEntityIdBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
-                                continue;
-                            }
-                            else
-                            if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
-                            {
-                                Vector<ComponentPtr> comps;
-                                metaProperty->getValue<Vector<ComponentPtr>>(metaInstance, comps);
+                                EcsSerializationId propertyValueIndex = propertyValueIndexIt->second;
 
-                                if (!comps.empty())
-                                {
-                                    Vector<EcsSerializationId> compIndices;
-                                    compIndices.resize(comps.size());
-                                    for (S32 i = 0, in = S32(comps.size()); i < in; ++i)
-                                        compIndices[i] = comps[i]->getSerializationId();
+                                DataBlock* modificationBlock = _parentBlock.addNewDataBlock(MAZE_HCS("modification"));
+                                modificationBlock->setCString(MAZE_HCS("component"), metaClass->getName());
+                                if (strcmp(_component->getClassQualifiedName().str, _component->getComponentClassName()) != 0)
+                                    modificationBlock->setCString(MAZE_HCS("_ct"), _component->getComponentClassName());
 
-                                    Char newPropertyName[128];
-                                    StringHelper::FormatString(newPropertyName, sizeof(newPropertyName), "%s:Array<EntityId>", propertyName);
-                                    AddDataToDataBlock(*componentBlock, HashedCString(newPropertyName), compIndices);
-                                }
-
-                                continue;
-                            }
-                            else
-                            if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
-                            {
-                                Vector<EntityPtr> ents;
-                                metaProperty->getValue<Vector<EntityPtr>>(metaInstance, ents);
-
-                                if (!ents.empty())
-                                {
-                                    Vector<EcsSerializationId> entIndices;
-                                    entIndices.resize(ents.size());
-                                    for (S32 i = 0, in = S32(ents.size()); i < in; ++i)
-                                        entIndices[i] = ents[i]->getSerializationId();
-
-                                    Char newPropertyName[128];
-                                    StringHelper::FormatString(newPropertyName, sizeof(newPropertyName), "%s:Array<Component>", propertyName);
-                                    AddDataToDataBlock(*componentBlock, HashedCString(newPropertyName), entIndices);
-                                }
-
-                                continue;
+                                modificationBlock->setCString(MAZE_HCS("property"), propertyName);
+                                modificationBlock->setS32(MAZE_HCS("value"), propertyValueIndex);
                             }
                         }
 
-                        DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, *componentBlock);
+                        continue;
+                    }
+                    else
+                    {
+                        DataBlock* modificationBlock = _parentBlock.addNewDataBlock(MAZE_HCS("modification"));
+                        modificationBlock->setCString(MAZE_HCS("component"), metaClass->getName());
+                        if (strcmp(_component->getClassQualifiedName().str, _component->getComponentClassName()) != 0)
+                            modificationBlock->setCString(MAZE_HCS("_ct"), _component->getComponentClassName());
+
+                        modificationBlock->setCString(MAZE_HCS("property"), propertyName);
+                        DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, MAZE_HCS("value"), *modificationBlock);
                     }
                 }
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void EntitySerializationManager::saveEntitiesToDataBlock(
+        EntitiesToDataBlockContext& _context,
+        DataBlock& _dataBlock) const
+    {
+        auto saveComponentFunc =
+            [&](EntitiesToDataBlockContext& _context, ComponentPtr const& _component, DataBlock& _parentBlock)
+            {
+                ClassUID componentUID = _component->getClassUID();
+                auto it = m_componentCustomSerializationByClassUID.find(componentUID);
+                if (it == m_componentCustomSerializationByClassUID.end())
+                    saveComponentToDataBlockDefault(_context, _component, _parentBlock);
+                else
+                    it->second.toDataBlockFunc(_context, _component, _parentBlock);
             };
 
         // Entities
-        for (auto const& entityComponentsData : _entityComponents)
+        for (auto const& entityComponentsData : _context.entityComponents)
         {
             EntityPtr const& entity = entityComponentsData.entity;
             Vector<ComponentPtr> const& components = entityComponentsData.components;
@@ -387,18 +456,16 @@ namespace Maze
                 entityBlock->setBool(MAZE_HCS("active"), entity->getActiveSelf());
 
             for (ComponentPtr const& component : components)
-            {
-                saveComponentFunc(component, *entityBlock);
-            }
+                saveComponentFunc(_context, component, *entityBlock);
         }
 
         // Prefabs
-        for (auto& prefabInstanceData : _prefabs)
+        for (auto& prefabInstanceData : _context.prefabs)
         {
             PrefabInstance* prefabInstance = prefabInstanceData.prefabInstance;
 
             EntityPtr const& prefabEntity = prefabInstance->getEntity();
-            EntityPtr const& identityPrefabEntity = _identityPrefabs[prefabInstance->getAssetUnitId()];
+            EntityPtr const& identityPrefabEntity = _context.identityPrefabs[prefabInstance->getAssetUnitId()];
 
             MAZE_ERROR_CONTINUE_IF(
                 !identityPrefabEntity,
@@ -429,68 +496,19 @@ namespace Maze
                 ComponentPtr const& identityComponent = identityPrefabEntity->getComponentById(componentData.first);
                 if (identityComponent)
                 {
-                    MetaClass const* metaClass = componentData.second->getMetaClass();
-                    MetaInstance metaInstance = componentData.second->getMetaInstance();
-                    MetaInstance identityComponentMetaInstance = identityComponent->getMetaInstance();
-
-                    for (MetaClass* metaClass : metaClass->getAllSuperMetaClasses())
-                    {
-                        for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
-                        {
-                            MetaProperty* metaProperty = metaClass->getProperty(i);
-
-                            HashedCString propertyName = metaProperty->getName();
-
-                            if (!metaProperty->hasOperatorEquals())
-                                continue;
-
-                            if (!metaProperty->isEqual(metaInstance, identityComponentMetaInstance))
-                            {
-                                MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
-                                if (metaPropertyMetaClass && (metaPropertyMetaClass->isInheritedFrom<Component>() || metaPropertyMetaClass->isInheritedFrom<Entity>()))
-                                {
-                                    void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
-                                    if (propertyValuePointer)
-                                    {
-                                        auto propertyValueIndexIt = _pointerIndices.find(propertyValuePointer);
-                                        if (propertyValueIndexIt != _pointerIndices.end())
-                                        {
-                                            EcsSerializationId propertyValueIndex = propertyValueIndexIt->second;
-
-                                            DataBlock* modificationBlock = entityBlock->addNewDataBlock(MAZE_HCS("modification"));
-                                            modificationBlock->setCString(MAZE_HCS("component"), metaClass->getName());
-                                            if (strcmp(componentData.second->getClassQualifiedName().str, componentData.second->getComponentClassName()) != 0)
-                                                modificationBlock->setCString(MAZE_HCS("_ct"), componentData.second->getComponentClassName());
-
-                                            modificationBlock->setCString(MAZE_HCS("property"), propertyName);
-                                            modificationBlock->setS32(MAZE_HCS("value"), propertyValueIndex);
-                                        }
-                                    }
-
-                                    continue;
-                                }
-                                else
-                                {
-                                    DataBlock* modificationBlock = entityBlock->addNewDataBlock(MAZE_HCS("modification"));
-                                    modificationBlock->setCString(MAZE_HCS("component"), metaClass->getName());
-                                    if (strcmp(componentData.second->getClassQualifiedName().str, componentData.second->getComponentClassName()) != 0)
-                                        modificationBlock->setCString(MAZE_HCS("_ct"), componentData.second->getComponentClassName());
-
-                                    modificationBlock->setCString(MAZE_HCS("property"), propertyName);
-                                    DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, MAZE_HCS("value"), *modificationBlock);
-                                }
-                            }
-                        }
-                    }
+                    ClassUID componentUID = componentData.second->getClassUID();
+                    auto it = m_componentCustomSerializationByClassUID.find(componentUID);
+                    if (it == m_componentCustomSerializationByClassUID.end())
+                        saveComponentModificationsToDataBlockDefault(_context, componentData.second, identityComponent, *entityBlock);
+                    else
+                        it->second.modificationsToDataBlockFunc(_context, componentData.second, identityComponent, *entityBlock);
                 }
                 else
-                {
-                    saveComponentFunc(componentData.second, *entityBlock);
-                }
+                    saveComponentFunc(_context, componentData.second, *entityBlock);
             }
         }
 
-        replaceDataBlockEcsIds(_dataBlock, _entityIndices, _entityComponents, _pointerIndices, _ecsWorld);
+        replaceDataBlockEcsIds(_dataBlock, _context.entityIndices, _context.entityComponents, _context.pointerIndices, _context.ecsWorld);
     }
 
     //////////////////////////////////////////
@@ -630,20 +648,15 @@ namespace Maze
         if (_entities.empty())
             return false;
 
-        Vector<EntitySerializationData> entityComponents;
-        Vector<PrefabSerializationData> prefabs;
-        collectEntitiesComponentsMap(_entities, entityComponents, prefabs);
+        EntitiesToDataBlockContext context;
+        context.ecsWorld = (*_entities.begin())->getEcsWorld();
+        collectEntitiesComponentsMap(_entities, context.entityComponents, context.prefabs);
 
-       
-        Map<void*, EcsSerializationId> pointerIndices;
-        Map<EntityId, EcsSerializationId> entityIndices;
-        Map<AssetUnitId, EntityPtr> identityPrefabs;
         EcsWorldPtr identityPrefabsWorld;
-        PrepareEntitiesToSerialize(entityComponents, prefabs, pointerIndices, entityIndices, identityPrefabs, identityPrefabsWorld);
+        PrepareEntitiesToSerialize(
+            context.entityComponents, context.prefabs, context.pointerIndices, context.entityIndices, context.identityPrefabs, identityPrefabsWorld);
 
-        
-        saveEntitiesToDataBlock((*_entities.begin())->getEcsWorld(), entityComponents, prefabs, pointerIndices, entityIndices, identityPrefabs, _dataBlock);
-
+        saveEntitiesToDataBlock(context, _dataBlock);
 
         _dataBlock.setS32(MAZE_HCS("_version"), c_enititySerializationVersion);
 
@@ -657,22 +670,17 @@ namespace Maze
         if (!_entity)
             return false;
 
-        Vector<EntitySerializationData> entityComponents;
-        Vector<PrefabSerializationData> prefabs;
-        collectEntityComponentsMap(_entity, entityComponents, prefabs);
+        EntitiesToDataBlockContext context;
+        context.ecsWorld = _entity->getEcsWorld();
+        collectEntityComponentsMap(_entity, context.entityComponents, context.prefabs);
 
-
-        Map<void*, S32> pointerIndices;
-        Map<EntityId, S32> entityIndices;
-        Map<AssetUnitId, EntityPtr> identityPrefabs;
         EcsWorldPtr identityPrefabsWorld;
-        PrepareEntitiesToSerialize(entityComponents, prefabs, pointerIndices, entityIndices, identityPrefabs, identityPrefabsWorld);
+        PrepareEntitiesToSerialize(
+            context.entityComponents, context.prefabs, context.pointerIndices, context.entityIndices, context.identityPrefabs, identityPrefabsWorld);
 
+        saveEntitiesToDataBlock(context, _dataBlock);
 
-        saveEntitiesToDataBlock(_entity->getEcsWorld(), entityComponents, prefabs, pointerIndices, entityIndices, identityPrefabs, _dataBlock);
-
-
-        _dataBlock.setS32(MAZE_HCS("_rootIndex"), pointerIndices[_entity.get()]);
+        _dataBlock.setS32(MAZE_HCS("_rootIndex"), context.pointerIndices[_entity.get()]);
         _dataBlock.setS32(MAZE_HCS("_version"), c_enititySerializationVersion);
 
         return true;
@@ -753,9 +761,10 @@ namespace Maze
         DataBlock* entitiesBlock = _dataBlock.getDataBlock(MAZE_HCS("entities"));
         if (entitiesBlock)
         {
-            Map<EcsSerializationId, EntityPtr> entities;
-            Map<EcsSerializationId, ComponentPtr> components;
-            loadEntities(*entitiesBlock, _scene->getWorld(), _scene.get(), entities, components);
+            EntitiesFromDataBlockContext context;
+            context.world = _scene->getWorld();
+            context.scene = _scene.get();
+            loadEntities(*entitiesBlock, context);
         }
 
         return true;
@@ -811,18 +820,294 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EntitySerializationManager::loadComponentFromDataBlockDefault(
+        DataBlock const& _componentBlock,
+        ComponentPtr const& _component,
+        EntitiesFromDataBlockContext& _context) const
+    {
+        MetaClass const* componentMetaClass = _component->getMetaClass();
+        MetaInstance componentMetaInstance = _component->getMetaInstance();
+
+        for (Maze::MetaClass* metaClass : componentMetaClass->getAllSuperMetaClasses())
+        {
+            for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+            {
+                Maze::MetaProperty* metaProperty = metaClass->getProperty(i);
+
+                HashedCString propertyName = metaProperty->getName();
+
+                {
+                    ClassUID metaPropertyUID = metaProperty->getValueClassUID();
+                    if (metaPropertyUID != 0)
+                    {
+                        if (metaPropertyUID == ClassInfo<ComponentPtr>::UID())
+                        {
+                            DataBlock const* cmpBlock = EcsHelper::GetComponentBlock(_componentBlock, propertyName.str);
+                            if (cmpBlock)
+                            {
+                                EcsSerializationId valueIndex = cmpBlock->getS32(MAZE_HCS("value"));
+
+                                MAZE_ERROR_IF(
+                                    valueIndex > 0 && !_context.outComponents[valueIndex],
+                                    "Component %d is not found! propertyName=%s",
+                                    valueIndex,
+                                    propertyName.str);
+
+                                metaProperty->setValue(componentMetaInstance, &_context.outComponents[valueIndex]);
+                            }
+                            else
+                            // #TODO: OBSOLETE, remove later
+                            if (_componentBlock.isParamExists(propertyName))
+                            {
+                                MAZE_ERROR("Obsolete component param: %s!", propertyName.str);
+                                S32 valueIndex = _componentBlock.getS32(propertyName);
+                                metaProperty->setValue(componentMetaInstance, &_context.outComponents[valueIndex]);
+                            }
+
+                            continue;
+                        }
+                        else
+                        if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
+                        {
+                            DataBlock const* entityIdBlock = EcsHelper::GetEntityIdBlock(_componentBlock, propertyName.str);
+                            if (entityIdBlock)
+                            {
+                                EntityId entityId(entityIdBlock->getS32(MAZE_HCS("value")));
+                                metaProperty->setValue(componentMetaInstance, &_context.entitiesPerEntityId[entityId]);
+
+                                MAZE_ERROR_IF(
+                                    entityId != c_invalidEntityId && !_context.entitiesPerEntityId[entityId],
+                                    "Entity %d is not found! propertyName=%s",
+                                    (S32)entityId,
+                                    propertyName.str);
+                            }
+                            else
+                            // #TODO: OBSOLETE, remove later
+                            if (_componentBlock.isParamExists(propertyName))
+                            {
+                                MAZE_ERROR("Obsolete eid param: %s!", propertyName.str);
+                                S32 valueIndex = _componentBlock.getS32(propertyName);
+                                metaProperty->setValue(componentMetaInstance, &_context.outEntities[valueIndex]);
+                            }
+                            continue;
+                        }
+                        else
+                        if (metaPropertyUID == ClassInfo<EntityId>::UID())
+                        {
+                            DataBlock const* entityIdBlock = EcsHelper::GetEntityIdBlock(_componentBlock, propertyName.str);
+                            if (entityIdBlock)
+                            {
+                                EntityId entityId(entityIdBlock->getS32(MAZE_HCS("value")));
+                                metaProperty->setValue(componentMetaInstance, &entityId);
+
+                                MAZE_ERROR_IF(
+                                    entityId != c_invalidEntityId && !_context.entitiesPerEntityId[entityId],
+                                    "Entity %d is not found! propertyName=%s",
+                                    (S32)entityId,
+                                    propertyName.str);
+                            }
+                            else
+                            {
+                                MAZE_ERROR("Wrong syntax");
+                            }
+                        }
+                        else
+                        if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
+                        {
+                            DataBlock const* cmpArrayBlock = EcsHelper::GetComponentArrayBlock(_componentBlock, propertyName.str);
+                            if (cmpArrayBlock)
+                            {
+                                Vector<EcsSerializationId> componentsIndices;
+                                ValueFromDataBlock(componentsIndices, *cmpArrayBlock);
+
+                                Vector<ComponentPtr> componentsValue;
+                                componentsValue.resize(componentsIndices.size());
+                                for (Size i = 0, in = componentsIndices.size(); i < in; ++i)
+                                {
+                                    MAZE_ERROR_IF(
+                                        componentsIndices[i] > 0 && !_context.outComponents[componentsIndices[i]],
+                                        "Component %d is not found! propertyName=%s",
+                                        componentsIndices[i],
+                                        propertyName.str);
+
+                                    componentsValue[i] = _context.outComponents[componentsIndices[i]];
+                                }
+                                metaProperty->setValue(componentMetaInstance, &componentsValue);
+                            }
+                            else
+                            {
+                                DataBlock const* propertyBlock = _componentBlock.getDataBlock(propertyName);
+                                if (propertyBlock)
+                                {
+                                    MAZE_ERROR("Obsolete component param: %s!", propertyName.str);
+
+                                    Vector<EcsSerializationId> componentsIndices;
+                                    ValueFromDataBlock(componentsIndices, *propertyBlock);
+
+                                    Vector<ComponentPtr> componentsValue;
+                                    componentsValue.resize(componentsIndices.size());
+                                    for (Size i = 0, in = componentsIndices.size(); i < in; ++i)
+                                        componentsValue[i] = _context.outComponents[componentsIndices[i]];
+                                    metaProperty->setValue(componentMetaInstance, &componentsValue);
+                                }
+                                else
+                                {
+                                    MAZE_ERROR("Invalid property '%s'!", propertyName.str);
+                                }
+                            }
+
+                            continue;
+                        }
+                        else
+                        if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
+                        {
+                            DataBlock const* entityIdArrayBlock = EcsHelper::GetEntityIdArrayBlock(_componentBlock, propertyName.str);
+                            if (entityIdArrayBlock)
+                            {
+                                Vector<EcsSerializationId> entitiesIds;
+                                ValueFromDataBlock(entitiesIds, *entityIdArrayBlock);
+
+                                Vector<EntityPtr> entitiesValue;
+                                entitiesValue.resize(entitiesIds.size());
+                                for (Size i = 0, in = entitiesIds.size(); i < in; ++i)
+                                {
+                                    EntityId entityId(entitiesIds[i]);
+                                    entitiesValue[i] = _context.entitiesPerEntityId[entityId];
+                                    MAZE_ERROR_IF(
+                                        entityId != c_invalidEntityId && !entitiesValue[i],
+                                        "Entity %d is not found! propertyName=%s",
+                                        entitiesIds[i],
+                                        propertyName.str);
+                                }
+                                metaProperty->setValue(componentMetaInstance, &entitiesValue);
+                            }
+                            // #TODO: OBSOLETE, remove later
+                            else
+                            {
+                                DataBlock const* propertyBlock = _componentBlock.getDataBlock(propertyName);
+                                if (propertyBlock)
+                                {
+                                    MAZE_ERROR("Obsolete eid array block: %s!", propertyName.str);
+
+                                    Vector<EcsSerializationId> entitiesIndices;
+                                    ValueFromDataBlock(entitiesIndices, *propertyBlock);
+
+                                    Vector<EntityPtr> entitiesValue;
+                                    entitiesValue.resize(entitiesIndices.size());
+                                    for (Size i = 0, in = entitiesIndices.size(); i < in; ++i)
+                                        entitiesValue[i] = _context.outEntities[entitiesIndices[i]];
+                                    metaProperty->setValue(componentMetaInstance, &entitiesValue);
+                                }
+                                else
+                                {
+                                    MAZE_ERROR("Invalid property '%s'", propertyName.str);
+                                }
+                            }
+                            continue;
+                        }
+                    }
+
+                    DataBlockHelper::DeserializeMetaPropertyFromDataBlock(componentMetaInstance, metaProperty, _componentBlock);
+                }
+
+
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void EntitySerializationManager::loadComponentModificationFromDataBlockDefault(
+        DataBlock const& _modificationBlock,
+        ComponentPtr const& _component,
+        CString _propertyName,
+        EntitiesFromDataBlockContext& _context) const
+    {
+        MetaProperty* metaProperty = _component->getMetaClass()->getProperty(_propertyName);
+        if (metaProperty)
+        {
+            ClassUID metaPropertyUID = metaProperty->getValueClassUID();
+            if (metaPropertyUID != 0)
+            {
+                if (metaPropertyUID == ClassInfo<ComponentPtr>::UID())
+                {
+                    EcsSerializationId valueIndex = _modificationBlock.getS32(MAZE_HCS("value"));
+                    metaProperty->setValue(_component->getMetaInstance(), &_context.outComponents[valueIndex]);
+                    return;
+                }
+                else
+                if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
+                {
+                    EcsSerializationId valueIndex = _modificationBlock.getS32(MAZE_HCS("value"));
+                    metaProperty->setValue(_component->getMetaInstance(), &_context.outEntities[valueIndex]);
+                    return;
+                }
+                else
+                if (metaPropertyUID == ClassInfo<EntityId>::UID())
+                {
+                    EcsSerializationId valueIndex = _modificationBlock.getS32(MAZE_HCS("value"));
+                    EntityPtr const& entity = _context.outEntities[valueIndex];
+                    EntityId entityId = entity ? entity->getId() : c_invalidEntityId;
+                    metaProperty->setValue(_component->getMetaInstance(), &entityId);
+                    return;
+                }
+                else
+                if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
+                {
+                    DataBlock const* propertyBlock = _modificationBlock.getDataBlock(MAZE_HCS("value"));
+                    if (propertyBlock)
+                    {
+                        Vector<EcsSerializationId> componentsIndices;
+                        ValueFromDataBlock(componentsIndices, *propertyBlock);
+
+                        Vector<ComponentPtr> componentsValue;
+                        componentsValue.resize(componentsIndices.size());
+                        for (Size i = 0, in = componentsIndices.size(); i < in; ++i)
+                            componentsValue[i] = _context.outComponents[componentsIndices[i]];
+                        metaProperty->setValue(_component->getMetaInstance(), &componentsValue);
+                    }
+                    else
+                    {
+                        MAZE_ERROR("Invalid property 'value'!");
+                    }
+                    return;
+                }
+                else
+                if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
+                {
+                    DataBlock const* propertyBlock = _modificationBlock.getDataBlock(MAZE_HCS("value"));
+                    if (propertyBlock)
+                    {
+                        Vector<EcsSerializationId> entitiesIndices;
+                        ValueFromDataBlock(entitiesIndices, *propertyBlock);
+
+                        Vector<EntityPtr> entitiesValue;
+                        entitiesValue.resize(entitiesIndices.size());
+                        for (Size i = 0, in = entitiesIndices.size(); i < in; ++i)
+                            entitiesValue[i] = _context.outEntities[entitiesIndices[i]];
+                        metaProperty->setValue(_component->getMetaInstance(), &entitiesValue);
+                    }
+                    else
+                    {
+                        MAZE_ERROR("Invalid property 'value'");
+                    }
+                    return;
+                }
+            }
+
+            DataBlockHelper::DeserializeMetaPropertyFromDataBlock(_component->getMetaInstance(), metaProperty, MAZE_HCS("value"), _modificationBlock);
+        }
+    }
+
+    //////////////////////////////////////////
     void EntitySerializationManager::loadEntities(
         DataBlock& _dataBlock,
-        EcsWorld* _world,
-        EcsScene* _scene,
-        Map<EcsSerializationId, EntityPtr>& _outEntities,
-        Map<EcsSerializationId, ComponentPtr>& _outComponents) const
+        EntitiesFromDataBlockContext& _context) const
     {
-        EcsScene* scene = _scene ? _scene
-            : (_world ? nullptr : SceneManager::GetInstancePtr()->getMainScene().get());
+        _context.scene = _context.scene ? _context.scene
+            : (_context.world ? nullptr : SceneManager::GetInstancePtr()->getMainScene().get());
 
-        EcsWorld* world = _world ? _world
-            : (scene ? scene->getWorld() : nullptr);
+        _context.world = _context.world ? _context.world
+            : (_context.scene ? _context.scene->getWorld() : nullptr);
 
         ComponentFactoryPtr const& factory = EntityManager::GetInstancePtr()->getComponentFactory();
 
@@ -847,9 +1132,9 @@ namespace Maze
                     EntityPtr entity = Entity::Create();
                     entity->setSerializationId(entityIndex);
                     entity->setAwakeForbidden(true);
-                    world->addEntity(entity);
+                    _context.world->addEntity(entity);
 
-                    _outEntities[entityIndex] = entity;
+                    _context.outEntities[entityIndex] = entity;
 
                     for (DataBlock const* componentBlock : *subBlock)
                     {
@@ -886,7 +1171,7 @@ namespace Maze
                         if (component)
                             component->setSerializationId(componentIndex);
 
-                        _outComponents[componentIndex] = component;
+                        _context.outComponents[componentIndex] = component;
                     }
                 }
                 else
@@ -918,7 +1203,7 @@ namespace Maze
 
                     if (prefab)
                     {                       
-                        EntityPtr entity = EntityPrefabManager::GetInstancePtr()->instantiatePrefab(prefab, world, scene);
+                        EntityPtr entity = EntityPrefabManager::GetInstancePtr()->instantiatePrefab(prefab, _context.world, _context.scene);
                         if (entity == nullptr)
                         {
                             MAZE_ERROR("Entity is nullptr!");
@@ -926,7 +1211,7 @@ namespace Maze
                         }
 
                         entity->setSerializationId(entityIndex);
-                        _outEntities[entityIndex] = entity;
+                        _context.outEntities[entityIndex] = entity;
 
                         for (DataBlock const* prefabChildBlock : *subBlock)
                         {
@@ -974,7 +1259,7 @@ namespace Maze
                                 if (component)
                                     component->setSerializationId(componentIndex);
 
-                                _outComponents[componentIndex] = component;
+                                _context.outComponents[componentIndex] = component;
                             }
                         }
                     }
@@ -991,46 +1276,47 @@ namespace Maze
 
 
         // Fix auto indices
-        for (Map<EcsSerializationId, EntityPtr>::iterator it = _outEntities.begin(), end = _outEntities.end(); it != end;)
+        for (Map<EcsSerializationId, EntityPtr>::iterator it = _context.outEntities.begin(), end = _context.outEntities.end(); it != end;)
         {
             if (it->first < 0)
             {
                 it->second->setSerializationId(it->second->getSerializationId() - it->first);
-                it = _outEntities.erase(it);
-                _outEntities.emplace(
+                it = _context.outEntities.erase(it);
+                _context.outEntities.emplace(
                     std::piecewise_construct,
                     std::forward_as_tuple(it->second->getSerializationId()),
                     std::forward_as_tuple(it->second));
-                end = _outEntities.end();
+                end = _context.outEntities.end();
             }
             else
                 ++it;
         }
 
-        for (Map<EcsSerializationId, ComponentPtr>::iterator it = _outComponents.begin(), end = _outComponents.end(); it != end;)
+        for (Map<EcsSerializationId, ComponentPtr>::iterator it = _context.outComponents.begin(), end = _context.outComponents.end(); it != end;)
         {
             if (it->first < 0)
             {
                 it->second->setSerializationId(it->second->getSerializationId() - it->first);
-                it = _outComponents.erase(it);
-                _outComponents.emplace(
+                it = _context.outComponents.erase(it);
+                _context.outComponents.emplace(
                     std::piecewise_construct,
                     std::forward_as_tuple(it->second->getSerializationId()),
                     std::forward_as_tuple(it->second));
-                end = _outComponents.end();
+                end = _context.outComponents.end();
             }
             else
                 ++it;
         }
 
-        UnorderedMap<EntityId, EntityPtr> entitiesPerEntityId;
-        for (auto const& entityData : _outEntities)
-            entitiesPerEntityId.emplace(
+        for (auto const& entityData : _context.outEntities)
+        {
+            _context.entitiesPerEntityId.emplace(
                 std::piecewise_construct,
                 std::forward_as_tuple(entityData.second->getId()),
                 std::forward_as_tuple(entityData.second));
+        }
 
-        restoreDataBlockEcsIds(_dataBlock, _outEntities, _outComponents);
+        restoreDataBlockEcsIds(_dataBlock, _context.outEntities, _context.outComponents);
 
         // Load
         {
@@ -1042,7 +1328,7 @@ namespace Maze
                 if (subBlock->getName() == MAZE_HCS("entity") || subBlock->getName() == MAZE_HCS("prefabInstance"))
                 {
                     EcsSerializationId entityIndex = subBlock->getS32(MAZE_HCS("_sid"));
-                    EntityPtr const& entity = _outEntities[entityIndex];
+                    EntityPtr const& entity = _context.outEntities[entityIndex];
                     if (entity == nullptr)
                     {
                         MAZE_ERROR("Entity is nullptr!");
@@ -1071,281 +1357,29 @@ namespace Maze
                                 ComponentPtr const& component = entity->getComponentById(componentId);
                                 MAZE_WARNING_CONTINUE_IF(!component, "There is no %s component in the entity (entityIndex=%d, property=%s)",
                                     componentClassName, entityIndex, componentPropertyName);
-                                MetaProperty* metaProperty = component->getMetaClass()->getProperty(componentPropertyName);
-                                if (metaProperty)
-                                {
-                                    ClassUID metaPropertyUID = metaProperty->getValueClassUID();
-                                    if (metaPropertyUID != 0)
-                                    {
-                                        if (metaPropertyUID == ClassInfo<ComponentPtr>::UID())
-                                        {
-                                            EcsSerializationId valueIndex = componentBlock->getS32(MAZE_HCS("value"));
-                                            metaProperty->setValue(component->getMetaInstance(), &_outComponents[valueIndex]);
 
-                                            continue;
-                                        }
-                                        else
-                                        if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
-                                        {
-                                            EcsSerializationId valueIndex = componentBlock->getS32(MAZE_HCS("value"));
-                                            metaProperty->setValue(component->getMetaInstance(), &_outEntities[valueIndex]);
-
-                                            continue;
-                                        }
-                                        else
-                                        if (metaPropertyUID == ClassInfo<EntityId>::UID())
-                                        {
-                                            EcsSerializationId valueIndex = componentBlock->getS32(MAZE_HCS("value"));
-                                            EntityPtr const& entity = _outEntities[valueIndex];
-                                            EntityId entityId = entity ? entity->getId() : c_invalidEntityId;
-                                            metaProperty->setValue(component->getMetaInstance(), &entityId);
-
-                                            continue;
-                                        }
-                                        else
-                                        if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
-                                        {
-                                            DataBlock const* propertyBlock = componentBlock->getDataBlock(MAZE_HCS("value"));
-                                            if (propertyBlock)
-                                            {
-                                                Vector<EcsSerializationId> componentsIndices;
-                                                ValueFromDataBlock(componentsIndices, *propertyBlock);
-
-                                                Vector<ComponentPtr> componentsValue;
-                                                componentsValue.resize(componentsIndices.size());
-                                                for (Size i = 0, in = componentsIndices.size(); i < in; ++i)
-                                                    componentsValue[i] = _outComponents[componentsIndices[i]];
-                                                metaProperty->setValue(component->getMetaInstance(), &componentsValue);
-                                            }
-                                            else
-                                            {
-                                                MAZE_ERROR("Invalid property 'value'!");
-                                            }
-                                            continue;
-                                        }
-                                        else
-                                        if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
-                                        {
-                                            DataBlock const* propertyBlock = componentBlock->getDataBlock(MAZE_HCS("value"));
-                                            if (propertyBlock)
-                                            {
-                                                Vector<EcsSerializationId> entitiesIndices;
-                                                ValueFromDataBlock(entitiesIndices, *propertyBlock);
-
-                                                Vector<EntityPtr> entitiesValue;
-                                                entitiesValue.resize(entitiesIndices.size());
-                                                for (Size i = 0, in = entitiesIndices.size(); i < in; ++i)
-                                                    entitiesValue[i] = _outEntities[entitiesIndices[i]];
-                                                metaProperty->setValue(component->getMetaInstance(), &entitiesValue);
-                                            }
-                                            else
-                                            {
-                                                MAZE_ERROR("Invalid property 'value'");
-                                            }
-                                            continue;
-                                        }
-                                    }
-
-                                    DataBlockHelper::DeserializeMetaPropertyFromDataBlock(component->getMetaInstance(), metaProperty, MAZE_HCS("value"), *componentBlock);
-                                }
+                                ClassUID componentClassUID = component->getClassUID();
+                                auto it = m_componentCustomSerializationByClassUID.find(componentClassUID);
+                                if (it == m_componentCustomSerializationByClassUID.end())
+                                    loadComponentModificationFromDataBlockDefault(*componentBlock, component, componentPropertyName, _context);
+                                else
+                                    it->second.modificationFromDataBlockFunc(*componentBlock, component, componentPropertyName, _context);
                             }
                         }
                         if (componentBlock->getName() == MAZE_HCS("component"))
                         {
                             EcsSerializationId componentIndex = componentBlock->getS32(MAZE_HCS("_sid"));
 
-                            ComponentPtr const& component = _outComponents[componentIndex];
+                            ComponentPtr const& component = _context.outComponents[componentIndex];
                             if (!component)
                                 continue;
 
-                            MetaClass const* componentMetaClass = component->getMetaClass();
-                            MetaInstance componentMetaInstance = component->getMetaInstance();
-
-                            for (Maze::MetaClass* metaClass : componentMetaClass->getAllSuperMetaClasses())
-                            {
-                                for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
-                                {
-                                    Maze::MetaProperty* metaProperty = metaClass->getProperty(i);
-
-                                    HashedCString propertyName = metaProperty->getName();
-
-                                    {
-                                        ClassUID metaPropertyUID = metaProperty->getValueClassUID();
-                                        if (metaPropertyUID != 0)
-                                        {
-                                            if (metaPropertyUID == ClassInfo<ComponentPtr>::UID())
-                                            {
-                                                DataBlock const* cmpBlock = EcsHelper::GetComponentBlock(*componentBlock, propertyName.str);
-                                                if (cmpBlock)
-                                                {
-                                                    EcsSerializationId valueIndex = cmpBlock->getS32(MAZE_HCS("value"));
-
-                                                    MAZE_ERROR_IF(
-                                                        valueIndex > 0 && !_outComponents[valueIndex],
-                                                        "Component %d is not found! propertyName=%s",
-                                                        valueIndex,
-                                                        propertyName.str);
-
-                                                    metaProperty->setValue(componentMetaInstance, &_outComponents[valueIndex]);
-                                                }
-                                                else
-                                                // #TODO: OBSOLETE, remove later
-                                                if (componentBlock->isParamExists(propertyName))
-                                                {
-                                                    MAZE_ERROR("Obsolete component param: %s!", propertyName.str);
-                                                    S32 valueIndex = componentBlock->getS32(propertyName);
-                                                    metaProperty->setValue(componentMetaInstance, &_outComponents[valueIndex]);
-                                                }
-
-                                                continue;
-                                            }
-                                            else
-                                            if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
-                                            {
-                                                DataBlock const* entityIdBlock = EcsHelper::GetEntityIdBlock(*componentBlock, propertyName.str);
-                                                if (entityIdBlock)
-                                                {
-                                                    EntityId entityId(entityIdBlock->getS32(MAZE_HCS("value")));
-                                                    metaProperty->setValue(componentMetaInstance, &entitiesPerEntityId[entityId]);
-
-                                                    MAZE_ERROR_IF(
-                                                        entityId != c_invalidEntityId && !entitiesPerEntityId[entityId],
-                                                        "Entity %d is not found! propertyName=%s",
-                                                        (S32)entityId,
-                                                        propertyName.str);
-                                                }
-                                                else
-                                                // #TODO: OBSOLETE, remove later
-                                                if (componentBlock->isParamExists(propertyName))
-                                                {
-                                                    MAZE_ERROR("Obsolete eid param: %s!", propertyName.str);
-                                                    S32 valueIndex = componentBlock->getS32(propertyName);
-                                                    metaProperty->setValue(componentMetaInstance, &_outEntities[valueIndex]);
-                                                }
-                                                continue;
-                                            }
-                                            else
-                                            if (metaPropertyUID == ClassInfo<EntityId>::UID())
-                                            {
-                                                DataBlock const* entityIdBlock = EcsHelper::GetEntityIdBlock(*componentBlock, propertyName.str);
-                                                if (entityIdBlock)
-                                                {
-                                                    EntityId entityId(entityIdBlock->getS32(MAZE_HCS("value")));
-                                                    metaProperty->setValue(componentMetaInstance, &entityId);
-
-                                                    MAZE_ERROR_IF(
-                                                        entityId != c_invalidEntityId && !entitiesPerEntityId[entityId],
-                                                        "Entity %d is not found! propertyName=%s",
-                                                        (S32)entityId,
-                                                        propertyName.str);
-                                                }
-                                                else
-                                                {
-                                                    MAZE_ERROR("Wrong syntax");
-                                                }
-                                            }
-                                            else
-                                            if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
-                                            {
-                                                DataBlock const* cmpArrayBlock = EcsHelper::GetComponentArrayBlock(*componentBlock, propertyName.str);
-                                                if (cmpArrayBlock)
-                                                {
-                                                    Vector<EcsSerializationId> componentsIndices;
-                                                    ValueFromDataBlock(componentsIndices, *cmpArrayBlock);
-
-                                                    Vector<ComponentPtr> componentsValue;
-                                                    componentsValue.resize(componentsIndices.size());
-                                                    for (Size i = 0, in = componentsIndices.size(); i < in; ++i)
-                                                    {
-                                                        MAZE_ERROR_IF(
-                                                            componentsIndices[i] > 0 && !_outComponents[componentsIndices[i]],
-                                                            "Component %d is not found! propertyName=%s",
-                                                            componentsIndices[i],
-                                                            propertyName.str);
-
-                                                        componentsValue[i] = _outComponents[componentsIndices[i]];
-                                                    }
-                                                    metaProperty->setValue(componentMetaInstance, &componentsValue);
-                                                }
-                                                else
-                                                {
-                                                    DataBlock const* propertyBlock = componentBlock->getDataBlock(propertyName);
-                                                    if (propertyBlock)
-                                                    {
-                                                        MAZE_ERROR("Obsolete component param: %s!", propertyName.str);
-
-                                                        Vector<EcsSerializationId> componentsIndices;
-                                                        ValueFromDataBlock(componentsIndices, *propertyBlock);
-
-                                                        Vector<ComponentPtr> componentsValue;
-                                                        componentsValue.resize(componentsIndices.size());
-                                                        for (Size i = 0, in = componentsIndices.size(); i < in; ++i)
-                                                            componentsValue[i] = _outComponents[componentsIndices[i]];
-                                                        metaProperty->setValue(componentMetaInstance, &componentsValue);
-                                                    }
-                                                    else
-                                                    {
-                                                        MAZE_ERROR("Invalid property '%s'!", propertyName.str);
-                                                    }
-                                                }
-
-                                                continue;
-                                            }
-                                            else
-                                            if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
-                                            {
-                                                DataBlock const* entityIdArrayBlock = EcsHelper::GetEntityIdArrayBlock(*componentBlock, propertyName.str);
-                                                if (entityIdArrayBlock)
-                                                {
-                                                    Vector<EcsSerializationId> entitiesIds;
-                                                    ValueFromDataBlock(entitiesIds, *entityIdArrayBlock);
-
-                                                    Vector<EntityPtr> entitiesValue;
-                                                    entitiesValue.resize(entitiesIds.size());
-                                                    for (Size i = 0, in = entitiesIds.size(); i < in; ++i)
-                                                    {
-                                                        EntityId entityId(entitiesIds[i]);
-                                                        entitiesValue[i] = entitiesPerEntityId[entityId];
-                                                        MAZE_ERROR_IF(
-                                                            entityId != c_invalidEntityId && !entitiesValue[i],
-                                                            "Entity %d is not found! propertyName=%s",
-                                                            entitiesIds[i],
-                                                            propertyName.str);
-                                                    }
-                                                    metaProperty->setValue(componentMetaInstance, &entitiesValue);
-                                                }
-                                                // #TODO: OBSOLETE, remove later
-                                                else
-                                                {
-                                                    DataBlock const* propertyBlock = componentBlock->getDataBlock(propertyName);
-                                                    if (propertyBlock)
-                                                    {
-                                                        MAZE_ERROR("Obsolete eid array block: %s!", propertyName.str);
-
-                                                        Vector<EcsSerializationId> entitiesIndices;
-                                                        ValueFromDataBlock(entitiesIndices, *propertyBlock);
-
-                                                        Vector<EntityPtr> entitiesValue;
-                                                        entitiesValue.resize(entitiesIndices.size());
-                                                        for (Size i = 0, in = entitiesIndices.size(); i < in; ++i)
-                                                            entitiesValue[i] = _outEntities[entitiesIndices[i]];
-                                                        metaProperty->setValue(componentMetaInstance, &entitiesValue);
-                                                    }
-                                                    else
-                                                    {
-                                                        MAZE_ERROR("Invalid property '%s'", propertyName.str);
-                                                    }
-                                                }
-                                                continue;
-                                            }
-                                        }
-
-                                        DataBlockHelper::DeserializeMetaPropertyFromDataBlock(componentMetaInstance, metaProperty, *componentBlock);
-                                    }
-
-
-                                }
-                            }
+                            ClassUID componentClassUID = component->getClassUID();
+                            auto it = m_componentCustomSerializationByClassUID.find(componentClassUID);
+                            if (it == m_componentCustomSerializationByClassUID.end())
+                                loadComponentFromDataBlockDefault(*componentBlock, component, _context);
+                            else
+                                it->second.fromDataBlockFunc(*componentBlock, component, _context);
                         }
                     }
                 }
@@ -1353,16 +1387,16 @@ namespace Maze
         }
 
         // Add to ECS scene
-        for (auto entityData : _outEntities)
+        for (auto entityData : _context.outEntities)
         {
             if (!entityData.second)
                 continue;
 
-            entityData.second->setEcsScene(scene);
+            entityData.second->setEcsScene(_context.scene);
         }
 
         // Awake
-        for (auto entityData : _outEntities)
+        for (auto entityData : _context.outEntities)
         {
             if (!entityData.second)
                 continue;
@@ -1388,11 +1422,12 @@ namespace Maze
             return nullptr;
 
 
-        Map<EcsSerializationId, EntityPtr> entities;
-        Map<EcsSerializationId, ComponentPtr> components;
-        loadEntities(_dataBlock, _world, _scene, entities, components);
+        EntitiesFromDataBlockContext context;
+        context.world = _world;
+        context.scene = _scene;
+        loadEntities(_dataBlock, context);
 
-        return entities[rootIndex];
+        return context.outEntities[rootIndex];
     }
 
     //////////////////////////////////////////
@@ -1497,6 +1532,17 @@ namespace Maze
             EntitySerializationData data{ entity, components };
             _entityComponents.emplace_back(data);
         }
+    }
+
+    //////////////////////////////////////////
+    void EntitySerializationManager::registerComponentSerializationByClassUID(
+        ClassUID _classUID,
+        ComponentSerializationFunctions _funcs)
+    {
+        m_componentCustomSerializationByClassUID.emplace(
+            std::piecewise_construct,
+            std::forward_as_tuple(_classUID),
+            std::forward_as_tuple(_funcs));
     }
 
 } // namespace Maze

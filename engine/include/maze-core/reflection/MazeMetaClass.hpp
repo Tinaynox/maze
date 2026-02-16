@@ -434,7 +434,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        static Map<ClassUID, MetaClass*> s_metaClassByUID;
+        static StdMap<ClassUID, MetaClass*> s_metaClassByUID;
 
     private:
         HashedCString m_name;

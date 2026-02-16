@@ -62,6 +62,50 @@ namespace Maze
         PrefabInstance* prefabInstance = nullptr;
     };
 
+    //////////////////////////////////////////
+    struct MAZE_CORE_API EntitiesToDataBlockContext
+    {
+        //////////////////////////////////////////
+        EcsWorld* ecsWorld = nullptr;
+        Vector<EntitySerializationData> entityComponents;
+        Vector<PrefabSerializationData> prefabs;
+        Map<void*, EcsSerializationId> pointerIndices;
+        Map<EntityId, EcsSerializationId> entityIndices;
+        Map<AssetUnitId, EntityPtr> identityPrefabs;
+    };
+
+    //////////////////////////////////////////
+    struct MAZE_CORE_API EntitiesFromDataBlockContext
+    {
+        //////////////////////////////////////////
+        EcsWorld* world = nullptr;
+        EcsScene* scene = nullptr;
+        UnorderedMap<EntityId, EntityPtr> entitiesPerEntityId;
+        Map<EcsSerializationId, EntityPtr> outEntities;
+        Map<EcsSerializationId, ComponentPtr> outComponents;
+    };
+
+
+    //////////////////////////////////////////
+    using SerializeComponentToDataBlockFunc = std::function<
+        void(EntitiesToDataBlockContext& _context, ComponentPtr const& _component, DataBlock& _parentDataBlock)>;
+    using SerializeComponentModificationsToDataBlockFunc = std::function<
+        void(EntitiesToDataBlockContext& _context, ComponentPtr const& _component, ComponentPtr const& _identityComponent, DataBlock& _parentDataBlock)>;
+    using DeserializeComponentFromDataBlockFunc = std::function<
+        void(DataBlock const& _componentBlock, ComponentPtr const& _component, EntitiesFromDataBlockContext& _context)>;
+    using DeserializeComponentModificaionFromDataBlockFunc = std::function<
+        void(DataBlock const& _modificationBlock, ComponentPtr const& _component, CString _propertyName, EntitiesFromDataBlockContext& _context)>;
+
+
+    //////////////////////////////////////////
+    struct MAZE_CORE_API ComponentSerializationFunctions
+    {
+        SerializeComponentToDataBlockFunc toDataBlockFunc;
+        SerializeComponentModificationsToDataBlockFunc modificationsToDataBlockFunc;
+        DeserializeComponentFromDataBlockFunc fromDataBlockFunc;
+        DeserializeComponentModificaionFromDataBlockFunc modificationFromDataBlockFunc;
+    };
+
 
     //////////////////////////////////////////
     // Class EntitySerializationManager
@@ -122,14 +166,6 @@ namespace Maze
             EcsScene* _scene = nullptr) const;
 
         //////////////////////////////////////////
-        /*
-        EntityPtr loadPrefabOBSOLETE(
-            DataBlock const& _dataBlock,
-            EcsWorld* _world = nullptr,
-            EcsScene* _scene = nullptr) const;
-        */
-
-        //////////////////////////////////////////
         EntityPtr loadPrefab(
             DataBlock& _dataBlock,
             EcsWorld* _world = nullptr,
@@ -155,6 +191,11 @@ namespace Maze
             Vector<EntitySerializationData>& _entityComponents,
             Vector<PrefabSerializationData>& _prefabs) const;
 
+
+        //////////////////////////////////////////
+        void registerComponentSerializationByClassUID(ClassUID _classUID, ComponentSerializationFunctions _funcs);
+
+
     protected:
 
         //////////////////////////////////////////
@@ -165,13 +206,21 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void saveComponentToDataBlockDefault(
+            EntitiesToDataBlockContext& _context,
+            ComponentPtr const& _component,
+            DataBlock& _parentBlock) const;
+
+        //////////////////////////////////////////
+        void saveComponentModificationsToDataBlockDefault(
+            EntitiesToDataBlockContext& _context,
+            ComponentPtr const& _component,
+            ComponentPtr const& _identityComponent,
+            DataBlock& _parentBlock) const;
+
+        //////////////////////////////////////////
         void saveEntitiesToDataBlock(
-            EcsWorld* _ecsWorld,
-            Vector<EntitySerializationData> const& _entityComponents,
-            Vector<PrefabSerializationData> const& _prefabs,
-            Map<void*, S32>& _pointerIndices,
-            Map<EntityId, S32>& _entityIndices,
-            Map<AssetUnitId, EntityPtr>& _identityPrefabs,
+            EntitiesToDataBlockContext& _context,
             DataBlock& _dataBlock) const;
 
         //////////////////////////////////////////
@@ -188,17 +237,29 @@ namespace Maze
             Map<S32, EntityPtr>& _outEntities,
             Map<S32, ComponentPtr>& _outComponents) const;
 
+        //////////////////////////////////////////
+        void loadComponentFromDataBlockDefault(
+            DataBlock const& _componentBlock,
+            ComponentPtr const& _component,
+            EntitiesFromDataBlockContext& _context) const;
+
+        //////////////////////////////////////////
+        void loadComponentModificationFromDataBlockDefault(
+            DataBlock const& _modificationBlock,
+            ComponentPtr const& _component,
+            CString _propertyName,
+            EntitiesFromDataBlockContext& _context) const;
+
+        //////////////////////////////////////////
         void loadEntities(
             DataBlock& _dataBlock,
-            EcsWorld* _world,
-            EcsScene* _scene,
-            Map<S32, EntityPtr>& _outEntities,
-            Map<S32, ComponentPtr>& _outComponents) const;
+            EntitiesFromDataBlockContext& _context) const;
 
     protected:
         static EntitySerializationManager* s_instance;
 
         Set<ClassUID> m_componentsToIgnore;
+        Map<ClassUID, ComponentSerializationFunctions> m_componentCustomSerializationByClassUID;
     };
 
 
