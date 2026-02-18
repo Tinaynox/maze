@@ -257,18 +257,9 @@ namespace Maze
     void EntitySerializationManager::saveComponentToDataBlockDefault(
         EntitiesToDataBlockContext& _context,
         ComponentPtr const& _component,
-        DataBlock& _parentBlock) const
+        DataBlock& _componentBlock) const
     {
-        DataBlock* componentBlock = _parentBlock.addNewDataBlock(MAZE_HCS("component"));
-
         auto propertyValueIndexIt = _context.pointerIndices.find(_component.get());
-
-        componentBlock->setCString(MAZE_HCS("_t"), static_cast<CString>(_component->getMetaClass()->getName()));
-
-        if (strcmp(_component->getClassQualifiedName().str, _component->getComponentClassName()) != 0)
-        {
-            componentBlock->setCString(MAZE_HCS("_ct"), static_cast<CString>(_component->getComponentClassName()));
-        }
 
         MetaClass const* metaClass = _component->getMetaClass();
         MetaInstance metaInstance = _component->getMetaInstance();
@@ -293,7 +284,7 @@ namespace Maze
                             if (propertyValuePointer)
                             {
                                 EcsSerializationId propertyValueIndex = _context.pointerIndices[propertyValuePointer];
-                                EcsHelper::EnsureComponentBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
+                                EcsHelper::EnsureComponentBlock(_componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
                             }
                             continue;
                         }
@@ -304,7 +295,7 @@ namespace Maze
                             if (propertyValuePointer)
                             {
                                 EcsSerializationId propertyValueIndex = _context.pointerIndices[propertyValuePointer];
-                                EcsHelper::EnsureEntityIdBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
+                                EcsHelper::EnsureEntityIdBlock(_componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
                             }
                             continue;
                         }
@@ -315,7 +306,7 @@ namespace Maze
                         EntityId eid;
                         metaProperty->getValue(metaInstance, eid);
                         EcsSerializationId propertyValueIndex = _context.entityIndices[eid];
-                        EcsHelper::EnsureEntityIdBlock(*componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
+                        EcsHelper::EnsureEntityIdBlock(_componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
                         continue;
                     }
                     else
@@ -333,7 +324,7 @@ namespace Maze
 
                             Char newPropertyName[128];
                             StringHelper::FormatString(newPropertyName, sizeof(newPropertyName), "%s:Array<EntityId>", propertyName);
-                            AddDataToDataBlock(*componentBlock, HashedCString(newPropertyName), compIndices);
+                            AddDataToDataBlock(_componentBlock, HashedCString(newPropertyName), compIndices);
                         }
 
                         continue;
@@ -353,14 +344,14 @@ namespace Maze
 
                             Char newPropertyName[128];
                             StringHelper::FormatString(newPropertyName, sizeof(newPropertyName), "%s:Array<Component>", propertyName);
-                            AddDataToDataBlock(*componentBlock, HashedCString(newPropertyName), entIndices);
+                            AddDataToDataBlock(_componentBlock, HashedCString(newPropertyName), entIndices);
                         }
 
                         continue;
                     }
                 }
 
-                DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, *componentBlock);
+                DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, _componentBlock);
             }
         }
     }
@@ -370,7 +361,7 @@ namespace Maze
         EntitiesToDataBlockContext& _context,
         ComponentPtr const& _component,
         ComponentPtr const& _identityComponent,
-        DataBlock& _parentBlock) const
+        DataBlock& _prefabBlock) const
     {
         MetaClass const* metaClass = _component->getMetaClass();
         MetaInstance metaInstance = _component->getMetaInstance();
@@ -400,7 +391,7 @@ namespace Maze
                             {
                                 EcsSerializationId propertyValueIndex = propertyValueIndexIt->second;
 
-                                DataBlock* modificationBlock = _parentBlock.addNewDataBlock(MAZE_HCS("modification"));
+                                DataBlock* modificationBlock = _prefabBlock.addNewDataBlock(MAZE_HCS("modification"));
                                 modificationBlock->setCString(MAZE_HCS("component"), metaClass->getName());
                                 if (strcmp(_component->getClassQualifiedName().str, _component->getComponentClassName()) != 0)
                                     modificationBlock->setCString(MAZE_HCS("_ct"), _component->getComponentClassName());
@@ -414,7 +405,7 @@ namespace Maze
                     }
                     else
                     {
-                        DataBlock* modificationBlock = _parentBlock.addNewDataBlock(MAZE_HCS("modification"));
+                        DataBlock* modificationBlock = _prefabBlock.addNewDataBlock(MAZE_HCS("modification"));
                         modificationBlock->setCString(MAZE_HCS("component"), metaClass->getName());
                         if (strcmp(_component->getClassQualifiedName().str, _component->getComponentClassName()) != 0)
                             modificationBlock->setCString(MAZE_HCS("_ct"), _component->getComponentClassName());
@@ -435,12 +426,17 @@ namespace Maze
         auto saveComponentFunc =
             [&](EntitiesToDataBlockContext& _context, ComponentPtr const& _component, DataBlock& _parentBlock)
             {
+                DataBlock* componentBlock = _parentBlock.addNewDataBlock(MAZE_HCS("component"));
+                componentBlock->setCString(MAZE_HCS("_t"), static_cast<CString>(_component->getMetaClass()->getName()));
+                if (strcmp(_component->getClassQualifiedName().str, _component->getComponentClassName()) != 0)
+                    componentBlock->setCString(MAZE_HCS("_ct"), static_cast<CString>(_component->getComponentClassName()));
+
                 ClassUID componentUID = _component->getClassUID();
                 auto it = m_componentCustomSerializationByClassUID.find(componentUID);
                 if (it == m_componentCustomSerializationByClassUID.end())
-                    saveComponentToDataBlockDefault(_context, _component, _parentBlock);
+                    saveComponentToDataBlockDefault(_context, _component, *componentBlock);
                 else
-                    it->second.toDataBlockFunc(_context, _component, _parentBlock);
+                    it->second.toDataBlockFunc(_context, _component, *componentBlock);
             };
 
         // Entities

@@ -218,7 +218,7 @@ namespace Maze
                         "Copy as string",
                         [this, componentId](String const& _item)
                         {
-                            Set<EntityPtr> selectedEntites = SelectionManager::GetInstancePtr()->getSelectedEntities();
+                            Set<EntityPtr> const& selectedEntites = SelectionManager::GetInstancePtr()->getSelectedEntities();
                             if (selectedEntites.size() == 1)
                             {
                                 ComponentPtr component = (*selectedEntites.begin())->getComponentById(componentId);

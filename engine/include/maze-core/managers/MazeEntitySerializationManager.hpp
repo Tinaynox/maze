@@ -88,9 +88,9 @@ namespace Maze
 
     //////////////////////////////////////////
     using SerializeComponentToDataBlockFunc = std::function<
-        void(EntitiesToDataBlockContext& _context, ComponentPtr const& _component, DataBlock& _parentDataBlock)>;
+        void(EntitiesToDataBlockContext& _context, ComponentPtr const& _component, DataBlock& _componentBlock)>;
     using SerializeComponentModificationsToDataBlockFunc = std::function<
-        void(EntitiesToDataBlockContext& _context, ComponentPtr const& _component, ComponentPtr const& _identityComponent, DataBlock& _parentDataBlock)>;
+        void(EntitiesToDataBlockContext& _context, ComponentPtr const& _component, ComponentPtr const& _identityComponent, DataBlock& _prefabBlock)>;
     using DeserializeComponentFromDataBlockFunc = std::function<
         void(DataBlock const& _componentBlock, ComponentPtr const& _component, EntitiesFromDataBlockContext& _context)>;
     using DeserializeComponentModificaionFromDataBlockFunc = std::function<
@@ -209,14 +209,14 @@ namespace Maze
         void saveComponentToDataBlockDefault(
             EntitiesToDataBlockContext& _context,
             ComponentPtr const& _component,
-            DataBlock& _parentBlock) const;
+            DataBlock& _componentBlock) const;
 
         //////////////////////////////////////////
         void saveComponentModificationsToDataBlockDefault(
             EntitiesToDataBlockContext& _context,
             ComponentPtr const& _component,
             ComponentPtr const& _identityComponent,
-            DataBlock& _parentBlock) const;
+            DataBlock& _prefabBlock) const;
 
         //////////////////////////////////////////
         void saveEntitiesToDataBlock(

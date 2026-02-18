@@ -31,6 +31,7 @@
 #include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 #include "maze-core/managers/MazeEventManager.hpp"
+#include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/serialization/MazeDataBlockBinarySerialization.hpp"
 #include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
@@ -40,8 +41,10 @@
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-plugin-csharp/helpers/MazeMonoSerializationHelper.hpp"
 #include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptableObject.hpp"
+#include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 
 
 //////////////////////////////////////////
@@ -84,6 +87,14 @@ namespace Maze
         EventManager::GetInstancePtr()->subscribeEvent<CSharpCoreAssemblyLoadedEvent>(this, &MonoSerializationManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &MonoSerializationManager::notifyEvent);
 
+        EntitySerializationManager::GetInstancePtr()->registerComponentSerializationByClassUID(
+            ClassInfo<MonoBehaviour>::UID(),
+            {
+                MonoSerializationHelper::SerializeMonoBehaviourToDataBlock,
+                MonoSerializationHelper::SerializeMonoBehaviourModificationsToDataBlock,
+                MonoSerializationHelper::DeserializeMonoBehaviourFromDataBlock,
+                MonoSerializationHelper::DeserializeMonoBehaviourModificaionFromDataBlock
+            });
 
         registerWriteMetaPropertyToMonoClassFieldFunctions();
 
