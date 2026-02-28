@@ -393,13 +393,29 @@ namespace Maze
                                 return;
 
                             // #TODO: History actions
-                            Transform3DPtr entityParent = entity->getComponent<Transform3D>();
-
                             EntityPtr newEntity = EntityPrefabManager::GetInstancePtr()->instantiatePrefab(
                                 assetUnit->getAssetUnitId(),
                                 entity->getEcsWorld(),
                                 entity->getEcsScene());
-                            newEntity->ensureComponent<Transform3D>()->setParent(entityParent);
+
+                            if (Transform3D* transform = newEntity->getComponentRaw<Transform3D>())
+                            {
+                                Transform3DPtr entityParent = entity->getComponent<Transform3D>();
+                                MAZE_DEBUG_ASSERT(entityParent);
+                                transform->setParent(entityParent);
+                            }
+                            else
+                            if (Transform2D* transform = newEntity->getComponentRaw<Transform2D>())
+                            {
+                                Transform2DPtr entityParent = entity->getComponent<Transform2D>();
+                                MAZE_DEBUG_ASSERT(entityParent);
+                                transform->setParent(entityParent);
+                            }
+                            else
+                            {
+                                MAZE_ERROR("Prefab without transform - %s", assetUnit->getName().c_str());
+                            }
+
                             SelectionManager::GetInstancePtr()->selectObject(newEntity);
                             return;
                         }
@@ -412,12 +428,28 @@ namespace Maze
                                 return;
 
                             // #TODO: History actions
-                            Transform3DPtr entityParent = entity->getComponent<Transform3D>();
-
                             EntityPtr newEntity = EditorToolsHelper::CreateEntity3D(
                                 renderMesh->getName().c_str(),
                                 entity->getEcsScene());
-                            newEntity->ensureComponent<Transform3D>()->setParent(entityParent);
+                            
+                            if (Transform3D* transform = newEntity->getComponentRaw<Transform3D>())
+                            {
+                                Transform3DPtr entityParent = entity->getComponent<Transform3D>();
+                                MAZE_DEBUG_ASSERT(entityParent);
+                                transform->setParent(entityParent);
+                            }
+                            else
+                            if (Transform2D* transform = newEntity->getComponentRaw<Transform2D>())
+                            {
+                                Transform2DPtr entityParent = entity->getComponent<Transform2D>();
+                                MAZE_DEBUG_ASSERT(entityParent);
+                                transform->setParent(entityParent);
+                            }
+                            else
+                            {
+                                MAZE_ERROR("Prefab without transform - %s", renderMesh->getName().c_str());
+                            }
+
                             MeshRendererPtr const& meshRenderer = newEntity->ensureComponent<MeshRenderer>();
                             meshRenderer->setRenderMesh(renderMesh);
                             meshRenderer->setMaterial("Specular");
@@ -467,7 +499,13 @@ namespace Maze
                                 assetUnit->getAssetUnitId(),
                                 scene->getWorld(),
                                 scene.get());
-                            newEntity->ensureComponent<Transform3D>()->setParent(Transform3DPtr());
+
+                            if (Transform3D* transform = newEntity->getComponentRaw<Transform3D>())
+                                transform->setParent(Transform3DPtr());
+                            else
+                            if (Transform2D* transform = newEntity->getComponentRaw<Transform2D>())
+                                transform->setParent(Transform2DPtr());
+
                             SelectionManager::GetInstancePtr()->selectObject(newEntity);
                             return;
                         }
@@ -479,7 +517,13 @@ namespace Maze
                             EntityPtr newEntity = EditorToolsHelper::CreateEntity3D(
                                 renderMesh->getName().c_str(),
                                 scene.get());
-                            newEntity->ensureComponent<Transform3D>()->setParent(Transform3DPtr());
+                            
+                            if (Transform3D* transform = newEntity->getComponentRaw<Transform3D>())
+                                transform->setParent(Transform3DPtr());
+                            else
+                            if (Transform2D* transform = newEntity->getComponentRaw<Transform2D>())
+                                transform->setParent(Transform2DPtr());
+
                             MeshRendererPtr const& meshRenderer = newEntity->ensureComponent<MeshRenderer>();
                             meshRenderer->setRenderMesh(renderMesh);
                             meshRenderer->setMaterial("Specular");

@@ -267,13 +267,13 @@ namespace Maze
         // Static asset (AUID)
         if (AssetUnitManager::GetInstancePtr())
         {
-            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_textureCube->getName());
-            if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTextureCube>::UID())
+            TextureCubeLibraryData const* spriteLibraryData = TextureManager::GetCurrentInstancePtr()->getTextureCubeLibraryData(m_textureCube->getName().getString());
+            if (spriteLibraryData->texture == m_textureCube)
             {
-                TextureCubePtr const& assetUnitTexture = assetUnit->castRaw<AssetUnitTextureCube>()->getTexture();
-                if (assetUnitTexture == m_textureCube)
+                AssetUnitId auid = spriteLibraryData->data.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
+                if (auid != c_invalidAssetUnitId)
                 {
-                    ValueToDataBlock(assetUnit->getAssetUnitId(), _dataBlock);
+                    ValueToDataBlock(auid, _dataBlock);
                     return;
                 }
             }
