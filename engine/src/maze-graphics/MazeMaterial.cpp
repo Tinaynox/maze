@@ -923,6 +923,13 @@ namespace Maze
             }
         }
 
+        // #TODO: Workaround for the Sprites
+        if (StringHelper::IsStartsWith(m_material->getName().c_str(), "Sprite"))
+        {
+            ValueToDataBlock(m_material->getName().c_str(), _dataBlock);
+            return;
+        }
+
         // Runtime resource (ResourceId)
         ValueToDataBlock((S32)m_material->getResourceId().getId(), _dataBlock);
     }

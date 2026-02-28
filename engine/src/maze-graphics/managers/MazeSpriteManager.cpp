@@ -100,6 +100,20 @@ namespace Maze
                 });
         }
 
+        if (AssetManager::GetInstancePtr())
+        {
+            AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(
+                [](AssetFilePtr const& _assetFile, HashedString const& _extension)
+            {
+                if (TextureManager::GetCurrentInstancePtr()->hasTextureLoader(_extension))
+                {
+                    // #TODO: Only for Sprite textures
+                    if (!_assetFile->getAssetUnit<AssetUnitSprite>())
+                        _assetFile->addAssetUnit(AssetUnitSprite::Create(_assetFile));
+                }
+            });
+        }
+
         return true;
     }
 
