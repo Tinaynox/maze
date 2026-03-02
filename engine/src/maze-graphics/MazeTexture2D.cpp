@@ -368,7 +368,7 @@ namespace Maze
         if (AssetUnitManager::GetInstancePtr())
         {
             Texture2DLibraryData const* spriteLibraryData = TextureManager::GetCurrentInstancePtr()->getTexture2DLibraryData(m_texture2D->getName().getString());
-            if (spriteLibraryData->texture == m_texture2D)
+            if (spriteLibraryData && spriteLibraryData->texture == m_texture2D)
             {
                 AssetUnitId auid = spriteLibraryData->data.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
                 if (auid != c_invalidAssetUnitId)

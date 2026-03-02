@@ -185,12 +185,15 @@ namespace Maze
                 if (manager)
                 {
                     Texture2DLibraryData const* spriteLibraryData = TextureManager::GetCurrentInstancePtr()->getTexture2DLibraryData(_event->getTextureName().getString());
-                    AssetUnitId auid = spriteLibraryData->data.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
-                    if (auid != c_invalidAssetUnitId)
+                    if (spriteLibraryData)
                     {
-                        AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
-                        if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
-                            manager->fixAssetFile(assetUnit->castRaw<AssetUnitTexture2D>()->getAssetFile());
+                        AssetUnitId auid = spriteLibraryData->data.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
+                        if (auid != c_invalidAssetUnitId)
+                        {
+                            AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                            if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
+                                manager->fixAssetFile(assetUnit->castRaw<AssetUnitTexture2D>()->getAssetFile());
+                        }
                     }
                 }
             });
