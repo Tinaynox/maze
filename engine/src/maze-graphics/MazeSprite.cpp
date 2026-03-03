@@ -417,7 +417,7 @@ namespace Maze
         if (AssetUnitManager::GetInstancePtr())
         {
             SpriteLibraryData const* spriteLibraryData = SpriteManager::GetCurrentInstance()->getSpriteLibraryData(m_sprite->getName().getString());
-            if (spriteLibraryData->sprite == m_sprite)
+            if (spriteLibraryData && spriteLibraryData->sprite == m_sprite)
             {
                 AssetUnitId auid = spriteLibraryData->data.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
                 if (auid != c_invalidAssetUnitId)

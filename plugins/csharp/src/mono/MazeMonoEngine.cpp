@@ -58,6 +58,7 @@ namespace Maze
         UnorderedMap<ComponentId, ScriptClassPtr> monoBehaviourSubClassesByComponentId;
         Vector<SharedPtr<CustomComponentSystemHolder>> monoBehaviourSystems;
 
+        ScriptClassPtr entityClass;
         ScriptClassPtr componentClass;
         ScriptPropertyPtr nativeComponentPtrProperty;
         ScriptClassPtr nativeComponentClass;
@@ -735,6 +736,8 @@ namespace Maze
 
         g_monoEngineData->ecsData.monoBehaviourClass = MonoEngine::CreateScriptClass(
             "Maze.Core", "MonoBehaviour", g_monoEngineData->coreAssemblyData.assemblyImage);
+        g_monoEngineData->ecsData.entityClass = MonoEngine::CreateScriptClass(
+            "Maze.Core", "Entity", g_monoEngineData->coreAssemblyData.assemblyImage);
         g_monoEngineData->ecsData.componentClass = MonoEngine::CreateScriptClass(
             "Maze.Core", "Component", g_monoEngineData->coreAssemblyData.assemblyImage);
         g_monoEngineData->ecsData.nativeComponentPtrProperty = g_monoEngineData->ecsData.componentClass->getProperty(
@@ -830,6 +833,12 @@ namespace Maze
     ScriptClassPtr const& MonoEngine::GetMonoBehaviourClass()
     {
         return g_monoEngineData->ecsData.monoBehaviourClass;
+    }
+
+    //////////////////////////////////////////
+    ScriptClassPtr const& MonoEngine::GetEntityClass()
+    {
+        return g_monoEngineData->ecsData.entityClass;
     }
 
     //////////////////////////////////////////

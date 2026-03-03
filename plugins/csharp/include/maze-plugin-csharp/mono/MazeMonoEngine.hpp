@@ -76,6 +76,9 @@ namespace Maze
         static ScriptClassPtr const& GetMonoBehaviourClass();
 
         //////////////////////////////////////////
+        static ScriptClassPtr const& GetEntityClass();
+
+        //////////////////////////////////////////
         static ScriptClassPtr const& GetComponentClass();
 
         //////////////////////////////////////////

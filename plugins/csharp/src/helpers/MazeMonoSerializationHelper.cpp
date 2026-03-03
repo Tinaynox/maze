@@ -120,6 +120,36 @@ namespace Maze
                     if (_field->isStatic())
                         return;
 
+                    MonoClass* fieldMonoClass = mono_class_from_mono_type(_field->getMonoType());
+                    if (fieldMonoClass)
+                    {
+                        if (fieldMonoClass == MonoEngine::GetEntityClass()->getMonoClass())
+                        {
+                            MonoObject* entityInstance0 = nullptr;
+                            monoInstance->getFieldValue(_field, entityInstance0);
+
+                            MonoObject* entityInstance1 = nullptr;
+                            identityMonoInstance->getFieldValue(_field, entityInstance1);
+
+                            // #TODO: Ignore entity eid modifications for now
+                            if (entityInstance0 && entityInstance1)
+                                return;
+                        }
+                        else
+                        if (mono_class_is_subclass_of(fieldMonoClass, MonoEngine::GetComponentClass()->getMonoClass(), false))
+                        {
+                            MonoObject* componentInstance0 = nullptr;
+                            monoInstance->getFieldValue(_field, componentInstance0);
+
+                            MonoObject* componentInstance1 = nullptr;
+                            identityMonoInstance->getFieldValue(_field, componentInstance1);
+
+                            // #TODO: Ignore component eid modifications for now
+                            if (componentInstance0 && componentInstance1)
+                                return;
+                        }
+                    }
+
                     DataBlock value;
                     MonoSerializationManager::GetInstancePtr()->saveFieldToDataBlock(
                         ecsWorld,
