@@ -147,6 +147,9 @@ namespace Maze
         //////////////////////////////////////////
         void setSprite(HashedString const& _spriteName);
 
+        //////////////////////////////////////////
+        ResourceId getSpriteTextureId() const;
+
 
 
         //////////////////////////////////////////
@@ -167,13 +170,13 @@ namespace Maze
         void setMaterial(CString _materialName);
 
         //////////////////////////////////////////
-        void setMaterialRefCopy(MaterialAssetRef const& _material);
+        // void setMaterialRefCopy(MaterialAssetRef const& _material);
 
         //////////////////////////////////////////
-        void setMaterialCopy(MaterialPtr const& _material);
+        // void setMaterialCopy(MaterialPtr const& _material);
 
         //////////////////////////////////////////
-        void setMaterialCopy(CString _materialName);
+        // void setMaterialCopy(CString _materialName);
             
 
         //////////////////////////////////////////

@@ -249,7 +249,7 @@ namespace Maze
             Maze::SpriteRenderer2DPtr spriteRenderer = gameObject->createComponent<SpriteRenderer2D>();
             spriteRenderer->setSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02));
-            spriteRenderer->setMaterialCopy(SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
+            spriteRenderer->setMaterial(SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
 
             if (spriteRenderer->getSprite())
             {

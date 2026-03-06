@@ -49,8 +49,6 @@ namespace Maze
     //
     //////////////////////////////////////////
     Texture2DMS::Texture2DMS()
-        : m_size(Vec2S::c_zero)
-        , m_internalPixelFormat(PixelFormat::None)
     {
         m_type = TextureType::TwoDimensionalMultisample;
     }

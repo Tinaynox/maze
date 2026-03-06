@@ -91,7 +91,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderQueue::addSelectRenderPassCommand(RenderPass* _renderPass)
+    void RenderQueue::addSelectRenderPassCommand(RenderPass* _renderPass, bool _bindTextures)
     {
         if (m_currentRenderPass == _renderPass)
             return;
@@ -99,7 +99,7 @@ namespace Maze
         MAZE_BP_IF(!_renderPass);
         m_currentRenderPass = _renderPass;
 
-        m_renderCommandsBuffer.createCommand<RenderCommandSetRenderPass>(_renderPass);
+        m_renderCommandsBuffer.createCommand<RenderCommandSetRenderPass>(_renderPass, _bindTextures);
         m_lastDrawVAOInstancedCommand = nullptr;
     }
 

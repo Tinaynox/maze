@@ -46,18 +46,23 @@ namespace Maze
         None = 0,
 
         SetRenderPass,
+        BindTextures,
         DrawVAOInstanced,
         ClearCurrentRenderTarget,
         PushScissorRect,
         PopScissorRect,
         EnableClipPlane,
         DisableClipPlane,
+
         UploadShaderUniformVec2F,
         UploadShaderUniformVec3F,
         UploadShaderUniformVec4F,
         UploadShaderUniformMat3F,
         UploadShaderUniformMat4F,
-        UploadShaderUniformTMat
+        UploadShaderUniformTMat,
+
+        SetShaderUniformVec2F,
+        SetShaderUniformTexture2D,
     };
     
 

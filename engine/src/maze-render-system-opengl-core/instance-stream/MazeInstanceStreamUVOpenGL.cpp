@@ -158,7 +158,7 @@ namespace Maze
             }
         }
 
-        m_maxInstancesPerDraw = 16384;
+        m_maxInstancesPerDraw = 16384 * 2;
         m_data.resize(m_maxInstancesPerDraw);
 
         return true;

@@ -213,7 +213,7 @@ namespace Maze
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         layoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
-        TextureManager::GetCurrentInstancePtr()->loadAllAssetTextures();
+        // TextureManager::GetCurrentInstancePtr()->loadAllAssetTextures();
 
         updateTextures();
         updateUI();
@@ -341,9 +341,9 @@ namespace Maze
         if (_texture)
         {
             // #TODO: REWORK
-            SpritePtr fakeSprite = Sprite::Create(_texture);
-            fakeSprite->setName(MAZE_HS("TexturePickerSprite"));
-            sprite->setSprite(fakeSprite);
+            // SpritePtr fakeSprite = Sprite::Create(_texture);
+            // fakeSprite->setName(MAZE_HS("TexturePickerSprite"));
+            // sprite->setSprite(fakeSprite);
             
         }
 

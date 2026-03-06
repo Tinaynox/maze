@@ -114,7 +114,7 @@ namespace Maze
 
             instanceStreams.push_back(m_instanceStreamModelMatrix);
             instanceStreams.push_back(m_instanceStreamColor);
-
+            
             for (S32 i = 0; i < MAZE_UV_CHANNELS_MAX; ++i)
             {
                 m_instanceStreamUVs[i] = InstanceStreamUVOpenGL::Create(i, rsOpenGL, _contextOpenGL, InstanceStreamModeOpenGL::UniformArray);
@@ -177,7 +177,14 @@ namespace Maze
 
                         RenderCommandSetRenderPass* command = static_cast<RenderCommandSetRenderPass*>(_command);
 
-                        bindRenderPass(command->renderPass);
+                        bindRenderPass(command->renderPass, command->bindTextures);
+                        break;
+                    }
+                    case RenderCommandType::BindTextures:
+                    {
+                        MAZE_PROFILE_EVENT("BindTextures");
+
+                        m_context->getCurrentShader()->castRaw<ShaderOpenGL>()->bindTextures();
                         break;
                     }
                     case RenderCommandType::DrawVAOInstanced:
@@ -317,6 +324,27 @@ namespace Maze
 
                         break;
                     }
+                    case RenderCommandType::SetShaderUniformVec2F:
+                    {
+                        RenderCommandSetShaderUniformVec2F* command = static_cast<RenderCommandSetShaderUniformVec2F*>(_command);
+                        ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
+                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        if (uniform)
+                            uniform->set(command->value);
+                        break;
+                    }
+                    case RenderCommandType::SetShaderUniformTexture2D:
+                    {
+                        RenderCommandSetShaderUniformTexture2D* command = static_cast<RenderCommandSetShaderUniformTexture2D*>(_command);
+                        if (Texture2D const* texture = Texture2D::GetResource(command->texture2DId))
+                        {
+                            ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
+                            ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                            if (uniform)
+                                uniform->set(texture);
+                        }
+                        break;
+                    }
                     case RenderCommandType::UploadShaderUniformVec2F:
                     {
                         RenderCommandUploadShaderUniformVec2F* command = static_cast<RenderCommandUploadShaderUniformVec2F*>(_command);
@@ -396,7 +424,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderQueueOpenGL::bindRenderPass(RenderPass* _renderPass)
+    void RenderQueueOpenGL::bindRenderPass(RenderPass* _renderPass, bool _bindTextures)
     {
         MAZE_DEBUG_ERROR_RETURN_IF(!m_context->_validateIsCurrentGLContext(), "Context is not current!");
 
@@ -443,7 +471,8 @@ namespace Maze
         _renderPass->applyRenderPassUniforms();
 
         // Bind textures
-        shaderOpenGL->bindTextures();
+        if (_bindTextures)
+            shaderOpenGL->bindTextures();
 
 
         // Stream data

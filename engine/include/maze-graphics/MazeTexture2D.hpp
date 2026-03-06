@@ -210,6 +210,9 @@ namespace Maze
         //////////////////////////////////////////
         inline S32 getHeight() const { return m_size.y; }
 
+        //////////////////////////////////////////
+        inline Vec2F const& getInvSize() const { return m_invSize; }
+
 
         //////////////////////////////////////////
         virtual void reload();
@@ -258,12 +261,13 @@ namespace Maze
         virtual bool init(RenderSystem* _renderSystem) MAZE_OVERRIDE;
     
     protected:
-        Vec2S m_size;
+        Vec2S m_size = Vec2S::c_zero;
+        Vec2F m_invSize = Vec2F::c_zero;
 
-        TextureFilter m_magFilter;
-        TextureFilter m_minFilter;
-        TextureWrap m_wrapS;
-        TextureWrap m_wrapT;
+        TextureFilter m_magFilter = TextureFilter::Linear;
+        TextureFilter m_minFilter = TextureFilter::Linear;
+        TextureWrap m_wrapS = TextureWrap::ClampToEdge;
+        TextureWrap m_wrapT = TextureWrap::ClampToEdge;
         ColorU32 m_borderColor = ColorU32::c_black;
         F32 m_anisotropyLevel = 0.0f;
 

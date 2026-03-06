@@ -139,7 +139,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline const Texture2DPtr& getTexture() const { return m_texture; }
+        inline Texture2DPtr const& getTexture() const { return m_texture; }
 
 
         //////////////////////////////////////////

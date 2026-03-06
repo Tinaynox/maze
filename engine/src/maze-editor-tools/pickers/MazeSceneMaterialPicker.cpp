@@ -212,7 +212,7 @@ namespace Maze
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         layoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
-        MaterialManager::GetCurrentInstance()->loadAllAssetMaterials();
+        // MaterialManager::GetCurrentInstance()->loadAllAssetMaterials();
 
         updateMaterials();
         updateUI();
@@ -339,6 +339,8 @@ namespace Maze
 
         if (_material && _material->getFirstRenderPass())
         {
+            // #TODO: REWORK
+            /*
             MaterialPtr materialCopy = _material->createCopy();
             
             RenderPassPtr const& renderPass = materialCopy->getFirstRenderPass();
@@ -354,7 +356,7 @@ namespace Maze
                 renderPass->getShader()->recompile();
 
 
-                // #TODO: REWORK
+                
                 if (materialCopy->getUniform(MAZE_HCS("u_baseMap")))
                 {
                     renderPass->getShader()->ensureUniform(MAZE_HCS("u_baseMapST"));
@@ -373,9 +375,11 @@ namespace Maze
                     }
                 }
 
+
                 sprite->setRenderMode(SpriteRenderMode::Simple);
-                sprite->setMaterialCopy(materialCopy);
+                sprite->setMaterial(materialCopy);
             }
+            */
         }
 
         String materialName = _material ? _material->getName().getString() : "None";

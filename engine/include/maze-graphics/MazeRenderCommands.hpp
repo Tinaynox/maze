@@ -52,13 +52,33 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        inline RenderCommandSetRenderPass(RenderPass* _renderPass)
+        inline RenderCommandSetRenderPass(
+            RenderPass* _renderPass,
+            bool _bindTextures)
             : RenderCommand(RenderCommandType::SetRenderPass)
             , renderPass(_renderPass)
+            , bindTextures(_bindTextures)
         {}
 
     public:
         RenderPass* renderPass;
+        bool bindTextures;
+    };
+
+
+    //////////////////////////////////////////
+    // Struct RenderCommandBindTextures
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API RenderCommandBindTextures
+        : public RenderCommand
+    {
+    public:
+
+        //////////////////////////////////////////
+        inline RenderCommandBindTextures()
+            : RenderCommand(RenderCommandType::BindTextures)
+        {}
     };
 
 
@@ -233,6 +253,55 @@ namespace Maze
     MAZE_IMPLEMENT_RENDER_COMMAND_UPLOAD_SHADER_UNIFORM(Mat3F);
     MAZE_IMPLEMENT_RENDER_COMMAND_UPLOAD_SHADER_UNIFORM(Mat4F);
     MAZE_IMPLEMENT_RENDER_COMMAND_UPLOAD_SHADER_UNIFORM(TMat);
+
+
+    //////////////////////////////////////////
+    // Struct RenderCommandUploadShaderUniform
+    //
+    //////////////////////////////////////////
+    #define MAZE_IMPLEMENT_RENDER_COMMAND_SET_SHADER_UNIFORM(DType)                         \
+    struct MAZE_GRAPHICS_API RenderCommandSetShaderUniform ## DType                         \
+        : public RenderCommand                                                              \
+    {                                                                                       \
+    public:                                                                                 \
+        inline RenderCommandSetShaderUniform ## DType(                                      \
+            HashedCString _name,                                                            \
+            DType const& _value)                                                            \
+            : RenderCommand(RenderCommandType::SetShaderUniform ## DType)                   \
+            , name(_name)                                                                   \
+            , value(_value)                                                                 \
+        {}                                                                                  \
+    public:                                                                                 \
+        DType value;                                                                        \
+        HashedCString name;                                                                 \
+    };
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_RENDER_COMMAND_SET_SHADER_UNIFORM(Vec2F);
+
+
+    //////////////////////////////////////////
+    // Struct RenderCommandSetShaderUniformTexture2D
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API RenderCommandSetShaderUniformTexture2D
+        : public RenderCommand
+    {
+    public:
+
+        //////////////////////////////////////////
+        inline RenderCommandSetShaderUniformTexture2D(
+            HashedCString _name,
+            ResourceId _texture2DId)
+            : RenderCommand(RenderCommandType::SetShaderUniformTexture2D)
+            , name(_name)
+            , texture2DId(_texture2DId)
+        {}
+
+    public:
+        ResourceId texture2DId;
+        HashedCString name;
+    };
 
 } // namespace Maze
 //////////////////////////////////////////

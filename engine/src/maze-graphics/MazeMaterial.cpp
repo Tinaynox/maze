@@ -178,6 +178,8 @@ namespace Maze
     //////////////////////////////////////////
     RenderPassPtr Material::createRenderPass(RenderPassType _passType)
     {
+        MAZE_ERROR_RETURN_VALUE_IF(m_readOnly, nullptr, "This material is readonly! Name=%s", getName().c_str());
+
         RenderPassPtr renderPass = m_renderSystem->createRenderPass(_passType);
 
         if (renderPass)
@@ -189,6 +191,8 @@ namespace Maze
     //////////////////////////////////////////
     void Material::addRenderPass(RenderPassPtr const& _renderPass)
     {
+        MAZE_ERROR_RETURN_IF(m_readOnly, "This material is readonly! Name=%s", getName().c_str());
+
         RenderPassType renderPassType = _renderPass->getPassType();
         Vector<RenderPassPtr>& passesByType = m_passes[renderPassType];
         passesByType.push_back(_renderPass);
@@ -229,6 +233,8 @@ namespace Maze
     //////////////////////////////////////////
     void Material::clearAllRenderPasses()
     {
+        MAZE_ERROR_RETURN_IF(m_readOnly, "This material is readonly! Name=%s", getName().c_str());
+
         for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
             m_passes[passType].clear();
     }
@@ -236,6 +242,8 @@ namespace Maze
     //////////////////////////////////////////
     void Material::clearAllUniforms()
     {
+        MAZE_ERROR_RETURN_IF(m_readOnly, "This material is readonly! Name=%s", getName().c_str());
+
         m_uniforms.clear();
     }
 
@@ -279,6 +287,8 @@ namespace Maze
     //////////////////////////////////////////
     bool Material::loadFromXMLDocument(tinyxml2::XMLDocument& _doc)
     {
+        MAZE_ERROR_RETURN_VALUE_IF(m_readOnly, false, "This material is readonly! Name=%s", getName().c_str());
+
         MAZE_PROFILE_EVENT("Material::loadFromXMLDocument");
 
         tinyxml2::XMLNode* rootNode = _doc.FirstChild();
@@ -298,6 +308,8 @@ namespace Maze
     //////////////////////////////////////////
     bool Material::loadFromAssetFile(AssetFilePtr const& _assetFile)
     {
+        MAZE_ERROR_RETURN_VALUE_IF(m_readOnly, false, "This material is readonly! Name=%s", getName().c_str());
+
         MAZE_PROFILE_EVENT("Material::loadFromAssetFile");
 
         MAZE_ERROR_RETURN_VALUE_IF(!_assetFile, false, "Asset File is null!");
@@ -340,6 +352,8 @@ namespace Maze
     //////////////////////////////////////////
     void Material::set(MaterialPtr const& _material)
     {
+        MAZE_ERROR_RETURN_IF(m_readOnly, "This material is readonly! Name=%s", getName().c_str());
+
         setName(_material->getName());
 
         m_renderSystem = _material->m_renderSystem;
@@ -548,6 +562,9 @@ namespace Maze
     //////////////////////////////////////////
     ShaderUniformVariantPtr const& Material::ensureUniform(HashedCString _uniformName, ShaderUniformType _type)
     {
+        static ShaderUniformVariantPtr nullPtr;
+        MAZE_ERROR_RETURN_VALUE_IF(m_readOnly, nullPtr, "This material is readonly! Name=%s", getName().c_str());
+
         ShaderUniformVariantPtr const& uniform = getUniform(_uniformName);
         if (uniform)
             return uniform;
@@ -572,6 +589,8 @@ namespace Maze
     //////////////////////////////////////////
     void Material::loadFromXMLElement(tinyxml2::XMLElement const* _element)
     {
+        MAZE_ERROR_RETURN_IF(m_readOnly, "This material is readonly! Name=%s", getName().c_str());
+
         clear();
 
         XMLHelper::DeserializeMetaInstanceFromXMLElement(getMetaClass(), getMetaInstance(), _element);
@@ -625,6 +644,8 @@ namespace Maze
     //////////////////////////////////////////
     bool Material::loadFromDataBlock(DataBlock const& _dataBlock)
     {
+        MAZE_ERROR_RETURN_VALUE_IF(m_readOnly, false, "This material is readonly! Name=%s", getName().c_str());
+
         clear();
 
         DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);

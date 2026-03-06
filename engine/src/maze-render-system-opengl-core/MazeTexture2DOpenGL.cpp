@@ -268,8 +268,9 @@ namespace Maze
         Texture2DOpenGLScopeBind textureScopedBind(this);
 
         
-
         m_size = pixelSheet0.getSize();
+        m_invSize.x = m_size.x > 0 ? 1.0f / m_size.x : 0.0f;
+        m_invSize.y = m_size.y > 0 ? 1.0f / m_size.y : 0.0f;
         m_hasPresetMipmaps = (_pixelSheets.size() > 1);
 
 

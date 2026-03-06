@@ -118,7 +118,9 @@ namespace Maze
 #else
         _ptr->setName(HashedString());
 #endif
-        _ptr->clear();
+
+        if (!_ptr->isReadOnly())
+            _ptr->clear();
 
         materialPool.push_back(_ptr);
     }

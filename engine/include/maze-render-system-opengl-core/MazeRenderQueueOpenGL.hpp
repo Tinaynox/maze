@@ -91,7 +91,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void bindRenderPass(RenderPass* _materialPass);
+        void bindRenderPass(RenderPass* _materialPass, bool _bindTextures);
 
 
         //////////////////////////////////////////

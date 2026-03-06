@@ -100,7 +100,17 @@ namespace Maze
         inline bool empty() const { return m_renderCommandsBuffer.empty(); }
 
         //////////////////////////////////////////
-        void addSelectRenderPassCommand(RenderPass* _materialPass);
+        void addSelectRenderPassCommand(RenderPass* _materialPass, bool _bindTextures = true);
+
+        //////////////////////////////////////////
+        inline RenderPass const* getCurrentRenderPass() const { return m_currentRenderPass; }
+
+        //////////////////////////////////////////
+        inline void addBindTexturesCommand()
+        {
+            m_renderCommandsBuffer.createCommand<RenderCommandBindTextures>();
+            m_lastDrawVAOInstancedCommand = nullptr;
+        }
 
         //////////////////////////////////////////
         static inline U8 ConstructUVMask(Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX])
@@ -309,6 +319,25 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        #define MAZE_IMPLEMENT_ADD_SET_SHADER_UNIFORM_COMMAND(DType)                                                    \
+        inline void addSetShaderUniformCommand(HashedCString _name, DType const& _value)                                \
+        {                                                                                                               \
+            m_lastDrawVAOInstancedCommand = nullptr;                                                                    \
+            m_renderCommandsBuffer.createCommand<RenderCommandSetShaderUniform ## DType>(_name, _value);                \
+        }
+
+        //////////////////////////////////////////
+        MAZE_IMPLEMENT_ADD_SET_SHADER_UNIFORM_COMMAND(Vec2F);
+
+        //////////////////////////////////////////
+        inline void addSetShaderUniformCommandTexture2D(HashedCString _name, ResourceId _texture2DId)
+        {
+            m_lastDrawVAOInstancedCommand = nullptr;
+            m_renderCommandsBuffer.createCommand<RenderCommandSetShaderUniformTexture2D>(_name, _texture2DId);
+        }
+
+
+        //////////////////////////////////////////
         virtual void draw() MAZE_ABSTRACT;
 
 
@@ -368,7 +397,7 @@ namespace Maze
         RenderTarget* m_renderTarget = nullptr;
         RenderCommandsBuffer m_renderCommandsBuffer;
 
-        RenderPass* m_currentRenderPass = nullptr;
+        RenderPass const* m_currentRenderPass = nullptr;
 
         RenderCommandDrawVAOInstanced* m_lastDrawVAOInstancedCommand = nullptr;
 

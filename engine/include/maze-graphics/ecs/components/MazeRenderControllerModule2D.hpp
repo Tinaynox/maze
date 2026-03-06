@@ -74,6 +74,8 @@ namespace Maze
         {
             DrawMeshRenderer,
             DrawMeshRendererInstanced,
+            DrawSpriteRenderer,
+            DrawSpriteRendererInstanced,
             PushScissorMask,
             PopScissorMask
         };
@@ -96,6 +98,22 @@ namespace Maze
             {}
 
             //////////////////////////////////////////
+            CanvasRenderCommand(Transform2D* _transform, MeshRenderer const* _meshRenderer, SpriteRenderer2D const* _spriteRenderer)
+                : type(CanvasRenderCommandType::DrawSpriteRenderer)
+                , transform(_transform)
+                , meshRenderer(_meshRenderer)
+                , spriteRenderer(_spriteRenderer)
+            {}
+
+            //////////////////////////////////////////
+            CanvasRenderCommand(Transform2D* _transform, MeshRendererInstanced const* _meshRenderer, SpriteRenderer2D const* _spriteRenderer)
+                : type(CanvasRenderCommandType::DrawSpriteRendererInstanced)
+                , transform(_transform)
+                , meshRendererInstanced(_meshRenderer)
+                , spriteRenderer(_spriteRenderer)
+            {}
+
+            //////////////////////////////////////////
             CanvasRenderCommand(Transform2D* _transform, ScissorMask2D* _scissorMask, bool _push)
                 : type(_push ? CanvasRenderCommandType::PushScissorMask : CanvasRenderCommandType::PopScissorMask)
                 , transform(_transform)
@@ -105,10 +123,13 @@ namespace Maze
             CanvasRenderCommandType type;
 
             Transform2D* transform;
-            MeshRenderer const* meshRenderer;
-            MeshRendererInstanced const* meshRendererInstanced;
-            RenderMesh const* renderMesh;
-            ScissorMask2D* scissorMask;
+            union
+            {
+                MeshRenderer const* meshRenderer;
+                MeshRendererInstanced const* meshRendererInstanced;
+                ScissorMask2D* scissorMask;
+            };
+            SpriteRenderer2D const* spriteRenderer = nullptr;
         };
 
         //////////////////////////////////////////

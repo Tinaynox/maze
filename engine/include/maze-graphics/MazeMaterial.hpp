@@ -246,6 +246,13 @@ namespace Maze
         //////////////////////////////////////////
         void dirtyRenderPassShaderUniforms();
 
+
+        //////////////////////////////////////////
+        inline void markAsReadOnly() { m_readOnly = true; }
+
+        //////////////////////////////////////////
+        inline bool isReadOnly() const { return m_readOnly; }
+
     public:
 
         //////////////////////////////////////////
@@ -307,10 +314,7 @@ namespace Maze
 
         FastVector<ShaderUniformVariantPtr> m_uniforms;
 
-    protected:
-        // static Material* s_instancesList;
-        // Material* m_instancesListNext = nullptr;
-        // Material* m_instancesListPrev = nullptr;
+        bool m_readOnly = false;
     };
 
 

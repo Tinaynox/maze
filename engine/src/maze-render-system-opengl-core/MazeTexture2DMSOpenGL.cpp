@@ -186,7 +186,8 @@ namespace Maze
         Texture2DMSOpenGLScopeBind textureScopedBind(this);       
 
         m_size = _size;
-
+        m_invSize.x = m_size.x > 0 ? 1.0f / m_size.x : 0.0f;
+        m_invSize.y = m_size.y > 0 ? 1.0f / m_size.y : 0.0f;
 
 #if (MAZE_DEBUG_GL)
         {

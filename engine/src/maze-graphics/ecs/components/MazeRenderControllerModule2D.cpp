@@ -37,6 +37,8 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/ecs/components/MazeLineRenderer2D.hpp"
+#include "maze-graphics/MazeRenderPass.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
@@ -53,6 +55,105 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    inline bool DrawCanvasMeshRenderer(
+        RenderTarget* _renderTarget,
+        RenderQueuePtr const& _renderQueue,
+        MeshRenderer const* _meshRenderer,
+        Transform2D* _transform2D,
+        std::function<void(RenderPass* _renderPass)> _selectRenderPass)
+    {
+        if (!_meshRenderer->getEnabled())
+            return false;
+
+        if (!_meshRenderer->getRenderMesh())
+            return false;
+
+        Vector<MaterialAssetRef> const& materials = _meshRenderer->getMaterialRefs();
+        Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+
+        if (vaos.empty())
+            return false;
+
+        Size c = Math::Max(vaos.size(), materials.size());
+
+        for (Size i = 0, in = c; i < in; ++i)
+        {
+            VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
+
+            MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null");
+
+            MaterialPtr const* material = nullptr;
+            if (!materials.empty())
+                material = &materials[i % materials.size()].getMaterial();
+
+            if (!material || !*material)
+                material = &_renderTarget->getRenderSystem()->getMaterialManager()->getErrorMaterial();
+
+            _selectRenderPass((*material)->getFirstRenderPass().get());
+
+            TMat const& worldTransform = _transform2D->getWorldTransform();
+
+            _renderQueue->addDrawVAOInstancedCommand(vao, worldTransform);
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    inline bool DrawCanvasMeshRendererInstanced(
+        RenderTarget* _renderTarget,
+        RenderQueuePtr const& _renderQueue,
+        MeshRendererInstanced const* _meshRenderer,
+        std::function<void(RenderPass* _renderPass)> _selectRenderPass)
+    {
+        if (!_meshRenderer->getEnabled())
+            return false;
+
+        if (!_meshRenderer->getRenderMesh())
+            return false;
+
+        Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+
+        if (vaos.empty())
+            return false;
+
+        Material const* material = _meshRenderer->getMaterial().get();
+        if (!material)
+        {
+            material = _renderTarget->getRenderSystem()->getMaterialManager()->getErrorMaterial().get();
+            if (!material)
+                return false;
+        }
+
+        _selectRenderPass(material->getFirstRenderPass().get());
+
+        for (Size i = 0, in = vaos.size(); i < in; ++i)
+        {
+            VertexArrayObjectPtr const& vao = vaos[i];
+            MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null");
+
+            S32 count = (S32)_meshRenderer->getModelMatrices().size();
+            if (count > 0)
+            {
+                Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX];
+                memset(uvStreams, 0, sizeof(uvStreams));
+                uvStreams[0] = _meshRenderer->getUV0Data();
+                uvStreams[1] = _meshRenderer->getUV1Data();
+
+                _renderQueue->addDrawVAOInstancedCommand(
+                    vao.get(),
+                    count,
+                    _meshRenderer->getModelMatricesData(),
+                    _meshRenderer->getColorsData(),
+                    uvStreams);
+            }
+        }
+
+        return true;
+    }
+
+
     //////////////////////////////////////////
     // Class RenderControllerModule2D
     //
@@ -205,94 +306,91 @@ namespace Maze
                     {
                         case CanvasRenderCommandType::DrawMeshRenderer:
                         {
-                            MeshRenderer const* meshRenderer = commandData.meshRenderer;
-
-                            if (!meshRenderer->getEnabled())
-                                continue;
-
-                            Transform2D* transform2D = commandData.transform;
-
-                            if (!meshRenderer->getRenderMesh())
-                                continue;
-
-                            Vector<MaterialAssetRef> const& materials = meshRenderer->getMaterialRefs();
-                            Vector<VertexArrayObjectPtr> const& vaos = meshRenderer->getRenderMesh()->getVertexArrayObjects();
-
-                            if (vaos.empty())
-                                continue;
-
-                            Size c = Math::Max(vaos.size(), materials.size());
-
-                            for (Size i = 0, in = c; i < in; ++i)
-                            {
-                                VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
-
-                                MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null");
-
-                                MaterialPtr const* material = nullptr;
-                                if (!materials.empty())
-                                    material = &materials[i % materials.size()].getMaterial();
-
-                                if (!material || !*material)
-                                    material = &renderTarget->getRenderSystem()->getMaterialManager()->getErrorMaterial();
-
-                                renderQueue->addSelectRenderPassCommand((*material)->getFirstRenderPass().get());
-
-                                TMat const& worldTransform = transform2D->getWorldTransform();
-
-                                renderQueue->addDrawVAOInstancedCommand(vao, worldTransform);                                
-                            }
-
+                            DrawCanvasMeshRenderer(_renderTarget, renderQueue, commandData.meshRenderer, commandData.transform,
+                                [&](RenderPass* _renderPass)
+                                {
+                                    renderQueue->addSelectRenderPassCommand(_renderPass, true);
+                                });
                             break;
                         }
 
                         case CanvasRenderCommandType::DrawMeshRendererInstanced:
                         {
-                            MeshRendererInstanced const* meshRenderer = commandData.meshRendererInstanced;
-
-                            if (!meshRenderer->getEnabled())
-                                continue;
-
-                            if (!meshRenderer->getRenderMesh())
-                                continue;
-
-                            Vector<VertexArrayObjectPtr> const& vaos = meshRenderer->getRenderMesh()->getVertexArrayObjects();
-
-                            if (vaos.empty())
-                                continue;
-
-                            Material const* material = meshRenderer->getMaterial().get();
-                            if (!material)
-                            {
-                                material = renderTarget->getRenderSystem()->getMaterialManager()->getErrorMaterial().get();
-                                if (!material)
-                                    continue;
-                            }
-
-                            renderQueue->addSelectRenderPassCommand(material->getFirstRenderPass().get());
-
-                            for (Size i = 0, in = vaos.size(); i < in; ++i)
-                            {
-                                VertexArrayObjectPtr const& vao = vaos[i];
-                                MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null");
-
-                                S32 count = (S32)meshRenderer->getModelMatrices().size();
-                                if (count > 0)
+                            DrawCanvasMeshRendererInstanced(_renderTarget, renderQueue, commandData.meshRendererInstanced,
+                                [&](RenderPass* _renderPass)
                                 {
-                                    Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX];
-                                    memset(uvStreams, 0, sizeof(uvStreams));
-                                    uvStreams[0] = meshRenderer->getUV0Data();
-                                    uvStreams[1] = meshRenderer->getUV1Data();
+                                    renderQueue->addSelectRenderPassCommand(_renderPass, true);
+                                });
+                            break;
+                        }
 
-                                    renderQueue->addDrawVAOInstancedCommand(
-                                        vao.get(),
-                                        count,
-                                        meshRenderer->getModelMatricesData(),
-                                        meshRenderer->getColorsData(),
-                                        uvStreams);
-                                }
+                        case CanvasRenderCommandType::DrawSpriteRenderer:
+                        {
+                            ResourceId texture2DId = commandData.spriteRenderer->getSpriteTextureId();
+                            Texture2D const* spriteTexture = Texture2D::GetResource(texture2DId);
+                            if (!spriteTexture)
+                                spriteTexture = TextureManager::GetCurrentInstancePtr()->getBuiltinTexture2D(BuiltinTexture2DType::Error).get();
+
+                            if (spriteTexture)
+                            {
+                                DrawCanvasMeshRenderer(_renderTarget, renderQueue, commandData.meshRenderer, commandData.transform,
+                                    [&](RenderPass* _renderPass)
+                                    {
+                                        // #TODO
+                                        //bool isSpriteTextureSet = false;
+                                        //if (renderQueue->getCurrentRenderPass())
+                                        //{
+                                        //    ShaderUniformPtr const& shaderUniform = renderQueue->getCurrentRenderPass()->getShader()->ensureUniform(MAZE_HCS("u_baseMap"));
+                                        //    if (shaderUniform)
+                                        //        isSpriteTextureSet = spriteTexture != shaderUniform->getTexture().get();
+                                        //}
+
+                                        renderQueue->addSelectRenderPassCommand(_renderPass, false);
+
+                                        // if (!isSpriteTextureSet)
+                                        {
+                                            renderQueue->addSetShaderUniformCommandTexture2D(MAZE_HCS("u_baseMap"), texture2DId);
+                                            renderQueue->addSetShaderUniformCommand(MAZE_HCS("u_baseMapTexelSize"), spriteTexture->getInvSize());
+                                        }
+
+                                        renderQueue->addBindTexturesCommand();
+                                    });
                             }
+                            break;
+                        }
 
+                        case CanvasRenderCommandType::DrawSpriteRendererInstanced:
+                        {
+                            ResourceId texture2DId = commandData.spriteRenderer->getSpriteTextureId();
+                            Texture2D const* spriteTexture = Texture2D::GetResource(texture2DId);
+                            if (!spriteTexture)
+                                spriteTexture = TextureManager::GetCurrentInstancePtr()->getBuiltinTexture2D(BuiltinTexture2DType::Error).get();
+                            if (spriteTexture)
+                            {
+
+                                DrawCanvasMeshRendererInstanced(_renderTarget, renderQueue, commandData.meshRendererInstanced,
+                                    [&](RenderPass* _renderPass)
+                                    {
+                                        // #TODO
+                                        //bool isSpriteTextureSet = false;
+                                        //if (renderQueue->getCurrentRenderPass())
+                                        //{
+                                        //    ShaderUniformPtr const& shaderUniform = renderQueue->getCurrentRenderPass()->getShader()->ensureUniform(MAZE_HCS("u_baseMap"));
+                                        //    if (shaderUniform)
+                                        //        isSpriteTextureSet = spriteTexture != shaderUniform->getTexture().get();
+                                        //}
+
+                                        renderQueue->addSelectRenderPassCommand(_renderPass, false);
+
+                                        // if (!isSpriteTextureSet)
+                                        {
+                                            renderQueue->addSetShaderUniformCommandTexture2D(MAZE_HCS("u_baseMap"), texture2DId);
+                                            renderQueue->addSetShaderUniformCommand(MAZE_HCS("u_baseMapTexelSize"), spriteTexture->getInvSize());
+                                        }
+
+                                        renderQueue->addBindTexturesCommand();
+                                    });
+                            }
                             break;
                         }
 
@@ -526,26 +624,66 @@ namespace Maze
                             });
                     }
 
-                    MeshRenderer* meshRenderer = entity->getComponentRaw<MeshRenderer>();
-                    if (meshRenderer)
+                    SpriteRenderer2D* spriteRenderer = entity->getComponentRaw<SpriteRenderer2D>();
+                    if (spriteRenderer)
                     {
-                        canvasRenderData.commands.emplace_back(
-                            CanvasRenderCommand
+                        MeshRenderer* meshRenderer = entity->getComponentRaw<MeshRenderer>();
+                        if (meshRenderer)
+                        {
+                            canvasRenderData.commands.emplace_back(
+                                CanvasRenderCommand
+                                {
+                                    _transform,
+                                    meshRenderer,
+                                    spriteRenderer
+                                });
+                        }
+                        else
+                        {
+                            MeshRendererInstanced* meshRendererInstanced = entity->getComponentRaw<MeshRendererInstanced>();
+                            if (meshRendererInstanced)
                             {
-                                _transform,
-                                meshRenderer,
-                            });
+                                canvasRenderData.commands.emplace_back(
+                                    CanvasRenderCommand
+                                    {
+                                        _transform,
+                                        meshRendererInstanced,
+                                        spriteRenderer
+                                    });
+                            }
+                            else
+                            {
+                                MAZE_NOT_IMPLEMENTED;
+                            }
+                        }
+                        
                     }
-
-                    MeshRendererInstanced* meshRendererInstanced = entity->getComponentRaw<MeshRendererInstanced>();
-                    if (meshRendererInstanced)
+                    else
                     {
-                        canvasRenderData.commands.emplace_back(
-                            CanvasRenderCommand
+
+                        MeshRenderer* meshRenderer = entity->getComponentRaw<MeshRenderer>();
+                        if (meshRenderer)
+                        {
+                            canvasRenderData.commands.emplace_back(
+                                CanvasRenderCommand
+                                {
+                                    _transform,
+                                    meshRenderer,
+                                });
+                        }
+                        else
+                        {
+                            MeshRendererInstanced* meshRendererInstanced = entity->getComponentRaw<MeshRendererInstanced>();
+                            if (meshRendererInstanced)
                             {
-                                _transform,
-                                meshRendererInstanced,
-                            });
+                                canvasRenderData.commands.emplace_back(
+                                    CanvasRenderCommand
+                                    {
+                                        _transform,
+                                        meshRendererInstanced,
+                                    });
+                            }
+                        }
                     }
 
                     for (Transform2D* _child : _transform->getChildren())

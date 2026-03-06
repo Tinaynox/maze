@@ -55,12 +55,6 @@ namespace Maze
     //
     //////////////////////////////////////////
     Texture2D::Texture2D()
-        : m_size(Vec2S::c_zero)
-        , m_magFilter(TextureFilter::Linear)
-        , m_minFilter(TextureFilter::Linear)
-        , m_wrapS(TextureWrap::ClampToEdge)
-        , m_wrapT(TextureWrap::ClampToEdge)
-        , m_internalPixelFormat(PixelFormat::None)
     {
         m_type = TextureType::TwoDimensional;
     }

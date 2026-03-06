@@ -621,6 +621,7 @@ namespace Maze
         {
             material->setName(HashedString(_materialType.toString()));
             addMaterialToLibrary(material);
+            material->markAsReadOnly();
         }
 
         return material;

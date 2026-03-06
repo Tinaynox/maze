@@ -90,7 +90,7 @@ namespace Maze
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setSprite(_sprite);
-            spriteRenderer->setMaterialCopy(_material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
+            spriteRenderer->setMaterial(_material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
 
             if (_sprite && _sprite->getSliceBorder().isBorderExists())
                 spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
@@ -121,7 +121,7 @@ namespace Maze
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setSprite(HashedString(_spriteName));
-            spriteRenderer->setMaterialCopy(_material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
+            spriteRenderer->setMaterial(_material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
 
             if (spriteRenderer->getSprite())
             {
@@ -181,7 +181,7 @@ namespace Maze
                 SpriteManager::GetCurrentInstance()->ensureBuiltinSprite(
                     BuiltinSpriteType::White));
             spriteRenderer->setColor(_color);
-            spriteRenderer->setMaterialCopy(
+            spriteRenderer->setMaterial(
                 _material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
 
             Maze::Transform2DPtr const& transform = spriteRenderer->getTransform();

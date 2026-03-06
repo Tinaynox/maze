@@ -120,6 +120,9 @@ namespace Maze
         //////////////////////////////////////////
         inline S32 getHeight() const { return m_size.y; }
 
+        //////////////////////////////////////////
+        inline Vec2F const& getInvSize() const { return m_invSize; }
+
 
         //////////////////////////////////////////
         inline S32 getSamples() const { return m_samples; }
@@ -158,7 +161,9 @@ namespace Maze
         virtual bool init(RenderSystem* _renderSystem) MAZE_OVERRIDE;
     
     protected:
-        Vec2S m_size;
+        Vec2S m_size = Vec2S::c_zero;
+        Vec2F m_invSize = Vec2F::c_zero;
+
         S32 m_samples = 0;
 
         PixelFormat::Enum m_internalPixelFormat = PixelFormat::None;

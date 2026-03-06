@@ -310,7 +310,7 @@ namespace Maze
                 _color,
                 _size - 2.0f,
                 Vec2F::c_zero,
-                renderSystem->getMaterialManager()->getSpriteMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial()->createCopy(),
                 transform,
                 _ecsScene);
             colorSpriteRenderer->getEntityRaw()->createComponent<SizePolicy2D>()->setSizeDelta(-2.0f, -2.0f);
@@ -428,7 +428,7 @@ namespace Maze
                 ColorU32::FromVec4F32((Vec4F)_color),
                 _size - 2.0f,
                 Vec2F::c_zero,
-                renderSystem->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorStreamHDR),
+                renderSystem->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorStreamHDR)->createCopy(),
                 transform,
                 _ecsScene);
             colorSpriteRenderer->getEntityRaw()->createComponent<SizePolicy2D>()->setSizeDelta(-2.0f, -2.0f);
