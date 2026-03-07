@@ -440,6 +440,7 @@ namespace Maze
                 if (originMaterial)
                 {
                     material = originMaterial->createCopy();
+                    material->removeUniform(MAZE_HCS("u_baseMap"));
 
                     RenderPassPtr const& renderPass = material->getFirstRenderPass();
                     if (renderPass->getShader())
@@ -620,6 +621,7 @@ namespace Maze
         if (material)
         {
             material->setName(HashedString(_materialType.toString()));
+            material->updateRenderPassShaderUniforms();
             addMaterialToLibrary(material);
             material->markAsReadOnly();
         }

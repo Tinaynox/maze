@@ -200,6 +200,10 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_FORCEINLINE void dirtyShaderUniforms() { m_shaderUniformsDirty = true; }
 
+
+        //////////////////////////////////////////
+        void updateShaderUniforms();
+
     public:
 
         //////////////////////////////////////////
@@ -237,8 +241,7 @@ namespace Maze
         void setMaterial(Material* _material);
 
 
-        //////////////////////////////////////////
-        void updateShaderUniforms();
+        
 
     protected:
         RenderSystem* m_renderSystem = nullptr;

@@ -903,7 +903,7 @@ namespace Maze
             return c_invalidResourceId;
 
         MaterialPtr materialCopy = material->createCopy();
-        materialCopy->setName(MAZE_HS("Mono Material"));
+        materialCopy->setName(HashedString("Mono Material - " + material->getName().getString()));
         materialCopy.incRef();
         // Debug::Log("Mono Material created(%x).", materialCopy.get());
         return materialCopy->getResourceId();

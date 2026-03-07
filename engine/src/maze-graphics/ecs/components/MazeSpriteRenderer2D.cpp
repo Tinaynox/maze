@@ -241,27 +241,13 @@ namespace Maze
 
         if (getMaterial())
         {
-            /*
-            Texture2DPtr texture;
+            MAZE_ERROR_IF(
+                getMaterial()->hasUniform(MAZE_HCS("u_baseMap")),
+                "Sprite material '%s' shouldn't have u_baseMap uniform!", getMaterial()->getName().c_str());
+            MAZE_ERROR_IF(
+                getMaterial()->hasUniform(MAZE_HCS("u_baseMapTexelSize")),
+                "Sprite material '%s' shouldn't have u_baseMapTexelSize uniform!", getMaterial()->getName().c_str());
 
-            if (getSprite())
-            {
-                texture = getSprite()->getTexture();
-
-                if (!texture)
-                    texture = getMaterial()->getRenderSystem()->getTextureManager()->ensureBuiltinTexture2D(BuiltinTexture2DType::Error);
-            }
-            else
-            {
-                texture = getMaterial()->getRenderSystem()->getTextureManager()->ensureBuiltinTexture2D(BuiltinTexture2DType::White);
-            }
-
-            if (texture)
-            {
-                getMaterial()->setUniform(MAZE_HCS("u_baseMap"), texture);
-                getMaterial()->setUniform(MAZE_HCS("u_baseMapTexelSize"), 1.0f / (Vec2F)texture->getSize());
-            }
-            */
             if (getEntityRaw() && getEntityRaw()->getEcsWorld())
                 getEntityRaw()->sendEventImmediate<SpriteRenderer2DMaterialUpdatedEvent>();
         }        

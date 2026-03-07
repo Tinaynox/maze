@@ -576,6 +576,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Material::removeUniform(HashedCString _uniformName)
+    {
+        auto it = std::find_if(
+            m_uniforms.begin(),
+            m_uniforms.end(),
+            [_uniformName](ShaderUniformVariantPtr const& _variant) { return (_variant->getName() == _uniformName); });
+        if (it != m_uniforms.end())
+            m_uniforms.erase(it);
+        
+        dirtyRenderPassShaderUniforms();
+    }
+
+    //////////////////////////////////////////
+    void Material::updateRenderPassShaderUniforms()
+    {
+        for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
+            for (RenderPassPtr const& renderPass : m_passes[passType])
+                renderPass->updateShaderUniforms();
+    }
+
+    //////////////////////////////////////////
     ShaderUniformVariantPtr const& Material::getUniform(Size _index)
     {
         static ShaderUniformVariantPtr nullPointer;
@@ -746,14 +767,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool Material::hasUniform(HashedCString _uniformName)
+    bool Material::hasUniform(HashedCString _uniformName) const
     {
-        for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
-            for (RenderPassPtr const& renderPass : m_passes[passType])
-                if (renderPass && renderPass->hasUniform(_uniformName))
-                    return true;
-
-        return false;
+        auto it = std::find_if(
+            m_uniforms.begin(),
+            m_uniforms.end(),
+            [_uniformName](ShaderUniformVariantPtr const& _variant) { return (_variant->getName() == _uniformName); });
+        return (it != m_uniforms.end());
+            
+        //for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
+        //    for (RenderPassPtr const& renderPass : m_passes[passType])
+        //        if (renderPass && renderPass->hasUniform(_uniformName))
+        //            return true;
+        //return false;
     }
 
     //////////////////////////////////////////
@@ -945,11 +971,11 @@ namespace Maze
         }
 
         // #TODO: Workaround for the Sprites
-        if (StringHelper::IsStartsWith(m_material->getName().c_str(), "Sprite"))
-        {
-            ValueToDataBlock(m_material->getName().c_str(), _dataBlock);
-            return;
-        }
+        //if (StringHelper::IsStartsWith(m_material->getName().c_str(), "Sprite"))
+        //{
+        //    ValueToDataBlock(m_material->getName().c_str(), _dataBlock);
+        //    return;
+        //}
 
         // Runtime resource (ResourceId)
         ValueToDataBlock((S32)m_material->getResourceId().getId(), _dataBlock);

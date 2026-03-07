@@ -221,10 +221,17 @@ namespace Maze
         ShaderUniformVariantPtr const& ensureUniform(HashedCString _uniformName, ShaderUniformType _type = ShaderUniformType::None);
 
         //////////////////////////////////////////
+        void removeUniform(HashedCString _uniformName);
+
+        //////////////////////////////////////////
         FastVector<ShaderUniformVariantPtr> const& getUniforms() const { return m_uniforms; }
 
         //////////////////////////////////////////
         ShaderUniformVariantPtr const& getUniform(Size _index);
+
+
+        //////////////////////////////////////////
+        void updateRenderPassShaderUniforms();
 
 
         //////////////////////////////////////////
@@ -237,7 +244,7 @@ namespace Maze
         U32 calculateUniformsCRC32(U32 _seed = 0) const;
 
         //////////////////////////////////////////
-        bool hasUniform(HashedCString _uniformName);
+        bool hasUniform(HashedCString _uniformName) const;
 
         //////////////////////////////////////////
         bool saveToFile(Path const& _path);
