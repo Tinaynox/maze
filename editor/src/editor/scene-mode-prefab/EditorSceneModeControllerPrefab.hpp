@@ -125,9 +125,18 @@ namespace Maze
         //////////////////////////////////////////
         void notifyPrefabAssetFileSaveEnabledChanged(bool const& _value);
 
+
+        //////////////////////////////////////////
+        void assignCanvasForCurrentPrefab();
+
+        //////////////////////////////////////////
+        void notifyPrefabEntityChanged(EntityPtr const& _entity);
+
     protected:
         Transform2DPtr m_canvasNode;
         Transform3DPtr m_mainNode;
+
+        CanvasPtr m_prefabCanvas;
 
         Light3DPtr m_debugLight;
 

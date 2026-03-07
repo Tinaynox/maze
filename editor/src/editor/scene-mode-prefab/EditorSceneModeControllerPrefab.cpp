@@ -108,7 +108,10 @@ namespace Maze
     EditorSceneModeControllerPrefab::~EditorSceneModeControllerPrefab()
     {
         if (EditorPrefabManager::GetInstancePtr())
+        {
             EditorPrefabManager::GetInstancePtr()->getPrefabAssetFileSaveEnabledChangedEvent().unsubscribe(this);
+            EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.unsubscribe(this);
+        }
 
         if (SettingsManager::GetInstancePtr())
         {
@@ -290,6 +293,10 @@ namespace Maze
         EditorPrefabManager::GetInstancePtr()->getPrefabAssetFileSaveEnabledChangedEvent().subscribe(
             this, &EditorSceneModeControllerPrefab::notifyPrefabAssetFileSaveEnabledChanged);
 
+        EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.subscribe(
+            this, &EditorSceneModeControllerPrefab::notifyPrefabEntityChanged);
+        assignCanvasForCurrentPrefab();
+
         return true;
     }
 
@@ -384,6 +391,58 @@ namespace Maze
     void EditorSceneModeControllerPrefab::notifyPrefabAssetFileSaveEnabledChanged(bool const& _value)
     {
         updateSaveButtonEnabled();
+    }
+
+    //////////////////////////////////////////
+    void EditorSceneModeControllerPrefab::notifyPrefabEntityChanged(EntityPtr const& _entity)
+    {
+        if (_entity)
+        {
+            assignCanvasForCurrentPrefab();
+        }
+        else
+        {
+            if (m_prefabCanvas)
+            {
+                if (m_prefabCanvas->getEntityRaw())
+                    m_prefabCanvas->getEntityRaw()->removeFromEcsWorld();
+
+                m_prefabCanvas.reset();
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void EditorSceneModeControllerPrefab::assignCanvasForCurrentPrefab()
+    {
+        EntityPtr const& entityPrefab = EditorPrefabManager::GetInstancePtr()->getPrefabEntity();
+        if (!entityPrefab)
+            return;
+
+        Transform2D* transform = entityPrefab->getComponentRaw<Transform2D>();
+        if (!transform)
+            return;
+
+        // Create canvas if required
+        SceneMainPtr const& sceneMain = EditorManager::GetInstancePtr()->getSceneMain();
+        if (!m_prefabCanvas || !m_prefabCanvas->getEntityRaw() || !m_prefabCanvas->getEntityRaw()->getEcsScene())
+        {
+            EntityPtr mainCanvasEntity = sceneMain->createEntity("Prefab Canvas");
+            m_prefabCanvas = mainCanvasEntity->createComponent<Canvas>();
+            m_prefabCanvas->setClearColorFlag(true);
+            m_prefabCanvas->setClearColor(ColorU32(99, 101, 140, 255));
+            m_prefabCanvas->setSortOrder(-1000000);
+            m_prefabCanvas->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport));
+
+            CanvasScalerPtr canvasScaler = mainCanvasEntity->ensureComponent<CanvasScaler>();
+            canvasScaler->setScaleMode(CanvasScalerScaleMode::ScaleWithViewportSize);
+            canvasScaler->setScreenMatchMode(CanvasScalerScreenMatchMode::MatchWidthOrHeight);
+            canvasScaler->setReferenceResolution(transform->getSize());
+            canvasScaler->setMatchWidthOrHeight(1.0f);
+            canvasScaler->updateCanvasScale();
+        }
+
+        transform->setParent(m_prefabCanvas->getTransform());
     }
 
 } // namespace Maze

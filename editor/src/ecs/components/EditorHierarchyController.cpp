@@ -402,6 +402,7 @@ namespace Maze
         hierarchyLine->setWorld(m_world);
         hierarchyLine->setText(_scene->getSceneName().str);
         hierarchyLine->getTransform()->setParent(m_hierarchyMainLayoutEntity);
+        hierarchyLine->setIndent(0);
         hierarchyLine->setUserData(reinterpret_cast<void*>((Size)(S32)_scene->getId()));
 
         m_sceneLines[_scene->getId()] = hierarchyLine;
@@ -471,7 +472,10 @@ namespace Maze
         if (parentLine)
             parentLine->addChild(hierarchyLine);
         else
+        {
             hierarchyLine->getTransform()->setParent(m_hierarchyMainLayoutEntity);
+            hierarchyLine->setIndent(0);
+        }
 
         m_entityLines[_entity->getId()] = hierarchyLine;
         updateEntityName(_entity);
@@ -1034,6 +1038,7 @@ namespace Maze
             {
                 MAZE_ERROR("Parent is not found!");
                 entityIt->second->getTransform()->setParent(m_hierarchyMainLayoutEntity);
+                entityIt->second->setIndent(0);
             }
         }
 
