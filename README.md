@@ -28,7 +28,7 @@ At the moment it is my main pet project, developed for the purpose of learning a
 ![Maze Editor](/res/art/screenshots/maze-editor2.jpg?raw=true "Maze Editor - Screenshot 2")
 ![Maze Editor](/res/art/screenshots/maze-editor3.jpg?raw=true "Maze Editor - Screenshot 3")
 
-## Getting Started
+## Getting started
 Start by cloning the repository with `git clone --recursive https://github.com/Tinaynox/maze`.
 
 ### ![Windows](/res/art/WindowsIcon_16x16.png?raw=true "Windows") Windows » ![Windows](/res/art/WindowsIcon_16x16.png?raw=true "Windows") Windows
