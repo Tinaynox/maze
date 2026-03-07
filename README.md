@@ -12,8 +12,21 @@ At the moment it is my main pet project, developed for the purpose of learning a
 
 [![Space Pressure 3D: Prelude](/res/art/projects/sp3d/SP3DPromo00.gif)](https://store.steampowered.com/app/1864190/Space_Pressure_3D_Prelude/)
 
-[![Steam](/res/art/SteamIcon_32x32.png?raw=true "Steam")](https://store.steampowered.com/app/1864190/Space_Pressure_3D_Prelude/) [![onstove.com](/res/art/STOVEIcon_32x32.png?raw=true "onstove.com")](https://store.onstove.com/ko/games/3363) [![itch.io](/res/art/ItchIcon_32x32.png?raw=true "itch.io")](https://tinaynox.itch.io/space-pressure-3d-prelude) 
+[![Steam](/res/art/SteamIcon_32x32.png?raw=true "Steam")](https://store.steampowered.com/app/1864190/Space_Pressure_3D_Prelude/) [![onstove.com](/res/art/STOVEIcon_32x32.png?raw=true "onstove.com")](https://store.onstove.com/ko/games/3363) [![itch.io](/res/art/ItchIcon_32x32.png?raw=true "itch.io")](https://tinaynox.itch.io/space-pressure-3d-prelude)
 
+
+**Melted Kingdoms**
+
+[![Melted Kingdoms](/res/art/projects/mk/mk0.jpg)](https://store.steampowered.com/app/4005150/Melted_Kingdoms/)
+
+[![Steam](/res/art/SteamIcon_32x32.png?raw=true "Steam")](https://store.steampowered.com/app/4005150/Melted_Kingdoms/) [![itch.io](/res/art/ItchIcon_32x32.png?raw=true "itch.io")](https://tinaynox.itch.io/melted-kingdoms)
+
+
+## Maze Editor screenshots
+![Maze Editor](/res/art/screenshots/maze-editor0.jpg?raw=true "Maze Editor - Screenshot 0")
+![Maze Editor](/res/art/screenshots/maze-editor1.jpg?raw=true "Maze Editor - Screenshot 1")
+![Maze Editor](/res/art/screenshots/maze-editor2.jpg?raw=true "Maze Editor - Screenshot 2")
+![Maze Editor](/res/art/screenshots/maze-editor3.jpg?raw=true "Maze Editor - Screenshot 3")
 
 ## Getting Started
 Start by cloning the repository with `git clone --recursive https://github.com/Tinaynox/maze`.
