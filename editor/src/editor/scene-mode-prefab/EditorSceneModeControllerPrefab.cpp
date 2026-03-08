@@ -402,13 +402,9 @@ namespace Maze
         }
         else
         {
-            if (m_prefabCanvas)
-            {
-                if (m_prefabCanvas->getEntityRaw())
-                    m_prefabCanvas->getEntityRaw()->removeFromEcsWorld();
-
-                m_prefabCanvas.reset();
-            }
+            SceneMainPtr const& sceneMain = EditorManager::GetInstancePtr()->getSceneMain();
+            if (sceneMain)
+                sceneMain->destroyPrefabCanvas();
         }
     }
 
@@ -423,26 +419,16 @@ namespace Maze
         if (!transform)
             return;
 
-        // Create canvas if required
         SceneMainPtr const& sceneMain = EditorManager::GetInstancePtr()->getSceneMain();
-        if (!m_prefabCanvas || !m_prefabCanvas->getEntityRaw() || !m_prefabCanvas->getEntityRaw()->getEcsScene())
+        if (sceneMain)
         {
-            EntityPtr mainCanvasEntity = sceneMain->createEntity("Prefab Canvas");
-            m_prefabCanvas = mainCanvasEntity->createComponent<Canvas>();
-            m_prefabCanvas->setClearColorFlag(true);
-            m_prefabCanvas->setClearColor(ColorU32(99, 101, 140, 255));
-            m_prefabCanvas->setSortOrder(-1000000);
-            m_prefabCanvas->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport));
+            CanvasPtr const& prefabCanvas = sceneMain->ensurePrefabCanvas();
+            CanvasScaler* prefabCanvasScaler = prefabCanvas->getEntityRaw()->getComponentRaw<CanvasScaler>();
+            if (prefabCanvasScaler)
+                prefabCanvasScaler->setReferenceResolution(transform->getSize());
 
-            CanvasScalerPtr canvasScaler = mainCanvasEntity->ensureComponent<CanvasScaler>();
-            canvasScaler->setScaleMode(CanvasScalerScaleMode::ScaleWithViewportSize);
-            canvasScaler->setScreenMatchMode(CanvasScalerScreenMatchMode::MatchWidthOrHeight);
-            canvasScaler->setReferenceResolution(transform->getSize());
-            canvasScaler->setMatchWidthOrHeight(1.0f);
-            canvasScaler->updateCanvasScale();
+            transform->setParent(prefabCanvas->getTransform());
         }
-
-        transform->setParent(m_prefabCanvas->getTransform());
     }
 
 } // namespace Maze

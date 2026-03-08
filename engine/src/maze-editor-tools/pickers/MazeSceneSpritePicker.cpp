@@ -213,7 +213,7 @@ namespace Maze
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         layoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
-        SpriteManager::GetCurrentInstance()->loadAllAssetSprites();
+        // SpriteManager::GetCurrentInstance()->loadAllAssetSprites();
 
         updateSprites();
         updateUI();

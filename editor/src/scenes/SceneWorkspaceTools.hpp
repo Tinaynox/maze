@@ -103,6 +103,13 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processSceneStateChanged(EcsSceneState _state) MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        AABB2D getViewportAABB2D();
+
+        //////////////////////////////////////////
+        Rect2F getViewortRect(Vec2F const& _cursorPositionRWS);
+
     protected:
     };
 

@@ -203,16 +203,10 @@ namespace Maze
         if (!Editor::GetInstancePtr()->getMainRenderWindow()->getFocused())
             return;
 
-        Rect2F viewportRect = m_camera3D->getViewport();
-        viewportRect.position *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
-        viewportRect.size *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
-
-        AABB2D aabb = AABB2D::FromRect2(viewportRect);
-
         Vec2F32 cursorPositionRWS = InputManager::GetInstancePtr()->getCursorPosition(0);
         Vec2F32 cursorPosition = EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(cursorPositionRWS);
 
-        if (m_camera3D && aabb.contains(cursorPosition))
+        if (m_camera3D && getViewportAABB2D().contains(cursorPosition))
         {
             Vec3F32 cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F32::c_unitZ;
             Vec3F32 cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F32::c_unitX;
@@ -273,6 +267,26 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    AABB2D SceneWorkspaceTools::getViewportAABB2D()
+    {
+        Rect2F viewportRect = m_camera3D->getViewport();
+        viewportRect.position *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
+        viewportRect.size *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
+
+        return AABB2D::FromRect2(viewportRect);
+    }
+
+    //////////////////////////////////////////
+    Rect2F SceneWorkspaceTools::getViewortRect(Vec2F const& _cursorPositionRWS)
+    {
+        return Rect2F(
+            m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
+            m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
+            m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
+            m_camera3D->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
+    }
+
+    //////////////////////////////////////////
     void SceneWorkspaceTools::notifyMouse(InputEventMouseData const& _data)
     {
         if (!Editor::GetInstancePtr()->getMainRenderWindow()->getFocused())
@@ -306,13 +320,7 @@ namespace Maze
                     {
                         Vec2F32 cursorPositionRWS = Vec2F32((F32)_data.x, (F32)_data.y);
                         Vec2F32 cursorPosition = EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(cursorPositionRWS);
-                        Rect2F viewportRect(
-                            m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
-                            m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
-                            m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
-                            m_camera3D->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
-
-                        if (viewportRect.contains(cursorPosition))
+                        if (getViewortRect(cursorPositionRWS).contains(cursorPosition))
                         {
                             m_cursorDrag = true;
                             m_cursorPositionLastFrame = cursorPositionRWS;
@@ -327,6 +335,29 @@ namespace Maze
                 {
                     m_cursorDrag = false;
                 }
+                break;
+            }
+            case InputEventMouseType::Wheel:
+            {
+                Vec2F32 cursorPositionRWS = Vec2F32((F32)_data.x, (F32)_data.y);
+                Vec2F32 cursorPosition = EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(cursorPositionRWS);
+                if (getViewortRect(cursorPositionRWS).contains(cursorPosition))
+                {
+                    SceneMainPtr const& sceneMain = EditorManager::GetInstancePtr()->getSceneMain();
+                    if (sceneMain)
+                    {
+                        CanvasPtr const& prefabCanvas = sceneMain->getPrefabCanvas();
+                        if (prefabCanvas)
+                        {
+                            CanvasScaler* prefabCanvasScaler = prefabCanvas->getEntityRaw()->getComponentRaw<CanvasScaler>();
+                            Vec2F refResolution = prefabCanvasScaler->getReferenceResolution();
+                            refResolution -= (F32)_data.z * 0.25f;
+                            if (refResolution.y > 0.0f)
+                                prefabCanvasScaler->setReferenceResolution(refResolution);
+                        }
+                    }
+                }
+
                 break;
             }
             default:

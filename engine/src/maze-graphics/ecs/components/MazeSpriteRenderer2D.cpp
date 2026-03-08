@@ -258,7 +258,7 @@ namespace Maze
     {
         if (!getSprite())
         {
-            Texture2DPtr const& whiteTexture = getMaterial()->getRenderSystem()->getTextureManager()->ensureBuiltinTexture2D(BuiltinTexture2DType::White);
+            Texture2DPtr const& whiteTexture = TextureManager::GetCurrentInstancePtr()->ensureBuiltinTexture2D(BuiltinTexture2DType::White);
             MAZE_DEBUG_ASSERT(whiteTexture);
             return whiteTexture->getResourceId();
         }

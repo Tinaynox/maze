@@ -52,6 +52,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SceneMain);
+    MAZE_USING_SHARED_PTR(Canvas);
 
 
     //////////////////////////////////////////
@@ -71,6 +72,20 @@ namespace Maze
         //////////////////////////////////////////
         virtual ~SceneMain();
 
+        //////////////////////////////////////////
+        CanvasPtr const& ensurePrefabCanvas();
+
+        //////////////////////////////////////////
+        inline CanvasPtr const& getPrefabCanvas() const { return m_prefabCanvas; }
+
+        //////////////////////////////////////////
+        void destroyAllEntities();
+
+        //////////////////////////////////////////
+        void destroyAllEntitiesExcept(EntityPtr const& _value);
+
+        //////////////////////////////////////////
+        void destroyPrefabCanvas();
 
     protected:
 
@@ -81,6 +96,7 @@ namespace Maze
         bool init(RenderTargetPtr const& _renderTarget);
 
     protected:
+        CanvasPtr m_prefabCanvas;
     };
 
 

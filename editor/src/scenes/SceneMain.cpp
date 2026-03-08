@@ -108,6 +108,55 @@ namespace Maze
         return true;
     }
 
+    //////////////////////////////////////////
+    CanvasPtr const& SceneMain::ensurePrefabCanvas()
+    {
+        if (!m_prefabCanvas || !m_prefabCanvas->getEntityRaw() || !m_prefabCanvas->getEntityRaw()->getEcsScene())
+        {
+            EntityPtr mainCanvasEntity = createEntity("Prefab Canvas");
+            m_prefabCanvas = mainCanvasEntity->createComponent<Canvas>();
+            m_prefabCanvas->setClearColorFlag(true);
+            m_prefabCanvas->setClearColor(ColorU32(99, 101, 140, 255));
+            m_prefabCanvas->setSortOrder(-1000000);
+            m_prefabCanvas->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport));
+
+            CanvasScalerPtr canvasScaler = mainCanvasEntity->ensureComponent<CanvasScaler>();
+            canvasScaler->setScaleMode(CanvasScalerScaleMode::ScaleWithViewportSize);
+            canvasScaler->setScreenMatchMode(CanvasScalerScreenMatchMode::Expand);
+            //canvasScaler->setMatchWidthOrHeight(1.0f);
+            canvasScaler->updateCanvasScale();
+        }
+
+        return m_prefabCanvas;
+    }
+
+    //////////////////////////////////////////
+    void SceneMain::destroyPrefabCanvas()
+    {
+        if (!m_prefabCanvas)
+            return;
+
+        if (m_prefabCanvas->getEntityRaw())
+            m_prefabCanvas->getEntityRaw()->removeFromEcsWorld();
+
+        m_prefabCanvas.reset();
+    }
+
+    //////////////////////////////////////////
+    void SceneMain::destroyAllEntities()
+    {
+        EcsRenderScene::destroyAllEntities();
+        destroyPrefabCanvas();
+    }
+
+    //////////////////////////////////////////
+    void SceneMain::destroyAllEntitiesExcept(EntityPtr const& _value)
+    {
+        EcsRenderScene::destroyAllEntitiesExcept(_value);
+        if (m_prefabCanvas && _value != m_prefabCanvas->getEntity())
+            destroyPrefabCanvas();
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////
