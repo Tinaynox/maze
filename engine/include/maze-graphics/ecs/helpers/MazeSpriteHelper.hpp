@@ -52,7 +52,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(EcsScene);
-    MAZE_USING_SHARED_PTR(Sprite);
+    MAZE_USING_MANAGED_SHARED_PTR(Sprite);
 
     //////////////////////////////////////////
     namespace SpriteHelper

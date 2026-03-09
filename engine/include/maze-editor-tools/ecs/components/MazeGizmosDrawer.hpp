@@ -51,7 +51,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(Sprite);
+    MAZE_USING_MANAGED_SHARED_PTR(Sprite);
     MAZE_USING_SHARED_PTR(MeshRenderer);
 
 

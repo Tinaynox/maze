@@ -412,10 +412,25 @@ namespace Maze
         MAZE_MONO_BIND_VALIDATE_COMPONENT(SpriteRenderer2D);
 
         MaterialPtr const& material = _component->castRaw<SpriteRenderer2D>()->getMaterial();
-        if (material)
-            _outResourceId = material->getResourceId();
-        else
-            _outResourceId = c_invalidResourceId;
+        _outResourceId = material ? material->getResourceId() : c_invalidResourceId;
+    }
+
+    //////////////////////////////////////////
+    inline void SpriteRenderer2DSetSprite(Component* _component, S32 _resourceId)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SpriteRenderer2D);
+
+        Sprite* sprite = Sprite::GetResource(_resourceId);
+        _component->castRaw<SpriteRenderer2D>()->setSprite(sprite ? sprite->getSharedPtr() : SpritePtr());
+    }
+
+    //////////////////////////////////////////
+    inline void SpriteRenderer2DGetSprite(Component* _component, S32& _outResourceId)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SpriteRenderer2D);
+
+        SpritePtr const& sprite = _component->castRaw<SpriteRenderer2D>()->getSprite();        
+        _outResourceId = sprite ? sprite->getResourceId() : c_invalidResourceId;
     }
 
     //////////////////////////////////////////
@@ -1180,6 +1195,26 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    inline S32 CreateSprite()
+    {
+        SpritePtr texture = Sprite::Create();
+        texture->setName(MAZE_HS("Mono Sprite"));
+        texture.incRef();
+        return texture->getResourceId();
+    }
+
+    //////////////////////////////////////////
+    inline void DestroySprite(S32 _spriteId)
+    {
+        TaskManager::GetInstancePtr()->addMainThreadTask(
+            [_spriteId]()
+            {
+                if (Sprite* texture = Sprite::GetResource(_spriteId))
+                    texture->getSharedPtr().decRef();
+            });
+    }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsGraphics()
@@ -1223,6 +1258,8 @@ namespace Maze
         // SpriteRenderer2D
         MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DSetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DGetMaterial);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DSetSprite);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DGetSprite);
 
         // Camera3D
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DGetOrthographicSize);
@@ -1356,6 +1393,10 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DSetPixelU32);
         MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DFillU32);
         MAZE_GRAPHICS_MONO_BIND_FUNC(PixelSheet2DBlend);
+
+        // Sprite
+        MAZE_GRAPHICS_MONO_BIND_FUNC(CreateSprite);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(DestroySprite);
     }
 
 } // namespace Maze

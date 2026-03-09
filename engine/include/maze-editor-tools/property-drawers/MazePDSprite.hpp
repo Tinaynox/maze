@@ -49,7 +49,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(PropertyDrawerSpriteAssetRef);
     MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(Button2D);
-    MAZE_USING_SHARED_PTR(Sprite);
+    MAZE_USING_MANAGED_SHARED_PTR(Sprite);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(ClickButton2D);
     MAZE_USING_SHARED_PTR(DragAndDropZone);

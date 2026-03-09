@@ -125,6 +125,12 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void SpriteRenderer2DGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SpriteRenderer2DSetSprite(NativePtr nativeComponentPtr, int spriteResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SpriteRenderer2DGetSprite(NativePtr nativeComponentPtr, out int outSpriteResourceId);
         #endregion
 
 
@@ -476,6 +482,14 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Texture2DLoad(int textureId, int pixelSheetId);
+        #endregion
+
+        #region Sprite
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int CreateSprite();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void DestroySprite(int spriteId);
         #endregion
     }
 }

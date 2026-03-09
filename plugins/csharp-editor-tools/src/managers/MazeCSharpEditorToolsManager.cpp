@@ -47,6 +47,7 @@
 #include "maze-editor-tools/property-drawers/MazePDAssetFileId.hpp"
 #include "maze-editor-tools/property-drawers/MazePDMaterial.hpp"
 #include "maze-editor-tools/property-drawers/MazePDTexture2D.hpp"
+#include "maze-editor-tools/property-drawers/MazePDSprite.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
@@ -853,8 +854,8 @@ namespace Maze
                 MonoObject* indexedResourceInstance = nullptr;
                 _instance.getFieldValue(_field, indexedResourceInstance);
                 ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-                Texture2D* material = Texture2D::GetResource(resourceId);
-                _drawer->setValue(material ? material->getSharedPtr() : nullptr);
+                Texture2D* texture = Texture2D::GetResource(resourceId);
+                _drawer->setValue(texture ? texture->getSharedPtr() : nullptr);
             },
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerTexture2D const* _drawer)
             {
@@ -862,6 +863,36 @@ namespace Maze
                 MonoObject* indexedResourceObj = MonoHelper::CreateIndexedResource(MAZE_HCS("Maze.Graphics.Texture2D"), resourceId);
                 _instance.setFieldValue(_field, indexedResourceObj);
             });
+
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerSprite>(MAZE_HCS("Maze.Graphics.Sprite"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerSprite* _drawer)
+        {
+            MonoObject* indexedResourceInstance = nullptr;
+            _instance.getPropertyValue(_property, indexedResourceInstance);
+            ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
+            Sprite* sprite = Sprite::GetResource(resourceId);
+            _drawer->setValue(sprite ? sprite->getSharedPtr() : nullptr);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerSprite const* _drawer)
+        {
+            ResourceId resourceId = _drawer->getValue() ? _drawer->getValue()->getResourceId() : c_invalidResourceId;
+            MonoObject* indexedResourceObj = MonoHelper::CreateIndexedResource(MAZE_HCS("Maze.Graphics.Sprite"), resourceId);
+            _instance.setPropertyValue(_property, indexedResourceObj);
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerSprite* _drawer)
+        {
+            MonoObject* indexedResourceInstance = nullptr;
+            _instance.getFieldValue(_field, indexedResourceInstance);
+            ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
+            Sprite* sprite = Sprite::GetResource(resourceId);
+            _drawer->setValue(sprite ? sprite->getSharedPtr() : nullptr);
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerSprite const* _drawer)
+        {
+            ResourceId resourceId = _drawer->getValue() ? _drawer->getValue()->getResourceId() : c_invalidResourceId;
+            MonoObject* indexedResourceObj = MonoHelper::CreateIndexedResource(MAZE_HCS("Maze.Graphics.Sprite"), resourceId);
+            _instance.setFieldValue(_field, indexedResourceObj);
+        });
 
 
         // Components

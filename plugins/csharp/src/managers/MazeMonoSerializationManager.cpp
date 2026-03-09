@@ -38,6 +38,7 @@
 #include "maze-core/math/MazeAABB3D.hpp"
 #include "maze-core/ecs/events/MazeEcsInputEvents.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeSprite.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
@@ -594,6 +595,54 @@ namespace Maze
                     else
                         _instance.resetFieldValue(_field);
                 });
+
+            // Sprite
+            registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("Maze.Graphics.Sprite"),
+                [monoDataBlockToDataBlock](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+            {
+                MonoObject* indexedResourceInstance = nullptr;
+                _instance.getPropertyValue(_prop, indexedResourceInstance);
+                ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
+                if (Sprite* sprite = Sprite::GetResource(resourceId))
+                    SpriteAssetRef(sprite).toDataBlock(*_dataBlock.ensureDataBlock(_prop->getName()));
+
+            },
+                [dataBlockToMonoDataBlock](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+            {
+                DataBlock const* dataBlock = _dataBlock.getDataBlock(_prop->getName());
+                if (dataBlock)
+                {
+                    SpriteAssetRef spriteAssetRef;
+                    spriteAssetRef.loadFromDataBlock(*dataBlock);
+                    ResourceId resourceId = spriteAssetRef.getSprite() ? spriteAssetRef.getSprite()->getResourceId() : c_invalidResourceId;
+                    MonoObject* indexedResourceObj = MonoHelper::CreateIndexedResource(MAZE_HCS("Maze.Graphics.Sprite"), resourceId);
+                    _instance.setPropertyValue(_prop, indexedResourceObj);
+                }
+                else
+                    _instance.resetPropertyValue(_prop);
+            },
+                [monoDataBlockToDataBlock](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+            {
+                MonoObject* indexedResourceInstance = nullptr;
+                _instance.getFieldValue(_field, indexedResourceInstance);
+                ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
+                if (Sprite* sprite = Sprite::GetResource(resourceId))
+                    SpriteAssetRef(sprite).toDataBlock(*_dataBlock.ensureDataBlock(_field->getName()));
+            },
+                [dataBlockToMonoDataBlock, monoDataBlockToDataBlock](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+            {
+                DataBlock const* dataBlock = _dataBlock.getDataBlock(_field->getName());
+                if (dataBlock)
+                {
+                    SpriteAssetRef spriteAssetRef;
+                    spriteAssetRef.loadFromDataBlock(*dataBlock);
+                    ResourceId resourceId = spriteAssetRef.getSprite() ? spriteAssetRef.getSprite()->getResourceId() : c_invalidResourceId;
+                    MonoObject* indexedResourceObj = MonoHelper::CreateIndexedResource(MAZE_HCS("Maze.Graphics.Sprite"), resourceId);
+                    _instance.setFieldValue(_field, indexedResourceObj);
+                }
+                else
+                    _instance.resetFieldValue(_field);
+            });
 
 #undef MAZE_MONO_SERIALIZATION_TYPE
 

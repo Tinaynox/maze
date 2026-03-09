@@ -55,7 +55,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
-    MAZE_USING_SHARED_PTR(Sprite);
+    MAZE_USING_MANAGED_SHARED_PTR(Sprite);
     MAZE_USING_SHARED_PTR(ContextMenu2D);
     MAZE_USING_SHARED_PTR(AssetsController);
     MAZE_USING_SHARED_PTR(EditBox2D);

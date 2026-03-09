@@ -38,6 +38,7 @@
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/utils/MazeManagedSharedObject.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/containers/MazeFastVector.hpp"
 
@@ -46,7 +47,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Sprite);
+    MAZE_USING_MANAGED_SHARED_PTR(Sprite);
     MAZE_USING_MANAGED_SHARED_PTR(Texture2D);
 
 
@@ -88,7 +89,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API Sprite
-        : public SharedObject<Sprite>
+        : public ManagedSharedObject<Sprite>
         , public IndexedResource<Sprite>
         , public MultiDelegateCallbackReceiver
         , public IStringSerializable
@@ -216,11 +217,6 @@ namespace Maze
         //////////////////////////////////////////
         static void ToString(Sprite const* _value, String& _data);
 
-    public:
-
-        //////////////////////////////////////////
-        // static void IterateSprites(std::function<bool(Sprite*)> _cb);
-
     protected:
 
         //////////////////////////////////////////
@@ -250,11 +246,6 @@ namespace Maze
         Vec2F m_textureCoordRT;
 
         SpriteSliceBorder m_sliceBorder;
-
-    protected:
-        // static Sprite* s_instancesList;
-        // Sprite* m_instancesListNext = nullptr;
-        // Sprite* m_instancesListPrev = nullptr;
     };
         
 
