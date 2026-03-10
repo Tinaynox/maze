@@ -400,29 +400,29 @@ namespace Maze
     //////////////////////////////////////////
     inline void ComponentSendMonoEvent(Component* _component, Entity* _entityReceiver, MonoObject* _monoEventPtr)
     {
-        MonoObject* monoEvent = (MonoObject*)mono_gchandle_get_target((uint32_t)(uintptr_t)_monoEventPtr);
-        _component->getEntityRaw()->getEcsWorld()->sendEvent<Maze::MonoEvent>(_entityReceiver->getId(), monoEvent);
+        U32 gcHandle = (uint32_t)(uintptr_t)_monoEventPtr;
+        _component->getEntityRaw()->getEcsWorld()->sendEvent<Maze::MonoEvent>(_entityReceiver->getId(), gcHandle);
     }
 
     //////////////////////////////////////////
     inline void ComponentSendMonoEventImmediate(Component* _component, Entity* _entityReceiver, MonoObject* _monoEventPtr)
     {
-        MonoObject* monoEvent = (MonoObject*)mono_gchandle_get_target((uint32_t)(uintptr_t)_monoEventPtr);
-        _component->getEntityRaw()->getEcsWorld()->sendEventImmediate<Maze::MonoEvent>(_entityReceiver->getId(), monoEvent);
+        U32 gcHandle = (uint32_t)(uintptr_t)_monoEventPtr;
+        _component->getEntityRaw()->getEcsWorld()->sendEventImmediate<Maze::MonoEvent>(_entityReceiver->getId(), gcHandle);
     }
 
     //////////////////////////////////////////
     inline void ComponentBroadcastMonoEvent(Component* _component, void* _monoEventPtr)
     {
-        MonoObject* monoEvent = (MonoObject*)mono_gchandle_get_target((uint32_t)(uintptr_t)_monoEventPtr);
-        _component->getEntityRaw()->getEcsWorld()->broadcastEvent<Maze::MonoEvent>(monoEvent);
+        U32 gcHandle = (uint32_t)(uintptr_t)_monoEventPtr;
+        _component->getEntityRaw()->getEcsWorld()->broadcastEvent<Maze::MonoEvent>(gcHandle);
     }
 
     //////////////////////////////////////////
     inline void ComponentBroadcastMonoEventImmediate(Component* _component, void* _monoEventPtr)
     {
-        MonoObject* monoEvent = (MonoObject*)mono_gchandle_get_target((uint32_t)(uintptr_t)_monoEventPtr);
-        _component->getEntityRaw()->getEcsWorld()->broadcastEventImmediate<Maze::MonoEvent>(monoEvent);
+        U32 gcHandle = (uint32_t)(uintptr_t)_monoEventPtr;
+        _component->getEntityRaw()->getEcsWorld()->broadcastEventImmediate<Maze::MonoEvent>(gcHandle);
     }
 
     //////////////////////////////////////////

@@ -107,16 +107,13 @@ namespace Maze
         //////////////////////////////////////////
         inline ScriptClassPtr getMonoClass() const { return m_scriptClass.lock(); }
 
-        //////////////////////////////////////////
-        inline MonoObject* getInstance() const { return m_instance; }
-
 
         //////////////////////////////////////////
         template <typename TValue>
         inline bool invokeMethod(MonoMethod* _method, TValue const& _value)
         {
             void* ptr = (void*)&_value;
-            MonoHelper::InvokeMethod(m_instance, _method, &ptr);
+            MonoHelper::InvokeMethod(getInstance(), _method, &ptr);
             return true;
         }
 
@@ -125,7 +122,7 @@ namespace Maze
         inline bool invokeMethod(MonoMethod* _method, MonoObject* const& _value)
         {
             void* ptr = (void*)_value;
-            MonoHelper::InvokeMethod(m_instance, _method, &ptr);
+            MonoHelper::InvokeMethod(getInstance(), _method, &ptr);
             return true;
         }
 
@@ -158,7 +155,7 @@ namespace Maze
         {
             MonoString* monoString = mono_string_new(mono_domain_get(), _value.c_str());
             void* stringParam = monoString;
-            MonoHelper::InvokeMethod(m_instance, _property->getSetterMethod(), &stringParam);
+            MonoHelper::InvokeMethod(getInstance(), _property->getSetterMethod(), &stringParam);
             return true;
         }
 
@@ -167,7 +164,7 @@ namespace Maze
         inline bool setPropertyValue(ScriptPropertyPtr const& _property, MonoObject* const& _value)
         {
             void* objectParam = _value;
-            MonoHelper::InvokeMethod(m_instance, _property->getSetterMethod(), &objectParam);
+            MonoHelper::InvokeMethod(getInstance(), _property->getSetterMethod(), &objectParam);
             return true;
         }
 
@@ -176,7 +173,7 @@ namespace Maze
         inline bool setPropertyValue(ScriptPropertyPtr const& _property, MonoArray* const& _value)
         {
             void* arrayParam = _value;
-            MonoHelper::InvokeMethod(m_instance, _property->getSetterMethod(), &arrayParam);
+            MonoHelper::InvokeMethod(getInstance(), _property->getSetterMethod(), &arrayParam);
             return true;
         }
 
@@ -186,7 +183,7 @@ namespace Maze
             if (!_property->getSetterMethod())
                 return false;
 
-            return MonoHelper::InvokeMethod(m_instance, _property->getSetterMethod(), nullptr);            
+            return MonoHelper::InvokeMethod(getInstance(), _property->getSetterMethod(), nullptr);
         }
 
         //////////////////////////////////////////
@@ -206,7 +203,7 @@ namespace Maze
         inline bool getPropertyValue(ScriptPropertyPtr const& _property, TValue& _value) const
         {
             MAZE_DEBUG_ASSERT(_property->getMonoProperty());
-            MonoObject* result = mono_property_get_value(_property->getMonoProperty(), m_instance, nullptr, nullptr);
+            MonoObject* result = mono_property_get_value(_property->getMonoProperty(), getInstance(), nullptr, nullptr);
             if (!result)
                 return false;
 
@@ -220,7 +217,7 @@ namespace Maze
         inline bool getPropertyValue(ScriptPropertyPtr const& _property, String& _value) const
         {
             MAZE_DEBUG_ASSERT(_property->getMonoProperty());
-            MonoObject* result = mono_property_get_value(_property->getMonoProperty(), m_instance, nullptr, nullptr);
+            MonoObject* result = mono_property_get_value(_property->getMonoProperty(), getInstance(), nullptr, nullptr);
             if (!result)
                 return false;
 
@@ -236,7 +233,7 @@ namespace Maze
         inline bool getPropertyValue(ScriptPropertyPtr const& _property, MonoObject*& _value) const
         {
             MAZE_DEBUG_ASSERT(_property->getMonoProperty());
-            MonoObject* result = mono_property_get_value(_property->getMonoProperty(), m_instance, nullptr, nullptr);
+            MonoObject* result = mono_property_get_value(_property->getMonoProperty(), getInstance(), nullptr, nullptr);
             if (!result)
                 return false;
 
@@ -251,7 +248,7 @@ namespace Maze
         inline bool setFieldValue(ScriptFieldPtr const& _field, TValue const& _value)
         {
             MAZE_DEBUG_ASSERT(_field->getMonoClassField());
-            mono_field_set_value(m_instance, _field->getMonoClassField(), (void*)&_value);
+            mono_field_set_value(getInstance(), _field->getMonoClassField(), (void*)&_value);
             return true;
         }
 
@@ -262,7 +259,7 @@ namespace Maze
             MAZE_DEBUG_ASSERT(_field->getMonoClassField());
 
             MonoString* monoString = mono_string_new(mono_domain_get(), _value.c_str());
-            mono_field_set_value(m_instance, _field->getMonoClassField(), monoString);
+            mono_field_set_value(getInstance(), _field->getMonoClassField(), monoString);
 
             return true;
         }
@@ -272,7 +269,7 @@ namespace Maze
         inline bool setFieldValue(ScriptFieldPtr const& _field, MonoObject* const& _value)
         {
             MAZE_DEBUG_ASSERT(_field->getMonoClassField());
-            mono_field_set_value(m_instance, _field->getMonoClassField(), _value);
+            mono_field_set_value(getInstance(), _field->getMonoClassField(), _value);
             return true;
         }
 
@@ -281,7 +278,7 @@ namespace Maze
         inline bool setFieldValue(ScriptFieldPtr const& _field, MonoArray* const& _value)
         {
             MAZE_DEBUG_ASSERT(_field->getMonoClassField());
-            mono_field_set_value(m_instance, _field->getMonoClassField(), _value);
+            mono_field_set_value(getInstance(), _field->getMonoClassField(), _value);
             return true;
         }
 
@@ -289,7 +286,7 @@ namespace Maze
         inline bool resetFieldValue(ScriptFieldPtr const& _field)
         {
             MAZE_DEBUG_ASSERT(_field->getMonoClassField());
-            mono_field_set_value(m_instance, _field->getMonoClassField(), nullptr);
+            mono_field_set_value(getInstance(), _field->getMonoClassField(), nullptr);
             return false;
         }
 
@@ -298,7 +295,7 @@ namespace Maze
         inline bool getFieldValue(ScriptFieldPtr const& _field, TValue& _value) const
         {
             MAZE_DEBUG_ASSERT(_field->getMonoClassField());
-            mono_field_get_value(m_instance, _field->getMonoClassField(), &_value);
+            mono_field_get_value(getInstance(), _field->getMonoClassField(), &_value);
             return true;
         }
 
@@ -309,7 +306,7 @@ namespace Maze
             MAZE_DEBUG_ASSERT(_field->getMonoClassField());
 
             MonoString* monoString = nullptr;
-            mono_field_get_value(m_instance, _field->getMonoClassField(), &monoString);
+            mono_field_get_value(getInstance(), _field->getMonoClassField(), &monoString);
 
             if (monoString)
             {
@@ -326,7 +323,7 @@ namespace Maze
         inline bool getFieldValue(ScriptFieldPtr const& _field, MonoObject*& _value) const
         {
             MAZE_DEBUG_ASSERT(_field->getMonoClassField());
-            mono_field_get_value(m_instance, _field->getMonoClassField(), &_value);
+            mono_field_get_value(getInstance(), _field->getMonoClassField(), &_value);
             return true;
         }
 
@@ -336,7 +333,11 @@ namespace Maze
         void destroy();
 
         //////////////////////////////////////////
-        inline bool isValid() const { return m_instance != nullptr && mono_object_get_class(m_instance) != nullptr; }
+        MonoObject* getInstance() const;
+
+
+        //////////////////////////////////////////
+        inline bool isValid() const { return m_gcHandle != 0u; }
 
 
     private:
@@ -346,7 +347,6 @@ namespace Maze
 
     private:
         ScriptClassWPtr m_scriptClass;
-        MonoObject* m_instance = nullptr;
         U32 m_gcHandle = 0u;
     };
 

@@ -174,6 +174,13 @@ namespace Maze
         {
             new(static_cast<void*>(_p)) TValue(_val);
         }
+
+        //////////////////////////////////////////
+        template<typename... TArgs>
+        void construct(pointer _p, TArgs&&... _args)
+        {
+            new (static_cast<void*>(_p)) TValue(std::forward<TArgs>(_args)...);
+        }
         
         //////////////////////////////////////////
         void destroy(pointer _p)

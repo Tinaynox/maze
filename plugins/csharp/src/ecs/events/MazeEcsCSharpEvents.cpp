@@ -41,14 +41,15 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MonoEvent);
     
+
     //////////////////////////////////////////
-    MonoEvent::MonoEvent(MonoObject* _monoEvent)
-        : m_monoEvent(_monoEvent)
-        , m_gcHandle(_monoEvent ? mono_gchandle_new(m_monoEvent, true) : 0u)
+    MonoEvent::MonoEvent(U32 _gcHandle)
+        : m_gcHandle(_gcHandle)
     {
-        if (_monoEvent)
+        if (m_gcHandle != 0u)
         {
-            MonoClass* klass = mono_object_get_class(_monoEvent);
+            MonoObject* monoEvent = mono_gchandle_get_target(m_gcHandle);
+            MonoClass* klass = mono_object_get_class(monoEvent);
             CString className = mono_class_get_name(klass);
             m_eventUID = CalculateClassUID(className);
         }
@@ -56,6 +57,23 @@ namespace Maze
 
     //////////////////////////////////////////
     MonoEvent::~MonoEvent()
+    {
+        freeEvent();
+    }
+
+    //////////////////////////////////////////
+    MonoObject* MonoEvent::getMonoEvent() const
+    {
+        if (m_gcHandle == 0u)
+            return nullptr;
+
+        MonoObject* monoEvent = mono_gchandle_get_target(m_gcHandle);
+        MAZE_DEBUG_ERROR_IF(!monoEvent, "Mono event mono event is null! m_gcHandle=%u", (U32)m_gcHandle);
+        return monoEvent;
+    }
+
+    //////////////////////////////////////////
+    void MonoEvent::freeEvent()
     {
         if (m_gcHandle != 0u)
         {

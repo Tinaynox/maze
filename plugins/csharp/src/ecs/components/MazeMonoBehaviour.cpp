@@ -533,7 +533,7 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_PLUGIN_CSHARP_API void MonoBehaviourOnMonoEvent(
-        MonoEvent const& _event,
+        MonoEvent& _event,
         Entity* _entity,
         MonoBehaviour* _monoBehaviour)
     {

@@ -406,10 +406,10 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
-        inline void sendEvent(EntityId _entityId, TArgs... _args)
+        inline void sendEvent(EntityId _entityId, TArgs&&... _args)
         {
             // #TODO: Rework to unique?
-            sendEvent(_entityId, std::move(std::static_pointer_cast<Event>(MakeShared<TEvent>(_args...))));
+            sendEvent(_entityId, std::move(std::static_pointer_cast<Event>(std::make_shared<TEvent>(std::forward<TArgs>(_args)...))));
         }
 
 

@@ -114,7 +114,7 @@ namespace Maze.Core
         {
             GCHandle handle = GCHandle.Alloc(monoEvent);
             InternalCalls.ComponentSendMonoEvent(NativeComponentPtr, entity.NativeEntityPtr, GCHandle.ToIntPtr(handle));
-            handle.Free();
+            // handle.Free(); // We free it in MonoEvent::~MonoEvent
         }
 
         public void SendEvent(MonoEvent monoEvent) => SendEvent(GetEntity(), monoEvent);
@@ -123,7 +123,7 @@ namespace Maze.Core
         {
             GCHandle handle = GCHandle.Alloc(monoEvent);
             InternalCalls.ComponentSendMonoEventImmediate(NativeComponentPtr, entity.NativeEntityPtr, GCHandle.ToIntPtr(handle));
-            handle.Free();
+            // handle.Free(); // We free it in MonoEvent::~MonoEvent
         }
 
         public void SendEventImmediate(MonoEvent monoEvent) => SendEventImmediate(GetEntity(), monoEvent);
@@ -132,14 +132,14 @@ namespace Maze.Core
         {
             GCHandle handle = GCHandle.Alloc(monoEvent);
             InternalCalls.ComponentBroadcastMonoEvent(NativeComponentPtr, GCHandle.ToIntPtr(handle));
-            handle.Free();
+            // handle.Free(); // We free it in MonoEvent::~MonoEvent
         }
 
         public void BroadcastEventImmediate(MonoEvent monoEvent)
         {
             GCHandle handle = GCHandle.Alloc(monoEvent);
             InternalCalls.ComponentBroadcastMonoEventImmediate(NativeComponentPtr, GCHandle.ToIntPtr(handle));
-            handle.Free();
+            // handle.Free(); // We free it in MonoEvent::~MonoEvent
         }
 
         public bool IsEditorMode()

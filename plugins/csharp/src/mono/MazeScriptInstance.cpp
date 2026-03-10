@@ -48,13 +48,12 @@ namespace Maze
         ScriptClassPtr const& _scriptClass,
         MonoObject* _instance)
         : m_scriptClass(_scriptClass)
-        , m_instance(_instance)
     {
-        MAZE_DEBUG_ASSERT(m_instance);
+        MAZE_DEBUG_ASSERT(_instance);
 
         EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &ScriptInstance::notifyEvent);
 
-        m_gcHandle = mono_gchandle_new(m_instance, true);
+        m_gcHandle = mono_gchandle_new(_instance, false);
     }
 
     //////////////////////////////////////////
@@ -69,7 +68,7 @@ namespace Maze
     {
         if (_eventUID == ClassInfo<MonoShutdownEvent>::UID())
         {
-            m_instance = nullptr;
+            m_gcHandle = 0u;
         }
     }
 
@@ -90,7 +89,7 @@ namespace Maze
     {
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(!isValid(), false, "Instance is not valid!");
 
-        MonoHelper::InvokeMethod(m_instance, _method);
+        MonoHelper::InvokeMethod(getInstance(), _method);
         return true;
     }
 
@@ -107,17 +106,24 @@ namespace Maze
     //////////////////////////////////////////
     void ScriptInstance::destroy()
     {
-        if (!m_instance)
-            return;
-
-        m_instance = nullptr;
         if (m_gcHandle != 0u)
         {
             mono_gchandle_free(m_gcHandle);
             m_gcHandle = 0u;
         }
     }
-    
+
+    //////////////////////////////////////////
+    MonoObject* ScriptInstance::getInstance() const
+    {
+        if (m_gcHandle == 0u)
+            return nullptr;
+
+        MonoObject* instance = mono_gchandle_get_target(m_gcHandle);
+        MAZE_DEBUG_ERROR_IF(!instance, "MonoObject instance is null! m_gcHandle=%u", (U32)m_gcHandle);
+        return instance;
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

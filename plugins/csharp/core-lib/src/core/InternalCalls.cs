@@ -5,6 +5,10 @@ namespace Maze.Core
 {
     public class InternalCalls
     {
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void ValidateAllScriptInstances();
+        
+
         #region Log
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void MazeLog(string text);

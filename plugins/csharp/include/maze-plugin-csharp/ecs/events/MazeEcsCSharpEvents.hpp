@@ -58,7 +58,19 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        MonoEvent(MonoObject* _monoEvent = nullptr);
+        MonoEvent(U32 _gcHandle);
+
+        //////////////////////////////////////////
+        MonoEvent(MonoEvent const& _event) = delete;
+
+        //////////////////////////////////////////
+        MonoEvent(MonoEvent&& _event) = default;
+
+        //////////////////////////////////////////
+        inline MonoEvent& operator=(MonoEvent& _event) = delete;
+
+        //////////////////////////////////////////
+        inline MonoEvent& operator=(MonoEvent&& _event) = default;
 
         //////////////////////////////////////////
         virtual ~MonoEvent();
@@ -68,10 +80,12 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline MonoObject* getMonoEvent() const { return m_monoEvent; }
+        MonoObject* getMonoEvent() const;
+
+        //////////////////////////////////////////
+        void freeEvent();
 
     private:
-        MonoObject* m_monoEvent = nullptr;
         U32 m_gcHandle = 0u;
         U32 m_eventUID = 0u;
     };
