@@ -101,9 +101,9 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_CORE_API void SendEvent(EcsWorld* _ecsWorld, EntityId _id, EventPtr&& _event)
+    MAZE_CORE_API void SendEvent(EcsWorld* _ecsWorld, EntityId _id, EventUPtr&& _event)
     {
-        _ecsWorld->sendEvent(_id, std::forward<EventPtr>(_event));
+        _ecsWorld->sendEvent(_id, std::forward<EventUPtr>(_event));
     }
 
     //////////////////////////////////////////
@@ -674,22 +674,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EcsWorld::broadcastEvent(EventPtr&& _event)
+    void EcsWorld::broadcastEvent(EventUPtr&& _event)
     {
         if (m_state != EcsWorldState::Active && m_state != EcsWorldState::PreparingToDestroy)
             return;
 
-        m_eventHolders.current()->addBroadcastEvent(std::forward<EventPtr>(_event));
+        m_eventHolders.current()->addBroadcastEvent(std::forward<EventUPtr>(_event));
     }
 
 
     //////////////////////////////////////////
-    void EcsWorld::sendEvent(EntityId _entityId, EventPtr&& _event)
+    void EcsWorld::sendEvent(EntityId _entityId, EventUPtr&& _event)
     {
         if (m_state != EcsWorldState::Active && m_state != EcsWorldState::PreparingToDestroy)
             return;
 
-        m_eventHolders.current()->addUnicastEvent(_entityId, std::forward<EventPtr>(_event));
+        m_eventHolders.current()->addUnicastEvent(_entityId, std::forward<EventUPtr>(_event));
     }
 
     //////////////////////////////////////////

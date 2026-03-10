@@ -52,7 +52,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    extern void SendEvent(EcsWorld* _ecsWorld, EntityId _id, EventPtr&& _event);
+    extern void SendEvent(EcsWorld* _ecsWorld, EntityId _id, EventUPtr&& _event);
 
     //////////////////////////////////////////
     extern void SendEventImmediate(EcsWorld* _ecsWorld, EntityId _id, Event* _event);

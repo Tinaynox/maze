@@ -74,7 +74,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_CORE_API void SendEvent(EcsWorld* _ecsWorld, EntityId _id, EventPtr&& _event);
+    MAZE_CORE_API void SendEvent(EcsWorld* _ecsWorld, EntityId _id, EventUPtr&& _event);
 
     //////////////////////////////////////////
     MAZE_CORE_API void SendEventImmediate(EcsWorld* _ecsWorld, EntityId _id, Event* _event);
@@ -356,19 +356,18 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void broadcastEvent(EventPtr&& _event);
+        void broadcastEvent(EventUPtr&& _event);
 
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
         inline void broadcastEvent(TArgs... _args)
         {
-            // #TODO: Rework to unique?
-            SharedPtr<TEvent> evt = MakeShared<TEvent>(_args...);
+            UniquePtr<TEvent> evt = std::make_unique<TEvent>(_args...);
             MAZE_DEBUG_ERROR_BP_IF(
                 evt->getClassUID() != ClassInfo<TEvent>::UID(),
                 "Event %s has wrong metadata!",
                 ClassInfo<TEvent>::Name());
-            broadcastEvent(std::move(std::static_pointer_cast<Event>(evt)));
+            broadcastEvent(std::move(evt));
         }
 
 
@@ -402,14 +401,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void sendEvent(EntityId _entityId, EventPtr&& _event);
+        void sendEvent(EntityId _entityId, EventUPtr&& _event);
 
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
         inline void sendEvent(EntityId _entityId, TArgs&&... _args)
         {
-            // #TODO: Rework to unique?
-            sendEvent(_entityId, std::move(std::static_pointer_cast<Event>(std::make_shared<TEvent>(std::forward<TArgs>(_args)...))));
+            sendEvent(_entityId, std::make_unique<TEvent>(std::forward<TArgs>(_args)...));
         }
 
 

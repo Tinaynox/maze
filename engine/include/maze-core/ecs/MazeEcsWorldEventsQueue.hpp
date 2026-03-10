@@ -104,16 +104,10 @@ namespace Maze
         bool removeEntity(EntityPtr const& _entity);
 
         //////////////////////////////////////////
-        bool addBroadcastEvent(EventPtr const& _event);
+        bool addBroadcastEvent(EventUPtr&& _event);
 
         //////////////////////////////////////////
-        bool addBroadcastEvent(EventPtr&& _event);
-
-        //////////////////////////////////////////
-        bool addUnicastEvent(EntityId _eid, EventPtr const& _event);
-
-        //////////////////////////////////////////
-        bool addUnicastEvent(EntityId _eid, EventPtr&& _event);
+        bool addUnicastEvent(EntityId _eid, EventUPtr&& _event);
 
         //////////////////////////////////////////
         void processEntityAddedToSample(
@@ -186,8 +180,8 @@ namespace Maze
         // Queue<Pair<ComponentSystemEventHandlerPtr, EntityId>> m_removingFromSampleEntities;
         Queue<EntityId> m_componentsChangedEntities;
         Queue<EntityId> m_activeChangedEntities;
-        Queue<EventPtr> m_broadcastEvents;
-        Queue<std::pair<EntityId, EventPtr>> m_unicastEvents;
+        Queue<EventUPtr> m_broadcastEvents;
+        Queue<std::pair<EntityId, EventUPtr>> m_unicastEvents;
 
         bool m_processingEvents = false;
     };
