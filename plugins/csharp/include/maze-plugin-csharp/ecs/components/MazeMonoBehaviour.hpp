@@ -84,10 +84,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setMonoClass(ScriptClassPtr const& _scriptClass);
+        void setMonoClass(
+            ScriptClassPtr const& _scriptClass,
+            bool _createMonoInstance = true);
 
         //////////////////////////////////////////
-        void setMonoClass(HashedCString _scriptClass);
+        void setMonoClass(
+            HashedCString _scriptClass,
+            bool _createMonoInstance = true);
 
         //////////////////////////////////////////
         ScriptClassPtr const& getMonoClass() const { return m_monoClass; }

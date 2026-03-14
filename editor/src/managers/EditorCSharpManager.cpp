@@ -550,6 +550,8 @@ namespace Maze
         if (!ConsoleService::GetInstancePtr())
             return;
 
+        Debug::Log("Updating console commands...");
+
         for (auto it = m_consoleCommands.begin(), end = m_consoleCommands.end(); it != end; ++it)
             ConsoleService::GetInstancePtr()->removeCommandHint(it.key());
 
@@ -644,6 +646,8 @@ namespace Maze
                 mono_custom_attrs_free(methodAttrs);
             }
         }
+
+        Debug::Log("Console commands updated.");
     }
 
 } // namespace Maze

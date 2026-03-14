@@ -45,6 +45,23 @@
 
 
 //////////////////////////////////////////
+enum GLogLevelFlags
+{
+    G_LOG_FLAG_RECURSION = 1 << 0,
+    G_LOG_FLAG_FATAL = 1 << 1,
+
+    G_LOG_LEVEL_ERROR = 1 << 2,
+    G_LOG_LEVEL_CRITICAL = 1 << 3,
+    G_LOG_LEVEL_WARNING = 1 << 4,
+    G_LOG_LEVEL_MESSAGE = 1 << 5,
+    G_LOG_LEVEL_INFO = 1 << 6,
+    G_LOG_LEVEL_DEBUG = 1 << 7,
+
+    G_LOG_LEVEL_MASK = ~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)
+};
+
+
+//////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
@@ -423,10 +440,18 @@ namespace Maze
         CString log_domain,
         CString log_level,
         CString message,
-        mono_bool fatal,
+        mono_bool log_flag,
         void* user_data)
     {
-        Debug::logwarn << "[" << log_level << "] " << " " << message << std::endl;
+        if (log_flag & (G_LOG_FLAG_FATAL | G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL))
+        {
+            Debug::logerr << "[" << log_level << "] " << " " << message << std::endl;
+            MAZE_BP;
+        }
+        else
+        {
+            Debug::logwarn << "[" << log_level << "] " << " " << message << std::endl;
+        }
     }
 
     //////////////////////////////////////////

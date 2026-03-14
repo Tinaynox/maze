@@ -183,36 +183,30 @@ namespace Maze
         else
         if (_eventUID == ClassInfo<MonoPreReloadEvent>::UID())
         {
-            // #TODO: RELOAD
-            /*
             if (m_monoClass)
             {
                 ScriptClassPtr const& scriptClass = MonoEngine::GetMonoBehaviourSubClass(m_monoClass->getFullName());
 
                 if (scriptClass)
                 {
-                    setMonoClass(scriptClass);
+                    setMonoClass(scriptClass, false); // #TODO: RELOAD, recreate instance
                 }
                 else
                 {
                     MAZE_ERROR_RETURN("Undefined MonoClass: %s", m_monoClass->getFullName().c_str());
                 }
             }
-            */
         }
         else
         if (_eventUID == ClassInfo<MonoReloadEvent>::UID())
         {
-            // #TODO: RELOAD
-            /*
-            if (getEntityRaw()->getEcsWorld())
+            if (m_monoInstance && getEntityRaw()->getEcsWorld())
                 setData(m_cachedData);
 
             m_cachedData.clear();
 
-            if (getEntityRaw()->getEcsWorld())
+            if (m_monoInstance && getEntityRaw()->getEcsWorld())
                 getEntityRaw()->getEcsWorld()->sendEventImmediate(getEntityId(), _event);
-            */
         }
     }
 
@@ -248,7 +242,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MonoBehaviour::setMonoClass(ScriptClassPtr const& _scriptClass)
+    void MonoBehaviour::setMonoClass(
+        ScriptClassPtr const& _scriptClass,
+        bool _createMonoInstance)
     {
         if (m_monoClass == _scriptClass)
             return;
@@ -260,15 +256,18 @@ namespace Maze
 
         m_componentId = GetComponentIdByName(m_monoClass->getFullName().c_str());
 
-        createMonoInstance();
+        if (_createMonoInstance)
+            createMonoInstance();
     }
 
     //////////////////////////////////////////
-    void MonoBehaviour::setMonoClass(HashedCString _scriptClass)
+    void MonoBehaviour::setMonoClass(
+        HashedCString _scriptClass,
+        bool _createMonoInstance)
     {
         ScriptClassPtr const& scriptClass = MonoEngine::GetMonoBehaviourSubClass(_scriptClass);
         MAZE_ERROR_RETURN_IF(!scriptClass, "MonoBehaviour class is not found: %s!", _scriptClass.str);
-        setMonoClass(scriptClass);
+        setMonoClass(scriptClass, _createMonoInstance);
     }
 
     //////////////////////////////////////////
