@@ -35,6 +35,7 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -46,6 +47,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-plugin-csharp/MazeMonoHeader.hpp"
 #include "scenes/SceneWorkspace.hpp"
 #include "editor/EditorSceneMode.hpp"
 #include <FileWatch.hpp>
@@ -140,6 +142,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void updateConsoleCommands();
+
+        //////////////////////////////////////////
         void updateAndReloadScriptsIfRequired();
 
     private:
@@ -167,6 +172,8 @@ namespace Maze
 
         bool m_csharpScriptsChanged = false;
         U32 m_csharpScriptsHash = 0u;
+
+        StringKeyMap<MonoMethod*> m_consoleCommands;
     };
 
 

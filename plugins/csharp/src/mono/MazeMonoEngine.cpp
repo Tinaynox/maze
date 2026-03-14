@@ -830,6 +830,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    MonoAssembly* MonoEngine::GetAppAssembly()
+    {
+        return g_monoEngineData->appAssemblyData.assembly;
+    }
+
+    //////////////////////////////////////////
+    MonoImage* MonoEngine::GetAppAssemblyImage()
+    {
+        return g_monoEngineData->appAssemblyData.assemblyImage;
+    }
+
+    //////////////////////////////////////////
     ScriptClassPtr const& MonoEngine::GetMonoBehaviourClass()
     {
         return g_monoEngineData->ecsData.monoBehaviourClass;

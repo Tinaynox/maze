@@ -335,7 +335,7 @@ namespace Maze
 
                 ConsoleService::GetInstancePtr()->registerCommand(
                     MAZE_HCS("profile"),
-                    [](String* _argv, S32 _argc)
+                    [](String const* _argv, S32 _argc)
                 {
                     if (_argc > 1)
                         return false;

@@ -38,6 +38,8 @@
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
+#include "maze-plugin-console/events/MazeConsoleEvents.hpp"
+#include "maze-plugin-console/MazeConsoleService.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "mono-binds/MonoBindsEditor.hpp"
@@ -107,6 +109,7 @@ namespace Maze
             EventManager::GetInstancePtr()->unsubscribeEvent<MonoInitializationEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
             EventManager::GetInstancePtr()->unsubscribeEvent<PlaytestModePrepareEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<ConsoleCommandEvent>(this);
         }
 
         s_instance = nullptr;
@@ -129,6 +132,7 @@ namespace Maze
         EventManager::GetInstancePtr()->subscribeEvent<MonoInitializationEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<MonoShutdownEvent>(this, &EditorCSharpManager::notifyEvent);
         EventManager::GetInstancePtr()->subscribeEvent<PlaytestModePrepareEvent>(this, &EditorCSharpManager::notifyEvent);
+        EventManager::GetInstancePtr()->subscribeEvent<ConsoleCommandEvent>(this, &EditorCSharpManager::notifyEvent);
 
         /*
         EditorUIManager::GetInstancePtr()->addTopBarOption(
@@ -315,6 +319,31 @@ namespace Maze
         {
             updateAndReloadScriptsIfRequired();
         }
+        else
+        if (_eventUID == ClassInfo<ConsoleCommandEvent>::UID())
+        {
+            ConsoleCommandEvent* evt = _event->castRaw<ConsoleCommandEvent>();
+            auto it = m_consoleCommands.find(evt->command);
+            if (it != m_consoleCommands.end())
+            {
+                evt->processed = true;
+
+                void* args[1] = { nullptr };
+                
+                MonoDomain* domain = mono_domain_get();
+                MonoClass* monoStringClass = mono_get_string_class();
+                MonoArray* monoStringsArray = mono_array_new(domain, monoStringClass, evt->argc);
+
+                for (S32 i = 0; i < evt->argc; i++)
+                {
+                    MonoString* monoStr = mono_string_new(domain, evt->argv[i].c_str());
+                    mono_array_set(monoStringsArray, MonoString*, i, monoStr);
+                }
+
+                args[0] = monoStringsArray;
+                MonoHelper::InvokeMethod(nullptr, it->second, args);
+            }
+        }
     }
 
     //////////////////////////////////////////
@@ -429,12 +458,14 @@ namespace Maze
     void EditorCSharpManager::loadCSharpAssembly()
     {
         CSharpService::GetInstancePtr()->loadAppAssembly(MAZE_HCS("Assembly-CSharp.dll"));
+        updateConsoleCommands();
     }
 
     //////////////////////////////////////////
     void EditorCSharpManager::reloadCSharpScripts()
     {
         MonoEngine::ReloadAssemblies();
+        updateConsoleCommands();
     }
 
     //////////////////////////////////////////
@@ -509,6 +540,108 @@ namespace Maze
                         if (EditorCSharpManager::GetInstancePtr())
                             EditorCSharpManager::GetInstancePtr()->processCSharpScriptsChanged();
                     });
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void EditorCSharpManager::updateConsoleCommands()
+    {
+        if (!ConsoleService::GetInstancePtr())
+            return;
+
+        for (auto it = m_consoleCommands.begin(), end = m_consoleCommands.end(); it != end; ++it)
+            ConsoleService::GetInstancePtr()->removeCommandHint(it.key());
+
+        m_consoleCommands.clear();
+
+        MonoImage* image = MonoEngine::GetAppAssemblyImage();
+        if (!image)
+            return;
+
+        MonoTableInfo const* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+        S32 numTypes = mono_table_info_get_rows(typeDefinitionsTable);
+
+        for (S32 i = 0; i < numTypes; ++i)
+        {
+            U32 cols[MONO_TYPEDEF_SIZE];
+            mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
+
+            CString typeNamespace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+            CString typeName = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+
+            MonoClass* monoClass = mono_class_from_name(
+                image,
+                typeNamespace,
+                typeName);
+
+            if (!monoClass)
+                continue;
+
+            if (mono_class_is_enum(monoClass) || mono_class_is_valuetype(monoClass))
+                continue;
+
+            void* iter = NULL;
+            MonoMethod* method;
+            while ((method = mono_class_get_methods(monoClass, &iter)))
+            {
+                if (!method)
+                    continue;
+
+                uint32_t methodFlags = mono_method_get_flags(method, nullptr);
+
+                if (!(methodFlags & MONO_METHOD_ATTR_STATIC))
+                    continue;
+
+                MonoCustomAttrInfo* methodAttrs = mono_custom_attrs_from_method(method);
+                if (!methodAttrs)
+                    continue;
+
+                for (S32 j = 0; j < methodAttrs->num_attrs; ++j)
+                {
+                    MonoCustomAttrEntry& entry = methodAttrs->attrs[j];
+                    MonoClass* attrClass = mono_method_get_class(entry.ctor);
+
+                    CString attrClassName = mono_class_get_name(attrClass);
+                    CString attrNamespace = mono_class_get_namespace(attrClass);
+                    if (strcmp(attrClassName, "ConsoleCommandAttribute") == 0 && strcmp(attrNamespace, "Maze.Console") == 0)
+                    {
+                        MonoObject* attrObj = mono_custom_attrs_get_attr(methodAttrs, attrClass);
+                        if (attrObj)
+                        {
+                            MonoClassField* commandNameField = mono_class_get_field_from_name(attrClass, "m_CommandName");
+                            MonoClassField* argsCountField = mono_class_get_field_from_name(attrClass, "m_ArgsCount");
+                            MonoClassField* descriptionField = mono_class_get_field_from_name(attrClass, "m_Description");
+
+                            MonoString* commandNameMonoString;
+                            mono_field_get_value(attrObj, commandNameField, &commandNameMonoString);
+                            Char* commandNameCStr = mono_string_to_utf8(commandNameMonoString);
+
+                            S32 argsCount = 0;
+                            mono_field_get_value(attrObj, argsCountField, &argsCount);
+
+                            MonoString* descriptionMonoString;
+                            mono_field_get_value(attrObj, descriptionField, &descriptionMonoString);
+                            Char* descriptionCStr = mono_string_to_utf8(descriptionMonoString);
+                            
+                            if (commandNameCStr != nullptr)
+                            {
+                                HashedString commandName(commandNameCStr);
+                                m_consoleCommands.emplace(commandName, method);
+
+                                ConsoleService::GetInstancePtr()->registerCommandHint(
+                                    commandName,
+                                    argsCount,
+                                    descriptionCStr != nullptr ? descriptionCStr : String());
+                            }
+
+                            mono_free(commandNameCStr);
+                            mono_free(descriptionCStr);
+                        }
+                    }
+                }
+
+                mono_custom_attrs_free(methodAttrs);
             }
         }
     }

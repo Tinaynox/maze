@@ -133,6 +133,14 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEvent>
+        inline void broadcastEventImmediate(TEvent* _event)
+        {
+            auto& cb = getEventCallbacks<TEvent>();
+            cb(ClassInfo<TEvent>::UID(), _event);
+        }
+
+        //////////////////////////////////////////
+        template <typename TEvent>
         inline MultiDelegate<ClassUID, Event*>& getEventCallbacks()
         {
             return m_eventCallbacks[ClassInfo<TEvent>::UID()];

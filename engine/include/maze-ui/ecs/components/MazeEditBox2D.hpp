@@ -69,7 +69,7 @@ namespace Maze
         friend class Entity;
 
         //////////////////////////////////////////
-        enum class MAZE_UI_API Flags
+        enum class MAZE_UI_API EditBoxFlags : U8
         {
             DontDeselectOnTextInput = MAZE_BIT(0)
         };
@@ -105,10 +105,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline S32 getFlags() const { return m_flags; }
+        inline U8 getEditBoxFlags() const { return m_editBoxFlags; }
 
         //////////////////////////////////////////
-        inline void setFlags(S32 _flags) { m_flags = _flags; }
+        inline void setEditBoxFlags(U8 _flags) { m_editBoxFlags = _flags; }
+
+        //////////////////////////////////////////
+        inline void setEditBoxFlag(EditBoxFlags _flag, bool _value)
+        {
+            if (_value)
+                setEditBoxFlags(m_editBoxFlags | static_cast<U8>(_flag));
+            else
+                setEditBoxFlags(m_editBoxFlags & ~static_cast<U8>(_flag));
+        }
 
 
         //////////////////////////////////////////
@@ -291,7 +300,7 @@ namespace Maze
 
         bool m_selected;
 
-        S32 m_flags = 0;
+        U8 m_editBoxFlags = 0;
 
         F32 m_cursorBlinkTimer;
         F32 m_cursorBlinkTime;

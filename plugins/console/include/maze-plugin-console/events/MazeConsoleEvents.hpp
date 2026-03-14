@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeConsoleCommand_hpp_))
-#define _MazeConsoleCommand_hpp_
+#if (!defined(_MazeConsoleEvents_hpp_))
+#define _MazeConsoleEvents_hpp_
 
 
 //////////////////////////////////////////
@@ -37,28 +37,41 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
+#include "maze-core/events/MazeEvent.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Struct
+    // Class ConsoleCommandEvent
     //
     //////////////////////////////////////////
-    struct MAZE_PLUGIN_CONSOLE_API ConsoleCommand
+    class MAZE_PLUGIN_CONSOLE_API ConsoleCommandEvent
+        : public GenericEvent<ConsoleCommandEvent>
     {
-        HashedString command;
-        Delegate<bool, String const*, S32> callback;
-        S32 argsCount = 0;
-    };
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(ConsoleCommandEvent, Event);
 
-    //////////////////////////////////////////
-    struct MAZE_PLUGIN_CONSOLE_API ConsoleCommandHint
-    {
-        HashedString command;
-        S32 argsCount = 0;
-        String description;
+    public:
+
+        //////////////////////////////////////////
+        inline ConsoleCommandEvent(
+            HashedCString const _command,
+            String const* _argv,
+            S32 const _argc)
+            : command(_command)
+            , argv(_argv)
+            , argc(_argc)
+        {}
+
+
+    public:
+        HashedCString const command;
+        String const* argv = nullptr;
+        S32 const argc = 0;
+        bool processed = false;
     };
 
 
@@ -66,5 +79,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeConsoleCommand_hpp_
+#endif // _MazeConsoleEvents_hpp_
 //////////////////////////////////////////

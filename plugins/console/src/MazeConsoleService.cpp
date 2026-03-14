@@ -28,10 +28,14 @@
 #include "maze-core/managers/MazeWindowManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-plugin-console/MazeConsoleService.hpp"
 #include "maze-plugin-console/settings/MazeConsoleSettings.hpp"
 #include "maze-plugin-console/scene/MazeSceneConsole.hpp"
+#include "maze-plugin-console/events/MazeConsoleEvents.hpp"
+#include "maze-plugin-console/ecs/events/MazeEcsConsoleEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -280,14 +284,17 @@ namespace Maze
     //////////////////////////////////////////
     void ConsoleService::registerCommand(
         HashedCString _command,
-        Delegate<bool, String*, S32> const& _callback,
-        S32 _argsCount)
+        Delegate<bool, String const*, S32> const& _callback,
+        S32 _argsCount,
+        String const& _description)
     {
         ConsoleCommand command;
         command.command = _command;
         command.callback = _callback;
         command.argsCount = _argsCount;
         m_commands.insert(_command, command);
+
+        registerCommandHint(_command, _argsCount, _description);
     }
 
     //////////////////////////////////////////
@@ -297,32 +304,59 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ConsoleService::executeCommand(HashedCString _command, String* _argv, S32 _argc)
+    void ConsoleService::executeCommand(String const& _command)
     {
-        auto it = m_commands.find(_command);
+        Debug::Log(_command.c_str());
+
+        Vector<String> words;
+        StringHelper::SplitWords(_command, words, ' ');
+        HashedCString const commandName(words[0].c_str());
+
+        String const* argv = words.size() > 1 ? &words[1] : nullptr;
+        S32 const argc = (S32)words.size() - 1;
+
+        bool commandProcessed = false;
+
+        auto it = m_commands.find(commandName);
         if (it != m_commands.end())
         {
-            String lastCommand = _command.str;
-            for (S32 i = 0; i < _argc; ++i)
-                lastCommand += ' ' + _argv[i];
-
-            Debug::Log("%s", lastCommand.c_str());
-
             ConsoleCommand const& command = it->second;
-            bool result = command.callback(_argv, _argc);
+            if (!command.callback(argv, argc))
+                Debug::LogWarning("Command %s failed!", commandName.str);
 
-            if (m_lastCommands.empty() || m_lastCommands.back() != lastCommand)
+            commandProcessed = true;
+        }
+        
+        if (!commandProcessed)
+        {
+            if (EntityManager::GetInstancePtr() && EntityManager::GetInstancePtr()->getDefaultWorldRaw())
             {
-                m_lastCommands.push_back(lastCommand);
+                EcsConsoleCommandEvent commandEvent(commandName, argv, argc);
+                EntityManager::GetInstancePtr()->getDefaultWorldRaw()->broadcastEventImmediate(&commandEvent);
+                commandProcessed |= commandEvent.processed;
+            }
+        }
+
+        if (!commandProcessed)
+        {
+            ConsoleCommandEvent commandEvent(commandName, argv, argc);
+            EventManager::GetInstancePtr()->broadcastEventImmediate(&commandEvent);
+            commandProcessed |= commandEvent.processed;
+        }
+
+        if (commandProcessed)
+        {
+            if (m_lastCommands.empty() || m_lastCommands.back() != _command)
+            {
+                m_lastCommands.push_back(_command);
 
                 if (m_lastCommands.size() >= 16)
                     m_lastCommands.pop_front();
             }
-
-            if (!result)
-                Debug::LogWarning("Command %s failed!", _command.str);
-            
         }
+        
+
+        MAZE_WARNING_IF(!commandProcessed, "Undefined command: %s", commandName.str);
     }
 
     //////////////////////////////////////////
@@ -340,6 +374,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Vector<ConsoleCommandHint> ConsoleService::getCommandHintsStartedWith(String const& _text)
+    {
+        Vector<ConsoleCommandHint> result;
+
+        for (auto const& commandHintData : m_commandHints)
+        {
+            if (StringHelper::IsStartsWith(commandHintData.first.c_str(), _text.c_str()))
+                result.emplace_back(commandHintData.second);
+        }
+
+        return result;
+    }
+
+    //////////////////////////////////////////
     String const& ConsoleService::getLastCommand(S32 _num)
     {
         static String nullString;
@@ -348,6 +396,22 @@ namespace Maze
             return nullString;
 
         return m_lastCommands.at(Math::Clamp((S32)m_lastCommands.size() - _num - 1, 0, (S32)m_lastCommands.size() - 1));
+    }
+
+    //////////////////////////////////////////
+    void ConsoleService::registerCommandHint(
+        HashedCString _command,
+        S32 _argsCount,
+        String const& _description)
+    {
+        MAZE_ERROR_RETURN_IF(m_commandHints.find(_command) != m_commandHints.end(), "Command '%s' hint is already registered!", _command.str);
+        m_commandHints.insert(_command, ConsoleCommandHint{ HashedString(_command), _argsCount, _description });
+    }
+
+    //////////////////////////////////////////
+    void ConsoleService::removeCommandHint(HashedCString _command)
+    {
+        m_commandHints.erase(_command);
     }
 
 } // namespace Maze

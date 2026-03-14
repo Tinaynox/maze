@@ -24,47 +24,17 @@
 
 
 //////////////////////////////////////////
-#pragma once
-#if (!defined(_MazeConsoleCommand_hpp_))
-#define _MazeConsoleCommand_hpp_
-
-
-//////////////////////////////////////////
-#include "maze-plugin-console/MazeConsoleHeader.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/utils/MazeObservableValue.hpp"
-#include "maze-core/system/MazeTimer.hpp"
-#include "maze-core/reflection/MazeMetaClass.hpp"
-#include "maze-core/settings/MazeSettings.hpp"
+#include "MazeConsoleHeader.hpp"
+#include "maze-plugin-console/events/MazeConsoleEvents.hpp"
+#include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
+#include "maze-core/memory/MazeMemory.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Struct
-    //
-    //////////////////////////////////////////
-    struct MAZE_PLUGIN_CONSOLE_API ConsoleCommand
-    {
-        HashedString command;
-        Delegate<bool, String const*, S32> callback;
-        S32 argsCount = 0;
-    };
-
-    //////////////////////////////////////////
-    struct MAZE_PLUGIN_CONSOLE_API ConsoleCommandHint
-    {
-        HashedString command;
-        S32 argsCount = 0;
-        String description;
-    };
-
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ConsoleCommandEvent, Event);
 
 } // namespace Maze
-//////////////////////////////////////////
-
-
-#endif // _MazeConsoleCommand_hpp_
 //////////////////////////////////////////

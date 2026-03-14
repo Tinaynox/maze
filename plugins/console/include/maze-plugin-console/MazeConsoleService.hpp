@@ -84,18 +84,36 @@ namespace Maze
         //////////////////////////////////////////
         void registerCommand(
             HashedCString _command,
-            Delegate<bool, String*, S32> const& _callback,
-            S32 _argsCount = 0);
+            Delegate<bool, String const*, S32> const& _callback,
+            S32 _argsCount = 0,
+            String const& _description = String());
 
         //////////////////////////////////////////
         bool hasCommand(HashedCString _command);
 
         //////////////////////////////////////////
-        void executeCommand(HashedCString _command, String* _argv, S32 _argc);
+        // void executeCommand(HashedCString _command, String* _argv, S32 _argc);
 
         //////////////////////////////////////////
         Vector<ConsoleCommand> getCommandsStartedWith(String const& _text);
 
+
+        //////////////////////////////////////////
+        void executeCommand(String const& _command);
+
+        //////////////////////////////////////////
+        Vector<ConsoleCommandHint> getCommandHintsStartedWith(String const& _text);
+
+
+
+        //////////////////////////////////////////
+        void registerCommandHint(
+            HashedCString _command,
+            S32 _argsCount,
+            String const& _description);
+
+        //////////////////////////////////////////
+        void removeCommandHint(HashedCString _command);
 
 
         //////////////////////////////////////////
@@ -155,6 +173,7 @@ namespace Maze
         String m_log;
 
         StringKeyMap<ConsoleCommand> m_commands;
+        StringKeyMap<ConsoleCommandHint> m_commandHints;
 
 
         Deque<String> m_lastCommands;

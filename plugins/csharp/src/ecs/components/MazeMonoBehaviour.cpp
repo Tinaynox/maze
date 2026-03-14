@@ -183,6 +183,8 @@ namespace Maze
         else
         if (_eventUID == ClassInfo<MonoPreReloadEvent>::UID())
         {
+            // #TODO: RELOAD
+            /*
             if (m_monoClass)
             {
                 ScriptClassPtr const& scriptClass = MonoEngine::GetMonoBehaviourSubClass(m_monoClass->getFullName());
@@ -196,10 +198,13 @@ namespace Maze
                     MAZE_ERROR_RETURN("Undefined MonoClass: %s", m_monoClass->getFullName().c_str());
                 }
             }
+            */
         }
         else
         if (_eventUID == ClassInfo<MonoReloadEvent>::UID())
         {
+            // #TODO: RELOAD
+            /*
             if (getEntityRaw()->getEcsWorld())
                 setData(m_cachedData);
 
@@ -207,6 +212,7 @@ namespace Maze
 
             if (getEntityRaw()->getEcsWorld())
                 getEntityRaw()->getEcsWorld()->sendEventImmediate(getEntityId(), _event);
+            */
         }
     }
 

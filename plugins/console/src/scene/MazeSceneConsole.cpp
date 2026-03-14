@@ -28,8 +28,10 @@
 #include "maze-plugin-console/scene/MazeSceneConsole.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
+#include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/helpers/MazeSystemHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
@@ -168,6 +170,7 @@ namespace Maze
             Vec2F::c_zero);
         m_edit->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         m_edit->getEntityRaw()->ensureComponent<CanvasGroup>()->setLocalAlpha(0.66f);
+        m_edit->setEditBoxFlag(EditBox2D::EditBoxFlags::DontDeselectOnTextInput, true);
 
         m_edit->eventTextInput.subscribe(this, &SceneConsole::notifyTextInput);
         m_edit->eventTextChanged.subscribe(this, &SceneConsole::notifyTextChanged);
@@ -210,21 +213,8 @@ namespace Maze
 
         if (command.empty())
             return;
-
-        Vector<String> words;
-        StringHelper::SplitWords(command, words, ' ');
-        String const commandName = words[0];
-
-        if (!ConsoleService::GetInstancePtr()->hasCommand(HashedCString(commandName.c_str())))
-        {
-            MAZE_WARNING("Undefined command: %s", commandName.c_str());
-            return;
-        }
         
-        if (words.size() > 1)
-            ConsoleService::GetInstancePtr()->executeCommand(HashedCString(commandName.c_str()), &words[1], (S32)words.size() - 1);
-        else
-            ConsoleService::GetInstancePtr()->executeCommand(HashedCString(commandName.c_str()), nullptr, 0);
+        ConsoleService::GetInstancePtr()->executeCommand(command);
 
         m_lastCommandIndex = -1;
     }
@@ -268,20 +258,26 @@ namespace Maze
         }
         else
         {
-            Vector<ConsoleCommand> commands = ConsoleService::GetInstancePtr()->getCommandsStartedWith(command);
+            Vector<ConsoleCommandHint> commandHints = ConsoleService::GetInstancePtr()->getCommandHintsStartedWith(command);
 
-            String hintText;
-            for (ConsoleCommand const& cmd : commands)
+            StringStream hintText;
+            S32 hintsAdded = 0;
+            for (ConsoleCommandHint const& cmdHint : commandHints)
             {
-                if (!hintText.empty())
-                    hintText += '\n';
-                hintText += cmd.command;
+                if (hintsAdded > 0)
+                    hintText << '\n';
+                hintText << cmdHint.command;
 
-                for (S32 i = 0; i < cmd.argsCount; ++i)
-                    hintText += " x";
+                for (S32 i = 0; i < cmdHint.argsCount; ++i)
+                    hintText << " x";
+
+                if (!cmdHint.description.empty())
+                    hintText << " // " << cmdHint.description;
+
+                hintsAdded++;
             }
 
-            m_hintText->setText(hintText);
+            m_hintText->setText(hintText.str());
         }
     }
 
@@ -292,26 +288,26 @@ namespace Maze
         if (command.empty())
             return;
 
-        Vector<ConsoleCommand> commands = ConsoleService::GetInstancePtr()->getCommandsStartedWith(command);
-        if (commands.empty())
+        Vector<ConsoleCommandHint> commandHints = ConsoleService::GetInstancePtr()->getCommandHintsStartedWith(command);
+        if (commandHints.empty())
             return;
 
-        if (commands.size() == 1)
-            m_edit->setText(commands.front().command);
+        if (commandHints.size() == 1)
+            m_edit->setText(commandHints.front().command);
         else
         {
-            S32 commandsCount = (S32)commands.size();
+            S32 commandsCount = (S32)commandHints.size();
 
             String commandPart;
             Size index = 0;
             bool finished = false;
             do
             {
-                Char ch = commands.front().command.getString()[index];
+                Char ch = commandHints.front().command.getString()[index];
 
                 for (S32 i = 1; i < commandsCount; ++i)
                 {
-                    if (commands[i].command.size() <= index || commands[i].command.getString()[index] != ch)
+                    if (commandHints[i].command.size() <= index || commandHints[i].command.getString()[index] != ch)
                     {
                         finished = true;
                         break;
@@ -325,7 +321,7 @@ namespace Maze
             while (!finished);
 
             if (commandPart == command)
-                m_edit->setText(commands.front().command);
+                m_edit->setText(commandHints.front().command);
             else
                 m_edit->setText(commandPart);
         }
@@ -348,34 +344,67 @@ namespace Maze
             else
             if (_keyboardData.keyCode == KeyCode::Up)
             {
-                S32 lastCommandsSize = (S32)ConsoleService::GetInstancePtr()->getLastCommandsSize();
-
-                if (lastCommandsSize > 0)
+                if (m_edit->getSelected())
                 {
-                    m_lastCommandIndex = Math::Clamp(m_lastCommandIndex + 1, 0, lastCommandsSize - 1);
-                    String const& lastCommand = ConsoleService::GetInstancePtr()->getLastCommand(m_lastCommandIndex);
-                    if (!lastCommand.empty())
-                        m_edit->setText(lastCommand);
+                    S32 lastCommandsSize = (S32)ConsoleService::GetInstancePtr()->getLastCommandsSize();
+
+                    if (lastCommandsSize > 0)
+                    {
+                        m_lastCommandIndex = Math::Clamp(m_lastCommandIndex + 1, 0, lastCommandsSize - 1);
+                        String const& lastCommand = ConsoleService::GetInstancePtr()->getLastCommand(m_lastCommandIndex);
+                        if (!lastCommand.empty())
+                        {
+                            m_edit->setText(lastCommand);
+                        }
+                    }
                 }
             }
             else
             if (_keyboardData.keyCode == KeyCode::Down)
             {
-                S32 lastCommandsSize = (S32)ConsoleService::GetInstancePtr()->getLastCommandsSize();
-
-                if (lastCommandsSize > 0)
+                if (m_edit->getSelected())
                 {
-                    if (m_lastCommandIndex <= 0)
+                    S32 lastCommandsSize = (S32)ConsoleService::GetInstancePtr()->getLastCommandsSize();
+
+                    if (lastCommandsSize > 0)
                     {
-                        m_lastCommandIndex = -1;
-                        m_edit->setText("");
+                        if (m_lastCommandIndex <= 0)
+                        {
+                            m_lastCommandIndex = -1;
+                            m_edit->setText("");
+                        }
+                        else
+                        {
+                            m_lastCommandIndex = Math::Clamp(m_lastCommandIndex - 1, 0, lastCommandsSize - 1);
+                            String const& lastCommand = ConsoleService::GetInstancePtr()->getLastCommand(m_lastCommandIndex);
+                            if (!lastCommand.empty())
+                                m_edit->setText(lastCommand);
+                        }
                     }
-                    else
+                }
+            }
+            else
+            if (_keyboardData.keyCode == KeyCode::C)
+            {
+                if (m_edit->getSelected())
+                {
+                    if (_keyboardData.isControlDown())
                     {
-                        m_lastCommandIndex = Math::Clamp(m_lastCommandIndex - 1, 0, lastCommandsSize - 1);
-                        String const& lastCommand = ConsoleService::GetInstancePtr()->getLastCommand(m_lastCommandIndex);
-                        if (!lastCommand.empty())
-                            m_edit->setText(lastCommand);
+                        if (!m_edit->getText().empty())
+                            SystemManager::GetInstancePtr()->setClipboardString(m_edit->getText());
+                    }
+                }
+            }
+            else
+            if (_keyboardData.keyCode == KeyCode::V)
+            {
+                if (m_edit->getSelected())
+                {
+                    if (_keyboardData.isControlDown())
+                    {
+                        String string = SystemManager::GetInstancePtr()->getClipboardAsString();
+                        string.erase(std::remove(string.begin(), string.end(), '\n'), string.end());
+                        m_edit->setText(m_edit->getText() + string);
                     }
                 }
             }

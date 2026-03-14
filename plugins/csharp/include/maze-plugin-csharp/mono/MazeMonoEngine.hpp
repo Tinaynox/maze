@@ -73,6 +73,12 @@ namespace Maze
         static MonoImage* GetCoreAssemblyImage();
 
         //////////////////////////////////////////
+        static MonoAssembly* GetAppAssembly();
+
+        //////////////////////////////////////////
+        static MonoImage* GetAppAssemblyImage();
+
+        //////////////////////////////////////////
         static ScriptClassPtr const& GetMonoBehaviourClass();
 
         //////////////////////////////////////////
