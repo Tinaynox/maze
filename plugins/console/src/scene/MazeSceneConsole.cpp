@@ -143,9 +143,10 @@ namespace Maze
         m_backgroundElement->setCaptureCursorHits(true);
         m_backgroundElement->eventClick.subscribe(this, &SceneConsole::notifyBackgroundClick);
 
-        m_consoleText = SystemUIHelper::CreateSystemText(
+        m_consoleText = UIHelper::CreateTextOrSystemText(
             "",
-            8,
+            FontMaterialPtr(),
+            12,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Bottom,
             m_background->getTransform()->getSize() - Vec2F(2.0f, 2.0f),
@@ -175,9 +176,10 @@ namespace Maze
         m_edit->eventTextInput.subscribe(this, &SceneConsole::notifyTextInput);
         m_edit->eventTextChanged.subscribe(this, &SceneConsole::notifyTextChanged);
 
-        m_hintText = SystemUIHelper::CreateSystemText(
+        m_hintText = UIHelper::CreateTextOrSystemText(
             "",
-            8,
+            FontMaterialPtr(),
+            12,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
             m_background->getTransform()->getSize(),
@@ -186,6 +188,7 @@ namespace Maze
             this,
             Vec2F(0.0f, 0.0f),
             Vec2F(0.0f, 1.0f));
+        m_hintText->setColor(ColorU32(100, 100, 100, 255));
 
         updateHintText();
     }
