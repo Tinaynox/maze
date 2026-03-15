@@ -1173,6 +1173,12 @@ namespace Maze
             DataBlock::Param const& paramData = _dataBlock.getParam(0);
             switch ((DataBlockParamType)paramData.type)
             {
+                case DataBlockParamType::ParamS32:
+                {
+                    S32 value = _dataBlock.getS32(0);
+                    MonoClass* monoClass = mono_class_from_name(mono_get_corlib(), "System", "Int32");
+                    return mono_value_box(mono_get_root_domain(), monoClass, &value);
+                }
                 case DataBlockParamType::ParamVec2F32:
                 {
                     MonoClass* monoClass = mono_class_from_name(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Vec2F");

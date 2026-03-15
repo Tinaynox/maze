@@ -677,63 +677,52 @@ namespace Maze
 
             MonoHelper::InvokeMethod(_value, clearMethod, nullptr);
 
-            for (DataBlock const* childData : _dataBlock)
+            if (_dataBlock.getDataBlocksCount() > 0)
             {
-                MonoObject* elementValue = nullptr;
-                if (!childData->isEmpty())
-                    elementValue = MonoSerializationManager::GetInstancePtr()->createMonoObjectFromDataBlock(*childData);
-            
-                if (elementValue != nullptr)
+                for (DataBlock const* childData : _dataBlock)
                 {
-                    MonoClass* klass = mono_object_get_class(elementValue);
-                    bool isValueType = mono_class_is_valuetype(klass) != 0;
+                    MonoObject* elementValue = nullptr;
+                    if (!childData->isEmpty())
+                        elementValue = MonoSerializationManager::GetInstancePtr()->createMonoObjectFromDataBlock(*childData);
 
-                    // #TODO: Optimize for value types - remove unnecessary boxing and unboxing
-                    void* args[1] = { isValueType ? (void*)mono_object_unbox(elementValue) : (void*)elementValue };
-                    MonoHelper::InvokeMethod(_value, addMethod, args);
-                }
-                else
-                {
-                    MonoClass* elementClass = GetMonoGenericClassFirstGenericArgumentClass(listMonoClass);
-                    if (!elementClass)
-                        return;
-                    
-                    if (mono_class_is_valuetype(elementClass))
+                    if (elementValue != nullptr)
                     {
-                        // Create default struct (zeroed or default-constructed)
-                        MonoObject* def = mono_object_new(mono_domain_get(), elementClass);
-                        mono_runtime_object_init(def);  // important for structs with default ctor
-                        void* args[1] = { mono_object_unbox(def) };
+                        MonoClass* klass = mono_object_get_class(elementValue);
+                        bool isValueType = mono_class_is_valuetype(klass) != 0;
+
+                        // #TODO: Optimize for value types - remove unnecessary boxing and unboxing
+                        void* args[1] = { isValueType ? (void*)mono_object_unbox(elementValue) : (void*)elementValue };
                         MonoHelper::InvokeMethod(_value, addMethod, args);
                     }
                     else
                     {
-                        // null for reference types
-                        MonoObject* n = nullptr;
-                        void* args[1] = { n };
-                        MonoHelper::InvokeMethod(_value, addMethod, args);
+                        MonoClass* elementClass = GetMonoGenericClassFirstGenericArgumentClass(listMonoClass);
+                        if (!elementClass)
+                            return;
+
+                        if (mono_class_is_valuetype(elementClass))
+                        {
+                            // Create default struct (zeroed or default-constructed)
+                            MonoObject* def = mono_object_new(mono_domain_get(), elementClass);
+                            mono_runtime_object_init(def);  // important for structs with default ctor
+                            void* args[1] = { mono_object_unbox(def) };
+                            MonoHelper::InvokeMethod(_value, addMethod, args);
+                        }
+                        else
+                        {
+                            // null for reference types
+                            MonoObject* n = nullptr;
+                            void* args[1] = { n };
+                            MonoHelper::InvokeMethod(_value, addMethod, args);
+                        }
                     }
-
-                    /*
-                    MonoImage* image = MonoEngine::GetCoreAssemblyImage();
-                    MonoClass* extensionsClass = mono_class_from_name(image, "Maze.Core", "ListExtra");
-                    MonoMethod* addDefaultStaticOpen = mono_class_get_method_from_name(extensionsClass, "AddDefault", 1);
-
-                    MonoType* typeArg[1] = { mono_class_get_type(elementClass) };
-
-                    mono_class_inflate_generic_method(
-                    */
-                    /*
-                    MonoMethod* addDefaultStaticClosed = mono_class_inflate_generic_method(
-                        addDefaultStaticOpen,
-                        mono_method_get_class(addDefaultStaticOpen),   // usually the declaring class
-                        mono_method_get_context(addDefaultStaticOpen), // or mono_method_get_context(addDefaultOpen)
-                        typeArg);
-                    */
-
-                    //void* args[1] = { _value };
-                    //MonoHelper::InvokeMethod(nullptr, addDefaultStatic, args);
                 }
+            }
+            else
+            if (_dataBlock.getParamsCount() > 0)
+            {
+                // List with param values are not supported yet
+                MAZE_NOT_IMPLEMENTED;
             }
         }
 
