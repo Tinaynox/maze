@@ -145,7 +145,7 @@ namespace Maze
         MonoAssemblyData editorAssemblyData; // #TODO: Rework abstraction
         MonoAssemblyData appAssemblyData;
 
-        bool debugEnabled = false;
+        bool debugEnabled = true;
 
         MonoEcsData ecsData;
 

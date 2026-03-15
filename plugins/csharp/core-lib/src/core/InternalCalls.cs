@@ -233,5 +233,10 @@ namespace Maze.Core
             out uint size,
             out byte* bytes);
         #endregion
+
+        #region ScriptableObject
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static ScriptableObject GetScriptableObject(uint assetUnitId);
+        #endregion
     }
 }

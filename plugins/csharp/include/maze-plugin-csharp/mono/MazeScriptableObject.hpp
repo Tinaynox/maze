@@ -103,6 +103,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline ScriptClassPtr const& getScriptClass() const { return m_scriptClass; }
+
+        //////////////////////////////////////////
         inline ScriptInstancePtr const& getScriptInstance() const { return m_scriptInstance; }
 
         //////////////////////////////////////////
@@ -121,6 +124,7 @@ namespace Maze
 
     private:
         HashedString m_name;
+        ScriptClassPtr m_scriptClass;
         ScriptInstancePtr m_scriptInstance;
         
     };

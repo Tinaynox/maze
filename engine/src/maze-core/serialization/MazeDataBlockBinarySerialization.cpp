@@ -115,6 +115,9 @@ namespace Maze
         {
             _buffer.clear();
 
+            if (!_dataBlock.getDataBuffer())
+                return true;
+
             StringKeyMap<DataBlock::SharedStringId> const& stringsMap = _dataBlock.getShared()->getStrings();
 
             ByteBufferWriteStream writeStream(_buffer);

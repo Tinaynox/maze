@@ -29,6 +29,8 @@
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
 #include "maze-plugin-csharp/ecs/events/MazeEcsCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptableObject.hpp"
+#include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeTaskManager.hpp"
@@ -650,6 +652,16 @@ namespace Maze
         mono_free(cstr);
     }
 
+    //////////////////////////////////////////
+    inline MonoObject* GetScriptableObject(AssetUnitId _auid)
+    {
+        ScriptableObjectPtr const& scriptableObject = ScriptableObjectManager::GetInstancePtr()->getOrLoadScriptableObject(_auid);
+        if (!scriptableObject || !scriptableObject->getScriptInstance())
+            return nullptr;
+
+        return scriptableObject->getScriptInstance()->getInstance();
+    }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsCore()
@@ -740,6 +752,9 @@ namespace Maze
         // AssetFile
         MAZE_CORE_MONO_BIND_FUNC(AssetFileIdIsValid);
         MAZE_CORE_MONO_BIND_FUNC(AssetFileReadAsDataBlock);
+
+        // ScriptableObject
+        MAZE_CORE_MONO_BIND_FUNC(GetScriptableObject);
     }
 
 } // namespace Maze

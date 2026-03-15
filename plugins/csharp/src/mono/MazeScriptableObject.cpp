@@ -113,6 +113,7 @@ namespace Maze
         m_scriptInstance = scriptClass->instantiate();
         MAZE_ERROR_RETURN_VALUE_IF(!m_scriptInstance, false, "Failed to instantiate ScriptableObject with class '%s'", className.str);
         
+        m_scriptClass = scriptClass;
         m_scriptInstance->setPropertyValue(MAZE_HCS("ResourceId"), getResourceId());
 
         setData(_dataBlock);
@@ -155,6 +156,8 @@ namespace Maze
     //////////////////////////////////////////
     void ScriptableObject::clearScriptInstance()
     {
+        m_scriptClass.reset();
+
         if (m_scriptInstance)
             m_scriptInstance->destroy();
         m_scriptInstance.reset();
