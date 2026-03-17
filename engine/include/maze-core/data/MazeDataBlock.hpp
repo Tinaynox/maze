@@ -275,21 +275,58 @@ namespace Maze
         class iterator_base
         {
         public:
+            using value_type = TValue*;
+            using reference = TValue*;
+            using pointer = TValue*;
+            using difference_type = std::ptrdiff_t;
+            using iterator_category = std::forward_iterator_tag;
 
             //////////////////////////////////////////
             inline iterator_base(TValue* _dataBlock, DataBlock::DataBlockIndex _index)
                 : m_dataBlock(_dataBlock)
                 , m_index(_index)
-            {}
+            {
+                skipComments();
+            }
 
             //////////////////////////////////////////
             inline TValue* operator*() { return m_dataBlock->getDataBlock(m_index); }
 
             //////////////////////////////////////////
-            inline iterator_base& operator++() { ++m_index; return *this; }
+            inline iterator_base& operator++()
+            {
+                ++m_index;
+                skipComments();
+                return *this;
+            }
+
+            //////////////////////////////////////////
+            inline iterator_base operator++(S32)
+            {
+                iterator_base tmp = *this;
+                ++(*this);
+                return tmp;
+            }
 
             //////////////////////////////////////////
             inline bool operator!=(iterator_base const& _other) const { return m_index != _other.m_index; }
+
+            //////////////////////////////////////////
+            inline bool operator==(iterator_base const& _other) const { return m_index == _other.m_index; }
+
+        private:
+
+            //////////////////////////////////////////
+            void skipComments()
+            {
+                while (
+                    m_index < m_dataBlock->getDataBlocksCount() &&
+                    m_dataBlock->getDataBlock(m_index) &&
+                    m_dataBlock->getDataBlock(m_index)->isComment())
+                {
+                    ++m_index;
+                }
+            }
 
         private:
             TValue* m_dataBlock = nullptr;

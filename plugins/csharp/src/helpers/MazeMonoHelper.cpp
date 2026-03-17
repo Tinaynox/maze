@@ -681,20 +681,65 @@ namespace Maze
             {
                 for (DataBlock const* childData : _dataBlock)
                 {
-                    MonoObject* elementValue = nullptr;
-                    if (!childData->isEmpty())
-                        elementValue = MonoSerializationManager::GetInstancePtr()->createMonoObjectFromDataBlock(*childData);
+                    bool itemExists = false;
 
-                    if (elementValue != nullptr)
+                    auto invokeMethodWithValue =
+                        [&](void* _arg)
+                        {
+                            void* args[1] = { _arg };
+                            MonoHelper::InvokeMethod(_value, addMethod, args);
+                            itemExists = true;
+                        };
+
+                    if (childData->getParamsCount() == 1)
                     {
-                        MonoClass* klass = mono_object_get_class(elementValue);
-                        bool isValueType = mono_class_is_valuetype(klass) != 0;
-
-                        // #TODO: Optimize for value types - remove unnecessary boxing and unboxing
-                        void* args[1] = { isValueType ? (void*)mono_object_unbox(elementValue) : (void*)elementValue };
-                        MonoHelper::InvokeMethod(_value, addMethod, args);
+                        DataBlock::Param const& paramData = childData->getParam(0);
+                        switch ((DataBlockParamType)paramData.type)
+                        {
+                            case DataBlockParamType::ParamS8: { S8 value = childData->getS8(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamS16: { S16 value = childData->getS16(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamS32: { S32 value = childData->getS32(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamS64: { S64 value = childData->getS64(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamU8: { U8 value = childData->getU8(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamU16: { U16 value = childData->getU16(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamU32: { U32 value = childData->getU32(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamU64: { U64 value = childData->getU64(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamF32: { F32 value = childData->getF32(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamF64: { F64 value = childData->getF64(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamBool: { Bool value = childData->getBool(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamVec4S8: { Vec4S8 value = childData->getVec4S8(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamVec4U8: { Vec4U8 value = childData->getVec4U8(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamVec2S32: { Vec2S value = childData->getVec2S32(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamVec3S32: { Vec3S value = childData->getVec3S32(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamVec4S32: { Vec4S value = childData->getVec4S32(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamVec2U32: { Vec2U value = childData->getVec2U32(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamVec3U32: { Vec3U value = childData->getVec3U32(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamVec4U32: { Vec4U value = childData->getVec4U32(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamVec2F32: { Vec2F value = childData->getVec2F(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamVec3F32: { Vec3F value = childData->getVec3F(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamVec4F32: { Vec4F value = childData->getVec4F(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamMat3F32: { Mat3F value = childData->getMat3F(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamMat4F32: { Mat4F value = childData->getMat4F(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamTMat: { TMat value = childData->getTMat(0); invokeMethodWithValue(&value); break; }
+                            case DataBlockParamType::ParamString:
+                            {
+                                invokeMethodWithValue(mono_string_new(mono_domain_get(), childData->getCString(0)));
+                                break;
+                            }
+                            default:
+                            {
+                                MAZE_ERROR("Unsupported param type - %d", (S32)paramData.type);
+                                break;
+                            }
+                        }
                     }
                     else
+                    if (childData->getDataBlocksCount() == 1)
+                    {
+                        MAZE_NOT_IMPLEMENTED;
+                    }
+
+                    if (!itemExists)
                     {
                         MonoClass* elementClass = GetMonoGenericClassFirstGenericArgumentClass(listMonoClass);
                         if (!elementClass)

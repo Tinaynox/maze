@@ -1176,8 +1176,7 @@ namespace Maze
                 case DataBlockParamType::ParamS32:
                 {
                     S32 value = _dataBlock.getS32(0);
-                    MonoClass* monoClass = mono_class_from_name(mono_get_corlib(), "System", "Int32");
-                    return mono_value_box(mono_get_root_domain(), monoClass, &value);
+                    return mono_value_box(mono_get_root_domain(), mono_get_int32_class(), &value);
                 }
                 case DataBlockParamType::ParamVec2F32:
                 {
