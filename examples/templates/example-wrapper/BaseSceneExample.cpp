@@ -468,9 +468,6 @@ namespace Maze
             m_postFXMaterial->setUniform(
                 MAZE_HASHED_CSTRING("u_invAspectRatio"),
                 (F32)m_renderBuffer->getHeight() / (F32)m_renderBuffer->getWidth());
-            m_postFXMaterial->setUniform(
-                MAZE_HASHED_CSTRING("u_baseMapTexelSize"),
-                1.0f / (Vec2F)m_renderBuffer->getColorTexture()->cast<Texture2D>()->getSize());
         }
         else
         {

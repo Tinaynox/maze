@@ -133,17 +133,17 @@ namespace Maze
 
         Vec3F cameraPosition = _params.cameraTransform.getTranslation();
 
-        m_renderControllerSample->process(
+        m_renderControllerSample->query(
             [&](Entity* _entity, RenderController* _renderController)
             {
-                m_waterRenderersSample->process(
+                m_waterRenderersSample->query(
                     [&](Entity* _entity, WaterRenderer3D* _waterRenderer)
                     {
                         F32 waterY = _waterRenderer->getTransform()->getWorldPosition().y;
 
                         DefaultPassParams params = _params;
                         params.renderMask &= ~(S32)DefaultRenderMask::Water;
-                        params.viewport = Rect2DF(0.0f, 0.0f, 1.0f, 1.0f);
+                        params.viewport = Rect2F(0.0f, 0.0f, 1.0f, 1.0f);
 
                         // Refraction buffer (Under water)
                         _renderController->getModule3D()->drawDefaultPass(

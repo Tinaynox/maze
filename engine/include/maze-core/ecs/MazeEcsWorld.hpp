@@ -494,7 +494,7 @@ namespace Maze
         static void ReleaseEcsWorldId(EcsWorldId _id);
 
     private:
-        static FastVector<EcsWorld*> s_worlds;
+        static std::vector<EcsWorld*> s_worlds;
         static Stack<EcsWorldId> s_freeEcsWorldIndices;
 
     private:

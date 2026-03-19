@@ -42,10 +42,10 @@ namespace Maze
     namespace GraphicsUtilsHelper
     {
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API PixelSheet2D g_asciiSymbolsSheet8x8(Vec2S(128, 48), PixelFormat::RGBA_U8);
+        MAZE_GRAPHICS_API PixelSheet2D* g_asciiSymbolsSheet8x8 = nullptr;
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API PixelSheet2D const& GetAsciiSymbolsSheet8x8() { return g_asciiSymbolsSheet8x8;  }
+        MAZE_GRAPHICS_API PixelSheet2D const* GetAsciiSymbolsSheet8x8() { return g_asciiSymbolsSheet8x8;  }
 
         //////////////////////////////////////////
         // Tables of ASCII symbols (code symbols - 32-127)
@@ -59,6 +59,9 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_GRAPHICS_API void ConstructAsciiSymbolsSheet8x8()
         {
+            if (g_asciiSymbolsSheet8x8)
+                return;
+
             String data;
             data += "?Q`0001oOch0o01o@F40o0<AGD4090LAGD<090@A7ch0?00O7Q`0600>00000000";
             data += "O000000nOT0063Qo4d8>?7a14Gno94AA4gno94AaOT0>o3`oO400o7QN00000400";
@@ -77,8 +80,9 @@ namespace Maze
             data += "O`000P08Od400g`<3V=P0G`673IP0`@3>1`00P@6O`P00g`<O`000GP800000000";
             data += "?P9PL020O`<`N3R0@E4HC7b0@ET<ATB0@@l6C4B0O`H3N7b0?P01L3R000000020";
 
-            g_asciiSymbolsSheet8x8.setFormat(PixelFormat::RGBA_U8);
-            g_asciiSymbolsSheet8x8.setSize(128, 48);
+            g_asciiSymbolsSheet8x8 = MAZE_NEW(PixelSheet2D, Vec2S(128, 48), PixelFormat::RGBA_U8);
+            g_asciiSymbolsSheet8x8->setFormat(PixelFormat::RGBA_U8);
+            g_asciiSymbolsSheet8x8->setSize(128, 48);
 
             S32 px = 0;
             S32 py = 0;
@@ -95,7 +99,7 @@ namespace Maze
                 {
                     U8 k = r & (1 << i) ? 255 : 0;
 
-                    g_asciiSymbolsSheet8x8.setPixel(px, py, ColorU32(k, k, k, k));
+                    g_asciiSymbolsSheet8x8->setPixel(px, py, ColorU32(k, k, k, k));
 
                     if (++py == 48)
                     {
@@ -105,7 +109,17 @@ namespace Maze
                 }
             }
 
-            g_asciiSymbolsSheet8x8.flipY();
+            g_asciiSymbolsSheet8x8->flipY();
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void DestroyAsciiSymbolsSheet8x8()
+        {
+            if (!g_asciiSymbolsSheet8x8)
+                return;
+
+            MAZE_DELETE(g_asciiSymbolsSheet8x8);
+            g_asciiSymbolsSheet8x8 = nullptr;
         }
 
         //////////////////////////////////////////

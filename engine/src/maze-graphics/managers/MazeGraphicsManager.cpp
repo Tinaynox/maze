@@ -90,6 +90,8 @@ namespace Maze
         m_renderSystems.clear();
         setDefaultRenderSystem(nullptr);
 
+        GraphicsUtilsHelper::DestroyAsciiSymbolsSheet8x8();
+
         s_instance = nullptr;
     }
 

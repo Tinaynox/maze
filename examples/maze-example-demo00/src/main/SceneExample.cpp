@@ -289,8 +289,8 @@ namespace Maze
         // m_waterRenderer->getMeshRenderer()->getMaterial()->getFirstRenderPass()->setRenderQueueIndex(2500);
         
         ConsoleService::GetInstancePtr()->registerCommand(
-            MAZE_HS("water"),
-            [this](String* _argv, S32 _argc)
+            MAZE_HCS("water"),
+            [this](String const* _argv, S32 _argc)
             {
                 if (_argc > 1)
                     return false;
@@ -529,7 +529,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
+    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
     {
         if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
             return;
@@ -664,8 +664,8 @@ namespace Maze
 
 
         ConsoleService::GetInstancePtr()->registerCommand(
-            MAZE_HS("ps"),
-            [this](String* _argv, S32 _argc)
+            MAZE_HCS("ps"),
+            [this](String const* _argv, S32 _argc)
             {
                 if (_argc > 1)
                     return false;
@@ -708,7 +708,7 @@ namespace Maze
                 if (_data.buttonId == 1)
                 {
                     Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
-                    Rect2DF viewportRect(
+                    Rect2F viewportRect(
                         m_canvas->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                         m_canvas->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
                         m_canvas->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
@@ -766,7 +766,7 @@ namespace Maze
                 if (_data.index == 0)
                 {
                     Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
-                    Rect2DF viewportRect(
+                    Rect2F viewportRect(
                         m_canvas->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                         m_canvas->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
                         m_canvas->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,

@@ -202,7 +202,7 @@ namespace Maze
     // Class EcsWorld
     //
     //////////////////////////////////////////
-    FastVector<EcsWorld*> EcsWorld::s_worlds = FastVector<EcsWorld*>();
+    std::vector<EcsWorld*> EcsWorld::s_worlds = std::vector<EcsWorld*>();
 
     //////////////////////////////////////////
     Stack<EcsWorldId> EcsWorld::s_freeEcsWorldIndices = Stack<EcsWorldId>();

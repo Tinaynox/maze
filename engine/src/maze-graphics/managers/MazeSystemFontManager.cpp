@@ -134,7 +134,7 @@ namespace Maze
                 Texture2DPtr texture = Texture2D::Create(m_renderSystemRaw);
                 texture->setName(_fontType.toCString());
                 PixelSheet2D systemFontSheet = GraphicsUtilsHelper::GenerateSystemFontExtrude(
-                    GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8(), 16, 6, 8, 8);
+                    *GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8(), 16, 6, 8, 8);
 
                 Vector<PixelSheet2D> pixelSheets;
                 pixelSheets.emplace_back(systemFontSheet.upscaledCopy(upscale));
@@ -257,7 +257,7 @@ namespace Maze
         Texture2DPtr texture = Texture2D::Create(m_renderSystemRaw);
         texture->setName(_name);
         PixelSheet2D systemFontSheet = GraphicsUtilsHelper::GenerateSystemFontExtrudeOutlined(
-            GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8(), 16, 6, 8, 8, _outlineColor);
+            *GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8(), 16, 6, 8, 8, _outlineColor);
 
         Vector<PixelSheet2D> pixelSheets;
         pixelSheets.emplace_back(systemFontSheet.upscaledCopy(upscale));

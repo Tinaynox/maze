@@ -203,7 +203,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneSplash::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
+    void SceneSplash::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
     {
         if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
             return;
@@ -321,8 +321,8 @@ namespace Maze
                 MAZE_LOAD_PLATFORM_PLUGIN(ParticlesEditorTools);
 
                 ConsoleService::GetInstancePtr()->registerCommand(
-                    MAZE_HS("profile"),
-                    [](String* _argv, S32 _argc)
+                    MAZE_HCS("profile"),
+                    [](String const* _argv, S32 _argc)
                 {
                     if (_argc > 1)
                         return false;

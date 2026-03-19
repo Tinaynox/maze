@@ -46,10 +46,13 @@ namespace Maze
     namespace GraphicsUtilsHelper
     {
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API PixelSheet2D const& GetAsciiSymbolsSheet8x8();
+        MAZE_GRAPHICS_API PixelSheet2D const* GetAsciiSymbolsSheet8x8();
 
         //////////////////////////////////////////
         MAZE_GRAPHICS_API void ConstructAsciiSymbolsSheet8x8();
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void DestroyAsciiSymbolsSheet8x8();
 
         //////////////////////////////////////////
         MAZE_GRAPHICS_API PixelSheet2D GenerateSystemFontExtrude(

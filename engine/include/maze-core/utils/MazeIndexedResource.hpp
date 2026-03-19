@@ -85,7 +85,7 @@ namespace Maze
         MAZE_FORCEINLINE static void ReleaseResourceId(ResourceId _id);
 
     private:
-        static FastVector<T*> s_resources;
+        static std::vector<T*> s_resources;
         static std::stack<ResourceId> s_freeResourceIndices;
 
     protected:
@@ -99,7 +99,7 @@ namespace Maze
 
 //////////////////////////////////////////
 #define MAZE_IMPLEMENT_INDEXED_RESOURCE(DClass)                               \
-    FastVector<DClass*> DClass::s_resources = FastVector<DClass*>();          \
+    std::vector<DClass*> DClass::s_resources = std::vector<DClass*>();          \
     std::stack<ResourceId> DClass::s_freeResourceIndices = std::stack<ResourceId>();
 
 

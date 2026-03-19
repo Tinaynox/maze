@@ -74,6 +74,8 @@ namespace Maze
         setCanvas(nullptr);
         m_gizmoToolsManager.reset();
 
+        GraphicsUtilsHelper::DestroyAsciiSymbolsSheet8x8();
+
         s_instance = nullptr;
     }
 

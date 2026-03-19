@@ -65,37 +65,37 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    static inline StringKeyMap<DataBlockParamType> ConstructDataBlockParamTypeByName()
+    static inline StdUnorderedMap<HashedCString, DataBlockParamType> ConstructDataBlockParamTypeByName()
     {
-        StringKeyMap<DataBlockParamType> result;
+        StdUnorderedMap<HashedCString, DataBlockParamType> result;
 
         for (Size i = 0; i < (Size)DataBlockParamType::MAX; ++i)
         {
             DataBlockParamTypeInfo const& info = c_dataBlockParamTypeInfo[i];
-            result.insert(info.name, DataBlockParamType(i));
+            result.emplace(info.name, DataBlockParamType(i));
         }
 
         // Aliases
-        result.insert(MAZE_HASHED_CSTRING("Vec2S32"), DataBlockParamType(DataBlockParamType::ParamVec2S32));
-        result.insert(MAZE_HASHED_CSTRING("Vec3S32"), DataBlockParamType(DataBlockParamType::ParamVec3S32));
-        result.insert(MAZE_HASHED_CSTRING("Vec4S32"), DataBlockParamType(DataBlockParamType::ParamVec4S32));
+        result.emplace(MAZE_HASHED_CSTRING("Vec2S32"), DataBlockParamType(DataBlockParamType::ParamVec2S32));
+        result.emplace(MAZE_HASHED_CSTRING("Vec3S32"), DataBlockParamType(DataBlockParamType::ParamVec3S32));
+        result.emplace(MAZE_HASHED_CSTRING("Vec4S32"), DataBlockParamType(DataBlockParamType::ParamVec4S32));
 
-        result.insert(MAZE_HASHED_CSTRING("Vec2U32"), DataBlockParamType(DataBlockParamType::ParamVec2U32));
-        result.insert(MAZE_HASHED_CSTRING("Vec3U32"), DataBlockParamType(DataBlockParamType::ParamVec3U32));
-        result.insert(MAZE_HASHED_CSTRING("Vec4U32"), DataBlockParamType(DataBlockParamType::ParamVec4U32));
+        result.emplace(MAZE_HASHED_CSTRING("Vec2U32"), DataBlockParamType(DataBlockParamType::ParamVec2U32));
+        result.emplace(MAZE_HASHED_CSTRING("Vec3U32"), DataBlockParamType(DataBlockParamType::ParamVec3U32));
+        result.emplace(MAZE_HASHED_CSTRING("Vec4U32"), DataBlockParamType(DataBlockParamType::ParamVec4U32));
 
-        result.insert(MAZE_HASHED_CSTRING("Vec2F32"), DataBlockParamType(DataBlockParamType::ParamVec2F32));
-        result.insert(MAZE_HASHED_CSTRING("Vec3F32"), DataBlockParamType(DataBlockParamType::ParamVec3F32));
-        result.insert(MAZE_HASHED_CSTRING("Vec4F32"), DataBlockParamType(DataBlockParamType::ParamVec4F32));
+        result.emplace(MAZE_HASHED_CSTRING("Vec2F32"), DataBlockParamType(DataBlockParamType::ParamVec2F32));
+        result.emplace(MAZE_HASHED_CSTRING("Vec3F32"), DataBlockParamType(DataBlockParamType::ParamVec3F32));
+        result.emplace(MAZE_HASHED_CSTRING("Vec4F32"), DataBlockParamType(DataBlockParamType::ParamVec4F32));
 
-        result.insert(MAZE_HASHED_CSTRING("Mat3F32"), DataBlockParamType(DataBlockParamType::ParamMat3F32));
-        result.insert(MAZE_HASHED_CSTRING("Mat4F32"), DataBlockParamType(DataBlockParamType::ParamMat4F32));
+        result.emplace(MAZE_HASHED_CSTRING("Mat3F32"), DataBlockParamType(DataBlockParamType::ParamMat3F32));
+        result.emplace(MAZE_HASHED_CSTRING("Mat4F32"), DataBlockParamType(DataBlockParamType::ParamMat4F32));
 
         return result;
     }
 
     //////////////////////////////////////////
-    StringKeyMap<DataBlockParamType> const MAZE_CORE_API c_dataBlockParamTypeByName = ConstructDataBlockParamTypeByName();
+    StdUnorderedMap<HashedCString, DataBlockParamType> const MAZE_CORE_API c_dataBlockParamTypeByName = ConstructDataBlockParamTypeByName();
 
     //////////////////////////////////////////
     MAZE_CORE_API DataBlockParamType GetDataBlockParamType(HashedCString _name)
