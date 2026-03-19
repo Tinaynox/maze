@@ -165,7 +165,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
+    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
     {        
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
     }
@@ -585,7 +585,7 @@ namespace Maze
             ColorU32(160, 160, 160),
             { 80.0f, 20.0f },
             { 0.0f, 0.0f },
-            MaterialManager::GetCurrentInstance()->getColorMaterial(),
+            MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
             layout->getTransform(),
             this);
 
@@ -593,7 +593,7 @@ namespace Maze
             ColorU32::c_green,
             { 40.0f, 20.0f },
             { 0.0f, 0.0f },
-            MaterialManager::GetCurrentInstance()->getColorMaterial(),
+            MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
             sprite->getTransform(),
             this,
             { 0.5f, 0.5f},
@@ -643,7 +643,7 @@ namespace Maze
             ColorU32(160, 160, 160),
             { 20.0f, 20.0f },
             { 0.0f, 0.0f },
-            MaterialManager::GetCurrentInstance()->getColorMaterial(),
+            MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
             layout->getTransform(),
             this);
 

@@ -310,7 +310,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
+    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2F const& _mainRenderWindowViewport)
     {
         m_camera3D->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
     }
