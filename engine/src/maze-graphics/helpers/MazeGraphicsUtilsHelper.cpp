@@ -80,7 +80,7 @@ namespace Maze
             data += "O`000P08Od400g`<3V=P0G`673IP0`@3>1`00P@6O`P00g`<O`000GP800000000";
             data += "?P9PL020O`<`N3R0@E4HC7b0@ET<ATB0@@l6C4B0O`H3N7b0?P01L3R000000020";
 
-            g_asciiSymbolsSheet8x8 = MAZE_NEW(PixelSheet2D, Vec2S(128, 48), PixelFormat::RGBA_U8);
+            g_asciiSymbolsSheet8x8 = MAZE_NEW_WITH_ARGS(PixelSheet2D, Vec2S(128, 48), PixelFormat::RGBA_U8);
             g_asciiSymbolsSheet8x8->setFormat(PixelFormat::RGBA_U8);
             g_asciiSymbolsSheet8x8->setSize(128, 48);
 

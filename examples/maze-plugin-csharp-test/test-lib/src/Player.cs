@@ -44,7 +44,7 @@ namespace Sandbox
         [EntitySystem(new string[] { "default" })]
         public void OnUpdate(float _dt)
         {
-            m_TestRotor.Speed = m_Transform.position.X * 3.0f;
+            m_TestRotor.Speed = m_Transform.Position.X * 3.0f;
 
             if (Input.GetKeyState(KeyCode.Left))
             {

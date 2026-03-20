@@ -346,7 +346,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneSystemTextTest::notifyButtonClick(Button2D* _button, CursorInputEvent const& _event)
+    void SceneSystemTextTest::notifyButtonClick(Button2D* _button, CursorInputEvent& _event)
     {
         if (_button == m_lb.get())
         {

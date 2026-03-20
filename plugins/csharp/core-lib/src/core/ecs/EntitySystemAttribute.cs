@@ -11,9 +11,9 @@ namespace Maze.Core
 
 
         public EntitySystemAttribute(
-            string[] tags = default,
-            string[] after = default,
-            string[] before = default)
+            string[] tags = default(string[]),
+            string[] after = default(string[]),
+            string[] before = default(string[]))
         {
             Tags = tags;
             After = after;

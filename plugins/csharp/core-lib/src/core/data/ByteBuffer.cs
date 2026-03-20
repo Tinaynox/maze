@@ -222,78 +222,63 @@ namespace Maze.Core
 
         public void Append<T>(T value) where T : struct
         {
-            switch (value)
-            {
-                case sbyte sbyteValue: Append(sbyteValue); break;
-                case short shortValue: Append(BitConverter.GetBytes(shortValue)); break;
-                case int intValue: Append(BitConverter.GetBytes(intValue)); break;
-                case long longValue: Append(BitConverter.GetBytes(longValue)); break;
-                case byte byteValue: Append(byteValue); break;
-                case ushort ushortValue: Append(BitConverter.GetBytes(ushortValue)); break;
-                case uint uintValue: Append(BitConverter.GetBytes(uintValue)); break;
-                case ulong ulongValue: Append(BitConverter.GetBytes(ulongValue)); break;
-                case float floatValue: Append(BitConverter.GetBytes(floatValue)); break;
-                case double doubleValue: Append(BitConverter.GetBytes(doubleValue)); break;
-                case bool boolValue: Append(BitConverter.GetBytes(boolValue)); break;             
-                case char charValue: Append(BitConverter.GetBytes(charValue)); break;
-                case Vec4S8 vecValue: Append(vecValue.GetBytes()); break;
-                case Vec4U8 vecValue: Append(vecValue.GetBytes()); break;
-                case Vec2S vecValue: Append(vecValue.GetBytes()); break;
-                case Vec3S vecValue: Append(vecValue.GetBytes()); break;
-                case Vec4S vecValue: Append(vecValue.GetBytes()); break;
-                case Vec2U vecValue: Append(vecValue.GetBytes()); break;
-                case Vec3U vecValue: Append(vecValue.GetBytes()); break;
-                case Vec4U vecValue: Append(vecValue.GetBytes()); break;
-                case Vec2F vecValue: Append(vecValue.GetBytes()); break;
-                case Vec3F vecValue: Append(vecValue.GetBytes()); break;
-                case Vec4F vecValue: Append(vecValue.GetBytes()); break;
-                case Vec2B vecValue: Append(vecValue.GetBytes()); break;
-                case Vec3B vecValue: Append(vecValue.GetBytes()); break;
-                case Vec4B vecValue: Append(vecValue.GetBytes()); break;
-                case Mat3F matValue: Append(matValue.GetBytes()); break;
-                case Mat4F matValue: Append(matValue.GetBytes()); break;
-                case TMat matValue: Append(matValue.GetBytes()); break;
-                default:
-                    throw new ArgumentException($"Type {typeof(T)} is not supported by BitConverter");
-            }
+            var t = typeof(T);
+
+            if (t == typeof(sbyte)) { Append((sbyte)(object)value); return; }
+            if (t == typeof(short)) { Append(BitConverter.GetBytes((short)(object)value)); return; }
+            if (t == typeof(int)) { Append(BitConverter.GetBytes((int)(object)value)); return; }
+            if (t == typeof(long)) { Append(BitConverter.GetBytes((long)(object)value)); return; }
+            if (t == typeof(byte)) { Append((byte)(object)value); return; }
+            if (t == typeof(ushort)) { Append(BitConverter.GetBytes((ushort)(object)value)); return; }
+            if (t == typeof(uint)) { Append(BitConverter.GetBytes((uint)(object)value)); return; }
+            if (t == typeof(ulong)) { Append(BitConverter.GetBytes((ulong)(object)value)); return; }
+            if (t == typeof(float)) { Append(BitConverter.GetBytes((float)(object)value)); return; }
+            if (t == typeof(double)) { Append(BitConverter.GetBytes((double)(object)value)); return; }
+            if (t == typeof(bool)) { Append(BitConverter.GetBytes((bool)(object)value)); return; }
+            if (t == typeof(char)) { Append(BitConverter.GetBytes((char)(object)value)); return; }
+
+            if (t == typeof(Vec4S8)) { Append(((Vec4S8)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec4U8)) { Append(((Vec4U8)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec2S)) { Append(((Vec2S)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec3S)) { Append(((Vec3S)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec4S)) { Append(((Vec4S)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec2U)) { Append(((Vec2U)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec3U)) { Append(((Vec3U)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec4U)) { Append(((Vec4U)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec2F)) { Append(((Vec2F)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec3F)) { Append(((Vec3F)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec4F)) { Append(((Vec4F)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec2B)) { Append(((Vec2B)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec3B)) { Append(((Vec3B)(object)value).GetBytes()); return; }
+            if (t == typeof(Vec4B)) { Append(((Vec4B)(object)value).GetBytes()); return; }
+            if (t == typeof(Mat3F)) { Append(((Mat3F)(object)value).GetBytes()); return; }
+            if (t == typeof(Mat4F)) { Append(((Mat4F)(object)value).GetBytes()); return; }
+            if (t == typeof(TMat)) { Append(((TMat)(object)value).GetBytes()); return; }
+
+            throw new ArgumentException($"Type {typeof(T)} is not supported by BitConverter");
         }
 
         public unsafe T ReadAs<T>(int startIndex) where T : struct
         {
-            // #TODO: Optimize?
-            switch (default(T))
-            {
-                case int intValue:
-                    return (T)(object)BitConverter.ToInt32(m_Data, startIndex);
-                case float floatValue:
-                    return (T)(object)BitConverter.ToSingle(m_Data, startIndex);
-                case double doubleValue:
-                    return (T)(object)BitConverter.ToDouble(m_Data, startIndex);
-                case bool boolValue:
-                    return (T)(object)BitConverter.ToBoolean(m_Data, startIndex);
-                case short shortValue:
-                    return (T)(object)BitConverter.ToInt16(m_Data, startIndex);
-                case long longValue:
-                    return (T)(object)BitConverter.ToInt64(m_Data, startIndex);
-                case ushort ushortValue:
-                    return (T)(object)BitConverter.ToUInt16(m_Data, startIndex);
-                case uint uintValue:
-                    return (T)(object)BitConverter.ToUInt32(m_Data, startIndex);
-                case ulong ulongValue:
-                    return (T)(object)BitConverter.ToUInt64(m_Data, startIndex);
-                case char charValue:
-                    return (T)(object)BitConverter.ToChar(m_Data, startIndex);
-                case Vec2F vecValue:
-                    return (T)(object)Vec2F.FromBytes(m_Data, startIndex);
-                case Vec3F vecValue:
-                    return (T)(object)Vec3F.FromBytes(m_Data, startIndex);
-                case Vec4F vecValue:
-                    return (T)(object)Vec4F.FromBytes(m_Data, startIndex);
-                case Vec2U vecValue:
-                    return (T)(object)Vec2U.FromBytes(m_Data, startIndex);
-                default:
-                    throw new ArgumentException($"Type {typeof(T)} is not supported by BitConverter");
-            }
+            var t = typeof(T);
+
+            if (t == typeof(int)) return (T)(object)BitConverter.ToInt32(m_Data, startIndex);
+            if (t == typeof(float)) return (T)(object)BitConverter.ToSingle(m_Data, startIndex);
+            if (t == typeof(double)) return (T)(object)BitConverter.ToDouble(m_Data, startIndex);
+            if (t == typeof(bool)) return (T)(object)BitConverter.ToBoolean(m_Data, startIndex);
+            if (t == typeof(short)) return (T)(object)BitConverter.ToInt16(m_Data, startIndex);
+            if (t == typeof(long)) return (T)(object)BitConverter.ToInt64(m_Data, startIndex);
+            if (t == typeof(ushort)) return (T)(object)BitConverter.ToUInt16(m_Data, startIndex);
+            if (t == typeof(uint)) return (T)(object)BitConverter.ToUInt32(m_Data, startIndex);
+            if (t == typeof(ulong)) return (T)(object)BitConverter.ToUInt64(m_Data, startIndex);
+            if (t == typeof(char)) return (T)(object)BitConverter.ToChar(m_Data, startIndex);
+
+            if (t == typeof(Vec2F)) return (T)(object)Vec2F.FromBytes(m_Data, startIndex);
+            if (t == typeof(Vec3F)) return (T)(object)Vec3F.FromBytes(m_Data, startIndex);
+            if (t == typeof(Vec4F)) return (T)(object)Vec4F.FromBytes(m_Data, startIndex);
+            if (t == typeof(Vec2U)) return (T)(object)Vec2U.FromBytes(m_Data, startIndex);
+
+            throw new ArgumentException($"Type {t} is not supported by BitConverter");
         }
 
         public bool IsEqual(ByteBuffer other)

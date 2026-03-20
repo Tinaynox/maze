@@ -14,7 +14,7 @@ namespace Maze.Console
         public ConsoleCommandAttribute(
             string commandName,
             int argsCount = 0,
-            string description = default)
+            string description = default(string))
         {
             m_CommandName = commandName;
             m_ArgsCount = argsCount;

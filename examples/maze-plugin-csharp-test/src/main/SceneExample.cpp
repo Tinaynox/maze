@@ -405,7 +405,7 @@ namespace Maze
         mono_add_internal_call("Maze.Test::NativeLogVector3", NativeLogVector3);
         mono_add_internal_call("Maze.Test::CrossVector3", CrossVector3);
 
-        MonoAssembly* testAssembly = CSharpService::GetInstancePtr()->loadMonoAssembly(MAZE_HCS("maze-csharp-test-lib.dll"));
+        MonoAssembly* testAssembly = CSharpService::GetInstancePtr()->loadAppAssembly(MAZE_HCS("maze-csharp-test-lib.dll"));
 
         // Tests
         MonoImage* assemblyImage = mono_assembly_get_image(testAssembly);

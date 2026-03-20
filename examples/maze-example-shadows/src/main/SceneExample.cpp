@@ -48,7 +48,6 @@
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
-#include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -70,13 +69,11 @@
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
-#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3DShadowBuffer.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer3D.hpp"
 #include "maze-graphics/ecs/components/MazeSkinnedMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeSkinnedMeshSkeleton.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderMZMESH.hpp"
-#include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
@@ -209,8 +206,9 @@ namespace Maze
             auto skinnedMeshRenderer = skinnedMeshEntity->createComponent<SkinnedMeshRenderer>();
             skinnedMeshRenderer->setRenderMesh("Buckethead.fbx");
             skinnedMeshRenderer->setMaterial("Buckethead.mzmaterial");
-            skinnedMeshRenderer->playAnimation(MAZE_HCS("Run"));
-            skinnedMeshRenderer->getAnimator()->getCurrentAnimation()->rewindToRandom();
+			auto skinnedMeshSkeleton = skinnedMeshEntity->createComponent<SkinnedMeshSkeleton>();
+            skinnedMeshSkeleton->getAnimator()->playAnimation(MAZE_HCS("Run"));
+            skinnedMeshSkeleton->getAnimator()->getCurrentAnimation()->rewindToRandom();
         }
 
         auto depthBufferTexture = m_camera3D->getEntityRaw()->getComponent<Camera3DShadowBuffer>()->getShadowBuffer()->getDepthTexture()->cast<Texture2D>();

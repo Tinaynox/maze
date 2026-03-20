@@ -102,7 +102,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyButtonClick(Button2D* _button, CursorInputEvent const& _event);
+        void notifyButtonClick(Button2D* _button, CursorInputEvent& _event);
 
     protected:
         Camera3DPtr m_camera3D;

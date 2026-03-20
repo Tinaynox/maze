@@ -45,7 +45,7 @@ namespace Maze.Core
             if (CanRead(sizeof(byte)))
                 value = m_ByteBuffer.Data[m_Offset];
             else
-                value = default;
+                value = default(byte);
             return this;
         }
 
@@ -101,7 +101,7 @@ namespace Maze.Core
 
         public ByteBufferReadStream Read(out byte value)
         {
-            value = default;
+            value = default(byte);
             if (CanRead(sizeof(byte)))
             {
                 value = m_ByteBuffer.Data[m_Offset];
@@ -112,7 +112,7 @@ namespace Maze.Core
 
         public ByteBufferReadStream Read(out short value)
         {
-            value = default;
+            value = default(short);
             if (CanRead(sizeof(short)))
             {
                 value = BitConverter.ToInt16(m_ByteBuffer.Data, m_Offset);
@@ -123,7 +123,7 @@ namespace Maze.Core
 
         public ByteBufferReadStream Read(out int value)
         {
-            value = default;
+            value = default(int);
             if (CanRead(sizeof(int)))
             {
                 value = BitConverter.ToInt32(m_ByteBuffer.Data, m_Offset);
@@ -134,7 +134,7 @@ namespace Maze.Core
 
         public ByteBufferReadStream Read(out long value)
         {
-            value = default;
+            value = default(long);
             if (CanRead(sizeof(long)))
             {
                 value = BitConverter.ToInt64(m_ByteBuffer.Data, m_Offset);
@@ -145,7 +145,7 @@ namespace Maze.Core
 
         public ByteBufferReadStream Read(out sbyte value)
         {
-            value = default;
+            value = default(sbyte);
             if (CanRead(sizeof(sbyte)))
             {
                 value = Convert.ToSByte(m_ByteBuffer.Data[m_Offset]);
@@ -156,7 +156,7 @@ namespace Maze.Core
 
         public ByteBufferReadStream Read(out ushort value)
         {
-            value = default;
+            value = default(ushort);
             if (CanRead(sizeof(ushort)))
             {
                 value = BitConverter.ToUInt16(m_ByteBuffer.Data, m_Offset);
@@ -167,7 +167,7 @@ namespace Maze.Core
 
         public ByteBufferReadStream Read(out uint value)
         {
-            value = default;
+            value = default(uint);
             if (CanRead(sizeof(uint)))
             {
                 value = BitConverter.ToUInt32(m_ByteBuffer.Data, m_Offset);
@@ -178,7 +178,7 @@ namespace Maze.Core
 
         public ByteBufferReadStream Read(out ulong value)
         {
-            value = default;
+            value = default(ulong);
             if (CanRead(sizeof(ulong)))
             {
                 value = BitConverter.ToUInt64(m_ByteBuffer.Data, m_Offset);
@@ -189,7 +189,7 @@ namespace Maze.Core
 
         public ByteBufferReadStream Read(out float value)
         {
-            value = default;
+            value = default(float);
             if (CanRead(sizeof(float)))
             {
                 value = BitConverter.ToSingle(m_ByteBuffer.Data, m_Offset);
@@ -200,7 +200,7 @@ namespace Maze.Core
 
         public ByteBufferReadStream Read(out double value)
         {
-            value = default;
+            value = default(double);
             if (CanRead(sizeof(double)))
             {
                 value = BitConverter.ToDouble(m_ByteBuffer.Data, m_Offset);

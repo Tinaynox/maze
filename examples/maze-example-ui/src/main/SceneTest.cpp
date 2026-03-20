@@ -225,7 +225,7 @@ namespace Maze
         Maze::SpriteRenderer2DPtr spriteRenderer = buttonEntity->createComponent<Maze::SpriteRenderer2D>();
         spriteRenderer->setSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
-        spriteRenderer->setMaterialCopy(SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
+        spriteRenderer->setMaterial(SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
 
         clickButton->setTransitionSprite(spriteRenderer);
 

@@ -17,7 +17,7 @@ namespace Sandbox
 
         [EntitySystem(
             new string[] { "default" },
-            default,
+            default(string[]),
             new string[] { "Sandbox.Player::OnUpdate" })]
         public void OnUpdate(float _dt)
         {

@@ -11,8 +11,8 @@ namespace Maze.Core
         public Vec3F Direction;
 
         public Ray(
-            Vec3F point = default,
-            Vec3F direction = default)
+            Vec3F point = default(Vec3F),
+            Vec3F direction = default(Vec3F))
         {
             Point = point;
             Direction = direction;

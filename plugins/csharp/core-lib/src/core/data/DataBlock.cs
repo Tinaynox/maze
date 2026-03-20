@@ -267,13 +267,13 @@ namespace Maze.Core
             return GetSharedString((uint)param.Value) ?? defValue;
         }
 
-        string GetParamValueByNameId(uint nameId, string defValue = default)
+        string GetParamValueByNameId(uint nameId, string defValue = default(string))
         {
             int paramIndex = FindParamIndex(nameId);
             return paramIndex < 0 ? defValue : GetParamValue(paramIndex, defValue);
         }
 
-        string GetParamValueByName(string name, string defValue = default)
+        string GetParamValueByName(string name, string defValue = default(string))
         {
             uint nameId = GetSharedStringId(name);
             return nameId == 0 ? defValue : GetParamValueByNameId(nameId, defValue);
@@ -351,111 +351,111 @@ namespace Maze.Core
         public void AddVec4S8(string name, Vec4S8 value) { AddParamByName(name, value); }
         public void SetVec4S8(int paramIndex, Vec4S8 value) { SetParam(paramIndex, value); }
         public void SetVec4S8(string name, Vec4S8 value) { SetParam(name, value); }
-        public Vec4S8 GetVec4S8(string name, Vec4S8 defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec4S8 GetVec4S8(string name, Vec4S8 defValue = default(Vec4S8)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec4U8
         public void AddVec4U8(string name, Vec4U8 value) { AddParamByName(name, value); }
         public void SetVec4U8(int paramIndex, Vec4U8 value) { SetParam(paramIndex, value); }
         public void SetVec4U8(string name, Vec4U8 value) { SetParam(name, value); }
-        public Vec4U8 GetVec4U8(string name, Vec4U8 defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec4U8 GetVec4U8(string name, Vec4U8 defValue = default(Vec4U8)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec2S
         public void AddVec2S(string name, Vec2S value) { AddParamByName(name, value); }
         public void SetVec2S(int paramIndex, Vec2S value) { SetParam(paramIndex, value); }
         public void SetVec2S(string name, Vec2S value) { SetParam(name, value); }
-        public Vec2S GetVec2S(string name, Vec2S defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec2S GetVec2S(string name, Vec2S defValue = default(Vec2S)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec3S
         public void AddVec3S(string name, Vec3S value) { AddParamByName(name, value); }
         public void SetVec3S(int paramIndex, Vec3S value) { SetParam(paramIndex, value); }
         public void SetVec3S(string name, Vec3S value) { SetParam(name, value); }
-        public Vec3S GetVec3S(string name, Vec3S defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec3S GetVec3S(string name, Vec3S defValue = default(Vec3S)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec4S
         public void AddVec4S(string name, Vec4S value) { AddParamByName(name, value); }
         public void SetVec4S(int paramIndex, Vec4S value) { SetParam(paramIndex, value); }
         public void SetVec4S(string name, Vec4S value) { SetParam(name, value); }
-        public Vec4S GetVec4S(string name, Vec4S defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec4S GetVec4S(string name, Vec4S defValue = default(Vec4S)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec2U
         public void AddVec2U(string name, Vec2U value) { AddParamByName(name, value); }
         public void SetVec2U(int paramIndex, Vec2U value) { SetParam(paramIndex, value); }
         public void SetVec2U(string name, Vec2U value) { SetParam(name, value); }
-        public Vec2U GetVec2U(string name, Vec2U defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec2U GetVec2U(string name, Vec2U defValue = default(Vec2U)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec3U
         public void AddVec3U(string name, Vec3U value) { AddParamByName(name, value); }
         public void SetVec3U(int paramIndex, Vec3U value) { SetParam(paramIndex, value); }
         public void SetVec3U(string name, Vec3U value) { SetParam(name, value); }
-        public Vec3U GetVec3U(string name, Vec3U defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec3U GetVec3U(string name, Vec3U defValue = default(Vec3U)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec4U
         public void AddVec4U(string name, Vec4U value) { AddParamByName(name, value); }
         public void SetVec4U(int paramIndex, Vec4U value) { SetParam(paramIndex, value); }
         public void SetVec4U(string name, Vec4U value) { SetParam(name, value); }
-        public Vec4U GetVec4U(string name, Vec4U defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec4U GetVec4U(string name, Vec4U defValue = default(Vec4U)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec2F
         public void AddVec2F(string name, Vec2F value) { AddParamByName(name, value); }
         public void SetVec2F(int paramIndex, Vec2F value) { SetParam(paramIndex, value); }
         public void SetVec2F(string name, Vec2F value) { SetParam(name, value); }
-        public Vec2F GetVec2F(string name, Vec2F defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec2F GetVec2F(string name, Vec2F defValue = default(Vec2F)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec3F
         public void AddVec3F(string name, Vec3F value) { AddParamByName(name, value); }
         public void SetVec3F(int paramIndex, Vec3F value) { SetParam(paramIndex, value); }
         public void SetVec3F(string name, Vec3F value) { SetParam(name, value); }
-        public Vec3F GetVec3F(string name, Vec3F defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec3F GetVec3F(string name, Vec3F defValue = default(Vec3F)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec4F
         public void AddVec4F(string name, Vec4F value) { AddParamByName(name, value); }
         public void SetVec4F(int paramIndex, Vec4F value) { SetParam(paramIndex, value); }
         public void SetVec4F(string name, Vec4F value) { SetParam(name, value); }
-        public Vec4F GetVec4F(string name, Vec4F defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec4F GetVec4F(string name, Vec4F defValue = default(Vec4F)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec2B
         public void AddVec2B(string name, Vec2B value) { AddParamByName(name, value); }
         public void SetVec2B(int paramIndex, Vec2B value) { SetParam(paramIndex, value); }
         public void SetVec2B(string name, Vec2B value) { SetParam(name, value); }
-        public Vec2B GetVec2B(string name, Vec2B defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec2B GetVec2B(string name, Vec2B defValue = default(Vec2B)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec3B
         public void AddVec3B(string name, Vec3B value) { AddParamByName(name, value); }
         public void SetVec3B(int paramIndex, Vec3B value) { SetParam(paramIndex, value); }
         public void SetVec3B(string name, Vec3B value) { SetParam(name, value); }
-        public Vec3B GetVec3B(string name, Vec3B defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec3B GetVec3B(string name, Vec3B defValue = default(Vec3B)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Vec4B
         public void AddVec4B(string name, Vec4B value) { AddParamByName(name, value); }
         public void SetVec4B(int paramIndex, Vec4B value) { SetParam(paramIndex, value); }
         public void SetVec4B(string name, Vec4B value) { SetParam(name, value); }
-        public Vec4B GetVec4B(string name, Vec4B defValue = default) { return GetParamValueByName(name, defValue); }
+        public Vec4B GetVec4B(string name, Vec4B defValue = default(Vec4B)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Mat3F
         public void AddMat3F(string name, Mat3F value) { AddParamByName(name, value); }
         public void SetMat3F(int paramIndex, Mat3F value) { SetParam(paramIndex, value); }
         public void SetMat3F(string name, Mat3F value) { SetParam(name, value); }
-        public Mat3F GetMat3F(string name, Mat3F defValue = default) { return GetParamValueByName(name, defValue); }
+        public Mat3F GetMat3F(string name, Mat3F defValue = default(Mat3F)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param Mat4F
         public void AddMat4F(string name, Mat4F value) { AddParamByName(name, value); }
         public void SetMat4F(int paramIndex, Mat4F value) { SetParam(paramIndex, value); }
         public void SetMat4F(string name, Mat4F value) { SetParam(name, value); }
-        public Mat4F GetMat4F(string name, Mat4F defValue = default) { return GetParamValueByName(name, defValue); }
+        public Mat4F GetMat4F(string name, Mat4F defValue = default(Mat4F)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param TMat
         public void AddTMat(string name, TMat value) { AddParamByName(name, value); }
         public void SetTMat(int paramIndex, TMat value) { SetParam(paramIndex, value); }
         public void SetTMat(string name, TMat value) { SetParam(name, value); }
-        public TMat GetTMat(string name, TMat defValue = default) { return GetParamValueByName(name, defValue); }
+        public TMat GetTMat(string name, TMat defValue = default(TMat)) { return GetParamValueByName(name, defValue); }
         #endregion
         #region Param String
         public void AddString(string name, string value) { AddParamByName(name, value); }
         public void AddString(string name, byte[] value) { AddString(name, Encoding.ASCII.GetString(value)); }
         public void SetString(int paramIndex, string value) { SetParam(paramIndex, value); }
         public void SetString(string name, string value) { SetParam(name, value); }
-        public string GetString(string name, string defValue = default) { return GetParamValueByName(name, defValue); }
-        public string GetString(int paramIndex, string defValue = default) { return GetParamValue(paramIndex, defValue); }
+        public string GetString(string name, string defValue = default(string)) { return GetParamValueByName(name, defValue); }
+        public string GetString(int paramIndex, string defValue = default(string)) { return GetParamValue(paramIndex, defValue); }
         #endregion
 
 

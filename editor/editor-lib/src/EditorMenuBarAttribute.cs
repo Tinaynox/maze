@@ -15,9 +15,9 @@ namespace Maze.Editor
         public string Option => m_Option;
 
         public EditorMenuBarAttribute(
-            string menuName = default,
-            string optionPath = default,
-            string option = default)
+            string menuName = default(string),
+            string optionPath = default(string),
+            string option = default(string))
         {
             m_MenuName = menuName;
             m_OptionPath = optionPath;
