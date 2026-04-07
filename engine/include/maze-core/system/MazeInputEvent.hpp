@@ -135,19 +135,19 @@ namespace Maze
     {
         enum Enum
         {
-            None            = MAZE_BIT(0),
-            CapsLockOn      = MAZE_BIT(1),
-            NumLockOn       = MAZE_BIT(2),
-            ScrollLockOn    = MAZE_BIT(3),
-            ShiftDown       = MAZE_BIT(4),
-            ControlDown     = MAZE_BIT(5),
-            AltDown         = MAZE_BIT(6),
-            CommandDown     = MAZE_BIT(7),
-            FnDown          = MAZE_BIT(8),
-            IsKeyPad        = MAZE_BIT(9),
-            IsLeft          = MAZE_BIT(10),
-            IsRight         = MAZE_BIT(11),
-            IsKeyRepeat     = MAZE_BIT(12),
+            None            = 0,
+            CapsLockOn      = MAZE_BIT(0),
+            NumLockOn       = MAZE_BIT(1),
+            ScrollLockOn    = MAZE_BIT(2),
+            ShiftDown       = MAZE_BIT(3),
+            ControlDown     = MAZE_BIT(4),
+            AltDown         = MAZE_BIT(5),
+            CommandDown     = MAZE_BIT(6),
+            FnDown          = MAZE_BIT(7),
+            IsKeyPad        = MAZE_BIT(8),
+            IsLeft          = MAZE_BIT(9),
+            IsRight         = MAZE_BIT(10),
+            IsKeyRepeat     = MAZE_BIT(11),
 
             MAX
         };

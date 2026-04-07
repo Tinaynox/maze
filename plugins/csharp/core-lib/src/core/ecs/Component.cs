@@ -4,6 +4,13 @@ using Maze;
 
 namespace Maze.Core
 {
+    [Flags]
+    public enum ComponentFlags : byte
+    {
+        None = 0,
+        SerializationDisabled = 1 << 0,
+    }
+
     public class Component
     {
         public EcsScene Scene => GetScene();
@@ -140,6 +147,16 @@ namespace Maze.Core
             GCHandle handle = GCHandle.Alloc(monoEvent);
             InternalCalls.ComponentBroadcastMonoEventImmediate(NativeComponentPtr, GCHandle.ToIntPtr(handle));
             // handle.Free(); // We free it in MonoEvent::~MonoEvent
+        }
+
+        public void SetFlag(ComponentFlags flag, bool value)
+        {
+            InternalCalls.ComponentSetFlag(NativeComponentPtr, (byte)flag, value);
+        }
+
+        public bool GetFlag(ComponentFlags flag)
+        {
+            return InternalCalls.ComponentGetFlag(NativeComponentPtr, (byte)flag);
         }
 
         public bool IsEditorMode()

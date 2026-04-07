@@ -439,6 +439,18 @@ namespace Maze
         return false;
     }
 
+    //////////////////////////////////////////
+    inline void ComponentSetFlag(Component* _component, U8 _flag, bool _value)
+    {
+		_component->setFlag(static_cast<Component::Flags>(_flag), _value);
+    }
+
+    //////////////////////////////////////////
+    inline bool ComponentGetFlag(Component* _component, U8 _flag)
+    {
+		return _component->getFlag(static_cast<Component::Flags>(_flag));
+    }
+
 
     //////////////////////////////////////////
     inline S32 Transform2DGetChildrenCount(Component* _component)
@@ -710,6 +722,8 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(ComponentBroadcastMonoEvent);
         MAZE_CORE_MONO_BIND_FUNC(ComponentBroadcastMonoEventImmediate);
         MAZE_CORE_MONO_BIND_FUNC(ComponentIsEditorMode);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentSetFlag);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentGetFlag);
 
         // Transform2D
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChildrenCount);

@@ -15,18 +15,18 @@ namespace Maze.Core
     {
         None                = 0u,
 
-        CapsLockOn          = 1u << 1,
-        NumLockOn           = 1u << 2,
-        ScrollLockOn        = 1u << 3,
-        ShiftDown           = 1u << 4,
-        ControlDown         = 1u << 5,
-        AltDown             = 1u << 6,
-        CommandDown         = 1u << 7,
-        FnDown              = 1u << 8,
-        IsKeyPad            = 1u << 9,
-        IsLeft              = 1u << 10,
-        IsRight             = 1u << 11,
-        IsKeyRepeat         = 1u << 12,
+        CapsLockOn          = 1u << 0,
+        NumLockOn           = 1u << 1,
+        ScrollLockOn        = 1u << 2,
+        ShiftDown           = 1u << 3,
+        ControlDown         = 1u << 4,
+        AltDown             = 1u << 5,
+        CommandDown         = 1u << 6,
+        FnDown              = 1u << 7,
+        IsKeyPad            = 1u << 8,
+        IsLeft              = 1u << 9,
+        IsRight             = 1u << 10,
+        IsKeyRepeat         = 1u << 11,
     }
 
     public class InputKeyboardEvent : NativeEvent

@@ -185,7 +185,7 @@ namespace Maze
         friend class Entity;
 
         //////////////////////////////////////////
-        enum class Flags
+        enum class Flags : U8
         {
             None = 0,
 

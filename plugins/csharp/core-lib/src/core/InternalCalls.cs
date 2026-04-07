@@ -119,6 +119,12 @@ namespace Maze.Core
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool ComponentIsEditorMode(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void ComponentSetFlag(NativePtr nativeComponentPtr, byte flag, bool value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool ComponentGetFlag(NativePtr nativeComponentPtr, byte flag);
         #endregion
 
         #region Transform2D
