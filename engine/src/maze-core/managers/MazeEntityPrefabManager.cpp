@@ -207,15 +207,37 @@ namespace Maze
         EntityPrefabLibraryDataCallbacks const& _callbacks,
         DataBlock const& _info)
     {
-        SharedPtr<EntityPrefabLibraryData> data = MakeShared<EntityPrefabLibraryData>(_entity, _callbacks, _info);
+		auto existedIt = m_entityPrefabsLibrary.find(_name);
+        if (existedIt != m_entityPrefabsLibrary.end())
+        {
+            AssetUnitId prevUuid = existedIt->second->data.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
 
-        auto it = m_entityPrefabsLibrary.insert(_name, data);
+            // Update existed
+			existedIt->second->prefab = _entity;
+			existedIt->second->callbacks = _callbacks;
+			existedIt->second->data = _info;
 
-        AssetUnitId auid = _info.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
-        if (auid != c_invalidAssetUnitId)
-            m_entityPrefabsByAssetUnitId.emplace(auid, data);
+            AssetUnitId newAuid = _info.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
+            if (newAuid != prevUuid)
+            {
+                if (prevUuid != c_invalidAssetUnitId)
+                    m_entityPrefabsByAssetUnitId.erase(prevUuid);
+				m_entityPrefabsByAssetUnitId.emplace(newAuid, existedIt->second);
+            }
 
-        return it->get();
+			return existedIt->second.get();
+        }
+        else
+        {
+            SharedPtr<EntityPrefabLibraryData> data = MakeShared<EntityPrefabLibraryData>(_entity, _callbacks, _info);
+            auto it = m_entityPrefabsLibrary.insert(_name, data);
+
+            AssetUnitId auid = _info.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
+            if (auid != c_invalidAssetUnitId)
+                m_entityPrefabsByAssetUnitId.emplace(auid, data);
+
+            return it->get();
+        }
     }
 
     //////////////////////////////////////////

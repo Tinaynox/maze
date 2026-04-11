@@ -243,5 +243,20 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    bool AssetUnitManager::findAssetUnit(ClassUID _assetUnitClassUID, std::function<bool(AssetUnitPtr const&)> _fn) const
+    {
+        for (auto it : m_assetUnitsByName)
+        {
+            if (it.second->getClassUID() == _assetUnitClassUID)
+            {
+                if (_fn(it.second))
+                    return true;
+			}
+        }
+
+        return false;
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

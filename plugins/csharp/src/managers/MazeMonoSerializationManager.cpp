@@ -30,13 +30,15 @@
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
+#include "maze-core/ecs/events/MazeEcsInputEvents.hpp"
 #include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
+#include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/serialization/MazeDataBlockBinarySerialization.hpp"
 #include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/math/MazeAABB3D.hpp"
-#include "maze-core/ecs/events/MazeEcsInputEvents.hpp"
+#include "maze-core/assets/MazeAssetUnitEntityPrefab.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
@@ -716,6 +718,18 @@ namespace Maze
         else
         if (_eventUID == ClassInfo<MonoShutdownEvent>::UID())
         {
+            if (AssetUnitManager::GetInstancePtr())
+            {
+                AssetUnitManager::GetInstancePtr()->iterateAssetUnits<AssetUnitEntityPrefab>(
+                    [](AssetUnitEntityPrefab& _assetUnit)
+                    {
+                        if (!_assetUnit.isLoaded())
+                            return;
+
+						_assetUnit.unloadNow();
+					});
+            }
+
             m_propertyDataBlockSerializationData.clear();
             m_fieldDataBlockSerializationData.clear();
             m_propertyDataBlockSubClassSerializationData.clear();

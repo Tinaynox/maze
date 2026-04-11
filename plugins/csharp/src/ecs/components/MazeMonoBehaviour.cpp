@@ -274,7 +274,7 @@ namespace Maze
     void MonoBehaviour::setSerializableData(DataBlock const& _dataBlock)
     {
         if (!getEntityRaw())
-            return;
+            return; // Waiting for entity will be created (MonoBehaviour::processPostCopy)
 
         if (m_monoClass && m_monoInstance)
         {

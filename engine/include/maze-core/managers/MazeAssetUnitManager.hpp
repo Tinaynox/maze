@@ -115,6 +115,24 @@ namespace Maze
         //////////////////////////////////////////
         inline bool getGenerateIdsForNewAssetUnits() const { return m_generateIdsForNewAssetUnits; }
 
+
+        //////////////////////////////////////////
+        bool findAssetUnit(ClassUID _assetUnitClassUID, std::function<bool(AssetUnitPtr const&)> _fn) const;
+
+        //////////////////////////////////////////
+		template <typename TAssetUnit>
+        bool findAssetUnit(std::function<bool(AssetUnitPtr const&)> const& _fn)
+        {
+			return findAssetUnit(ClassInfo<TAssetUnit>::UID(), _fn);
+        }
+
+        //////////////////////////////////////////
+        template <typename TAssetUnit>
+        void iterateAssetUnits(std::function<void(TAssetUnit&)> const& _fn)
+        {
+            findAssetUnit(ClassInfo<TAssetUnit>::UID(), [_fn](AssetUnitPtr const& _assetUnit) { _fn(*_assetUnit->castRaw<TAssetUnit>()); return false; });
+        }
+
     public:
         MultiDelegate<AssetUnitPtr const&> eventAssetUnitAdded;
         MultiDelegate<AssetUnitId, AssetUnitPtr> eventAssetUnitWillBeRemoved;
