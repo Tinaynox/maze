@@ -575,6 +575,24 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TComponent>
+        inline TComponent* findComponentRawRecursive()
+        {
+            TComponent* component = this->getEntityRaw()->template getComponentRawInheritedFrom<TComponent>();
+            if (component)
+                return component;
+
+            for (Transform2D* transform : m_children)
+            {
+                component = transform->template findComponentRawRecursive<TComponent>();
+                if (component)
+                    return component;
+            }
+
+            return nullptr;
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
         inline TComponent* getFirstTrunkComponent()
         {
             TComponent* component = this->getEntityRaw()->template getComponentRaw<TComponent>();

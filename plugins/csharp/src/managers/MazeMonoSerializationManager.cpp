@@ -726,7 +726,8 @@ namespace Maze
                         if (!_assetUnit.isLoaded())
                             return;
 
-						_assetUnit.unloadNow();
+                        if (EcsHelper::FindComponentRawRecursive<MonoBehaviour>(_assetUnit.getPrefab().get()))
+						    _assetUnit.unloadNow();
 					});
             }
 

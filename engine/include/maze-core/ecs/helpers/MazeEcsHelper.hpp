@@ -113,6 +113,22 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <typename TComponent>
+        inline TComponent* FindComponentRawRecursive(Entity* _entity)
+        {
+            if (TComponent* component = _entity->getComponentRaw<TComponent>())
+                return component;
+
+            if (Transform2D* transform2D = _entity->getComponentRaw<Transform2D>())
+                return transform2D->findComponentRawRecursive<TComponent>();
+            
+            if (Transform3D* transform3D = _entity->getComponentRaw<Transform3D>())
+                return transform3D->findComponentRawRecursive<TComponent>();
+
+			return nullptr;
+        }
+
+        //////////////////////////////////////////
         MAZE_CORE_API Entity* FindEntityWithSerializationId(Entity* _entity, EcsSerializationId _sid);
 
         //////////////////////////////////////////
