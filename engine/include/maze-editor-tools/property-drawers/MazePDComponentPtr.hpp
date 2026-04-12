@@ -95,6 +95,13 @@ namespace Maze
         ////////////////////////////////////////////
         inline ComponentId getComponentId() const { return m_componentId; }
 
+
+        ////////////////////////////////////////////
+        virtual bool toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+        ////////////////////////////////////////////
+        virtual bool setDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////

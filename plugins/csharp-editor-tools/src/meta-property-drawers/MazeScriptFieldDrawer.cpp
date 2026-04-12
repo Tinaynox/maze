@@ -90,6 +90,12 @@ namespace Maze
         m_callbacks = _callbacks;
         
         m_drawer = m_callbacks.createDrawerCb(_scriptField->getMonoType(), _data);
+        if (!m_drawer)
+        {
+            Debug::LogError("Failed to create ScriptFieldDrawer for type '%s'!", _scriptField->getTypeName().c_str());
+            return false;
+        }
+
         m_drawer->eventUIData.subscribe(this, &ScriptFieldDrawer::processDataFromUI);
 
         return true;

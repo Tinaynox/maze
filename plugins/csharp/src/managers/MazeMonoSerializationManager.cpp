@@ -216,7 +216,7 @@ namespace Maze
                         MonoObject* listMonoObject = nullptr;
                         _instance.getPropertyValue(_prop, listMonoObject);
                         if (listMonoObject)
-                            MonoHelper::DeserializeDataBlockToMonoObjectList(*listDataBlock, listMonoObject);
+                            MonoHelper::DeserializeDataBlockToMonoObjectList(_world, *listDataBlock, listMonoObject);
                     }
                     else
                     {
@@ -241,7 +241,7 @@ namespace Maze
                         MonoObject* listMonoObject = nullptr;
                         _instance.getFieldValue(_field, listMonoObject);
                         if (listMonoObject)
-                            MonoHelper::DeserializeDataBlockToMonoObjectList(*listDataBlock, listMonoObject);
+                            MonoHelper::DeserializeDataBlockToMonoObjectList(_world, *listDataBlock, listMonoObject);
                     }
                     else
                     {
@@ -1167,6 +1167,14 @@ namespace Maze
                 else
                 {
                     MAZE_WARNING("Unsupported generic type serialization - %s!", monoTypeBaseNameBuffer);
+                }
+            }
+            else
+            {
+                MonoClass* componentClass = MonoEngine::GetComponentClass()->getMonoClass();
+                if (mono_class_is_subclass_of(objectClass, componentClass, false))
+                {
+                    MonoHelper::SerializeMonoObjectComponentToDataBlock(_object, _dataBlock);
                 }
             }
         }

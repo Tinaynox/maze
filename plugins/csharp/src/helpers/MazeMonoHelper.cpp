@@ -25,6 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeCSharpHeader.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptProperty.hpp"
@@ -668,6 +669,7 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void DeserializeDataBlockToMonoObjectList(
+            EcsWorld* _world,
             DataBlock const& _dataBlock,
             MonoObject* _value)
         {
@@ -691,7 +693,7 @@ namespace Maze
                             itemExists = true;
                         };
 
-                    if (childData->getParamsCount() == 1)
+                    if (childData->getParamsCount() == 1 && childData->getDataBlocksCount() == 0)
                     {
                         DataBlock::Param const& paramData = childData->getParam(0);
                         switch ((DataBlockParamType)paramData.type)
@@ -734,9 +736,24 @@ namespace Maze
                         }
                     }
                     else
-                    if (childData->getDataBlocksCount() == 1)
+                    if (childData->getDataBlocksCount() == 1 && childData->getParamsCount() == 0)
                     {
                         MAZE_NOT_IMPLEMENTED;
+                    }
+                    else
+                    if (childData->getParamsCount() > 0 || childData->getDataBlocksCount() > 0)
+                    {
+                        Component* component = EcsHelper::DeserializeComponentFromDataBlock(_world, *childData);
+                        if (component)
+                        {
+                            MonoClass* elementClass = GetMonoGenericClassFirstGenericArgumentClass(listMonoClass);
+                            if (elementClass)
+                            {
+                                MonoType* elementMonoType = mono_class_get_type(elementClass);
+                                MonoObject* elementValue = GetComponentByType(component, elementMonoType);
+                                invokeMethodWithValue(elementValue);
+                            }
+                        }
                     }
 
                     if (!itemExists)
@@ -769,6 +786,26 @@ namespace Maze
                 // List with param values are not supported yet
                 MAZE_NOT_IMPLEMENTED;
             }
+        }
+
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void SerializeMonoObjectComponentToDataBlock(
+            MonoObject* _value,
+            DataBlock& _dataBlock)
+        {
+            if (!_value)
+                return;
+
+            MonoProperty* componentPtrProperty = MonoEngine::GetNativeComponentPtrProperty()->getMonoProperty();
+            MonoObject* result = mono_property_get_value(componentPtrProperty, _value, nullptr, nullptr);
+            if (!result)
+                return;
+
+            Component* component = *(Component**)mono_object_unbox(result);
+            EcsHelper::SerializeComponentToDataBlock(_dataBlock, component);
+            if (component && component->getEntityRaw() && component->getEntityRaw()->getEcsWorld())
+                _dataBlock.setU8(MAZE_HCS("world"), (U8)component->getEntityRaw()->getEcsWorld()->getId());
         }
 
 

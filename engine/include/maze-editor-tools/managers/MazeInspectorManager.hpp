@@ -44,6 +44,8 @@
 #include "maze-editor-tools/property-drawers/MazePDVec2U32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDTexture2D.hpp"
 #include "maze-editor-tools/property-drawers/MazePDFontMaterial.hpp"
+#include "maze-editor-tools/property-drawers/MazePDEntityId.hpp"
+#include "maze-editor-tools/property-drawers/MazePDComponentPtr.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDDefault.hpp"
 #include "maze-ui/ecs/components/MazeMenuListTree2D.hpp"
 #include <functional>
@@ -81,6 +83,9 @@ namespace Maze
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Vec2U, PropertyDrawerVec2U32>;
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Texture2DPtr, PropertyDrawerTexture2D>;
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<FontMaterialPtr, PropertyDrawerFontMaterial>;
+    template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<FontMaterialAssetRef, PropertyDrawerFontMaterialAssetRef>;
+    template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<EntityId, PropertyDrawerEntityId>;
+    template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<ComponentPtr, PropertyDrawerComponentPtr>;
 
 
     //////////////////////////////////////////

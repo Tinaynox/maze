@@ -48,6 +48,7 @@
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
+#include "maze-editor-tools/property-drawers/MazePDComponentPtr.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 
@@ -104,7 +105,22 @@ namespace Maze
         HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
         
         ClassUID childPropertyClassUID = MonoEngine::GetCppTypeBindingClassUID(monoTypeBaseNameHCS);
-        MAZE_ERROR_RETURN_VALUE_IF(childPropertyClassUID == 0, false, "Undefined binding for monoType=%s", monoTypeBaseNameBuffer);
+
+        if (childPropertyClassUID == 0)
+        {
+            ScriptClassPtr const& scriptClass = MonoEngine::GetMonoBehaviourSubClass(monoTypeBaseNameHCS);
+            if (scriptClass)
+            {
+                ComponentId componentId = GetComponentIdByName(monoTypeBaseNameBuffer);
+                childPropertyClassUID = ClassInfo<ComponentPtr>::UID();
+                m_childPropertyDataBlock.setS32(MAZE_HCS("componentId"), (S32)componentId);
+            }
+            else
+            {
+                MAZE_ERROR("Undefined binding for monoType=%s", monoTypeBaseNameBuffer);
+                return false;
+            }
+        }
 
         if (!PropertyDrawerVector::init(childPropertyClassUID, _dataBlock))
             return false;

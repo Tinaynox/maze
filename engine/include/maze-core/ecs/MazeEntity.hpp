@@ -187,6 +187,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline Component* getComponentRawById(ComponentId _id) const
+        {
+            ComponentsContainer::const_iterator it = m_components.find(_id);
+
+            static ComponentPtr const nullPointer;
+            if (it == m_components.end())
+                return nullptr;
+
+            return it->second.get();
+        }
+
+        //////////////////////////////////////////
         template <typename TComponent>
         inline SharedPtr<TComponent> getComponent() const
         {
@@ -232,13 +244,32 @@ namespace Maze
         }
         */
 
+        //////////////////////////////////////////
+        inline Component* getComponentRawInheritedFrom(ComponentId _id) const
+        {
+            for (auto const& componentData : m_components)
+            {
+                if (componentData.first == _id)
+                    return componentData.second.get();
+
+                if (componentData.second->getMetaClass()->isInheritedFrom(_id))
+                    return componentData.second.get();
+            }
+
+            return getComponentRawById(_id);
+        }
 
         //////////////////////////////////////////
         inline ComponentPtr getComponentInheritedFrom(ComponentId _id) const
         {
             for (auto const& componentData : m_components)
+            {
+                if (componentData.first == _id)
+                    return componentData.second;
+
                 if (componentData.second->getMetaClass()->isInheritedFrom(_id))
                     return componentData.second;
+            }
 
             return getComponentById(_id);
         }

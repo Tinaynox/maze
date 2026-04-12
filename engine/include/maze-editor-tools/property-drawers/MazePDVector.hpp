@@ -127,6 +127,7 @@ namespace Maze
 
     protected:
         ClassUID m_childPropertyClassUID = 0;
+        DataBlock m_childPropertyDataBlock;
 
         SpriteRenderer2DPtr m_expandButtonSprite;
         ClickButton2DPtr m_expandButton;

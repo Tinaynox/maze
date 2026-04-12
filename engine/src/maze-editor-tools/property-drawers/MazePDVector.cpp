@@ -285,7 +285,7 @@ namespace Maze
         {
             while (itemDrawersCount < _count)
             {
-                DataBlock data;
+                DataBlock data = m_childPropertyDataBlock;
                 data.setString(MAZE_HCS("label"), "Element" + StringHelper::ToString((U32)m_itemDrawers.size()));
                 PropertyDrawerPtr itemDrawer = InspectorManager::GetInstancePtr()->createPropertyDrawer(
                     m_childPropertyClassUID,
@@ -295,6 +295,10 @@ namespace Maze
                 {
                     itemDrawer->eventUIData.subscribe(this, &PropertyDrawerVector::processItemPropertyUIData);
                     m_itemDrawers.push_back(itemDrawer);
+                }
+                else
+                {
+                    Debug::LogWarning("PropertyDrawerVector: undefined PropertyDrawerVector for type ClassUID=%u", (U32)m_childPropertyClassUID);
                 }
 
                 ++itemDrawersCount;

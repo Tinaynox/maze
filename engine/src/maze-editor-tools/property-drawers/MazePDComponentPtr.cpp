@@ -271,6 +271,58 @@ namespace Maze
         return entity->getComponentInheritedFrom(m_componentId);
     }
 
+    ////////////////////////////////////////////
+    bool PropertyDrawerComponentPtr::toDataBlock(DataBlock& _dataBlock) const
+    {
+        if (m_entityId == c_invalidEntityId || m_componentId == c_invalidComponentId)
+        {
+            _dataBlock.clearData();
+            return true;
+        }
+
+        EcsWorld* world = EcsWorld::GetEcsWorld(m_worldId);
+        if (!world)
+            return false;
+
+        EntityPtr const& entity = world->getEntity(m_entityId);
+        if (!entity)
+            return false;
+
+        Component* component = entity->getComponentRawInheritedFrom(m_componentId);
+        if (!component)
+            return false;
+
+        EcsHelper::SerializeComponentToDataBlock(_dataBlock, component);
+         _dataBlock.setU8(MAZE_HCS("world"), (U8)world->getId());
+
+        return true;
+    }
+
+    ////////////////////////////////////////////
+    bool PropertyDrawerComponentPtr::setDataBlock(DataBlock const& _dataBlock)
+    {
+        if (_dataBlock.isEmpty())
+        {
+            setValue(nullptr);
+            return true;
+        }
+
+        EcsWorldId worldId(_dataBlock.getU8(MAZE_HCS("world"), m_worldId));
+        EcsWorld* world = EcsWorld::GetEcsWorld(worldId);
+        if (!world)
+            return false;
+
+        Component* component = EcsHelper::DeserializeComponentFromDataBlock(world, _dataBlock);
+        if (!component)
+        {
+            setValue(nullptr);
+            return false;
+        }
+
+        setValue(component->getSharedPtr());
+        return true;
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

@@ -550,6 +550,9 @@ namespace Maze
     MAZE_FORCEINLINE typename ::std::enable_if<(!StdHelper::HasDefaultConstructor<UValue>::value), void>::type
         ValueFromDataBlock(SharedPtr<UValue>& _value, DataBlock const& _data)
     {
+        if (!_value && _data.isEmpty())
+            return;
+
         MAZE_ERROR_RETURN_IF(!_value, "%s class has no default constructor to make shared ptr", static_cast<CString>(ClassInfo<UValue>::Name()));
         TryValueFromDataBlock<UValue>(*_value.get(), _data);
     }

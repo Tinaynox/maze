@@ -539,7 +539,11 @@ namespace Maze
                 {
                     DataBlock dataBlock;
                     _drawer->toDataBlock(dataBlock);
-                    MonoHelper::DeserializeDataBlockToMonoObjectList(dataBlock, listMonoObject);
+                    MonoHelper::DeserializeDataBlockToMonoObjectList(_world, dataBlock, listMonoObject);
+                }
+                else
+                {
+                    Debug::LogWarning("NOT IMPLEMENTED: List is not exists - serialization is not available.");
                 }
             },
             [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerCSharpList* _drawer)
@@ -563,7 +567,11 @@ namespace Maze
                 {
                     DataBlock dataBlock;
                     _drawer->toDataBlock(dataBlock);
-                    MonoHelper::DeserializeDataBlockToMonoObjectList(dataBlock, listMonoObject);
+                    MonoHelper::DeserializeDataBlockToMonoObjectList(_world, dataBlock, listMonoObject);
+                }
+                else
+                {
+                    Debug::LogWarning("NOT IMPLEMENTED: List is not exists - serialization is not available.");
                 }
             },
             [](MonoType* _monoType, DataBlock const& _dataBlock)

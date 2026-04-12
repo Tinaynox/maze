@@ -58,7 +58,6 @@
 #include "maze-editor-tools/property-drawers/MazePDTexture2D.hpp"
 #include "maze-editor-tools/property-drawers/MazePDSprite.hpp"
 #include "maze-editor-tools/property-drawers/MazePDFontMaterial.hpp"
-#include "maze-editor-tools/property-drawers/MazePDEntityId.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDBool.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDS32.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMPDF32.hpp"
@@ -193,6 +192,14 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    using MetaPropertyDrawerComponentPtr =
+        MetaPropertyDrawerDefault<
+        ComponentPtr,
+        PropertyDrawerComponentPtr>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerComponentPtr, MetaPropertyDrawer);
+
+
+    //////////////////////////////////////////
     // Class InspectorManager
     //
     //////////////////////////////////////////
@@ -248,6 +255,7 @@ namespace Maze
         registerPropertyDrawer<FontMaterialPtr, PropertyDrawerFontMaterial>();
         registerPropertyDrawer<FontMaterialAssetRef, PropertyDrawerFontMaterialAssetRef>();
         registerPropertyDrawer<EntityId, PropertyDrawerEntityId>();
+        registerPropertyDrawer<ComponentPtr, PropertyDrawerComponentPtr>();
 
         registerMetaPropertyDrawer<bool, MetaPropertyDrawerBool>();
         registerMetaPropertyDrawer<S32, MetaPropertyDrawerS32>();
@@ -277,6 +285,7 @@ namespace Maze
         registerMetaPropertyDrawer<FontMaterialPtr, MetaPropertyDrawerFontMaterial>();
         registerMetaPropertyDrawer<FontMaterialAssetRef, MetaPropertyDrawerFontMaterialAssetRef>();
         registerMetaPropertyDrawer<EntityId, MetaPropertyDrawerEntityId>();
+        registerMetaPropertyDrawer<ComponentPtr, MetaPropertyDrawerComponentPtr>();
 
         registerComponentEditor<Transform3D, ComponentEditorTransform3D>();
         registerComponentEditor<Camera3D, ComponentEditorCamera3D>();

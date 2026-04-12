@@ -234,7 +234,11 @@ namespace Maze
         MAZE_PLUGIN_CSHARP_API void SerializeMonoObjectListToDataBlock(MonoObject* _value, DataBlock& _dataBlock);
 
         //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void DeserializeDataBlockToMonoObjectList(DataBlock const& _dataBlock, MonoObject* _value);
+        MAZE_PLUGIN_CSHARP_API void DeserializeDataBlockToMonoObjectList(EcsWorld* _world, DataBlock const& _dataBlock, MonoObject* _value);
+
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void SerializeMonoObjectComponentToDataBlock(MonoObject* _value, DataBlock& _dataBlock);
 
 
         //////////////////////////////////////////

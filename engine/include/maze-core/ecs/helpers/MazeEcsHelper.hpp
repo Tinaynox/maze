@@ -80,16 +80,22 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock* EnsureComponentBlock(DataBlock& _data, CString _name);
+        MAZE_CORE_API DataBlock* EnsureComponentBlock(DataBlock& _parentBlock, CString _name);
 
         //////////////////////////////////////////
-        MAZE_CORE_API void SerializeComponentToDataBlock(DataBlock& _data, CString _name, Component* _component);
+        MAZE_CORE_API void SerializeComponentToDataBlock(DataBlock& _cmpBlock, Component* _component);
 
         //////////////////////////////////////////
-        MAZE_CORE_API DataBlock const* GetComponentBlock(DataBlock const& _data, CString _name);
+        MAZE_CORE_API void SerializeComponentToDataBlock(DataBlock& _parentBlock, CString _name, Component* _component);
 
         //////////////////////////////////////////
-        MAZE_CORE_API Component* DeserializeComponentFromDataBlock(EcsWorld* _ecsWorld, DataBlock const& _data, CString _name);
+        MAZE_CORE_API DataBlock const* GetComponentBlock(DataBlock const& _parentBlock, CString _name);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API Component* DeserializeComponentFromDataBlock(EcsWorld* _ecsWorld, DataBlock const& _cmpBlock);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API Component* DeserializeComponentFromDataBlock(EcsWorld* _ecsWorld, DataBlock const& _parentBlock, CString _name);
 
 
         //////////////////////////////////////////

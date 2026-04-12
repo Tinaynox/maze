@@ -519,6 +519,9 @@ namespace Maze
         {
             if (StringHelper::IsEndsWith(subBlock->getName().str, ":EntityId"))
             {
+                if (_dataBlock.getU8(MAZE_HCS("world"), c_invalidWorldId) != c_invalidWorldId)
+                    _dataBlock.removeParam(MAZE_HCS("world"));
+
                 EntityId eid = EntityId(subBlock->getS32(MAZE_HCS("value"), (S32)c_invalidEntityId));
                 if (eid != c_invalidEntityId)
                 {
