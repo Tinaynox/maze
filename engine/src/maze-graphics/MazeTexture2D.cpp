@@ -155,8 +155,7 @@ namespace Maze
         MAZE_PROFILE_EVENT("Texture2D::loadEmpty");
 
         PixelSheet2D pixelSheet(_size, _pixelFormat);
-        loadTexture(pixelSheet, _pixelFormat);
-        return true;
+        return loadTexture(pixelSheet, _pixelFormat);
     }
 
     //////////////////////////////////////////

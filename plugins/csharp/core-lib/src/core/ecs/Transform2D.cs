@@ -52,9 +52,7 @@ namespace Maze.Core
 
         public void SetParent(Transform2D parent)
         {
-            // #TODO: Implement
-            Debug.LogWarning("Transform2D.SetParent not implemented");
-            // InternalCalls.Transform2DSetParent(NativeComponentPtr, parent.NativeComponentPtr);
+            InternalCalls.Transform2DSetParent(NativeComponentPtr, parent.NativeComponentPtr);
         }
 
         public Transform2D GetChild(int index)

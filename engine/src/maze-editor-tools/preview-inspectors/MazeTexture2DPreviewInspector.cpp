@@ -157,7 +157,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
                 Vec2F(scene->getCanvas()->getTransform()->getHeight()),
                 Vec2F::c_zero,
-                MaterialManager::GetCurrentInstance()->getSpriteMaterial(),
+                MaterialManager::GetCurrentInstance()->getSpriteMaterial()->createCopy(),
                 scene->getCanvas()->getTransform(),
                 scene.get(),
                 Vec2F(0.5f, 0.5f),

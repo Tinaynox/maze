@@ -451,6 +451,13 @@ namespace Maze
 		return _component->getFlag(static_cast<Component::Flags>(_flag));
     }
 
+    //////////////////////////////////////////
+    inline void Transform2DSetParent(Component* _component, Component* _parent)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        MAZE_ERROR_RETURN_IF(_parent->getClassUID() != ClassInfo<Transform2D>::UID(), "Component is not Transform2D!");
+        _component->castRaw<Transform2D>()->setParent(_parent ? _parent->cast<Transform2D>() : nullptr);
+    }
 
     //////////////////////////////////////////
     inline S32 Transform2DGetChildrenCount(Component* _component)
@@ -726,6 +733,7 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetFlag);
 
         // Transform2D
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DSetParent);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChildrenCount);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChild);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetSize);
