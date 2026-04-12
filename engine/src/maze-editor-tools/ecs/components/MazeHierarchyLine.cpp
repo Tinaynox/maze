@@ -708,6 +708,15 @@ namespace Maze
         m_indent = _indent;
 
         updateNodeContainerIndent();
+
+        if (m_childrenLayout)
+        {
+            for (Transform2D* childTransform : m_childrenLayout->getTransform()->getChildren())
+            {
+                if (HierarchyLine* childLine = childTransform->getEntityRaw()->getComponentRaw<HierarchyLine>())
+                    childLine->setIndent(m_indent + 1);
+            }
+        }
     }
 
     //////////////////////////////////////////
