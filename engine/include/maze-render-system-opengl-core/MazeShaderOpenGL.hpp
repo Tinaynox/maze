@@ -31,6 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGLCoreHeader.hpp"
+#include "maze-render-system-opengl-core/MazeHeaderOpenGL.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeShader.hpp"
 
