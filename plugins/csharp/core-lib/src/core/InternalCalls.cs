@@ -153,6 +153,18 @@ namespace Maze.Core
         public extern static void Transform2DSetScale(NativePtr nativeComponentPtr, ref Vec2F scale);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DGetPivot(NativePtr nativeComponentPtr, out Vec2F outPivot);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DSetPivot(NativePtr nativeComponentPtr, ref Vec2F pivot);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DGetAnchor(NativePtr nativeComponentPtr, out Vec2F outAnchor);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void Transform2DSetAnchor(NativePtr nativeComponentPtr, ref Vec2F anchor);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform2DSetParent(NativePtr nativeComponentPtr, NativePtr parentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

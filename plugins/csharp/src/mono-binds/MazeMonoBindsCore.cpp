@@ -516,6 +516,34 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void Transform2DGetAnchor(Component* _component, Vec2F& _outAnchor)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _outAnchor = _component->castRaw<Transform2D>()->getAnchor();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform2DSetAnchor(Component* _component, Vec2F const& _outAnchor)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _component->castRaw<Transform2D>()->setAnchor(_outAnchor);
+    }
+
+    //////////////////////////////////////////
+    inline void Transform2DGetPivot(Component* _component, Vec2F& _outPivot)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _outPivot = _component->castRaw<Transform2D>()->getPivot();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform2DSetPivot(Component* _component, Vec2F const& _outPivot)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _component->castRaw<Transform2D>()->setPivot(_outPivot);
+    }
+
+    //////////////////////////////////////////
     inline void Transform2DGetLocalTransform(Component* _component, TMat& _outTMat)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
@@ -742,6 +770,10 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(Transform2DSetPosition);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetScale);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DSetScale);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetAnchor);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DSetAnchor);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetPivot);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DSetPivot);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetLocalTransform);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DSetLocalTransform);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetWorldTransform);

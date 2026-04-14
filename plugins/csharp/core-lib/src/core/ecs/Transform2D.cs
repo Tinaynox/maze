@@ -32,6 +32,18 @@ namespace Maze.Core
             set { InternalCalls.Transform2DSetScale(NativeComponentPtr, ref value); }
         }
 
+        public Vec2F Anchor
+        {
+            get { InternalCalls.Transform2DGetAnchor(NativeComponentPtr, out Vec2F anchor); return anchor; }
+            set { InternalCalls.Transform2DSetAnchor(NativeComponentPtr, ref value); }
+        }
+
+        public Vec2F Pivot
+        {
+            get { InternalCalls.Transform2DGetPivot(NativeComponentPtr, out Vec2F pivot); return pivot; }
+            set { InternalCalls.Transform2DSetPivot(NativeComponentPtr, ref value); }
+        }
+
         public TMat Transform
         {
             get { InternalCalls.Transform2DGetLocalTransform(NativeComponentPtr, out TMat tm); return tm; }
