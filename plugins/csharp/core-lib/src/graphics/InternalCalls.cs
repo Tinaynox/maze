@@ -131,6 +131,12 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void SpriteRenderer2DGetSprite(NativePtr nativeComponentPtr, out int outSpriteResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SpriteRenderer2DSetColor(NativePtr nativeComponentPtr, uint color);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SpriteRenderer2DGetColor(NativePtr nativeComponentPtr, out uint outColor);
         #endregion
 
 

@@ -425,6 +425,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void SpriteRenderer2DGetColor(Component* _component, U32& _outColor)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SpriteRenderer2D);
+        _outColor = _component->castRaw<SpriteRenderer2D>()->getColor().toRGBA_U8();
+    }
+
+    //////////////////////////////////////////
+    inline void SpriteRenderer2DSetColor(Component* _component, U32 _color)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SpriteRenderer2D);
+
+        _component->castRaw<SpriteRenderer2D>()->setColor(ColorU32(_color));
+    }
+
+    //////////////////////////////////////////
     inline void SpriteRenderer2DGetSprite(Component* _component, S32& _outResourceId)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(SpriteRenderer2D);
@@ -1260,6 +1275,8 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DGetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DSetSprite);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DGetSprite);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DSetColor);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DGetColor);
 
         // Camera3D
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DGetOrthographicSize);

@@ -84,6 +84,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        explicit inline ColorU32(U32 _rgba)
+        {
+			setRGBA_U8(_rgba);
+        }
+
+        //////////////////////////////////////////
         inline ColorU32(ColorU32 const& _color, U8 _a)
             : r(_color.r)
             , g(_color.g)

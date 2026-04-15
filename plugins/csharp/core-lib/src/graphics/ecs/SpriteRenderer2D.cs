@@ -16,6 +16,12 @@ namespace Maze.Graphics
             set { InternalCalls.SpriteRenderer2DSetSprite(NativeComponentPtr, value.ResourceId); }
         }
 
+        public ColorU32 Color
+        {
+            get { InternalCalls.SpriteRenderer2DGetColor(NativeComponentPtr, out uint res); return new ColorU32(res); }
+            set { InternalCalls.SpriteRenderer2DSetColor(NativeComponentPtr, value.ToUInt()); }
+        }
+
         public SpriteRenderer2D(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
         {  
