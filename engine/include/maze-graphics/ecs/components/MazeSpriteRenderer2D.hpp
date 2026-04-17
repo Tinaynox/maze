@@ -208,6 +208,13 @@ namespace Maze
         //////////////////////////////////////////
         void setPixelPerfect(bool _value);
 
+
+        //////////////////////////////////////////
+        inline F32 getPixelsPerUnitMultiplier() const { return m_pixelsPerUnitMultiplier; }
+
+        //////////////////////////////////////////
+        void setPixelsPerUnitMultiplier(F32 _value);
+
         
 
         //////////////////////////////////////////
@@ -267,6 +274,7 @@ namespace Maze
         SpriteRenderMode m_renderMode = SpriteRenderMode::Simple;
 
         bool m_pixelPerfect = false;
+        F32 m_pixelsPerUnitMultiplier = 1.0f;
 
     private:
         U8 m_flags = 0u;

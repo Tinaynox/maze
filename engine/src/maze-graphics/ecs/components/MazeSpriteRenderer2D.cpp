@@ -68,7 +68,8 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(SpriteAssetRef, sprite, SpriteAssetRef(), getSpriteRef, setSpriteRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialAssetRef, material, MaterialAssetRef(), getMaterialRef, setMaterialRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(SpriteRenderMode, renderMode, SpriteRenderMode::Simple, getRenderMode, setRenderMode));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(SpriteRenderMode, renderMode, SpriteRenderMode::Simple, getRenderMode, setRenderMode),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, pixelsPerUnitMultiplier, 1.0f, getPixelsPerUnitMultiplier, setPixelsPerUnitMultiplier));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SpriteRenderer2D);
@@ -230,6 +231,19 @@ namespace Maze
     }
     
     //////////////////////////////////////////
+    void SpriteRenderer2D::setPixelsPerUnitMultiplier(F32 _value)
+    {
+        if (m_pixelsPerUnitMultiplier == _value)
+            return;
+
+        m_pixelsPerUnitMultiplier = _value;
+
+        enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
+        enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
+        enableFlag(SpriteRenderer2D::Flags::UV0Dirty);
+    }
+
+    //////////////////////////////////////////
     void SpriteRenderer2D::updateMaterial()
     {
         if (!m_meshRenderer)
@@ -315,11 +329,20 @@ namespace Maze
                     Vec2F const& texCoordLB = getSprite()->getTextureCoordLB();
                     Vec2F const& texCoordRT = getSprite()->getTextureCoordRT();
 
-                    Vec2F centerSize = Vec2F(
-                        Math::Max(size.x - sliceBorder.left - sliceBorder.right, 0.0f),
-                        Math::Max(size.y - sliceBorder.bottom - sliceBorder.top, 0.0f));
 
-                    Vec2F centerPositionLB = Vec2F(sliceBorder.left, sliceBorder.bottom);
+                    // Scale border render sizes by pixels-per-unit multiplier.
+                    // UV splits are still derived from the original pixel borders.
+                    F32 const invPPUM = 1.0f / Math::Max(m_pixelsPerUnitMultiplier, 0.0001f);
+                    F32 const borderLeft   = sliceBorder.left   * invPPUM;
+                    F32 const borderRight  = sliceBorder.right  * invPPUM;
+                    F32 const borderBottom = sliceBorder.bottom * invPPUM;
+                    F32 const borderTop    = sliceBorder.top    * invPPUM;
+
+                    Vec2F centerSize = Vec2F(
+                        Math::Max(size.x - borderLeft - borderRight, 0.0f),
+                        Math::Max(size.y - borderBottom - borderTop, 0.0f));
+
+                    Vec2F centerPositionLB = Vec2F(borderLeft, borderBottom);
                     Vec2F centerPositionRT = centerPositionLB + centerSize;
 
                     Vec2F deltaUV = texCoordRT - texCoordLB;
@@ -329,38 +352,38 @@ namespace Maze
                     Vec2F centerUVRT = texCoordRT - deltaUV * Vec2F(sliceBorder.right, sliceBorder.top) / nativeSize;
 
 
-                    if (sliceBorder.left > 0.0f)
+                    if (borderLeft > 0.0f)
                     {
-                        // LB 
-                        if (sliceBorder.bottom > 0.0f)
+                        // LB
+                        if (borderBottom > 0.0f)
                         {
                             addQuad(
-                                TMat::CreateScale(sliceBorder.left, sliceBorder.bottom),
+                                TMat::CreateScale(borderLeft, borderBottom),
                                 Vec4F::c_one,
                                 Vec4F(texCoordLB, centerUVLB));
                         }
 
                         // Left
                         addQuad(
-                            TMat::CreateTranslation(0.0f, centerPositionLB.y).transform(TMat::CreateScale(sliceBorder.left, centerSize.y)),
+                            TMat::CreateTranslation(0.0f, centerPositionLB.y).transform(TMat::CreateScale(borderLeft, centerSize.y)),
                             Vec4F::c_one,
                             Vec4F(Vec2F(texCoordLB.x, centerUVLB.y), Vec2F(centerUVLB.x, centerUVRT.y)));
 
-                        // LT 
-                        if (sliceBorder.top > 0.0f)
+                        // LT
+                        if (borderTop > 0.0f)
                         {
                             addQuad(
-                                TMat::CreateTranslation(0.0f, centerPositionRT.y).transform(TMat::CreateScale(sliceBorder.left, sliceBorder.top)),
+                                TMat::CreateTranslation(0.0f, centerPositionRT.y).transform(TMat::CreateScale(borderLeft, borderTop)),
                                 Vec4F::c_one,
                                 Vec4F(Vec2F(texCoordLB.x, centerUVRT.y), Vec2F(centerUVLB.x, texCoordRT.y)));
                         }
                     }
 
                     // Bottom
-                    if (sliceBorder.bottom > 0.0f)
+                    if (borderBottom > 0.0f)
                     {
                         addQuad(
-                            TMat::CreateTranslation(centerPositionLB.x, 0.0f).transform(TMat::CreateScale(centerSize.x, sliceBorder.bottom)),
+                            TMat::CreateTranslation(centerPositionLB.x, 0.0f).transform(TMat::CreateScale(centerSize.x, borderBottom)),
                             Vec4F::c_one,
                             Vec4F(Vec2F(centerUVLB.x, texCoordLB.y), Vec2F(centerUVRT.x, centerUVLB.y)));
                     }
@@ -372,36 +395,36 @@ namespace Maze
                         Vec4F(centerUVLB, centerUVRT));
 
                     // Top
-                    if (sliceBorder.top > 0.0f)
+                    if (borderTop > 0.0f)
                     {
                         addQuad(
-                            TMat::CreateTranslation(centerPositionLB.x, centerPositionRT.y).transform(TMat::CreateScale(centerSize.x, sliceBorder.top)),
+                            TMat::CreateTranslation(centerPositionLB.x, centerPositionRT.y).transform(TMat::CreateScale(centerSize.x, borderTop)),
                             Vec4F::c_one,
                             Vec4F(Vec2F(centerUVLB.x, centerUVRT.y), Vec2F(centerUVRT.x, texCoordRT.y)));
                     }
 
-                    if (sliceBorder.right > 0.0f)
+                    if (borderRight > 0.0f)
                     {
-                        // RB 
-                        if (sliceBorder.bottom > 0.0f)
+                        // RB
+                        if (borderBottom > 0.0f)
                         {
                             addQuad(
-                                TMat::CreateTranslation(centerPositionRT.x, 0.0f).transform(TMat::CreateScale(sliceBorder.right, sliceBorder.bottom)),
+                                TMat::CreateTranslation(centerPositionRT.x, 0.0f).transform(TMat::CreateScale(borderRight, borderBottom)),
                                 Vec4F::c_one,
                                 Vec4F(Vec2F(centerUVRT.x, texCoordLB.y), Vec2F(texCoordRT.x, centerUVLB.y)));
                         }
 
                         // Right
                         addQuad(
-                            TMat::CreateTranslation(centerPositionRT.x, centerPositionLB.y).transform(TMat::CreateScale(sliceBorder.right, centerSize.y)),
+                            TMat::CreateTranslation(centerPositionRT.x, centerPositionLB.y).transform(TMat::CreateScale(borderRight, centerSize.y)),
                             Vec4F::c_one,
                             Vec4F(Vec2F(centerUVRT.x, centerUVLB.y), Vec2F(texCoordRT.x, centerUVRT.y)));
 
-                        // RT 
-                        if (sliceBorder.top > 0.0f)
+                        // RT
+                        if (borderTop > 0.0f)
                         {
                             addQuad(
-                                TMat::CreateTranslation(centerPositionRT.x, centerPositionRT.y).transform(TMat::CreateScale(sliceBorder.right, sliceBorder.top)),
+                                TMat::CreateTranslation(centerPositionRT.x, centerPositionRT.y).transform(TMat::CreateScale(borderRight, borderTop)),
                                 Vec4F::c_one,
                                 Vec4F(Vec2F(centerUVRT.x, centerUVRT.y), texCoordRT));
                         }
