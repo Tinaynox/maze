@@ -48,7 +48,10 @@ namespace Maze.Core
 
         public int GetEntityId()
         {
-            return InternalCalls.EntityGetEntityId(NativeEntityPtr);
+            if (Valid)
+                return InternalCalls.EntityGetEntityId(NativeEntityPtr);
+
+            return 0;
         }
 
         public T GetComponent<T>() where T : class
