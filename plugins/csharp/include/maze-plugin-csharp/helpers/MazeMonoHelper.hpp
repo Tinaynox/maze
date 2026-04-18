@@ -63,6 +63,9 @@ namespace Maze
         MAZE_PLUGIN_CSHARP_API CStringSpan GetMonoGenericClassBaseName(CString _genericClassName);
 
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API bool GetMonoGenericClassBaseName(CString _genericClassName, Char* _outBuffer, Size _outBufferSize);
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API CStringSpan GetMonoGenericClassFirstGenericArgumentName(CString _genericClassName);
 
         //////////////////////////////////////////

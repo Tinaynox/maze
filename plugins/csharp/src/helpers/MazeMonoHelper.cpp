@@ -53,6 +53,19 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API bool GetMonoGenericClassBaseName(CString _genericClassName, Char* _outBuffer, Size _outBufferSize)
+        {
+            CStringSpan monoTypeBaseName = GetMonoGenericClassBaseName(_genericClassName);
+            MAZE_ERROR_RETURN_VALUE_IF(monoTypeBaseName.size() == 0, false, "Invalid generic class - %s", _genericClassName);
+
+            MAZE_ERROR_RETURN_VALUE_IF(monoTypeBaseName.size() + 1 > _outBufferSize, false, "Buffer is too small for mono type base name - %s", _genericClassName);
+            memcpy_s(_outBuffer, _outBufferSize, monoTypeBaseName.ptr(), monoTypeBaseName.size());
+            _outBuffer[monoTypeBaseName.size()] = 0;
+            
+            return true;
+        }
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API CStringSpan GetMonoGenericClassFirstGenericArgumentName(CString _genericClassName)
         {
             CString start = strchr(_genericClassName, '<');

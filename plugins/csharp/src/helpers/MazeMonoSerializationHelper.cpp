@@ -148,6 +148,33 @@ namespace Maze
                             if (componentInstance0 && componentInstance1)
                                 return;
                         }
+                        else
+                        if (mono_type_get_type(_field->getMonoType()) == MONO_TYPE_GENERICINST)
+                        {
+                            CString monoTypeName = mono_type_get_name(_field->getMonoType());
+
+                            Char monoTypeBaseNameBuffer[256];
+                            if (!MonoHelper::GetMonoGenericClassBaseName(
+                                monoTypeName,
+                                monoTypeBaseNameBuffer,
+                                sizeof(monoTypeBaseNameBuffer)))
+                                return;
+
+                            if (strcmp(monoTypeBaseNameBuffer, "System.Collections.Generic.List") == 0)
+                            {
+                                CStringSpan monoTypeArgBaseName = MonoHelper::GetMonoGenericClassFirstGenericArgumentName(monoTypeName);
+                                MAZE_ERROR_RETURN_IF(monoTypeArgBaseName.size() == 0, "Invalid generic class - %s", monoTypeName);
+
+                                Char monoTypeArgBaseNameBuffer[256];
+                                memcpy_s(monoTypeArgBaseNameBuffer, sizeof(monoTypeArgBaseNameBuffer), monoTypeArgBaseName.ptr(), monoTypeArgBaseName.size());
+                                monoTypeArgBaseNameBuffer[monoTypeArgBaseName.size()] = 0;
+                                HashedCString monoTypeArgBaseNameHCS(monoTypeArgBaseNameBuffer);
+
+                                // #TODO: Ignore component eid modifications for now
+                                if (MonoEngine::GetMonoBehaviourSubClass(monoTypeArgBaseNameHCS))
+                                    return;
+                            }
+                        }
                     }
 
                     DataBlock value;

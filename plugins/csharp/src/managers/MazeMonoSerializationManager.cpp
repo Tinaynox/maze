@@ -771,13 +771,12 @@ namespace Maze
     {
         if (_property->isGenericType())
         {
-            CStringSpan monoTypeBaseName = MonoHelper::GetMonoGenericClassBaseName(_property->getTypeName().c_str());
-            if (monoTypeBaseName.empty())
-                return false;
-
             Char monoTypeBaseNameBuffer[256];
-            memcpy_s(monoTypeBaseNameBuffer, sizeof(monoTypeBaseNameBuffer), monoTypeBaseName.ptr(), monoTypeBaseName.size());
-            monoTypeBaseNameBuffer[monoTypeBaseName.size()] = 0;
+            if (!MonoHelper::GetMonoGenericClassBaseName(
+                _property->getTypeName().c_str(),
+                monoTypeBaseNameBuffer,
+                sizeof(monoTypeBaseNameBuffer)))
+                return false;
             HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
 
             auto it = m_propertyDataBlockSerializationData.find(monoTypeBaseNameHCS);
@@ -831,13 +830,12 @@ namespace Maze
     {
         if (_property->isGenericType())
         {
-            CStringSpan monoTypeBaseName = MonoHelper::GetMonoGenericClassBaseName(_property->getTypeName().c_str());
-            if (monoTypeBaseName.empty())
-                return false;
-
             Char monoTypeBaseNameBuffer[256];
-            memcpy_s(monoTypeBaseNameBuffer, sizeof(monoTypeBaseNameBuffer), monoTypeBaseName.ptr(), monoTypeBaseName.size());
-            monoTypeBaseNameBuffer[monoTypeBaseName.size()] = 0;
+            if (!MonoHelper::GetMonoGenericClassBaseName(
+                _property->getTypeName().c_str(),
+                monoTypeBaseNameBuffer,
+                sizeof(monoTypeBaseNameBuffer)))
+                return false;
             HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
 
             auto it = m_propertyDataBlockSerializationData.find(monoTypeBaseNameHCS);
@@ -913,13 +911,12 @@ namespace Maze
     {
         if (_field->isGenericType())
         {
-            CStringSpan monoTypeBaseName = MonoHelper::GetMonoGenericClassBaseName(_field->getTypeName().c_str());
-            if (monoTypeBaseName.empty())
-                return false;
-
             Char monoTypeBaseNameBuffer[256];
-            memcpy_s(monoTypeBaseNameBuffer, sizeof(monoTypeBaseNameBuffer), monoTypeBaseName.ptr(), monoTypeBaseName.size());
-            monoTypeBaseNameBuffer[monoTypeBaseName.size()] = 0;
+            if (!MonoHelper::GetMonoGenericClassBaseName(
+                _field->getTypeName().c_str(),
+                monoTypeBaseNameBuffer,
+                sizeof(monoTypeBaseNameBuffer)))
+                return false;
             HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
 
             auto it = m_fieldDataBlockSerializationData.find(monoTypeBaseNameHCS);
@@ -973,13 +970,12 @@ namespace Maze
     {
         if (_field->isGenericType())
         {
-            CStringSpan monoTypeBaseName = MonoHelper::GetMonoGenericClassBaseName(_field->getTypeName().c_str());
-            if (monoTypeBaseName.empty())
-                return false;
-
             Char monoTypeBaseNameBuffer[256];
-            memcpy_s(monoTypeBaseNameBuffer, sizeof(monoTypeBaseNameBuffer), monoTypeBaseName.ptr(), monoTypeBaseName.size());
-            monoTypeBaseNameBuffer[monoTypeBaseName.size()] = 0;
+            if (!MonoHelper::GetMonoGenericClassBaseName(
+                _field->getTypeName().c_str(),
+                monoTypeBaseNameBuffer,
+                sizeof(monoTypeBaseNameBuffer)))
+                return false;
             HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
 
             auto it = m_fieldDataBlockSerializationData.find(monoTypeBaseNameHCS);
@@ -1148,15 +1144,14 @@ namespace Maze
 
             if (monoTypeType == MONO_TYPE_GENERICINST)
             {
-                // CString monoClassName = mono_class_get_name(objectClass);
                 CString monoTypeName = mono_type_get_name(monoType);
 
-                CStringSpan monoTypeBaseName = MonoHelper::GetMonoGenericClassBaseName(monoTypeName);
-                MAZE_ERROR_RETURN_IF(monoTypeBaseName.size() == 0, "Invalid generic class - %s", monoTypeName);
-
                 Char monoTypeBaseNameBuffer[256];
-                memcpy_s(monoTypeBaseNameBuffer, sizeof(monoTypeBaseNameBuffer), monoTypeBaseName.ptr(), monoTypeBaseName.size());
-                monoTypeBaseNameBuffer[monoTypeBaseName.size()] = 0;
+                if (!MonoHelper::GetMonoGenericClassBaseName(
+                    monoTypeName,
+                    monoTypeBaseNameBuffer,
+                    sizeof(monoTypeBaseNameBuffer)))
+                    return;
                 HashedCString monoTypeBaseNameHCS(monoTypeBaseNameBuffer);
                 
                 auto it2 = m_serializeGenericMonoObjectToDataBlockFunctions.find(monoTypeBaseNameHCS);
