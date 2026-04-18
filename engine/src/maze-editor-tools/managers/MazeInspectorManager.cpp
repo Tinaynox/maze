@@ -497,6 +497,12 @@ namespace Maze
 
         return it->second;
     }
+
+    //////////////////////////////////////////
+    void InspectorManager::registerEntityInspectorDragAndDrop(EntityInspectorDragAndDropCallback _callback)
+    {
+        m_entityInspectorDragAndDropCallbacks.push_back(_callback);
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

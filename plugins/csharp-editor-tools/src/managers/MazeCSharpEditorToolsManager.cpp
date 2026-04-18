@@ -26,6 +26,9 @@
 //////////////////////////////////////////
 #include "MazeCSharpEditorToolsHeader.hpp"
 #include "maze-plugin-csharp-editor-tools/managers/MazeCSharpEditorToolsManager.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-editor-tools/property-drawers/MazePDString.hpp"
 #include "maze-editor-tools/property-drawers/MazePDS32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDBool.hpp"
@@ -49,10 +52,12 @@
 #include "maze-editor-tools/property-drawers/MazePDTexture2D.hpp"
 #include "maze-editor-tools/property-drawers/MazePDSprite.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
+#include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-plugin-csharp/assets/MazeAssetUnitScriptableObject.hpp"
 #include "maze-plugin-csharp/managers/MazeMonoSerializationManager.hpp"
 #include "maze-plugin-csharp-editor-tools/property-drawers/MazePDScriptableObject.hpp"
 #include "maze-plugin-csharp-editor-tools/property-drawers/MazePDCSharpEnum.hpp"
@@ -109,6 +114,41 @@ namespace Maze
                         UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TextFile),
                         ColorU32(75, 216, 19)
                     };
+            });
+
+        InspectorManager::GetInstancePtr()->registerEntityInspectorDragAndDrop(
+            [this](Set<EntityPtr> const& _entities, DataBlock const& _data, EntityId _viewEid, bool _drop)
+            {
+                HashedCString type = _data.getHashedCString(MAZE_HCS("type"));
+                if (type == MAZE_HCS("assetFile"))
+                {
+                    AssetFileId afid = _data.getS32(MAZE_HCS("afid"));
+                    AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(afid);
+                    if (!assetFile)
+                        return false;
+
+                    if (assetFile->getExtension() != Path("cs"))
+                        return false;
+
+                    Path const& fileName = assetFile->getFileName();
+					Path fileNameWithoutExtension = FileHelper::GetFileNameWithoutExtension(fileName);
+                    ScriptClassPtr const& scriptClass = MonoEngine::GetMonoBehaviourSubClass(
+                        HashedCString(fileNameWithoutExtension.toUTF8().c_str()));
+                    if (!scriptClass)
+                        return false;
+
+                    if (_drop)
+                    {
+                        // #TODO: EditorAction
+						HashedCString scriptClassFullName = scriptClass->getFullName().asHashedCString();
+                        for (EntityPtr const& entity : _entities)
+                            entity->createComponent<MonoBehaviour>(scriptClassFullName);
+                    }
+
+                    return true;
+                }
+
+                return false;
             });
 
         registerDrawers();

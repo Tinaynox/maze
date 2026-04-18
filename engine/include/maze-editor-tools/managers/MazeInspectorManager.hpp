@@ -71,6 +71,9 @@ namespace Maze
     using MetaPropertyDrawerAABB2D = MetaPropertyDrawerDefault<AABB2D, PropertyDrawerAABB2D>;
     using MetaPropertyDrawerAABB3D = MetaPropertyDrawerDefault<AABB3D, PropertyDrawerAABB3D>;
 
+    //////////////////////////////////////////
+    using EntityInspectorDragAndDropCallback = std::function<bool(Set<EntityPtr> const& _entities, DataBlock const& _data, EntityId _viewEid, bool _drop)>;
+
 
     //////////////////////////////////////////
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<MaterialPtr, PropertyDrawerMaterial>;
@@ -448,6 +451,13 @@ namespace Maze
         //////////////////////////////////////////
         inline Vector<ClassUID> const& getHiddenComponents() const { return m_hiddenComponents; }
 
+
+        //////////////////////////////////////////
+        void registerEntityInspectorDragAndDrop(EntityInspectorDragAndDropCallback _callback);
+
+        //////////////////////////////////////////
+        inline Vector<EntityInspectorDragAndDropCallback> const& getEntityInspectorDragAndDropCallbacks() const { return m_entityInspectorDragAndDropCallbacks; }
+
     public:
 
         //////////////////////////////////////////
@@ -468,6 +478,7 @@ namespace Maze
         Map<ClassUID, std::function<PropertyDrawerPtr(DataBlock const&)>> m_propertyDrawers;
         Map<ClassUID, std::function<MetaPropertyDrawerPtr(MetaProperty*)>> m_metaPropertyDrawers;
         Map<ClassUID, Vector<std::pair<String, std::function<void(Entity*, Component*)>>>> m_inspectorComponentContextMenuOptions;
+        Vector<EntityInspectorDragAndDropCallback> m_entityInspectorDragAndDropCallbacks;
 
         bool m_saveAssetButtonEnabled = true;
 

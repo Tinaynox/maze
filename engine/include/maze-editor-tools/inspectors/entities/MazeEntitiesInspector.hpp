@@ -53,6 +53,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ClickButton2D);
     MAZE_USING_SHARED_PTR(Button2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
+    MAZE_USING_SHARED_PTR(DragAndDropZone);
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(ComponentEditor);
     MAZE_USING_SHARED_PTR(ToggleButton2D);
@@ -134,6 +135,8 @@ namespace Maze
         Set<EntityPtr> m_entities;
 
         Transform2DPtr m_topBlock;
+        SpriteRenderer2DPtr m_topBlockDragAndDropFrame;
+        DragAndDropZonePtr m_topBlockDragAndDropZone;
         ToggleButton2DPtr m_entitiesEnabledToggleButton;
         AbstractTextRenderer2DPtr m_entityIdText;
         ClickButton2DPtr m_addComponentButton;

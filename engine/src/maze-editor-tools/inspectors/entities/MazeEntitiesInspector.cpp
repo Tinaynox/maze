@@ -43,8 +43,10 @@
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
@@ -106,6 +108,44 @@ namespace Maze
             _parent,
             _parent->getEntityRaw()->getEcsScene());
         m_topBlock->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Flags::Height, false);
+
+        m_topBlockDragAndDropFrame = SpriteHelper::CreateSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
+            m_topBlock->getSize(),
+            Vec2F::c_zero,
+            nullptr,
+            m_topBlock,
+            _parent->getEntityRaw()->getEcsScene());
+        m_topBlockDragAndDropFrame->setColor(255, 200, 40);
+        m_topBlockDragAndDropFrame->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        m_topBlockDragAndDropFrame->getMeshRenderer()->setEnabled(false);
+
+        m_topBlockDragAndDropZone = m_topBlock->getEntityRaw()->ensureComponent<DragAndDropZone>();
+        m_topBlockDragAndDropZone->getUIElement()->setCaptureCursorHits(true);
+        m_topBlockDragAndDropZone->eventDragAndDropValidate.subscribe(
+            [this](DataBlock const& _data, EntityId _viewEid, bool& _outDropAllowed)
+            {
+                Vector<EntityInspectorDragAndDropCallback> const& dragAndDropCallbacks = InspectorManager::GetInstancePtr()->getEntityInspectorDragAndDropCallbacks();
+                for (EntityInspectorDragAndDropCallback const& callback : dragAndDropCallbacks)
+                    if (callback(m_entities, _data, _viewEid, false))
+                    {
+                        _outDropAllowed = true;
+                        break;
+                    }
+            });
+        m_topBlockDragAndDropZone->eventDragAndDrop.subscribe(
+            [this](DataBlock const& _data, EntityId _viewEid)
+            {
+                Vector<EntityInspectorDragAndDropCallback> const& dragAndDropCallbacks = InspectorManager::GetInstancePtr()->getEntityInspectorDragAndDropCallbacks();
+                for (EntityInspectorDragAndDropCallback const& callback : dragAndDropCallbacks)
+                    if (callback(m_entities, _data, _viewEid, true))
+                        break;
+            });
+        m_topBlockDragAndDropZone->eventDragAndDropZoneOnDragAndDropCurrentZoneChanged.subscribe(
+            [this](bool _active)
+            {
+                this->m_topBlockDragAndDropFrame->getMeshRenderer()->setEnabled(_active);
+            });
 
         m_entitiesEnabledToggleButton = UIHelper::CreateDefaultToggleButton(
             Vec2F(5, 0),
