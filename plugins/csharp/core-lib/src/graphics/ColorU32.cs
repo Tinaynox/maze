@@ -28,10 +28,10 @@ namespace Maze.Graphics
         public static ColorU32 Yellow => new ColorU32(255, 255, 0, 255);
 
         public ColorU32(
-            byte r = 0,
-            byte g = 0,
-            byte b = 0,
-            byte a = 0)
+            byte r = 255,
+            byte g = 255,
+            byte b = 255,
+            byte a = 255)
         {
             R = r;
             G = g;
