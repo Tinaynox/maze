@@ -168,6 +168,9 @@ namespace Maze.Core
         public extern static void Transform2DSetParent(NativePtr nativeComponentPtr, NativePtr parentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static NativePtr Transform2DGetParent(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void Transform2DGetLocalTransform(NativePtr nativeComponentPtr, out TMat outTMat);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

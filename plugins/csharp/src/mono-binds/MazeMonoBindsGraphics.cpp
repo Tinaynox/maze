@@ -844,6 +844,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void CanvasConvertViewportCoordsToRenderTargetCoords(
+        Component* _component,
+        Vec2F const& _viewportPosition,
+        Vec2F& _outValue)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Canvas);
+        _outValue = _component->castRaw<Canvas>()->convertViewportCoordsToRenderTargetCoords(_viewportPosition);
+    }    
+
+    //////////////////////////////////////////
     inline void AbstractTextRendererGetText(Component* _component, MonoString* _text)
     {
         MAZE_ERROR_RETURN_IF(!_component->getMetaClass()->isInheritedFrom<AbstractTextRenderer>(), "Component is not AbstractTextRenderer!");
@@ -1336,6 +1346,7 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(CanvasSetRenderTarget);
         MAZE_GRAPHICS_MONO_BIND_FUNC(CanvasGetRenderTargetRect);
         MAZE_GRAPHICS_MONO_BIND_FUNC(CanvasConvertRenderTargetCoordsToViewportCoords);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(CanvasConvertViewportCoordsToRenderTargetCoords);
 
         // AbstractTextRenderer
         MAZE_GRAPHICS_MONO_BIND_FUNC(AbstractTextRendererGetText);

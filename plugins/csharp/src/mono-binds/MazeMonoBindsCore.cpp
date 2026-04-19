@@ -460,6 +460,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline Transform2D* Transform2DGetParent(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(Transform2D, nullptr);
+		return _component->castRaw<Transform2D>()->getParent().get();
+    }
+
+    //////////////////////////////////////////
     inline S32 Transform2DGetChildrenCount(Component* _component)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(Transform2D, 0);
@@ -762,6 +769,7 @@ namespace Maze
 
         // Transform2D
         MAZE_CORE_MONO_BIND_FUNC(Transform2DSetParent);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetParent);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChildrenCount);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetChild);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetSize);

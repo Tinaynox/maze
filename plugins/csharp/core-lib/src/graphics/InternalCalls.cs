@@ -286,6 +286,12 @@ namespace Maze.Graphics
             NativePtr nativeComponentPtr,
             ref Vec2F renderTargetPos,
             out Vec2F outViewportCoords);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void CanvasConvertViewportCoordsToRenderTargetCoords(
+            NativePtr nativeComponentPtr,
+            ref Vec2F viewportPos,
+            out Vec2F outRenderTargetCoords);
         #endregion
 
         #region AbstractTextRenderer

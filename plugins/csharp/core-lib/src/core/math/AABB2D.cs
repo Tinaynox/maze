@@ -26,6 +26,22 @@ namespace Maze.Core
             MaxY = maxY;
         }
 
+        public AABB2D(Vec2F point)
+        {
+            MinX = point.X;
+            MinY = point.Y;
+            MaxX = point.X;
+            MaxY = point.Y;
+        }
+
+        public AABB2D(Vec2F point0, Vec2F point1)
+        {
+            MinX = Math.Min(point0.X, point1.X);
+            MinY = Math.Min(point0.Y, point1.Y);
+            MaxX = Math.Max(point0.X, point1.X);
+            MaxY = Math.Max(point0.Y, point1.Y);
+        }
+
         public static bool operator ==(AABB2D value0, AABB2D value1)
         {
             return
@@ -58,6 +74,30 @@ namespace Maze.Core
                 hash = hash * 23 + MaxY.GetHashCode();
                 return hash;
             }
+        }
+
+        public void ApplyIntersection(AABB2D other)
+        {
+            MinX = Math.Max(MinX, other.MinX);
+            MinY = Math.Max(MinY, other.MinY);
+            MaxX = Math.Min(MaxX, other.MaxX);
+            MaxY = Math.Min(MaxY, other.MaxY);
+        }
+
+        public void ApplyUnion(AABB2D other)
+        {
+            MinX = Math.Min(MinX, other.MinX);
+            MinY = Math.Min(MinY, other.MinY);
+            MaxX = Math.Max(MaxX, other.MaxX);
+            MaxY = Math.Max(MaxY, other.MaxY);
+        }
+
+        public void ApplyUnion(Vec2F point)
+        {
+            MinX = Math.Min(MinX, point.X);
+            MinY = Math.Min(MinY, point.Y);
+            MaxX = Math.Max(MaxX, point.X);
+            MaxY = Math.Max(MaxY, point.Y);
         }
 
         public override string ToString()
