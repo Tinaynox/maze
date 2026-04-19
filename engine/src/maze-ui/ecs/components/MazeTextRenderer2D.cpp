@@ -867,6 +867,74 @@ namespace Maze
         updateMaterial();
     }
 
+    //////////////////////////////////////////
+    Vec2F TextRenderer2D::calculateRequiredSizeForText(CString _text)
+    {
+        if (!getFontMaterial() || !getFontMaterial()->getFont() || !getFontMaterial()->getFont()->getDefaultFont())
+            return Vec2F::c_zero;
+
+        if (!_text || !*_text)
+            return Vec2F::c_zero;
+
+        auto ttfPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFPage(m_fontSize, m_bold);
+
+        F32 hSpace = static_cast<F32>(getFontMaterial()->getFont()->getDefaultFont()->ensureGlyph(L' ', m_fontSize, m_bold, *ttfPage).advance);
+        F32 linespace = getFontMaterial()->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
+
+        F32 rowLengthMax = 0.0f;
+        F32 x = 0.0f;
+        Size rowCount = 1;
+
+        U32 prevChar = 0;
+        U32 curChar = 0;
+        CString it = _text;
+        CString end = _text + strlen(_text);
+
+        while ((it != end) && (curChar = utf8::next(it, end)))
+        {
+            x += getFontMaterial()->getFont()->getKerning(prevChar, curChar, m_fontSize);
+            prevChar = curChar;
+
+            if (getColorTags() && curChar == '#' && it != end && *it == '{')
+            {
+                while (it != end && *it != '}')
+                    ++it;
+                if (it != end)
+                    ++it;
+                prevChar = 0;
+                continue;
+            }
+
+            if (curChar == ' ') { x += hSpace; continue; }
+            if (curChar == '\t') { x += hSpace * 4; continue; }
+            if (curChar == '\n')
+            {
+                rowLengthMax = Math::Max(rowLengthMax, x);
+                x = 0.0f;
+                ++rowCount;
+                continue;
+            }
+
+            FontGlyphStorageData* glyphStorageData = getFontMaterial()->getFont()->getGlyphStorageData(curChar);
+            if (glyphStorageData && glyphStorageData->getTrueTypeFont())
+                ttfPage = &glyphStorageData->getTrueTypeFont()->ensureTTFPage(m_fontSize, m_bold);
+            else
+                ttfPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFPage(m_fontSize, m_bold);
+
+            FontGlyph const& glyph = getFontMaterial()->getFont()->ensureGlyphFromStorage(glyphStorageData, curChar, m_fontSize, m_bold, *ttfPage);
+            x += glyph.advance;
+
+            if (glyphStorageData &&
+                (glyphStorageData->type == FontGlyphStorageType::Sprite ||
+                 glyphStorageData->type == FontGlyphStorageType::Entity))
+                x = Math::Round(x);
+        }
+
+        rowLengthMax = Math::Max(rowLengthMax, x);
+
+        return Vec2F(rowLengthMax, (F32)rowCount * linespace);
+    }
+
 
 
     //////////////////////////////////////////

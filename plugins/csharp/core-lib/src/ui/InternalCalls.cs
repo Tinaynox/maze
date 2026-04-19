@@ -32,6 +32,9 @@ namespace Maze.UI
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void TextRenderer2DSetText(NativePtr nativeComponentPtr, string text);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void TextRenderer2DCalculateRequiredSizeForText(NativePtr nativeComponentPtr, string text, out Vec2F outSize);
         #endregion
 
         #region UITweenTransitionAlpha

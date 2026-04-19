@@ -37,6 +37,7 @@
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
@@ -716,6 +717,20 @@ namespace Maze
         return scriptableObject->getScriptInstance()->getInstance();
     }
 
+    //////////////////////////////////////////
+    inline void SizePolicy2DGetSizeDelta(Component* _component, Vec2F& _outSize)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SizePolicy2D);
+        _outSize = _component->castRaw<SizePolicy2D>()->getSizeDelta();
+    }
+
+    //////////////////////////////////////////
+    inline void SizePolicy2DSetSizeDelta(Component* _component, Vec2F const& _size)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SizePolicy2D);
+        _component->castRaw<SizePolicy2D>()->setSizeDelta(_size);
+    }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsCore()
@@ -817,6 +832,10 @@ namespace Maze
 
         // ScriptableObject
         MAZE_CORE_MONO_BIND_FUNC(GetScriptableObject);
+
+		// SizePolicy2D
+        MAZE_CORE_MONO_BIND_FUNC(SizePolicy2DGetSizeDelta);
+		MAZE_CORE_MONO_BIND_FUNC(SizePolicy2DSetSizeDelta);
     }
 
 } // namespace Maze

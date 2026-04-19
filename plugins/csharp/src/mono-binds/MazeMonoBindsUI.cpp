@@ -103,6 +103,16 @@ namespace Maze
         mono_free(cstr);
     }
 
+    //////////////////////////////////////////
+    inline void TextRenderer2DCalculateRequiredSizeForText(Component* _component, MonoString* _text, Vec2F& _outSize)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(TextRenderer2D);
+
+        Char* cstr = mono_string_to_utf8(_text);
+        _outSize = _component->castRaw<TextRenderer2D>()->calculateRequiredSizeForText(cstr);
+        mono_free(cstr);
+    }
+
 
     //////////////////////////////////////////
     inline void UITweenTransitionAlphaSetHidden(Component* _component, bool _value, bool _resetProgress)
@@ -286,6 +296,7 @@ namespace Maze
         // TextRenderer2D
         MAZE_UI_MONO_BIND_FUNC(TextRenderer2DGetText);
         MAZE_UI_MONO_BIND_FUNC(TextRenderer2DSetText);
+        MAZE_UI_MONO_BIND_FUNC(TextRenderer2DCalculateRequiredSizeForText);
 
         // UITweenTransitionAlpha
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaSetHidden);

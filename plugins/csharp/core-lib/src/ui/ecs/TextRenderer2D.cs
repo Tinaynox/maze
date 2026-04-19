@@ -12,8 +12,18 @@ namespace Maze.UI
 
         public TextRenderer2D(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
-        {  
+        {
         }
 
+        public Vec2F CalculateRequiredSizeForText(string text)
+        {
+            InternalCalls.TextRenderer2DCalculateRequiredSizeForText(NativeComponentPtr, text, out Vec2F outSize);
+            return outSize;
+        }
+
+        public Vec2F CalculateRequiredSizeForText()
+        {
+            return CalculateRequiredSizeForText(Text);
+        }
     }
 }

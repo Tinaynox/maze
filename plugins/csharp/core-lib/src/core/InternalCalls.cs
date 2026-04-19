@@ -259,5 +259,14 @@ namespace Maze.Core
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static ScriptableObject GetScriptableObject(uint assetUnitId);
         #endregion
+
+
+        #region SizePolicy2D
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SizePolicy2DGetSizeDelta(NativePtr nativeComponentPtr, out Vec2F outSize);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void SizePolicy2DSetSizeDelta(NativePtr nativeComponentPtr, ref Vec2F size);
+        #endregion
     }
 }

@@ -386,6 +386,9 @@ namespace Maze
         //////////////////////////////////////////
         void updateMeshRendererModelMatrices();
 
+        //////////////////////////////////////////
+        Vec2F calculateRequiredSizeForText(CString _text);
+
     protected:
 
         //////////////////////////////////////////
