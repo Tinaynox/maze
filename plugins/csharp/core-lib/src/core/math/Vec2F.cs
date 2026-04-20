@@ -26,6 +26,18 @@ namespace Maze.Core
             Y = y;
         }
 
+        public Vec2F(Vec2S other)
+        {
+            X = other.X;
+            Y = other.Y;
+        }
+
+        public Vec2F(Vec2U other)
+        {
+            X = other.X;
+            Y = other.Y;
+        }
+
         public static Vec2F operator -(Vec2F vec0)
         {
             return new Vec2F(-vec0.X, -vec0.Y);

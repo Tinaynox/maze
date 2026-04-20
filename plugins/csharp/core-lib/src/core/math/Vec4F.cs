@@ -60,6 +60,22 @@ namespace Maze.Core
             W = w;
         }
 
+        public Vec4F(Vec4S other)
+        {
+            X = other.X;
+            Y = other.Y;
+            Z = other.Z;
+            W = other.W;
+        }
+
+        public Vec4F(Vec4U other)
+        {
+            X = other.X;
+            Y = other.Y;
+            Z = other.Z;
+            W = other.W;
+        }
+
         public float this[int index]
         {
             get

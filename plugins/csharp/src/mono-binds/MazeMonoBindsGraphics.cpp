@@ -43,6 +43,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeGlobalShaderUniform.hpp"
@@ -1240,6 +1241,79 @@ namespace Maze
             });
     }
 
+    //////////////////////////////////////////
+    inline bool SpriteIsValid(S32 _spriteId)
+    {
+        Sprite* sprite = Sprite::GetResource(_spriteId);
+        return !!sprite;
+    }
+
+    //////////////////////////////////////////
+    inline bool SpriteGetId(MonoString* _spriteName, S32& _outValue)
+    {
+        Char* cstr = mono_string_to_utf8(_spriteName);
+        SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getOrLoadSprite(HashedCString(cstr));
+        mono_free(cstr);
+        if (sprite)
+        {
+            _outValue = sprite->getResourceId();
+            return true;
+        }
+        else
+        {
+            _outValue = c_invalidResourceId;
+            return false;
+        }
+    }
+
+    //////////////////////////////////////////
+    inline bool SpriteGetColorOffset(S32 _spriteId, Vec2F& _outValue)
+    {
+        if (Sprite* sprite = Sprite::GetResource(_spriteId))
+        {
+            _outValue = sprite->getColorOffset();
+            return true;
+        }
+        _outValue = Vec2F::c_zero;
+        return false;
+    }
+
+    //////////////////////////////////////////
+    inline bool SpriteGetColorPosition(S32 _spriteId, Vec2F& _outValue)
+    {
+        if (Sprite* sprite = Sprite::GetResource(_spriteId))
+        {
+            _outValue = sprite->getColorPosition();
+            return true;
+        }
+        _outValue = Vec2F::c_zero;
+        return false;
+    }
+
+    //////////////////////////////////////////
+    inline bool SpriteGetColorSize(S32 _spriteId, Vec2F& _outValue)
+    {
+        if (Sprite* sprite = Sprite::GetResource(_spriteId))
+        {
+            _outValue = sprite->getColorSize();
+            return true;
+        }
+        _outValue = Vec2F::c_zero;
+        return false;
+    }
+
+    //////////////////////////////////////////
+    inline bool SpriteGetNativeSize(S32 _spriteId, Vec2F& _outValue)
+    {
+        if (Sprite* sprite = Sprite::GetResource(_spriteId))
+        {
+            _outValue = sprite->getNativeSize();
+            return true;
+        }
+        _outValue = Vec2F::c_zero;
+        return false;
+    }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsGraphics()
@@ -1425,6 +1499,12 @@ namespace Maze
         // Sprite
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreateSprite);
         MAZE_GRAPHICS_MONO_BIND_FUNC(DestroySprite);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteIsValid);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteGetId);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteGetColorOffset);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteGetColorPosition);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteGetColorSize);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteGetNativeSize);
     }
 
 } // namespace Maze

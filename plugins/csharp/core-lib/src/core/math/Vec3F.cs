@@ -42,6 +42,20 @@ namespace Maze.Core
             Z = z;
         }
 
+        public Vec3F(Vec3S other)
+        {
+            X = other.X;
+            Y = other.Y;
+            Z = other.Z;
+        }
+
+        public Vec3F(Vec3U other)
+        {
+            X = other.X;
+            Y = other.Y;
+            Z = other.Z;
+        }
+
         public float this[int index]
         {
             get

@@ -502,6 +502,24 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void DestroySprite(int spriteId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool SpriteIsValid(int spriteId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool SpriteGetId(string spriteName, out int outSpriteId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool SpriteGetColorOffset(int spriteId, out Vec2F outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool SpriteGetColorPosition(int spriteId, out Vec2F outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool SpriteGetColorSize(int spriteId, out Vec2F outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool SpriteGetNativeSize(int spriteId, out Vec2F outValue);
         #endregion
     }
 }
