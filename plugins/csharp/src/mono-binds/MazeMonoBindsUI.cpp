@@ -37,6 +37,9 @@
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionTranslation.hpp"
 #include "maze-ui/ecs/components/MazeTextRenderer2D.hpp"
+#include "maze-ui/ecs/components/MazeLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 
 
 //////////////////////////////////////////
@@ -281,6 +284,45 @@ namespace Maze
         return id;
     }
 
+    //////////////////////////////////////////
+    inline void Layout2DAlignChildren(Component* _component) { _component->castRaw<Layout2D>()->alignChildren(); }
+
+    //////////////////////////////////////////
+    inline void Layout2DGetPaddingLeft(Component* _component, F32& _outValue) { _outValue = _component->castRaw<Layout2D>()->getPaddingLeft(); }
+
+    //////////////////////////////////////////
+    inline void Layout2DSetPaddingLeft(Component* _component, F32 _value) { _component->castRaw<Layout2D>()->setPaddingLeft(_value); }
+
+    //////////////////////////////////////////
+    inline void Layout2DGetPaddingRight(Component* _component, F32& _outValue) { _outValue = _component->castRaw<Layout2D>()->getPaddingRight(); }
+
+    //////////////////////////////////////////
+    inline void Layout2DSetPaddingRight(Component* _component, F32 _value) { _component->castRaw<Layout2D>()->setPaddingRight(_value); }
+
+    //////////////////////////////////////////
+    inline void Layout2DGetPaddingTop(Component* _component, F32& _outValue) { _outValue = _component->castRaw<Layout2D>()->getPaddingTop(); }
+
+    //////////////////////////////////////////
+    inline void Layout2DSetPaddingTop(Component* _component, F32 _value) { _component->castRaw<Layout2D>()->setPaddingTop(_value); }
+
+    //////////////////////////////////////////
+    inline void Layout2DGetPaddingBottom(Component* _component, F32& _outValue) { _outValue = _component->castRaw<Layout2D>()->getPaddingBottom(); }
+
+    //////////////////////////////////////////
+    inline void Layout2DSetPaddingBottom(Component* _component, F32 _value) { _component->castRaw<Layout2D>()->setPaddingBottom(_value); }
+
+    //////////////////////////////////////////
+    inline void Layout2DGetAutoWidth(Component* _component, bool& _outValue) { _outValue = _component->castRaw<Layout2D>()->getAutoWidth(); }
+
+    //////////////////////////////////////////
+    inline void Layout2DSetAutoWidth(Component* _component, bool _value) { _component->castRaw<Layout2D>()->setAutoWidth(_value); }
+
+    //////////////////////////////////////////
+    inline void Layout2DGetAutoHeight(Component* _component, bool& _outValue) { _outValue = _component->castRaw<Layout2D>()->getAutoHeight(); }
+
+    //////////////////////////////////////////
+    inline void Layout2DSetAutoHeight(Component* _component, bool _value) { _component->castRaw<Layout2D>()->setAutoHeight(_value); }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsUI()
@@ -327,6 +369,21 @@ namespace Maze
         // SystemCursor
         MAZE_UI_MONO_BIND_FUNC(SystemCursorIsValid);
         MAZE_UI_MONO_BIND_FUNC(SystemCursorGetOrLoad);
+
+        // Layout2D
+        MAZE_UI_MONO_BIND_FUNC(Layout2DAlignChildren);
+        MAZE_UI_MONO_BIND_FUNC(Layout2DGetPaddingLeft);
+        MAZE_UI_MONO_BIND_FUNC(Layout2DSetPaddingLeft);
+        MAZE_UI_MONO_BIND_FUNC(Layout2DGetPaddingRight);
+        MAZE_UI_MONO_BIND_FUNC(Layout2DSetPaddingRight);
+        MAZE_UI_MONO_BIND_FUNC(Layout2DGetPaddingTop);
+        MAZE_UI_MONO_BIND_FUNC(Layout2DSetPaddingTop);
+        MAZE_UI_MONO_BIND_FUNC(Layout2DGetPaddingBottom);
+        MAZE_UI_MONO_BIND_FUNC(Layout2DSetPaddingBottom);
+		MAZE_UI_MONO_BIND_FUNC(Layout2DGetAutoWidth);
+        MAZE_UI_MONO_BIND_FUNC(Layout2DSetAutoWidth);
+        MAZE_UI_MONO_BIND_FUNC(Layout2DGetAutoHeight);
+        MAZE_UI_MONO_BIND_FUNC(Layout2DSetAutoHeight);
     }
 
 } // namespace Maze

@@ -110,5 +110,46 @@ namespace Maze.UI
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int SystemCursorGetOrLoad(string systemCursorName);
         #endregion
+
+        #region Layout2D
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DAlignChildren(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DGetPaddingLeft(NativePtr nativeComponentPtr, out float _outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DSetPaddingLeft(NativePtr nativeComponentPtr, float _value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DGetPaddingRight(NativePtr nativeComponentPtr, out float _outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DSetPaddingRight(NativePtr nativeComponentPtr, float _value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DGetPaddingTop(NativePtr nativeComponentPtr, out float _outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DSetPaddingTop(NativePtr nativeComponentPtr, float _value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DGetPaddingBottom(NativePtr nativeComponentPtr, out float _outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DSetPaddingBottom(NativePtr nativeComponentPtr, float _value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DGetAutoWidth(NativePtr nativeComponentPtr, out bool _outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DSetAutoWidth(NativePtr nativeComponentPtr, bool _value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DGetAutoHeight(NativePtr nativeComponentPtr, out bool _outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool Layout2DSetAutoHeight(NativePtr nativeComponentPtr, bool _value);
+        #endregion
     }
 }
