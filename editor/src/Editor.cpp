@@ -277,7 +277,7 @@ namespace Maze
     {
         RenderWindowParams params;
         params.windowParams = WindowParams::Create();
-        params.windowParams->clientSize = Vec2U32(1280, 800);
+        params.windowParams->clientSize = Vec2U32(1800, 950);
         params.windowParams->title = m_config.projectName;
         params.windowParams->flags |= WindowStyleFlags::MinimizeButton;
         params.windowParams->flags |= WindowStyleFlags::MaximizeButton;

@@ -86,12 +86,16 @@ namespace Maze
     //////////////////////////////////////////
     F32 const EditorLayout::c_menuBarHeight = 17.0f;
     F32 const topBarHeight = 0.025f;
-    Rect2F const EditorLayout::c_sceneViewport(0.25f, 0.33f, 0.5f, 0.645f);
-    Rect2F const EditorLayout::c_hierarchyViewport(0.0f, 0.33f, 0.25f, 0.67f - topBarHeight);
-    Rect2F const EditorLayout::c_inspectorViewport(0.75f, 0.33f, 0.25f, 0.67f - topBarHeight);
-    Rect2F const EditorLayout::c_assetsViewport(0.0f, 0.0f, 0.5f, 0.33f);
-    Rect2F const EditorLayout::c_previewViewport(0.5f, 0.0f, 0.5f, 0.33f);
-    Rect2F const EditorLayout::c_topBarViewport(0.0f, 0.975f, 1.0f, topBarHeight);
+    F32 const sceneViewportX = 0.15f;
+    F32 const sceneViewportY = 0.2f;
+    F32 const sceneViewportWidth = 1.0f - sceneViewportX * 2.0f;
+    F32 const sceneViewportHeight = 1.0f - sceneViewportY - topBarHeight;
+    Rect2F const EditorLayout::c_sceneViewport(sceneViewportX, sceneViewportY, sceneViewportWidth, sceneViewportHeight);
+    Rect2F const EditorLayout::c_hierarchyViewport(0.0f, sceneViewportY, sceneViewportX, sceneViewportHeight);
+    Rect2F const EditorLayout::c_inspectorViewport(sceneViewportX + sceneViewportWidth, sceneViewportY, 1.0f - sceneViewportX - sceneViewportWidth, sceneViewportHeight);
+    Rect2F const EditorLayout::c_assetsViewport(0.0f, 0.0f, sceneViewportX + sceneViewportWidth * 0.5f, sceneViewportY);
+    Rect2F const EditorLayout::c_previewViewport(sceneViewportX + sceneViewportWidth * 0.5f, 0.0f, 1.0f - sceneViewportX - sceneViewportWidth * 0.5f, sceneViewportY);
+    Rect2F const EditorLayout::c_topBarViewport(0.0f, 1.0f - topBarHeight, 1.0f, topBarHeight);
     F32 const EditorLayout::c_workspaceTopBarHeight = 20.0f;
         
     //////////////////////////////////////////
