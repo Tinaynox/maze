@@ -383,7 +383,18 @@ namespace Maze
 
         MAZE_PROFILE_EVENT("EcsWorld::update");
 
+        {
+            MAZE_PROFILE_EVENT("EcsWorld - WorldPreUpdateEvent");
+
+            WorldPreUpdateEvent updateEvent(_dt);
+            broadcastEventImmediate<WorldPreUpdateEvent>(updateEvent);
+        }
         
+        if (m_eventHolders.other()->getEventsCount() == 0)
+            m_eventHolders.switchContainer();
+
+        m_eventHolders.other()->processEvents();
+
         if (m_eventHolders.other()->getEventsCount() == 0)
             m_eventHolders.switchContainer();
 

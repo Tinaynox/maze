@@ -54,7 +54,19 @@ namespace Maze.Core
         public bool IsKeyRepeat() { return (modifiers & (uint)InputEventKeyboardModifiers.IsKeyRepeat) != 0; }
     }
 
-    public class PostUpdateEvent : NativeEvent {}
+    
+    public class WorldPreUpdateEvent : NativeEvent
+    {
+        public float dt;
+    }
+    public class PreUpdateEvent : NativeEvent
+    {
+        public float dt;
+    }
+    public class PostUpdateEvent : NativeEvent
+    {
+        public float dt;
+    }
 
     public class MonoPreShutdownEvent : NativeEvent {}
     public class MonoReloadEvent : NativeEvent { }

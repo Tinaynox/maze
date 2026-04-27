@@ -62,6 +62,36 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Class WorldPreUpdateEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API WorldPreUpdateEvent
+        : public GenericEvent<WorldPreUpdateEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(WorldPreUpdateEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline WorldPreUpdateEvent(F32 _dt = 0.0f)
+            : m_dt(_dt)
+        {
+        }
+
+        //////////////////////////////////////////
+        inline F32 getDt() const { return m_dt; }
+
+        //////////////////////////////////////////
+        inline void setDt(F32 _value) { m_dt = _value; }
+
+    private:
+        F32 m_dt = 0.0f;
+    };
+
+    
+    //////////////////////////////////////////
     // Class PreUpdateEvent
     //
     //////////////////////////////////////////
@@ -81,6 +111,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline F32 getDt() const { return m_dt; }
+
+        //////////////////////////////////////////
+        inline void setDt(F32 _value) { m_dt = _value; }
 
     private:
         F32 m_dt = 0.0f;
@@ -108,6 +141,9 @@ namespace Maze
         //////////////////////////////////////////
         inline F32 getDt() const { return m_dt; }
 
+        //////////////////////////////////////////
+        inline void setDt(F32 _value) { m_dt = _value; }
+
     private:
         F32 m_dt = 0.0f;
     };
@@ -133,6 +169,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline F32 getDt() const { return m_dt; }
+
+        //////////////////////////////////////////
+        inline void setDt(F32 _value) { m_dt = _value; }
 
     private:
         F32 m_dt = 0.0f;
