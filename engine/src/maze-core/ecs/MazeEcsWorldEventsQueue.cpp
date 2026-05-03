@@ -164,6 +164,8 @@ namespace Maze
             }
         }
 
+        
+        MAZE_DEBUG_ASSERT(m_eventTypes.empty());
         MAZE_DEBUG_ASSERT(m_addingEntities.empty());
         MAZE_DEBUG_ASSERT(m_removingEntities.empty());
         MAZE_DEBUG_ASSERT(m_componentsChangedEntities.empty());

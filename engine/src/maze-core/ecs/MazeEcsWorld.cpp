@@ -390,15 +390,14 @@ namespace Maze
             broadcastEventImmediate<WorldPreUpdateEvent>(updateEvent);
         }
         
-        if (m_eventHolders.other()->getEventsCount() == 0)
-            m_eventHolders.switchContainer();
+        while (m_eventHolders.current()->getEventsCount() + m_eventHolders.other()->getEventsCount() > 0)
+        {
+            if (m_eventHolders.other()->getEventsCount() == 0)
+                m_eventHolders.switchContainer();
 
-        m_eventHolders.other()->processEvents();
+            m_eventHolders.other()->processEvents();
+        }
 
-        if (m_eventHolders.other()->getEventsCount() == 0)
-            m_eventHolders.switchContainer();
-
-        m_eventHolders.other()->processEvents();
 
         {
             MAZE_PROFILE_EVENT("EcsWorld - PreUpdateEvent");
