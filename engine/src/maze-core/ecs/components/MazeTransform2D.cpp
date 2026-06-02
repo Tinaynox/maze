@@ -360,10 +360,12 @@ namespace Maze
 
         if (getEntityRaw() && getEntityRaw()->getEcsWorld())
         {
-            getEntityRaw()->getEcsWorld()->broadcastEvent<EntityParentChangedEvent>(
-                getEntityId(),
-                prevParentEntityId,
-                m_parent ? m_parent->getEntityId() : c_invalidEntityId);
+            EntityId newParentId = m_parent ? m_parent->getEntityId() : c_invalidEntityId;
+            if (newParentId != prevParentEntityId)
+                getEntityRaw()->getEcsWorld()->broadcastEvent<EntityParentChangedEvent>(
+                    getEntityId(),
+                    prevParentEntityId,
+                    newParentId);
 
         }
 
