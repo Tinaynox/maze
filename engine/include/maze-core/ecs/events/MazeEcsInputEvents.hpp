@@ -57,15 +57,65 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        inline InputMouseEvent(InputEventMouseData const& _data = InputEventMouseData())
-            : m_data(_data)
+        inline InputMouseEvent(
+            InputEventMouseType _type = InputEventMouseType::None,
+            S32 _buttonId = 0,
+            S32 _x = 0,
+            S32 _y = 0,
+            S32 _z = 0,
+            S32 _windowId = c_invalidResourceId)
+            : m_type(_type)
+			, m_buttonId(_buttonId)
+			, m_x(_x)
+			, m_y(_y)
+            , m_z(_z)
+            , m_windowId(_windowId)
         {}
 
         //////////////////////////////////////////
-        inline InputEventMouseData const& getData() const { return m_data; }
+        inline InputEventMouseType getType() const { return m_type; }
+
+        //////////////////////////////////////////
+        inline void setType(InputEventMouseType _type) { m_type = _type; }
+
+        //////////////////////////////////////////
+        inline S32 getButtonId() const { return m_buttonId; }
+
+        //////////////////////////////////////////
+        inline void setButtonId(S32 _value) { m_buttonId = _value; }
+
+        //////////////////////////////////////////
+        inline S32 getX() const { return m_x; }
+
+        //////////////////////////////////////////
+        inline void setX(S32 _value) { m_x = _value; }
+
+        //////////////////////////////////////////
+        inline S32 getY() const { return m_y; }
+
+        //////////////////////////////////////////
+        inline void setY(S32 _value) { m_y = _value; }
+
+        //////////////////////////////////////////
+        inline S32 getZ() const { return m_z; }
+
+        //////////////////////////////////////////
+        inline void setZ(S32 _value) { m_z = _value; }
+
+        //////////////////////////////////////////
+        inline S32 getWindowId() const { return m_windowId; }
+
+        //////////////////////////////////////////
+        inline void setWindowId(S32 _value) { m_windowId = _value; }
 
     private:
-        InputEventMouseData m_data;
+        InputEventMouseType m_type = InputEventMouseType::None;
+        S32 m_buttonId = 0;
+        S32 m_x = 0;
+        S32 m_y = 0;
+        S32 m_z = 0;
+
+        S32 m_windowId = c_invalidResourceId;
     };
 
 

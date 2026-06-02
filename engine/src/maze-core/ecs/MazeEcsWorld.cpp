@@ -705,6 +705,9 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorld::notifyMouse(InputEventMouseData const& _data)
     {
+        broadcastEventImmediate<InputMouseEvent>(
+			_data.type, _data.buttonId, _data.x, _data.y, _data.z, _data.windowId);
+
         switch (_data.type)
         {
             case InputEventMouseType::ButtonUp:

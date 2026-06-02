@@ -54,7 +54,29 @@ namespace Maze.Core
         public bool IsKeyRepeat() { return (modifiers & (uint)InputEventKeyboardModifiers.IsKeyRepeat) != 0; }
     }
 
-    
+    public enum InputEventMouseType : byte
+    {
+        None = 0,
+
+        Move,
+        Drag,
+        Wheel,
+        ButtonDown,
+        ButtonDoubleClick,
+        ButtonUp
+    }
+
+    public class InputMouseEvent : NativeEvent
+    {
+        public InputEventMouseType type = InputEventMouseType.None;
+        public int buttonId = 0;
+        public int x = 0;
+        public int y = 0;
+        public int z = 0;
+        public int windowId = -1;
+    }
+
+
     public class WorldPreUpdateEvent : NativeEvent
     {
         public float dt;

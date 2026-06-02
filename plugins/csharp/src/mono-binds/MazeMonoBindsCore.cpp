@@ -35,6 +35,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
+#include "maze-core/managers/MazeSystemCursorManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
@@ -60,6 +61,8 @@ namespace Maze
     //////////////////////////////////////////
     inline void MazeLog(MonoString* _log)
     {
+        MAZE_PROFILE_EVENT("Mono::Log");
+
         Char* cstr = mono_string_to_utf8(_log);
         Debug::Log("MONO: %s", cstr);
         mono_free(cstr);
@@ -68,6 +71,8 @@ namespace Maze
     //////////////////////////////////////////
     inline void MazeLogWarning(MonoString* _log)
     {
+        MAZE_PROFILE_EVENT("Mono::LogWarning");
+
         Char* cstr = mono_string_to_utf8(_log);
         Debug::LogWarning("MONO: %s", cstr);
         mono_free(cstr);
@@ -76,6 +81,8 @@ namespace Maze
     //////////////////////////////////////////
     inline void MazeLogError(MonoString* _log)
     {
+        MAZE_PROFILE_EVENT("Mono::LogError");
+
         Char* cstr = mono_string_to_utf8(_log);
         Debug::LogError("MONO: %s", cstr);
         mono_free(cstr);
@@ -731,6 +738,18 @@ namespace Maze
         _component->castRaw<SizePolicy2D>()->setSizeDelta(_size);
     }
 
+    //////////////////////////////////////////
+    inline void SetSystemCursorVisible(bool visible)
+    {
+        if (!SystemCursorManager::GetInstancePtr())
+            return;
+
+        if (visible)
+            SystemCursorManager::GetInstancePtr()->showSystemCursor();
+        else
+            SystemCursorManager::GetInstancePtr()->hideSystemCursor();
+    }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsCore()
@@ -836,6 +855,9 @@ namespace Maze
 		// SizePolicy2D
         MAZE_CORE_MONO_BIND_FUNC(SizePolicy2DGetSizeDelta);
 		MAZE_CORE_MONO_BIND_FUNC(SizePolicy2DSetSizeDelta);
+
+        // SystemCursorManager
+		MAZE_CORE_MONO_BIND_FUNC(SetSystemCursorVisible);
     }
 
 } // namespace Maze

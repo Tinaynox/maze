@@ -160,6 +160,8 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr EcsScene::createEntity()
     {
+        MAZE_PROFILE_EVENT("EcsScene::createEntity");
+
         EntityPtr entity = Entity::Create();
         entity->setEcsScene(this);
         m_world->addEntity(entity);

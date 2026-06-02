@@ -1,0 +1,13 @@
+using System;
+using Maze.Core;
+
+namespace Maze.Core
+{
+    public static class CoreHelper
+    {
+        public static void SetSystemCursorVisible(bool visible)
+        {
+            InternalCalls.SetSystemCursorVisible(visible);
+        }
+    }
+}

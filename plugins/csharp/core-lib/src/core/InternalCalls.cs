@@ -6,18 +6,18 @@ namespace Maze.Core
     public class InternalCalls
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void ValidateAllScriptInstances();
+        internal extern static void ValidateAllScriptInstances();
         
 
         #region Log
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MazeLog(string text);
+        internal extern static void MazeLog(string text);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MazeLogWarning(string text);
+        internal extern static void MazeLogWarning(string text);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MazeLogError(string text);
+        internal extern static void MazeLogError(string text);
         #endregion
 
         #region Input
@@ -28,7 +28,7 @@ namespace Maze.Core
         public extern static bool GetCursorButtonState(int cursorId, int buttonIndex);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GetCursorPosition(int cursorId, out Vec2F outPosition);
+        internal extern static void GetCursorPosition(int cursorId, out Vec2F outPosition);
         #endregion
 
         #region Ecs
@@ -64,13 +64,13 @@ namespace Maze.Core
         public extern static MonoBehaviour EntityCreateMonoBehaviourComponentObject(NativePtr nativeEntityPtr, int componentId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void EntityRemoveFromEcsWorld(NativePtr nativeEntityPtr);
+        internal extern static void EntityRemoveFromEcsWorld(NativePtr nativeEntityPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void EntityGetActive(NativePtr nativeEntityPtr, out bool outValue);
+        internal extern static void EntityGetActive(NativePtr nativeEntityPtr, out bool outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void EntitySetActive(NativePtr nativeEntityPtr, bool value);
+        internal extern static void EntitySetActive(NativePtr nativeEntityPtr, bool value);
         #endregion
 
         #region Component
@@ -106,22 +106,22 @@ namespace Maze.Core
         public extern static NativePtr ComponentGetEntity(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void ComponentSendMonoEvent(NativePtr nativeComponentPtr, NativePtr receiverEntity, IntPtr monoEvent);
+        internal extern static void ComponentSendMonoEvent(NativePtr nativeComponentPtr, NativePtr receiverEntity, IntPtr monoEvent);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void ComponentSendMonoEventImmediate(NativePtr nativeComponentPtr, NativePtr receiverEntity, IntPtr monoEvent);
+        internal extern static void ComponentSendMonoEventImmediate(NativePtr nativeComponentPtr, NativePtr receiverEntity, IntPtr monoEvent);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void ComponentBroadcastMonoEvent(NativePtr nativeComponentPtr, IntPtr monoEvent);
+        internal extern static void ComponentBroadcastMonoEvent(NativePtr nativeComponentPtr, IntPtr monoEvent);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void ComponentBroadcastMonoEventImmediate(NativePtr nativeComponentPtr, IntPtr monoEvent);
+        internal extern static void ComponentBroadcastMonoEventImmediate(NativePtr nativeComponentPtr, IntPtr monoEvent);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool ComponentIsEditorMode(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void ComponentSetFlag(NativePtr nativeComponentPtr, byte flag, bool value);
+        internal extern static void ComponentSetFlag(NativePtr nativeComponentPtr, byte flag, bool value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool ComponentGetFlag(NativePtr nativeComponentPtr, byte flag);
@@ -132,103 +132,103 @@ namespace Maze.Core
         public extern static int Transform2DGetChildrenCount(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DGetChild(NativePtr nativeComponentPtr, int index, out NativePtr outChild);
+        internal extern static void Transform2DGetChild(NativePtr nativeComponentPtr, int index, out NativePtr outChild);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DGetSize(NativePtr nativeComponentPtr, out Vec2F outSize);
+        internal extern static void Transform2DGetSize(NativePtr nativeComponentPtr, out Vec2F outSize);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DSetSize(NativePtr nativeComponentPtr, ref Vec2F size);
+        internal extern static void Transform2DSetSize(NativePtr nativeComponentPtr, ref Vec2F size);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DGetPosition(NativePtr nativeComponentPtr, out Vec2F outPosition);
+        internal extern static void Transform2DGetPosition(NativePtr nativeComponentPtr, out Vec2F outPosition);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DSetPosition(NativePtr nativeComponentPtr, ref Vec2F pos);
+        internal extern static void Transform2DSetPosition(NativePtr nativeComponentPtr, ref Vec2F pos);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DGetScale(NativePtr nativeComponentPtr, out Vec2F outScale);
+        internal extern static void Transform2DGetScale(NativePtr nativeComponentPtr, out Vec2F outScale);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DSetScale(NativePtr nativeComponentPtr, ref Vec2F scale);
+        internal extern static void Transform2DSetScale(NativePtr nativeComponentPtr, ref Vec2F scale);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DGetPivot(NativePtr nativeComponentPtr, out Vec2F outPivot);
+        internal extern static void Transform2DGetPivot(NativePtr nativeComponentPtr, out Vec2F outPivot);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DSetPivot(NativePtr nativeComponentPtr, ref Vec2F pivot);
+        internal extern static void Transform2DSetPivot(NativePtr nativeComponentPtr, ref Vec2F pivot);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DGetAnchor(NativePtr nativeComponentPtr, out Vec2F outAnchor);
+        internal extern static void Transform2DGetAnchor(NativePtr nativeComponentPtr, out Vec2F outAnchor);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DSetAnchor(NativePtr nativeComponentPtr, ref Vec2F anchor);
+        internal extern static void Transform2DSetAnchor(NativePtr nativeComponentPtr, ref Vec2F anchor);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DSetParent(NativePtr nativeComponentPtr, NativePtr parentPtr);
+        internal extern static void Transform2DSetParent(NativePtr nativeComponentPtr, NativePtr parentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static NativePtr Transform2DGetParent(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DGetLocalTransform(NativePtr nativeComponentPtr, out TMat outTMat);
+        internal extern static void Transform2DGetLocalTransform(NativePtr nativeComponentPtr, out TMat outTMat);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DSetLocalTransform(NativePtr nativeComponentPtr, TMat tm);
+        internal extern static void Transform2DSetLocalTransform(NativePtr nativeComponentPtr, TMat tm);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform2DGetWorldTransform(NativePtr nativeComponentPtr, out TMat outTMat);
+        internal extern static void Transform2DGetWorldTransform(NativePtr nativeComponentPtr, out TMat outTMat);
         #endregion
 
 
         #region Transform3D
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DTranslate(NativePtr nativeComponentPtr, ref Vec3F delta);
+        internal extern static void Transform3DTranslate(NativePtr nativeComponentPtr, ref Vec3F delta);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DRotate(NativePtr nativeComponentPtr, ref Vec3F axis, float angle);
+        internal extern static void Transform3DRotate(NativePtr nativeComponentPtr, ref Vec3F axis, float angle);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetPosition(NativePtr nativeComponentPtr, out Vec3F outPosition);
+        internal extern static void Transform3DGetPosition(NativePtr nativeComponentPtr, out Vec3F outPosition);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetPosition(NativePtr nativeComponentPtr, ref Vec3F pos);
+        internal extern static void Transform3DSetPosition(NativePtr nativeComponentPtr, ref Vec3F pos);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetWorldPosition(NativePtr nativeComponentPtr, out Vec3F outPosition);
+        internal extern static void Transform3DGetWorldPosition(NativePtr nativeComponentPtr, out Vec3F outPosition);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetRotation(NativePtr nativeComponentPtr, out Quaternion outPosition);
+        internal extern static void Transform3DGetRotation(NativePtr nativeComponentPtr, out Quaternion outPosition);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetRotation(NativePtr nativeComponentPtr, ref Quaternion pos);
+        internal extern static void Transform3DSetRotation(NativePtr nativeComponentPtr, ref Quaternion pos);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetScale(NativePtr nativeComponentPtr, out Vec3F outScale);
+        internal extern static void Transform3DGetScale(NativePtr nativeComponentPtr, out Vec3F outScale);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetScale(NativePtr nativeComponentPtr, ref Vec3F scale);
+        internal extern static void Transform3DSetScale(NativePtr nativeComponentPtr, ref Vec3F scale);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetParent(NativePtr nativeComponentPtr, NativePtr parentPtr);
+        internal extern static void Transform3DSetParent(NativePtr nativeComponentPtr, NativePtr parentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetLocalTransform(NativePtr nativeComponentPtr, out TMat outTMat);
+        internal extern static void Transform3DGetLocalTransform(NativePtr nativeComponentPtr, out TMat outTMat);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetLocalTransform(NativePtr nativeComponentPtr, TMat tm);
+        internal extern static void Transform3DSetLocalTransform(NativePtr nativeComponentPtr, TMat tm);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetWorldTransform(NativePtr nativeComponentPtr, out TMat outTMat);
+        internal extern static void Transform3DGetWorldTransform(NativePtr nativeComponentPtr, out TMat outTMat);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DSetWorldTransform(NativePtr nativeComponentPtr, TMat tm);
+        internal extern static void Transform3DSetWorldTransform(NativePtr nativeComponentPtr, TMat tm);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int Transform3DGetChildrenCount(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Transform3DGetChild(NativePtr nativeComponentPtr, int index, out NativePtr outChild);
+        internal extern static void Transform3DGetChild(NativePtr nativeComponentPtr, int index, out NativePtr outChild);
         #endregion
 
         #region Name
@@ -236,7 +236,7 @@ namespace Maze.Core
         public extern static string NameGetName(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void NameSetName(NativePtr nativeComponentPtr, string name);
+        internal extern static void NameSetName(NativePtr nativeComponentPtr, string name);
         #endregion
 
         #region AssetUnit
@@ -263,10 +263,15 @@ namespace Maze.Core
 
         #region SizePolicy2D
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SizePolicy2DGetSizeDelta(NativePtr nativeComponentPtr, out Vec2F outSize);
+        internal extern static void SizePolicy2DGetSizeDelta(NativePtr nativeComponentPtr, out Vec2F outSize);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SizePolicy2DSetSizeDelta(NativePtr nativeComponentPtr, ref Vec2F size);
+        internal extern static void SizePolicy2DSetSizeDelta(NativePtr nativeComponentPtr, ref Vec2F size);
+        #endregion
+
+        #region SystemCursorManager
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void SetSystemCursorVisible(bool visible);
         #endregion
     }
 }

@@ -8,72 +8,72 @@ namespace Maze.Graphics
     {
         #region MeshRenderer
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererSetMaterialAssetUnit(NativePtr nativeComponentPtr, int index, AssetUnitId material);
+        internal extern static void MeshRendererSetMaterialAssetUnit(NativePtr nativeComponentPtr, int index, AssetUnitId material);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererSetMaterialResourceId(NativePtr nativeComponentPtr, int index, int materialResourceId);
+        internal extern static void MeshRendererSetMaterialResourceId(NativePtr nativeComponentPtr, int index, int materialResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
+        internal extern static void MeshRendererSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
+        internal extern static void MeshRendererGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
+        internal extern static void MeshRendererSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
+        internal extern static void MeshRendererGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
         #endregion
 
         #region MeshRendererInstanced
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererInstancedSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
+        internal extern static void MeshRendererInstancedSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererInstancedGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
+        internal extern static void MeshRendererInstancedGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererInstancedSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
+        internal extern static void MeshRendererInstancedSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererInstancedGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
+        internal extern static void MeshRendererInstancedGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererInstancedResizeModelMatrices(NativePtr nativeComponentPtr, int size);
+        internal extern static void MeshRendererInstancedResizeModelMatrices(NativePtr nativeComponentPtr, int size);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererInstancedSetModelMatrix(NativePtr nativeComponentPtr, int index, ref TMat tm);
+        internal extern static void MeshRendererInstancedSetModelMatrix(NativePtr nativeComponentPtr, int index, ref TMat tm);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererInstancedResizeColors(NativePtr nativeComponentPtr, int size);
+        internal extern static void MeshRendererInstancedResizeColors(NativePtr nativeComponentPtr, int size);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshRendererInstancedSetColor(NativePtr nativeComponentPtr, int index, ref Vec4F color);
+        internal extern static void MeshRendererInstancedSetColor(NativePtr nativeComponentPtr, int index, ref Vec4F color);
         #endregion
 
         #region SkinnedMeshRenderer
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshRendererSetMaterialAssetUnit(NativePtr nativeComponentPtr, AssetUnitId material);
+        internal extern static void SkinnedMeshRendererSetMaterialAssetUnit(NativePtr nativeComponentPtr, AssetUnitId material);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshRendererSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
+        internal extern static void SkinnedMeshRendererSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshRendererGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
+        internal extern static void SkinnedMeshRendererGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshRendererSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
+        internal extern static void SkinnedMeshRendererSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshRendererGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
+        internal extern static void SkinnedMeshRendererGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
         #endregion
 
         #region SkinnedMeshSkeleton
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshSkeletonSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
+        internal extern static void SkinnedMeshSkeletonSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshSkeletonGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
+        internal extern static void SkinnedMeshSkeletonGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int SkinnedMeshSkeletonPlayAnimation(
             NativePtr nativeComponentPtr,
@@ -100,13 +100,13 @@ namespace Maze.Graphics
             out float outCurrentTime);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshSkeletonPlayerRewindTo(
+        internal extern static void SkinnedMeshSkeletonPlayerRewindTo(
             NativePtr nativeComponentPtr,
             int playerIndex,
             float time);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshSkeletonPlayerStop(
+        internal extern static void SkinnedMeshSkeletonPlayerStop(
             NativePtr nativeComponentPtr,
             int playerIndex);
 
@@ -114,76 +114,76 @@ namespace Maze.Graphics
         public extern static float SkinnedMeshSkeletonGetAnimationSpeed(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SkinnedMeshSkeletonSetAnimationSpeed(
+        internal extern static void SkinnedMeshSkeletonSetAnimationSpeed(
             NativePtr nativeComponentPtr,
             float animationSpeed);
         #endregion
 
         #region SpriteRenderer2D
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SpriteRenderer2DSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
+        internal extern static void SpriteRenderer2DSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SpriteRenderer2DGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
+        internal extern static void SpriteRenderer2DGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SpriteRenderer2DSetSprite(NativePtr nativeComponentPtr, int spriteResourceId);
+        internal extern static void SpriteRenderer2DSetSprite(NativePtr nativeComponentPtr, int spriteResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SpriteRenderer2DGetSprite(NativePtr nativeComponentPtr, out int outSpriteResourceId);
+        internal extern static void SpriteRenderer2DGetSprite(NativePtr nativeComponentPtr, out int outSpriteResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SpriteRenderer2DSetColor(NativePtr nativeComponentPtr, uint color);
+        internal extern static void SpriteRenderer2DSetColor(NativePtr nativeComponentPtr, uint color);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void SpriteRenderer2DGetColor(NativePtr nativeComponentPtr, out uint outColor);
+        internal extern static void SpriteRenderer2DGetColor(NativePtr nativeComponentPtr, out uint outColor);
         #endregion
 
 
         #region Camera3D
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Camera3DGetAspectRatio(NativePtr nativeComponentPtr, out float outValue);
+        internal extern static void Camera3DGetAspectRatio(NativePtr nativeComponentPtr, out float outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Camera3DGetOrthographicSize(NativePtr nativeComponentPtr, out float outValue);
+        internal extern static void Camera3DGetOrthographicSize(NativePtr nativeComponentPtr, out float outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Camera3DSetOrthographicSize(NativePtr nativeComponentPtr, float value);
+        internal extern static void Camera3DSetOrthographicSize(NativePtr nativeComponentPtr, float value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Camera3DGetNearZ(NativePtr nativeComponentPtr, out float outValue);
+        internal extern static void Camera3DGetNearZ(NativePtr nativeComponentPtr, out float outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Camera3DSetNearZ(NativePtr nativeComponentPtr, float value);
+        internal extern static void Camera3DSetNearZ(NativePtr nativeComponentPtr, float value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Camera3DGetFarZ(NativePtr nativeComponentPtr, out float outValue);
+        internal extern static void Camera3DGetFarZ(NativePtr nativeComponentPtr, out float outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Camera3DSetFarZ(NativePtr nativeComponentPtr, float value);
+        internal extern static void Camera3DSetFarZ(NativePtr nativeComponentPtr, float value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Camera3DGetRenderMask(NativePtr nativeComponentPtr, out int outValue);
+        internal extern static void Camera3DGetRenderMask(NativePtr nativeComponentPtr, out int outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Camera3DSetRenderMask(NativePtr nativeComponentPtr, int value);
+        internal extern static void Camera3DSetRenderMask(NativePtr nativeComponentPtr, int value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Camera3DGetRenderTarget(NativePtr nativeComponentPtr, out int outValue);
+        internal extern static void Camera3DGetRenderTarget(NativePtr nativeComponentPtr, out int outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Camera3DSetRenderTarget(NativePtr nativeComponentPtr, int value);
+        internal extern static void Camera3DSetRenderTarget(NativePtr nativeComponentPtr, int value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Camera3DConvertViewportCoordsToRay(NativePtr nativeComponentPtr, ref Vec2F positionViewport, out Ray ray);
+        internal extern static void Camera3DConvertViewportCoordsToRay(NativePtr nativeComponentPtr, ref Vec2F positionViewport, out Ray ray);
         #endregion
 
         #region Light3D
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Light3DGetRadius(NativePtr nativeComponentPtr, out float outValue);
+        internal extern static void Light3DGetRadius(NativePtr nativeComponentPtr, out float outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Light3DSetRadius(NativePtr nativeComponentPtr, float value);
+        internal extern static void Light3DSetRadius(NativePtr nativeComponentPtr, float value);
         #endregion
 
         #region Mesh
@@ -191,13 +191,13 @@ namespace Maze.Graphics
         public extern static int CreateMesh();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void DestroyMesh(int meshId);
+        internal extern static void DestroyMesh(int meshId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshAddSubMesh(int meshId, int subMeshId);
+        internal extern static void MeshAddSubMesh(int meshId, int subMeshId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MeshClear(int meshId);
+        internal extern static void MeshClear(int meshId);
         #endregion
 
         #region SubMesh
@@ -205,7 +205,7 @@ namespace Maze.Graphics
         public extern static int CreateSubMesh();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void DestroySubMesh(int subMeshId);
+        internal extern static void DestroySubMesh(int subMeshId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static unsafe void SubMeshSetRenderDrawTopology(int subMeshId, int topology);
@@ -249,13 +249,13 @@ namespace Maze.Graphics
         public extern static int CreateRenderMesh();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void DestroyRenderMesh(int renderMeshId);
+        internal extern static void DestroyRenderMesh(int renderMeshId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void RenderMeshLoadFromMesh(int renderMeshId, int meshId);
+        internal extern static void RenderMeshLoadFromMesh(int renderMeshId, int meshId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void RenderMeshClear(int renderMeshId);
+        internal extern static void RenderMeshClear(int renderMeshId);
         #endregion
 
         #region RenderWindow
@@ -263,7 +263,7 @@ namespace Maze.Graphics
         public extern static int CreateRenderWindow(ref Vec2U windowSize, string title);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void DestroyRenderWindow(int resourceId);
+        internal extern static void DestroyRenderWindow(int resourceId);
         #endregion
 
         #region EcsRenderScene
@@ -273,22 +273,22 @@ namespace Maze.Graphics
 
         #region Canvas
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void CanvasGetRenderTarget(NativePtr nativeComponentPtr, out int outValue);
+        internal extern static void CanvasGetRenderTarget(NativePtr nativeComponentPtr, out int outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void CanvasSetRenderTarget(NativePtr nativeComponentPtr, int value);
+        internal extern static void CanvasSetRenderTarget(NativePtr nativeComponentPtr, int value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void CanvasGetRenderTargetRect(NativePtr nativeComponentPtr, out Rect2F value);
+        internal extern static void CanvasGetRenderTargetRect(NativePtr nativeComponentPtr, out Rect2F value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void CanvasConvertRenderTargetCoordsToViewportCoords(
+        internal extern static void CanvasConvertRenderTargetCoordsToViewportCoords(
             NativePtr nativeComponentPtr,
             ref Vec2F renderTargetPos,
             out Vec2F outViewportCoords);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void CanvasConvertViewportCoordsToRenderTargetCoords(
+        internal extern static void CanvasConvertViewportCoordsToRenderTargetCoords(
             NativePtr nativeComponentPtr,
             ref Vec2F viewportPos,
             out Vec2F outRenderTargetCoords);
@@ -296,10 +296,10 @@ namespace Maze.Graphics
 
         #region AbstractTextRenderer
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void AbstractTextRendererGetText(NativePtr nativeComponentPtr, out string outValue);
+        internal extern static void AbstractTextRendererGetText(NativePtr nativeComponentPtr, out string outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void AbstractTextRendererSetText(NativePtr nativeComponentPtr, string value);
+        internal extern static void AbstractTextRendererSetText(NativePtr nativeComponentPtr, string value);
         #endregion
 
         #region GlobalShaderUniform
@@ -310,64 +310,64 @@ namespace Maze.Graphics
         public extern static int GlobalShaderUniformEnsure(string name);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetS32(int globalShaderUniformId, ref int value);
+        internal extern static void GlobalShaderUniformSetS32(int globalShaderUniformId, ref int value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetF32(int globalShaderUniformId, ref float value);
+        internal extern static void GlobalShaderUniformSetF32(int globalShaderUniformId, ref float value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetF64(int globalShaderUniformId, ref double value);
+        internal extern static void GlobalShaderUniformSetF64(int globalShaderUniformId, ref double value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetBool(int globalShaderUniformId, ref bool value);
+        internal extern static void GlobalShaderUniformSetBool(int globalShaderUniformId, ref bool value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetVec2F(int globalShaderUniformId, ref Vec2F value);
+        internal extern static void GlobalShaderUniformSetVec2F(int globalShaderUniformId, ref Vec2F value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetVec3F(int globalShaderUniformId, ref Vec3F value);
+        internal extern static void GlobalShaderUniformSetVec3F(int globalShaderUniformId, ref Vec3F value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetVec4F(int globalShaderUniformId, ref Vec4F value);
+        internal extern static void GlobalShaderUniformSetVec4F(int globalShaderUniformId, ref Vec4F value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetVec2S(int globalShaderUniformId, ref Vec2S value);
+        internal extern static void GlobalShaderUniformSetVec2S(int globalShaderUniformId, ref Vec2S value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetVec3S(int globalShaderUniformId, ref Vec3S value);
+        internal extern static void GlobalShaderUniformSetVec3S(int globalShaderUniformId, ref Vec3S value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetVec4S(int globalShaderUniformId, ref Vec4S value);
+        internal extern static void GlobalShaderUniformSetVec4S(int globalShaderUniformId, ref Vec4S value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetVec2U(int globalShaderUniformId, ref Vec2U value);
+        internal extern static void GlobalShaderUniformSetVec2U(int globalShaderUniformId, ref Vec2U value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetVec3U(int globalShaderUniformId, ref Vec3U value);
+        internal extern static void GlobalShaderUniformSetVec3U(int globalShaderUniformId, ref Vec3U value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetVec4U(int globalShaderUniformId, ref Vec4U value);
+        internal extern static void GlobalShaderUniformSetVec4U(int globalShaderUniformId, ref Vec4U value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetVec2B(int globalShaderUniformId, ref Vec2B value);
+        internal extern static void GlobalShaderUniformSetVec2B(int globalShaderUniformId, ref Vec2B value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetVec3B(int globalShaderUniformId, ref Vec3B value);
+        internal extern static void GlobalShaderUniformSetVec3B(int globalShaderUniformId, ref Vec3B value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetVec4B(int globalShaderUniformId, ref Vec4B value);
+        internal extern static void GlobalShaderUniformSetVec4B(int globalShaderUniformId, ref Vec4B value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetMat3F(int globalShaderUniformId, ref Mat3F value);
+        internal extern static void GlobalShaderUniformSetMat3F(int globalShaderUniformId, ref Mat3F value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetMat4F(int globalShaderUniformId, ref Mat4F value);
+        internal extern static void GlobalShaderUniformSetMat4F(int globalShaderUniformId, ref Mat4F value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetTMat(int globalShaderUniformId, ref TMat value);
+        internal extern static void GlobalShaderUniformSetTMat(int globalShaderUniformId, ref TMat value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void GlobalShaderUniformSetColorF128(int globalShaderUniformId, ref ColorF128 value);
+        internal extern static void GlobalShaderUniformSetColorF128(int globalShaderUniformId, ref ColorF128 value);
         #endregion
 
         #region Material
@@ -378,73 +378,73 @@ namespace Maze.Graphics
         public extern static int MaterialCreateCopy(int materialId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void DestroyMaterial(int materialId);
+        internal extern static void DestroyMaterial(int materialId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int MaterialEnsureUniformIndex(int materialId, string name);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetS32(int materialId, int uniformIndex, ref int value);
+        internal extern static void MaterialUniformSetS32(int materialId, int uniformIndex, ref int value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetF32(int materialId, int uniformIndex, ref float value);
+        internal extern static void MaterialUniformSetF32(int materialId, int uniformIndex, ref float value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetF64(int materialId, int uniformIndex, ref double value);
+        internal extern static void MaterialUniformSetF64(int materialId, int uniformIndex, ref double value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetBool(int materialId, int uniformIndex, ref bool value);
+        internal extern static void MaterialUniformSetBool(int materialId, int uniformIndex, ref bool value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetVec2F(int materialId, int uniformIndex, ref Vec2F value);
+        internal extern static void MaterialUniformSetVec2F(int materialId, int uniformIndex, ref Vec2F value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetVec3F(int materialId, int uniformIndex, ref Vec3F value);
+        internal extern static void MaterialUniformSetVec3F(int materialId, int uniformIndex, ref Vec3F value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetVec4F(int materialId, int uniformIndex, ref Vec4F value);
+        internal extern static void MaterialUniformSetVec4F(int materialId, int uniformIndex, ref Vec4F value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetVec2S(int materialId, int uniformIndex, ref Vec2S value);
+        internal extern static void MaterialUniformSetVec2S(int materialId, int uniformIndex, ref Vec2S value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetVec3S(int materialId, int uniformIndex, ref Vec3S value);
+        internal extern static void MaterialUniformSetVec3S(int materialId, int uniformIndex, ref Vec3S value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetVec4S(int materialId, int uniformIndex, ref Vec4S value);
+        internal extern static void MaterialUniformSetVec4S(int materialId, int uniformIndex, ref Vec4S value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetVec2U(int materialId, int uniformIndex, ref Vec2U value);
+        internal extern static void MaterialUniformSetVec2U(int materialId, int uniformIndex, ref Vec2U value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetVec3U(int materialId, int uniformIndex, ref Vec3U value);
+        internal extern static void MaterialUniformSetVec3U(int materialId, int uniformIndex, ref Vec3U value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetVec4U(int materialId, int uniformIndex, ref Vec4U value);
+        internal extern static void MaterialUniformSetVec4U(int materialId, int uniformIndex, ref Vec4U value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetVec2B(int materialId, int uniformIndex, ref Vec2B value);
+        internal extern static void MaterialUniformSetVec2B(int materialId, int uniformIndex, ref Vec2B value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetVec3B(int materialId, int uniformIndex, ref Vec3B value);
+        internal extern static void MaterialUniformSetVec3B(int materialId, int uniformIndex, ref Vec3B value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetVec4B(int materialId, int uniformIndex, ref Vec4B value);
+        internal extern static void MaterialUniformSetVec4B(int materialId, int uniformIndex, ref Vec4B value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetMat3F(int materialId, int uniformIndex, ref Mat3F value);
+        internal extern static void MaterialUniformSetMat3F(int materialId, int uniformIndex, ref Mat3F value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetMat4F(int materialId, int uniformIndex, ref Mat4F value);
+        internal extern static void MaterialUniformSetMat4F(int materialId, int uniformIndex, ref Mat4F value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetTMat(int materialId, int uniformIndex, ref TMat value);
+        internal extern static void MaterialUniformSetTMat(int materialId, int uniformIndex, ref TMat value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetColorF128(int materialId, int uniformIndex, ref ColorF128 value);
+        internal extern static void MaterialUniformSetColorF128(int materialId, int uniformIndex, ref ColorF128 value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void MaterialUniformSetTexture2D(int materialId, int uniformIndex, int textureId); 
+        internal extern static void MaterialUniformSetTexture2D(int materialId, int uniformIndex, int textureId); 
         #endregion
 
         #region PixelSheet2D
@@ -452,34 +452,34 @@ namespace Maze.Graphics
         public extern static int CreatePixelSheet2D();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void DestroyPixelSheet2D(int sheetId);
+        internal extern static void DestroyPixelSheet2D(int sheetId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void PixelSheet2DSaveToFileAsTGA(int sheetId, string filename, bool resetAlpha);
+        internal extern static void PixelSheet2DSaveToFileAsTGA(int sheetId, string filename, bool resetAlpha);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void PixelSheet2DGetSize(int sheetId, out Vec2S value);
+        internal extern static void PixelSheet2DGetSize(int sheetId, out Vec2S value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void PixelSheet2DSetSize(int sheetId, ref Vec2S value);
+        internal extern static void PixelSheet2DSetSize(int sheetId, ref Vec2S value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int PixelSheet2DGetFormat(int sheetId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void PixelSheet2DSetFormat(int sheetId, int format);
+        internal extern static void PixelSheet2DSetFormat(int sheetId, int format);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static uint PixelSheet2DGetPixelU32(int sheetId, int x, int y);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void PixelSheet2DSetPixelU32(int sheetId, int x, int y, uint color);
+        internal extern static void PixelSheet2DSetPixelU32(int sheetId, int x, int y, uint color);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void PixelSheet2DFillU32(int sheetId, uint color);
+        internal extern static void PixelSheet2DFillU32(int sheetId, uint color);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void PixelSheet2DBlend(int sheetBaseId, int sheetApplyId);
+        internal extern static void PixelSheet2DBlend(int sheetBaseId, int sheetApplyId);
         #endregion
 
         #region Texture2D
@@ -487,13 +487,13 @@ namespace Maze.Graphics
         public extern static int CreateTexture2D();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void DestroyTexture2D(int textureId);
+        internal extern static void DestroyTexture2D(int textureId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int Texture2DReadAsPixelSheet(int textureId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Texture2DLoad(int textureId, int pixelSheetId);
+        internal extern static void Texture2DLoad(int textureId, int pixelSheetId);
         #endregion
 
         #region Sprite
@@ -501,7 +501,7 @@ namespace Maze.Graphics
         public extern static int CreateSprite();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void DestroySprite(int spriteId);
+        internal extern static void DestroySprite(int spriteId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool SpriteIsValid(int spriteId);

@@ -28,6 +28,7 @@
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/managers/MazeSystemCursorManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
@@ -372,6 +373,7 @@ namespace Maze
         // Reset cursor
         if (Editor::GetInstancePtr()->getMainRenderWindow() && Editor::GetInstancePtr()->getMainRenderWindow()->getWindow())
             Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->setCursor(nullptr);
+        SystemCursorManager::GetInstancePtr()->showSystemCursor();
 
 
         if (m_playtestModeEnabled)

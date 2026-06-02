@@ -32,7 +32,13 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputMouseEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputMouseEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(InputEventMouseType, type, InputEventMouseType::None, getType, setType),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, buttonId, 0, getButtonId, setButtonId),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, x, 0, getX, setX),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, y, 0, getY, setY),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, z, 0, getZ, setZ),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, windowId, c_invalidResourceId, getWindowId, setWindowId));
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputKeyboardEvent, Event,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(InputEventKeyboardType, type, InputEventKeyboardType::None, getType, setType),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S64, scanCode, 0, getScanCode, setScanCode),
