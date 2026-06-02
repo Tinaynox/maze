@@ -129,6 +129,9 @@ namespace Maze
         inline bool isValid() const { return m_monoClass != nullptr; }
 
         //////////////////////////////////////////
+        inline MonoMethod* getOnAwakeMethod() const { return m_onAwakeMethod; }
+
+        //////////////////////////////////////////
         inline MonoMethod* getOnCreateMethod() const { return m_onCreateMethod; }
 
         //////////////////////////////////////////
@@ -213,6 +216,7 @@ namespace Maze
         HashedString m_fullName;
         MonoClass* m_monoClass = nullptr;
 
+        MonoMethod* m_onAwakeMethod = nullptr;
         MonoMethod* m_onCreateMethod = nullptr;
         MonoMethod* m_onUpdateMethod = nullptr;
         MonoMethod* m_onDestroyMethod = nullptr;

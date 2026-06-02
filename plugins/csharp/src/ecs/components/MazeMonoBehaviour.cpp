@@ -469,6 +469,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void MonoBehaviour::processEntityAwakened()
+    {
+        ScriptClassPtr const& scriptClass = getMonoClass();
+        if (!scriptClass || !scriptClass->getOnAwakeMethod())
+            return;
+
+        if (ScriptInstancePtr const& scriptInstance = ensureMonoInstance())
+        {
+            scriptInstance->invokeMethod(
+                scriptClass->getOnAwakeMethod());
+        }
+    }
+
+    //////////////////////////////////////////
     /*
     COMPONENT_SYSTEM_EVENT_HANDLER(MonoBehaviourOnPostCopy,
         {},
@@ -488,14 +502,13 @@ namespace Maze
         MonoBehaviour* _monoBehaviour)
     {
         ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
-        if (!scriptClass)
+        if (!scriptClass || !scriptClass->getOnCreateMethod())
             return;
 
         if (ScriptInstancePtr const& scriptInstance = _monoBehaviour->ensureMonoInstance())
         {
-            if (scriptClass->getOnCreateMethod())
-                scriptInstance->invokeMethod(
-                    scriptClass->getOnCreateMethod());
+            scriptInstance->invokeMethod(
+                scriptClass->getOnCreateMethod());
         }
     }
 
@@ -506,15 +519,17 @@ namespace Maze
         MonoBehaviour* _monoBehaviour)
     {
         ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
-        ScriptInstancePtr const& scriptInstance = _monoBehaviour->getMonoInstance();
 
-        if (!scriptClass || !scriptInstance || !scriptInstance->isValid())
+        if (!scriptClass || !scriptClass->getOnUpdateMethod())
             return;
 
-        if (scriptClass->getOnUpdateMethod())
-            scriptInstance->invokeMethod(
-                scriptClass->getOnUpdateMethod(),
-                _event.getDt());
+        ScriptInstancePtr const& scriptInstance = _monoBehaviour->getMonoInstance();
+        if (!scriptInstance || !scriptInstance->isValid())
+            return;
+
+        scriptInstance->invokeMethod(
+            scriptClass->getOnUpdateMethod(),
+            _event.getDt());
     }
 
     //////////////////////////////////////////
@@ -526,11 +541,10 @@ namespace Maze
         ScriptClassPtr const& scriptClass = _monoBehaviour->getMonoClass();
         ScriptInstancePtr const& scriptInstance = _monoBehaviour->getMonoInstance();
 
-        if (scriptClass && scriptInstance && scriptInstance->isValid())
+        if (scriptClass && scriptInstance && scriptInstance->isValid() && scriptClass->getOnDestroyMethod())
         {
-            if (scriptClass->getOnDestroyMethod())
-                scriptInstance->invokeMethod(
-                    scriptClass->getOnDestroyMethod());
+            scriptInstance->invokeMethod(
+                scriptClass->getOnDestroyMethod());
         }
 
         _monoBehaviour->destroyMonoInstance();

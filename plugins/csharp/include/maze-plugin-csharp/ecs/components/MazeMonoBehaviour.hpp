@@ -149,6 +149,10 @@ namespace Maze
         //////////////////////////////////////////
         void notifyEvent(ClassUID _eventUID, Event* _event);
 
+
+        //////////////////////////////////////////
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
+
     protected:
         ComponentId m_componentId = 0u;
         ScriptClassPtr m_monoClass;

@@ -51,7 +51,7 @@ namespace Maze
 
 
         Vector<Maze::S8 const*> commandLineArguments;
-        U32 minFrameDeltaTimeMS = 0u;
+        U32 minFrameDeltaTimeMS = 2u;
 
         String projectName;
 

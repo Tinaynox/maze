@@ -119,6 +119,7 @@ namespace Maze
         if (_eventUID == ClassInfo<MonoShutdownEvent>::UID())
         {
             m_monoClass = nullptr;
+            m_onAwakeMethod = nullptr;
             m_onCreateMethod = nullptr;
             m_onUpdateMethod = nullptr;
             m_onDestroyMethod = nullptr;
@@ -192,6 +193,7 @@ namespace Maze
     void ScriptClass::assignDefaultMethods()
     {
         m_onCreateMethod = getMethod("OnCreate");
+        m_onAwakeMethod = getMethod("OnAwake");
         m_onUpdateMethod = getMethod("OnUpdate", 1);
         m_onDestroyMethod = getMethod("OnDestroy");
 
