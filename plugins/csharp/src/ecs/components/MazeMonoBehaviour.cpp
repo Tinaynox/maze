@@ -251,9 +251,6 @@ namespace Maze
 
         m_monoClass = _scriptClass;
 
-        m_monoClass->getMethod("OnCreate");
-        m_monoClass->getMethod("OnUpdate", 1);
-
         m_componentId = GetComponentIdByName(m_monoClass->getFullName().c_str());
 
         if (_createMonoInstance)
