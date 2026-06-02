@@ -416,7 +416,23 @@ namespace Maze
         if (!_entity->getEcsScene())
             return nullptr;
 
-        EntityId parentId = EcsHelper::GetEntityParentId(_entity.get());
+        EntityId parentId = c_invalidEntityId;
+
+        if (Transform2D* transform2D = _entity->getComponentRaw<Transform2D>())
+        {
+            if (transform2D->getParent())
+                parentId = transform2D->getParent()->getEntityId();
+        }
+        else
+        if (Transform3D* transform3D = _entity->getComponentRaw<Transform3D>())
+        {
+            if (transform3D && transform3D->getParent())
+                parentId = transform3D->getParent()->getEntityId();
+        }
+        else
+        {
+            return nullptr;
+        }
 
         HierarchyLinePtr parentLine;
         if (parentId)
