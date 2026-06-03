@@ -164,5 +164,17 @@ namespace Maze.Core
             }
             return result;
         }
+
+        public bool ContainsPointLS(Vec2F pointLS)
+        {
+            return pointLS.X >= 0.0f && pointLS.Y >= 0.0f && pointLS.X <= Size.X && pointLS.Y <= Size.Y;
+        }
+
+        public bool ContainsPointWS(Vec2F pointWS)
+        {
+            TMat invWorldTm = WorldTransform.Inversed();
+            Vec2F pointLS = invWorldTm.Transform(pointWS);
+            return ContainsPointLS(pointLS);
+        }
     }
 }
