@@ -32,7 +32,7 @@ At the moment it is my main pet project, developed for the purpose of learning a
 Start by cloning the repository with `git clone --recursive https://github.com/Tinaynox/maze`.
 
 ### ![Windows](/res/art/WindowsIcon_16x16.png?raw=true "Windows") Windows » ![Windows](/res/art/WindowsIcon_16x16.png?raw=true "Windows") Windows
-- Download and install Visual Studio 2017 or 2019
+- Download and install Visual Studio 2026
 - Download and install Windows SDK
 - Download and install CMake 3.6+
 - Download and install Python 3.8+
