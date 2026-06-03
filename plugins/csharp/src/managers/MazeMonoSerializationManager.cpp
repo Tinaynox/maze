@@ -132,7 +132,7 @@ namespace Maze
                 monoByteBufferSizeProperty,
                 monoByteBufferDataProperty](MonoObject* _monoDataBlock, DataBlock& _dataBlock)
                 {
-                    _dataBlock.clear();
+                    _dataBlock.clearData();
 
                     if (!_monoDataBlock)
                         return true;
