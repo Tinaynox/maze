@@ -23,7 +23,7 @@ At the moment it is my main pet project, developed for the purpose of learning a
 
 
 ## Links
-[![YouTube](/res/art/YouTubeIcon_32x32.png?raw=true "YouTube")](https://www.youtube.com/watch?v=1487fMZHhhw&list=PLAXaNJxAv5yvSVxR3jy0WwMJW0tZPoXWQ)
+[![Website](/res/art/WebsiteIcon_32x32.png?raw=true "Website")](https://tinaynox.com/projects/maze/) [![YouTube](/res/art/YouTubeIcon_32x32.png?raw=true "YouTube")](https://www.youtube.com/watch?v=1487fMZHhhw&list=PLAXaNJxAv5yvSVxR3jy0WwMJW0tZPoXWQ)
 
 
 ## Maze Editor screenshots
