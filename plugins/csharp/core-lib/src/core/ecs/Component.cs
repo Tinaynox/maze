@@ -159,6 +159,11 @@ namespace Maze.Core
             return InternalCalls.ComponentGetFlag(NativeComponentPtr, (byte)flag);
         }
 
+        public Entity GetEntity(int eid)
+        {
+            return new Entity(InternalCalls.ComponentGetEntityById(NativeComponentPtr, eid));
+        }
+
         public bool IsEditorMode()
         {
             return InternalCalls.ComponentIsEditorMode(NativeComponentPtr);

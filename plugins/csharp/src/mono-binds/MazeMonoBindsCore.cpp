@@ -408,6 +408,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline Entity* ComponentGetEntityById(Component* _component, S32 _eid)
+    {
+        Entity* entity = _component->getEntityRaw();
+        if (!entity)
+            return nullptr;
+
+        EcsWorld* world = entity->getEcsWorld();
+        if (!world)
+            return nullptr;
+
+        EntityPtr const& foundEntity = world->getEntity(EntityId(_eid));
+        if (!foundEntity)
+            return nullptr;
+
+        return foundEntity.get();
+    }
+
+    //////////////////////////////////////////
     inline void ComponentSendMonoEvent(Component* _component, Entity* _entityReceiver, MonoObject* _monoEventPtr)
     {
         U32 gcHandle = (uint32_t)(uintptr_t)_monoEventPtr;
@@ -793,6 +811,7 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(ComponentCreateNativeComponent);
         MAZE_CORE_MONO_BIND_FUNC(ComponentCreateMonoBehaviourComponentObject);
         MAZE_CORE_MONO_BIND_FUNC(ComponentGetEntity);
+        MAZE_CORE_MONO_BIND_FUNC(ComponentGetEntityById);
         MAZE_CORE_MONO_BIND_FUNC(ComponentSendMonoEvent);
         MAZE_CORE_MONO_BIND_FUNC(ComponentSendMonoEventImmediate);
         MAZE_CORE_MONO_BIND_FUNC(ComponentBroadcastMonoEvent);

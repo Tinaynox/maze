@@ -106,6 +106,9 @@ namespace Maze.Core
         public extern static NativePtr ComponentGetEntity(NativePtr nativeComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static NativePtr ComponentGetEntityById(NativePtr nativeComponentPtr, int eid);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void ComponentSendMonoEvent(NativePtr nativeComponentPtr, NativePtr receiverEntity, IntPtr monoEvent);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
