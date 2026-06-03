@@ -22,10 +22,6 @@ At the moment it is my main pet project, developed for the purpose of learning a
 [![Steam](/res/art/SteamIcon_32x32.png?raw=true "Steam")](https://store.steampowered.com/app/4005150/Melted_Kingdoms/) [![itch.io](/res/art/ItchIcon_32x32.png?raw=true "itch.io")](https://tinaynox.itch.io/melted-kingdoms)
 
 
-## Links
-[![Website](/res/art/WebsiteIcon_32x32.png?raw=true "Website")](https://tinaynox.com/projects/maze/) [![YouTube](/res/art/YouTubeIcon_32x32.png?raw=true "YouTube")](https://www.youtube.com/watch?v=1487fMZHhhw&list=PLAXaNJxAv5yvSVxR3jy0WwMJW0tZPoXWQ)
-
-
 ## Maze Editor screenshots
 ![Maze Editor](/res/art/screenshots/maze-editor0.jpg?raw=true "Maze Editor - Screenshot 0")
 ![Maze Editor](/res/art/screenshots/maze-editor1.jpg?raw=true "Maze Editor - Screenshot 1")
@@ -89,6 +85,10 @@ Start by cloning the repository with `git clone --recursive https://github.com/T
 
 ### ![macOS](/res/art/MacOSIcon_16x16.png?raw=true "macOS") macOS » ![iOS](/res/art/IOSIcon_16x16.png?raw=true "iOS") iOS
 *[Work In Progress]*
+
+
+## Links
+[![Website](/res/art/WebsiteIcon_32x32.png?raw=true "Website")](https://tinaynox.com/projects/maze/) [![YouTube](/res/art/YouTubeIcon_32x32.png?raw=true "YouTube")](https://www.youtube.com/watch?v=1487fMZHhhw&list=PLAXaNJxAv5yvSVxR3jy0WwMJW0tZPoXWQ)
 
 
 ## Features Demonstration
