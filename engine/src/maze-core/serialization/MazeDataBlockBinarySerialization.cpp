@@ -154,7 +154,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API bool LoadBinary(DataBlock& _dataBlock, ByteBuffer const& _buffer)
         {
-            _dataBlock.clear();
+            _dataBlock.clearData();
 
             ByteBufferReadStream readStream(_buffer);
 
@@ -181,7 +181,7 @@ namespace Maze
                 Size bytesReaded = readStream.read((U8*)&string[0], (Size)stringSize);
                 if (bytesReaded != (Size)stringSize)
                 {
-                    _dataBlock.clear();
+                    _dataBlock.clearData();
                     MAZE_ERROR_RETURN_VALUE(false, "Binary data is corrupted.");
                 }
 
@@ -193,7 +193,7 @@ namespace Maze
 
             if (!ReadDataBlockBinary(readStream, _dataBlock))
             {
-                _dataBlock.clear();
+                _dataBlock.clearData();
                 MAZE_ERROR_RETURN_VALUE(false, "Binary data is corrupted.");
             }
 
@@ -206,7 +206,7 @@ namespace Maze
                 
                 if (loadedCheckSumHash != calculatedCheckSumHash)
                 {
-                    _dataBlock.clear();
+                    _dataBlock.clearData();
                     MAZE_WARNING_RETURN_VALUE(false, "Checksum doesn't match.");
                 }
             }
