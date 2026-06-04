@@ -230,6 +230,13 @@ namespace Maze.Core
                 v.X * M01 + v.Y * M11 + M31);
         }
 
+        public Vec2F TransformNonTranslate(Vec2F v)
+        {
+            return new Vec2F(
+                v.X * M00 + v.Y * M10,
+                v.X * M01 + v.Y * M11);
+        }
+
         //////////////////////////////////////////
         //
         //                           [ m[0][0] m[0][1] m[0][2] 0 ]
@@ -244,6 +251,14 @@ namespace Maze.Core
                 v.X * M00 + v.Y * M10 + v.Z * M20 + M30,
                 v.X * M01 + v.Y * M11 + v.Z * M21 + M31,
                 v.X * M02 + v.Y * M12 + v.Z * M22 + M32);
+        }
+
+        public Vec3F TransformNonTranslate(Vec3F v)
+        {
+            return new Vec3F(
+                v.X * M00 + v.Y * M10 + v.Z * M20,
+                v.X * M01 + v.Y * M11 + v.Z * M21,
+                v.X * M02 + v.Y * M12 + v.Z * M22);
         }
 
         public TMat Inversed()
