@@ -603,5 +603,21 @@ namespace Maze.Core
         }
 
         public static string BoolToStringPretty(bool value) => value ? "true" : "false";
+
+        public static string TrimEndAfterChar(this string str, char ch)
+        {
+            if (string.IsNullOrEmpty(str))
+                return str;
+
+            int index = str.LastIndexOf(ch);
+            return index >= 0
+                ? str.Substring(0, index)
+                : str;
+        }
+
+        public static string TrimExtension(this string str)
+        {
+            return TrimEndAfterChar(str, '.');
+        }
     }
 }

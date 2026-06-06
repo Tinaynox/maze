@@ -261,6 +261,9 @@ namespace Maze.Core
         #region ScriptableObject
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static ScriptableObject GetScriptableObject(uint assetUnitId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static string ScriptableObjectGetName(int resourceId);
         #endregion
 
 

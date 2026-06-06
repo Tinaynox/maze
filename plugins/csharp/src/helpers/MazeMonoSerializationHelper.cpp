@@ -114,6 +114,7 @@ namespace Maze
 
             EcsWorld* ecsWorld = _component->getEntityRaw()->getEcsWorld();
 
+            // Fields
             MonoHelper::IterateSerializableFields(monoClass,
                 [&](ScriptFieldPtr const& _field)
                 {
@@ -199,6 +200,95 @@ namespace Maze
                     modificationBlock->setCString(MAZE_HCS("_ct"), _component->getComponentClassName());
 
                     modificationBlock->setCString(MAZE_HCS("property"), _field->getName().c_str());
+                    modificationBlock->addNewDataBlock(&value, MAZE_HCS("value"));
+                });
+
+            // Properties
+            MonoHelper::IterateSerializableProperties(monoClass,
+                [&](ScriptPropertyPtr const& _property)
+                {
+                    if (_property->isStaticGetter() || _property->isStaticSetter())
+                        return;
+
+                    MonoClass* fieldMonoClass = mono_class_from_mono_type(_property->getMonoType());
+                    if (fieldMonoClass)
+                    {
+                        if (fieldMonoClass == MonoEngine::GetEntityClass()->getMonoClass())
+                        {
+                            MonoObject* entityInstance0 = nullptr;
+                            monoInstance->getPropertyValue(_property, entityInstance0);
+
+                            MonoObject* entityInstance1 = nullptr;
+                            identityMonoInstance->getPropertyValue(_property, entityInstance1);
+
+                            // #TODO: Ignore entity eid modifications for now
+                            if (entityInstance0 && entityInstance1)
+                                return;
+                        }
+                        else
+                        if (mono_class_is_subclass_of(fieldMonoClass, MonoEngine::GetComponentClass()->getMonoClass(), false))
+                        {
+                            MonoObject* componentInstance0 = nullptr;
+                            monoInstance->getPropertyValue(_property, componentInstance0);
+
+                            MonoObject* componentInstance1 = nullptr;
+                            identityMonoInstance->getPropertyValue(_property, componentInstance1);
+
+                            // #TODO: Ignore component eid modifications for now
+                            if (componentInstance0 && componentInstance1)
+                                return;
+                        }
+                        else
+                        if (mono_type_get_type(_property->getMonoType()) == MONO_TYPE_GENERICINST)
+                        {
+                            CString monoTypeName = mono_type_get_name(_property->getMonoType());
+
+                            Char monoTypeBaseNameBuffer[256];
+                            if (!MonoHelper::GetMonoGenericClassBaseName(
+                                monoTypeName,
+                                monoTypeBaseNameBuffer,
+                                sizeof(monoTypeBaseNameBuffer)))
+                                return;
+
+                            if (strcmp(monoTypeBaseNameBuffer, "System.Collections.Generic.List") == 0)
+                            {
+                                CStringSpan monoTypeArgBaseName = MonoHelper::GetMonoGenericClassFirstGenericArgumentName(monoTypeName);
+                                MAZE_ERROR_RETURN_IF(monoTypeArgBaseName.size() == 0, "Invalid generic class - %s", monoTypeName);
+
+                                Char monoTypeArgBaseNameBuffer[256];
+                                memcpy_s(monoTypeArgBaseNameBuffer, sizeof(monoTypeArgBaseNameBuffer), monoTypeArgBaseName.ptr(), monoTypeArgBaseName.size());
+                                monoTypeArgBaseNameBuffer[monoTypeArgBaseName.size()] = 0;
+                                HashedCString monoTypeArgBaseNameHCS(monoTypeArgBaseNameBuffer);
+
+                                // #TODO: Ignore component eid modifications for now
+                                if (MonoEngine::GetMonoBehaviourSubClass(monoTypeArgBaseNameHCS))
+                                    return;
+                            }
+                        }
+                    }
+
+                    DataBlock value;
+                    MonoSerializationManager::GetInstancePtr()->savePropertyToDataBlock(
+                        ecsWorld,
+                        *monoInstance,
+                        _property,
+                        value);
+
+                    DataBlock identityValue;
+                    MonoSerializationManager::GetInstancePtr()->savePropertyToDataBlock(
+                        ecsWorld,
+                        *identityMonoInstance,
+                        _property,
+                        identityValue);
+
+                    if (value.isEqual(identityValue))
+                        return;
+
+                    DataBlock* modificationBlock = _prefabBlock.addNewDataBlock(MAZE_HCS("modification"));
+                    modificationBlock->setCString(MAZE_HCS("component"), MonoBehaviour::GetMetaClass()->getName().str);
+                    modificationBlock->setCString(MAZE_HCS("_ct"), _component->getComponentClassName());
+
+                    modificationBlock->setCString(MAZE_HCS("property"), _property->getName().c_str());
                     modificationBlock->addNewDataBlock(&value, MAZE_HCS("value"));
                 });
         }

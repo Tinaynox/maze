@@ -20,6 +20,22 @@ namespace Maze.Graphics
             ReleaseResource();
         }
 
+        public static RenderMesh Get(int resourceId)
+        {
+            if (InternalCalls.RenderMeshIsValid(resourceId))
+                return new RenderMesh(resourceId);
+
+            return null;
+        }
+
+        public static RenderMesh Get(string spriteName)
+        {
+            if (InternalCalls.RenderMeshGetId(spriteName, out int outRenderMeshId))
+                return new RenderMesh(outRenderMeshId);
+
+            return null;
+        }
+
         public override void ReleaseResource()
         {
             if (m_OwnsResourceId && m_ResourceId != -1)

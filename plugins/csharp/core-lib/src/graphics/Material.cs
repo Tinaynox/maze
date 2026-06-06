@@ -22,6 +22,14 @@ namespace Maze.Graphics
             return null;
         }
 
+        public static Material Get(string materialName)
+        {
+            if (InternalCalls.MaterialGetId(materialName, out int outMaterialId))
+                return new Material(outMaterialId);
+
+            return null;
+        }
+
         public override void ReleaseResource()
         {
             if (m_OwnsResourceId && m_ResourceId != -1)

@@ -6,6 +6,8 @@ namespace Maze.Core
 {
     public class ScriptableObject : IndexedResource
     {
+        public string Name => InternalCalls.ScriptableObjectGetName(m_ResourceId);
+
         public ScriptableObject(int resourceId = -1)
         {
             m_ResourceId = resourceId;

@@ -44,6 +44,7 @@
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeGlobalShaderUniform.hpp"
@@ -766,6 +767,31 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline bool RenderMeshIsValid(S32 _renderMeshId)
+    {
+        RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId);
+        return !!renderMesh;
+    }
+
+    //////////////////////////////////////////
+    inline bool RenderMeshGetId(MonoString* _renderMeshName, S32& _outValue)
+    {
+        Char* cstr = mono_string_to_utf8(_renderMeshName);
+        RenderMeshPtr const& renderMesh = RenderMeshManager::GetCurrentInstancePtr()->getOrLoadRenderMesh(HashedCString(cstr));
+        mono_free(cstr);
+        if (renderMesh)
+        {
+            _outValue = renderMesh->getResourceId();
+            return true;
+        }
+        else
+        {
+            _outValue = c_invalidResourceId;
+            return false;
+        }
+    }
+
+    //////////////////////////////////////////
     inline S32 CreateRenderWindow(
         Vec2U const& _size,
         MonoString* _title)
@@ -934,6 +960,24 @@ namespace Maze
     {
         Material* material = Material::GetResource(_materialId);
         return !!material;
+    }
+
+    //////////////////////////////////////////
+    inline bool MaterialGetId(MonoString* _materialName, S32& _outValue)
+    {
+        Char* cstr = mono_string_to_utf8(_materialName);
+        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(HashedCString(cstr));
+        mono_free(cstr);
+        if (material)
+        {
+            _outValue = material->getResourceId();
+            return true;
+        }
+        else
+        {
+            _outValue = c_invalidResourceId;
+            return false;
+        }
     }
 
     //////////////////////////////////////////
@@ -1407,6 +1451,8 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(DestroyRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshLoadFromMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshClear);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshIsValid);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshGetId);
 
         // RenderWindow
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreateRenderWindow);
@@ -1452,6 +1498,7 @@ namespace Maze
 
         // Material
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialIsValid);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialGetId);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialCreateCopy);
         MAZE_GRAPHICS_MONO_BIND_FUNC(DestroyMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialEnsureUniformIndex);

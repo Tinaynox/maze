@@ -256,6 +256,12 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void RenderMeshClear(int renderMeshId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool RenderMeshIsValid(int renderMeshId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool RenderMeshGetId(string renderMeshName, out int outRenderMeshId);
         #endregion
 
         #region RenderWindow
@@ -373,6 +379,9 @@ namespace Maze.Graphics
         #region Material
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool MaterialIsValid(int materialId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool MaterialGetId(string materialName, out int outMaterialId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static int MaterialCreateCopy(int materialId);

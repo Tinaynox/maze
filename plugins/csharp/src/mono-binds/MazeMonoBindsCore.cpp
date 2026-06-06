@@ -743,6 +743,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline MonoString* ScriptableObjectGetName(S32 _resourceId)
+    {
+        if (ScriptableObject* scriptableObject = ScriptableObject::GetResource(_resourceId))
+            return mono_string_new(mono_domain_get(), scriptableObject->getName().c_str());
+
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
     inline void SizePolicy2DGetSizeDelta(Component* _component, Vec2F& _outSize)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(SizePolicy2D);
@@ -870,6 +879,7 @@ namespace Maze
 
         // ScriptableObject
         MAZE_CORE_MONO_BIND_FUNC(GetScriptableObject);
+        MAZE_CORE_MONO_BIND_FUNC(ScriptableObjectGetName);
 
 		// SizePolicy2D
         MAZE_CORE_MONO_BIND_FUNC(SizePolicy2DGetSizeDelta);
