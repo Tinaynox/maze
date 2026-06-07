@@ -270,6 +270,15 @@ namespace Maze
         return m_mesh->calculateBoundingSphereRadius();
     }
 
+    //////////////////////////////////////////
+    bool RenderMesh::traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t) const
+    {
+        if (!m_mesh)
+            return false;
+
+        return m_mesh->traceRay(_origin, _direction, _t);
+    }
+
 
     //////////////////////////////////////////
     // Class RenderMeshAssetRef

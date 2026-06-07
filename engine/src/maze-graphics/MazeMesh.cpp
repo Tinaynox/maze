@@ -208,5 +208,14 @@ namespace Maze
         return radius;
     }
 
+    //////////////////////////////////////////
+    bool Mesh::traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t) const
+    {
+        bool result = false;
+        for (SubMeshPtr const& subMesh : m_subMeshes)
+            result |= subMesh->traceRay(_origin, _direction, _t);
+        return result;
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

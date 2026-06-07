@@ -800,6 +800,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline bool RenderMeshTraceRay(S32 _renderMeshId, Vec3F const& _origin, Vec3F const& _direction, F32 &_t)
+    {
+        if (RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId))
+            return renderMesh->traceRay(_origin, _direction, _t);
+        return false;
+    }
+
+    //////////////////////////////////////////
     inline S32 CreateRenderWindow(
         Vec2U const& _size,
         MonoString* _title)
@@ -1462,6 +1470,7 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshIsValid);
         MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshGetId);
         MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshCalculateBoundingSphereRadius);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshTraceRay);
 
         // RenderWindow
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreateRenderWindow);

@@ -410,5 +410,129 @@ namespace Maze
         return Math::Sqrt(radiusSq);
     }
 
+    //////////////////////////////////////////
+    bool SubMesh::traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t) const
+    {
+        if (m_renderDrawTopology != RenderDrawTopology::Triangles)
+            return false;
+
+        MeshVertexAttributeDescription const& positionData =
+            m_vertexData[(Size)VertexAttributeSemantic::Position];
+        ByteBufferPtr const& positionBuffer = positionData.byteBuffer;
+
+        if (!positionBuffer || positionData.count == 0)
+            return false;
+        if (positionData.description.type != VertexAttributeType::F32)
+        {
+            MAZE_NOT_IMPLEMENTED;
+            return false;
+        }
+
+        Vec3F const* positions = reinterpret_cast<Vec3F const*>(positionBuffer->getDataRO());
+        Size vertexCount = positionData.count;
+
+        if (!m_indicesBuffer || m_indicesCount == 0)
+            return false;
+
+        U8 const* indexData = m_indicesBuffer->getDataRO();
+
+        auto getIndex = [&](Size _i) -> Size
+        {
+            switch (m_indicesType)
+            {
+                case VertexAttributeType::U16: return (Size)(reinterpret_cast<U16 const*>(indexData)[_i]);
+                case VertexAttributeType::U32: return (Size)(reinterpret_cast<U32 const*>(indexData)[_i]);
+                case VertexAttributeType::U8:  return (Size)(reinterpret_cast<U8  const*>(indexData)[_i]);
+                case VertexAttributeType::S16: return (Size)(reinterpret_cast<S16 const*>(indexData)[_i]);
+                case VertexAttributeType::S32: return (Size)(reinterpret_cast<S32 const*>(indexData)[_i]);
+                case VertexAttributeType::S8:  return (Size)(reinterpret_cast<S8  const*>(indexData)[_i]);
+                default: return 0;
+            }
+        };
+
+        F32 bestT = F32_MAX;
+        bool found = false;
+
+        constexpr F32 c_epsilon = 1e-7f;
+
+        auto testTriangle = 
+            [&](Vec3F const& v0, Vec3F const& v1, Vec3F const& v2)
+            {
+                Vec3F edge1 = v1 - v0;
+                Vec3F edge2 = v2 - v0;
+
+                Vec3F h = _direction.crossProduct(edge2);
+                F32   a = edge1.dotProduct(h);
+
+                // Ray parallel to triangle
+                if (a > -c_epsilon && a < c_epsilon)
+                    return;
+
+                F32   f = 1.0f / a;
+                Vec3F s = _origin - v0;
+                F32   u = f * s.dotProduct(h);
+
+                if (u < 0.0f || u > 1.0f)
+                    return;
+
+                Vec3F q = s.crossProduct(edge1);
+                F32   v = f * _direction.dotProduct(q);
+
+                if (v < 0.0f || (u + v) > 1.0f)
+                    return;
+
+                F32 t = f * edge2.dotProduct(q);
+                if (t < c_epsilon || t >= bestT)
+                    return;
+
+                bestT  = t;
+                found  = true;
+            };
+
+        switch (m_renderDrawTopology)
+        {
+            case RenderDrawTopology::Triangles:
+            {
+                // Indices come in explicit triplets: (0,1,2), (3,4,5), …
+                Size triCount = m_indicesCount / 3u;
+                for (Size i = 0; i < triCount; ++i)
+                {
+                    Size i0 = getIndex(i * 3 + 0);
+                    Size i1 = getIndex(i * 3 + 1);
+                    Size i2 = getIndex(i * 3 + 2);
+                    if (i0 >= vertexCount || i1 >= vertexCount || i2 >= vertexCount)
+                        continue;
+                    testTriangle(positions[i0], positions[i1], positions[i2]);
+                }
+                break;
+            }
+
+            case RenderDrawTopology::TrianglesFan:
+            {
+                // All triangles share index 0 as the hub vertex.
+                Size hub = getIndex(0);
+                if (hub >= vertexCount)
+                    break;
+                for (Size i = 1; i + 1 < m_indicesCount; ++i)
+                {
+                    Size i1 = getIndex(i);
+                    Size i2 = getIndex(i + 1);
+                    if (i1 >= vertexCount || i2 >= vertexCount)
+                        continue;
+                    testTriangle(positions[hub], positions[i1], positions[i2]);
+                }
+                break;
+            }
+
+            default:
+                break;
+        }
+
+        if (found)
+            _t = bestT;
+
+        return found;
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

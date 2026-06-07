@@ -60,5 +60,10 @@ namespace Maze.Graphics
         {
             return InternalCalls.RenderMeshCalculateBoundingSphereRadius(m_ResourceId);
         }
+
+        public bool TraceRay(Vec3F origin, Vec3F dir, ref float t)
+        {
+            return InternalCalls.RenderMeshTraceRay(m_ResourceId, ref origin, ref dir, ref t);
+        }
     }
 }

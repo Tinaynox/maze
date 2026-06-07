@@ -265,6 +265,9 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static float RenderMeshCalculateBoundingSphereRadius(int renderMeshId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool RenderMeshTraceRay(int renderMeshId, ref Vec3F origin, ref Vec3F dir, ref float t);
         #endregion
 
         #region RenderWindow

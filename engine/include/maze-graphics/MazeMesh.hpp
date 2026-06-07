@@ -127,6 +127,9 @@ namespace Maze
         //////////////////////////////////////////
         F32 calculateBoundingSphereRadius() const;
 
+        //////////////////////////////////////////
+        bool traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t) const;
+
     protected:
 
         //////////////////////////////////////////
