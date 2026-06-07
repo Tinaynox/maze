@@ -261,6 +261,15 @@ namespace Maze
         MAZE_TODO;
     }
 
+    //////////////////////////////////////////
+    F32 RenderMesh::calculateBoundingSphereRadius() const
+    {
+        if (!m_mesh)
+            return 0.0f;
+
+        return m_mesh->calculateBoundingSphereRadius();
+    }
+
 
     //////////////////////////////////////////
     // Class RenderMeshAssetRef

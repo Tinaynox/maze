@@ -123,6 +123,10 @@ namespace Maze
         //////////////////////////////////////////
         MeshSkeletonPtr const& ensureSkeleton();
 
+
+        //////////////////////////////////////////
+        F32 calculateBoundingSphereRadius() const;
+
     protected:
 
         //////////////////////////////////////////

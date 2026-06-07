@@ -385,5 +385,30 @@ namespace Maze
         return true;
     }
 
+    //////////////////////////////////////////
+    F32 SubMesh::calculateBoundingSphereRadius() const
+    {
+        MeshVertexAttributeDescription const& positionData = m_vertexData[(Size)VertexAttributeSemantic::Position];
+        ByteBufferPtr const& positionBuffer = positionData.byteBuffer;
+        if (!positionBuffer)
+            return 0.0f;
+
+        F32 radiusSq = 0.0f;
+        switch (positionData.description.type)
+        {
+            case VertexAttributeType::F32:
+            {
+                positionBuffer->iterateAs<Vec3F>([&radiusSq](Vec3F const& _value) { radiusSq = Math::Max(radiusSq, _value.squaredLength()); });
+                break;
+            }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+            }
+        }
+
+        return Math::Sqrt(radiusSq);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

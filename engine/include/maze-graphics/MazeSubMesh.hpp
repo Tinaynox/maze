@@ -283,6 +283,9 @@ namespace Maze
         //////////////////////////////////////////
         bool mergeWith(SubMeshPtr const& _otherSubMesh);
 
+        //////////////////////////////////////////
+        F32 calculateBoundingSphereRadius() const;
+
     protected:
 
         //////////////////////////////////////////

@@ -262,6 +262,9 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool RenderMeshGetId(string renderMeshName, out int outRenderMeshId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static float RenderMeshCalculateBoundingSphereRadius(int renderMeshId);
         #endregion
 
         #region RenderWindow

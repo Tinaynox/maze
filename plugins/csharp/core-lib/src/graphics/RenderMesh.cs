@@ -55,5 +55,10 @@ namespace Maze.Graphics
         {
             InternalCalls.RenderMeshClear(m_ResourceId);
         }
+
+        public float CalculateBoundingSphereRadius()
+        {
+            return InternalCalls.RenderMeshCalculateBoundingSphereRadius(m_ResourceId);
+        }
     }
 }

@@ -792,6 +792,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline F32 RenderMeshCalculateBoundingSphereRadius(S32 _renderMeshId)
+    {
+        if (RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId))
+            return renderMesh->calculateBoundingSphereRadius();
+        return 0.0f;
+    }
+
+    //////////////////////////////////////////
     inline S32 CreateRenderWindow(
         Vec2U const& _size,
         MonoString* _title)
@@ -1453,6 +1461,7 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshClear);
         MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshIsValid);
         MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshGetId);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(RenderMeshCalculateBoundingSphereRadius);
 
         // RenderWindow
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreateRenderWindow);

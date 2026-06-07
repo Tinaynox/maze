@@ -199,5 +199,14 @@ namespace Maze
         return m_skeleton;
     }
 
+    //////////////////////////////////////////
+    F32 Mesh::calculateBoundingSphereRadius() const
+    {
+        F32 radius = 0.0f;
+        for (SubMeshPtr const& subMesh : m_subMeshes)
+            radius = Math::Max(radius, subMesh->calculateBoundingSphereRadius());
+        return radius;
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

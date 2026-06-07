@@ -22,6 +22,8 @@ namespace Maze.Core
         public Vec3F Right => this[0];
         public Vec3F Up => this[1];
         public Vec3F Forward => this[2];
+        public Vec3F Translation => this[3];
+        public float MaxAbsTranslation => Math.Max(Math.Abs(M30), Math.Max(Math.Abs(M31), Math.Abs(M32)));
 
         public TMat(
             float m00, float m01, float m02,
@@ -128,6 +130,11 @@ namespace Maze.Core
                 0, 0, scale,
                 0, 0, 0);
         }
+
+        public float ScaleX => new Vec3F(M00, M01, M02).Length();
+        public float ScaleY => new Vec3F(M10, M11, M12).Length();
+        public float ScaleZ => new Vec3F(M20, M21, M22).Length();
+        public float MaxScale => Math.Max(ScaleX, Math.Max(ScaleY, ScaleZ));
 
         public Vec3F this[int index]
         {

@@ -185,6 +185,10 @@ namespace Maze
         //////////////////////////////////////////
         virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        F32 calculateBoundingSphereRadius() const;
+
     protected:
 
         //////////////////////////////////////////

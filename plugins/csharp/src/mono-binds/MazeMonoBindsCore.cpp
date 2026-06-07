@@ -429,28 +429,32 @@ namespace Maze
     inline void ComponentSendMonoEvent(Component* _component, Entity* _entityReceiver, MonoObject* _monoEventPtr)
     {
         U32 gcHandle = (uint32_t)(uintptr_t)_monoEventPtr;
-        _component->getEntityRaw()->getEcsWorld()->sendEvent<Maze::MonoEvent>(_entityReceiver->getId(), gcHandle);
+        if (_component->getEntityRaw()->getEcsWorld())
+            _component->getEntityRaw()->getEcsWorld()->sendEvent<Maze::MonoEvent>(_entityReceiver->getId(), gcHandle);
     }
 
     //////////////////////////////////////////
     inline void ComponentSendMonoEventImmediate(Component* _component, Entity* _entityReceiver, MonoObject* _monoEventPtr)
     {
         U32 gcHandle = (uint32_t)(uintptr_t)_monoEventPtr;
-        _component->getEntityRaw()->getEcsWorld()->sendEventImmediate<Maze::MonoEvent>(_entityReceiver->getId(), gcHandle);
+        if (_component->getEntityRaw()->getEcsWorld())
+            _component->getEntityRaw()->getEcsWorld()->sendEventImmediate<Maze::MonoEvent>(_entityReceiver->getId(), gcHandle);
     }
 
     //////////////////////////////////////////
     inline void ComponentBroadcastMonoEvent(Component* _component, void* _monoEventPtr)
     {
         U32 gcHandle = (uint32_t)(uintptr_t)_monoEventPtr;
-        _component->getEntityRaw()->getEcsWorld()->broadcastEvent<Maze::MonoEvent>(gcHandle);
+        if (_component->getEntityRaw()->getEcsWorld())
+            _component->getEntityRaw()->getEcsWorld()->broadcastEvent<Maze::MonoEvent>(gcHandle);
     }
 
     //////////////////////////////////////////
     inline void ComponentBroadcastMonoEventImmediate(Component* _component, void* _monoEventPtr)
     {
         U32 gcHandle = (uint32_t)(uintptr_t)_monoEventPtr;
-        _component->getEntityRaw()->getEcsWorld()->broadcastEventImmediate<Maze::MonoEvent>(gcHandle);
+        if (_component->getEntityRaw()->getEcsWorld())
+            _component->getEntityRaw()->getEcsWorld()->broadcastEventImmediate<Maze::MonoEvent>(gcHandle);
     }
 
     //////////////////////////////////////////

@@ -56,6 +56,10 @@ namespace Maze.Core
                 value0.MaxX != value1.MaxX || value0.MaxY != value1.MaxY;
         }
 
+        public bool Contains(Vec2F p) =>
+            p.X >= MinX && p.X <= MaxX &&
+            p.Y >= MinY && p.Y <= MaxY;
+
         public override bool Equals(object obj)
         {
             if (obj is AABB2D other)

@@ -18,6 +18,8 @@ namespace Maze.Core
             Direction = direction;
         }
 
+        public Vec3F At(float t) => Point + Direction * t;
+
         public override string ToString()
         {
             return $"{Point}{Direction}";
