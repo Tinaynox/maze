@@ -155,6 +155,7 @@ namespace Maze
         ContextOpenGLScopeBind contextScopedBind(m_context);
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
 
+        MAZE_GL_CALL(mzglFinish());
         MAZE_GL_CALL(mzglDeleteTextures(1, &m_glTexture));
         m_glTexture = 0;
     }
@@ -291,6 +292,7 @@ namespace Maze
 
             MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_PACK_ALIGNMENT, 4));
             MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_FRAMEBUFFER, currentFBO));
+            MAZE_GL_CALL(mzglFinish());
             MAZE_GL_CALL(mzglDeleteFramebuffers(1, &tempFBO));
 
             return result;
@@ -333,6 +335,7 @@ namespace Maze
             MAZE_GL_CALL(mapped = mzglUnmapBuffer(MAZE_GL_PIXEL_PACK_BUFFER));
             MAZE_ERROR_RETURN_VALUE_IF(!mapped, result, "Buffer data corrupted, please reload");
 
+            MAZE_GL_CALL(mzglFinish());
             MAZE_GL_CALL(mzglBindBuffer(MAZE_GL_PIXEL_PACK_BUFFER, 0));
             MAZE_GL_CALL(mzglDeleteBuffers(1, &bufferId));
         }

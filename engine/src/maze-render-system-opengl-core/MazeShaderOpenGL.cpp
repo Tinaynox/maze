@@ -617,6 +617,7 @@ namespace Maze
         if (m_programId)
         {
             MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemOpenGLRaw());
+            MAZE_GL_CALL(mzglFinish());
             MAZE_GL_CALL(mzglDeleteProgram(m_programId));
             m_programId = 0;
         }

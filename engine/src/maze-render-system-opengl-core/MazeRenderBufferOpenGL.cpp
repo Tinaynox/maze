@@ -402,7 +402,7 @@ namespace Maze
         if (m_context->getBindedFrameBuffer() == m_frameBufferId)
             m_context->setCurrentRenderBuffer(nullptr);
 
-
+        MAZE_GL_CALL(mzglFinish());
         MAZE_GL_CALL(mzglDeleteFramebuffers(1, &m_frameBufferId));
         
 #if (MAZE_PLATFORM == MAZE_PLATFORM_IOS)

@@ -156,6 +156,7 @@ namespace Maze
         ContextOpenGLScopeBind contextScopedBind(m_context);
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
 
+        MAZE_GL_CALL(mzglFinish());
         MAZE_GL_CALL(mzglDeleteTextures(1, &m_glTexture));
         m_glTexture = 0;
     }
