@@ -8,6 +8,9 @@ namespace Maze.Graphics
     {
         #region MeshRenderer
         [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void MeshRendererResizeMaterialsCount(NativePtr nativeComponentPtr, uint count);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void MeshRendererSetMaterialAssetUnit(NativePtr nativeComponentPtr, int index, AssetUnitId material);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

@@ -35,5 +35,10 @@ namespace Maze.Graphics
         {
             SetMaterial(idx, material?.ResourceId ?? -1);
         }
+
+        public void ResizeMaterialsCount(uint count)
+        {
+            InternalCalls.MeshRendererResizeMaterialsCount(NativeComponentPtr, count);
+        }
     }
 }

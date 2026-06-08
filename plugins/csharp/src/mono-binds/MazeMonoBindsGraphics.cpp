@@ -58,6 +58,15 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    inline void MeshRendererResizeMaterialsCount(Component* _component, U32 _count)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRenderer);
+
+        Vector<MaterialAssetRef> materials = _component->castRaw<MeshRenderer>()->getMaterialRefs();
+        materials.resize(_count);
+        _component->castRaw<MeshRenderer>()->setMaterialRefs(materials);
+    }
 
     //////////////////////////////////////////
     inline void MeshRendererSetMaterialAssetUnit(Component* _component, S32 _index, AssetUnitId _auid)
@@ -1379,6 +1388,7 @@ namespace Maze
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsGraphics()
     {
         // MeshRenderer
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererResizeMaterialsCount);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetMaterialAssetUnit);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetMaterialResourceId);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetMaterial);
