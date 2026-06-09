@@ -30,6 +30,8 @@
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeVertexBufferObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeVertexOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeVertexBufferObjectMappingControllerOpenGL.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -74,7 +76,7 @@ namespace Maze
     {
         if (m_context)
         {
-            m_context->bindArrayBuffer(m_prevVAO);
+            m_context->bindVertexArrayObject(m_prevVAO);
         }
     }
 
@@ -216,8 +218,17 @@ namespace Maze
 
         Size bytesPerType = GetVertexAttributeTypeSize(_description.type);
         Size bytesPerVertexData = bytesPerType * _description.count;
+        Size requiredBytes = bytesPerVertexData * _verticesCount;
 
-        vbo->upload(_data, bytesPerVertexData * _verticesCount);
+        // Reallocate if the buffer is too small
+        if (requiredBytes > vbo->getSizeBytes())
+        {
+            vbo->upload(_data, requiredBytes); // full realloc via glBufferData
+        }
+        else
+        {
+            vbo->getMappingController()->upload(_data, 0, requiredBytes);
+        }
 
         MZGLuint vertexAttrib = static_cast<MZGLuint>(vertexElementSemantic);
         MZGLenum typeOpenGL = GetVertexAttributeTypeOpenGL(_description.type);

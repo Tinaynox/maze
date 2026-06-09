@@ -93,15 +93,15 @@ namespace Maze
 
             if (m_singleMapping)
             {
-                {
-                    MAZE_GL_CALL(m_mappedPtr = mzglMapBufferRange(MAZE_GL_COPY_WRITE_BUFFER, _start, _count, flags));
-                }
+                MAZE_GL_CALL(m_mappedPtr = mzglMapBufferRange(MAZE_GL_COPY_WRITE_BUFFER, _start, _count, flags));
+                _outTicket = addMappedRange(_start, _count);
+                return m_mappedPtr;
             }
             else
             {
-                {
-                    MAZE_GL_CALL(m_mappedPtr = mzglMapBufferRange(MAZE_GL_COPY_WRITE_BUFFER, 0, m_vbo->getSizeBytes(), flags));
-                }
+                MAZE_GL_CALL(m_mappedPtr = mzglMapBufferRange(MAZE_GL_COPY_WRITE_BUFFER, 0, m_vbo->getSizeBytes(), flags));
+                _outTicket = addMappedRange(_start, _count);
+                return static_cast<U8*>(m_mappedPtr) + _start;
             }
         }
         else
@@ -113,7 +113,6 @@ namespace Maze
         }
 
         _outTicket = addMappedRange(_start, _count);
-
         return static_cast<U8*>(m_mappedPtr) + _start;
     }
 
@@ -123,7 +122,11 @@ namespace Maze
         Size _flushStart,
         Size _flushCount)
     {
-        MAZE_ERROR_IF(_flushStart > m_mappedRanges[_ticket].count || _flushStart + _flushCount > m_mappedRanges[_ticket].count, "VBO out of bounds flush!");
+        MAZE_ERROR_IF(
+            m_mappedRanges[_ticket].start + _flushStart + _flushCount > m_vbo->getSizeBytes(),
+            "VBO flush exceeds buffer bounds! absolute end=%zu capacity=%zu",
+            m_mappedRanges[_ticket].start + _flushStart + _flushCount,
+            m_vbo->getSizeBytes());
 
         MAZE_GL_CALL(mzglFlushMappedBufferRange(
             MAZE_GL_COPY_WRITE_BUFFER,
@@ -152,6 +155,11 @@ namespace Maze
         Size _offset,
         Size _length)
     {
+        MAZE_ERROR_RETURN_IF(
+            _offset + _length > m_vbo->getSizeBytes(),
+            "VBO upload out of bounds! offset=%zu length=%zu capacity=%zu",
+            _offset, _length, m_vbo->getSizeBytes());
+
         MAZE_GL_CALL(mzglBufferSubData(MAZE_GL_COPY_WRITE_BUFFER, _offset, _length, _data));
 
         // #TODO:
