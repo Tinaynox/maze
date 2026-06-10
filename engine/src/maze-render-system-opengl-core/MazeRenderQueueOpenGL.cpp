@@ -318,7 +318,7 @@ namespace Maze
                     }
                     case RenderCommandType::DisableClipPlane:
                     {
-                        RenderCommandEnableClipPlane* command = static_cast<RenderCommandEnableClipPlane*>(_command);
+                        RenderCommandDisableClipPlane* command = static_cast<RenderCommandDisableClipPlane*>(_command);
 
                         m_context->setClipDistanceEnabled(command->index, false);
 

@@ -578,12 +578,14 @@ namespace Maze
         
         if (vertexShaderId)
         {
+            MAZE_GL_CALL(mzglDetachShader(m_programId, vertexShaderId));
             MAZE_GL_CALL(mzglDeleteShader(vertexShaderId));
             vertexShaderId = 0;
         }
 
         if (fragmentShaderId)
         {
+            MAZE_GL_CALL(mzglDetachShader(m_programId, fragmentShaderId));
             MAZE_GL_CALL(mzglDeleteShader(fragmentShaderId));
             fragmentShaderId = 0;
         }

@@ -473,7 +473,8 @@ namespace Maze
 
         S32 activeTextureIndex = m_activeTexture - MAZE_GL_TEXTURE0;
 
-        if (m_bindTextureIds[activeTextureIndex] == _textureId)
+        if (m_bindTextureIds[activeTextureIndex] == _textureId &&
+            m_bindTextureTargets[activeTextureIndex] == _textureTarget)
             return;
 
         m_bindTextureTargets[activeTextureIndex] = _textureTarget;
@@ -986,6 +987,11 @@ namespace Maze
             case TextureType::TwoDimensional:
             {
                 bindTexture2D(_texture->castRaw<Texture2D>());
+                break;
+            }
+            case TextureType::TwoDimensionalMultisample:
+            {
+                bindTexture2DMS(_texture->castRaw<Texture2DMS>());
                 break;
             }
             case TextureType::Cube:
