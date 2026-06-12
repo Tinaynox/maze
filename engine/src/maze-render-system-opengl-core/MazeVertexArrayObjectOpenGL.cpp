@@ -220,15 +220,7 @@ namespace Maze
         Size bytesPerVertexData = bytesPerType * _description.count;
         Size requiredBytes = bytesPerVertexData * _verticesCount;
 
-        // Reallocate if the buffer is too small
-        if (requiredBytes > vbo->getSizeBytes())
-        {
-            vbo->upload(_data, requiredBytes); // full realloc via glBufferData
-        }
-        else
-        {
-            vbo->getMappingController()->upload(_data, 0, requiredBytes);
-        }
+        vbo->upload(_data, requiredBytes);
 
         MZGLuint vertexAttrib = static_cast<MZGLuint>(vertexElementSemantic);
         MZGLenum typeOpenGL = GetVertexAttributeTypeOpenGL(_description.type);

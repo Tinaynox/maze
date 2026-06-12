@@ -193,6 +193,15 @@ namespace Maze
 
         ContextOpenGLScopeBind contextScopedBind(m_context);
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+
+        // Upload without relocation
+        if (_data != nullptr && m_mappingController && _bytes <= m_sizeBytes)
+        {
+            MAZE_GL_CALL(mzglBindBuffer(MAZE_GL_COPY_WRITE_BUFFER, m_glVBO));
+            m_mappingController->upload(_data, 0, _bytes);
+            return;
+        }
+
         VertexBufferObjectOpenGLScopeBind vboScopedBind(this);
 
         m_sizeBytes = _bytes;
