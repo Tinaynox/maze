@@ -195,14 +195,12 @@ namespace Maze
 
             for (U32 i = 0; i < height; ++i)
             {
-                rowPointers[i] = pixelSheet.getDataRW() + i * rowbytes;
+                rowPointers[i] = pixelSheet.getDataRW() + (height - 1 - i) * rowbytes;
             }
 
             png_read_image(pngStruct, rowPointers);
 
             png_read_end(pngStruct, 0);
-
-            pixelSheet.flipY();
 
             if (rowPointers)
                 free(rowPointers);
