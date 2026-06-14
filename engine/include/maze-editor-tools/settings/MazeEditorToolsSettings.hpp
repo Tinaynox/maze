@@ -108,6 +108,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void setGizmoWorldSpace(bool _value) { m_gizmoWorldSpace = _value; }
+
+        //////////////////////////////////////////
+        inline bool getGizmoWorldSpace() const { return m_gizmoWorldSpace.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<bool const&>& getGizmoWorldSpaceChangedEvent() { return m_gizmoWorldSpace.eventValueChanged; }
+
+        //////////////////////////////////////////
+        inline void switchGizmoWorldSpace() { setGizmoWorldSpace(!getGizmoWorldSpace()); }
+
+
+        //////////////////////////////////////////
         void setGizmosBillboards(bool _value) { m_gizmosBillboards = _value; }
 
         //////////////////////////////////////////
@@ -124,6 +137,7 @@ namespace Maze
         ObservableValue<bool> m_active = true;
         ObservableValue<bool> m_pause = false;
         ObservableValue<GizmoToolType> m_selectedGizmoTool = GizmoToolType::Translate;
+        ObservableValue<bool> m_gizmoWorldSpace = false;
 
         ObservableValue<bool> m_gizmosBillboards = true;
     };

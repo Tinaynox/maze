@@ -92,6 +92,7 @@ namespace Maze
             EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
             debbugerSettings->getPauseChangedEvent().unsubscribe(this);
             debbugerSettings->getSelectedGizmoToolChangedEvent().unsubscribe(this);
+            debbugerSettings->getGizmoWorldSpaceChangedEvent().unsubscribe(this);
         }
     }
 
@@ -187,6 +188,20 @@ namespace Maze
             });
         }
 
+        m_gizmoWorldSpaceButton = EditorToolsUIHelper::CreateDefaultToggleButton(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::EntityObject3D),
+            ColorU32(85, 85, 85),
+            m_leftLayout->getTransform(),
+            getEntityRaw()->getEcsScene(),
+            Vec2F32(16.0f, 16.0f));
+        m_gizmoWorldSpaceButton->setCheckByClick(false);
+        m_gizmoWorldSpaceButton->eventClick.subscribe(
+            [](Button2D* _button, CursorInputEvent& _event)
+            {
+                EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+                debbugerSettings->switchGizmoWorldSpace();
+            });
+
         
         m_layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Center,
@@ -245,6 +260,7 @@ namespace Maze
         EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
         debbugerSettings->getPauseChangedEvent().subscribe(this, &TopBarController::notifyPauseChanged);
         debbugerSettings->getSelectedGizmoToolChangedEvent().subscribe(this, &TopBarController::notifySelectedGizmoToolChanged);
+        debbugerSettings->getGizmoWorldSpaceChangedEvent().subscribe(this, &TopBarController::notifyGizmoWorldSpaceChanged);
     }
 
     //////////////////////////////////////////
@@ -257,6 +273,12 @@ namespace Maze
     void TopBarController::notifySelectedGizmoToolChanged(GizmoToolType const& _tool)
     {
         updateGizmoToolsButtons();
+    }
+
+    //////////////////////////////////////////
+    void TopBarController::notifyGizmoWorldSpaceChanged(bool const& _value)
+    {
+        m_gizmoWorldSpaceButton->setChecked(_value);
     }
 
     //////////////////////////////////////////
@@ -273,10 +295,15 @@ namespace Maze
     //////////////////////////////////////////
     void TopBarController::updateUI()
     {
-        EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
-        m_pauseButton->setChecked(debbugerSettings->getPause());
+        EditorToolsSettings* editorToolsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+        m_pauseButton->setChecked(editorToolsSettings->getPause());
 
         updateGizmoToolsButtons();
+
+        if (m_gizmoWorldSpaceButton)
+        {
+            m_gizmoWorldSpaceButton->setChecked(editorToolsSettings->getGizmoWorldSpace());
+        }
     }
 
     

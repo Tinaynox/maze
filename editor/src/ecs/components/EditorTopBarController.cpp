@@ -60,6 +60,7 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "managers/EditorManager.hpp"
+#include "managers/EditorGizmosManager.hpp"
 #include "settings/MazeEditorSettings.hpp"
 
 
@@ -92,6 +93,7 @@ namespace Maze
             EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
             debbugerSettings->getPauseChangedEvent().unsubscribe(this);
             debbugerSettings->getSelectedGizmoToolChangedEvent().unsubscribe(this);
+            debbugerSettings->getGizmoWorldSpaceChangedEvent().unsubscribe(this);
 
             EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
             editorSettings->getDebugInfoEnabledChangedEvent().unsubscribe(this);
@@ -197,6 +199,20 @@ namespace Maze
                 debbugerSettings->setSelectedGizmoTool(tool);
             });
         }
+
+        m_gizmoWorldSpaceButton = EditorToolsUIHelper::CreateDefaultToggleButton(
+            EditorGizmosManager::GetInstancePtr()->getEditorGizmosSprite(EditorGizmosSprite::Axes),
+            ColorU32(5, 5, 5),
+            m_leftLayout->getTransform(),
+            getEntityRaw()->getEcsScene(),
+            Vec2F32(14.0f, 14.0f));
+        m_gizmoWorldSpaceButton->setCheckByClick(false);
+        m_gizmoWorldSpaceButton->eventClick.subscribe(
+            [](Button2D* _button, CursorInputEvent& _event)
+            {
+                EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+                debbugerSettings->switchGizmoWorldSpace();
+            });
 
         
         m_layout = UIHelper::CreateHorizontalLayout(
@@ -308,6 +324,7 @@ namespace Maze
         EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
         debbugerSettings->getPauseChangedEvent().subscribe(this, &EditorTopBarController::notifyPauseChanged);
         debbugerSettings->getSelectedGizmoToolChangedEvent().subscribe(this, &EditorTopBarController::notifySelectedGizmoToolChanged);
+        debbugerSettings->getGizmoWorldSpaceChangedEvent().subscribe(this, &EditorTopBarController::notifyGizmoWorldSpaceChanged);
 
         EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
         editorSettings->getDebugInfoEnabledChangedEvent().subscribe(this, &EditorTopBarController::notifyBoolParamChanged);
@@ -329,6 +346,12 @@ namespace Maze
     void EditorTopBarController::notifySelectedGizmoToolChanged(GizmoToolType const& _tool)
     {
         updateGizmoToolsButtons();
+    }
+
+    //////////////////////////////////////////
+    void EditorTopBarController::notifyGizmoWorldSpaceChanged(bool const& _value)
+    {
+        m_gizmoWorldSpaceButton->setChecked(_value);
     }
 
     //////////////////////////////////////////
@@ -356,6 +379,11 @@ namespace Maze
         if (m_debugInfoButton)
         {
             m_debugInfoButton->setChecked(editorSettings->getDebugInfoEnabled());
+        }
+
+        if (m_gizmoWorldSpaceButton)
+        {
+            m_gizmoWorldSpaceButton->setChecked(editorToolsSettings->getGizmoWorldSpace());
         }
 
         updateGizmoToolsButtons();

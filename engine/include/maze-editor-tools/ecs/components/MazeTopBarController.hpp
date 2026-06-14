@@ -106,6 +106,9 @@ namespace Maze
         //////////////////////////////////////////
         void notifySelectedGizmoToolChanged(GizmoToolType const& _tool);
 
+        //////////////////////////////////////////
+        void notifyGizmoWorldSpaceChanged(bool const& _value);
+
 
         //////////////////////////////////////////
         void updateGizmoToolsButtons();
@@ -125,6 +128,7 @@ namespace Maze
 
         HorizontalLayout2DPtr m_leftLayout;
         ToggleButton2DPtr m_gizmoToolButtons[GizmoToolType::MAX];
+        ToggleButton2DPtr m_gizmoWorldSpaceButton;
 
         HorizontalLayout2DPtr m_layout;
 
