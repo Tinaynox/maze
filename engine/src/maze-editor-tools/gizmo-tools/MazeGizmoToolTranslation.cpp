@@ -234,76 +234,70 @@ namespace Maze
         {
             Vec3F axis = basisTransform.transform(getWorldAxis(m_usingAxis)).normalizedCopy();
 
-            Ray cursorRay = camera->convertViewportCoordsToRay(_cursorPos);
-
-            // Pick the non-drag axis most face-on to the camera as the drag plane normal.
-            // This avoids the numerical blow-up that occurs when the cursor ray is nearly
-            // parallel to the drag axis (ClosestPointOnLineBToLineA divides by ~0 in that case).
             Vec3F norm;
-            F32 bestDot = 0.0f;
+            F32 d = 0.0f;
             for (S32 i = 0; i < 3; ++i)
             {
                 if (m_usingAxis == i)
                     continue;
+
                 Vec3F crossAxis = basisTransform.transform(getWorldAxis(i)).normalizedCopy();
-                F32 d = Math::Abs(crossAxis.dotProduct(camera->getTransform()->getWorldForwardDirection()));
-                if (d > bestDot)
+                F32 dot = crossAxis.dotProduct(camera->getTransform()->getWorldForwardDirection());
+                if (Math::Abs(dot) > d)
                 {
-                    bestDot = d;
+                    d = Math::Abs(dot);
                     norm = crossAxis;
                 }
             }
 
-            F32 dist;
-            if (Math::RaycastPlane(cursorRay.getPoint(), cursorRay.getDirection(), pos, norm, dist))
+            Ray cursorRay = camera->convertViewportCoordsToRay(_cursorPos);
+
+            if (m_useRequest)
             {
-                Vec3F point = cursorRay.getPoint(dist);
-                point = Math::ProjectionPointOnLine(point, pos, pos + axis);
+                m_useRequest = false;
+                m_startPosition = pos;
+                m_startPoint = Math::ClosestPointOnLineBToLineA(cursorRay, Ray(m_startPosition, axis));
 
-                if (m_useRequest)
+                if (InputManager::GetInstancePtr()->getKeyState(KeyCode::LShift) ||
+                    InputManager::GetInstancePtr()->getKeyState(KeyCode::RShift))
                 {
-                    m_useRequest = false;
-                    m_startPosition = pos;
-                    m_startPoint = point;
+                    EntityPtr entityCopy = entity->createCopy();
+                    entityCopy->ensureComponent<Transform3D>()->setParent(
+                        entity->ensureComponent<Transform3D>()->getParent());
 
-                    if (InputManager::GetInstancePtr()->getKeyState(KeyCode::LShift) ||
-                        InputManager::GetInstancePtr()->getKeyState(KeyCode::RShift))
-                    {
-                        EntityPtr entityCopy = entity->createCopy();
-                        entityCopy->ensureComponent<Transform3D>()->setParent(
-                            entity->ensureComponent<Transform3D>()->getParent());
-
-                        if (EditorToolsActionManager::GetInstancePtr())
-                            EditorToolsActionManager::GetInstancePtr()->applyActions(
-                                EditorActionEntityAdd::Create(entityCopy),
-                                EditorActionSelectEntities::Create(true, entityCopy));
-                    }
+                    if (EditorToolsActionManager::GetInstancePtr())
+                        EditorToolsActionManager::GetInstancePtr()->applyActions(
+                            EditorActionEntityAdd::Create(entityCopy),
+                            EditorActionSelectEntities::Create(true, entityCopy));
                 }
-                else
-                {
-                    Vec3F delta = point - m_startPoint;
-                    Vec3F newWorldPosition = m_startPosition + delta;
 
+            }
+            else
+            {
+                Vec3F endPoint = Math::ClosestPointOnLineBToLineA(cursorRay, Ray(m_startPosition, axis));
+
+                Vec3F delta = endPoint - m_startPoint;
+                Vec3F newWorldPosition = m_startPosition + delta;
+                
 #if 0
-                    GizmosHelper::DrawSolidSphere(m_startPoint, 0.1f, ColorF128::c_red, 0.1f);
-                    GizmosHelper::DrawSolidSphere(point, 0.1f, ColorF128::c_green, 0.1f);
+                GizmosHelper::DrawSolidSphere(m_startPoint, 0.1f, ColorF128::c_red, 0.1f);
+                GizmosHelper::DrawSolidSphere(endPoint, 0.1f, ColorF128::c_green, 0.1f);
 #endif
 
-                    TMat parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
-                                                                         : TMat::c_identity;
+                TMat parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
+                                                                     : TMat::c_identity;
 
-                    Vec3F newPosLS = parentWorldScale.inversed().transform(newWorldPosition);
+                Vec3F newPosLS = parentWorldScale.inversed().transform(newWorldPosition);
 
-                    if (InputManager::GetInstancePtr()->getKeyState(KeyCode::LAlt) ||
-                        InputManager::GetInstancePtr()->getKeyState(KeyCode::RAlt))
-                    {
-                        newPosLS.x = Math::Round(newPosLS.x);
-                        newPosLS.y = Math::Round(newPosLS.y);
-                        newPosLS.z = Math::Round(newPosLS.z);
-                    }
-
-                    EditorActionHelper::Translate(entity, newPosLS);
+                if (InputManager::GetInstancePtr()->getKeyState(KeyCode::LAlt) ||
+                    InputManager::GetInstancePtr()->getKeyState(KeyCode::RAlt))
+                {
+                    newPosLS.x = Math::Round(newPosLS.x);
+                    newPosLS.y = Math::Round(newPosLS.y);
+                    newPosLS.z = Math::Round(newPosLS.z);
                 }
+
+                EditorActionHelper::Translate(entity, newPosLS);
             }
         }
         else
