@@ -32,10 +32,12 @@
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionEntityAdd.hpp"
 #include "maze-editor-tools/editor-actions/MazeEditorActionSelectEntities.hpp"
+#include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
 #include "maze-core/math/MazeMathRaytracing.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 
@@ -81,8 +83,20 @@ namespace Maze
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
         F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;
 
-        TMat basisTransform = TMat::CreateBasis(right, up, forward);
-        TMat transform = basisTransform * TMat::CreateTranslation(pos);
+        bool worldSpace = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>()->getGizmoWorldSpace();
+
+        TMat basisTransform;
+        TMat transform;
+        if (worldSpace)
+        {
+            basisTransform = TMat::c_identity;
+            transform = TMat::CreateTranslation(pos);
+        }
+        else
+        {
+            basisTransform = TMat::CreateBasis(right, up, forward);
+            transform = basisTransform * TMat::CreateTranslation(pos);
+        }
 
         GizmosDrawer::GizmosMode const gizmosMode = GizmosDrawer::GizmosMode::Debug;
         GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::TransparentTop;
@@ -198,11 +212,15 @@ namespace Maze
             std::function<bool()> checkFunc;
         };
 
+        Vec3F sortRight   = worldSpace ? Vec3F::c_unitX : right;
+        Vec3F sortUp      = worldSpace ? Vec3F::c_unitY : up;
+        Vec3F sortForward = worldSpace ? Vec3F::c_unitZ : forward;
+
         Vector<Axis> drawFuncs =
         {
-            Axis(0, (pos + right).squaredDistance(cameraWorldPosition), drawX, checkX),
-            Axis(1, (pos + up).squaredDistance(cameraWorldPosition), drawY, checkY),
-            Axis(2, (pos + forward).squaredDistance(cameraWorldPosition), drawZ, checkZ)
+            Axis(0, (pos + sortRight).squaredDistance(cameraWorldPosition), drawX, checkX),
+            Axis(1, (pos + sortUp).squaredDistance(cameraWorldPosition), drawY, checkY),
+            Axis(2, (pos + sortForward).squaredDistance(cameraWorldPosition), drawZ, checkZ)
         };
         std::sort(
             drawFuncs.begin(),
