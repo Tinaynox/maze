@@ -211,51 +211,27 @@ namespace Maze
             else
                 axis = m_startAxis;
 
-            Vec3F raycastPos = pos;
-            Vec3F norm = axis;
             Vec3F vector;
             bool vectorValid = false;
             F32 dist;
 
-            F32 dot = Math::Abs(axis.dotProduct(ray.getDirection()));
-            if (dot < 0.15f)
+            // When the ray is nearly parallel to the ring plane, use the camera-forward plane
+            // as a proxy and still project the hit point onto the ring plane.
+            F32 axisDot = Math::Abs(axis.dotProduct(ray.getDirection()));
+            Vec3F planeNormal = (axisDot > 0.05f) ? axis : -camera->getTransform()->getWorldForwardDirection();
+
+            if (Math::RaycastPlane(ray.getPoint(), ray.getDirection(), pos, planeNormal, dist) && dist > 0.0f)
             {
-                norm = -camera->getTransform()->getWorldForwardDirection();
-                vectorValid = Math::RaycastPlane(ray.getPoint(), ray.getDirection(), raycastPos, norm, dist);
-                if (vectorValid)
+                Vec3F toPoint = ray.getPoint(dist) - pos;
+                toPoint -= toPoint.dotProduct(axis) * axis;
+
+                if (toPoint.squaredLength() > 1e-8f)
                 {
-                    Vec3F point = ray.getPoint(dist);
-
-                    Vec3F cross = (-norm).crossProduct(axis);
-                    point = Math::ProjectionPointOnLine(
-                        point,
-                        raycastPos,
-                        raycastPos + cross);
-
-                    Vec3F delta = (point - raycastPos);
-                    F32 d = delta.dotProduct(cross);
-                    F32 f = d / (scale * GizmoToolConfig::c_transformGizmoToolRotationRadius);
-                    F32 c = delta.normalizedCopy().dotProduct(camera->getTransform()->getWorldRightDirection()) +
-                            delta.normalizedCopy().dotProduct(camera->getTransform()->getWorldUpDirection());
-                    F32 value = Math::Abs(f) * Math::Sign(c);
-
-                    Vec3F projectPoint = Math::ProjectionPointOnPlane(raycastPos + norm, raycastPos, axis);
-                    Vec3F centerVector = (projectPoint - raycastPos).normalizedCopy();
-                    vector = centerVector.rotatedCopy(axis, value * Math::c_halfPi);
-                }
-            }
-            else
-            {
-                vectorValid = Math::RaycastPlane(ray.getPoint(), ray.getDirection(), raycastPos, norm, dist);
-                if (vectorValid)
-                {
-                    Vec3F point = ray.getPoint(dist);
-                    vector = (point - pos).normalizedCopy();
-                    // point = pos + vector * scale * GizmoToolConfig::c_transformGizmoToolRotationRadius;
+                    vector = toPoint.normalizedCopy();
+                    vectorValid = true;
                 }
             }
 
-            
             if (vectorValid)
             {
                 if (m_useRequest)
@@ -267,32 +243,24 @@ namespace Maze
                 }
                 else
                 {
-                    F32 dotCheck = vector.dotProduct(m_startAxis);
-                    if (Math::IsNearZero(dotCheck, 1e-6f))
+                    F32 cosAngle = Math::Clamp(m_startVector.dotProduct(vector), -1.0f, 1.0f);
+                    F32 angle = Math::ATan2(m_startVector.crossProduct(vector).dotProduct(axis), cosAngle);
+
+                    if (InputManager::GetInstancePtr()->getKeyState(KeyCode::LAlt) ||
+                        InputManager::GetInstancePtr()->getKeyState(KeyCode::RAlt))
                     {
-                        Quaternion parentWorldRotation = entityTransform->getParent() ? entityTransform->getParent()->getWorldRotation()
-                                                                                      : Quaternion::c_identity;
-
-                        TMat parentWorldTransform = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
-                                                                                 : TMat::c_identity;
-                        parentWorldTransform.setTranslation(Vec3F::c_zero);
-
-                        Quaternion newLocalRotation = Quaternion(
-                            parentWorldTransform.inversed().transform(m_startVector).normalizedCopy(),
-                            parentWorldTransform.inversed().transform(vector).normalizedCopy());
-
-                        if (InputManager::GetInstancePtr()->getKeyState(KeyCode::LAlt) ||
-                            InputManager::GetInstancePtr()->getKeyState(KeyCode::RAlt))
-                        {
-                            Vec3F euler = newLocalRotation.getEuler();
-                            euler.x = Math::DegreesToRadians(Math::Round(Math::RadiansToDegrees(euler.x) / 5.0f) * 5.0f);
-                            euler.y = Math::DegreesToRadians(Math::Round(Math::RadiansToDegrees(euler.y) / 5.0f) * 5.0f);
-                            euler.z = Math::DegreesToRadians(Math::Round(Math::RadiansToDegrees(euler.z) / 5.0f) * 5.0f);
-                            newLocalRotation = Quaternion::FromEuler(euler);
-                        }
-
-                        EditorActionHelper::Rotate(entity, newLocalRotation * m_startRotation);
+                        F32 degrees = Math::Round(Math::RadiansToDegrees(angle) / 5.0f) * 5.0f;
+                        angle = Math::DegreesToRadians(degrees);
                     }
+
+                    Quaternion worldRotationDelta(angle, axis);
+
+                    Quaternion parentWorldRotation = entityTransform->getParent()
+                        ? entityTransform->getParent()->getWorldRotation()
+                        : Quaternion::c_identity;
+
+                    EditorActionHelper::Rotate(entity,
+                        parentWorldRotation.inversed() * worldRotationDelta * parentWorldRotation * m_startRotation);
                 }
             }
         }
