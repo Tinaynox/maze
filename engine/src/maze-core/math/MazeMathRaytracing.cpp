@@ -192,7 +192,7 @@ namespace Maze
             F32 b = m.dotProduct(_rayDirection);
             F32 c = m.dotProduct(m) - _sphereRadius * _sphereRadius;
 
-            // Exit if r’s origin outside s (c > 0) and r pointing away from s (b > 0) 
+            // Exit if rï¿½s origin outside s (c > 0) and r pointing away from s (b > 0) 
             if (c > 0.0f && b > 0.0f)
                 return false;
             F32 discr = b * b - c;
@@ -354,7 +354,7 @@ namespace Maze
 
             if (Abs(localRay.getDirection().z) > 0.00001f)
             {
-                F32 t2 = (localRay.getPoint().z + 1) / -localRay.getDirection().z;
+                F32 t2 = localRay.getPoint().z / -localRay.getDirection().z;
                 if (t2 > 0.0f && t2 < _dist)
                 {
                     Vec3F point2 = localRay.getPoint(t2);

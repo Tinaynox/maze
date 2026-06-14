@@ -199,15 +199,12 @@ namespace Maze
             if (!withinTriPrisim)
                 return false;
 
-            // Calulate Triangle's Normal
-            Vec3F n = GenTriangleNormal(_a, _b, _c);
+            // Calculate Triangle's Normal
+            Vec3F n = GenTriangleNormal(_a, _b, _c).normalizedCopy();
 
-            // Project the point onto this normal
-            Vec3F projection = ProjectionPointOnVector(_point, n);
-
-            // If the distance from the triangle to the point is 0
-            //    it lies on the triangle
-            if (projection.length() <= std::numeric_limits<F32>::epsilon())
+            // If the distance from the point to the triangle's plane is ~0,
+            // the point lies on the triangle
+            if (Math::Abs((_point - _a).dotProduct(n)) <= std::numeric_limits<F32>::epsilon())
                 return true;
             else
                 return false;
