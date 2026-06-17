@@ -450,7 +450,7 @@ namespace Maze
             }
         };
 
-        F32 bestT = F32_MAX;
+        F32 bestT = _t;
         bool found = false;
 
         constexpr F32 c_epsilon = 1e-7f;
