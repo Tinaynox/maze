@@ -35,6 +35,7 @@
 #include "maze-render-system-opengl-core/MazeBlendModeOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeCullModeOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeCompareFunctionOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeStencilOperationOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeExtensionsOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderBufferOpenGL.hpp"
@@ -65,6 +66,7 @@ namespace Maze
         , m_scissorRect(0, 0, 0, 0)
         , m_clearColor(1.0f, 0.0f, 1.0f, 1.0f)
         , m_clearDepth(1.0f)
+        , m_clearStencil(0)
         , m_blendEnabled(false)
         , m_blendSrcFactor(BlendFactor::One)
         , m_blendDestFactor(BlendFactor::Zero)
@@ -73,6 +75,14 @@ namespace Maze
         , m_depthWriteEnabled(false)
         , m_cullEnabled(false)
         , m_cullMode(CullMode::None)
+        , m_stencilTestEnabled(false)
+        , m_stencilTestCompareFunction(CompareFunction::None)
+        , m_stencilReferenceValue(0)
+        , m_stencilReadMask(0xFF)
+        , m_stencilFailOperation(StencilOperation::None)
+        , m_stencilDepthFailOperation(StencilOperation::None)
+        , m_stencilPassOperation(StencilOperation::None)
+        , m_stencilWriteMask(0xFF)
         , m_multiSampleEnabled(false)
         , m_wireframeRender(false)
         , m_antialiasingLevelSupport(0)
@@ -270,6 +280,34 @@ namespace Maze
             }
         }
 
+        if (m_stencilTestEnabled)
+        {
+            if (mzglEnable)
+                MAZE_GL_CALL(mzglEnable(MAZE_GL_STENCIL_TEST));
+        }
+        else
+        {
+            if (mzglDisable)
+                MAZE_GL_CALL(mzglDisable(MAZE_GL_STENCIL_TEST));
+        }
+
+        if (mzglStencilFunc && m_stencilTestCompareFunction != CompareFunction::None)
+        {
+            MZGLenum stencilTestCompareFunctionGL = GetOpenGLCompareFunction(m_stencilTestCompareFunction);
+            MAZE_GL_CALL(mzglStencilFunc(stencilTestCompareFunctionGL, (MZGLint)m_stencilReferenceValue, (MZGLuint)m_stencilReadMask));
+        }
+
+        if (mzglStencilOp && m_stencilFailOperation != StencilOperation::None)
+        {
+            MZGLenum failGL = GetOpenGLStencilOperation(m_stencilFailOperation);
+            MZGLenum depthFailGL = GetOpenGLStencilOperation(m_stencilDepthFailOperation);
+            MZGLenum passGL = GetOpenGLStencilOperation(m_stencilPassOperation);
+            MAZE_GL_CALL(mzglStencilOp(failGL, depthFailGL, passGL));
+        }
+
+        if (mzglStencilMask)
+            MAZE_GL_CALL(mzglStencilMask((MZGLuint)m_stencilWriteMask));
+
 
         if (mzglViewport)
         {
@@ -428,6 +466,7 @@ namespace Maze
         m_scissorRect = Rect2S(0, 0, 0, 0);
         m_clearColor = Vec4F(1.0f, 0.0f, 1.0f, 1.0f);
         m_clearDepth = 1.0f;
+        m_clearStencil = 0;
         m_blendEnabled = false;
         m_blendSrcFactor = BlendFactor::One;
         m_blendDestFactor = BlendFactor::Zero;
@@ -436,6 +475,14 @@ namespace Maze
         m_depthWriteEnabled = false;
         m_cullEnabled = false;
         m_cullMode = CullMode::None;
+        m_stencilTestEnabled = false;
+        m_stencilTestCompareFunction = CompareFunction::None;
+        m_stencilReferenceValue = 0;
+        m_stencilReadMask = 0xFF;
+        m_stencilFailOperation = StencilOperation::None;
+        m_stencilDepthFailOperation = StencilOperation::None;
+        m_stencilPassOperation = StencilOperation::None;
+        m_stencilWriteMask = 0xFF;
         m_multiSampleEnabled = false;
         m_wireframeRender = false;
 
@@ -668,6 +715,92 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void StateMachineOpenGL::setStencilTestEnabled(bool _stencilTestEnabled)
+    {
+        if (m_stencilTestEnabled == _stencilTestEnabled)
+            return;
+
+        m_stencilTestEnabled = _stencilTestEnabled;
+
+#if (MAZE_DEBUG_GL)
+        m_context->_validateIsCurrentGLContext();
+#endif
+
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+
+        if (_stencilTestEnabled)
+        {
+            MAZE_GL_CALL(mzglEnable(MAZE_GL_STENCIL_TEST));
+        }
+        else
+        {
+            MAZE_GL_CALL(mzglDisable(MAZE_GL_STENCIL_TEST));
+        }
+    }
+
+    //////////////////////////////////////////
+    void StateMachineOpenGL::setStencilFunc(CompareFunction _stencilTestCompareFunction, U8 _referenceValue, U8 _readMask)
+    {
+        if (m_stencilTestCompareFunction == _stencilTestCompareFunction &&
+            m_stencilReferenceValue == _referenceValue &&
+            m_stencilReadMask == _readMask)
+            return;
+
+        m_stencilTestCompareFunction = _stencilTestCompareFunction;
+        m_stencilReferenceValue = _referenceValue;
+        m_stencilReadMask = _readMask;
+
+#if (MAZE_DEBUG_GL)
+        m_context->_validateIsCurrentGLContext();
+#endif
+
+        MZGLenum stencilTestCompareFunctionGL = GetOpenGLCompareFunction(_stencilTestCompareFunction);
+
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+        MAZE_GL_CALL(mzglStencilFunc(stencilTestCompareFunctionGL, (MZGLint)_referenceValue, (MZGLuint)_readMask));
+    }
+
+    //////////////////////////////////////////
+    void StateMachineOpenGL::setStencilOp(StencilOperation _fail, StencilOperation _depthFail, StencilOperation _pass)
+    {
+        if (m_stencilFailOperation == _fail &&
+            m_stencilDepthFailOperation == _depthFail &&
+            m_stencilPassOperation == _pass)
+            return;
+
+        m_stencilFailOperation = _fail;
+        m_stencilDepthFailOperation = _depthFail;
+        m_stencilPassOperation = _pass;
+
+#if (MAZE_DEBUG_GL)
+        m_context->_validateIsCurrentGLContext();
+#endif
+
+        MZGLenum failGL = GetOpenGLStencilOperation(_fail);
+        MZGLenum depthFailGL = GetOpenGLStencilOperation(_depthFail);
+        MZGLenum passGL = GetOpenGLStencilOperation(_pass);
+
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+        MAZE_GL_CALL(mzglStencilOp(failGL, depthFailGL, passGL));
+    }
+
+    //////////////////////////////////////////
+    void StateMachineOpenGL::setStencilWriteMask(U8 _stencilWriteMask)
+    {
+        if (m_stencilWriteMask == _stencilWriteMask)
+            return;
+
+        m_stencilWriteMask = _stencilWriteMask;
+
+#if (MAZE_DEBUG_GL)
+        m_context->_validateIsCurrentGLContext();
+#endif
+
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+        MAZE_GL_CALL(mzglStencilMask((MZGLuint)_stencilWriteMask));
+    }
+
+    //////////////////////////////////////////
     void StateMachineOpenGL::setViewportRect(Rect2S const& _viewportRect)
     {
         if (m_viewportRect == _viewportRect)
@@ -860,6 +993,26 @@ namespace Maze
             MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
 
             MAZE_GL_CALL(mzglClearDepth(m_clearDepth));
+        }
+    }
+
+    //////////////////////////////////////////
+    void StateMachineOpenGL::setClearStencil(S32 _clearStencil)
+    {
+        if (m_clearStencil == _clearStencil)
+            return;
+
+        m_clearStencil = _clearStencil;
+
+#if (MAZE_DEBUG_GL)
+        m_context->_validateIsCurrentGLContext();
+#endif
+
+        if (mzglClearStencil)
+        {
+            MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+
+            MAZE_GL_CALL(mzglClearStencil((MZGLint)m_clearStencil));
         }
     }
 

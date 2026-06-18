@@ -233,6 +233,12 @@ namespace Maze
         //////////////////////////////////////////
         inline void setClearDepth(F32 _clearDepth) { m_stateMachine->setClearDepth(_clearDepth); }
 
+        //////////////////////////////////////////
+        inline S32 getClearStencil() const { return m_stateMachine->getClearStencil(); }
+
+        //////////////////////////////////////////
+        inline void setClearStencil(S32 _clearStencil) { m_stateMachine->setClearStencil(_clearStencil); }
+
 
         //////////////////////////////////////////
         void setViewportRect(Rect2S const& _viewportRect);
@@ -368,6 +374,27 @@ namespace Maze
 
         //////////////////////////////////////////
         inline CullMode getCullMode() const { return m_stateMachine->getCullMode(); }
+
+        //////////////////////////////////////////
+        void setStencilTestEnabled(bool _stencilTestEnabled);
+
+        //////////////////////////////////////////
+        inline bool getStencilTestEnabled() const { return m_stateMachine->getStencilTestEnabled(); }
+
+        //////////////////////////////////////////
+        void setStencilFunc(CompareFunction _stencilTestCompareFunction, U8 _referenceValue, U8 _readMask);
+
+        //////////////////////////////////////////
+        inline CompareFunction getStencilTestCompareFunction() const { return m_stateMachine->getStencilTestCompareFunction(); }
+
+        //////////////////////////////////////////
+        void setStencilOp(StencilOperation _fail, StencilOperation _depthFail, StencilOperation _pass);
+
+        //////////////////////////////////////////
+        void setStencilWriteMask(U8 _stencilWriteMask);
+
+        //////////////////////////////////////////
+        inline U8 getStencilWriteMask() const { return m_stateMachine->getStencilWriteMask(); }
 
         //////////////////////////////////////////
         void setWireframeRender(bool _value);

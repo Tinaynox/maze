@@ -127,15 +127,18 @@ namespace Maze
         //////////////////////////////////////////
         inline RenderCommandClearCurrentRenderTarget(
             bool _colorBuffer = true,
-            bool _depthBuffer = true)
+            bool _depthBuffer = true,
+            bool _stencilBuffer = true)
             : RenderCommand(RenderCommandType::ClearCurrentRenderTarget)
             , colorBuffer(_colorBuffer)
             , depthBuffer(_depthBuffer)
+            , stencilBuffer(_stencilBuffer)
         {}
 
     public:
         bool colorBuffer;
         bool depthBuffer;
+        bool stencilBuffer;
     };
 
 

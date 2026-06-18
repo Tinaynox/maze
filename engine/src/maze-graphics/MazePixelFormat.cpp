@@ -453,7 +453,23 @@ namespace Maze
         
         return false;
     }
-    
+
+    //////////////////////////////////////////
+    MAZE_GRAPHICS_API bool PixelFormat::IsDepthStencil(PixelFormat::Enum _pixelFormat)
+    {
+        switch (_pixelFormat)
+        {
+            case PixelFormat::DEPTH_STENCIL_U24_8:
+            case PixelFormat::DEPTH_STENCIL_F32_U8:
+                return true;
+
+            default:
+                break;
+        }
+
+        return false;
+    }
+
     //////////////////////////////////////////
     static inline Size CalculateRequiredBytesASTCSlice(
         U32 _width,

@@ -205,6 +205,10 @@ namespace Maze
                 shaderSource =
 #include "shaders/MazeShadowCasterShader.mzglsl"
                     ; break;
+            case BuiltinShaderType::Outline:
+                shaderSource =
+#include "shaders/MazeOutlineShader.mzglsl"
+                    ; break;
             default:
             {
                 MAZE_NOT_IMPLEMENTED;

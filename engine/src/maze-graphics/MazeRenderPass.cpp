@@ -53,7 +53,14 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(BlendFactor, blendDestFactor, BlendFactor::Zero, getBlendDestFactor, setBlendDestFactor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(CompareFunction, depthTestCompareFunction, CompareFunction::Disabled, getDepthTestCompareFunction, setDepthTestCompareFunction),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, depthWriteEnabled, true, getDepthWriteEnabled, setDepthWriteEnabled),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(CullMode, cullMode, CullMode::Off, getCullMode, setCullMode)
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CullMode, cullMode, CullMode::Off, getCullMode, setCullMode),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CompareFunction, stencilTestCompareFunction, CompareFunction::Disabled, getStencilTestCompareFunction, setStencilTestCompareFunction),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(U8, stencilReferenceValue, 0, getStencilReferenceValue, setStencilReferenceValue),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(U8, stencilReadMask, 0xFF, getStencilReadMask, setStencilReadMask),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(U8, stencilWriteMask, 0xFF, getStencilWriteMask, setStencilWriteMask),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(StencilOperation, stencilFailOperation, StencilOperation::Keep, getStencilFailOperation, setStencilFailOperation),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(StencilOperation, stencilDepthFailOperation, StencilOperation::Keep, getStencilDepthFailOperation, setStencilDepthFailOperation),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(StencilOperation, stencilPassOperation, StencilOperation::Keep, getStencilPassOperation, setStencilPassOperation)
     )
 
     //////////////////////////////////////////
@@ -105,6 +112,13 @@ namespace Maze
         m_depthTestCompareFunction = _renderPass.m_depthTestCompareFunction;
         m_depthWriteEnabled = _renderPass.m_depthWriteEnabled;
         m_cullMode = _renderPass.m_cullMode;
+        m_stencilTestCompareFunction = _renderPass.m_stencilTestCompareFunction;
+        m_stencilReferenceValue = _renderPass.m_stencilReferenceValue;
+        m_stencilReadMask = _renderPass.m_stencilReadMask;
+        m_stencilWriteMask = _renderPass.m_stencilWriteMask;
+        m_stencilFailOperation = _renderPass.m_stencilFailOperation;
+        m_stencilDepthFailOperation = _renderPass.m_stencilDepthFailOperation;
+        m_stencilPassOperation = _renderPass.m_stencilPassOperation;
 
         return true;
     }
@@ -242,6 +256,13 @@ namespace Maze
         crc32 = Hash::CalculateCRC32((Char const*)&m_depthTestCompareFunction, sizeof(m_depthTestCompareFunction), crc32);
         crc32 = Hash::CalculateCRC32((Char const*)&m_depthWriteEnabled, sizeof(m_depthWriteEnabled), crc32);
         crc32 = Hash::CalculateCRC32((Char const*)&m_cullMode, sizeof(m_cullMode), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_stencilTestCompareFunction, sizeof(m_stencilTestCompareFunction), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_stencilReferenceValue, sizeof(m_stencilReferenceValue), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_stencilReadMask, sizeof(m_stencilReadMask), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_stencilWriteMask, sizeof(m_stencilWriteMask), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_stencilFailOperation, sizeof(m_stencilFailOperation), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_stencilDepthFailOperation, sizeof(m_stencilDepthFailOperation), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_stencilPassOperation, sizeof(m_stencilPassOperation), crc32);
 
         return crc32;
     }

@@ -192,6 +192,10 @@ MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern MZGLboolean (MAZE_GL_FUNCPTR *mzglUnma
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglDepthFunc)(MZGLenum _func);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglDepthMask)(MZGLboolean _flag);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglCullFace)(MZGLenum _mode);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglStencilFunc)(MZGLenum _func, MZGLint _ref, MZGLuint _mask);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglStencilOp)(MZGLenum _fail, MZGLenum _zfail, MZGLenum _zpass);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglStencilMask)(MZGLuint _mask);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglClearStencil)(MZGLint _s);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglFrontFace)(MZGLenum _mode);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglClipPlane)(MZGLenum _plane, MZGLdouble const* _equation);
 

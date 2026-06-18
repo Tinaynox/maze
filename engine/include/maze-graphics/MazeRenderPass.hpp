@@ -35,6 +35,7 @@
 #include "maze-graphics/MazeBlendMode.hpp"
 #include "maze-graphics/MazeCullMode.hpp"
 #include "maze-graphics/MazeCompareFunction.hpp"
+#include "maze-graphics/MazeStencilOperation.hpp"
 #include "maze-graphics/MazeRenderPassType.hpp"
 #include "maze-graphics/MazeShaderUniformVariant.hpp"
 #include "maze-graphics/MazeShader.hpp"
@@ -188,6 +189,48 @@ namespace Maze
         MAZE_FORCEINLINE CullMode getCullMode() const { return m_cullMode; }
 
         //////////////////////////////////////////
+        MAZE_FORCEINLINE void setStencilTestCompareFunction(CompareFunction _value) { m_stencilTestCompareFunction = _value; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE CompareFunction getStencilTestCompareFunction() const { return m_stencilTestCompareFunction; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE void setStencilReferenceValue(U8 _value) { m_stencilReferenceValue = _value; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE U8 getStencilReferenceValue() const { return m_stencilReferenceValue; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE void setStencilReadMask(U8 _value) { m_stencilReadMask = _value; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE U8 getStencilReadMask() const { return m_stencilReadMask; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE void setStencilWriteMask(U8 _value) { m_stencilWriteMask = _value; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE U8 getStencilWriteMask() const { return m_stencilWriteMask; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE void setStencilFailOperation(StencilOperation _value) { m_stencilFailOperation = _value; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE StencilOperation getStencilFailOperation() const { return m_stencilFailOperation; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE void setStencilDepthFailOperation(StencilOperation _value) { m_stencilDepthFailOperation = _value; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE StencilOperation getStencilDepthFailOperation() const { return m_stencilDepthFailOperation; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE void setStencilPassOperation(StencilOperation _value) { m_stencilPassOperation = _value; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE StencilOperation getStencilPassOperation() const { return m_stencilPassOperation; }
+
+        //////////////////////////////////////////
         void applyRenderPassUniforms();
 
         //////////////////////////////////////////
@@ -264,6 +307,14 @@ namespace Maze
         bool m_depthWriteEnabled = true;
 
         CullMode m_cullMode = CullMode::Off;
+
+        CompareFunction m_stencilTestCompareFunction = CompareFunction::Disabled;
+        U8 m_stencilReferenceValue = 0;
+        U8 m_stencilReadMask = 0xFF;
+        U8 m_stencilWriteMask = 0xFF;
+        StencilOperation m_stencilFailOperation = StencilOperation::Keep;
+        StencilOperation m_stencilDepthFailOperation = StencilOperation::Keep;
+        StencilOperation m_stencilPassOperation = StencilOperation::Keep;
     };
 
 } // namespace Maze

@@ -277,7 +277,8 @@ namespace Maze
     //////////////////////////////////////////
     void RenderSystemOpenGL3::clearCurrentRenderTarget(
         bool _colorBuffer,
-        bool _depthBuffer)
+        bool _depthBuffer,
+        bool _stencilBuffer)
     {
         if (!m_currentRenderTarget)
             return;
@@ -300,6 +301,14 @@ namespace Maze
             getCurrentContext()->setClearDepth(clearDepth);
 
             getCurrentContext()->setDepthWriteEnabled(true);
+        }
+
+        if (_stencilBuffer)
+        {
+            mask |= MAZE_GL_STENCIL_BUFFER_BIT;
+
+            getCurrentContext()->setClearStencil(0);
+            getCurrentContext()->setStencilWriteMask(0xFF);
         }
 
         getCurrentContext()->_validateIsCurrentGLContext();

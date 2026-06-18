@@ -167,7 +167,8 @@ namespace Maze
 
                         m_context->getRenderSystem()->clearCurrentRenderTarget(
                             command->colorBuffer,
-                            command->depthBuffer);
+                            command->depthBuffer,
+                            command->stencilBuffer);
 
                         break;
                     }
@@ -461,6 +462,23 @@ namespace Maze
         {
             m_context->setCullMode(cullMode);
         }
+
+        // Stencil Test
+        CompareFunction stencilTestCompareFunction = _renderPass->getStencilTestCompareFunction();
+        bool stencilTestEnabled = (stencilTestCompareFunction != CompareFunction::Disabled);
+        m_context->setStencilTestEnabled(stencilTestEnabled);
+        if (stencilTestEnabled)
+        {
+            m_context->setStencilFunc(
+                stencilTestCompareFunction,
+                _renderPass->getStencilReferenceValue(),
+                _renderPass->getStencilReadMask());
+            m_context->setStencilOp(
+                _renderPass->getStencilFailOperation(),
+                _renderPass->getStencilDepthFailOperation(),
+                _renderPass->getStencilPassOperation());
+        }
+        m_context->setStencilWriteMask(_renderPass->getStencilWriteMask());
 
 
         // Shader

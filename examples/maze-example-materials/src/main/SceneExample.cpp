@@ -49,7 +49,6 @@
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
-#include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -57,6 +56,8 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeMeshManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeOutlineRenderer.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -205,6 +206,18 @@ namespace Maze
 
         addMeshPreview("TorusKnotUV.fbx", "BlinnPhongAlpha00.mzmaterial", "Alpha Blend", torusKnotScale);
         addMeshPreviewSpace();
+
+        {
+            EntityPtr objectEntity = addMeshPreview("TorusKnotUV.fbx", "Lambert00.mzmaterial", "Stencil Outline", torusKnotScale);
+            addMeshPreviewSpace();
+
+            MeshRenderer* meshRenderer = objectEntity->getComponentRaw<MeshRenderer>();
+            meshRenderer->setEnabled(false);
+
+            OutlineRendererPtr barrelOutlineRenderer = objectEntity->createComponent<OutlineRenderer>();
+            barrelOutlineRenderer->setOutlineColor(ColorF128(0.821128f, 3.610131f, 15.145296f, 1.000000f));
+            barrelOutlineRenderer->setOutlineWidth(0.02f);
+        }
 
         addMeshPreview("TorusKnotUV.fbx", "Fresnel00.mzmaterial", "Fresnel", torusKnotScale);
         addMeshPreviewSpace();

@@ -481,6 +481,7 @@ namespace Maze
         {
             MZGLint textureId = 0;
             MZGLenum textureTarget = MAZE_GL_TEXTURE_2D;
+            PixelFormat::Enum pixelFormat = PixelFormat::None;
 
             if (_texture)
             {
@@ -490,12 +491,14 @@ namespace Maze
                     {
                         textureId = _texture->castRaw<Texture2DOpenGL>()->getGLTexture();
                         textureTarget = MAZE_GL_TEXTURE_2D;
+                        pixelFormat = _texture->castRaw<Texture2D>()->getInternalPixelFormat();
                         break;
                     }
                     case TextureType::TwoDimensionalMultisample:
                     {
                         textureId = _texture->castRaw<Texture2DMSOpenGL>()->getGLTexture();
                         textureTarget = MAZE_GL_TEXTURE_2D_MULTISAMPLE;
+                        pixelFormat = _texture->castRaw<Texture2DMS>()->getInternalPixelFormat();
                         break;
                     }
                     default:
@@ -512,18 +515,26 @@ namespace Maze
                 RenderBufferOpenGLScopeBind renderBufferScopeBind(this);
 
                 S32 activeTextureIndex = m_context->getActiveTexture();
-                m_context->activeTexture(0);            
+                m_context->activeTexture(0);
+
+                // A combined depth-stencil texture must be attached at GL_DEPTH_STENCIL_ATTACHMENT
+                // so both aspects are bound to the FBO - attaching it at GL_DEPTH_ATTACHMENT alone
+                // leaves the framebuffer without a stencil attachment even though the texture itself
+                // has stencil bits, silently breaking any stencil test/write against this target.
+                MZGLenum attachment = PixelFormat::IsDepthStencil(pixelFormat)
+                    ? MAZE_GL_DEPTH_STENCIL_ATTACHMENT
+                    : MAZE_GL_DEPTH_ATTACHMENT;
 
                 MAZE_GL_CALL(
                     mzglFramebufferTexture2D(
                         MAZE_GL_FRAMEBUFFER,
-                        MAZE_GL_DEPTH_ATTACHMENT,
+                        attachment,
                         textureTarget,
                         textureId, 0));
 
                 m_context->activeTexture(activeTextureIndex);
             }
-            
+
         }
     }
 

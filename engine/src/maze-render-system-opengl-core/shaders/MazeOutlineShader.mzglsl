@@ -1,0 +1,63 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+)"
+#include "MazePrecisionHigh.mzglsl"
+#include "MazeVertex.mzglsl"
+R"(
+    //////////////////////////////////////////
+    uniform float u_outlineWidth;
+
+    //////////////////////////////////////////
+    IN vec3 a_position;
+    IN vec3 a_normal;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        int instanceId = gl_InstanceID;
+
+        mat4 modelMatrix = GetModelMatrix(instanceId);
+        mat4 viewMatrix = GetViewMatrix();
+
+        mat3 normalMatrix = mat3(modelMatrix);
+        vec3 normalWS = normalize(normalMatrix * a_normal);
+
+        vec4 positionWS = modelMatrix * vec4(a_position, 1.0);
+        positionWS.xyz += normalWS * u_outlineWidth;
+
+        MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+
+        vec4 positionVS = viewMatrix * positionWS;
+        vec4 positionCS = u_projectionMatrix * positionVS;
+
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+
+        gl_Position = positionCS;
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+)"
+#include "MazePrecisionHigh.mzglsl"
+#include "MazeFragment.mzglsl"
+R"(
+
+    //////////////////////////////////////////
+    uniform vec4 u_outlineColor;
+
+    //////////////////////////////////////////
+    MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        MAZE_CLIP_DISTANCE_FRAGMENT;
+
+        out_color = u_outlineColor;
+    }
+)"

@@ -262,10 +262,11 @@ namespace Maze
         //////////////////////////////////////////
         inline void addClearCurrentRenderTargetCommand(
             bool _colorBuffer = true,
-            bool _depthBuffer = true)
+            bool _depthBuffer = true,
+            bool _stencilBuffer = true)
         {
             m_lastDrawVAOInstancedCommand = nullptr;
-            m_renderCommandsBuffer.createCommand<RenderCommandClearCurrentRenderTarget>(_colorBuffer, _depthBuffer);
+            m_renderCommandsBuffer.createCommand<RenderCommandClearCurrentRenderTarget>(_colorBuffer, _depthBuffer, _stencilBuffer);
         }
 
         //////////////////////////////////////////

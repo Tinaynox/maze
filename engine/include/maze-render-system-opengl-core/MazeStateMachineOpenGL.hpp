@@ -36,6 +36,7 @@
 #include "maze-graphics/MazeBlendMode.hpp"
 #include "maze-graphics/MazeCullMode.hpp"
 #include "maze-graphics/MazeCompareFunction.hpp"
+#include "maze-graphics/MazeStencilOperation.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeTexture2DMS.hpp"
 #include "maze-graphics/MazeTextureCube.hpp"
@@ -150,6 +151,43 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void setStencilTestEnabled(bool _stencilTestEnabled);
+
+        //////////////////////////////////////////
+        inline bool getStencilTestEnabled() const { return m_stencilTestEnabled; }
+
+        //////////////////////////////////////////
+        void setStencilFunc(CompareFunction _stencilTestCompareFunction, U8 _referenceValue, U8 _readMask);
+
+        //////////////////////////////////////////
+        inline CompareFunction getStencilTestCompareFunction() const { return m_stencilTestCompareFunction; }
+
+        //////////////////////////////////////////
+        inline U8 getStencilReferenceValue() const { return m_stencilReferenceValue; }
+
+        //////////////////////////////////////////
+        inline U8 getStencilReadMask() const { return m_stencilReadMask; }
+
+        //////////////////////////////////////////
+        void setStencilOp(StencilOperation _fail, StencilOperation _depthFail, StencilOperation _pass);
+
+        //////////////////////////////////////////
+        inline StencilOperation getStencilFailOperation() const { return m_stencilFailOperation; }
+
+        //////////////////////////////////////////
+        inline StencilOperation getStencilDepthFailOperation() const { return m_stencilDepthFailOperation; }
+
+        //////////////////////////////////////////
+        inline StencilOperation getStencilPassOperation() const { return m_stencilPassOperation; }
+
+        //////////////////////////////////////////
+        void setStencilWriteMask(U8 _stencilWriteMask);
+
+        //////////////////////////////////////////
+        inline U8 getStencilWriteMask() const { return m_stencilWriteMask; }
+
+
+        //////////////////////////////////////////
         inline Rect2S const& getViewportRect() const { return m_viewportRect; }
 
         //////////////////////////////////////////
@@ -203,6 +241,12 @@ namespace Maze
 
         //////////////////////////////////////////
         inline F32 getClearDepth() const { return m_clearDepth; }
+
+        //////////////////////////////////////////
+        void setClearStencil(S32 _clearStencil);
+
+        //////////////////////////////////////////
+        inline S32 getClearStencil() const { return m_clearStencil; }
 
 
         //////////////////////////////////////////
@@ -323,6 +367,7 @@ namespace Maze
         Rect2S m_scissorRect;
         Vec4F m_clearColor;
         F32 m_clearDepth;
+        S32 m_clearStencil;
 
         // BlendMode
         bool m_blendEnabled;
@@ -339,6 +384,16 @@ namespace Maze
         // CullMode
         bool m_cullEnabled;
         CullMode m_cullMode;
+
+        // StencilTest
+        bool m_stencilTestEnabled;
+        CompareFunction m_stencilTestCompareFunction;
+        U8 m_stencilReferenceValue;
+        U8 m_stencilReadMask;
+        StencilOperation m_stencilFailOperation;
+        StencilOperation m_stencilDepthFailOperation;
+        StencilOperation m_stencilPassOperation;
+        U8 m_stencilWriteMask;
 
         MZGLboolean m_multiSampleEnabled;
         

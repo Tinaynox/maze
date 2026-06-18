@@ -611,6 +611,51 @@ namespace Maze
                 material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
                 break;
             }
+            case BuiltinMaterialType::OutlineStencilMask:
+            {
+                // Re-draws the mesh's silhouette into the stencil buffer without affecting
+                // the color buffer (blend keeps the destination color: result = dst * One + src * Zero)
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Color));
+                renderPass->setBlendSrcFactor(BlendFactor::Zero);
+                renderPass->setBlendDestFactor(BlendFactor::One);
+                renderPass->setDepthWriteEnabled(false);
+                // No depth test: this pass only needs to mark the mesh's full silhouette in the
+                // stencil buffer. Testing against the depth buffer here is subject to floating-point
+                // mismatch against the main draw's interpolated depth (most visible at grazing-angle
+                // edges), which punches gaps in the mask and lets the outline pass bleed through them.
+                renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+                renderPass->setCullMode(CullMode::Back);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Opaque + 1);
+                renderPass->setStencilTestCompareFunction(CompareFunction::Always);
+                renderPass->setStencilPassOperation(StencilOperation::Replace);
+                renderPass->setStencilDepthFailOperation(StencilOperation::Keep);
+                renderPass->setStencilFailOperation(StencilOperation::Keep);
+                renderPass->setStencilReferenceValue(1);
+                material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                break;
+            }
+            case BuiltinMaterialType::Outline:
+            {
+                // Draws a normal-extruded shell, visible only where the stencil mask
+                // from OutlineStencilMask hasn't already marked the mesh's own silhouette
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Outline));
+                renderPass->setBlendSrcFactor(BlendFactor::One);
+                renderPass->setBlendDestFactor(BlendFactor::Zero);
+                renderPass->setDepthWriteEnabled(false);
+                renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                renderPass->setCullMode(CullMode::Front);
+                renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Opaque + 2);
+                renderPass->setStencilTestCompareFunction(CompareFunction::NotEqual);
+                renderPass->setStencilReferenceValue(1);
+                renderPass->setStencilWriteMask(0);
+                material->setUniform(MAZE_HCS("u_outlineWidth"), 0.02f);
+                material->setUniform(MAZE_HCS("u_outlineColor"), ColorF128(1.0f, 0.65f, 0.0f, 1.0f));
+                break;
+            }
             default:
             {
                 MAZE_NOT_IMPLEMENTED;

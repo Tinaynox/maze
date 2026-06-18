@@ -492,6 +492,30 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ContextOpenGL::setStencilTestEnabled(bool _stencilTestEnabled)
+    {
+        m_stateMachine->setStencilTestEnabled(_stencilTestEnabled);
+    }
+
+    //////////////////////////////////////////
+    void ContextOpenGL::setStencilFunc(CompareFunction _stencilTestCompareFunction, U8 _referenceValue, U8 _readMask)
+    {
+        m_stateMachine->setStencilFunc(_stencilTestCompareFunction, _referenceValue, _readMask);
+    }
+
+    //////////////////////////////////////////
+    void ContextOpenGL::setStencilOp(StencilOperation _fail, StencilOperation _depthFail, StencilOperation _pass)
+    {
+        m_stateMachine->setStencilOp(_fail, _depthFail, _pass);
+    }
+
+    //////////////////////////////////////////
+    void ContextOpenGL::setStencilWriteMask(U8 _stencilWriteMask)
+    {
+        m_stateMachine->setStencilWriteMask(_stencilWriteMask);
+    }
+
+    //////////////////////////////////////////
     void ContextOpenGL::setWireframeRender(bool _value)
     {
         m_stateMachine->setWireframeRender(_value);

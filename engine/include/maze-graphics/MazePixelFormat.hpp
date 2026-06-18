@@ -180,7 +180,10 @@ namespace Maze
         
         //////////////////////////////////////////
         MAZE_GRAPHICS_API bool IsCompressed(PixelFormat::Enum _pixelFormat);
-        
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API bool IsDepthStencil(PixelFormat::Enum _pixelFormat);
+
         //////////////////////////////////////////
         MAZE_GRAPHICS_API Size CalculateRequiredBytes(U32 _width, U32 _height, U32 _depth, PixelFormat::Enum _pixelFormat);
     }

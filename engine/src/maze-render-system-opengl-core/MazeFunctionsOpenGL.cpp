@@ -167,6 +167,10 @@ MAZE_RENDER_SYSTEM_OPENGL_CORE_API MZGLboolean (MAZE_GL_FUNCPTR *mzglUnmapBuffer
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglDepthFunc)(MZGLenum _func) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglDepthMask)(MZGLboolean _flag) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglCullFace)(MZGLenum _mode) = nullptr;
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglStencilFunc)(MZGLenum _func, MZGLint _ref, MZGLuint _mask) = nullptr;
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglStencilOp)(MZGLenum _fail, MZGLenum _zfail, MZGLenum _zpass) = nullptr;
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglStencilMask)(MZGLuint _mask) = nullptr;
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglClearStencil)(MZGLint _s) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglFrontFace)(MZGLenum _mode) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR* mzglClipPlane)(MZGLenum _plane, MZGLdouble const* _equation) = nullptr;
 

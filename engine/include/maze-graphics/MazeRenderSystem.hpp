@@ -196,7 +196,8 @@ namespace Maze
         //////////////////////////////////////////
         virtual void clearCurrentRenderTarget(
             bool _colorBuffer = true,
-            bool _depthBuffer = true) MAZE_ABSTRACT;
+            bool _depthBuffer = true,
+            bool _stencilBuffer = true) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         inline ShaderSystemPtr const& getShaderSystem() const { return m_shaderSystem; }

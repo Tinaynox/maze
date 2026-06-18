@@ -205,6 +205,10 @@ namespace Maze
         AssignOpenGLFunctionDirect(_renderContext, mzglCullFace, glCullFace);
         AssignOpenGLFunctionDirect(_renderContext, mzglFrontFace, glFrontFace);
         AssignOpenGLFunctionDirect(_renderContext, mzglClipPlane, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglStencilFunc, glStencilFunc);
+        AssignOpenGLFunctionDirect(_renderContext, mzglStencilOp, glStencilOp);
+        AssignOpenGLFunctionDirect(_renderContext, mzglStencilMask, glStencilMask);
+        AssignOpenGLFunctionDirect(_renderContext, mzglClearStencil, glClearStencil);
 
         AssignOpenGLFunction(_renderContext, mzglDebugMessageControl, "glDebugMessageControl");
         AssignOpenGLFunction(_renderContext, mzglDebugMessageCallback, "glDebugMessageCallback");
@@ -299,6 +303,10 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglUniformMatrix4fv, "glUniformMatrix4fv");
         AssignOpenGLFunction(_renderContext, mzglGetVertexAttribiv, "glGetVertexAttribivARB");
         AssignOpenGLFunction(_renderContext, mzglGetVertexAttribPointerv, "glGetVertexAttribPointervARB");
+        AssignOpenGLFunction(_renderContext, mzglStencilFunc, "glStencilFunc");
+        AssignOpenGLFunction(_renderContext, mzglStencilOp, "glStencilOp");
+        AssignOpenGLFunction(_renderContext, mzglStencilMask, "glStencilMask");
+        AssignOpenGLFunction(_renderContext, mzglClearStencil, "glClearStencil");
         AssignOpenGLFunction(_renderContext, mzglGenQueries, "glGenQueries");
         AssignOpenGLFunction(_renderContext, mzglBeginQuery, "glBeginQuery");
         AssignOpenGLFunction(_renderContext, mzglEndQuery, "glEndQuery");

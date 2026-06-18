@@ -72,7 +72,8 @@ namespace Maze
         //////////////////////////////////////////
         virtual void clearCurrentRenderTarget(
             bool _colorBuffer = true,
-            bool _depthBuffer = true) MAZE_OVERRIDE;
+            bool _depthBuffer = true,
+            bool _stencilBuffer = true) MAZE_OVERRIDE;
 
     protected:
 
