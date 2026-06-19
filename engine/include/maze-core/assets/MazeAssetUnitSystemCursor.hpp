@@ -100,7 +100,7 @@ namespace Maze
     
 
         //////////////////////////////////////////
-        virtual bool isForceSetAssetFileName() const { return true; }
+        virtual bool isForceSetAssetFileName() const MAZE_OVERRIDE { return true; }
 
     protected:
         SystemCursorPtr m_cursor;

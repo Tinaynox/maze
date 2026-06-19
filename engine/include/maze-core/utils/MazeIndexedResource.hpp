@@ -98,9 +98,9 @@ namespace Maze
 
 
 //////////////////////////////////////////
-#define MAZE_IMPLEMENT_INDEXED_RESOURCE(DClass)                               \
-    std::vector<DClass*> DClass::s_resources = std::vector<DClass*>();          \
-    std::stack<ResourceId> DClass::s_freeResourceIndices = std::stack<ResourceId>();
+#define MAZE_IMPLEMENT_INDEXED_RESOURCE(DClass)                                                          \
+    template <> std::vector<DClass*> IndexedResource<DClass>::s_resources = std::vector<DClass*>();      \
+    template <> std::stack<ResourceId> IndexedResource<DClass>::s_freeResourceIndices = std::stack<ResourceId>();
 
 
 //////////////////////////////////////////

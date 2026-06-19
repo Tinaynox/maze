@@ -34,8 +34,6 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsTypes.hpp"
-#include "maze-core/ecs/components/MazeTransform2D.hpp"
-#include "maze-core/ecs/components/MazeTransform3D.hpp"
 
 
 //////////////////////////////////////////
@@ -106,33 +104,18 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // Note: Defined out-of-line in MazeEcsHelper.inl, since the bodies need
+        // the complete definitions of Transform2D/Transform3D, which would otherwise
+        // create a header circular-include trap (Transform2D.hpp includes this header
+        // before its own class body is complete). Include MazeEcsHelper.inl explicitly
+        // (after Transform2D.hpp/Transform3D.hpp are fully visible) wherever these are used.
+        //////////////////////////////////////////
         template <typename TComponent>
-        inline TComponent* GetFirstTrunkComponent(Entity* _entity)
-        {
-            if (Transform2D* transform2D = _entity->getComponentRaw<Transform2D>())
-                return transform2D->getFirstTrunkComponent<TComponent>();
-            else
-            if (Transform3D* transform3D = _entity->getComponentRaw<Transform3D>())
-                return transform3D->getFirstTrunkComponent<TComponent>();
-            
-            return nullptr;
-        }
+        TComponent* GetFirstTrunkComponent(Entity* _entity);
 
         //////////////////////////////////////////
         template <typename TComponent>
-        inline TComponent* FindComponentRawRecursive(Entity* _entity)
-        {
-            if (TComponent* component = _entity->getComponentRaw<TComponent>())
-                return component;
-
-            if (Transform2D* transform2D = _entity->getComponentRaw<Transform2D>())
-                return transform2D->findComponentRawRecursive<TComponent>();
-            
-            if (Transform3D* transform3D = _entity->getComponentRaw<Transform3D>())
-                return transform3D->findComponentRawRecursive<TComponent>();
-
-			return nullptr;
-        }
+        TComponent* FindComponentRawRecursive(Entity* _entity);
 
         //////////////////////////////////////////
         MAZE_CORE_API Entity* FindEntityWithSerializationId(Entity* _entity, EcsSerializationId _sid);

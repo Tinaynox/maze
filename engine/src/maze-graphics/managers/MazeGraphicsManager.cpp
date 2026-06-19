@@ -61,11 +61,13 @@
 
 //////////////////////////////////////////
 // Notify Nvidia and AMD drivers to select THE BEST GPU for us.
+#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
 extern "C"
 {
   __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
   __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
+#endif
 
 
 //////////////////////////////////////////

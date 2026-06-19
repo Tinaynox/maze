@@ -410,7 +410,7 @@ namespace Maze
     MAZE_FORCEINLINE TValue DataBlock::castParamValue(TFrom const& _value)
     {
         TValue result;
-        memcpy(&result, &_value, sizeof(TValue));
+        memcpy((void*)&result, (void const*)&_value, sizeof(TValue));
         return result;
     }
 
@@ -419,7 +419,7 @@ namespace Maze
     MAZE_FORCEINLINE TValue DataBlock::castParamValue(U8 const* _value)
     {
         TValue result;
-        memcpy(&result, _value, sizeof(TValue));
+        memcpy((void*)&result, (void const*)_value, sizeof(TValue));
         return result;
     }
 

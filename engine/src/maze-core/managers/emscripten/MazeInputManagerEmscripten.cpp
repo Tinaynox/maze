@@ -83,16 +83,16 @@ namespace Maze
         if (!InputManager::init(_config))
             return false;
 
-        emscripten_set_click_callback(nullptr, nullptr, 1, OnMouseEvent);
-        emscripten_set_mousedown_callback(nullptr, nullptr, 1, OnMouseEvent);
-        emscripten_set_mouseup_callback(nullptr, nullptr, 1, OnMouseEvent);
-        emscripten_set_dblclick_callback(nullptr, nullptr, 1, OnMouseEvent);
-        emscripten_set_mousemove_callback(nullptr, nullptr, 1, OnMouseEvent);
-        emscripten_set_mouseenter_callback(nullptr, nullptr, 1, OnMouseEvent);
-        emscripten_set_mouseleave_callback(nullptr, nullptr, 1, OnMouseEvent);
-        
-        emscripten_set_keydown_callback(nullptr, nullptr, 1, OnKeyboardEvent);
-        emscripten_set_keyup_callback(nullptr, nullptr, 1, OnKeyboardEvent);
+        emscripten_set_click_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnMouseEvent);
+        emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnMouseEvent);
+        emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnMouseEvent);
+        emscripten_set_dblclick_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnMouseEvent);
+        emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnMouseEvent);
+        emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnMouseEvent);
+        emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnMouseEvent);
+
+        emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnKeyboardEvent);
+        emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnKeyboardEvent);
         
         return true;
     }
@@ -114,7 +114,7 @@ namespace Maze
                 event.buttonId = ConvertEmscriptenMouseButtonIdToMazeMouseButtonId(_event->button);
                 event.x = _event->clientX;
                 event.y = windowEmscripten->getClientSize().y - _event->clientY;
-                event.window = windowEmscripten.get();
+                event.windowId = windowEmscripten->getResourceId();
                 generateInputEvent(event);
                 break;
             }
@@ -125,7 +125,7 @@ namespace Maze
                 event.buttonId = ConvertEmscriptenMouseButtonIdToMazeMouseButtonId(_event->button);
                 event.x = _event->clientX;
                 event.y = windowEmscripten->getClientSize().y - _event->clientY;
-                event.window = windowEmscripten.get();
+                event.windowId = windowEmscripten->getResourceId();
                 generateInputEvent(event);
                 break;
             }            
@@ -136,7 +136,7 @@ namespace Maze
                 event.buttonId = ConvertEmscriptenMouseButtonIdToMazeMouseButtonId(_event->button);
                 event.x = _event->clientX;
                 event.y = windowEmscripten->getClientSize().y - _event->clientY;
-                event.window = windowEmscripten.get();
+                event.windowId = windowEmscripten->getResourceId();
                 generateInputEvent(event);
                 break;
             }        
@@ -146,7 +146,7 @@ namespace Maze
                 event.type = InputEventMouseType::Move;
                 event.x = _event->clientX;
                 event.y = windowEmscripten->getClientSize().y - _event->clientY;
-                event.window = windowEmscripten.get();
+                event.windowId = windowEmscripten->getResourceId();
                 generateInputEvent(event);
                 
                 for (S32 i = 0; i < 3; ++i)
@@ -158,7 +158,7 @@ namespace Maze
                         event2.buttonId = i;
                         event2.x = _event->clientX;
                         event2.y = windowEmscripten->getClientSize().y - _event->clientY;
-                        event2.window = windowEmscripten.get();
+                        event2.windowId = windowEmscripten->getResourceId();
                         generateInputEvent(event2);
                     }
                 }

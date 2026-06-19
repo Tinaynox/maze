@@ -168,16 +168,16 @@ namespace Maze
         {
             S32 count = _indexLast - _indexFirst;
 
-            memset(m_seeds.begin() + _indexFirst, 0, sizeof(m_seeds[0]) * count);
-            memset(m_positions.begin() + _indexFirst, 0, sizeof(m_positions[0]) * count);
-            memset(m_directions.begin() + _indexFirst, 0, sizeof(m_directions[0]) * count);
-            memset(m_rotations.begin() + _indexFirst, 0, sizeof(m_rotations[0]) * count);
-            memset(m_lifes.begin() + _indexFirst, 0, sizeof(m_lifes[0]) * count);
-            memset(m_sizes.begin() + _indexFirst, 0, sizeof(m_sizes[0]) * count);
-            memset(m_colorsInitial.begin() + _indexFirst, 0, sizeof(m_colorsInitial[0]) * count);
-            memset(m_colorsCurrent.begin() + _indexFirst, 0, sizeof(m_colorsCurrent[0]) * count);
-            memset(m_movements.begin() + _indexFirst, 0, sizeof(m_movements[0]) * count);
-            memset(m_animationFrames.begin() + _indexFirst, 0, sizeof(m_animationFrames[0]) * count);            
+            memset((void*)(m_seeds.begin() + _indexFirst), 0, sizeof(m_seeds[0]) * count);
+            memset((void*)(m_positions.begin() + _indexFirst), 0, sizeof(m_positions[0]) * count);
+            memset((void*)(m_directions.begin() + _indexFirst), 0, sizeof(m_directions[0]) * count);
+            memset((void*)(m_rotations.begin() + _indexFirst), 0, sizeof(m_rotations[0]) * count);
+            memset((void*)(m_lifes.begin() + _indexFirst), 0, sizeof(m_lifes[0]) * count);
+            memset((void*)(m_sizes.begin() + _indexFirst), 0, sizeof(m_sizes[0]) * count);
+            memset((void*)(m_colorsInitial.begin() + _indexFirst), 0, sizeof(m_colorsInitial[0]) * count);
+            memset((void*)(m_colorsCurrent.begin() + _indexFirst), 0, sizeof(m_colorsCurrent[0]) * count);
+            memset((void*)(m_movements.begin() + _indexFirst), 0, sizeof(m_movements[0]) * count);
+            memset((void*)(m_animationFrames.begin() + _indexFirst), 0, sizeof(m_animationFrames[0]) * count);
         }
 
 

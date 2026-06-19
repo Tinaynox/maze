@@ -774,7 +774,7 @@ namespace Maze
     {
         if (_index >= (ParamIndex)getParamsCount())
             return false;
-        return setParam<String const&>(_index, _value);
+        return setParam<String>(_index, _value);
     }
 
     //////////////////////////////////////////

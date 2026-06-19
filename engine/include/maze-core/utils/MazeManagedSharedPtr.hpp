@@ -51,8 +51,8 @@ namespace Maze
     //////////////////////////////////////////
     struct RefCountBlock
     {
-        std::atomic<S32> weak = 0;
-        std::atomic<S32> strong = 1;
+        std::atomic<S32> weak{ 0 };
+        std::atomic<S32> strong{ 1 };
         std::function<void(void*)> deleter;
     };
 
@@ -83,7 +83,7 @@ namespace Maze
         inline ManagedWeakPtr() = default;
 
         //////////////////////////////////////////
-        inline ManagedWeakPtr::~ManagedWeakPtr()
+        inline ~ManagedWeakPtr()
         {
             release();
         }
@@ -333,7 +333,7 @@ namespace Maze
         template <typename Y>
         inline ManagedSharedPtr& operator=(Y* _r)
         {
-            bind(r);
+            bind(_r);
             return *this;
         }
 

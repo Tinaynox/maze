@@ -38,6 +38,7 @@
 #include "maze-core/data/MazeDataBlock.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-core/assets/MazeAssetUnitId.hpp"
+#include "maze-core/assets/MazeAssetUnit.hpp"
 
 
 //////////////////////////////////////////

@@ -145,12 +145,14 @@ namespace Maze
                     if (err) {
                         console.warn("Mounting Emscripten localStorage failed:", err);
                         
-                        ccall('OnMountEmscriptenLocalStorageFinished', 'void', ['number'], [0]);
+                        // ccall('OnMountEmscriptenLocalStorageFinished', 'void', ['number'], [0]); // obsolete
+						Module._OnMountEmscriptenLocalStorageFinished(0); // new
                     }
                     else {
                         console.log("Mounting Emscripten localStorage successful.");
                         
-                        ccall('OnMountEmscriptenLocalStorageFinished', 'void', ['number'], [1]);
+                        // ccall('OnMountEmscriptenLocalStorageFinished', 'void', ['number'], [1]); // obsolete
+						Module._OnMountEmscriptenLocalStorageFinished(1); // new
                     }
                 });
             }, MAZE_EMSCRIPTEN_LOCAL_STORAGE_DIR);
@@ -170,12 +172,14 @@ namespace Maze
                     if (err) {
                         console.warn("Syncing Emscripten localStorage failed:", err);
                         
-                        ccall('OnSyncEmscriptenLocalStorageFinished', 'void', ['number'], [0]);
+                        // ccall('OnSyncEmscriptenLocalStorageFinished', 'void', ['number'], [0]); // obsolete
+						Module.OnSyncEmscriptenLocalStorageFinished(0); // new
                     }
                     else {
                         console.log("Syncing Emscripten localStorage successful.");
                         
-                        ccall('OnSyncEmscriptenLocalStorageFinished', 'void', ['number'], [1]);
+                        // ccall('OnSyncEmscriptenLocalStorageFinished', 'void', ['number'], [1]); // obsolete
+						Module.OnSyncEmscriptenLocalStorageFinished(1); // new
                     }
                 });
             );

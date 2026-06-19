@@ -66,19 +66,19 @@ namespace Maze
         , m_clientSizeBeforeFullscreen(Vec2U32::c_zero)
     {
         emscripten_set_fullscreenchange_callback(NULL, (void*)this, 1, &WindowEmscripten::ProcessFullscreenChangeCallback);
-        emscripten_set_webglcontextlost_callback(NULL, (void*)this, 1, &WindowEmscripten::ProcessContextLostCallback);
-        emscripten_set_webglcontextrestored_callback(NULL, (void*)this, 1, &WindowEmscripten::ProcessContextRestoredCallback);
-        emscripten_set_resize_callback(NULL, (void*)this, 1, &WindowEmscripten::ProcessResizeCallback);
-        
+        emscripten_set_webglcontextlost_callback(c_canvasName, (void*)this, 1, &WindowEmscripten::ProcessContextLostCallback);
+        emscripten_set_webglcontextrestored_callback(c_canvasName, (void*)this, 1, &WindowEmscripten::ProcessContextRestoredCallback);
+        emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, (void*)this, 1, &WindowEmscripten::ProcessResizeCallback);
+
     }
 
     //////////////////////////////////////////
     WindowEmscripten::~WindowEmscripten()
     {
         emscripten_set_fullscreenchange_callback(NULL, NULL, 0, NULL);
-        emscripten_set_webglcontextlost_callback(NULL, NULL, 0, NULL);
-        emscripten_set_webglcontextrestored_callback(NULL, NULL, 0, NULL);
-        emscripten_set_resize_callback(NULL, NULL, 0, NULL);
+        emscripten_set_webglcontextlost_callback(c_canvasName, NULL, 0, NULL);
+        emscripten_set_webglcontextrestored_callback(c_canvasName, NULL, 0, NULL);
+        emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, NULL, 0, NULL);
     }
 
 
@@ -204,13 +204,19 @@ namespace Maze
     {
         return false;
     }
-    
+
+    //////////////////////////////////////////
+    bool WindowEmscripten::updateCursor()
+    {
+        return false;
+    }
+
     //////////////////////////////////////////
     bool WindowEmscripten::updateWindowMode()
     {
         if (m_params->windowMode == WindowMode::Fullscreen)
         {
-            if (emscripten_request_fullscreen(NULL, 1) == EMSCRIPTEN_RESULT_SUCCESS)
+            if (emscripten_request_fullscreen(c_canvasName, 1) == EMSCRIPTEN_RESULT_SUCCESS)
             {
                 Debug::log << "emscripten_request_fullscreen: " << "SUCCESS" << endl;
             }

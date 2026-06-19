@@ -146,27 +146,36 @@ namespace Maze
 #if (MAZE_COMPILER == MAZE_COMPILER_MSVC)
             return _vscwprintf(_format, _args);            
 #else
-            S32 bufSize = 1024;
-            while (bufSize < 1024 * 1024)
+            WChar stackBuffer[1024];
+
             {
-                va_list argcopy;
-                va_copy(argcopy, _args);
-                WChar buffer[bufSize];
-                S32 fmtSize = vswprintf(
-                    buffer,
-                    sizeof(buffer) / sizeof(buffer[0]),
-                    _format,
-                    argcopy);
-                va_end(argcopy);
-                
-                if (fmtSize >= 0)
-                    return fmtSize;
-                
-                bufSize *= 2;
+                va_list copy;
+                va_copy(copy, _args);
+
+                S32 len = vswprintf(stackBuffer, 1024, _format, copy);
+
+                va_end(copy);
+
+                if (len >= 0)
+                    return len;
             }
-            
+
+            for (S32 bufSize = 2048; bufSize < 1024 * 1024; bufSize *= 2)
+            {
+                std::unique_ptr<WChar[]> buffer(new WChar[bufSize]);
+
+                va_list copy;
+                va_copy(copy, _args);
+
+                S32 len = vswprintf(buffer.get(), bufSize, _format, copy);
+
+                va_end(copy);
+
+                if (len >= 0)
+                    return len;
+            }
+
             return -1;
-            
 #endif            
         }
         

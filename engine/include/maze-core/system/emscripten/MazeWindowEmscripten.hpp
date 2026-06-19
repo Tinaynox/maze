@@ -129,7 +129,10 @@ namespace Maze
         
         //////////////////////////////////////////
         virtual bool updateTitle() MAZE_OVERRIDE;
-        
+
+        //////////////////////////////////////////
+        virtual bool updateCursor() MAZE_OVERRIDE;
+
         //////////////////////////////////////////
         virtual bool updateWindowMode() MAZE_OVERRIDE;
 

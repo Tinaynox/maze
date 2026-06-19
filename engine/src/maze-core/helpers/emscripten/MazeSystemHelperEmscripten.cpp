@@ -37,24 +37,20 @@
 inline Maze::String GetSystemLocale()
 {
     Maze::String result;
-    
-    const char* language = (const char*)EM_ASM_INT({
-        var language = navigator.language;
-        var buffer = Module._malloc(language.length + 1);
-        stringToUTF8(language, buffer, language.length + 1);
-        return buffer;
-    });
-    
+
+    const char* language = reinterpret_cast<const char*>(EM_ASM_PTR({
+        return stringToNewUTF8(navigator.language);
+    }));
+
     if (language)
     {
         result = language;
-    
-        EM_ASM_INT({
-            Module._free($0);
+
+        EM_ASM({
+            _free($0);
         }, language);
-    
     }
-    
+
     return result;
 }
 
@@ -95,7 +91,7 @@ namespace Maze
             Vector<String> words;
             StringHelper::SplitWords(localeLanguage, words, '-');
             
-            return IETFTagToGeoLanguage(words[0]);
+            return IETFTagToGeoLanguage(words[0].c_str());
         }
         
         //////////////////////////////////////////

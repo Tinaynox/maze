@@ -303,7 +303,7 @@ namespace Maze
 
                 bool parentIsValid = true;
                 Transform3DPtr parentOfParent = parentTransform3D;
-                while (parentOfParent = parentOfParent->getParent())
+                while ((parentOfParent = parentOfParent->getParent()))
                 {
                     if (parentOfParent == transform3D)
                     {
@@ -337,7 +337,7 @@ namespace Maze
 
                 bool parentIsValid = true;
                 Transform2DPtr parentOfParent = parentTransform2D;
-                while (parentOfParent = parentOfParent->getParent())
+                while ((parentOfParent = parentOfParent->getParent()))
                 {
                     if (parentOfParent == transform2D)
                     {

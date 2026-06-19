@@ -370,8 +370,8 @@ namespace Maze
         template <
             typename TFunctor,
             typename = std::enable_if_t<
-                !std::is_pointer_v<std::decay_t<TFunctor>> &&
-                !std::is_same_v<std::decay_t<TFunctor>, DelegateType>
+                !std::is_pointer<std::decay_t<TFunctor>>::value &&
+                !std::is_same<std::decay_t<TFunctor>, DelegateType>::value
             >
         >
         bool unsubscribe(

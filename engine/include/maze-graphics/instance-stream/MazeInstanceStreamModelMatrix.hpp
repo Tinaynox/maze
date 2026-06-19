@@ -83,8 +83,8 @@ namespace Maze
             S32 _count)
         {
             memcpy(
-                m_data.begin() + _index,
-                _value,
+                (void*)(m_data.begin() + _index),
+                (void const*)_value,
                 sizeof(TMat) * _count);
         }
 
