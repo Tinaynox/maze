@@ -283,10 +283,8 @@ namespace Maze
         addMeshPreview("TorusKnotUV.fbx", "Hologram00.mzmaterial", "Hologram", torusKnotScale);
         addMeshPreviewSpace();
 
-        /*
-        addMeshPreview("TorusKnotUV.fbx", "Raymarching00.mzmaterial", "Ray Marching", torusKnotScale);
+        addRaymarchPreview("Raymarching00.mzmaterial", "Ray Marching", 1.5f);
         addMeshPreviewSpace();
-        */
 
         /*
         addMeshPreview("TorusKnotUV.fbx", "Gem00.mzmaterial", "Gem", torusKnotScale);
@@ -406,6 +404,65 @@ namespace Maze
             labelRenderer->getTransform()->setLocalScaleX(0.7f);
             labelRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault3DOutlined());
 
+        }
+
+        m_meshData.emplace_back(meshData);
+
+        return objectEntity;
+    }
+
+    //////////////////////////////////////////
+    EntityPtr SceneExample::addRaymarchPreview(
+        String const& _materialName,
+        String const& _text,
+        F32 _scale)
+    {
+        EntityPtr objectEntity = createEntity("MeshPreview");
+        Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
+        MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
+        meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getBuiltinRenderMesh(BuiltinRenderMeshType::Cube));
+        meshRenderer->setMaterial(_materialName);
+
+        transform->setLocalScale(_scale);
+
+        Rotor3DPtr rotor = objectEntity->ensureComponent<Rotor3D>();
+        rotor->setAxis(Vec3F32::c_unitY);
+        rotor->setSpeed(0.3f);
+        rotor->setActive(m_meshMovementEnabled);
+
+        ExampleMeshData meshData;
+        meshData.renderer = meshRenderer;
+        meshData.material = meshRenderer->getMaterial();
+        meshData.rotor = rotor;
+
+        F32 x = ((S32)m_meshData.size() - 16) * 2.0f + m_meshesOffset;
+        transform->setLocalPosition(x, 2.0f, 8.0f);
+
+        {
+            EntityPtr pedestalEntity = createEntity("Pedestal");
+            Transform3DPtr pedestalTransform = pedestalEntity->createComponent<Transform3D>();
+            pedestalTransform->setLocalScale(1.0f, 0.2f, 1.0f);
+            pedestalTransform->setLocalPosition(
+                transform->getLocalPosition().x,
+                pedestalTransform->getLocalScale().y * 0.5f,
+                transform->getLocalPosition().z);
+            MeshRendererPtr pedestalMeshRenderer = pedestalEntity->createComponent<MeshRenderer>();
+            pedestalMeshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getBuiltinRenderMesh(BuiltinRenderMeshType::Cylinder));
+            pedestalMeshRenderer->setMaterial("Chessboard00.mzmaterial");
+        }
+
+        {
+            EntityPtr labelEntity = createEntity("Label");
+            SystemTextRenderer3DPtr labelRenderer = labelEntity->ensureComponent<SystemTextRenderer3D>();
+            labelRenderer->getTransform()->setLocalPosition(
+                transform->getLocalPosition().x,
+                0.75f,
+                transform->getLocalPosition().z);
+
+            labelRenderer->setText(_text);
+            labelRenderer->setFontSize(16);
+            labelRenderer->getTransform()->setLocalScaleX(0.7f);
+            labelRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault3DOutlined());
         }
 
         m_meshData.emplace_back(meshData);
