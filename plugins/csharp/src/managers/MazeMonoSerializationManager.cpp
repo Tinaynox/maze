@@ -30,6 +30,7 @@
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
+#include "maze-core/ecs/helpers/MazeEcsHelper.inl"
 #include "maze-core/ecs/events/MazeEcsInputEvents.hpp"
 #include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
