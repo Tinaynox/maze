@@ -58,7 +58,18 @@ Start by cloning the repository with `git clone --recursive https://github.com/T
 - Import `prj/*/prj.gradle-android` folder via Android Studio (Import project Gradle option)
 
 ### ![Windows](/res/art/WindowsIcon_16x16.png?raw=true "Windows") Windows » ![Emscripten](/res/art/EmscriptenIcon_16x16.png?raw=true "Emscripten") Emscripten
+- Install MSYS2
+  `pacman -Syu`
+  `pacman -S --needed mingw-w64-ucrt-x86_64-toolchain`
+  Add `C:\msys64\ucrt64\bin` to PATH env var
 - Download and install Emscripten SDK
+  `git clone https://github.com/emscripten-core/emsdk.git`
+  `cd emsdk`
+  `emsdk install latest`
+  `emsdk activate latest`
+- Add env pathes to PATH var:
+  path to `\emsdk`
+  path to `\emsdk\upstream\emscripten\`
 - Download and install CMake 3.6+
 - Download and install Python 3.8+
 
