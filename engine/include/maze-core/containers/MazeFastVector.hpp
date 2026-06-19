@@ -368,7 +368,7 @@ namespace Maze
                 _first->~T();
                 ++_first;
             }
-            memmove(m_data + idx, m_data + idxNext, (m_size - idxNext) * sizeof(T));
+            memmove((void*)(m_data + idx), (void const*)(m_data + idxNext), (m_size - idxNext) * sizeof(T));
             m_size -= (idxNext - idx);
 
             return m_data + idx;
@@ -380,7 +380,7 @@ namespace Maze
         {
             Size idx = (_toErase - m_data);
             _toErase->~T();
-            memcpy(m_data + idx, m_data + m_size - 1, sizeof(T));
+            memcpy((void*)(m_data + idx), (void const*)(m_data + m_size - 1), sizeof(T));
             --m_size;
 
             return m_data + idx;
@@ -393,7 +393,7 @@ namespace Maze
 
             Size idx      = (_first - m_data);
             Size idxNext  = (_last - m_data);
-            memmove(m_data + idx, m_data + idxNext, (m_size - idxNext) * sizeof(T));
+            memmove((void*)(m_data + idx), (void const*)(m_data + idxNext), (m_size - idxNext) * sizeof(T));
             m_size -= (idxNext - idx);
 
             return m_data + idx;

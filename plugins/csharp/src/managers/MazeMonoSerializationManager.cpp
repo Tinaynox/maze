@@ -38,6 +38,8 @@
 #include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/math/MazeAABB3D.hpp"
+#include "maze-core/math/MazeAnimationCurve.hpp"
+#include "maze-graphics/MazeColorGradient.hpp"
 #include "maze-core/assets/MazeAssetUnitEntityPrefab.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/MazeSprite.hpp"
@@ -432,6 +434,44 @@ namespace Maze
                 });
 
 
+            // AnimationCurve
+            registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("Maze.Core.AnimationCurve"),
+                [](EcsWorld*, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+                {
+                    MonoObject* curveInstance = nullptr;
+                    _instance.getPropertyValue(_prop, curveInstance);
+                    AnimationCurve curve = MonoHelper::MonoObjectToAnimationCurve(curveInstance);
+                    ValueToDataBlock(curve, *_dataBlock.ensureDataBlock(_prop->getName()));
+                },
+                [](EcsWorld*, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+                {
+                    AnimationCurve curve;
+                    if (DataBlock const* dataBlock = _dataBlock.getDataBlock(_prop->getName()))
+                        ValueFromDataBlock(curve, *dataBlock);
+
+                    MonoObject* existingInstance = nullptr;
+                    _instance.getPropertyValue(_prop, existingInstance);
+                    _instance.setPropertyValue(_prop, MonoHelper::AnimationCurveToMonoObject(curve, existingInstance));
+                },
+                [](EcsWorld*, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+                {
+                    MonoObject* curveInstance = nullptr;
+                    _instance.getFieldValue(_field, curveInstance);
+                    AnimationCurve curve = MonoHelper::MonoObjectToAnimationCurve(curveInstance);
+                    ValueToDataBlock(curve, *_dataBlock.ensureDataBlock(_field->getName()));
+                },
+                [](EcsWorld*, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+                {
+                    AnimationCurve curve;
+                    if (DataBlock const* dataBlock = _dataBlock.getDataBlock(_field->getName()))
+                        ValueFromDataBlock(curve, *dataBlock);
+
+                    MonoObject* existingInstance = nullptr;
+                    _instance.getFieldValue(_field, existingInstance);
+                    _instance.setFieldValue(_field, MonoHelper::AnimationCurveToMonoObject(curve, existingInstance));
+                });
+
+
             // SciptableObjects
             ScriptClassPtr const& scriptableObjectClass = MonoEngine::GetScriptableObjectClass();
             registerPropertyAndFieldDataBlockSubClassSerialization(
@@ -501,6 +541,43 @@ namespace Maze
             // Graphics
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Graphics.ColorU32", Vec4U8);
             MAZE_MONO_SERIALIZATION_TYPE("Maze.Graphics.ColorF128", Vec4F);
+
+            // ColorGradient
+            registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("Maze.Graphics.ColorGradient"),
+                [](EcsWorld*, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
+                {
+                    MonoObject* gradientInstance = nullptr;
+                    _instance.getPropertyValue(_prop, gradientInstance);
+                    ColorGradient gradient = MonoHelper::MonoObjectToColorGradient(gradientInstance);
+                    ValueToDataBlock(gradient, *_dataBlock.ensureDataBlock(_prop->getName()));
+                },
+                [](EcsWorld*, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
+                {
+                    ColorGradient gradient;
+                    if (DataBlock const* dataBlock = _dataBlock.getDataBlock(_prop->getName()))
+                        ValueFromDataBlock(gradient, *dataBlock);
+
+                    MonoObject* existingInstance = nullptr;
+                    _instance.getPropertyValue(_prop, existingInstance);
+                    _instance.setPropertyValue(_prop, MonoHelper::ColorGradientToMonoObject(gradient, existingInstance));
+                },
+                [](EcsWorld*, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
+                {
+                    MonoObject* gradientInstance = nullptr;
+                    _instance.getFieldValue(_field, gradientInstance);
+                    ColorGradient gradient = MonoHelper::MonoObjectToColorGradient(gradientInstance);
+                    ValueToDataBlock(gradient, *_dataBlock.ensureDataBlock(_field->getName()));
+                },
+                [](EcsWorld*, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
+                {
+                    ColorGradient gradient;
+                    if (DataBlock const* dataBlock = _dataBlock.getDataBlock(_field->getName()))
+                        ValueFromDataBlock(gradient, *dataBlock);
+
+                    MonoObject* existingInstance = nullptr;
+                    _instance.getFieldValue(_field, existingInstance);
+                    _instance.setFieldValue(_field, MonoHelper::ColorGradientToMonoObject(gradient, existingInstance));
+                });
 
             // Material
             registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("Maze.Graphics.Material"),
@@ -1052,6 +1129,7 @@ namespace Maze
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Mat4F);
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(TMat);
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(Rect2F);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(AnimationCurve);
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(EntityId);
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(InputEventKeyboardType);
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(InputEventMouseType);
@@ -1060,6 +1138,7 @@ namespace Maze
         // Graphics
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(ColorU32);
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(ColorF128);
+        REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(ColorGradient);
 
         // UI
         REGISTER_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD_FUNCTION(CursorInputEvent);
@@ -1122,6 +1201,10 @@ namespace Maze
         registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Mat4F", MonoHelper::SerializeMonoObjectMat4FToDataBlock);
         registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "TMat", MonoHelper::SerializeMonoObjectTMatToDataBlock);
         registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "Rect2F", MonoHelper::SerializeMonoObjectRect2FToDataBlock);
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Core", "AnimationCurve", MonoHelper::SerializeMonoObjectAnimationCurveToDataBlock);
+
+        // Maze.Graphics
+        registerMonoObjectSerializationFunction(MonoEngine::GetCoreAssemblyImage(), "Maze.Graphics", "ColorGradient", MonoHelper::SerializeMonoObjectColorGradientToDataBlock);
     }
 
     //////////////////////////////////////////

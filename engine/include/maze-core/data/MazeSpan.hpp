@@ -34,6 +34,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_CPlusPlus.hpp"
+#include "maze-core/helpers/MazeLogHelper.hpp"
 
 
 //////////////////////////////////////////

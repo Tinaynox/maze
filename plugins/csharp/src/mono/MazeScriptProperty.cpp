@@ -103,7 +103,8 @@ namespace Maze
     //////////////////////////////////////////
     ScriptProperty::~ScriptProperty()
     {
-        EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->unsubscribeEvent<MonoShutdownEvent>(this);
     }
 
     //////////////////////////////////////////

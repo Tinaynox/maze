@@ -34,6 +34,7 @@
 #include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
 #include "maze-plugin-csharp/managers/MazeMonoSerializationManager.hpp"
 #include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
+#include "maze-core/serialization/MazeDataBlockBinarySerialization.hpp"
 #include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 #include "maze-core/ecs/events/MazeEcsInputEvents.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
@@ -508,6 +509,185 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        namespace
+        {
+            //////////////////////////////////////////
+            struct MonoDataBlockBridgeBinding
+            {
+                MonoImage* image = nullptr;
+
+                ScriptClassPtr byteBufferClass;
+                MonoProperty* byteBufferSizeProperty = nullptr;
+                MonoProperty* byteBufferDataProperty = nullptr;
+
+                ScriptClassPtr dataBlockClass;
+                MonoMethod* dataBlockLoadBytesMethod = nullptr;
+                MonoMethod* dataBlockToByteBufferMethod = nullptr;
+
+                ScriptClassPtr animationCurveClass;
+                MonoMethod* animationCurveCtor = nullptr;
+                MonoMethod* animationCurveToDataBlockMethod = nullptr;
+                MonoMethod* animationCurveLoadFromDataBlockMethod = nullptr;
+
+                ScriptClassPtr colorGradientClass;
+                MonoMethod* colorGradientCtor = nullptr;
+                MonoMethod* colorGradientToDataBlockMethod = nullptr;
+                MonoMethod* colorGradientLoadFromDataBlockMethod = nullptr;
+            };
+
+            //////////////////////////////////////////
+            MonoDataBlockBridgeBinding& EnsureMonoDataBlockBridgeBinding()  // #TODO: Move to MonoEngineData?
+            {
+                static MonoDataBlockBridgeBinding binding; // #TODO: Move to MonoEngineData?
+
+                MonoImage* coreAssemblyImage = MonoEngine::GetCoreAssemblyImage();
+                if (binding.image != coreAssemblyImage)
+                {
+                    binding.image = coreAssemblyImage;
+
+                    binding.byteBufferClass = ScriptClass::Create("Maze.Core", "ByteBuffer", coreAssemblyImage);
+                    binding.byteBufferSizeProperty = binding.byteBufferClass->getProperty("Size");
+                    binding.byteBufferDataProperty = binding.byteBufferClass->getProperty("Data");
+
+                    binding.dataBlockClass = ScriptClass::Create("Maze.Core", "DataBlock", coreAssemblyImage);
+                    binding.dataBlockLoadBytesMethod = binding.dataBlockClass->getMethod("LoadBytes", 2);
+                    binding.dataBlockToByteBufferMethod = binding.dataBlockClass->getMethod("ToByteBuffer", 0);
+
+                    binding.animationCurveClass = ScriptClass::Create("Maze.Core", "AnimationCurve", coreAssemblyImage);
+                    binding.animationCurveCtor = binding.animationCurveClass->getMethod(".ctor", 0);
+                    binding.animationCurveToDataBlockMethod = binding.animationCurveClass->getMethod("ToDataBlock", 0);
+                    binding.animationCurveLoadFromDataBlockMethod = binding.animationCurveClass->getMethod("LoadFromDataBlock", 1);
+
+                    binding.colorGradientClass = ScriptClass::Create("Maze.Graphics", "ColorGradient", coreAssemblyImage);
+                    binding.colorGradientCtor = binding.colorGradientClass->getMethod(".ctor", 0);
+                    binding.colorGradientToDataBlockMethod = binding.colorGradientClass->getMethod("ToDataBlock", 0);
+                    binding.colorGradientLoadFromDataBlockMethod = binding.colorGradientClass->getMethod("LoadFromDataBlock", 1);
+                }
+
+                return binding;
+            }
+
+        } // namespace
+        //////////////////////////////////////////
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* DataBlockToMonoObject(DataBlock const& _dataBlock)
+        {
+            MonoDataBlockBridgeBinding& binding = EnsureMonoDataBlockBridgeBinding();
+
+            ByteBuffer buffer;
+            DataBlockBinarySerialization::SaveBinary(_dataBlock, buffer);
+            U32 bufferSize = buffer.getSize();
+            void* args[2] = { (void*)buffer.getDataRO(), (void*)&bufferSize };
+            return MonoHelper::InvokeMethod(nullptr, binding.dataBlockLoadBytesMethod, args);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API bool MonoObjectToDataBlock(MonoObject* _monoObject, DataBlock& _dataBlock)
+        {
+            _dataBlock.clearData();
+
+            if (!_monoObject)
+                return true;
+
+            MonoDataBlockBridgeBinding& binding = EnsureMonoDataBlockBridgeBinding();
+
+            MonoObject* monoByteBuffer = MonoHelper::InvokeMethod(_monoObject, binding.dataBlockToByteBufferMethod);
+            MonoObject* monoByteBufferSizeObject = mono_property_get_value(binding.byteBufferSizeProperty, monoByteBuffer, nullptr, nullptr);
+            MAZE_ERROR_RETURN_VALUE_IF(!monoByteBufferSizeObject || !MonoHelper::IsValueType(monoByteBufferSizeObject), false, "Failed to get Size property");
+
+            U32 monoByteBufferSize = *(U32*)mono_object_unbox(monoByteBufferSizeObject);
+            if (monoByteBufferSize == 0)
+                return true;
+
+            MonoArray* monoByteBufferDataObject = (MonoArray*)mono_property_get_value(binding.byteBufferDataProperty, monoByteBuffer, nullptr, nullptr);
+            U8 const* arrayData = (U8 const*)mono_array_addr_with_size(monoByteBufferDataObject, sizeof(U8), 0);
+            ByteBuffer buffer(arrayData, monoByteBufferSize);
+            DataBlockBinarySerialization::LoadBinary(_dataBlock, buffer);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* AnimationCurveToMonoObject(AnimationCurve const& _value, MonoObject* _existingInstance)
+        {
+            MonoDataBlockBridgeBinding& binding = EnsureMonoDataBlockBridgeBinding();
+
+            MonoObject* curveInstance = _existingInstance;
+            if (!curveInstance)
+            {
+                curveInstance = mono_object_new(MonoEngine::GetMonoDomain(), binding.animationCurveClass->getMonoClass());
+                MonoHelper::InvokeMethod(curveInstance, binding.animationCurveCtor);
+            }
+
+            DataBlock dataBlock;
+            ValueToDataBlock(_value, dataBlock);
+
+            MonoObject* monoDataBlock = DataBlockToMonoObject(dataBlock);
+            void* args[1] = { (void*)monoDataBlock };
+            MonoHelper::InvokeMethod(curveInstance, binding.animationCurveLoadFromDataBlockMethod, args);
+
+            return curveInstance;
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API AnimationCurve MonoObjectToAnimationCurve(MonoObject* _monoObject)
+        {
+            AnimationCurve curve;
+
+            if (!_monoObject)
+                return curve;
+
+            MonoDataBlockBridgeBinding& binding = EnsureMonoDataBlockBridgeBinding();
+
+            MonoObject* monoDataBlock = MonoHelper::InvokeMethod(_monoObject, binding.animationCurveToDataBlockMethod);
+            DataBlock dataBlock;
+            MonoObjectToDataBlock(monoDataBlock, dataBlock);
+            ValueFromDataBlock(curve, dataBlock);
+
+            return curve;
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* ColorGradientToMonoObject(ColorGradient const& _value, MonoObject* _existingInstance)
+        {
+            MonoDataBlockBridgeBinding& binding = EnsureMonoDataBlockBridgeBinding();
+
+            MonoObject* gradientInstance = _existingInstance;
+            if (!gradientInstance)
+            {
+                gradientInstance = mono_object_new(MonoEngine::GetMonoDomain(), binding.colorGradientClass->getMonoClass());
+                MonoHelper::InvokeMethod(gradientInstance, binding.colorGradientCtor);
+            }
+
+            DataBlock dataBlock;
+            ValueToDataBlock(_value, dataBlock);
+
+            MonoObject* monoDataBlock = DataBlockToMonoObject(dataBlock);
+            void* args[1] = { (void*)monoDataBlock };
+            MonoHelper::InvokeMethod(gradientInstance, binding.colorGradientLoadFromDataBlockMethod, args);
+
+            return gradientInstance;
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API ColorGradient MonoObjectToColorGradient(MonoObject* _monoObject)
+        {
+            ColorGradient gradient;
+
+            if (!_monoObject)
+                return gradient;
+
+            MonoDataBlockBridgeBinding& binding = EnsureMonoDataBlockBridgeBinding();
+
+            MonoObject* monoDataBlock = MonoHelper::InvokeMethod(_monoObject, binding.colorGradientToDataBlockMethod);
+            DataBlock dataBlock;
+            MonoObjectToDataBlock(monoDataBlock, dataBlock);
+            ValueFromDataBlock(gradient, dataBlock);
+
+            return gradient;
+        }
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void WriteMetaPropertyToMonoClassFieldString(
             ConstMetaInstance const& _metaInstance,
             MetaProperty const* _metaProperty,
@@ -559,6 +739,20 @@ namespace Maze
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(TMat);
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Rect2F);
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(EntityId);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void WriteMetaPropertyToMonoClassFieldAnimationCurve(
+            ConstMetaInstance const& _metaInstance,
+            MetaProperty const* _metaProperty,
+            MonoObject* _monoObj,
+            MonoClassField* _field)
+        {
+            AnimationCurve value;
+            _metaProperty->getValue<AnimationCurve>(_metaInstance, value);
+
+            MonoObject* curveInstance = AnimationCurveToMonoObject(value);
+            mono_field_set_value(_monoObj, _field, curveInstance);
+        }
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(InputEventKeyboardType);
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(InputEventMouseType);
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(KeyCode);
@@ -585,6 +779,20 @@ namespace Maze
             ColorF128 value;
             _metaProperty->getValue<ColorF128>(_metaInstance, value);
             mono_field_set_value(_monoObj, _field, &value.value);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void WriteMetaPropertyToMonoClassFieldColorGradient(
+            ConstMetaInstance const& _metaInstance,
+            MetaProperty const* _metaProperty,
+            MonoObject* _monoObj,
+            MonoClassField* _field)
+        {
+            ColorGradient value;
+            _metaProperty->getValue<ColorGradient>(_metaInstance, value);
+
+            MonoObject* gradientInstance = ColorGradientToMonoObject(value);
+            mono_field_set_value(_monoObj, _field, gradientInstance);
         }
 
         MAZE_IMPLEMENT_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorInputEvent);
@@ -627,6 +835,24 @@ namespace Maze
         MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(TMat);
         MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Rect2F);
         MAZE_IMPLEMENT_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(EntityId);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void SerializeMonoObjectAnimationCurveToDataBlock(
+            MonoObject* _value,
+            DataBlock& _dataBlock)
+        {
+            AnimationCurve curve = MonoObjectToAnimationCurve(_value);
+            ValueToDataBlock(curve, _dataBlock);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void SerializeMonoObjectColorGradientToDataBlock(
+            MonoObject* _value,
+            DataBlock& _dataBlock)
+        {
+            ColorGradient gradient = MonoObjectToColorGradient(_value);
+            ValueToDataBlock(gradient, _dataBlock);
+        }
 
 
         //////////////////////////////////////////

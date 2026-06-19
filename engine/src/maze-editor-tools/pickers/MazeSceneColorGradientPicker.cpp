@@ -376,7 +376,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
                 m_gradientRendererHolder->getTransform()->getSize() - Vec2F(2.0f, 2.0f),
                 Vec2F(1.0f, 1.0f),
-                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getSpriteMaterial(),
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getSpriteMaterial()->createCopy(),
                 m_gradientRendererHolder->getTransform(),
                 this,
                 Vec2F(0.0f, 0.0f),

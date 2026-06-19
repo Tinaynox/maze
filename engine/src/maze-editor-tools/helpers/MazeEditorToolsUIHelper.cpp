@@ -587,7 +587,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
                 _size - 2.0f,
                 Vec2F::c_zero,
-                renderSystem->getMaterialManager()->getSpriteMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial()->createCopy(),
                 transform,
                 _ecsScene);
             transparentBackSpriteRenderer->getMaterial()->setUniform(

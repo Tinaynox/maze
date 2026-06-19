@@ -36,6 +36,8 @@
 #include "maze-core/services/MazeLogService.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/math/MazeAnimationCurve.hpp"
+#include "maze-graphics/MazeColorGradient.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 
 
@@ -148,6 +150,25 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* DataBlockToMonoObject(DataBlock const& _dataBlock);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API bool MonoObjectToDataBlock(MonoObject* _monoObject, DataBlock& _dataBlock);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* AnimationCurveToMonoObject(AnimationCurve const& _value, MonoObject* _existingInstance = nullptr);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API AnimationCurve MonoObjectToAnimationCurve(MonoObject* _monoObject);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* ColorGradientToMonoObject(ColorGradient const& _value, MonoObject* _existingInstance = nullptr);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API ColorGradient MonoObjectToColorGradient(MonoObject* _monoObject);
+
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void WriteMetaPropertyToMonoClassFieldString(
             ConstMetaInstance const& _metaInstance,
             MetaProperty const* _metaProperty,
@@ -187,12 +208,14 @@ namespace Maze
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Mat4F);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(TMat);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(Rect2F);
+        MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(AnimationCurve);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(EntityId);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(InputEventKeyboardType);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(InputEventMouseType);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(KeyCode);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(ColorU32);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(ColorF128);
+        MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(ColorGradient);
 
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorInputEvent);
         MAZE_DECLARE_WRITE_META_PROPERTY_TO_MONO_CLASS_FIELD(CursorWheelInputEvent);
@@ -230,9 +253,11 @@ namespace Maze
         MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Mat4F);
         MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(TMat);
         MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(Rect2F);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(AnimationCurve);
         MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(EntityId);
         MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(ColorU32);
         MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(ColorF128);
+        MAZE_DECLARE_SERIALIZE_MONO_OBJECT_TO_DATA_BLOCK(ColorGradient);
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void SerializeMonoObjectListToDataBlock(MonoObject* _value, DataBlock& _dataBlock);

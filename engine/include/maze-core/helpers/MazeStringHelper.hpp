@@ -1204,7 +1204,7 @@ namespace Maze
         }
 
 
-#if (((MAZE_COMPILER == MAZE_COMPILER_CLANG) || (MAZE_COMPILER == MAZE_COMPILER_GNUC)) && (MAZE_PLATFORM != MAZE_PLATFORM_ANDROID))
+#if (((MAZE_COMPILER == MAZE_COMPILER_CLANG) || (MAZE_COMPILER == MAZE_COMPILER_GNUC)) && (MAZE_PLATFORM != MAZE_PLATFORM_ANDROID) && (MAZE_PLATFORM != MAZE_PLATFORM_EMSCRIPTEN))
 
         //////////////////////////////////////////
         inline StdString ToStdString(Size _value) noexcept { return ToStdString(static_cast<U64>(_value)); }

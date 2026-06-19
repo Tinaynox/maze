@@ -42,6 +42,8 @@
 #include "maze-editor-tools/property-drawers/MazePDRect2F.hpp"
 #include "maze-editor-tools/property-drawers/MazePDAABB2D.hpp"
 #include "maze-editor-tools/property-drawers/MazePDAABB3D.hpp"
+#include "maze-editor-tools/property-drawers/MazePDAnimationCurve.hpp"
+#include "maze-editor-tools/property-drawers/MazePDColorGradient.hpp"
 #include "maze-editor-tools/property-drawers/MazePDColorU32.hpp"
 #include "maze-editor-tools/property-drawers/MazePDColorF128.hpp"
 #include "maze-editor-tools/property-drawers/MazePDEntityPtr.hpp"
@@ -779,6 +781,32 @@ namespace Maze
             _instance.setFieldValue(_field, _drawer->getValue());
         });
 
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerAnimationCurve>(MAZE_HCS("Maze.Core.AnimationCurve"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerAnimationCurve* _drawer)
+        {
+            MonoObject* curveInstance = nullptr;
+            _instance.getPropertyValue(_property, curveInstance);
+            _drawer->setValue(MonoHelper::MonoObjectToAnimationCurve(curveInstance));
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerAnimationCurve const* _drawer)
+        {
+            MonoObject* existingInstance = nullptr;
+            _instance.getPropertyValue(_property, existingInstance);
+            _instance.setPropertyValue(_property, MonoHelper::AnimationCurveToMonoObject(_drawer->getValue(), existingInstance));
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerAnimationCurve* _drawer)
+        {
+            MonoObject* curveInstance = nullptr;
+            _instance.getFieldValue(_field, curveInstance);
+            _drawer->setValue(MonoHelper::MonoObjectToAnimationCurve(curveInstance));
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerAnimationCurve const* _drawer)
+        {
+            MonoObject* existingInstance = nullptr;
+            _instance.getFieldValue(_field, existingInstance);
+            _instance.setFieldValue(_field, MonoHelper::AnimationCurveToMonoObject(_drawer->getValue(), existingInstance));
+        });
+
         registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerAssetUnitId>(MAZE_HCS("Maze.Core.AssetUnitId"),
             [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerAssetUnitId* _drawer)
         {
@@ -850,6 +878,32 @@ namespace Maze
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerColorF128 const* _drawer)
         {
             _instance.setFieldValue(_field, _drawer->getValue().toVec4F32());
+        });
+
+        registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerColorGradient>(MAZE_HCS("Maze.Graphics.ColorGradient"),
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorGradient* _drawer)
+        {
+            MonoObject* gradientInstance = nullptr;
+            _instance.getPropertyValue(_property, gradientInstance);
+            _drawer->setValue(MonoHelper::MonoObjectToColorGradient(gradientInstance));
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerColorGradient const* _drawer)
+        {
+            MonoObject* existingInstance = nullptr;
+            _instance.getPropertyValue(_property, existingInstance);
+            _instance.setPropertyValue(_property, MonoHelper::ColorGradientToMonoObject(_drawer->getValue(), existingInstance));
+        },
+            [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, PropertyDrawerColorGradient* _drawer)
+        {
+            MonoObject* gradientInstance = nullptr;
+            _instance.getFieldValue(_field, gradientInstance);
+            _drawer->setValue(MonoHelper::MonoObjectToColorGradient(gradientInstance));
+        },
+            [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerColorGradient const* _drawer)
+        {
+            MonoObject* existingInstance = nullptr;
+            _instance.getFieldValue(_field, existingInstance);
+            _instance.setFieldValue(_field, MonoHelper::ColorGradientToMonoObject(_drawer->getValue(), existingInstance));
         });
 
         registerScriptPropertyAndFieldDrawerCallbacks<PropertyDrawerMaterial>(MAZE_HCS("Maze.Graphics.Material"),
