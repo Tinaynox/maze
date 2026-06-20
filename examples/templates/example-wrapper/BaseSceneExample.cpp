@@ -383,7 +383,9 @@ namespace Maze
     //////////////////////////////////////////
     void BaseSceneExample::processCursorPress(Vec2F32 const& _positionOS, CursorInputEvent& _event)
     {
-#if (MAZE_PLATFORM_MOBILE)
+#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+        if (true)
+#elif (MAZE_PLATFORM_MOBILE)
         if (_event.button == 0)
 #else
         if (_event.button == 1)
@@ -398,7 +400,9 @@ namespace Maze
     {
         Vec2F32 deltaPosition = _positionOS - m_cursorPositionLastFrame;
 
-#if (MAZE_PLATFORM_MOBILE)
+#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+        if (true)
+#elif (MAZE_PLATFORM_MOBILE)
         if (_event.button == 0)
 #else
         if (_event.button == 1)
