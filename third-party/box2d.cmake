@@ -24,9 +24,9 @@
 
 
 ##########################################
-set(BOX2D_BUILD_EXAMPLES OFF)
-set(BOX2D_BUILD_TESTBED OFF)
-set(BOX2D_BUILD_UNIT_TESTS OFF)
+set(BOX2D_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "" FORCE)
+set(BOX2D_BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
 add_subdirectory("${MAZE_DIR}/third-party/box2d" "${CMAKE_CURRENT_BINARY_DIR}/third-party/box2d")
 set_property(TARGET box2d PROPERTY FOLDER "MazeThirdParty")
 set_target_properties(box2d
