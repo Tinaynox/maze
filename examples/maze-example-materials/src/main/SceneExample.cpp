@@ -285,6 +285,9 @@ namespace Maze
         addRaymarchPreview("Raymarching00.mzmaterial", "Ray Marching", 1.5f);
         addMeshPreviewSpace();
 
+        addMeshPreview("TorusKnotUV.fbx", "SoapBubble00.mzmaterial", "Soap Bubble", torusKnotScale);
+        addMeshPreviewSpace();
+
         /*
         addMeshPreview("TorusKnotUV.fbx", "Gem00.mzmaterial", "Gem", torusKnotScale);
         addMeshPreviewSpace();
@@ -340,7 +343,7 @@ namespace Maze
         
         meshData.rotor = rotor;
         
-        F32 x = ((S32)m_meshData.size() - 16) * 2.0f + m_meshesOffset;
+        F32 x = ((S32)m_meshData.size() - 18) * 2.0f + m_meshesOffset;
         transform->setLocalPosition(x, 2.0f, 8.0f);
 
 
@@ -434,7 +437,7 @@ namespace Maze
         meshData.material = meshRenderer->getMaterial();
         meshData.rotor = rotor;
 
-        F32 x = ((S32)m_meshData.size() - 16) * 2.0f + m_meshesOffset;
+        F32 x = ((S32)m_meshData.size() - 18) * 2.0f + m_meshesOffset;
         transform->setLocalPosition(x, 2.0f, 8.0f);
 
         {

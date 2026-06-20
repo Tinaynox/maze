@@ -1,0 +1,124 @@
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:Vec4F = 1.000000,1.000000,1.000000,1.000000
+}
+
+uniform
+{
+  name:String = "u_skyboxMap"
+  type:String = "UniformTextureCube"
+  value:String = "Skybox00.mzcubemap"
+}
+
+uniform
+{
+  name:String = "u_filmThickness"
+  type:String = "UniformF32"
+  value:F32 = 1.5
+}
+
+uniform
+{
+  name:String = "u_thicknessVariation"
+  type:String = "UniformF32"
+  value:F32 = 1.0
+}
+
+uniform
+{
+  name:String = "u_filmScale"
+  type:String = "UniformF32"
+  value:F32 = 30.0
+}
+
+uniform
+{
+  name:String = "u_filmSpeed"
+  type:String = "UniformF32"
+  value:F32 = 0.15
+}
+
+uniform
+{
+  name:String = "u_hueScale"
+  type:String = "UniformF32"
+  value:F32 = 220.0
+}
+
+uniform
+{
+  name:String = "u_hueShift"
+  type:String = "UniformF32"
+  value:F32 = 0.0
+}
+
+uniform
+{
+  name:String = "u_saturation"
+  type:String = "UniformF32"
+  value:F32 = 0.75
+}
+
+uniform
+{
+  name:String = "u_brightness"
+  type:String = "UniformF32"
+  value:F32 = 1.5
+}
+
+uniform
+{
+  name:String = "u_fresnelPower"
+  type:String = "UniformF32"
+  value:F32 = 2.0
+}
+
+uniform
+{
+  name:String = "u_reflectionStrength"
+  type:String = "UniformF32"
+  value:F32 = 0.6
+}
+
+uniform
+{
+  name:String = "u_minAlpha"
+  type:String = "UniformF32"
+  value:F32 = 0.15
+}
+
+uniform
+{
+  name:String = "u_maxAlpha"
+  type:String = "UniformF32"
+  value:F32 = 0.95
+}
+
+uniform
+{
+  name:String = "u_specularPower"
+  type:String = "UniformF32"
+  value:F32 = 64.0
+}
+
+uniform
+{
+  name:String = "u_specularIntensity"
+  type:String = "UniformF32"
+  value:F32 = 2.0
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:U8 = 150
+  shader:String = "SoapBubble00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "SrcAlpha"
+  blendDestFactor:String = "OneMinusSrcAlpha"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:Bool = false
+  cullMode:String = "Back"
+}
