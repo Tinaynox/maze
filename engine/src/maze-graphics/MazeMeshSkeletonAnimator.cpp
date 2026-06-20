@@ -130,11 +130,8 @@ namespace Maze
 
         if (m_skeleton)
         {
-            m_bonesGlobalTransforms.resize(m_skeleton->getBonesCount());
-            memset(&m_bonesGlobalTransforms[0], 0, sizeof(TMat) * m_bonesGlobalTransforms.size());
-
-            m_bonesSkinningTransforms.resize(m_skeleton->getBonesCount());
-            memset(&m_bonesSkinningTransforms[0], 0, sizeof(TMat) * m_bonesSkinningTransforms.size());
+            m_bonesGlobalTransforms.resize(m_skeleton->getBonesCount(), TMat::c_identity);
+            m_bonesSkinningTransforms.resize(m_skeleton->getBonesCount(), TMat::c_identity);
 
             m_bonesTransformsDirty.resize(m_skeleton->getBonesCount());
 
