@@ -287,6 +287,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline bool EntityRemoveComponent(Entity* _entity, ComponentId _componentId)
+    {
+        if (!_entity)
+            return false;
+
+        return _entity->removeComponent(_componentId);
+    }
+
+    //////////////////////////////////////////
     inline void EntityGetActive(Entity* _entity, bool& _outValue)
     {
         _outValue = _entity->getActiveSelf();
@@ -810,6 +819,7 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(EntityCreateNativeComponent);
         MAZE_CORE_MONO_BIND_FUNC(EntityCreateMonoBehaviourComponentObject);
         MAZE_CORE_MONO_BIND_FUNC(EntityRemoveFromEcsWorld);
+        MAZE_CORE_MONO_BIND_FUNC(EntityRemoveComponent);
         MAZE_CORE_MONO_BIND_FUNC(EntityGetActive);
         MAZE_CORE_MONO_BIND_FUNC(EntitySetActive);
 

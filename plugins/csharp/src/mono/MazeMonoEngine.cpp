@@ -150,6 +150,9 @@ namespace Maze
         MonoEcsData ecsData;
 
         StringKeyMap<CppTypeBindingData> cppTypeBindingDataPerCSharpTypeName;
+
+        MonoCoreTypesBinding coreTypesBinding;
+        MonoGraphicsTypesBinding graphicsTypesBinding;
     };
 
 
@@ -668,6 +671,9 @@ namespace Maze
 
         g_monoEngineData->ecsData = MonoEcsData();
 
+        g_monoEngineData->coreTypesBinding = MonoCoreTypesBinding();
+        g_monoEngineData->graphicsTypesBinding = MonoGraphicsTypesBinding();
+
         g_monoEngineData->coreAssemblyData.resetAssembies();
         g_monoEngineData->editorAssemblyData.resetAssembies();
         g_monoEngineData->appAssemblyData.resetAssembies();
@@ -788,6 +794,34 @@ namespace Maze
 
         LoadAssemblyClasses(g_monoEngineData->coreAssemblyData.assembly);
 
+        {
+            MonoCoreTypesBinding& binding = g_monoEngineData->coreTypesBinding;
+            binding.image = g_monoEngineData->coreAssemblyData.assemblyImage;
+
+            binding.byteBufferClass = ScriptClass::Create("Maze.Core", "ByteBuffer", binding.image);
+            binding.byteBufferSizeProperty = binding.byteBufferClass->getProperty("Size");
+            binding.byteBufferDataProperty = binding.byteBufferClass->getProperty("Data");
+
+            binding.dataBlockClass = ScriptClass::Create("Maze.Core", "DataBlock", binding.image);
+            binding.dataBlockLoadBytesMethod = binding.dataBlockClass->getMethod("LoadBytes", 2);
+            binding.dataBlockToByteBufferMethod = binding.dataBlockClass->getMethod("ToByteBuffer", 0);
+
+            binding.animationCurveClass = ScriptClass::Create("Maze.Core", "AnimationCurve", binding.image);
+            binding.animationCurveCtor = binding.animationCurveClass->getMethod(".ctor", 0);
+            binding.animationCurveToDataBlockMethod = binding.animationCurveClass->getMethod("ToDataBlock", 0);
+            binding.animationCurveLoadFromDataBlockMethod = binding.animationCurveClass->getMethod("LoadFromDataBlock", 1);
+        }
+
+        {
+            MonoGraphicsTypesBinding& binding = g_monoEngineData->graphicsTypesBinding;
+            binding.image = g_monoEngineData->coreAssemblyData.assemblyImage;
+
+            binding.colorGradientClass = ScriptClass::Create("Maze.Graphics", "ColorGradient", binding.image);
+            binding.colorGradientCtor = binding.colorGradientClass->getMethod(".ctor", 0);
+            binding.colorGradientToDataBlockMethod = binding.colorGradientClass->getMethod("ToDataBlock", 0);
+            binding.colorGradientLoadFromDataBlockMethod = binding.colorGradientClass->getMethod("LoadFromDataBlock", 1);
+        }
+
         EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpCoreAssemblyLoadedEvent>();
         EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpAssemblyLoadedEvent>();
 
@@ -900,6 +934,18 @@ namespace Maze
     ScriptClassPtr const& MonoEngine::GetEcsUtilsClass()
     {
         return g_monoEngineData->ecsData.ecsUtilsClass;
+    }
+
+    //////////////////////////////////////////
+    MonoCoreTypesBinding const& MonoEngine::GetCoreTypesBinding()
+    {
+        return g_monoEngineData->coreTypesBinding;
+    }
+
+    //////////////////////////////////////////
+    MonoGraphicsTypesBinding const& MonoEngine::GetGraphicsTypesBinding()
+    {
+        return g_monoEngineData->graphicsTypesBinding;
     }
 
     //////////////////////////////////////////

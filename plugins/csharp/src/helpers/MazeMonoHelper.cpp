@@ -509,71 +509,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        namespace
-        {
-            //////////////////////////////////////////
-            struct MonoDataBlockBridgeBinding
-            {
-                MonoImage* image = nullptr;
-
-                ScriptClassPtr byteBufferClass;
-                MonoProperty* byteBufferSizeProperty = nullptr;
-                MonoProperty* byteBufferDataProperty = nullptr;
-
-                ScriptClassPtr dataBlockClass;
-                MonoMethod* dataBlockLoadBytesMethod = nullptr;
-                MonoMethod* dataBlockToByteBufferMethod = nullptr;
-
-                ScriptClassPtr animationCurveClass;
-                MonoMethod* animationCurveCtor = nullptr;
-                MonoMethod* animationCurveToDataBlockMethod = nullptr;
-                MonoMethod* animationCurveLoadFromDataBlockMethod = nullptr;
-
-                ScriptClassPtr colorGradientClass;
-                MonoMethod* colorGradientCtor = nullptr;
-                MonoMethod* colorGradientToDataBlockMethod = nullptr;
-                MonoMethod* colorGradientLoadFromDataBlockMethod = nullptr;
-            };
-
-            //////////////////////////////////////////
-            MonoDataBlockBridgeBinding& EnsureMonoDataBlockBridgeBinding()  // #TODO: Move to MonoEngineData?
-            {
-                static MonoDataBlockBridgeBinding binding; // #TODO: Move to MonoEngineData?
-
-                MonoImage* coreAssemblyImage = MonoEngine::GetCoreAssemblyImage();
-                if (binding.image != coreAssemblyImage)
-                {
-                    binding.image = coreAssemblyImage;
-
-                    binding.byteBufferClass = ScriptClass::Create("Maze.Core", "ByteBuffer", coreAssemblyImage);
-                    binding.byteBufferSizeProperty = binding.byteBufferClass->getProperty("Size");
-                    binding.byteBufferDataProperty = binding.byteBufferClass->getProperty("Data");
-
-                    binding.dataBlockClass = ScriptClass::Create("Maze.Core", "DataBlock", coreAssemblyImage);
-                    binding.dataBlockLoadBytesMethod = binding.dataBlockClass->getMethod("LoadBytes", 2);
-                    binding.dataBlockToByteBufferMethod = binding.dataBlockClass->getMethod("ToByteBuffer", 0);
-
-                    binding.animationCurveClass = ScriptClass::Create("Maze.Core", "AnimationCurve", coreAssemblyImage);
-                    binding.animationCurveCtor = binding.animationCurveClass->getMethod(".ctor", 0);
-                    binding.animationCurveToDataBlockMethod = binding.animationCurveClass->getMethod("ToDataBlock", 0);
-                    binding.animationCurveLoadFromDataBlockMethod = binding.animationCurveClass->getMethod("LoadFromDataBlock", 1);
-
-                    binding.colorGradientClass = ScriptClass::Create("Maze.Graphics", "ColorGradient", coreAssemblyImage);
-                    binding.colorGradientCtor = binding.colorGradientClass->getMethod(".ctor", 0);
-                    binding.colorGradientToDataBlockMethod = binding.colorGradientClass->getMethod("ToDataBlock", 0);
-                    binding.colorGradientLoadFromDataBlockMethod = binding.colorGradientClass->getMethod("LoadFromDataBlock", 1);
-                }
-
-                return binding;
-            }
-
-        } // namespace
-        //////////////////////////////////////////
-
-        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API MonoObject* DataBlockToMonoObject(DataBlock const& _dataBlock)
         {
-            MonoDataBlockBridgeBinding& binding = EnsureMonoDataBlockBridgeBinding();
+            MonoCoreTypesBinding const& binding = MonoEngine::GetCoreTypesBinding();
 
             ByteBuffer buffer;
             DataBlockBinarySerialization::SaveBinary(_dataBlock, buffer);
@@ -590,7 +528,7 @@ namespace Maze
             if (!_monoObject)
                 return true;
 
-            MonoDataBlockBridgeBinding& binding = EnsureMonoDataBlockBridgeBinding();
+            MonoCoreTypesBinding const& binding = MonoEngine::GetCoreTypesBinding();
 
             MonoObject* monoByteBuffer = MonoHelper::InvokeMethod(_monoObject, binding.dataBlockToByteBufferMethod);
             MonoObject* monoByteBufferSizeObject = mono_property_get_value(binding.byteBufferSizeProperty, monoByteBuffer, nullptr, nullptr);
@@ -610,7 +548,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API MonoObject* AnimationCurveToMonoObject(AnimationCurve const& _value, MonoObject* _existingInstance)
         {
-            MonoDataBlockBridgeBinding& binding = EnsureMonoDataBlockBridgeBinding();
+            MonoCoreTypesBinding const& binding = MonoEngine::GetCoreTypesBinding();
 
             MonoObject* curveInstance = _existingInstance;
             if (!curveInstance)
@@ -637,7 +575,7 @@ namespace Maze
             if (!_monoObject)
                 return curve;
 
-            MonoDataBlockBridgeBinding& binding = EnsureMonoDataBlockBridgeBinding();
+            MonoCoreTypesBinding const& binding = MonoEngine::GetCoreTypesBinding();
 
             MonoObject* monoDataBlock = MonoHelper::InvokeMethod(_monoObject, binding.animationCurveToDataBlockMethod);
             DataBlock dataBlock;
@@ -650,7 +588,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API MonoObject* ColorGradientToMonoObject(ColorGradient const& _value, MonoObject* _existingInstance)
         {
-            MonoDataBlockBridgeBinding& binding = EnsureMonoDataBlockBridgeBinding();
+            MonoGraphicsTypesBinding const& binding = MonoEngine::GetGraphicsTypesBinding();
 
             MonoObject* gradientInstance = _existingInstance;
             if (!gradientInstance)
@@ -677,7 +615,7 @@ namespace Maze
             if (!_monoObject)
                 return gradient;
 
-            MonoDataBlockBridgeBinding& binding = EnsureMonoDataBlockBridgeBinding();
+            MonoGraphicsTypesBinding const& binding = MonoEngine::GetGraphicsTypesBinding();
 
             MonoObject* monoDataBlock = MonoHelper::InvokeMethod(_monoObject, binding.colorGradientToDataBlockMethod);
             DataBlock dataBlock;

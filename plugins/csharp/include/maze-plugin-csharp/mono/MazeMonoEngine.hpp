@@ -45,6 +45,37 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    struct MAZE_PLUGIN_CSHARP_API MonoCoreTypesBinding
+    {
+        MonoImage* image = nullptr;
+
+        ScriptClassPtr byteBufferClass;
+        MonoProperty* byteBufferSizeProperty = nullptr;
+        MonoProperty* byteBufferDataProperty = nullptr;
+
+        ScriptClassPtr dataBlockClass;
+        MonoMethod* dataBlockLoadBytesMethod = nullptr;
+        MonoMethod* dataBlockToByteBufferMethod = nullptr;
+
+        ScriptClassPtr animationCurveClass;
+        MonoMethod* animationCurveCtor = nullptr;
+        MonoMethod* animationCurveToDataBlockMethod = nullptr;
+        MonoMethod* animationCurveLoadFromDataBlockMethod = nullptr;
+    };
+
+    //////////////////////////////////////////
+    struct MAZE_PLUGIN_CSHARP_API MonoGraphicsTypesBinding
+    {
+        MonoImage* image = nullptr;
+
+        ScriptClassPtr colorGradientClass;
+        MonoMethod* colorGradientCtor = nullptr;
+        MonoMethod* colorGradientToDataBlockMethod = nullptr;
+        MonoMethod* colorGradientLoadFromDataBlockMethod = nullptr;
+    };
+
+
+    //////////////////////////////////////////
     // Class MonoEngine
     //
     //////////////////////////////////////////
@@ -95,6 +126,12 @@ namespace Maze
 
         //////////////////////////////////////////
         static ScriptClassPtr const& GetEcsUtilsClass();
+
+        //////////////////////////////////////////
+        static MonoCoreTypesBinding const& GetCoreTypesBinding();
+
+        //////////////////////////////////////////
+        static MonoGraphicsTypesBinding const& GetGraphicsTypesBinding();
 
         //////////////////////////////////////////
         static ScriptClassPtr const& GetMonoEventClass();

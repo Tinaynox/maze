@@ -67,6 +67,9 @@ namespace Maze.Core
         internal extern static void EntityRemoveFromEcsWorld(NativePtr nativeEntityPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool EntityRemoveComponent(NativePtr nativeEntityPtr, int componentId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void EntityGetActive(NativePtr nativeEntityPtr, out bool outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

@@ -113,6 +113,12 @@ namespace Maze.Core
             InternalCalls.EntityRemoveFromEcsWorld(NativeEntityPtr);
         }
 
+        public bool RemoveComponent<T>() where T : class
+        {
+            int componentId = InternalCalls.GetComponentIdByMonoType(typeof(T));
+            return InternalCalls.EntityRemoveComponent(NativeEntityPtr, componentId);
+        }
+
         public override string ToString()
         {
             return Id.ToString();
