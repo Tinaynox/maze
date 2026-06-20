@@ -56,10 +56,13 @@ namespace Maze
 
         //////////////////////////////////////////
         EM_BOOL processMouseEvent(S32 _eventType, EmscriptenMouseEvent const* _event, void* _userData);
-        
+
         //////////////////////////////////////////
         EM_BOOL processKeyboardEvent(S32 _eventType, EmscriptenKeyboardEvent const* _event, void* _userData);
-        
+
+        //////////////////////////////////////////
+        EM_BOOL processTouchEvent(S32 _eventType, EmscriptenTouchEvent const* _event, void* _userData);
+
     protected:
 
         //////////////////////////////////////////
@@ -67,7 +70,15 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init(DataBlock const& _config) MAZE_OVERRIDE;
-             
+
+        //////////////////////////////////////////
+        S32 acquireTouchSlot(S32 _identifier);
+
+        //////////////////////////////////////////
+        void releaseTouchSlot(S32 _identifier);
+
+    protected:
+        Vector<S32> m_touchIdentifiers;
     };
 
 

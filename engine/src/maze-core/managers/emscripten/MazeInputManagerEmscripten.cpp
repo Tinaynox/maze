@@ -47,6 +47,12 @@ EM_BOOL OnKeyboardEvent(Maze::S32 _eventType, EmscriptenKeyboardEvent const* _ev
     return g_inputManagerEmscripten->processKeyboardEvent(_eventType, _event, _userData);
 }
 
+//////////////////////////////////////////
+EM_BOOL OnTouchEvent(Maze::S32 _eventType, EmscriptenTouchEvent const* _event, void* _userData)
+{
+    return g_inputManagerEmscripten->processTouchEvent(_eventType, _event, _userData);
+}
+
 
 //////////////////////////////////////////
 namespace Maze
@@ -93,8 +99,46 @@ namespace Maze
 
         emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnKeyboardEvent);
         emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnKeyboardEvent);
-        
+
+        emscripten_set_touchstart_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnTouchEvent);
+        emscripten_set_touchend_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnTouchEvent);
+        emscripten_set_touchmove_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnTouchEvent);
+        emscripten_set_touchcancel_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, 1, OnTouchEvent);
+
         return true;
+    }
+
+    //////////////////////////////////////////
+    S32 InputManagerEmscripten::acquireTouchSlot(S32 _identifier)
+    {
+        for (Size i = 0; i < m_touchIdentifiers.size(); ++i)
+            if (m_touchIdentifiers[i] == _identifier)
+                return (S32)i;
+
+        for (Size i = 0; i < m_touchIdentifiers.size(); ++i)
+        {
+            if (m_touchIdentifiers[i] == -1)
+            {
+                m_touchIdentifiers[i] = _identifier;
+                return (S32)i;
+            }
+        }
+
+        m_touchIdentifiers.push_back(_identifier);
+        return (S32)m_touchIdentifiers.size() - 1;
+    }
+
+    //////////////////////////////////////////
+    void InputManagerEmscripten::releaseTouchSlot(S32 _identifier)
+    {
+        for (Size i = 0; i < m_touchIdentifiers.size(); ++i)
+        {
+            if (m_touchIdentifiers[i] == _identifier)
+            {
+                m_touchIdentifiers[i] = -1;
+                return;
+            }
+        }
     }
     
     //////////////////////////////////////////
@@ -204,6 +248,84 @@ namespace Maze
         return 0;
     }
     
+    //////////////////////////////////////////
+    EM_BOOL InputManagerEmscripten::processTouchEvent(
+        Maze::S32 _eventType,
+        EmscriptenTouchEvent const* _event,
+        void* _userData)
+    {
+        WindowEmscriptenPtr const& windowEmscripten = WindowManagerEmscripten::GetInstancePtr()->castRaw<WindowManagerEmscripten>()->getWindow();
+
+        for (S32 i = 0; i < _event->numTouches; ++i)
+        {
+            EmscriptenTouchPoint const& touch = _event->touches[i];
+            if (!touch.isChanged)
+                continue;
+
+            S32 identifier = (S32)touch.identifier;
+            S32 x = (S32)touch.clientX;
+            S32 y = windowEmscripten->getClientSize().y - (S32)touch.clientY;
+
+            switch (_eventType)
+            {
+                case EMSCRIPTEN_EVENT_TOUCHSTART:
+                {
+                    InputEventTouchData event;
+                    event.type = InputEventTouchType::Press;
+                    event.index = acquireTouchSlot(identifier);
+                    event.x = x;
+                    event.y = y;
+                    event.windowId = windowEmscripten->getResourceId();
+                    generateInputEvent(event);
+                    break;
+                }
+                case EMSCRIPTEN_EVENT_TOUCHMOVE:
+                {
+                    InputEventTouchData event;
+                    event.type = InputEventTouchType::Move;
+                    event.index = acquireTouchSlot(identifier);
+                    event.x = x;
+                    event.y = y;
+                    event.windowId = windowEmscripten->getResourceId();
+                    generateInputEvent(event);
+                    break;
+                }
+                case EMSCRIPTEN_EVENT_TOUCHEND:
+                {
+                    InputEventTouchData event;
+                    event.type = InputEventTouchType::Release;
+                    event.index = acquireTouchSlot(identifier);
+                    event.x = x;
+                    event.y = y;
+                    event.windowId = windowEmscripten->getResourceId();
+                    generateInputEvent(event);
+
+                    releaseTouchSlot(identifier);
+                    break;
+                }
+                case EMSCRIPTEN_EVENT_TOUCHCANCEL:
+                {
+                    InputEventTouchData event;
+                    event.type = InputEventTouchType::Cancel;
+                    event.index = acquireTouchSlot(identifier);
+                    event.x = x;
+                    event.y = y;
+                    event.windowId = windowEmscripten->getResourceId();
+                    generateInputEvent(event);
+
+                    releaseTouchSlot(identifier);
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+        }
+
+        return 1;
+    }
+
     //////////////////////////////////////////
     EM_BOOL InputManagerEmscripten::processKeyboardEvent(
         Maze::S32 _eventType,
