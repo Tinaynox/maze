@@ -49,8 +49,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(OutlineRenderer, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorF128, outlineColor, ColorF128(1.0f, 0.65f, 0.0f, 1.0f), getOutlineColor, setOutlineColor),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, outlineWidth, 0.02f, getOutlineWidth, setOutlineWidth),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialAssetRef, outlineMaterial, MaterialAssetRef(), getOutlineMaterialRef, setOutlineMaterialRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, true, getEnabled, setEnabled));
 
     //////////////////////////////////////////
@@ -108,49 +107,18 @@ namespace Maze
     void OutlineRenderer::processEntityAwakened()
     {
         m_meshRenderer = getEntityRaw()->getComponentRaw<MeshRenderer>();
-        ensureMaterials();
     }
 
     //////////////////////////////////////////
-    void OutlineRenderer::ensureMaterials()
+    void OutlineRenderer::setOutlineMaterial(String const& _materialName)
     {
-        if (!m_stencilMaskMaterial)
-        {
-            MaterialPtr const& builtinMask = m_renderSystem->getMaterialManager()->ensureBuiltinMaterial(BuiltinMaterialType::OutlineStencilMask);
-            m_stencilMaskMaterial = builtinMask ? builtinMask->createCopy() : nullptr;
-        }
+        MaterialPtr const& material = m_renderSystem->getMaterialManager()->getOrLoadMaterial(_materialName);
+        MAZE_ERROR_IF(!material, "Undefined material: %s", _materialName.c_str());
 
-        if (!m_outlineMaterial)
-        {
-            MaterialPtr const& builtinOutline = m_renderSystem->getMaterialManager()->ensureBuiltinMaterial(BuiltinMaterialType::Outline);
-            m_outlineMaterial = builtinOutline ? builtinOutline->createCopy() : nullptr;
-        }
+        MAZE_ERROR_IF(material && material->getRenderPassesCount(RenderPassType::Default) < 2,
+            "Outline material must have at least 2 Default render passes (mask + shell)!");
 
-        updateOutlineUniforms();
-    }
-
-    //////////////////////////////////////////
-    void OutlineRenderer::updateOutlineUniforms()
-    {
-        if (m_outlineMaterial)
-        {
-            m_outlineMaterial->setUniform(MAZE_HCS("u_outlineColor"), m_outlineColor);
-            m_outlineMaterial->setUniform(MAZE_HCS("u_outlineWidth"), m_outlineWidth);
-        }
-    }
-
-    //////////////////////////////////////////
-    void OutlineRenderer::setOutlineColor(ColorF128 const& _outlineColor)
-    {
-        m_outlineColor = _outlineColor;
-        updateOutlineUniforms();
-    }
-
-    //////////////////////////////////////////
-    void OutlineRenderer::setOutlineWidth(F32 _outlineWidth)
-    {
-        m_outlineWidth = _outlineWidth;
-        updateOutlineUniforms();
+        setOutlineMaterial(material);
     }
 
     //////////////////////////////////////////
@@ -201,12 +169,12 @@ namespace Maze
         if (!_meshRenderer->getRenderMesh())
             return;
 
-        RenderPassPtr const& maskRenderPass = _outlineRenderer->getStencilMaskMaterial()
-            ? _outlineRenderer->getStencilMaskMaterial()->getFirstRenderPass()
-            : nullptr;
-        RenderPassPtr const& outlineRenderPass = _outlineRenderer->getOutlineMaterial()
-            ? _outlineRenderer->getOutlineMaterial()->getFirstRenderPass()
-            : nullptr;
+        MaterialPtr const& outlineMaterial = _outlineRenderer->getOutlineMaterial();
+        if (!outlineMaterial || outlineMaterial->getRenderPassesCount(RenderPassType::Default) < 2)
+            return;
+
+        RenderPassPtr const& maskRenderPass = outlineMaterial->getRenderPass(RenderPassType::Default, 0);
+        RenderPassPtr const& outlineRenderPass = outlineMaterial->getRenderPass(RenderPassType::Default, 1);
 
         if (!maskRenderPass || !outlineRenderPass)
             return;

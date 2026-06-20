@@ -215,8 +215,7 @@ namespace Maze
             meshRenderer->setEnabled(false);
 
             OutlineRendererPtr barrelOutlineRenderer = objectEntity->createComponent<OutlineRenderer>();
-            barrelOutlineRenderer->setOutlineColor(ColorF128(0.821128f, 3.610131f, 15.145296f, 1.000000f));
-            barrelOutlineRenderer->setOutlineWidth(0.02f);
+            barrelOutlineRenderer->setOutlineMaterial(MaterialManager::GetCurrentInstance()->getOrLoadMaterial("Outline00.mzmaterial"));
         }
 
         addMeshPreview("TorusKnotUV.fbx", "Fresnel00.mzmaterial", "Fresnel", torusKnotScale);

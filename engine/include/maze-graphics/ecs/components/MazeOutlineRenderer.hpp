@@ -84,16 +84,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setOutlineColor(ColorF128 const& _outlineColor);
+        inline void setOutlineMaterialRef(MaterialAssetRef const& _material) { m_outlineMaterialRef.setMaterial(_material.getMaterial()); }
 
         //////////////////////////////////////////
-        inline ColorF128 const& getOutlineColor() const { return m_outlineColor; }
+        inline MaterialAssetRef const& getOutlineMaterialRef() const { return m_outlineMaterialRef; }
 
         //////////////////////////////////////////
-        void setOutlineWidth(F32 _outlineWidth);
+        inline void setOutlineMaterial(MaterialPtr const& _material) { m_outlineMaterialRef.setMaterial(_material); }
 
         //////////////////////////////////////////
-        inline F32 getOutlineWidth() const { return m_outlineWidth; }
+        inline MaterialPtr const& getOutlineMaterial() const { return m_outlineMaterialRef.getMaterial(); }
+
+        //////////////////////////////////////////
+        void setOutlineMaterial(String const& _materialName);
 
 
         //////////////////////////////////////////
@@ -102,12 +105,6 @@ namespace Maze
         //////////////////////////////////////////
         inline bool getEnabled() const { return m_enabled; }
 
-
-        //////////////////////////////////////////
-        inline MaterialPtr const& getStencilMaskMaterial() const { return m_stencilMaskMaterial; }
-
-        //////////////////////////////////////////
-        inline MaterialPtr const& getOutlineMaterial() const { return m_outlineMaterial; }
 
     protected:
 
@@ -128,12 +125,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        void ensureMaterials();
-
-        //////////////////////////////////////////
-        void updateOutlineUniforms();
-
 
         //////////////////////////////////////////
         virtual void drawDefaultPass(
@@ -152,11 +143,7 @@ namespace Maze
 
         MeshRenderer* m_meshRenderer = nullptr;
 
-        MaterialPtr m_stencilMaskMaterial;
-        MaterialPtr m_outlineMaterial;
-
-        ColorF128 m_outlineColor = ColorF128(1.0f, 0.65f, 0.0f, 1.0f);
-        F32 m_outlineWidth = 0.02f;
+        MaterialAssetRef m_outlineMaterialRef;
 
         bool m_enabled = true;
     };
