@@ -169,13 +169,15 @@ namespace Maze
                         Vec3F cameraScale = params.cameraTransform.getScaleSignless();
 
                         cameraRotation.x = -cameraRotation.x;
-                                        
+                        cameraRotation.z = -cameraRotation.z;
+
                         params.cameraTransform = TMat::CreateTranslation(cameraPosition);
                         params.cameraTransform = params.cameraTransform.transform(
                             TMat::CreateRotation(cameraRotation));
                         params.cameraTransform = params.cameraTransform.transform(
                             TMat::CreateScale(cameraScale));
-                        
+                        params.viewMatrix = params.cameraTransform.inversed();
+
                         // Reflection buffer (Above the water level)
                         _renderController->getModule3D()->drawDefaultPass(
                             m_reflectionBuffer.get(),
