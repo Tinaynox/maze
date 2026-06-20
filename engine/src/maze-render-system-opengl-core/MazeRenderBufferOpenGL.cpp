@@ -424,6 +424,7 @@ namespace Maze
         {
             MZGLint textureId = 0;
             MZGLenum textureTarget = MAZE_GL_TEXTURE_2D;
+            bool isRenderbuffer = false;
 
             if (_texture)
             {
@@ -438,9 +439,11 @@ namespace Maze
                     }
                     case TextureType::TwoDimensionalMultisample:
                     {
-                        textureId = _texture->castRaw<Texture2DMSOpenGL>()->getGLTexture();
+                        Texture2DMSOpenGL* textureMS = _texture->castRaw<Texture2DMSOpenGL>();
+                        textureId = textureMS->getGLTexture();
                         MAZE_ERROR_IF(textureId == 0, "Texture2DMSOpenGL<%s> has zero id!", _texture->getName().c_str());
                         textureTarget = MAZE_GL_TEXTURE_2D_MULTISAMPLE;
+                        isRenderbuffer = textureMS->isRenderbuffer();
                         break;
                     }
                     default:
@@ -452,24 +455,36 @@ namespace Maze
 
             if (textureId)
             {
-                
+
                 MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemOpenGLRaw());
                 ContextOpenGLScopeBind contextScopeBind(m_context);
                 RenderBufferOpenGLScopeBind renderBufferScopeBind(this);
 
-                S32 activeTextureIndex = m_context->getActiveTexture();
-                m_context->activeTexture(0);            
+                if (isRenderbuffer)
+                {
+                    MAZE_GL_CALL(
+                        mzglFramebufferRenderbuffer(
+                            MAZE_GL_FRAMEBUFFER,
+                            MAZE_GL_COLOR_ATTACHMENT0 + _index,
+                            MAZE_GL_RENDERBUFFER,
+                            textureId));
+                }
+                else
+                {
+                    S32 activeTextureIndex = m_context->getActiveTexture();
+                    m_context->activeTexture(0);
 
-                MAZE_GL_CALL(
-                    mzglFramebufferTexture2D(
-                        MAZE_GL_FRAMEBUFFER,
-                        MAZE_GL_COLOR_ATTACHMENT0 + _index,
-                        textureTarget,
-                        textureId, 0));
+                    MAZE_GL_CALL(
+                        mzglFramebufferTexture2D(
+                            MAZE_GL_FRAMEBUFFER,
+                            MAZE_GL_COLOR_ATTACHMENT0 + _index,
+                            textureTarget,
+                            textureId, 0));
 
-                m_context->activeTexture(activeTextureIndex);
+                    m_context->activeTexture(activeTextureIndex);
+                }
             }
-            
+
         }
     }
 
@@ -482,6 +497,7 @@ namespace Maze
             MZGLint textureId = 0;
             MZGLenum textureTarget = MAZE_GL_TEXTURE_2D;
             PixelFormat::Enum pixelFormat = PixelFormat::None;
+            bool isRenderbuffer = false;
 
             if (_texture)
             {
@@ -496,9 +512,11 @@ namespace Maze
                     }
                     case TextureType::TwoDimensionalMultisample:
                     {
-                        textureId = _texture->castRaw<Texture2DMSOpenGL>()->getGLTexture();
+                        Texture2DMSOpenGL* textureMS = _texture->castRaw<Texture2DMSOpenGL>();
+                        textureId = textureMS->getGLTexture();
                         textureTarget = MAZE_GL_TEXTURE_2D_MULTISAMPLE;
                         pixelFormat = _texture->castRaw<Texture2DMS>()->getInternalPixelFormat();
+                        isRenderbuffer = textureMS->isRenderbuffer();
                         break;
                     }
                     default:
@@ -514,9 +532,6 @@ namespace Maze
                 ContextOpenGLScopeBind contextScopeBind(m_context);
                 RenderBufferOpenGLScopeBind renderBufferScopeBind(this);
 
-                S32 activeTextureIndex = m_context->getActiveTexture();
-                m_context->activeTexture(0);
-
                 // A combined depth-stencil texture must be attached at GL_DEPTH_STENCIL_ATTACHMENT
                 // so both aspects are bound to the FBO - attaching it at GL_DEPTH_ATTACHMENT alone
                 // leaves the framebuffer without a stencil attachment even though the texture itself
@@ -525,14 +540,29 @@ namespace Maze
                     ? MAZE_GL_DEPTH_STENCIL_ATTACHMENT
                     : MAZE_GL_DEPTH_ATTACHMENT;
 
-                MAZE_GL_CALL(
-                    mzglFramebufferTexture2D(
-                        MAZE_GL_FRAMEBUFFER,
-                        attachment,
-                        textureTarget,
-                        textureId, 0));
+                if (isRenderbuffer)
+                {
+                    MAZE_GL_CALL(
+                        mzglFramebufferRenderbuffer(
+                            MAZE_GL_FRAMEBUFFER,
+                            attachment,
+                            MAZE_GL_RENDERBUFFER,
+                            textureId));
+                }
+                else
+                {
+                    S32 activeTextureIndex = m_context->getActiveTexture();
+                    m_context->activeTexture(0);
 
-                m_context->activeTexture(activeTextureIndex);
+                    MAZE_GL_CALL(
+                        mzglFramebufferTexture2D(
+                            MAZE_GL_FRAMEBUFFER,
+                            attachment,
+                            textureTarget,
+                            textureId, 0));
+
+                    m_context->activeTexture(activeTextureIndex);
+                }
             }
 
         }
@@ -546,6 +576,7 @@ namespace Maze
         {
             MZGLint textureId = 0;
             MZGLenum textureTarget = MAZE_GL_TEXTURE_2D;
+            bool isRenderbuffer = false;
 
             if (_texture)
             {
@@ -559,8 +590,10 @@ namespace Maze
                     }
                     case TextureType::TwoDimensionalMultisample:
                     {
-                        textureId = _texture->castRaw<Texture2DMSOpenGL>()->getGLTexture();
+                        Texture2DMSOpenGL* textureMS = _texture->castRaw<Texture2DMSOpenGL>();
+                        textureId = textureMS->getGLTexture();
                         textureTarget = MAZE_GL_TEXTURE_2D_MULTISAMPLE;
+                        isRenderbuffer = textureMS->isRenderbuffer();
                         break;
                     }
                     default:
@@ -576,19 +609,31 @@ namespace Maze
                 ContextOpenGLScopeBind contextScopeBind(m_context);
                 RenderBufferOpenGLScopeBind renderBufferScopeBind(this);
 
-                S32 activeTextureIndex = m_context->getActiveTexture();
-                m_context->activeTexture(0);
+                if (isRenderbuffer)
+                {
+                    MAZE_GL_CALL(
+                        mzglFramebufferRenderbuffer(
+                            MAZE_GL_FRAMEBUFFER,
+                            MAZE_GL_STENCIL_ATTACHMENT,
+                            MAZE_GL_RENDERBUFFER,
+                            textureId));
+                }
+                else
+                {
+                    S32 activeTextureIndex = m_context->getActiveTexture();
+                    m_context->activeTexture(0);
 
-                MAZE_GL_CALL(
-                    mzglFramebufferTexture2D(
-                        MAZE_GL_FRAMEBUFFER,
-                        MAZE_GL_STENCIL_ATTACHMENT,
-                        textureTarget,
-                        textureId, 0));
+                    MAZE_GL_CALL(
+                        mzglFramebufferTexture2D(
+                            MAZE_GL_FRAMEBUFFER,
+                            MAZE_GL_STENCIL_ATTACHMENT,
+                            textureTarget,
+                            textureId, 0));
 
-                m_context->activeTexture(activeTextureIndex);
+                    m_context->activeTexture(activeTextureIndex);
+                }
             }
-            
+
         }
     }
 

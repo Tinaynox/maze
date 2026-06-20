@@ -86,6 +86,10 @@ namespace Maze
         AssignOpenGLFunctionDirect(_renderContext, mzglDiscardFramebuffer, nullptr);
         AssignOpenGLFunctionDirect(_renderContext, mzglDeleteRenderbuffers, glDeleteRenderbuffers);
         AssignOpenGLFunctionDirect(_renderContext, mzglFramebufferRenderbuffer, glFramebufferRenderbuffer);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGenRenderbuffers, glGenRenderbuffers);
+        AssignOpenGLFunctionDirect(_renderContext, mzglRenderbufferStorage, glRenderbufferStorage);
+        AssignOpenGLFunctionDirect(_renderContext, mzglRenderbufferStorageMultisample, glRenderbufferStorageMultisample);
+        AssignOpenGLFunctionDirect(_renderContext, mzglIsRenderbuffer, glIsRenderbuffer);
         AssignOpenGLFunctionDirect(_renderContext, mzglBindFramebuffer, glBindFramebuffer);
         AssignOpenGLFunctionDirect(_renderContext, mzglDrawBuffers, glDrawBuffers);
         AssignOpenGLFunctionDirect(_renderContext, mzglFramebufferTexture2D, glFramebufferTexture2D);
@@ -240,6 +244,10 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglDiscardFramebuffer, "glDiscardFramebufferEXT");
         AssignOpenGLFunction(_renderContext, mzglDeleteRenderbuffers, "glDeleteRenderbuffers");
         AssignOpenGLFunction(_renderContext, mzglFramebufferRenderbuffer, "glFramebufferRenderbuffer");
+        AssignOpenGLFunction(_renderContext, mzglGenRenderbuffers, "glGenRenderbuffers");
+        AssignOpenGLFunction(_renderContext, mzglRenderbufferStorage, "glRenderbufferStorage");
+        AssignOpenGLFunction(_renderContext, mzglRenderbufferStorageMultisample, "glRenderbufferStorageMultisample");
+        AssignOpenGLFunction(_renderContext, mzglIsRenderbuffer, "glIsRenderbuffer");
         AssignOpenGLFunction(_renderContext, mzglBindFramebuffer, "glBindFramebuffer");
         AssignOpenGLFunction(_renderContext, mzglDrawBuffers, "glDrawBuffers");
         AssignOpenGLFunction(_renderContext, mzglFramebufferTexture2D, "glFramebufferTexture2D");

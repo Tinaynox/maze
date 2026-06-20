@@ -109,6 +109,11 @@ namespace Maze
         //////////////////////////////////////////
         inline MZGLuint getGLTexture() const { return m_glTexture; }
 
+        //////////////////////////////////////////
+        // WebGL2/GLES3.0 (Emscripten) has no GL_TEXTURE_2D_MULTISAMPLE - it only supports
+        // multisampling via GL_RENDERBUFFER, so in that case m_glTexture holds a renderbuffer id
+        inline bool isRenderbuffer() const { return m_isRenderbuffer; }
+
 
         //////////////////////////////////////////
         using Texture2DMS::loadEmpty;
@@ -181,6 +186,7 @@ namespace Maze
         ContextOpenGL* m_context;
 
         MZGLuint m_glTexture;
+        bool m_isRenderbuffer;
     };
 
 } // namespace Maze

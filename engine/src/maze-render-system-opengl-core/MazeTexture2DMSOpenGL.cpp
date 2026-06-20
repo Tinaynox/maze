@@ -88,6 +88,7 @@ namespace Maze
     Texture2DMSOpenGL::Texture2DMSOpenGL()
         : m_context(nullptr)
         , m_glTexture(0)
+        , m_isRenderbuffer(false)
     {
     }
 
@@ -140,7 +141,18 @@ namespace Maze
 
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
 
-        MAZE_GL_CALL(mzglGenTextures(1, &m_glTexture));
+        // GL_TEXTURE_2D_MULTISAMPLE is GL3.2/GLES 3.1+ only - WebGL2/GLES3.0 (Emscripten) doesn't
+        // expose it and only supports multisampling through GL_RENDERBUFFER, so fall back to that
+        m_isRenderbuffer = (!mzglTexImage2DMultisample && !mzglTexStorage2DMultisample && mzglRenderbufferStorageMultisample);
+
+        if (m_isRenderbuffer)
+        {
+            MAZE_GL_CALL(mzglGenRenderbuffers(1, &m_glTexture));
+        }
+        else
+        {
+            MAZE_GL_CALL(mzglGenTextures(1, &m_glTexture));
+        }
     }
 
     //////////////////////////////////////////
@@ -156,7 +168,16 @@ namespace Maze
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
 
         MAZE_GL_CALL(mzglFinish());
-        MAZE_GL_CALL(mzglDeleteTextures(1, &m_glTexture));
+
+        if (m_isRenderbuffer)
+        {
+            MAZE_GL_CALL(mzglDeleteRenderbuffers(1, &m_glTexture));
+        }
+        else
+        {
+            MAZE_GL_CALL(mzglDeleteTextures(1, &m_glTexture));
+        }
+
         m_glTexture = 0;
     }
 
@@ -184,11 +205,21 @@ namespace Maze
 
         ContextOpenGLScopeBind contextScopedBind(m_context);
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
-        Texture2DMSOpenGLScopeBind textureScopedBind(this);       
 
         m_size = _size;
         m_invSize.x = m_size.x > 0 ? 1.0f / m_size.x : 0.0f;
         m_invSize.y = m_size.y > 0 ? 1.0f / m_size.y : 0.0f;
+
+        if (m_isRenderbuffer)
+        {
+            MAZE_GL_CALL(mzglBindRenderbuffer(MAZE_GL_RENDERBUFFER, m_glTexture));
+            MAZE_GL_CALL(mzglRenderbufferStorageMultisample(MAZE_GL_RENDERBUFFER, (MZGLsizei)m_samples, internalFormat, (MZGLsizei)_size.x, (MZGLsizei)_size.y));
+            MAZE_GL_CALL(mzglBindRenderbuffer(MAZE_GL_RENDERBUFFER, 0));
+
+            return true;
+        }
+
+        Texture2DMSOpenGLScopeBind textureScopedBind(this);
 
 #if (MAZE_DEBUG_GL)
         {
@@ -200,7 +231,7 @@ namespace Maze
                 return false;
             }
         }
-#endif        
+#endif
         if (mzglTexImage2DMultisample)
         {
             MAZE_GL_CALL(mzglTexImage2DMultisample(MAZE_GL_TEXTURE_2D_MULTISAMPLE, (MZGLsizei)m_samples, internalFormat, (MZGLsizei)_size.x, (MZGLsizei)_size.y, MAZE_GL_TRUE));
@@ -214,7 +245,7 @@ namespace Maze
         {
             MAZE_WARNING_RETURN_VALUE(false, "Texture2DMS is not supported!");
         }
-    
+
 #if (MAZE_DEBUG_GL)
         {
             MZGLboolean isTexture = MAZE_GL_FALSE;
@@ -238,7 +269,9 @@ namespace Maze
 
     //////////////////////////////////////////
     PixelSheet2D Texture2DMSOpenGL::readAsPixelSheet(PixelFormat::Enum _outputFormat)
-    {   
+    {
+        MAZE_WARNING_RETURN_VALUE_IF(m_isRenderbuffer, PixelSheet2D(), "Not supported for renderbuffer-backed Texture2DMS!");
+
         if (_outputFormat == PixelFormat::None)
             _outputFormat = m_internalPixelFormat;
 
@@ -358,6 +391,7 @@ namespace Maze
     {
         MAZE_ERROR_RETURN_IF((S32)_x + (S32)_width > m_size.x, "Can't copy image!");
         MAZE_ERROR_RETURN_IF((S32)_y + (S32)_height > m_size.y, "Can't copy image!");
+        MAZE_WARNING_RETURN_IF(m_isRenderbuffer, "Not supported for renderbuffer-backed Texture2DMS!");
 
         ContextOpenGLScopeBind contextScopedBind(m_context);
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());

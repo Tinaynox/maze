@@ -75,6 +75,10 @@ MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglGenFramebuf
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglDiscardFramebuffer)(MZGLenum _target, MZGLsizei _numAttachments, const MZGLenum* _attachments);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglDeleteRenderbuffers)(MZGLsizei _n, const MZGLuint* _renderbuffers);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglFramebufferRenderbuffer)(MZGLenum _target, MZGLenum _attachment, MZGLenum _renderbuffertarget, MZGLuint _renderbuffer);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglGenRenderbuffers)(MZGLsizei _n, MZGLuint* _renderbuffers);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglRenderbufferStorage)(MZGLenum _target, MZGLenum _internalformat, MZGLsizei _width, MZGLsizei _height);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglRenderbufferStorageMultisample)(MZGLenum _target, MZGLsizei _samples, MZGLenum _internalformat, MZGLsizei _width, MZGLsizei _height);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern MZGLboolean (MAZE_GL_FUNCPTR *mzglIsRenderbuffer)(MZGLuint _renderbuffer);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglBindFramebuffer)(MZGLenum _target, MZGLuint _framebuffer);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglDrawBuffers)(MZGLsizei _n, const MZGLenum* _bufs);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglDrawElementsInstanced)(MZGLenum _mode, MZGLsizei _count, MZGLenum _type, const void* _indices, MZGLsizei _primcount);
