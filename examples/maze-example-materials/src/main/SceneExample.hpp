@@ -115,12 +115,6 @@ namespace Maze
             F32 _scale);
 
         //////////////////////////////////////////
-        EntityPtr addRaymarchPreview(
-            String const& _materialName,
-            String const& _text,
-            F32 _scale);
-
-        //////////////////////////////////////////
         void addMeshPreviewSpace();
 
         //////////////////////////////////////////
