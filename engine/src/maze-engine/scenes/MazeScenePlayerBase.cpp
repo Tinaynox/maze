@@ -165,7 +165,7 @@ namespace Maze
                 {
                     renderBufferSize,
                     { PixelFormat::RGBA_F16, samples },
-                    { PixelFormat::DEPTH_U24, samples }
+                    { PixelFormat::DEPTH_STENCIL_U24_8, samples }
                 });
             if (m_renderBufferMSAA)
             {
@@ -189,7 +189,7 @@ namespace Maze
             {
                 renderBufferSize,
                 PixelFormat::RGBA_F16,
-                PixelFormat::DEPTH_U24
+                PixelFormat::DEPTH_STENCIL_U24_8
             });
         m_renderBuffer->setName("RenderBuffer");
         m_renderBuffer->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
