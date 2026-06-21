@@ -225,6 +225,14 @@ namespace Maze
     {
         return false;
     }
+
+    //////////////////////////////////////////
+    bool WindowOSX::updateCursorLock()
+    {
+        // macOS has no API to clip the cursor to a rect while it stays visible -
+        // ViewOSX clamps the cursor back into bounds on every mouse move/drag instead.
+        return false;
+    }
     
     //////////////////////////////////////////
     void WindowOSX::processWindowDelegateOSXDidResize()

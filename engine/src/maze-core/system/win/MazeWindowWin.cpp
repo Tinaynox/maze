@@ -281,6 +281,33 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool WindowWin::updateCursorLock()
+    {
+        if (!isOpened())
+            return true;
+
+        if (m_params->cursorLocked && getFocused())
+        {
+            RECT clientRC;
+            GetClientRect((HWND)m_handle, &clientRC);
+
+            POINT topLeft = { clientRC.left, clientRC.top };
+            POINT bottomRight = { clientRC.right, clientRC.bottom };
+            ClientToScreen((HWND)m_handle, &topLeft);
+            ClientToScreen((HWND)m_handle, &bottomRight);
+
+            RECT screenRC = { topLeft.x, topLeft.y, bottomRight.x, bottomRight.y };
+            ClipCursor(&screenRC);
+        }
+        else
+        {
+            ClipCursor(NULL);
+        }
+
+        return false;
+    }
+
+    //////////////////////////////////////////
     inline void CaptureMouseInput(HWND _hwnd)
     {
         ReleaseCapture();
@@ -678,11 +705,14 @@ namespace Maze
 
             case WM_MOVE:
             {
+                if (m_params->cursorLocked)
+                    updateCursorLock();
+
                 processWindowPositionChanged();
 
                 break;
             }
-            
+
             case WM_SIZE:
             {
                 if (_wParam == SIZE_MINIMIZED)
@@ -704,6 +734,9 @@ namespace Maze
                 }
 
                 updateClientSize();
+
+                if (m_params->cursorLocked)
+                    updateCursorLock();
 
                 processWindowSizeChanged();
 
@@ -744,6 +777,9 @@ namespace Maze
                 if (!isOpened())
                     return true;
 
+                if (m_params->cursorLocked)
+                    updateCursorLock();
+
                 processWindowFocusChanged();
 
                 break;
@@ -753,6 +789,9 @@ namespace Maze
             {
                 if (!isOpened())
                     return true;
+
+                if (m_params->cursorLocked)
+                    ClipCursor(NULL);
 
                 processWindowFocusChanged();
 

@@ -95,6 +95,7 @@ namespace Maze
         iconBig = _iconBig;
         iconSmall = _iconSmall;
         flags = _flags;
+        cursorLocked = false;
 
         return true;
     }
@@ -110,6 +111,7 @@ namespace Maze
         iconBig = _windowParams->iconBig;
         iconSmall = _windowParams->iconSmall;
         flags = _windowParams->flags;
+        cursorLocked = _windowParams->cursorLocked;
 
         return true;
     }
@@ -225,9 +227,20 @@ namespace Maze
             return false;
 
         m_params->flags = _flags;
-        
+
         updateWindowMode();
         return true;
+    }
+
+    //////////////////////////////////////////
+    bool Window::setCursorLocked(bool _value)
+    {
+        if (m_params->cursorLocked == _value)
+            return false;
+
+        m_params->cursorLocked = _value;
+
+        return updateCursorLock();
     }
 
     //////////////////////////////////////////

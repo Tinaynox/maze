@@ -76,8 +76,19 @@ namespace Maze
         inline MultiDelegate<bool const&>& getBloomEnabledChangedEvent() { return m_bloomEnabled.eventValueChanged; }
 
 
+        //////////////////////////////////////////
+        void setCursorLocked(bool _value) { m_cursorLocked = _value; }
+
+        //////////////////////////////////////////
+        inline bool getCursorLocked() const { return m_cursorLocked.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<bool const&>& getCursorLockedChangedEvent() { return m_cursorLocked.eventValueChanged; }
+
+
     protected:
         ObservableValue<bool> m_bloomEnabled = true;
+        ObservableValue<bool> m_cursorLocked = false;
     };
 
 

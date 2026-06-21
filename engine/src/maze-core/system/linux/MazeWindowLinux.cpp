@@ -1012,6 +1012,32 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool WindowLinux::updateCursorLock()
+    {
+        if (m_params->cursorLocked && getFocused())
+        {
+            XGrabPointer(
+                m_xDisplay,
+                m_xWindow,
+                True,
+                ButtonMotionMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask,
+                GrabModeAsync,
+                GrabModeAsync,
+                m_xWindow,
+                None,
+                CurrentTime);
+        }
+        else
+        {
+            XUngrabPointer(m_xDisplay, CurrentTime);
+        }
+
+        XFlush(m_xDisplay);
+
+        return false;
+    }
+
+    //////////////////////////////////////////
     Vec2S32 WindowLinux::getPrimaryMonitorPosition()
     {
         Vec2S32 monitorPosition;
@@ -1314,6 +1340,9 @@ namespace Maze
                     XFree(hints);
                 }
 
+                if (m_params->cursorLocked)
+                    updateCursorLock();
+
                 processWindowFocusChanged();
 
                 break;
@@ -1324,6 +1353,8 @@ namespace Maze
                 if (m_inputContext)
                     XUnsetICFocus(m_inputContext);
 
+                if (m_params->cursorLocked)
+                    XUngrabPointer(m_xDisplay, CurrentTime);
 
                 processWindowFocusChanged();
                 break;

@@ -126,6 +126,8 @@ namespace Maze
 
         Flags flags;
 
+        bool cursorLocked;
+
     protected:
 
         //////////////////////////////////////////
@@ -193,6 +195,12 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual WindowParams::Flags getFlags() const { return m_params->flags; }
+
+        //////////////////////////////////////////
+        virtual bool setCursorLocked(bool _value);
+
+        //////////////////////////////////////////
+        inline bool getCursorLocked() const { return m_params->cursorLocked; }
 
         //////////////////////////////////////////
         inline WindowMode getWindowMode() const { return m_params->windowMode; }
@@ -265,6 +273,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool updateMinimized() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual bool updateCursorLock() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         void processWindowCreated();

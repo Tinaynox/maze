@@ -36,7 +36,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PlayerSettings, Settings,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, bloomEnabled, true, getBloomEnabled, setBloomEnabled));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, bloomEnabled, true, getBloomEnabled, setBloomEnabled),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, cursorLocked, false, getCursorLocked, setCursorLocked));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PlayerSettings);

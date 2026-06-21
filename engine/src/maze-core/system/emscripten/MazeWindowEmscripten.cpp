@@ -246,7 +246,15 @@ namespace Maze
     {
         return false;
     }
-    
+
+    //////////////////////////////////////////
+    bool WindowEmscripten::updateCursorLock()
+    {
+        // Browsers only expose Pointer Lock (hides the cursor and gives relative deltas),
+        // there is no API to confine a visible cursor to the canvas bounds
+        return false;
+    }
+
     //////////////////////////////////////////
     void WindowEmscripten::resize(U32 _width, U32 _height)
     {

@@ -139,8 +139,10 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool updateMinimized() MAZE_OVERRIDE;
 
-        
-        
+        //////////////////////////////////////////
+        virtual bool updateCursorLock() MAZE_OVERRIDE;
+
+
         //////////////////////////////////////////
         void resize(U32 _width, U32 _height);
         

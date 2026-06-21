@@ -28,6 +28,7 @@
 #import "maze-core/system/osx/MazeViewOSX.hpp"
 #include MAZE_INCLUDE_OS_FILE(maze-core/managers, MazeInputManager)
 #include MAZE_INCLUDE_OS_FILE(maze-core/system, MazeWindow)
+#import <CoreGraphics/CoreGraphics.h>
 
 
 //////////////////////////////////////////
@@ -155,11 +156,42 @@
 }
 
 //////////////////////////////////////////
+// macOS has no API to clip the system cursor to a rect while it stays visible,
+// so cursor lock is emulated by clamping the reported position and warping the
+// real cursor back into the view bounds whenever it would otherwise leave them.
+- (NSPoint)clampPositionForCursorLock:(NSPoint)_posBacking
+{
+    if (!m_window || !m_window->getCursorLocked())
+        return _posBacking;
+
+    NSRect boundsBacking = [self convertRectToBacking:[self bounds]];
+
+    NSPoint clamped = _posBacking;
+    clamped.x = MAX(NSMinX(boundsBacking), MIN(clamped.x, NSMaxX(boundsBacking)));
+    clamped.y = MAX(NSMinY(boundsBacking), MIN(clamped.y, NSMaxY(boundsBacking)));
+
+    if (!NSEqualPoints(clamped, _posBacking))
+    {
+        NSPoint clampedViewPoint = [self convertPointFromBacking:clamped];
+        NSPoint windowPoint = [self convertPoint:clampedViewPoint toView:nil];
+        NSRect screenRect = [[self window] convertRectToScreen:NSMakeRect(windowPoint.x, windowPoint.y, 0, 0)];
+
+        CGPoint warpPoint;
+        warpPoint.x = screenRect.origin.x;
+        warpPoint.y = CGDisplayPixelsHigh(kCGDirectMainDisplay) - screenRect.origin.y;
+        CGWarpMouseCursorPosition(warpPoint);
+    }
+
+    return clamped;
+}
+
+//////////////////////////////////////////
 -(void)mouseMoved:(NSEvent*)_event
 {
     NSPoint pos = [_event locationInWindow];
     pos = [self convertPointToBacking:pos];
-    
+    pos = [self clampPositionForCursorLock:pos];
+
     Maze::InputManager* inputManager = Maze::InputManager::GetInstancePtr();
     Maze::InputEventMouseData eventData;
     eventData.type = Maze::InputEventMouseType::Move;
@@ -174,7 +206,8 @@
 {
     NSPoint pos = [_event locationInWindow];
     pos = [self convertPointToBacking:pos];
-    
+    pos = [self clampPositionForCursorLock:pos];
+
     Maze::InputManager* inputManager = Maze::InputManager::GetInstancePtr();
     Maze::InputEventMouseData eventData;
     eventData.type = Maze::InputEventMouseType::Move;
@@ -190,7 +223,8 @@
 {
     NSPoint pos = [_event locationInWindow];
     pos = [self convertPointToBacking:pos];
-    
+    pos = [self clampPositionForCursorLock:pos];
+
     Maze::InputManager* inputManager = Maze::InputManager::GetInstancePtr();
     Maze::InputEventMouseData eventData;
     eventData.type = Maze::InputEventMouseType::Move;

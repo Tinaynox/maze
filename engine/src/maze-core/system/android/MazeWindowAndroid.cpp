@@ -216,6 +216,13 @@ namespace Maze
     {
         return false;
     }
-    
+
+    //////////////////////////////////////////
+    bool WindowAndroid::updateCursorLock()
+    {
+        // Android has no system mouse cursor to lock
+        return false;
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

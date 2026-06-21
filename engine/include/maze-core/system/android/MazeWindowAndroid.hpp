@@ -137,6 +137,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool updateMinimized() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual bool updateCursorLock() MAZE_OVERRIDE;
+
     };
 
 } // namespace Maze

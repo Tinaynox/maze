@@ -202,7 +202,14 @@ namespace Maze
     {
         return false;
     }
-    
+
+    //////////////////////////////////////////
+    bool WindowIOS::updateCursorLock()
+    {
+        // iOS has no system mouse cursor to lock
+        return false;
+    }
+
     //////////////////////////////////////////
     void WindowIOS::processOrientationChanged()
     {
