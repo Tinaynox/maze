@@ -7,7 +7,11 @@ namespace Maze.Core
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void ValidateAllScriptInstances();
-        
+
+        #region System
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static float GetAppTime();
+        #endregion
 
         #region Log
         [MethodImpl(MethodImplOptions.InternalCall)]

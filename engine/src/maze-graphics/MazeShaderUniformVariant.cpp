@@ -1143,17 +1143,20 @@ namespace Maze
             case ShaderUniformType::UniformBool:                _dataBlock.setBool(MAZE_HCS("value"), getBool()); break;
             case ShaderUniformType::UniformTexture2D:
             {
-                // Save as AUID
-                if (AssetUnitManager::GetInstancePtr())
+                if (m_texture)
                 {
-                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_texture->getName());
-                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
+                    // Save as AUID
+                    if (AssetUnitManager::GetInstancePtr())
                     {
-                        Texture2DPtr const& assetUnitTexture = assetUnit->castRaw<AssetUnitTexture2D>()->getTexture();
-                        if (assetUnitTexture == m_texture)
+                        AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_texture->getName());
+                        if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
                         {
-                            _dataBlock.setU32(MAZE_HCS("value"), assetUnit->getAssetUnitId());
-                            break;
+                            Texture2DPtr const& assetUnitTexture = assetUnit->castRaw<AssetUnitTexture2D>()->getTexture();
+                            if (assetUnitTexture == m_texture)
+                            {
+                                _dataBlock.setU32(MAZE_HCS("value"), assetUnit->getAssetUnitId());
+                                break;
+                            }
                         }
                     }
                 }
@@ -1163,17 +1166,20 @@ namespace Maze
             }
             case ShaderUniformType::UniformTextureCube:
             {
-                // Save as AUID
-                if (AssetUnitManager::GetInstancePtr())
+                if (m_texture)
                 {
-                    AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_texture->getName());
-                    if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTextureCube>::UID())
+                    // Save as AUID
+                    if (AssetUnitManager::GetInstancePtr())
                     {
-                        TextureCubePtr const& assetUnitTexture = assetUnit->castRaw<AssetUnitTextureCube>()->getTexture();
-                        if (assetUnitTexture == m_texture)
+                        AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_texture->getName());
+                        if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTextureCube>::UID())
                         {
-                            _dataBlock.setU32(MAZE_HCS("value"), assetUnit->getAssetUnitId());
-                            break;
+                            TextureCubePtr const& assetUnitTexture = assetUnit->castRaw<AssetUnitTextureCube>()->getTexture();
+                            if (assetUnitTexture == m_texture)
+                            {
+                                _dataBlock.setU32(MAZE_HCS("value"), assetUnit->getAssetUnitId());
+                                break;
+                            }
                         }
                     }
                 }

@@ -9,5 +9,10 @@ namespace Maze.Core
         {
             InternalCalls.SetSystemCursorVisible(visible);
         }
+
+        public static float GetAppTime()
+        {
+            return InternalCalls.GetAppTime();
+        }
     }
 }

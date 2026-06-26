@@ -33,6 +33,7 @@
 #include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/managers/MazeSystemCursorManager.hpp"
@@ -88,6 +89,11 @@ namespace Maze
         mono_free(cstr);
     }
 
+    //////////////////////////////////////////
+    inline float GetAppTime()
+    {
+        return UpdateManager::GetInstancePtr()->getAppTime();
+    }
 
     //////////////////////////////////////////
     inline bool GetKeyState(S32 _keyCode)
@@ -794,6 +800,9 @@ namespace Maze
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsCore()
     {
+        // System
+        MAZE_CORE_MONO_BIND_FUNC(GetAppTime);
+
         // Log
         MAZE_CORE_MONO_BIND_FUNC(MazeLog);
         MAZE_CORE_MONO_BIND_FUNC(MazeLogWarning);
