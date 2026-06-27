@@ -215,6 +215,7 @@ namespace Maze
 
         enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
         enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
+        enableFlag(SpriteRenderer2D::Flags::ColorDirty);
         enableFlag(SpriteRenderer2D::Flags::MaterialDirty);
         enableFlag(SpriteRenderer2D::Flags::UV0Dirty);
     }
@@ -240,6 +241,7 @@ namespace Maze
 
         enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
         enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
+        enableFlag(SpriteRenderer2D::Flags::ColorDirty);
         enableFlag(SpriteRenderer2D::Flags::UV0Dirty);
     }
 
@@ -442,7 +444,62 @@ namespace Maze
             }
             case SpriteRenderMode::Tiled:
             {
-                MAZE_NOT_IMPLEMENTED;
+                Vec2F const& size = m_transform->getSize();
+
+                if (getSprite() && getSprite()->getTexture() && size.x > 0.0f && size.y > 0.0f)
+                {
+                    Vec2F const& nativeSize = getSprite()->getNativeSize();
+                    F32 const invPPUM = 1.0f / Math::Max(m_pixelsPerUnitMultiplier, 0.0001f);
+
+                    Vec2F tileSize = nativeSize * invPPUM;
+                    if (tileSize.x <= 0.0f)
+                        tileSize.x = size.x;
+                    if (tileSize.y <= 0.0f)
+                        tileSize.y = size.y;
+
+                    Vec2F const& texCoordLB = getSprite()->getTextureCoordLB();
+                    Vec2F const& texCoordRT = getSprite()->getTextureCoordRT();
+                    Vec2F deltaUV = texCoordRT - texCoordLB;
+
+                    // Accumulate tile positions directly instead of precomputing a tile
+                    // count via Ceil(size / tileSize) - when size is an exact multiple of
+                    // tileSize, floating point error in that division can round up and
+                    // produce an extra, degenerate (negative-size) tile.
+                    F32 const epsilon = 0.0001f;
+
+                    for (F32 quadY = 0.0f; quadY < size.y - epsilon; quadY += tileSize.y)
+                    {
+                        F32 quadHeight = Math::Min(tileSize.y, size.y - quadY);
+                        F32 vFrac = quadHeight / tileSize.y;
+
+                        for (F32 quadX = 0.0f; quadX < size.x - epsilon; quadX += tileSize.x)
+                        {
+                            F32 quadWidth = Math::Min(tileSize.x, size.x - quadX);
+                            F32 uFrac = quadWidth / tileSize.x;
+
+                            addQuad(
+                                TMat::CreateTranslation(quadX, quadY).transform(TMat::CreateScale(quadWidth, quadHeight)),
+                                Vec4F::c_one,
+                                Vec4F(texCoordLB, texCoordLB + deltaUV * Vec2F(uFrac, vFrac)));
+                        }
+                    }
+                }
+                else
+                {
+                    Vec4F uv;
+                    if (getSprite())
+                        uv = Vec4F(
+                            getSprite()->getTextureCoordLB(),
+                            getSprite()->getTextureCoordRT());
+                    else
+                        uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f);
+
+                    addQuad(
+                        TMat::CreateScale(size),
+                        Vec4F::c_one,
+                        uv);
+                }
+
                 break;
             }
             default:
@@ -577,8 +634,20 @@ namespace Maze
         SpriteRenderer2D* _spriteRenderer)
     {
         if (_spriteRenderer->getTransform()->isSizeChanged())
+        {
             _spriteRenderer->enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
-        
+            _spriteRenderer->enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
+
+            // Simple/Sliced always produce the same quad count and per-quad UV/color
+            // regardless of size, so only Tiled (whose tile count and per-tile UV
+            // cropping depend on size) needs these buffers rebuilt on resize.
+            if (_spriteRenderer->getRenderMode() == SpriteRenderMode::Tiled)
+            {
+                _spriteRenderer->enableFlag(SpriteRenderer2D::Flags::ColorDirty);
+                _spriteRenderer->enableFlag(SpriteRenderer2D::Flags::UV0Dirty);
+            }
+        }
+
         if (_spriteRenderer->getTransform()->isWorldTransformChanged())
             _spriteRenderer->enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
 
