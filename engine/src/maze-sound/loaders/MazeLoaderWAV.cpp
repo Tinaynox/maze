@@ -280,6 +280,28 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    // OpenAL only supports 8-bit and 16-bit PCM samples, so 24-bit per channel
+    // WAV data has to be downsampled to 16-bit before it can be played.
+    //////////////////////////////////////////
+    static ByteBufferPtr ConvertWave24To16(ByteBufferPtr const& _data, U32 _dataSize)
+    {
+        U32 sampleCount = _dataSize / 3;
+        ByteBufferPtr result = ByteBuffer::Create(sampleCount * 2);
+
+        U8 const* src = _data->getDataRO();
+        U8* dst = result->getDataRW();
+
+        for (U32 i = 0; i < sampleCount; ++i)
+        {
+            // 24-bit sample is little-endian: [LSB, mid, MSB]. Keep the upper 16 bits.
+            dst[i * 2 + 0] = src[i * 3 + 1];
+            dst[i * 2 + 1] = src[i * 3 + 2];
+        }
+
+        return result;
+    }
+
+    //////////////////////////////////////////
     MAZE_SOUND_API bool LoadWAV(AssetFilePtr const& _file, SoundDataPtr& _soundData)
     {
         ByteBufferPtr fileData = _file->readAsByteBuffer();
@@ -309,11 +331,21 @@ namespace Maze
                 offset += bytesRead;
                 if (bytesRead == waveInfo.dataSize)
                 {
+                    ByteBufferPtr soundDataBuffer = waveInfo.data;
+                    U16 bitsPerSample = waveInfo.extensible.format.bitsPerSample;
+
+                    // OpenAL doesn't support 24-bit per channel PCM - downsample to 16-bit
+                    if (bitsPerSample == 24)
+                    {
+                        soundDataBuffer = ConvertWave24To16(waveInfo.data, waveInfo.dataSize);
+                        bitsPerSample = 16;
+                    }
+
                     _soundData = MakeShared<SoundData>(
-                        waveInfo.data,
+                        soundDataBuffer,
                         waveInfo.extensible.format.channels,
                         waveInfo.extensible.format.samplesPerSec,
-                        waveInfo.extensible.format.bitsPerSample,
+                        bitsPerSample,
                         waveInfo.extensible.channelMask);
 
                     wr = WaveResult::Ok;
