@@ -53,6 +53,63 @@ namespace Maze
             CString _fileName,
             bool _resetAlpha = false);
 
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void DrawLine(
+            PixelSheet2D& _pixelSheet,
+            S32 _x0, S32 _y0,
+            S32 _x1, S32 _y1,
+            ColorU32 const& _color);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void DrawCircle(
+            PixelSheet2D& _pixelSheet,
+            S32 _x, S32 _y,
+            S32 _radius,
+            ColorU32 const& _color);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void DrawFilledCircle(
+            PixelSheet2D& _pixelSheet,
+            S32 _x, S32 _y,
+            S32 _radius,
+            ColorU32 const& _color);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void DrawFilledRect(
+            PixelSheet2D& _pixelSheet,
+            S32 _x, S32 _y,
+            S32 _w, S32 _h,
+            ColorU32 const& _color);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void DrawFilledTriangle(
+            PixelSheet2D& _pixelSheet,
+            S32 _x0, S32 _y0,
+            S32 _x1, S32 _y1,
+            S32 _x2, S32 _y2,
+            ColorU32 const& _color);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void DrawText(
+            PixelSheet2D& _pixelSheet,
+            S32 _x, S32 _y,
+            CString _text,
+            ColorU32 const& _color,
+            U32 _scale,
+            S32 _horizontalAlignment,
+            S32 _verticalAlignment);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API PixelSheet2D UpscaledCopy(
+            PixelSheet2D const& _pixelSheet,
+            S32 _scale);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API PixelSheet2D DownscaledCopy(
+            PixelSheet2D const& _pixelSheet,
+            S32 _scale,
+            bool _roundAlpha = false);
+
     } // namespace PixelSheet2DHelper
     //////////////////////////////////////////
 

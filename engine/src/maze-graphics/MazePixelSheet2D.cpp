@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazePixelSheet2D.hpp"
-#include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
+#include "maze-graphics/helpers/MazePixelSheet2DHelper.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 
 
@@ -313,118 +313,7 @@ namespace Maze
         S32 _x1, S32 _y1,
         ColorU32 const& _color)
     {
-        U32 color = _color.toRGBA_U8();
-
-        S32 x;
-        S32 y;
-        S32 dx = _x1 - _x0;
-        S32 dy = _y1 - _y0;
-        S32 xe;
-        S32 ye;
-        S32 i;
-
-        // Line is vertical
-        if (dx == 0)
-        {
-            if (_y1 < _y0)
-                std::swap(_y0, _y1);
-
-            for (y = _y0; y <= _y1; ++y)
-                setPixelSafe(_x0, y, color);
-
-            return;
-        }
-
-        // Line is horizontal
-        if (dy == 0)
-        {
-            if (_x1 < _x0)
-                std::swap(_x0, _x1);
-
-            for (x = _x0; x <= _x1; ++x)
-                setPixelSafe(x, _y0, color);
-
-            return;
-        }
-
-        // Line is Funk-aye
-        S32 dx1 = abs(dx);
-        S32 dy1 = abs(dy);
-
-        S32 px = 2 * dy1 - dx1;
-        S32 py = 2 * dx1 - dy1;
-
-        if (dy1 <= dx1)
-        {
-            if (dx >= 0)
-            {
-                x = _x0;
-                y = _y0;
-                xe = _x1;
-            }
-            else
-            {
-                x = _x1;
-                y = _y1;
-                xe = _x0;
-            }
-
-            setPixelSafe(x, y, color);
-
-            for (i = 0; x < xe; ++i)
-            {
-                x = x + 1;
-                if (px < 0)
-                    px = px + 2 * dy1;
-                else
-                {
-                    if ((dx < 0 && dy < 0) || (dx > 0 && dy > 0))
-                        y = y + 1;
-                    else 
-                        y = y - 1;
-
-                    px = px + 2 * (dy1 - dx1);
-                }
-
-                setPixelSafe(x, y, color);
-            }
-        }
-        else
-        {
-            if (dy >= 0)
-            {
-                x = _x0;
-                y = _y0;
-                ye = _y1;
-            }
-            else
-            {
-                x = _x1;
-                y = _y1;
-                ye = _y0;
-            }
-
-            setPixelSafe(x, y, color);
-
-            for (i = 0; y < ye; ++i)
-            {
-                y = y + 1;
-
-                if (py <= 0)
-                    py = py + 2 * dx1;
-                else
-                {
-                    if ((dx < 0 && dy < 0) || (dx > 0 && dy > 0))
-                        x = x + 1;
-                    else
-                        x = x - 1;
-
-                    py = py + 2 * (dx1 - dy1);
-                }
-
-                setPixelSafe(x, y, color);
-            }
-        }
+        PixelSheet2DHelper::DrawLine(*this, _x0, _y0, _x1, _y1, _color);
     }
 
     //////////////////////////////////////////
@@ -433,30 +322,7 @@ namespace Maze
         S32 _radius,
         ColorU32 const& _color)
     {
-        if (_radius <= 0)
-            return;
-
-        U32 color = _color.toRGBA_U8();
-
-        S32 x0 = 0;
-        S32 y0 = _radius;
-        S32 d = 3 - 2 * _radius;
-
-        while (y0 >= x0)
-        {
-            setPixelSafe(_x + x0, _y - y0, color);
-            setPixelSafe(_x + y0, _y - x0, color);
-            setPixelSafe(_x + y0, _y + x0, color);
-            setPixelSafe(_x + x0, _y + y0, color);
-            setPixelSafe(_x - x0, _y + y0, color);
-            setPixelSafe(_x - y0, _y + x0, color);
-            setPixelSafe(_x - y0, _y - x0, color);
-            setPixelSafe(_x - x0, _y - y0, color);
-            if (d < 0)
-                d += (4 * x0++ + 6);
-            else 
-                d += (4 * (x0++ - y0--) + 10);
-        }
+        PixelSheet2DHelper::DrawCircle(*this, _x, _y, _radius, _color);
     }
 
 
@@ -466,34 +332,7 @@ namespace Maze
         S32 _radius,
         ColorU32 const& _color)
     {
-        if (_radius <= 0)
-            return;
-
-        U32 color = _color.toRGBA_U8();
-
-        S32 x0 = 0;
-        S32 y0 = _radius;
-        S32 d = 3 - 2 * _radius;
-
-        auto _drawline = 
-            [&](S32 _sx, S32 _ex, S32 _ny)
-            {
-                for (S32 i = _sx; i <= _ex; i++)
-                    setPixelSafe(i, _ny, color);
-            };
-
-        while (y0 >= x0)
-        {
-            _drawline(_x - x0, _x + x0, _y - y0);
-            _drawline(_x - y0, _x + y0, _y - x0);
-            _drawline(_x - x0, _x + x0, _y + y0);
-            _drawline(_x - y0, _x + y0, _y + x0);
-
-            if (d < 0)
-                d += (4 * x0++ + 6);
-            else
-                d += (4 * (x0++ - y0--) + 10);
-        }
+        PixelSheet2DHelper::DrawFilledCircle(*this, _x, _y, _radius, _color);
     }
 
     //////////////////////////////////////////
@@ -514,32 +353,7 @@ namespace Maze
         S32 _w, S32 _h,
         ColorU32 const& _color)
     {
-        U32 color = _color.toRGBA_U8();
-
-        S32 x1 = _x + _w;
-        S32 y1 = _y + _h;
-
-        if (_x < 0)
-            _x = 0;
-        if (_x >= m_size.x)
-            _x = m_size.x;
-        if (_y < 0)
-            _y = 0;
-        if (_y >= m_size.y)
-            _y = m_size.y;
-
-        if (x1 < 0)
-            x1 = 0;
-        if (x1 >= m_size.x)
-            x1 = m_size.x;
-        if (y1 < 0)
-            y1 = 0;
-        if (y1 >= m_size.y)
-            y1 = m_size.y;
-
-        for (S32 y = _y; y < y1; ++y)
-            for (S32 x = _x; x < x1; ++x)
-                setPixelSafe(x, y, color);
+        PixelSheet2DHelper::DrawFilledRect(*this, _x, _y, _w, _h, _color);
     }
 
     //////////////////////////////////////////
@@ -561,103 +375,7 @@ namespace Maze
         S32 _x2, S32 _y2,
         ColorU32 const& _color)
     {
-        // _y2 is top
-        if (_y2 >= _y1 && _y2 >= _y0)
-        {
-        }
-        else
-        // _y1 is top
-        if (_y1 >= _y0 && _y1 >= _y2) 
-        {
-            // Swap 1 & 2
-            std::swap(_x1, _x2);
-            std::swap(_y1, _y2);
-        }
-        else 
-        // _y0 is top
-        {
-            // Swap 1 & 2
-            std::swap(_x0, _x2);
-            std::swap(_y0, _y2);
-        }
-
-        if (_y1 <= _y0)
-        {
-            // Swap 0 & 1
-            std::swap(_x0, _x1);
-            std::swap(_y0, _y1);
-        }
-
-        auto fillBottomFlatTriangle =
-            [&](S32 _tx0, S32 _ty0,
-                S32 _tx1, S32 _ty1,
-                S32 _tx2, S32 _ty2)
-            {
-                F32 invslope1 = F32(_tx1 - _tx0) / F32(_ty1 - _ty0);
-                F32 invslope2 = F32(_tx2 - _tx0) / F32(_ty2 - _ty0);
-
-                F32 curx1 = (F32)_tx0;
-                F32 curx2 = (F32)_tx0;
-
-                for (S32 scanlineY = _ty0; scanlineY > _ty2; --scanlineY)
-                {
-                    drawLine((S32)round(curx1), scanlineY, (S32)round(curx2), scanlineY, _color);
-                    curx1 -= invslope1;
-                    curx2 -= invslope2;
-                }
-                
-            };
-
-        auto fillTopFlatTriangle =
-            [&](S32 _tx0, S32 _ty0,
-                S32 _tx1, S32 _ty1,
-                S32 _tx2, S32 _ty2)
-        {
-            F32 invslope1 = F32(_tx1 - _tx0) / F32(_ty1 - _ty0);
-            F32 invslope2 = F32(_tx2 - _tx0) / F32(_ty2 - _ty0);
-
-            F32 curx1 = (F32)_tx0;
-            F32 curx2 = (F32)_tx0;
-
-            for (S32 scanlineY = _ty0; scanlineY <= _ty1; ++scanlineY)
-            {
-                drawLine((S32)round(curx1), scanlineY, (S32)round(curx2), scanlineY, _color);
-                curx1 += invslope1;
-                curx2 += invslope2;
-            }
-        };
-
-        if (_y1 == _y2)
-        {
-            fillTopFlatTriangle(
-                _x0, _y0,
-                _x1, _y1,
-                _x2, _y2);
-        }
-        else
-        if (_y0 == _y1)
-        {
-            fillBottomFlatTriangle(
-                _x2, _y2,
-                _x0, _y0,
-                _x1, _y1);
-        }
-        else
-        {
-            S32 x3 = (S32)(_x0 + ((F32)(_y1 - _y0) / (F32)(_y2 - _y0)) * (_x2 - _x0));
-            S32 y3 = _y1;
-
-            fillTopFlatTriangle(
-                _x0, _y0,
-                _x1, _y1,
-                x3, y3);
-
-            fillBottomFlatTriangle(
-                _x2, _y2,
-                x3, y3,
-                _x1, _y1);
-            
-        }
+        PixelSheet2DHelper::DrawFilledTriangle(*this, _x0, _y0, _x1, _y1, _x2, _y2, _color);
     }
 
     //////////////////////////////////////////
@@ -669,101 +387,7 @@ namespace Maze
         S32 _horizontalAlignment,
         S32 _verticalAlignment)
     {
-        PixelSheet2D const* asciiSymbols = GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8();
-
-        S32 rowSize = 8 * (S32)_scale;
-        S32 columnSize = 8 * (S32)_scale;
-
-        S32 rowsCount = 1;
-        S32 columnsCount = 0;
-
-        S32 columnsCounter = 0;
-
-        Char const* p = _text;
-        while (*p != 0)
-        {
-            if (*p == '\n')
-            {
-                ++rowsCount;
-
-                columnsCount = Math::Max(columnsCount, columnsCounter);
-                columnsCounter = 0;
-            }
-            else
-            {
-                ++columnsCounter;
-            }
-
-            ++p;
-        }
-        columnsCount = Math::Max(columnsCount, columnsCounter);
-
-
-        S32 sx = 0;
-        S32 sy = -rowSize;
-
-        S32 xShift = 0;
-        switch (_horizontalAlignment)
-        {
-        case 0:
-            break;
-        case 1:
-            xShift = -(columnSize * columnsCount) >> 1;
-            break;
-        case 2:
-            xShift = -columnSize * columnsCount;
-            break;
-        }
-        sx = xShift;
-
-        switch (_verticalAlignment)
-        {
-            case 0:
-                break;
-            case 1:
-                sy += (rowSize * rowsCount) >> 1;
-                break;
-            case 2:
-                sy += rowSize * rowsCount;
-                break;
-        }
-
-        p = _text;
-        while (*p != 0)
-        {
-            Char c = *p;
-
-            if (c == '\n')
-            {
-                sx = xShift;
-                sy -= rowSize;
-            }
-            else
-            {
-                S32 ox = (c - 32) % 16;
-                S32 oy = 5 - ((c - 32) / 16);
-
-                if (_scale > 1)
-                {
-                    for (U32 i = 0; i < 8; i++)
-                        for (U32 j = 0; j < 8; j++)
-                            if (asciiSymbols->getPixelRGBA_U8(i + ox * 8, j + oy * 8).r > 0)
-                                for (U32 is = 0; is < _scale; is++)
-                                    for (U32 js = 0; js < _scale; js++)
-                                        setPixelSafe(_x + sx + (i * _scale) + is, _y + sy + (j * _scale) + js, _color);
-                }
-                else
-                {
-                    for (U32 i = 0; i < 8; i++)
-                        for (U32 j = 0; j < 8; j++)
-                            if (asciiSymbols->getPixelRGBA_U8(i + ox * 8, j + oy * 8).r > 0)
-                                setPixelSafe(_x + sx + i,_y + sy + j, _color);
-                }
-                sx += 8 * _scale;
-            }
-
-            ++p;
-        }
+        PixelSheet2DHelper::DrawText(*this, _x, _y, _text, _color, _scale, _horizontalAlignment, _verticalAlignment);
     }
 
     //////////////////////////////////////////
@@ -781,24 +405,7 @@ namespace Maze
     //////////////////////////////////////////
     PixelSheet2D PixelSheet2D::upscaledCopy(S32 _scale)
     {
-        if (_scale <= 1)
-            return PixelSheet2D(*this);
-
-        PixelSheet2D newSheet(getSize() * _scale, getFormat());
-        
-        for (S32 _r = 0; _r < m_size.y; ++_r)
-        {
-            for (S32 _y = 0; _y < _scale; ++_y)
-            {
-                for (S32 _c = 0; _c < m_size.x; ++_c)
-                {
-                    for (S32 _x = 0; _x < _scale; ++_x)
-                        newSheet.setPixel(_c * _scale + _x, _r * _scale + _y, getPixel(_c, _r));
-                }
-            }
-        }
-
-        return newSheet;
+        return PixelSheet2DHelper::UpscaledCopy(*this, _scale);
     }
 
     //////////////////////////////////////////
@@ -810,39 +417,7 @@ namespace Maze
     //////////////////////////////////////////
     PixelSheet2D PixelSheet2D::downscaledCopy(S32 _scale, bool _roundAlpha)
     {
-        if (_scale <= 1)
-            return PixelSheet2D(*this);
-
-        MAZE_ERROR_RETURN_VALUE_IF(getFormat() != PixelFormat::RGBA_U8, PixelSheet2D(*this), "Unsupported pixel format!");
-
-        PixelSheet2D newSheet(getSize() / _scale, getFormat());
-
-        for (S32 _r = 0; _r < newSheet.m_size.y; ++_r)
-        {
-            for (S32 _c = 0; _c < newSheet.m_size.x; ++_c)
-            {
-                U32 r = 0;
-                U32 g = 0;
-                U32 b = 0;
-                U32 a = 0;
-                U32 count = _scale * _scale;
-                for (S32 _y = 0; _y < _scale; ++_y)
-                    for (S32 _x = 0; _x < _scale; ++_x)
-                    {
-                        ColorU32 srcPixel = getPixelRGBA_U8(_c * _scale + _x, _r * _scale + _y);
-                        r += srcPixel.r;
-                        g += srcPixel.g;
-                        b += srcPixel.b;
-                        a += srcPixel.a;
-                    }
-                ColorU32 newPixel(r / count, g / count, b / count, a / count);
-                if (_roundAlpha)
-                    newPixel.a = newPixel.a >= 128 ? 255 : 0;
-                newSheet.setPixel(_c, _r, newPixel);
-            }
-        }
-
-        return newSheet;
+        return PixelSheet2DHelper::DownscaledCopy(*this, _scale, _roundAlpha);
     }
 
     //////////////////////////////////////////
