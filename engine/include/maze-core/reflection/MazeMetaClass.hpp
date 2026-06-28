@@ -525,8 +525,21 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
+        // Note: std::is_default_constructible is unreliable here for classes with a
+        // protected/private default constructor that friends this class (libstdc++/libc++
+        // do not consistently honor that friendship when evaluating the trait), so this
+        // checks constructibility directly via expression SFINAE - written lexically inside
+        // GenericMetaClass<TClass>, this expression is evaluated with this class' (friend)
+        // access, so it correctly succeeds for friended protected/private constructors.
+        template <typename T, typename = void>
+        struct IsInstantiable : ::std::false_type {};
+
         template <typename T>
-        typename ::std::enable_if<(::std::is_abstract<T>::value || !(::std::is_default_constructible<T>::value)), T*>::type
+        struct IsInstantiable<T, decltype(void(new T()))> : ::std::true_type {};
+
+        //////////////////////////////////////////
+        template <typename T>
+        typename ::std::enable_if<(::std::is_abstract<T>::value || !IsInstantiable<T>::value), T*>::type
             createInstanceImpl() const
         {
             return nullptr;
@@ -534,7 +547,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename T>
-        typename ::std::enable_if<!(::std::is_abstract<T>::value) && ::std::is_default_constructible<T>::value, T*>::type
+        typename ::std::enable_if<!::std::is_abstract<T>::value && IsInstantiable<T>::value, T*>::type
             createInstanceImpl() const
         {
             return new TClass();

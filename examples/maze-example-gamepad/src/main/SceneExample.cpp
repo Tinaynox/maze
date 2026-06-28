@@ -27,7 +27,7 @@
 #include "SceneExample.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -176,7 +176,7 @@ namespace Maze
         EcsRenderScene::update(_dt);
 
         m_gamepadsCountText->setText("Gamepads Count: " +
-            StringHelper::ToString(GamepadManager::GetInstancePtr()->getGamepadsCount()));
+            StringHelper::ToString((S32)GamepadManager::GetInstancePtr()->getGamepadsCount()));
 
 #if (MAZE_PLATFORM != MAZE_PLATFORM_EMSCRIPTEN)
         m_detectGamepadsTimer += _dt;
@@ -309,7 +309,7 @@ namespace Maze
         }
 
         {
-            String str = "Id: " + StringHelper::ToString(gamepad->getId());
+            String str = "Id: " + StringHelper::ToString((S32)gamepad->getId());
             SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
@@ -385,7 +385,7 @@ namespace Maze
         }
 
         {
-            String str = "Device Id: " + StringHelper::ToString(gamepad->getDeviceId());
+            String str = "Device Id: " + StringHelper::ToString((S32)gamepad->getDeviceId());
             SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
@@ -401,7 +401,7 @@ namespace Maze
         }
 
         {
-            String str = "Axes: " + StringHelper::ToString(gamepad->getAxesCount());
+            String str = "Axes: " + StringHelper::ToString((S32)gamepad->getAxesCount());
             SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
@@ -434,7 +434,7 @@ namespace Maze
         }
 
         {
-            String str = "Buttons: " + StringHelper::ToString(gamepad->getButtonsCount());
+            String str = "Buttons: " + StringHelper::ToString((S32)gamepad->getButtonsCount());
             SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
