@@ -169,6 +169,12 @@ namespace Maze.Core
         internal extern static void Transform2DSetPivot(NativePtr nativeComponentPtr, ref Vec2F pivot);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static float Transform2DGetLocalRotation(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void Transform2DSetLocalRotation(NativePtr nativeComponentPtr, float angle);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void Transform2DGetAnchor(NativePtr nativeComponentPtr, out Vec2F outAnchor);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

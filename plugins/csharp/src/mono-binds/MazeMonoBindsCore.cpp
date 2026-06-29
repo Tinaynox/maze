@@ -596,6 +596,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline F32 Transform2DGetLocalRotation(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(Transform2D, 0.0f);
+        return _component->castRaw<Transform2D>()->getLocalRotation().toRadians();
+    }
+
+    //////////////////////////////////////////
+    inline void Transform2DSetLocalRotation(Component* _component, F32 _angle)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
+        _component->castRaw<Transform2D>()->setLocalRotation(Rotation2D(_angle));
+    }
+
+    //////////////////////////////////////////
     inline void Transform2DGetLocalTransform(Component* _component, TMat& _outTMat)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform2D);
@@ -867,6 +881,8 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(Transform2DSetAnchor);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetPivot);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DSetPivot);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DGetLocalRotation);
+        MAZE_CORE_MONO_BIND_FUNC(Transform2DSetLocalRotation);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetLocalTransform);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DSetLocalTransform);
         MAZE_CORE_MONO_BIND_FUNC(Transform2DGetWorldTransform);

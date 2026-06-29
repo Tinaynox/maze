@@ -44,6 +44,13 @@ namespace Maze.Core
             set { InternalCalls.Transform2DSetPivot(NativeComponentPtr, ref value); }
         }
 
+        // Rotation around the Z axis, in radians (counter-clockwise)
+        public float Rotation
+        {
+            get => InternalCalls.Transform2DGetLocalRotation(NativeComponentPtr);
+            set => InternalCalls.Transform2DSetLocalRotation(NativeComponentPtr, value);
+        }
+
         public TMat Transform
         {
             get { InternalCalls.Transform2DGetLocalTransform(NativeComponentPtr, out TMat tm); return tm; }
