@@ -457,7 +457,7 @@ namespace Maze
     //////////////////////////////////////////
     void EditorCSharpManager::loadCSharpAssembly()
     {
-        CSharpService::GetInstancePtr()->loadAppAssembly(MAZE_HCS("Assembly-CSharp.dll"));
+        CSharpService::GetInstancePtr()->loadAssembly(MAZE_HCS("Assembly-CSharp.dll"));
         updateConsoleCommands();
     }
 
@@ -557,93 +557,96 @@ namespace Maze
 
         m_consoleCommands.clear();
 
-        MonoImage* image = MonoEngine::GetAppAssemblyImage();
-        if (!image)
-            return;
-
-        MonoTableInfo const* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
-        S32 numTypes = mono_table_info_get_rows(typeDefinitionsTable);
-
-        for (S32 i = 0; i < numTypes; ++i)
+        for (MonoAssemblyData const& assemblyData : MonoEngine::GetAssembliesData())
         {
-            U32 cols[MONO_TYPEDEF_SIZE];
-            mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
-
-            CString typeNamespace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
-            CString typeName = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
-
-            MonoClass* monoClass = mono_class_from_name(
-                image,
-                typeNamespace,
-                typeName);
-
-            if (!monoClass)
+            MonoImage* image = assemblyData.assemblyImage;
+            if (!image)
                 continue;
 
-            if (mono_class_is_enum(monoClass) || mono_class_is_valuetype(monoClass))
-                continue;
+            MonoTableInfo const* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+            S32 numTypes = mono_table_info_get_rows(typeDefinitionsTable);
 
-            void* iter = NULL;
-            MonoMethod* method;
-            while ((method = mono_class_get_methods(monoClass, &iter)))
+            for (S32 i = 0; i < numTypes; ++i)
             {
-                if (!method)
+                U32 cols[MONO_TYPEDEF_SIZE];
+                mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
+
+                CString typeNamespace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+                CString typeName = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+
+                MonoClass* monoClass = mono_class_from_name(
+                    image,
+                    typeNamespace,
+                    typeName);
+
+                if (!monoClass)
                     continue;
 
-                uint32_t methodFlags = mono_method_get_flags(method, nullptr);
-
-                if (!(methodFlags & MONO_METHOD_ATTR_STATIC))
+                if (mono_class_is_enum(monoClass) || mono_class_is_valuetype(monoClass))
                     continue;
 
-                MonoCustomAttrInfo* methodAttrs = mono_custom_attrs_from_method(method);
-                if (!methodAttrs)
-                    continue;
-
-                for (S32 j = 0; j < methodAttrs->num_attrs; ++j)
+                void* iter = NULL;
+                MonoMethod* method;
+                while ((method = mono_class_get_methods(monoClass, &iter)))
                 {
-                    MonoCustomAttrEntry& entry = methodAttrs->attrs[j];
-                    MonoClass* attrClass = mono_method_get_class(entry.ctor);
+                    if (!method)
+                        continue;
 
-                    CString attrClassName = mono_class_get_name(attrClass);
-                    CString attrNamespace = mono_class_get_namespace(attrClass);
-                    if (strcmp(attrClassName, "ConsoleCommandAttribute") == 0 && strcmp(attrNamespace, "Maze.Console") == 0)
+                    uint32_t methodFlags = mono_method_get_flags(method, nullptr);
+
+                    if (!(methodFlags & MONO_METHOD_ATTR_STATIC))
+                        continue;
+
+                    MonoCustomAttrInfo* methodAttrs = mono_custom_attrs_from_method(method);
+                    if (!methodAttrs)
+                        continue;
+
+                    for (S32 j = 0; j < methodAttrs->num_attrs; ++j)
                     {
-                        MonoObject* attrObj = mono_custom_attrs_get_attr(methodAttrs, attrClass);
-                        if (attrObj)
+                        MonoCustomAttrEntry& entry = methodAttrs->attrs[j];
+                        MonoClass* attrClass = mono_method_get_class(entry.ctor);
+
+                        CString attrClassName = mono_class_get_name(attrClass);
+                        CString attrNamespace = mono_class_get_namespace(attrClass);
+                        if (strcmp(attrClassName, "ConsoleCommandAttribute") == 0 && strcmp(attrNamespace, "Maze.Console") == 0)
                         {
-                            MonoClassField* commandNameField = mono_class_get_field_from_name(attrClass, "m_CommandName");
-                            MonoClassField* argsCountField = mono_class_get_field_from_name(attrClass, "m_ArgsCount");
-                            MonoClassField* descriptionField = mono_class_get_field_from_name(attrClass, "m_Description");
-
-                            MonoString* commandNameMonoString;
-                            mono_field_get_value(attrObj, commandNameField, &commandNameMonoString);
-                            Char* commandNameCStr = mono_string_to_utf8(commandNameMonoString);
-
-                            S32 argsCount = 0;
-                            mono_field_get_value(attrObj, argsCountField, &argsCount);
-
-                            MonoString* descriptionMonoString;
-                            mono_field_get_value(attrObj, descriptionField, &descriptionMonoString);
-                            Char* descriptionCStr = mono_string_to_utf8(descriptionMonoString);
-                            
-                            if (commandNameCStr != nullptr)
+                            MonoObject* attrObj = mono_custom_attrs_get_attr(methodAttrs, attrClass);
+                            if (attrObj)
                             {
-                                HashedString commandName(commandNameCStr);
-                                m_consoleCommands.emplace(commandName, method);
+                                MonoClassField* commandNameField = mono_class_get_field_from_name(attrClass, "m_CommandName");
+                                MonoClassField* argsCountField = mono_class_get_field_from_name(attrClass, "m_ArgsCount");
+                                MonoClassField* descriptionField = mono_class_get_field_from_name(attrClass, "m_Description");
 
-                                ConsoleService::GetInstancePtr()->registerCommandHint(
-                                    commandName,
-                                    argsCount,
-                                    descriptionCStr != nullptr ? descriptionCStr : String());
+                                MonoString* commandNameMonoString;
+                                mono_field_get_value(attrObj, commandNameField, &commandNameMonoString);
+                                Char* commandNameCStr = mono_string_to_utf8(commandNameMonoString);
+
+                                S32 argsCount = 0;
+                                mono_field_get_value(attrObj, argsCountField, &argsCount);
+
+                                MonoString* descriptionMonoString;
+                                mono_field_get_value(attrObj, descriptionField, &descriptionMonoString);
+                                Char* descriptionCStr = mono_string_to_utf8(descriptionMonoString);
+
+                                if (commandNameCStr != nullptr)
+                                {
+                                    HashedString commandName(commandNameCStr);
+                                    m_consoleCommands.emplace(commandName, method);
+
+                                    ConsoleService::GetInstancePtr()->registerCommandHint(
+                                        commandName,
+                                        argsCount,
+                                        descriptionCStr != nullptr ? descriptionCStr : String());
+                                }
+
+                                mono_free(commandNameCStr);
+                                mono_free(descriptionCStr);
                             }
-
-                            mono_free(commandNameCStr);
-                            mono_free(descriptionCStr);
                         }
                     }
-                }
 
-                mono_custom_attrs_free(methodAttrs);
+                    mono_custom_attrs_free(methodAttrs);
+                }
             }
         }
 

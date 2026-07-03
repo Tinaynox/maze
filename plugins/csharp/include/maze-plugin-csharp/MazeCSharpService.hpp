@@ -76,10 +76,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MonoAssembly* loadEditorAssembly(HashedCString _csharpFile);
-
-        //////////////////////////////////////////
-        MonoAssembly* loadAppAssembly(HashedCString _csharpFile);
+        MonoAssembly* loadAssembly(HashedCString _csharpFile);
 
 
         //////////////////////////////////////////

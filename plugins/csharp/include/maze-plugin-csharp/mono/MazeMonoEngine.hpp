@@ -76,6 +76,22 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    struct MAZE_PLUGIN_CSHARP_API MonoAssemblyData
+    {
+        HashedString filePath;
+        MonoAssembly* assembly = nullptr;
+        MonoImage* assemblyImage = nullptr;
+
+        //////////////////////////////////////////
+        void resetAssembies()
+        {
+            assembly = nullptr;
+            assemblyImage = nullptr;
+        }
+    };
+
+
+    //////////////////////////////////////////
     // Class MonoEngine
     //
     //////////////////////////////////////////
@@ -104,10 +120,14 @@ namespace Maze
         static MonoImage* GetCoreAssemblyImage();
 
         //////////////////////////////////////////
-        static MonoAssembly* GetAppAssembly();
+        // All loaded non-core assemblies (in load order)
+        static Vector<MonoAssemblyData> const& GetAssembliesData();
 
         //////////////////////////////////////////
-        static MonoImage* GetAppAssemblyImage();
+        static MonoAssembly* GetAssembly(HashedCString _csharpFile);
+
+        //////////////////////////////////////////
+        static MonoImage* GetAssemblyImage(HashedCString _csharpFile);
 
         //////////////////////////////////////////
         static ScriptClassPtr const& GetMonoBehaviourClass();
@@ -183,10 +203,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        static MonoAssembly* LoadEditorAssembly(HashedCString _csharpFile);
-
-        //////////////////////////////////////////
-        static MonoAssembly* LoadAppAssembly(HashedCString _csharpFile);
+        // Loads (or reloads) a non-core assembly. The assembly is tracked
+        // by file path and restored automatically on ReloadAssemblies
+        static MonoAssembly* LoadAssembly(HashedCString _csharpFile);
 
 
         //////////////////////////////////////////

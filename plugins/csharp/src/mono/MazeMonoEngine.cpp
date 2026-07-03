@@ -107,21 +107,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    struct MAZE_PLUGIN_CSHARP_API MonoAssemblyData
-    {
-        HashedString filePath;
-        MonoAssembly* assembly = nullptr;
-        MonoImage* assemblyImage = nullptr;
-
-        //////////////////////////////////////////
-        void resetAssembies()
-        {
-            assembly = nullptr;
-            assemblyImage = nullptr;
-        }
-    };
-
-    //////////////////////////////////////////
     struct MAZE_PLUGIN_CSHARP_API CppTypeBindingData
     {
         HashedCString cppTypeName;
@@ -142,8 +127,7 @@ namespace Maze
         MonoDomain* appDomain = nullptr;
 
         MonoAssemblyData coreAssemblyData;
-        MonoAssemblyData editorAssemblyData; // #TODO: Rework abstraction
-        MonoAssemblyData appAssemblyData;
+        Vector<MonoAssemblyData> assembliesData; // All non-core assemblies (in load order)
 
         bool debugEnabled = true;
 
@@ -562,11 +546,10 @@ namespace Maze
 
         LoadCoreAssembly(g_monoEngineData->coreAssemblyData.filePath);
 
-        if (!g_monoEngineData->editorAssemblyData.filePath.empty())
-            LoadEditorAssembly(g_monoEngineData->editorAssemblyData.filePath);
-
-        if (!g_monoEngineData->appAssemblyData.filePath.empty())
-            LoadAppAssembly(g_monoEngineData->appAssemblyData.filePath);
+        // LoadAssembly updates existing entries in place, so index iteration is safe
+        for (Size i = 0, in = g_monoEngineData->assembliesData.size(); i < in; ++i)
+            if (!g_monoEngineData->assembliesData[i].filePath.empty())
+                LoadAssembly(g_monoEngineData->assembliesData[i].filePath.asHashedCString());
 
         EventManager::GetInstancePtr()->broadcastEventImmediate<MonoPreReloadEvent>();
         EventManager::GetInstancePtr()->broadcastEventImmediate<MonoReloadEvent>();
@@ -678,8 +661,8 @@ namespace Maze
         g_monoEngineData->graphicsTypesBinding = MonoGraphicsTypesBinding();
 
         g_monoEngineData->coreAssemblyData.resetAssembies();
-        g_monoEngineData->editorAssemblyData.resetAssembies();
-        g_monoEngineData->appAssemblyData.resetAssembies();
+        for (MonoAssemblyData& assemblyData : g_monoEngineData->assembliesData)
+            assemblyData.resetAssembies();
 
         g_monoEngineData->appDomain = nullptr;
 
@@ -832,45 +815,39 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MonoAssembly* MonoEngine::LoadEditorAssembly(HashedCString _csharpFile)
+    MonoAssembly* MonoEngine::LoadAssembly(HashedCString _csharpFile)
     {
-        g_monoEngineData->editorAssemblyData.filePath = _csharpFile;
+        // Find or add the assembly slot (tracked by file path)
+        MonoAssemblyData* assemblyData = nullptr;
+        for (MonoAssemblyData& data : g_monoEngineData->assembliesData)
+        {
+            if (data.filePath == _csharpFile)
+            {
+                assemblyData = &data;
+                break;
+            }
+        }
+
+        if (!assemblyData)
+        {
+            g_monoEngineData->assembliesData.emplace_back();
+            assemblyData = &g_monoEngineData->assembliesData.back();
+            assemblyData->filePath = _csharpFile;
+        }
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_csharpFile);
         if (!assetFile)
             return nullptr;
 
-        g_monoEngineData->editorAssemblyData.assembly = LoadMonoAssembly(assetFile);
-        MAZE_ERROR_RETURN_VALUE_IF(!g_monoEngineData->editorAssemblyData.assembly, nullptr, "Failed to load mono assembly: %s!");
-        g_monoEngineData->editorAssemblyData.assemblyImage = mono_assembly_get_image(g_monoEngineData->editorAssemblyData.assembly);
+        assemblyData->assembly = LoadMonoAssembly(assetFile);
+        MAZE_ERROR_RETURN_VALUE_IF(!assemblyData->assembly, nullptr, "Failed to load mono assembly: %s!", _csharpFile.str);
+        assemblyData->assemblyImage = mono_assembly_get_image(assemblyData->assembly);
 
-        LoadAssemblyClasses(g_monoEngineData->editorAssemblyData.assembly);
+        LoadAssemblyClasses(assemblyData->assembly);
 
-        EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpEditorAssemblyLoadedEvent>();
         EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpAssemblyLoadedEvent>();
 
-        return g_monoEngineData->editorAssemblyData.assembly;
-    }
-
-    //////////////////////////////////////////
-    MonoAssembly* MonoEngine::LoadAppAssembly(HashedCString _csharpFile)
-    {
-        g_monoEngineData->appAssemblyData.filePath = _csharpFile;
-
-        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_csharpFile);
-        if (!assetFile)
-            return nullptr;
-
-        g_monoEngineData->appAssemblyData.assembly = LoadMonoAssembly(assetFile);
-        MAZE_ERROR_RETURN_VALUE_IF(!g_monoEngineData->appAssemblyData.assembly, nullptr, "Failed to load mono assembly: %s!");
-        g_monoEngineData->appAssemblyData.assemblyImage = mono_assembly_get_image(g_monoEngineData->appAssemblyData.assembly);
-
-        LoadAssemblyClasses(g_monoEngineData->appAssemblyData.assembly);
-
-        EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpAppAssemblyLoadedEvent>();
-        EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpAssemblyLoadedEvent>();
-
-        return g_monoEngineData->appAssemblyData.assembly;
+        return assemblyData->assembly;
     }
 
     //////////////////////////////////////////
@@ -892,15 +869,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MonoAssembly* MonoEngine::GetAppAssembly()
+    Vector<MonoAssemblyData> const& MonoEngine::GetAssembliesData()
     {
-        return g_monoEngineData->appAssemblyData.assembly;
+        return g_monoEngineData->assembliesData;
     }
 
     //////////////////////////////////////////
-    MonoImage* MonoEngine::GetAppAssemblyImage()
+    MonoAssembly* MonoEngine::GetAssembly(HashedCString _csharpFile)
     {
-        return g_monoEngineData->appAssemblyData.assemblyImage;
+        for (MonoAssemblyData const& assemblyData : g_monoEngineData->assembliesData)
+            if (assemblyData.filePath == _csharpFile)
+                return assemblyData.assembly;
+
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
+    MonoImage* MonoEngine::GetAssemblyImage(HashedCString _csharpFile)
+    {
+        for (MonoAssemblyData const& assemblyData : g_monoEngineData->assembliesData)
+            if (assemblyData.filePath == _csharpFile)
+                return assemblyData.assemblyImage;
+
+        return nullptr;
     }
 
     //////////////////////////////////////////

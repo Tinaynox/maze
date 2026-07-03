@@ -356,7 +356,7 @@ namespace Maze
                 MAZE_LOAD_PLATFORM_PLUGIN(CSharp);
                 MAZE_LOAD_PLATFORM_PLUGIN(CSharpEditorTools);
 
-                CSharpService::GetInstancePtr()->loadEditorAssembly(MAZE_HCS("maze-editor-lib.dll"));
+                CSharpService::GetInstancePtr()->loadAssembly(MAZE_HCS("maze-editor-lib.dll"));
 
                 setCurrentProgress(0.975f);
                 break;
