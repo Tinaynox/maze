@@ -38,6 +38,12 @@ set(CMAKE_CSharp_FLAGS "/langversion:7")
 
 
 ##########################################
+# Mono can only read portable PDBs, not classic Windows PDBs
+set(CMAKE_CSharp_FLAGS_DEBUG "/debug:portable /optimize- /warn:3 /errorreport:prompt /define:DEBUG")
+set(CMAKE_CSharp_FLAGS_RELWITHDEBINFO "/debug:portable /optimize-")
+
+
+##########################################
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
 
