@@ -94,23 +94,16 @@ namespace Maze.Core
             float cz = (float)Math.Cos(angleZ);
             float sz = (float)Math.Sin(angleZ);
 
-            // #TODO: simplify
-            return
-                new TMat(
-                    cy, 0,  -sy,
-                    0, 1, 0,
-                    sy, 0, cy,
-                    0, 0, 0).Transform(
-                    new TMat(
-                        1, 0, 0,
-                        0, cx, sx,
-                        0,  -sx, cx,
-                        0, 0, 0)).Transform(
-                        new TMat(
-                            cz, sz, 0,
-                             -sz, cz, 0,
-                            0, 0, 1,
-                            0, 0, 0));
+            // Expanded product Z * X * Y (Z applied first, then X, then Y) -
+            // same as RotY.Transform(RotX).Transform(RotZ)
+            float sxsy = sx * sy;
+            float sxcy = sx * cy;
+
+            return new TMat(
+                cz * cy + sz * sxsy,   sz * cx,   sz * sxcy - cz * sy,
+                cz * sxsy - sz * cy,   cz * cx,   sz * sy + cz * sxcy,
+                cx * sy,               -sx,       cx * cy,
+                0, 0, 0);
         }
 
         public static TMat CreateScale(Vec3F scale)

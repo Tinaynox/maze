@@ -192,22 +192,16 @@ namespace Maze
         F32 cz = cosf(_angleZ);
         F32 sz = sinf(_angleZ);
 
-        return 
-            TMat(
-                (ValueType)cy, (ValueType)0, (ValueType)-sy,
-                (ValueType)0, (ValueType)1, (ValueType)0,
-                (ValueType)sy, (ValueType)0, (ValueType)cy,
-                (ValueType)0, (ValueType)0, (ValueType)0).transform(
-                TMat(
-                    (ValueType)1, (ValueType)0, (ValueType)0,
-                    (ValueType)0, (ValueType)cx, (ValueType)sx,
-                    (ValueType)0, (ValueType)-sx, (ValueType)cx,
-                    (ValueType)0, (ValueType)0, (ValueType)0)).transform(
-                    TMat(
-                        (ValueType)cz, (ValueType)sz, (ValueType)0,
-                        (ValueType)-sz, (ValueType)cz, (ValueType)0,
-                        (ValueType)0, (ValueType)0, (ValueType)1,
-                        (ValueType)0, (ValueType)0, (ValueType)0));
+        // Expanded product Z * X * Y (Z applied first, then X, then Y) -
+        // same as RotY.transform(RotX).transform(RotZ)
+        F32 sxsy = sx * sy;
+        F32 sxcy = sx * cy;
+
+        return TMat(
+            (ValueType)(cz * cy + sz * sxsy), (ValueType)(sz * cx), (ValueType)(sz * sxcy - cz * sy),
+            (ValueType)(cz * sxsy - sz * cy), (ValueType)(cz * cx), (ValueType)(sz * sy + cz * sxcy),
+            (ValueType)(cx * sy),             (ValueType)(-sx),     (ValueType)(cx * cy),
+            (ValueType)0, (ValueType)0, (ValueType)0);
     }
 
     //////////////////////////////////////////
