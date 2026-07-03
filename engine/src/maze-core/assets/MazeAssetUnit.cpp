@@ -121,7 +121,7 @@ namespace Maze
 
         m_loadingState = AssetUnitLoadingState::Loading;
 
-#if (1)
+#if (0)
         // #TODO: async load test
         if (TaskManager::GetInstancePtr())
         {
@@ -169,7 +169,7 @@ namespace Maze
 
         m_loadingState = AssetUnitLoadingState::Unloading;
 
-#if (1)
+#if (0)
         // #TODO: async load test
         if (TaskManager::GetInstancePtr())
         {

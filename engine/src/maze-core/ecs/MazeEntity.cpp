@@ -36,15 +36,45 @@ namespace Maze
 {
     //////////////////////////////////////////
     // Snapshot for callback loops - callbacks may add/remove components,
-    // which would invalidate iterators of the contiguous container
-    static inline void CollectComponents(
-        Entity::ComponentsContainer const& _components,
-        Vector<ComponentPtr>& _outComponents)
+    // which would invalidate iterators of the contiguous container.
+    // Components added mid-loop must not be visited (addComponent awakens
+    // them itself), so the set is fixed at construction time. Stored inplace
+    // to avoid heap allocation for typical component counts
+    class ComponentsSnapshot
     {
-        _outComponents.reserve(_components.size());
-        for (auto const& componentData : _components)
-            _outComponents.push_back(componentData.second);
-    }
+    public:
+
+        //////////////////////////////////////////
+        inline explicit ComponentsSnapshot(Entity::ComponentsContainer const& _components)
+        {
+            Size size = _components.size();
+            ComponentPtr* dst = m_inplace;
+            if (size > c_inplaceCapacity)
+            {
+                m_fallback.resize(size);
+                dst = m_fallback.data();
+            }
+
+            m_begin = dst;
+            m_end = dst + size;
+            for (auto const& componentData : _components)
+                *dst++ = componentData.second;
+        }
+
+        //////////////////////////////////////////
+        inline ComponentPtr const* begin() const { return m_begin; }
+
+        //////////////////////////////////////////
+        inline ComponentPtr const* end() const { return m_end; }
+
+    private:
+        static Size const c_inplaceCapacity = 16;
+
+        ComponentPtr m_inplace[c_inplaceCapacity];
+        Vector<ComponentPtr> m_fallback;
+        ComponentPtr const* m_begin = nullptr;
+        ComponentPtr const* m_end = nullptr;
+    };
 
 
     //////////////////////////////////////////
@@ -365,9 +395,7 @@ namespace Maze
         m_transitionFlags |= static_cast<U8>(TransitionFlags::Awakened);
 
 
-        // #TODO: Remove
-        Vector<ComponentPtr> components;
-        CollectComponents(m_components, components);
+        ComponentsSnapshot components(m_components);
         for (ComponentPtr const& component : components)
             component->processEntityAwakened();
     }
@@ -394,8 +422,7 @@ namespace Maze
 
         if (m_scene)
         {
-            Vector<ComponentPtr> components;
-            CollectComponents(m_components, components);
+            ComponentsSnapshot components(m_components);
             for (ComponentPtr const& component : components)
                 component->processSceneReset();
 
@@ -408,8 +435,7 @@ namespace Maze
         {
             m_scene->processEntityAdded(this);
 
-            Vector<ComponentPtr> components;
-            CollectComponents(m_components, components);
+            ComponentsSnapshot components(m_components);
             for (ComponentPtr const& component : components)
                 component->processSceneSet();
         }
@@ -450,8 +476,7 @@ namespace Maze
                 {
                     m_world->processEntityActiveChanged(getId());
 
-                    Vector<ComponentPtr> components;
-                    CollectComponents(m_components, components);
+                    ComponentsSnapshot components(m_components);
 
                     if (currentActiveInHierarchy)
                     {
@@ -474,8 +499,7 @@ namespace Maze
         if (!getEcsWorld())
             return;
 
-        Vector<ComponentPtr> components;
-        CollectComponents(m_components, components);
+        ComponentsSnapshot components(m_components);
         for (ComponentPtr const& component : components)
             component->processEvent(_event);
     }

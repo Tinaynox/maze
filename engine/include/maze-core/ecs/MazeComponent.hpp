@@ -100,43 +100,39 @@ namespace Maze
 
         //////////////////////////////////////////
         inline EntityCopyData()
-            : m_stackDepth(0)
+            : m_storage(MakeShared<Storage>())
+            , m_stackDepth(0)
         {
-            // #TODO: OPTIMIZE
-            m_entities.reset(new Map<Entity*, Entity*>());
-            m_components.reset(new Map<Component*, Component*>());
-            m_componentProperties.reset(new Vector<ComponentPropertyData>());
-            m_entityProperties.reset(new Vector<EntityPropertyData>());
         }
 
         //////////////////////////////////////////
         inline Map<Entity*, Entity*>& getEntities()
         {
-            return *m_entities.get();
+            return m_storage->entities;
         }
 
         //////////////////////////////////////////
         inline Map<Entity*, Entity*> const& getEntities() const
         {
-            return *m_entities.get();
+            return m_storage->entities;
         }
 
         //////////////////////////////////////////
         inline Map<Component*, Component*>& getComponents()
         {
-            return *m_components.get();
+            return m_storage->components;
         }
 
         //////////////////////////////////////////
         inline Vector<ComponentPropertyData>& getComponentProperties()
         {
-            return *m_componentProperties.get();
+            return m_storage->componentProperties;
         }
 
         //////////////////////////////////////////
         inline Vector<EntityPropertyData>& getEntityProperties()
         {
-            return *m_entityProperties.get();
+            return m_storage->entityProperties;
         }
 
         //////////////////////////////////////////
@@ -162,10 +158,20 @@ namespace Maze
         inline void setScene(EcsScene* _scene) { m_scene = _scene; }
 
     private:
-        SharedPtr<Map<Entity*, Entity*>> m_entities;
-        SharedPtr<Map<Component*, Component*>> m_components;
-        SharedPtr<Vector<ComponentPropertyData>> m_componentProperties;
-        SharedPtr<Vector<EntityPropertyData>> m_entityProperties;
+
+        //////////////////////////////////////////
+        // All copies of one EntityCopyData share the same storage - the object
+        // is passed by value through the recursive entity copy, so the
+        // containers live in a single shared heap block
+        struct Storage
+        {
+            Map<Entity*, Entity*> entities;
+            Map<Component*, Component*> components;
+            Vector<ComponentPropertyData> componentProperties;
+            Vector<EntityPropertyData> entityProperties;
+        };
+
+        SharedPtr<Storage> m_storage;
         S32 m_stackDepth;
 
         EcsWorld* m_world = nullptr;
