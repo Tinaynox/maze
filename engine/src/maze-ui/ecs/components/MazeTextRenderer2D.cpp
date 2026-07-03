@@ -26,10 +26,10 @@
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
 #include "maze-ui/ecs/components/MazeTextRenderer2D.hpp"
+#include "maze-ui/helpers/MazeTextRenderer2DHelper.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
-#include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -108,7 +108,7 @@ namespace Maze
     //////////////////////////////////////////
     TextRenderer2D::TextRenderer2D()
     {
-        
+
     }
 
     //////////////////////////////////////////
@@ -149,7 +149,8 @@ namespace Maze
             _copyData))
             return false;
 
-        updateMeshData();
+        enableFlag(Flags::MeshDataDirty);
+        enableFlag(Flags::MaterialDirty);
 
         return true;
     }
@@ -162,7 +163,7 @@ namespace Maze
 
         m_text = _text;
 
-        updateMeshData();
+        enableFlag(Flags::MeshDataDirty);
     }
 
     //////////////////////////////////////////
@@ -173,7 +174,7 @@ namespace Maze
 
         m_text = TextHelper::PopOneSymbolUTF8(m_text);
 
-        updateMeshData();
+        enableFlag(Flags::MeshDataDirty);
     }
 
     //////////////////////////////////////////
@@ -181,7 +182,7 @@ namespace Maze
     {
         return TextHelper::GetSymbolsCountUTF8(m_text);
     }
-    
+
     //////////////////////////////////////////
     void TextRenderer2D::setColor(ColorU32 _color)
     {
@@ -190,7 +191,12 @@ namespace Maze
 
         m_color = _color;
 
-        updateMeshData(); // #TODO: Rework
+        // Glyph colors may derive from the base color via color tags ('#{-}') -
+        // only then a full relayout is required
+        if (m_hasActiveColorTags)
+            enableFlag(Flags::MeshDataDirty);
+        else
+            enableFlag(Flags::GlyphColorsDirty);
     }
 
     //////////////////////////////////////////
@@ -201,7 +207,7 @@ namespace Maze
 
         m_styles = _style;
 
-        updateMeshData();
+        enableFlag(Flags::MeshDataDirty);
     }
 
     //////////////////////////////////////////
@@ -224,19 +230,23 @@ namespace Maze
             getFontMaterial()->eventMaterialChanged.subscribe(this, &TextRenderer2D::notifyFontMaterialMaterialChanged);
         }
 
-        updateMeshData();
-        updateMaterial();
+        enableFlag(Flags::MeshDataDirty);
+        enableFlag(Flags::MaterialDirty);
     }
 
     //////////////////////////////////////////
     Vec2F TextRenderer2D::getTextEnd(Size _rowIndex)
     {
-        if (!getFontMaterial())
-            m_lastGlyphOffset = Vec2F(0.0f, 0.0f);
+        // Apply pending changes so the result reflects the actual state
+        prepareForRender();
+
+        FontMaterialPtr const& fontMaterial = getFontMaterial();
+        if (!fontMaterial || !fontMaterial->getFont() || !fontMaterial->getFont()->getDefaultFont())
+            return Vec2F::c_zero;
 
         if (m_text.empty())
         {
-            F32 linespace = getFontMaterial()->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
+            F32 linespace = fontMaterial->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
 
             F32 y = calculateY(linespace, 1);
             m_lastGlyphOffset = Vec2F(0.0f, y);
@@ -250,47 +260,63 @@ namespace Maze
         F32 _totalTextHeight,
         Size _actualRowsCount)
     {
-        F32 y = 0.0f;
+        FontMaterialPtr const& fontMaterial = getFontMaterial();
+        if (!m_transform || !fontMaterial)
+            return 0.0f;
 
-        if (!m_transform || !getFontMaterial())
-            return y;
+        FontPtr const& font = fontMaterial->getFont();
 
-        Vec2F const& size = m_transform->getSize();
+        F32 ascent = font->getDefaultFont()->getAscender(m_fontSize);
+        F32 descent = font->getDefaultFont()->getDescender(m_fontSize);
+        F32 linespace = font->getLineSpacing(m_fontSize) * getLineSpacingScale();
 
-        F32 ascent = getFontMaterial()->getFont()->getDefaultFont()->getAscender(m_fontSize);
-        F32 descent = getFontMaterial()->getFont()->getDefaultFont()->getDescender(m_fontSize);
-        F32 linespace = getFontMaterial()->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
+        F32 y = TextRenderer2DHelper::CalculateTextPositionY(
+            m_verticalAlignment,
+            m_transform->getSize().y,
+            ascent,
+            descent,
+            linespace,
+            _totalTextHeight,
+            _actualRowsCount);
 
-        switch (m_verticalAlignment)
-        {
-        case VerticalAlignment2D::Top:
-            y = size.y - ascent;
-            break;
-        case VerticalAlignment2D::Middle:
-            y = (size.y - _totalTextHeight) * 0.5f - descent + F32(_actualRowsCount - 1) * linespace;
-            break;
-        case VerticalAlignment2D::Bottom:
-            y = -descent + F32(_actualRowsCount - 1) * linespace;
-            break;
-        default:
-            MAZE_NOT_IMPLEMENTED;
-            break;
-        }
-        
         return m_pixelPerfect ? Math::Round(y) : y;
+    }
+
+    //////////////////////////////////////////
+    void TextRenderer2D::prepareForRender()
+    {
+        if (m_updatingMeshData)
+            return;
+
+        m_updatingMeshData = true;
+
+        if (getFlag(Flags::MeshDataDirty))
+        {
+            ensureAllGlyphs();
+            updateMeshDataNow();
+        }
+
+        if (getFlag(Flags::GlyphColorsDirty))
+            updateGlyphColors();
+
+        if (getFlag(Flags::MaterialDirty))
+            updateMaterial();
+
+        if (getFlag(Flags::ModelMatricesDirty))
+            updateMeshRendererModelMatrices();
+
+        if (getFlag(Flags::ColorDirty))
+            updateMeshRendererColors();
+
+        m_updatingMeshData = false;
     }
 
     //////////////////////////////////////////
     void TextRenderer2D::updateMeshData()
     {
-        if (m_debugUpdatingMeshData)
-            return;
-
-        m_debugUpdatingMeshData = true;
-        ensureAllGlyphs();
-        updateMaterial();
-        updateMeshDataNow();
-        m_debugUpdatingMeshData = false;
+        enableFlag(Flags::MeshDataDirty);
+        enableFlag(Flags::MaterialDirty);
+        prepareForRender();
     }
 
     //////////////////////////////////////////
@@ -299,20 +325,22 @@ namespace Maze
         if (!m_meshRenderer)
             return;
 
-        if (!getFontMaterial() || !getFontMaterial()->getFont())
+        FontMaterialPtr const& fontMaterial = getFontMaterial();
+        if (!fontMaterial || !fontMaterial->getFont())
             return;
 
-        if (!getFontMaterial()->getFont()->getDefaultFont())
+        FontPtr const& font = fontMaterial->getFont();
+        TrueTypeFontPtr const& defaultFont = font->getDefaultFont();
+        if (!defaultFont)
             return;
 
-        auto ttfPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFPage(m_fontSize, m_bold);
-        auto ttfOutlineThicknessPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFOutlineThicknessPage(m_fontSize, m_bold, m_outlineThickness);
+        auto ttfPage = &defaultFont->ensureTTFPage(m_fontSize, m_bold);
+        auto ttfOutlineThicknessPage = &defaultFont->ensureTTFOutlineThicknessPage(m_fontSize, m_bold, m_outlineThickness);
 
-        getFontMaterial()->getFont()->getDefaultFont()->ensureGlyph(L'x', m_fontSize, m_bold, *ttfPage);
-        getFontMaterial()->getFont()->getDefaultFont()->ensureGlyph(L' ', m_fontSize, m_bold, *ttfPage);
-        getFontMaterial()->getFont()->getDefaultFont()->ensureGlyph(L'.', m_fontSize, m_bold, *ttfPage);
+        defaultFont->ensureGlyph(L'x', m_fontSize, m_bold, *ttfPage);
+        defaultFont->ensureGlyph(L' ', m_fontSize, m_bold, *ttfPage);
+        defaultFont->ensureGlyph(L'.', m_fontSize, m_bold, *ttfPage);
 
-        U32 prevChar = 0;
         U32 curChar = 0;
         String::iterator it = m_text.begin();
         String::iterator end = m_text.end();
@@ -322,7 +350,7 @@ namespace Maze
             if (curChar == ' ' || curChar == '\t' || curChar == '\n')
                 continue;
 
-            auto glyphStorageData = getFontMaterial()->getFont()->getGlyphStorageData(curChar);
+            auto glyphStorageData = font->getGlyphStorageData(curChar);
             if (glyphStorageData)
             {
                 if (glyphStorageData->getTrueTypeFont())
@@ -335,124 +363,74 @@ namespace Maze
             }
             else
             {
-                ttfPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFPage(m_fontSize, m_bold);
+                ttfPage = &defaultFont->ensureTTFPage(m_fontSize, m_bold);
 
                 if (m_outlineThickness)
-                    ttfOutlineThicknessPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFOutlineThicknessPage(m_fontSize, m_bold, m_outlineThickness);
+                    ttfOutlineThicknessPage = &defaultFont->ensureTTFOutlineThicknessPage(m_fontSize, m_bold, m_outlineThickness);
             }
-           
-            getFontMaterial()->getFont()->ensureGlyphFromStorage(glyphStorageData, curChar, m_fontSize, m_bold, *ttfPage);
+
+            font->ensureGlyphFromStorage(glyphStorageData, curChar, m_fontSize, m_bold, *ttfPage);
 
             if (m_outlineThickness)
-                getFontMaterial()->getFont()->ensureOutlinedGlyphFromStorage(glyphStorageData, curChar, m_fontSize, m_bold, m_outlineThickness, *ttfOutlineThicknessPage);
+                font->ensureOutlinedGlyphFromStorage(glyphStorageData, curChar, m_fontSize, m_bold, m_outlineThickness, *ttfOutlineThicknessPage);
         }
     }
 
     //////////////////////////////////////////
     void TextRenderer2D::updateMeshDataNow()
     {
+        if (!m_canvasRenderer || !m_meshRenderer || !m_transform)
+            return;
+
         m_boundingSize = Vec2F::c_zero;
 
-        if (!m_canvasRenderer)
-            return;
-        
-        if (!m_meshRenderer)
-            return;
+        FontMaterialPtr const& fontMaterial = getFontMaterial();
+        Font* font = fontMaterial ? fontMaterial->getFont().get() : nullptr;
 
-        Vec2F const& size = m_transform->getSize();
-
-        if (!getFontMaterial() || !getFontMaterial()->getFont() || !getFontMaterial()->getFont()->getDefaultFont() || m_text.empty())
+        if (!font || !font->getDefaultFont() || m_text.empty())
         {
             m_meshRenderer->resize(0);
             m_localMatrices.clear();
             m_localColors.clear();
+            m_outlineQuadsCount = 0u;
+            m_hasActiveColorTags = false;
+
+            disableFlag(Flags::MeshDataDirty);
+            disableFlag(Flags::GlyphColorsDirty);
             return;
         }
+
+        TrueTypeFontPtr const& defaultFont = font->getDefaultFont();
+        Vec2F const& size = m_transform->getSize();
 
         String finalText = m_text;
 
         // Process color tags
         Deque<Pair<Size, ColorF128>> colorTags;
+        m_hasActiveColorTags = false;
         if (getColorTags())
         {
-            Size startTagPosition = finalText.find("#{");
-            Size endTagPosition = finalText.find('}', startTagPosition);
-            while (startTagPosition != String::npos && endTagPosition != String::npos)
-            {
-                String colorString = finalText.substr(startTagPosition + 2, endTagPosition - startTagPosition - 2);
-                ColorF128 color;
-
-                if (colorString == "-")
-                    color = getColor();
-                else
-                    color = ColorU32::FromString(colorString, ',');
-
-                finalText.erase(startTagPosition, endTagPosition - startTagPosition + 1);
-                colorTags.push_back(std::make_pair(startTagPosition, color));
-
-                startTagPosition = finalText.find("#{");
-                endTagPosition = finalText.find('}', startTagPosition);
-            }
+            m_hasActiveColorTags = TextRenderer2DHelper::ExtractColorTags(
+                finalText,
+                ColorF128(m_color.toVec4F32()),
+                colorTags);
         }
 
         // Process symbols limit policy
-        if ((m_symbolsLimit > 0) && (m_symbolsLimitPolicy != TextRenderer2DSymbolsLimitPolicy::None))
-        {
-            bool textCropped = false;
-
-            while (TextHelper::GetSymbolsCountUTF8(finalText) > m_symbolsLimit)
-            {
-                finalText = TextHelper::PopOneSymbolUTF8(finalText);
-                textCropped = true;
-            }
-
-            switch (m_symbolsLimitPolicy.toEnum())
-            {
-                case TextRenderer2DSymbolsLimitPolicy::Dot:
-                {
-                    if (textCropped)
-                    {
-                        finalText = TextHelper::PopOneSymbolUTF8(finalText);
-                        finalText += ".";
-                    }
-
-                    break;
-                }
-                case TextRenderer2DSymbolsLimitPolicy::ThreeDots:
-                {
-                    if (textCropped)
-                    {
-                        finalText = TextHelper::PopOneSymbolUTF8(finalText);
-                        finalText = TextHelper::PopOneSymbolUTF8(finalText);
-                        finalText = TextHelper::PopOneSymbolUTF8(finalText);
-                        finalText += "...";
-                    }
-
-                    break;
-                }
-
-                default:
-                    break;
-            }
-        }
+        TextRenderer2DHelper::ApplySymbolsLimitPolicy(finalText, m_symbolsLimit, m_symbolsLimitPolicy);
 
         FontGlyphStorageData* glyphStorageData = nullptr;
-        auto ttfPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFPage(m_fontSize, m_bold);
-        auto ttfOutlineThicknessPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFOutlineThicknessPage(m_fontSize, m_bold, m_outlineThickness);
+        auto ttfPage = &defaultFont->ensureTTFPage(m_fontSize, m_bold);
+        auto ttfOutlineThicknessPage = &defaultFont->ensureTTFOutlineThicknessPage(m_fontSize, m_bold, m_outlineThickness);
 
-        F32 ascent = getFontMaterial()->getFont()->getDefaultFont()->getAscender(m_fontSize);
-        F32 descent = getFontMaterial()->getFont()->getDefaultFont()->getDescender(m_fontSize);
-        F32 linespace = getFontMaterial()->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
+        F32 linespace = font->getLineSpacing(m_fontSize) * getLineSpacingScale();
 
-        Rect2F xBounds = getFontMaterial()->getFont()->getDefaultFont()->ensureGlyph(L'x', m_fontSize, m_bold, *ttfPage).bounds;
-
-        F32 hSpace = static_cast<F32>(getFontMaterial()->getFont()->getDefaultFont()->ensureGlyph(L' ', m_fontSize, m_bold, *ttfPage).advance);
+        F32 hSpace = static_cast<F32>(defaultFont->ensureGlyph(L' ', m_fontSize, m_bold, *ttfPage).advance);
         F32 vSpace = linespace;
 
-        
 
         Vector<TempGlyphData> glyphs;
-        glyphs.reserve(getSymbolsCount());
+        glyphs.reserve(TextHelper::GetSymbolsCountUTF8(finalText));
 
         Size quadsCount = 0u;
         Size outlineQuadsCount = 0u;
@@ -470,7 +448,7 @@ namespace Maze
             while ((it != end) && (curChar = utf8::next(it, end)))
             {
                 // #TODO: Rework - take kerning from the current glyph storage
-                F32 kerning = getFontMaterial()->getFont()->getKerning(prevChar, curChar, m_fontSize);
+                F32 kerning = font->getKerning(prevChar, curChar, m_fontSize);
                 x += kerning;
                 prevChar = curChar;
 
@@ -496,7 +474,7 @@ namespace Maze
 
                 TempGlyphData glyphData;
 
-                glyphData.glyphStorageData = getFontMaterial()->getFont()->getGlyphStorageData(curChar);
+                glyphData.glyphStorageData = font->getGlyphStorageData(curChar);
                 if (glyphStorageData != glyphData.glyphStorageData)
                 {
                     glyphStorageData = glyphData.glyphStorageData;
@@ -513,19 +491,19 @@ namespace Maze
                     }
                     else
                     {
-                        ttfPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFPage(m_fontSize, m_bold);
+                        ttfPage = &defaultFont->ensureTTFPage(m_fontSize, m_bold);
 
                         if (m_outlineThickness)
-                            ttfOutlineThicknessPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFOutlineThicknessPage(m_fontSize, m_bold, m_outlineThickness);
+                            ttfOutlineThicknessPage = &defaultFont->ensureTTFOutlineThicknessPage(m_fontSize, m_bold, m_outlineThickness);
                     }
                 }
-                glyphData.glyph = &(getFontMaterial()->getFont()->ensureGlyphFromStorage(glyphStorageData, curChar, m_fontSize, m_bold, *ttfPage));
+                glyphData.glyph = &(font->ensureGlyphFromStorage(glyphStorageData, curChar, m_fontSize, m_bold, *ttfPage));
                 if (glyphData.glyph->bounds.size.x > 0.0 && glyphData.glyph->bounds.size.y > 0.0)
                 {
 
                     // #TODO: Entities size here
                     /*
-                    if (glyphStorageData && 
+                    if (glyphStorageData &&
                         glyphStorageData->type == FontGlyphStorageType::Entity &&
                         scaleEntitiesToFit &&
                         (-glyphData.glyph->bounds.position.y > (F32)m_fontSize))
@@ -536,10 +514,10 @@ namespace Maze
                     */
 
                     if (m_outlineThickness)
-                        glyphData.outlineThicknessGlyph = &(getFontMaterial()->getFont()->ensureOutlinedGlyphFromStorage(
+                        glyphData.outlineThicknessGlyph = &(font->ensureOutlinedGlyphFromStorage(
                             glyphStorageData, curChar, m_fontSize, m_bold, m_outlineThickness, *ttfOutlineThicknessPage));
 
-                
+
                     if (glyphData.glyphStorageData)
                     {
                         switch (glyphData.glyphStorageData->type)
@@ -595,7 +573,8 @@ namespace Maze
         ColorF128 currentGlyphColor = ColorF128(m_color.toVec4F32());
 
         Size curCharOffset = 0;
-        F32 xAlignOffset = calculateXAlignOffset(rowLengths, currentRow);
+        F32 xAlignOffset = TextRenderer2DHelper::CalculateXAlignOffset(
+            m_widthPolicy, m_horizontalAlignment, size.x, rowLengths[currentRow]);
         if (m_pixelPerfect)
             xAlignOffset = Math::Round(xAlignOffset);
 
@@ -605,12 +584,13 @@ namespace Maze
         m_meshRenderer->resize((S32)totalQuadsCount);
         m_localMatrices.resize(totalQuadsCount);
         m_localColors.resize(totalQuadsCount);
+        m_outlineQuadsCount = outlineQuadsCount;
 
         // Build mesh
         while ((it != end) && (curChar = utf8::next(it, end)))
         {
             // #TODO: Rework - take kerning from the current glyph storage
-            F32 kerning = getFontMaterial()->getFont()->getKerning(prevChar, curChar, m_fontSize);
+            F32 kerning = font->getKerning(prevChar, curChar, m_fontSize);
             x += kerning;
             prevChar = curChar;
 
@@ -644,7 +624,8 @@ namespace Maze
             if (curChar == '\n')
             {
                 ++currentRow;
-                xAlignOffset = calculateXAlignOffset(rowLengths, currentRow);
+                xAlignOffset = TextRenderer2DHelper::CalculateXAlignOffset(
+                    m_widthPolicy, m_horizontalAlignment, size.x, rowLengths[currentRow]);
                 if (m_pixelPerfect)
                     xAlignOffset = Math::Round(xAlignOffset);
 
@@ -659,7 +640,7 @@ namespace Maze
 
             TempGlyphData& glyphData = glyphs[glyphIndex];
             ++glyphIndex;
-            
+
 
             if (glyphData.glyphStorageData && glyphData.glyphStorageData->type == FontGlyphStorageType::Entity)
             {
@@ -711,8 +692,10 @@ namespace Maze
         m_boundingSize.x = rowLengthMax;
         m_boundingSize.y = totalTextHeight;
 
-        updateMeshRendererModelMatrices();
-        updateMeshRendererColors();
+        disableFlag(Flags::MeshDataDirty);
+        disableFlag(Flags::GlyphColorsDirty);
+        enableFlag(Flags::ModelMatricesDirty);
+        enableFlag(Flags::ColorDirty);
     }
 
     //////////////////////////////////////////
@@ -725,6 +708,32 @@ namespace Maze
             m_meshRenderer->setMaterial(getFontMaterial()->fetchMaterial(m_fontSize, m_bold));
         else
             m_meshRenderer->setMaterial(MaterialPtr());
+
+        disableFlag(Flags::MaterialDirty);
+    }
+
+    //////////////////////////////////////////
+    void TextRenderer2D::updateGlyphColors()
+    {
+        disableFlag(Flags::GlyphColorsDirty);
+
+        Size quadsCount = m_localColors.size();
+        Size outlineQuadsCount = Math::Min(m_outlineQuadsCount, quadsCount);
+
+        Vec4F outlineColor = m_outlineColor.toVec4F32();
+        for (Size i = 0; i < outlineQuadsCount; ++i)
+            m_localColors[i] = outlineColor;
+
+        // Tagged glyph colors can't be restored without a relayout,
+        // so only rewrite them when no color tags are active
+        if (!m_hasActiveColorTags)
+        {
+            Vec4F color = m_color.toVec4F32();
+            for (Size i = outlineQuadsCount; i < quadsCount; ++i)
+                m_localColors[i] = color;
+        }
+
+        enableFlag(Flags::ColorDirty);
     }
 
     //////////////////////////////////////////
@@ -736,7 +745,8 @@ namespace Maze
         m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadNullPivotMesh());
         m_meshRenderer->setFlag(Component::Flags::SerializationDisabled, true);
 
-        updateMeshData();
+        enableFlag(Flags::MeshDataDirty);
+        enableFlag(Flags::MaterialDirty);
     }
 
     //////////////////////////////////////////
@@ -750,6 +760,8 @@ namespace Maze
         Size colorsCount = m_meshRenderer->getColors().size();
         for (Size i = 0; i < colorsCount; ++i)
             m_meshRenderer->setColor(i, m_localColors[i] * vertexColor);
+
+        disableFlag(Flags::ColorDirty);
     }
 
     //////////////////////////////////////////
@@ -778,39 +790,8 @@ namespace Maze
                 tm.setTranslation(tm.getTranslation2D() + pixelPerfectShift);
             m_meshRenderer->setModelMatrix(i, tm);
         }
-    }
 
-    //////////////////////////////////////////
-    F32 TextRenderer2D::calculateXAlignOffset(FastVector<F32> const& _rowLengths, U32 _currentRow)
-    {
-        Vec2F const& size = m_transform->getSize();
-
-        if (m_widthPolicy == TextRenderer2DWidthPolicy::Abut)
-        {
-            switch (m_horizontalAlignment)
-            {
-                case HorizontalAlignment2D::Left: return Math::Min(0.0f, size.x - _rowLengths[_currentRow]);
-                case HorizontalAlignment2D::Right: return Math::Max(0.0f, size.x - _rowLengths[_currentRow]);
-                case HorizontalAlignment2D::Center: return (size.x - _rowLengths[_currentRow]) / 2.0f;
-                default:
-                    MAZE_NOT_IMPLEMENTED;
-                    break;
-            }
-        }
-        else
-        {
-            switch (m_horizontalAlignment)
-            {
-                case HorizontalAlignment2D::Left: return 0.0f;
-                case HorizontalAlignment2D::Right: return size.x - _rowLengths[_currentRow];
-                case HorizontalAlignment2D::Center: return (size.x - _rowLengths[_currentRow]) / 2.0f;
-                default:
-                    MAZE_NOT_IMPLEMENTED;
-                    break;
-            }
-        }
-
-        return 0.0f;
+        disableFlag(Flags::ModelMatricesDirty);
     }
 
     //////////////////////////////////////////
@@ -829,7 +810,7 @@ namespace Maze
 
         MAZE_ERROR_RETURN_IF(_quadIndex >= m_localMatrices.size(), "Out of bounds!");
         MAZE_ERROR_RETURN_IF(_quadIndex >= m_localColors.size(), "Out of bounds!");
-        
+
         Vec2F sizeV = (Vec2F)_glyph.bounds.size;
         Vec2F positionShiftV = _position + _glyph.bounds.position;
 
@@ -838,9 +819,8 @@ namespace Maze
         m_localMatrices[_quadIndex] = localTransform;
         m_localColors[_quadIndex] = _color.toVec4F32();
 
-        Vec4F const vertexColor = Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer ? m_canvasRenderer->getAlpha() : 1.0f);
+        // Final colors are pushed by updateMeshRendererColors (ColorDirty pass)
 
-        m_meshRenderer->setColor(_quadIndex, (Vec4F)_color * vertexColor);
         m_meshRenderer->setUV0(
             _quadIndex,
             Vec4F(
@@ -857,29 +837,32 @@ namespace Maze
     //////////////////////////////////////////
     void TextRenderer2D::notifyFontMaterialTexturesChanged()
     {
-        // #TODO: dirty flag here
-        updateMeshData();
+        enableFlag(Flags::MeshDataDirty);
     }
 
     //////////////////////////////////////////
     void TextRenderer2D::notifyFontMaterialMaterialChanged()
     {
-        updateMaterial();
+        enableFlag(Flags::MaterialDirty);
     }
 
     //////////////////////////////////////////
     Vec2F TextRenderer2D::calculateRequiredSizeForText(CString _text)
     {
-        if (!getFontMaterial() || !getFontMaterial()->getFont() || !getFontMaterial()->getFont()->getDefaultFont())
+        FontMaterialPtr const& fontMaterial = getFontMaterial();
+        if (!fontMaterial || !fontMaterial->getFont() || !fontMaterial->getFont()->getDefaultFont())
             return Vec2F::c_zero;
 
         if (!_text || !*_text)
             return Vec2F::c_zero;
 
-        auto ttfPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFPage(m_fontSize, m_bold);
+        FontPtr const& font = fontMaterial->getFont();
+        TrueTypeFontPtr const& defaultFont = font->getDefaultFont();
 
-        F32 hSpace = static_cast<F32>(getFontMaterial()->getFont()->getDefaultFont()->ensureGlyph(L' ', m_fontSize, m_bold, *ttfPage).advance);
-        F32 linespace = getFontMaterial()->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
+        auto ttfPage = &defaultFont->ensureTTFPage(m_fontSize, m_bold);
+
+        F32 hSpace = static_cast<F32>(defaultFont->ensureGlyph(L' ', m_fontSize, m_bold, *ttfPage).advance);
+        F32 linespace = font->getLineSpacing(m_fontSize) * getLineSpacingScale();
 
         F32 rowLengthMax = 0.0f;
         F32 x = 0.0f;
@@ -892,7 +875,7 @@ namespace Maze
 
         while ((it != end) && (curChar = utf8::next(it, end)))
         {
-            x += getFontMaterial()->getFont()->getKerning(prevChar, curChar, m_fontSize);
+            x += font->getKerning(prevChar, curChar, m_fontSize);
             prevChar = curChar;
 
             if (getColorTags() && curChar == '#' && it != end && *it == '{')
@@ -915,13 +898,13 @@ namespace Maze
                 continue;
             }
 
-            FontGlyphStorageData* glyphStorageData = getFontMaterial()->getFont()->getGlyphStorageData(curChar);
+            FontGlyphStorageData* glyphStorageData = font->getGlyphStorageData(curChar);
             if (glyphStorageData && glyphStorageData->getTrueTypeFont())
                 ttfPage = &glyphStorageData->getTrueTypeFont()->ensureTTFPage(m_fontSize, m_bold);
             else
-                ttfPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFPage(m_fontSize, m_bold);
+                ttfPage = &defaultFont->ensureTTFPage(m_fontSize, m_bold);
 
-            FontGlyph const& glyph = getFontMaterial()->getFont()->ensureGlyphFromStorage(glyphStorageData, curChar, m_fontSize, m_bold, *ttfPage);
+            FontGlyph const& glyph = font->ensureGlyphFromStorage(glyphStorageData, curChar, m_fontSize, m_bold, *ttfPage);
             x += glyph.advance;
 
             if (glyphStorageData &&
@@ -946,18 +929,18 @@ namespace Maze
         TextRenderer2D* _textRenderer2D)
     {
         if (_textRenderer2D->getTransform()->isSizeChanged())
-            _textRenderer2D->updateMeshData();
-        else
-        {
-            if (_textRenderer2D->getTransform()->isWorldTransformChanged())
-                _textRenderer2D->updateMeshRendererModelMatrices();
+            _textRenderer2D->enableFlag(TextRenderer2D::Flags::MeshDataDirty);
 
-            if (_textRenderer2D->getCanvasRenderer()->isAlphaDirty())
-                _textRenderer2D->updateMeshRendererColors();
-        }
+        if (_textRenderer2D->getTransform()->isWorldTransformChanged())
+            _textRenderer2D->enableFlag(TextRenderer2D::Flags::ModelMatricesDirty);
+
+        if (_textRenderer2D->getCanvasRenderer()->isAlphaDirty())
+            _textRenderer2D->enableFlag(TextRenderer2D::Flags::ColorDirty);
+
+        _textRenderer2D->prepareForRender();
     }
-    
-            
-    
+
+
+
 } // namespace Maze
 //////////////////////////////////////////

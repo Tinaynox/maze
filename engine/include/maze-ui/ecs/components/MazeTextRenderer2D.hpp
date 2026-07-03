@@ -108,6 +108,18 @@ namespace Maze
         //////////////////////////////////////////
         friend class Entity;
 
+        //////////////////////////////////////////
+        enum class Flags : U8
+        {
+            None = 0,
+
+            MeshDataDirty = MAZE_BIT(0),        // Full glyph relayout (ensureAllGlyphs + updateMeshDataNow)
+            ColorDirty = MAZE_BIT(1),           // Push m_localColors * canvas alpha to the mesh renderer
+            ModelMatricesDirty = MAZE_BIT(2),   // Push world-transformed m_localMatrices to the mesh renderer
+            MaterialDirty = MAZE_BIT(3),        // Refetch material (font material/size/bold changed)
+            GlyphColorsDirty = MAZE_BIT(4),     // Rewrite m_localColors from m_color/m_outlineColor without relayout
+        };
+
     public:
 
         //////////////////////////////////////////
@@ -119,6 +131,31 @@ namespace Maze
 
         //////////////////////////////////////////
         MeshRendererInstancedPtr const& getMeshRenderer() const { return m_meshRenderer; }
+
+
+        //////////////////////////////////////////
+        inline U8 getFlags() const { return m_flags; }
+
+        //////////////////////////////////////////
+        inline void setFlags(U8 _flags) { m_flags = _flags; }
+
+        //////////////////////////////////////////
+        inline void setFlag(Flags _flag, bool _value)
+        {
+            if (_value)
+                setFlags(m_flags | static_cast<U8>(_flag));
+            else
+                setFlags(m_flags & ~static_cast<U8>(_flag));
+        }
+
+        //////////////////////////////////////////
+        inline bool getFlag(Flags _flag) const { return (m_flags & static_cast<U8>(_flag)) != 0; }
+
+        //////////////////////////////////////////
+        inline void enableFlag(Flags _flag) { setFlag(_flag, true); }
+
+        //////////////////////////////////////////
+        inline void disableFlag(Flags _flag) { setFlag(_flag, false); }
 
 
         //////////////////////////////////////////
@@ -169,7 +206,8 @@ namespace Maze
 
             m_fontSize = _fontSize;
 
-            updateMeshData();
+            enableFlag(Flags::MeshDataDirty);
+            enableFlag(Flags::MaterialDirty);
         }
 
         //////////////////////////////////////////
@@ -183,7 +221,7 @@ namespace Maze
 
             m_lineSpacingScale = _value;
 
-            updateMeshData();
+            enableFlag(Flags::MeshDataDirty);
         }
 
 
@@ -243,7 +281,7 @@ namespace Maze
 
             m_horizontalAlignment = _horizontalAlignment;
 
-            updateMeshData();
+            enableFlag(Flags::MeshDataDirty);
         }
 
 
@@ -258,7 +296,7 @@ namespace Maze
 
             m_verticalAlignment = _verticalAlignment;
 
-            updateMeshData();
+            enableFlag(Flags::MeshDataDirty);
         }
 
 
@@ -273,7 +311,7 @@ namespace Maze
 
             m_pixelPerfect = _value;
 
-            updateMeshRendererModelMatrices();
+            enableFlag(Flags::ModelMatricesDirty);
         }
 
 
@@ -286,7 +324,7 @@ namespace Maze
 
             m_symbolsLimit = _symbolsLimit;
 
-            updateMeshData();
+            enableFlag(Flags::MeshDataDirty);
         }
 
         //////////////////////////////////////////
@@ -304,7 +342,7 @@ namespace Maze
 
             m_symbolsLimitPolicy = _value;
 
-            updateMeshData();
+            enableFlag(Flags::MeshDataDirty);
         }
 
 
@@ -319,7 +357,7 @@ namespace Maze
 
             m_widthPolicy = _value;
 
-            updateMeshData();
+            enableFlag(Flags::MeshDataDirty);
         }
 
         //////////////////////////////////////////
@@ -333,7 +371,7 @@ namespace Maze
 
             m_outlineThickness = _outlineThickness;
 
-            updateMeshData();
+            enableFlag(Flags::MeshDataDirty);
         }
 
         //////////////////////////////////////////
@@ -347,7 +385,8 @@ namespace Maze
 
             m_outlineColor = _color;
 
-            updateMeshData();
+            // Outline quads are never affected by color tags - cheap recolor is enough
+            enableFlag(Flags::GlyphColorsDirty);
         }
 
 
@@ -362,7 +401,8 @@ namespace Maze
 
             m_bold = _bold;
 
-            updateMeshData();
+            enableFlag(Flags::MeshDataDirty);
+            enableFlag(Flags::MaterialDirty);
         }
 
 
@@ -371,6 +411,12 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // Processes all pending dirty flags. Called by the render system
+        // once per frame; can be called manually to flush pending changes
+        void prepareForRender();
+
+        //////////////////////////////////////////
+        // Immediate full rebuild (flushes all pending changes right away)
         void updateMeshData();
 
         //////////////////////////////////////////
@@ -409,11 +455,12 @@ namespace Maze
         void updateMaterial();
 
         //////////////////////////////////////////
-        virtual void processEntityAwakened() MAZE_OVERRIDE;
-
+        // Rewrites m_localColors from m_color/m_outlineColor without relayout
+        void updateGlyphColors();
 
         //////////////////////////////////////////
-        F32 calculateXAlignOffset(FastVector<F32> const& _rowLengths, U32 _currentRow);
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
+
 
         //////////////////////////////////////////
         void setGlyphQuad(
@@ -467,12 +514,21 @@ namespace Maze
         bool m_bold = false;
 
     private:
+        U8 m_flags = 0u;
+
         Vector<TMat> m_localMatrices;
         Vector<Vec4F> m_localColors;
 
+        // Outline quads occupy [0, m_outlineQuadsCount) of the local buffers
+        Size m_outlineQuadsCount = 0u;
+
+        // True when the current text actually contains color tags -
+        // glyph colors then depend on the tags and require a full relayout
+        bool m_hasActiveColorTags = false;
+
         Vec2F m_lastGlyphOffset = Vec2F::c_zero;
 
-        bool m_debugUpdatingMeshData = false;
+        bool m_updatingMeshData = false;
     };
 
 
