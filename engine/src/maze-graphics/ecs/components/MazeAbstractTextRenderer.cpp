@@ -55,7 +55,12 @@ namespace Maze
     // Class AbstractTextRenderer
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AbstractTextRenderer, Component);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AbstractTextRenderer, Component,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(U32, fontSize, 32u, getFontSize, setFontSize),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(HorizontalAlignment2D, horizontalAlignment, HorizontalAlignment2D::Left, getHorizontalAlignment, setHorizontalAlignment),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(VerticalAlignment2D, verticalAlignment, VerticalAlignment2D::Top, getVerticalAlignment, setVerticalAlignment));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(AbstractTextRenderer);

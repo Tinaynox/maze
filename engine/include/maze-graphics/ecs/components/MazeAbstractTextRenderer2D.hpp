@@ -48,6 +48,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(CanvasRenderer);
+    MAZE_USING_SHARED_PTR(MeshRendererInstanced);
 
 
     //////////////////////////////////////////
@@ -68,6 +69,18 @@ namespace Maze
         //////////////////////////////////////////
         friend class Entity;
 
+        //////////////////////////////////////////
+        enum class Flags : U8
+        {
+            None = 0,
+
+            MeshDataDirty = MAZE_BIT(0),        // Full text relayout (updateMeshDataNow)
+            ColorDirty = MAZE_BIT(1),           // Push m_localColors * mesh color to the mesh renderer
+            ModelMatricesDirty = MAZE_BIT(2),   // Push world-transformed m_localMatrices to the mesh renderer
+            MaterialDirty = MAZE_BIT(3),        // Refetch material
+            GlyphColorsDirty = MAZE_BIT(4),     // Rewrite m_localColors without relayout (renderers with per-glyph colors)
+        };
+
     public:
 
         //////////////////////////////////////////
@@ -80,16 +93,69 @@ namespace Maze
         //////////////////////////////////////////
         CanvasRendererPtr const& getCanvasRenderer() const { return m_canvasRenderer; }
 
+        //////////////////////////////////////////
+        MeshRendererInstancedPtr const& getMeshRenderer() const { return m_meshRenderer; }
+
 
         //////////////////////////////////////////
         inline Vec2F const& getBoundingSize() const { return m_boundingSize; }
 
 
         //////////////////////////////////////////
-        virtual bool getPixelPerfect() const MAZE_ABSTRACT;
+        inline U8 getFlags() const { return m_flags; }
 
         //////////////////////////////////////////
-        virtual void setPixelPerfect(bool _value) MAZE_ABSTRACT;
+        inline void setFlags(U8 _flags) { m_flags = _flags; }
+
+        //////////////////////////////////////////
+        inline void setFlag(Flags _flag, bool _value)
+        {
+            if (_value)
+                setFlags(m_flags | static_cast<U8>(_flag));
+            else
+                setFlags(m_flags & ~static_cast<U8>(_flag));
+        }
+
+        //////////////////////////////////////////
+        inline bool getFlag(Flags _flag) const { return (m_flags & static_cast<U8>(_flag)) != 0; }
+
+        //////////////////////////////////////////
+        inline void enableFlag(Flags _flag) { setFlag(_flag, true); }
+
+        //////////////////////////////////////////
+        inline void disableFlag(Flags _flag) { setFlag(_flag, false); }
+
+
+        //////////////////////////////////////////
+        virtual bool getPixelPerfect() const { return m_pixelPerfect; }
+
+        //////////////////////////////////////////
+        virtual void setPixelPerfect(bool _value)
+        {
+            if (m_pixelPerfect == _value)
+                return;
+
+            m_pixelPerfect = _value;
+
+            enableFlag(Flags::ModelMatricesDirty);
+        }
+
+
+        //////////////////////////////////////////
+        // Processes all pending dirty flags. Called by the render system
+        // once per frame; can be called manually to flush pending changes
+        void prepareForRender();
+
+        //////////////////////////////////////////
+        // Immediate full rebuild (flushes all pending changes right away)
+        void updateMeshData();
+
+
+        //////////////////////////////////////////
+        void updateMeshRendererColors();
+
+        //////////////////////////////////////////
+        void updateMeshRendererModelMatrices();
 
     protected:
 
@@ -98,7 +164,7 @@ namespace Maze
 
         //////////////////////////////////////////
         using Component::init;
-        
+
         //////////////////////////////////////////
         bool init(RenderSystem* _renderSystem = nullptr);
 
@@ -110,12 +176,52 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        virtual void processTextDataChanged() MAZE_OVERRIDE
+        {
+            enableFlag(Flags::MeshDataDirty);
+            enableFlag(Flags::MaterialDirty);
+        }
+
+        //////////////////////////////////////////
+        virtual void processColorChanged() MAZE_OVERRIDE
+        {
+            enableFlag(Flags::ColorDirty);
+        }
+
+
+        //////////////////////////////////////////
+        // Rebuilds m_localMatrices/m_localColors and the mesh from the current text data
+        virtual void updateMeshDataNow() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void updateMaterial() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        // Rewrites m_localColors without relayout (GlyphColorsDirty)
+        virtual void updateGlyphColors() { disableFlag(Flags::GlyphColorsDirty); }
+
+        //////////////////////////////////////////
+        // Uniform color multiplier for the whole mesh (ColorDirty pass)
+        virtual Vec4F calculateMeshColor() const;
+
     protected:
 
         Transform2DPtr m_transform;
         CanvasRendererPtr m_canvasRenderer;
+        MeshRendererInstancedPtr m_meshRenderer;
 
         Vec2F m_boundingSize = Vec2F::c_zero;
+
+        bool m_pixelPerfect = true;
+
+        Vector<TMat> m_localMatrices;
+        Vector<Vec4F> m_localColors;
+
+    private:
+        U8 m_flags = 0u;
+        bool m_updatingMeshData = false;
     };
 
 

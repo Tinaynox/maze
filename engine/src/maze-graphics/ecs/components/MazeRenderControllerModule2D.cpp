@@ -202,7 +202,6 @@ namespace Maze
         m_canvasGroupsSample = _world->requestInclusiveSample<CanvasGroup>();
         m_canvasRenderersSample = _world->requestInclusiveSample<CanvasRenderer>();
         m_spriteRenderer2DsSample =  _world->requestInclusiveSample<SpriteRenderer2D>();
-        m_systemTextRenderer2DsSample =  _world->requestInclusiveSample<SystemTextRenderer2D>();
         m_lineRenderers2DSample = _world->requestInclusiveSample<LineRenderer2D, Transform2D>();
 
         m_sizePolicy2D = _world->requestInclusiveSample<SizePolicy2D, Transform2D>();
@@ -490,21 +489,6 @@ namespace Maze
             {
                 if (_canvasRenderer->getTransform()->isHierarchyChanged())
                     _canvasRenderer->dirtyAlpha();
-            });
-
-        m_systemTextRenderer2DsSample->query(
-            [](Entity* _entity, SystemTextRenderer2D* _systemTextRenderer2D)
-            {
-                if (_systemTextRenderer2D->getTransform()->isSizeChanged())
-                    _systemTextRenderer2D->updateMeshData();
-                else
-                {
-                    if (_systemTextRenderer2D->getTransform()->isWorldTransformChanged())
-                        _systemTextRenderer2D->updateMeshRendererModelMatrices();
-
-                    if (_systemTextRenderer2D->getCanvasRenderer()->isAlphaDirty())
-                        _systemTextRenderer2D->updateMeshRendererColors();
-                }
             });
 
         m_world->broadcastEventImmediate<Render2DPostUpdateEvent>(dt);

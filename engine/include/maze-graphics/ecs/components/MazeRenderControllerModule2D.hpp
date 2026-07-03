@@ -38,7 +38,6 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
@@ -215,7 +214,6 @@ namespace Maze
         SharedPtr<GenericInclusiveEntitiesSample<CanvasGroup>> m_canvasGroupsSample;
         SharedPtr<GenericInclusiveEntitiesSample<CanvasRenderer>> m_canvasRenderersSample;
         SharedPtr<GenericInclusiveEntitiesSample<SpriteRenderer2D>> m_spriteRenderer2DsSample;
-        SharedPtr<GenericInclusiveEntitiesSample<SystemTextRenderer2D>> m_systemTextRenderer2DsSample;
         SharedPtr<GenericInclusiveEntitiesSample<LineRenderer2D, Transform2D>> m_lineRenderers2DSample;
         SharedPtr<GenericInclusiveEntitiesSample<SizePolicy2D, Transform2D>> m_sizePolicy2D;
 

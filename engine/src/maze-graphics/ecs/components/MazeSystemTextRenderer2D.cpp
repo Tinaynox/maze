@@ -29,7 +29,6 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
-#include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -37,6 +36,8 @@
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
+#include "maze-graphics/helpers/MazeSystemFontHelper.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -58,12 +59,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SystemTextRenderer2D, AbstractTextRenderer2D,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(SystemFontPtr, systemFont, SystemFontPtr(), getSystemFont, setSystemFont),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(U32, fontSize, 32u, getFontSize, setFontSize),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(HorizontalAlignment2D, horizontalAlignment, HorizontalAlignment2D::Left, getHorizontalAlignment, setHorizontalAlignment),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(VerticalAlignment2D, verticalAlignment, VerticalAlignment2D::Top, getVerticalAlignment, setVerticalAlignment));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(SystemFontPtr, systemFont, SystemFontPtr(), getSystemFont, setSystemFont));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SystemTextRenderer2D);
@@ -71,18 +67,14 @@ namespace Maze
 
     //////////////////////////////////////////
     SystemTextRenderer2D::SystemTextRenderer2D()
-        : m_color(ColorU32::c_white)
-        , m_fontSize(32)
-        , m_horizontalAlignment(HorizontalAlignment2D::Left)
-        , m_verticalAlignment(VerticalAlignment2D::Top)
     {
-        
+
     }
 
     //////////////////////////////////////////
     SystemTextRenderer2D::~SystemTextRenderer2D()
     {
-        
+
     }
 
     //////////////////////////////////////////
@@ -117,31 +109,7 @@ namespace Maze
             _copyData))
             return false;
 
-        updateMeshData();
-
         return true;
-    }
-
-    //////////////////////////////////////////
-    void SystemTextRenderer2D::setText(String const& _text)
-    {
-        if (m_text == _text)
-            return;
-
-        m_text = _text;
-
-        updateMeshData();
-    }
-    
-    //////////////////////////////////////////
-    void SystemTextRenderer2D::setColor(ColorU32 _color)
-    {
-        if (m_color == _color)
-            return;
-
-        m_color = _color;
-
-        updateMeshRendererColors();
     }
 
     //////////////////////////////////////////
@@ -152,75 +120,87 @@ namespace Maze
 
         m_systemFont = _systemFont;
 
-        updateMaterial();
-        updateMeshData();
+        enableFlag(Flags::MeshDataDirty);
+        enableFlag(Flags::MaterialDirty);
     }
 
     //////////////////////////////////////////
-    void SystemTextRenderer2D::updateMeshData()
+    void SystemTextRenderer2D::updateMeshDataNow()
     {
-        if (!m_canvasRenderer)
-            return;
-        
-        if (!m_meshRenderer)
+        if (!m_canvasRenderer || !m_meshRenderer || !m_transform)
             return;
 
-        if (!m_systemFont)
+        m_boundingSize = Vec2F::c_zero;
+
+        Texture2DPtr const& systemFontTexture = m_systemFont ? m_systemFont->texture : nullptr;
+        if (!systemFontTexture || m_text.empty())
+        {
+            m_meshRenderer->resize(0);
+            m_localMatrices.clear();
+            m_localColors.clear();
+
+            disableFlag(Flags::MeshDataDirty);
+            disableFlag(Flags::GlyphColorsDirty);
             return;
+        }
 
         Vec2F const& size = m_transform->getSize();
 
-        Texture2DPtr const& systemFontTexture = m_systemFont->texture;
-        if (!systemFontTexture)
-            return;
-
-
         F32 fontScale = (F32)m_fontSize / (F32)(m_systemFont->charSize.x - m_systemFont->outline * 2);
 
-        S32 const rowSize = m_systemFont->charSize.y;
+        F32 const rowSize = (F32)m_systemFont->charSize.y;
+        F32 const rowAdvance = rowSize * m_lineSpacingScale;
 
         S32 rowsCount = 1;
         S32 maxColumnsCount = 0;
         S32 charsCount = 0;
-        calculateTextData(
+        SystemFontHelper::CalculateSystemTextData(
+            m_text.c_str(),
             rowsCount,
             maxColumnsCount,
             charsCount);
 
         m_meshRenderer->resize(charsCount);
         m_localMatrices.resize(charsCount);
+        m_localColors.assign(charsCount, Vec4F::c_one);
 
-        S32 columnsCount = 0;
-        Char const* p0 = &m_text[0];
-        while (*p0 != 0 && *p0 != '\n')
-        {
-            ++columnsCount;
-            ++p0;
-        }
+        S32 columnsCount = SystemFontHelper::CalculateSystemTextRowColumns(m_text.c_str());
 
-        S32 sx = 0;
-        S32 sy = -rowSize;
+        F32 sx = 0.0f;
+        F32 sy = -rowSize;
         Size charIndex = 0;
 
-        Char const* p = &m_text[0];
+        Vec2F positionShift = SystemFontHelper::CalculateSystemTextShift(
+            m_systemFont,
+            m_horizontalAlignment,
+            m_verticalAlignment,
+            size,
+            fontScale,
+            m_lineSpacingScale,
+            rowsCount,
+            columnsCount);
+
+        Char const* p = m_text.c_str();
         while (*p != 0)
         {
             Char c = *p;
 
             if (c == '\n')
             {
-                sx = 0;
-                sy -= rowSize;
+                sx = 0.0f;
+                sy -= rowAdvance;
 
-                columnsCount = 0;
-                p0 = p + 1;
-                while (*p0 != 0 && *p0 != '\n')
-                {
-                    ++columnsCount;
-                    ++p0;
-                }
+                columnsCount = SystemFontHelper::CalculateSystemTextRowColumns(p + 1);
 
-                maxColumnsCount = Math::Max(maxColumnsCount, columnsCount);
+                positionShift = SystemFontHelper::CalculateSystemTextShift(
+                    m_systemFont,
+                    m_horizontalAlignment,
+                    m_verticalAlignment,
+                    size,
+                    fontScale,
+                    m_lineSpacingScale,
+                    rowsCount,
+                    columnsCount);
             }
             else
             {
@@ -235,26 +215,8 @@ namespace Maze
                     (F32(oy * m_systemFont->stroke.y + m_systemFont->charSize.y + m_systemFont->offset.y) / (F32)systemFontTexture->getHeight()) - border
                 );
 
-                Vec2F positionShift;
-                switch (m_horizontalAlignment)
-                {
-                    case HorizontalAlignment2D::Left: positionShift.x = 0.0f; break;
-                    case HorizontalAlignment2D::Center: positionShift.x = (size.x - (columnsCount * (m_systemFont->charSize.x - m_systemFont->outline) + m_systemFont->outline) * fontScale) * 0.5f; break;
-                    case HorizontalAlignment2D::Right: positionShift.x = size.x - (columnsCount * (m_systemFont->charSize.x - m_systemFont->outline) + m_systemFont->outline) * fontScale; break;
-                    default: break;
-                }
-                switch (m_verticalAlignment)
-                {
-                    case VerticalAlignment2D::Top: positionShift.y = size.y; break;
-                    case VerticalAlignment2D::Middle: positionShift.y = (size.y + (rowsCount * (m_systemFont->charSize.y - m_systemFont->outline) + m_systemFont->outline) * fontScale) * 0.5f; break;
-                    case VerticalAlignment2D::Bottom: positionShift.y = (rowsCount * rowSize) * fontScale; break;
-                    default: break;
-                }
-                    
-                // positionShift += 0.5f * m_systemFont->charSize.y * fontScale;
-
                 Vec2F sizeV = (Vec2F)m_systemFont->charSize * fontScale;
-                Vec2F positionShiftV = Vec2F((F32)sx, (F32)sy) * fontScale + positionShift;
+                Vec2F positionShiftV = Vec2F(sx, sy) * fontScale + positionShift;
 
                 TMat localTransform = TMat::CreateTranslation(positionShiftV).transform(
                     TMat::CreateScale(sizeV));
@@ -264,17 +226,20 @@ namespace Maze
 
                 ++charIndex;
 
-                sx += m_systemFont->charSize.x - m_systemFont->outline;
+                sx += F32(m_systemFont->charSize.x - m_systemFont->outline);
             }
 
             ++p;
         }
 
         m_boundingSize.x = (F32(maxColumnsCount) * (m_systemFont->charSize.x - m_systemFont->outline) + m_systemFont->outline) * fontScale;
-        m_boundingSize.y = (rowsCount * (m_systemFont->charSize.y - m_systemFont->outline) + m_systemFont->outline) * fontScale;
+        m_boundingSize.y = (F32(rowsCount - 1) * (m_systemFont->charSize.y - m_systemFont->outline) * m_lineSpacingScale
+            + F32(m_systemFont->charSize.y - m_systemFont->outline) + F32(m_systemFont->outline)) * fontScale;
 
-        updateMeshRendererModelMatrices();
-        updateMeshRendererColors();
+        disableFlag(Flags::MeshDataDirty);
+        disableFlag(Flags::GlyphColorsDirty);
+        enableFlag(Flags::ModelMatricesDirty);
+        enableFlag(Flags::ColorDirty);
     }
 
     //////////////////////////////////////////
@@ -287,167 +252,81 @@ namespace Maze
             m_meshRenderer->setMaterial(m_systemFont->material);
         else
             m_meshRenderer->setMaterial(MaterialPtr());
+
+        disableFlag(Flags::MaterialDirty);
+    }
+
+    //////////////////////////////////////////
+    Vec4F SystemTextRenderer2D::calculateMeshColor() const
+    {
+        Vec4F meshColor = m_color.toVec4F32();
+        if (m_canvasRenderer)
+            meshColor.w *= m_canvasRenderer->getAlpha();
+        return meshColor;
     }
 
     //////////////////////////////////////////
     Vec2F SystemTextRenderer2D::getTextEnd(Size _rowIndex)
     {
-        if (!m_systemFont)
+        // Apply pending changes so the result reflects the actual state
+        prepareForRender();
+
+        if (!m_systemFont || !m_transform)
             return Vec2F::c_zero;
 
         Vec2F const& size = m_transform->getSize();
         F32 fontScale = (F32)m_fontSize / (F32)(m_systemFont->charSize.x - m_systemFont->outline * 2);
 
-        S32 const rowSize = m_systemFont->charSize.y;
+        F32 const rowSize = (F32)m_systemFont->charSize.y;
+        F32 const rowAdvance = rowSize * m_lineSpacingScale;
 
         S32 rowsCount = 1;
         S32 maxColumnsCount = 0;
         S32 charsCount = 0;
-        calculateTextData(
+        SystemFontHelper::CalculateSystemTextData(
+            m_text.c_str(),
             rowsCount,
             maxColumnsCount,
             charsCount);
 
-        S32 columnsCount = 0;
-        Char const* p0 = &m_text[0];
-        while (*p0 != 0 && *p0 != '\n')
-        {
-            ++columnsCount;
-            ++p0;
-        }
+        S32 columnsCount = SystemFontHelper::CalculateSystemTextRowColumns(m_text.c_str());
 
-        S32 sx = 0;
-        S32 sy = -rowSize;
+        F32 sx = 0.0f;
+        F32 sy = -rowSize;
 
-        Char const* p = &m_text[0];
+        Char const* p = m_text.c_str();
         while (*p != 0 && _rowIndex > 0)
         {
-            Char c = *p;
-
-            if (c == '\n')
+            if (*p == '\n')
             {
                 --_rowIndex;
 
-                sx = 0;
-                sy -= rowSize;
+                sx = 0.0f;
+                sy -= rowAdvance;
 
-                columnsCount = 0;
-                p0 = p + 1;
-                while (*p0 != 0 && *p0 != '\n')
-                {
-                    ++columnsCount;
-                    ++p0;
-                }
+                columnsCount = SystemFontHelper::CalculateSystemTextRowColumns(p + 1);
             }
+
+            ++p;
         }
 
-        Vec2F positionShift;
-        switch (m_horizontalAlignment)
-        {
-            case HorizontalAlignment2D::Left: positionShift.x = 0.0f; break;
-            case HorizontalAlignment2D::Center: positionShift.x = (size.x - (columnsCount * (m_systemFont->charSize.x - m_systemFont->outline) + m_systemFont->outline) * fontScale) * 0.5f; break;
-            case HorizontalAlignment2D::Right: positionShift.x = size.x - (columnsCount * (m_systemFont->charSize.x - m_systemFont->outline) + m_systemFont->outline) * fontScale; break;
-            default: break;
-        }
-        switch (m_verticalAlignment)
-        {
-            case VerticalAlignment2D::Top: positionShift.y = size.y; break;
-            case VerticalAlignment2D::Middle: positionShift.y = (size.y + (rowsCount * (m_systemFont->charSize.y - m_systemFont->outline) + m_systemFont->outline) * fontScale) * 0.5f; break;
-            case VerticalAlignment2D::Bottom: positionShift.y = (rowsCount * rowSize) * fontScale; break;
-            default: break;
-        }
-
-        // positionShift += 0.5f * m_systemFont->charSize.x * fontScale;
+        Vec2F positionShift = SystemFontHelper::CalculateSystemTextShift(
+            m_systemFont,
+            m_horizontalAlignment,
+            m_verticalAlignment,
+            size,
+            fontScale,
+            m_lineSpacingScale,
+            rowsCount,
+            columnsCount);
 
         Vec2F sizeV = (Vec2F)m_systemFont->charSize * fontScale;
-        Vec2F positionShiftV = Vec2F((F32)sx, (F32)sy) * fontScale + positionShift;
+        Vec2F positionShiftV = Vec2F(sx, sy) * fontScale + positionShift;
 
-        return Vec2F(0.0f + columnsCount, 0.0f) * sizeV + positionShiftV;
+        return Vec2F((F32)columnsCount, 0.0f) * sizeV + positionShiftV;
     }
 
-    //////////////////////////////////////////
-    void SystemTextRenderer2D::calculateTextData(
-        S32& _rowsCount,
-        S32& _maxColumnsCount,
-        S32& _charsCount)
-    {
-        S32 columnsCounter = 0;
 
-        Char const* p0 = &m_text[0];
-        while (*p0 != 0)
-        {
-            if (*p0 == '\n')
-            {
-                ++_rowsCount;
-
-                _maxColumnsCount = Math::Max(_maxColumnsCount, columnsCounter);
-                columnsCounter = 0;
-            }
-            else
-            {
-                ++columnsCounter;
-                ++_charsCount;
-            }
-
-            ++p0;
-        }
-        _maxColumnsCount = Math::Max(_maxColumnsCount, columnsCounter);
-    }
-
-    //////////////////////////////////////////
-    void SystemTextRenderer2D::processEntityAwakened()
-    {
-        AbstractTextRenderer2D::processEntityAwakened();
-
-        m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
-        m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadNullPivotMesh());
-        m_meshRenderer->setFlag(Component::Flags::SerializationDisabled, true);
-
-        updateMaterial();
-        updateMeshData();
-    }
-
-    //////////////////////////////////////////
-    void SystemTextRenderer2D::updateMeshRendererColors()
-    {
-        if (!m_meshRenderer)
-            return;
-
-        Vec4F const vertexColor = Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer ? m_canvasRenderer->getAlpha() : 1.0f);
-
-        Size colorsCount = m_meshRenderer->getColors().size();
-        for (Size i = 0; i < colorsCount; ++i)
-            m_meshRenderer->setColor(i, vertexColor * m_color.toVec4F32());
-    }
-
-    //////////////////////////////////////////
-    void SystemTextRenderer2D::updateMeshRendererModelMatrices()
-    {
-        if (!m_meshRenderer)
-            return;
-
-        Size transformCount = m_meshRenderer->getModelMatrices().size();
-        MAZE_DEBUG_ERROR_IF(transformCount != m_localMatrices.size(), "Invalid characters count!");
-        if (transformCount == 0)
-            return;
-
-        Vec2F pixelPerfectShift = Vec2F::c_zero;
-        if (m_pixelPerfect)
-        {
-            TMat initTm = m_transform->getWorldTransform().transform(m_localMatrices[0]);
-            Vec2F translation = initTm.getTranslation2D();
-            pixelPerfectShift = Math::Round(translation) - translation;
-        }
-
-        for (Size i = 0; i < transformCount; ++i)
-        {
-            TMat tm = m_transform->getWorldTransform().transform(m_localMatrices[i]);
-            if (m_pixelPerfect)
-                tm.setTranslation(tm.getTranslation2D() + pixelPerfectShift);
-            m_meshRenderer->setModelMatrix(i, tm);
-        }
-    }
-    
     //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(SystemTextRenderer2DAdded,
         {},
@@ -462,6 +341,26 @@ namespace Maze
                 SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault());
         }
     }
-    
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SystemTextRenderer2DSystem,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
+        Render2DPostUpdateEvent& _event,
+        Entity* _entity,
+        SystemTextRenderer2D* _textRenderer2D)
+    {
+        if (_textRenderer2D->getTransform()->isSizeChanged())
+            _textRenderer2D->enableFlag(AbstractTextRenderer2D::Flags::MeshDataDirty);
+
+        if (_textRenderer2D->getTransform()->isWorldTransformChanged())
+            _textRenderer2D->enableFlag(AbstractTextRenderer2D::Flags::ModelMatricesDirty);
+
+        if (_textRenderer2D->getCanvasRenderer()->isAlphaDirty())
+            _textRenderer2D->enableFlag(AbstractTextRenderer2D::Flags::ColorDirty);
+
+        _textRenderer2D->prepareForRender();
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

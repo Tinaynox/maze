@@ -70,10 +70,18 @@ namespace Maze
         //////////////////////////////////////////
         virtual ~AbstractTextRenderer();
 
-        
+
 
         //////////////////////////////////////////
-        virtual void setText(String const& _text) MAZE_ABSTRACT;
+        virtual void setText(String const& _text)
+        {
+            if (m_text == _text)
+                return;
+
+            m_text = _text;
+
+            processTextDataChanged();
+        }
 
         //////////////////////////////////////////
         inline void setTextFormatted(CString _text, ...)
@@ -84,11 +92,19 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual String const& getText() const MAZE_ABSTRACT;
+        virtual String const& getText() const { return m_text; }
 
 
         //////////////////////////////////////////
-        virtual void setColor(ColorU32 _color) MAZE_ABSTRACT;
+        virtual void setColor(ColorU32 _color)
+        {
+            if (m_color == _color)
+                return;
+
+            m_color = _color;
+
+            processColorChanged();
+        }
 
         //////////////////////////////////////////
         inline void setColor(U8 _r, U8 _g, U8 _b)
@@ -103,21 +119,52 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual ColorU32 getColor() const MAZE_ABSTRACT;
+        virtual ColorU32 getColor() const { return m_color; }
 
 
         //////////////////////////////////////////
-        virtual HorizontalAlignment2D getHorizontalAlignment() const MAZE_ABSTRACT;
+        inline U32 getFontSize() const { return m_fontSize; }
 
         //////////////////////////////////////////
-        virtual void setHorizontalAlignment(HorizontalAlignment2D _horizontalAlignment) MAZE_ABSTRACT;
+        virtual void setFontSize(U32 _fontSize)
+        {
+            if (m_fontSize == _fontSize)
+                return;
+
+            m_fontSize = _fontSize;
+
+            processTextDataChanged();
+        }
 
 
         //////////////////////////////////////////
-        virtual VerticalAlignment2D getVerticalAlignment() const MAZE_ABSTRACT;
+        virtual HorizontalAlignment2D getHorizontalAlignment() const { return m_horizontalAlignment; }
 
         //////////////////////////////////////////
-        virtual void setVerticalAlignment(VerticalAlignment2D _verticalAlignment) MAZE_ABSTRACT;
+        virtual void setHorizontalAlignment(HorizontalAlignment2D _horizontalAlignment)
+        {
+            if (m_horizontalAlignment == _horizontalAlignment)
+                return;
+
+            m_horizontalAlignment = _horizontalAlignment;
+
+            processTextDataChanged();
+        }
+
+
+        //////////////////////////////////////////
+        virtual VerticalAlignment2D getVerticalAlignment() const { return m_verticalAlignment; }
+
+        //////////////////////////////////////////
+        virtual void setVerticalAlignment(VerticalAlignment2D _verticalAlignment)
+        {
+            if (m_verticalAlignment == _verticalAlignment)
+                return;
+
+            m_verticalAlignment = _verticalAlignment;
+
+            processTextDataChanged();
+        }
 
 
         //////////////////////////////////////////
@@ -125,10 +172,18 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual F32 getLineSpacingScale() const MAZE_ABSTRACT;
+        virtual F32 getLineSpacingScale() const { return m_lineSpacingScale; }
 
         //////////////////////////////////////////
-        virtual void setLineSpacingScale(F32 _value) MAZE_ABSTRACT;
+        virtual void setLineSpacingScale(F32 _value)
+        {
+            if (m_lineSpacingScale == _value)
+                return;
+
+            m_lineSpacingScale = _value;
+
+            processTextDataChanged();
+        }
 
     protected:
 
@@ -137,7 +192,7 @@ namespace Maze
 
         //////////////////////////////////////////
         using Component::init;
-        
+
         //////////////////////////////////////////
         bool init(RenderSystem* _renderSystem = nullptr);
 
@@ -149,8 +204,25 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        // Called when any layout-affecting parameter has changed
+        virtual void processTextDataChanged() {}
+
+        //////////////////////////////////////////
+        // Called when the base color has changed
+        virtual void processColorChanged() {}
+
     protected:
         RenderSystem* m_renderSystem = nullptr;
+
+        String m_text;
+        ColorU32 m_color = ColorU32::c_white;
+        U32 m_fontSize = 32u;
+        F32 m_lineSpacingScale = 1.0f;
+
+        HorizontalAlignment2D m_horizontalAlignment = HorizontalAlignment2D::Left;
+        VerticalAlignment2D m_verticalAlignment = VerticalAlignment2D::Top;
     };
 
 

@@ -93,6 +93,9 @@ namespace Maze
             _copyData))
             return false;
 
+        enableFlag(Flags::MeshDataDirty);
+        enableFlag(Flags::MaterialDirty);
+
         return true;
     }
 
@@ -102,7 +105,99 @@ namespace Maze
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
         m_canvasRenderer = getEntityRaw()->ensureComponent<CanvasRenderer>();
         m_canvasRenderer->setFlag(Component::Flags::SerializationDisabled, true);
-    }            
-    
+
+        m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
+        m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadNullPivotMesh());
+        m_meshRenderer->setFlag(Component::Flags::SerializationDisabled, true);
+
+        enableFlag(Flags::MeshDataDirty);
+        enableFlag(Flags::MaterialDirty);
+    }
+
+    //////////////////////////////////////////
+    void AbstractTextRenderer2D::prepareForRender()
+    {
+        if (m_updatingMeshData)
+            return;
+
+        m_updatingMeshData = true;
+
+        if (getFlag(Flags::MeshDataDirty))
+            updateMeshDataNow();
+
+        if (getFlag(Flags::GlyphColorsDirty))
+            updateGlyphColors();
+
+        if (getFlag(Flags::MaterialDirty))
+            updateMaterial();
+
+        if (getFlag(Flags::ModelMatricesDirty))
+            updateMeshRendererModelMatrices();
+
+        if (getFlag(Flags::ColorDirty))
+            updateMeshRendererColors();
+
+        m_updatingMeshData = false;
+    }
+
+    //////////////////////////////////////////
+    void AbstractTextRenderer2D::updateMeshData()
+    {
+        enableFlag(Flags::MeshDataDirty);
+        enableFlag(Flags::MaterialDirty);
+        prepareForRender();
+    }
+
+    //////////////////////////////////////////
+    Vec4F AbstractTextRenderer2D::calculateMeshColor() const
+    {
+        return Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer ? m_canvasRenderer->getAlpha() : 1.0f);
+    }
+
+    //////////////////////////////////////////
+    void AbstractTextRenderer2D::updateMeshRendererColors()
+    {
+        if (!m_meshRenderer)
+            return;
+
+        Vec4F const meshColor = calculateMeshColor();
+
+        Size colorsCount = m_meshRenderer->getColors().size();
+        for (Size i = 0; i < colorsCount; ++i)
+            m_meshRenderer->setColor(i, m_localColors[i] * meshColor);
+
+        disableFlag(Flags::ColorDirty);
+    }
+
+    //////////////////////////////////////////
+    void AbstractTextRenderer2D::updateMeshRendererModelMatrices()
+    {
+        if (!m_meshRenderer)
+            return;
+
+        Size transformCount = m_meshRenderer->getModelMatrices().size();
+        MAZE_DEBUG_ERROR_IF(transformCount != m_localMatrices.size(), "Invalid characters count!");
+        if (transformCount == 0)
+            return;
+
+        Vec2F pixelPerfectShift = Vec2F::c_zero;
+        if (m_pixelPerfect)
+        {
+            TMat initTm = m_transform->getWorldTransform().transform(m_localMatrices[0]);
+            Vec2F translation = initTm.getTranslation2D();
+            pixelPerfectShift = Math::Round(translation) - translation;
+        }
+
+        for (Size i = 0; i < transformCount; ++i)
+        {
+            TMat tm = m_transform->getWorldTransform().transform(m_localMatrices[i]);
+            if (m_pixelPerfect)
+                tm.setTranslation(tm.getTranslation2D() + pixelPerfectShift);
+            m_meshRenderer->setModelMatrix(i, tm);
+        }
+
+        disableFlag(Flags::ModelMatricesDirty);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

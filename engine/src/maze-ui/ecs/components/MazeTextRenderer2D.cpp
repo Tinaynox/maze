@@ -59,12 +59,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(TextRenderer2D, AbstractTextRenderer2D,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(FontMaterialAssetRef, fontMaterial, FontMaterialAssetRef(), getFontMaterialRef, setFontMaterialRef),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(U32, fontSize, 32, getFontSize, setFontSize),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(HorizontalAlignment2D, horizontalAlignment, HorizontalAlignment2D::Left, getHorizontalAlignment, setHorizontalAlignment),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(VerticalAlignment2D, verticalAlignment, VerticalAlignment2D::Top, getVerticalAlignment, setVerticalAlignment),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(TextRenderer2DWidthPolicy, widthPolicy, TextRenderer2DWidthPolicy::None, getWidthPolicy, setWidthPolicy),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, outlineThickness, 0.0f, getOutlineThickness, setOutlineThickness),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, bold, false, getBold, setBold),
@@ -108,7 +103,7 @@ namespace Maze
     //////////////////////////////////////////
     TextRenderer2D::TextRenderer2D()
     {
-
+        m_fontSize = 18u;
     }
 
     //////////////////////////////////////////
@@ -149,21 +144,7 @@ namespace Maze
             _copyData))
             return false;
 
-        enableFlag(Flags::MeshDataDirty);
-        enableFlag(Flags::MaterialDirty);
-
         return true;
-    }
-
-    //////////////////////////////////////////
-    void TextRenderer2D::setText(String const& _text)
-    {
-        if (m_text == _text)
-            return;
-
-        m_text = _text;
-
-        enableFlag(Flags::MeshDataDirty);
     }
 
     //////////////////////////////////////////
@@ -181,22 +162,6 @@ namespace Maze
     Size TextRenderer2D::getSymbolsCount()
     {
         return TextHelper::GetSymbolsCountUTF8(m_text);
-    }
-
-    //////////////////////////////////////////
-    void TextRenderer2D::setColor(ColorU32 _color)
-    {
-        if (m_color == _color)
-            return;
-
-        m_color = _color;
-
-        // Glyph colors may derive from the base color via color tags ('#{-}') -
-        // only then a full relayout is required
-        if (m_hasActiveColorTags)
-            enableFlag(Flags::MeshDataDirty);
-        else
-            enableFlag(Flags::GlyphColorsDirty);
     }
 
     //////////////////////////////////////////
@@ -283,43 +248,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void TextRenderer2D::prepareForRender()
-    {
-        if (m_updatingMeshData)
-            return;
-
-        m_updatingMeshData = true;
-
-        if (getFlag(Flags::MeshDataDirty))
-        {
-            ensureAllGlyphs();
-            updateMeshDataNow();
-        }
-
-        if (getFlag(Flags::GlyphColorsDirty))
-            updateGlyphColors();
-
-        if (getFlag(Flags::MaterialDirty))
-            updateMaterial();
-
-        if (getFlag(Flags::ModelMatricesDirty))
-            updateMeshRendererModelMatrices();
-
-        if (getFlag(Flags::ColorDirty))
-            updateMeshRendererColors();
-
-        m_updatingMeshData = false;
-    }
-
-    //////////////////////////////////////////
-    void TextRenderer2D::updateMeshData()
-    {
-        enableFlag(Flags::MeshDataDirty);
-        enableFlag(Flags::MaterialDirty);
-        prepareForRender();
-    }
-
-    //////////////////////////////////////////
     void TextRenderer2D::ensureAllGlyphs()
     {
         if (!m_meshRenderer)
@@ -381,6 +309,8 @@ namespace Maze
     {
         if (!m_canvasRenderer || !m_meshRenderer || !m_transform)
             return;
+
+        ensureAllGlyphs();
 
         m_boundingSize = Vec2F::c_zero;
 
@@ -734,64 +664,6 @@ namespace Maze
         }
 
         enableFlag(Flags::ColorDirty);
-    }
-
-    //////////////////////////////////////////
-    void TextRenderer2D::processEntityAwakened()
-    {
-        AbstractTextRenderer2D::processEntityAwakened();
-
-        m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
-        m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadNullPivotMesh());
-        m_meshRenderer->setFlag(Component::Flags::SerializationDisabled, true);
-
-        enableFlag(Flags::MeshDataDirty);
-        enableFlag(Flags::MaterialDirty);
-    }
-
-    //////////////////////////////////////////
-    void TextRenderer2D::updateMeshRendererColors()
-    {
-        if (!m_meshRenderer)
-            return;
-
-        Vec4F const vertexColor = Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer ? m_canvasRenderer->getAlpha() : 1.0f);
-
-        Size colorsCount = m_meshRenderer->getColors().size();
-        for (Size i = 0; i < colorsCount; ++i)
-            m_meshRenderer->setColor(i, m_localColors[i] * vertexColor);
-
-        disableFlag(Flags::ColorDirty);
-    }
-
-    //////////////////////////////////////////
-    void TextRenderer2D::updateMeshRendererModelMatrices()
-    {
-        if (!m_meshRenderer)
-            return;
-
-        Size transformCount = m_meshRenderer->getModelMatrices().size();
-        MAZE_DEBUG_ERROR_IF(transformCount != m_localMatrices.size(), "Invalid characters count!");
-        if (transformCount == 0)
-            return;
-
-        Vec2F pixelPerfectShift = Vec2F::c_zero;
-        if (m_pixelPerfect)
-        {
-            TMat initTm = m_transform->getWorldTransform().transform(m_localMatrices[0]);
-            Vec2F translation = initTm.getTranslation2D();
-            pixelPerfectShift = Math::Round(translation) - translation;
-        }
-
-        for (Size i = 0; i < transformCount; ++i)
-        {
-            TMat tm = m_transform->getWorldTransform().transform(m_localMatrices[i]);
-            if (m_pixelPerfect)
-                tm.setTranslation(tm.getTranslation2D() + pixelPerfectShift);
-            m_meshRenderer->setModelMatrix(i, tm);
-        }
-
-        disableFlag(Flags::ModelMatricesDirty);
     }
 
     //////////////////////////////////////////

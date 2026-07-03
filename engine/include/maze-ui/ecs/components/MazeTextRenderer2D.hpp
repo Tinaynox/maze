@@ -108,18 +108,6 @@ namespace Maze
         //////////////////////////////////////////
         friend class Entity;
 
-        //////////////////////////////////////////
-        enum class Flags : U8
-        {
-            None = 0,
-
-            MeshDataDirty = MAZE_BIT(0),        // Full glyph relayout (ensureAllGlyphs + updateMeshDataNow)
-            ColorDirty = MAZE_BIT(1),           // Push m_localColors * canvas alpha to the mesh renderer
-            ModelMatricesDirty = MAZE_BIT(2),   // Push world-transformed m_localMatrices to the mesh renderer
-            MaterialDirty = MAZE_BIT(3),        // Refetch material (font material/size/bold changed)
-            GlyphColorsDirty = MAZE_BIT(4),     // Rewrite m_localColors from m_color/m_outlineColor without relayout
-        };
-
     public:
 
         //////////////////////////////////////////
@@ -130,56 +118,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MeshRendererInstancedPtr const& getMeshRenderer() const { return m_meshRenderer; }
-
-
-        //////////////////////////////////////////
-        inline U8 getFlags() const { return m_flags; }
-
-        //////////////////////////////////////////
-        inline void setFlags(U8 _flags) { m_flags = _flags; }
-
-        //////////////////////////////////////////
-        inline void setFlag(Flags _flag, bool _value)
-        {
-            if (_value)
-                setFlags(m_flags | static_cast<U8>(_flag));
-            else
-                setFlags(m_flags & ~static_cast<U8>(_flag));
-        }
-
-        //////////////////////////////////////////
-        inline bool getFlag(Flags _flag) const { return (m_flags & static_cast<U8>(_flag)) != 0; }
-
-        //////////////////////////////////////////
-        inline void enableFlag(Flags _flag) { setFlag(_flag, true); }
-
-        //////////////////////////////////////////
-        inline void disableFlag(Flags _flag) { setFlag(_flag, false); }
-
-
-        //////////////////////////////////////////
-        virtual void setText(String const& _text) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual String const& getText() const MAZE_OVERRIDE { return m_text; }
-
-
-        //////////////////////////////////////////
         void removeSymbol();
 
         //////////////////////////////////////////
         Size getSymbolsCount();
-
-
-        //////////////////////////////////////////
-        using AbstractTextRenderer2D::setColor;
-
-        //////////////////////////////////////////
-        virtual void setColor(ColorU32 _color) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual ColorU32 getColor() const MAZE_OVERRIDE { return m_color; }
 
 
         //////////////////////////////////////////
@@ -193,36 +135,6 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void setFontMaterial(FontMaterialPtr const& _fontMaterial) { setFontMaterialRef(FontMaterialAssetRef(_fontMaterial)); }
-
-
-        //////////////////////////////////////////
-        inline U32 getFontSize() const { return m_fontSize; }
-
-        //////////////////////////////////////////
-        void setFontSize(U32 _fontSize)
-        {
-            if (m_fontSize == _fontSize)
-                return;
-
-            m_fontSize = _fontSize;
-
-            enableFlag(Flags::MeshDataDirty);
-            enableFlag(Flags::MaterialDirty);
-        }
-
-        //////////////////////////////////////////
-        virtual F32 getLineSpacingScale() const MAZE_OVERRIDE { return m_lineSpacingScale; }
-
-        //////////////////////////////////////////
-        virtual void setLineSpacingScale(F32 _value) MAZE_OVERRIDE
-        {
-            if (m_lineSpacingScale == _value)
-                return;
-
-            m_lineSpacingScale = _value;
-
-            enableFlag(Flags::MeshDataDirty);
-        }
 
 
         //////////////////////////////////////////
@@ -267,52 +179,6 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void setColorTags(bool _value) { setStyle(TextRenderer2DStyle::ColorTags, _value); }
-
-
-
-        //////////////////////////////////////////
-        virtual HorizontalAlignment2D getHorizontalAlignment() const MAZE_OVERRIDE { return m_horizontalAlignment; }
-
-        //////////////////////////////////////////
-        virtual void setHorizontalAlignment(HorizontalAlignment2D _horizontalAlignment) MAZE_OVERRIDE
-        {
-            if (m_horizontalAlignment == _horizontalAlignment)
-                return;
-
-            m_horizontalAlignment = _horizontalAlignment;
-
-            enableFlag(Flags::MeshDataDirty);
-        }
-
-
-        //////////////////////////////////////////
-        virtual VerticalAlignment2D getVerticalAlignment() const MAZE_OVERRIDE { return m_verticalAlignment; }
-
-        //////////////////////////////////////////
-        virtual void setVerticalAlignment(VerticalAlignment2D _verticalAlignment) MAZE_OVERRIDE
-        {
-            if (m_verticalAlignment == _verticalAlignment)
-                return;
-
-            m_verticalAlignment = _verticalAlignment;
-
-            enableFlag(Flags::MeshDataDirty);
-        }
-
-
-        //////////////////////////////////////////
-        virtual bool getPixelPerfect() const MAZE_OVERRIDE { return m_pixelPerfect; }
-
-        //////////////////////////////////////////
-        virtual void setPixelPerfect(bool _value) MAZE_OVERRIDE
-        {
-            if (m_pixelPerfect == _value)
-                return;
-
-            m_pixelPerfect = _value;
-
-            enableFlag(Flags::ModelMatricesDirty);
-        }
 
 
 
@@ -411,26 +277,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        // Processes all pending dirty flags. Called by the render system
-        // once per frame; can be called manually to flush pending changes
-        void prepareForRender();
-
-        //////////////////////////////////////////
-        // Immediate full rebuild (flushes all pending changes right away)
-        void updateMeshData();
-
-        //////////////////////////////////////////
         void ensureAllGlyphs();
-
-        //////////////////////////////////////////
-        void updateMeshDataNow();
-
-
-        //////////////////////////////////////////
-        void updateMeshRendererColors();
-
-        //////////////////////////////////////////
-        void updateMeshRendererModelMatrices();
 
         //////////////////////////////////////////
         Vec2F calculateRequiredSizeForText(CString _text);
@@ -452,15 +299,26 @@ namespace Maze
             EntityCopyData _copyData) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void updateMaterial();
+        // Full glyph relayout (ensureAllGlyphs + mesh rebuild)
+        virtual void updateMeshDataNow() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void updateMaterial() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         // Rewrites m_localColors from m_color/m_outlineColor without relayout
-        void updateGlyphColors();
+        virtual void updateGlyphColors() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processEntityAwakened() MAZE_OVERRIDE;
-
+        // Glyph colors may derive from the base color via color tags ('#{-}') -
+        // only then a full relayout is required
+        virtual void processColorChanged() MAZE_OVERRIDE
+        {
+            if (m_hasActiveColorTags)
+                enableFlag(Flags::MeshDataDirty);
+            else
+                enableFlag(Flags::GlyphColorsDirty);
+        }
 
         //////////////////////////////////////////
         void setGlyphQuad(
@@ -482,27 +340,9 @@ namespace Maze
             Size _actualRowsCount);
 
     protected:
-        MeshRendererInstancedPtr m_meshRenderer;
-
-    protected:
-        String m_text;
-
-        ShaderUniformVariantPtr m_colorUniform;
-        ShaderUniformVariantPtr m_baseMapUniform;
-        ShaderUniformVariantPtr m_baseMapTexelSizeUniform;
-
-        ColorU32 m_color = ColorU32::c_white;
-
         FontMaterialAssetRef m_fontMaterialRef;
-        U32 m_fontSize = 18u;
-        F32 m_lineSpacingScale = 1.0f;
 
         U32 m_styles = TextRenderer2DStyle::ColorTags;
-
-        HorizontalAlignment2D m_horizontalAlignment = HorizontalAlignment2D::Left;
-        VerticalAlignment2D m_verticalAlignment = VerticalAlignment2D::Top;
-
-        bool m_pixelPerfect = true;
 
         U32 m_symbolsLimit = 0u;
         TextRenderer2DSymbolsLimitPolicy m_symbolsLimitPolicy = TextRenderer2DSymbolsLimitPolicy::Crop;
@@ -514,11 +354,6 @@ namespace Maze
         bool m_bold = false;
 
     private:
-        U8 m_flags = 0u;
-
-        Vector<TMat> m_localMatrices;
-        Vector<Vec4F> m_localColors;
-
         // Outline quads occupy [0, m_outlineQuadsCount) of the local buffers
         Size m_outlineQuadsCount = 0u;
 
@@ -527,8 +362,6 @@ namespace Maze
         bool m_hasActiveColorTags = false;
 
         Vec2F m_lastGlyphOffset = Vec2F::c_zero;
-
-        bool m_updatingMeshData = false;
     };
 
 

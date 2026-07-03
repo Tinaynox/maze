@@ -48,6 +48,7 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "maze-graphics/helpers/MazeSystemFontHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -58,13 +59,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SystemTextRenderer3D, AbstractTextRenderer3D,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, size, Vec2F::c_zero, getSize, setSize),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(SystemFontPtr, systemFont, SystemFontPtr(), getSystemFont, setSystemFont),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(U32, fontSize, 32, getFontSize, setFontSize),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(HorizontalAlignment2D, horizontalAlignment, HorizontalAlignment2D::Left, getHorizontalAlignment, setHorizontalAlignment),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(VerticalAlignment2D, verticalAlignment, VerticalAlignment2D::Top, getVerticalAlignment, setVerticalAlignment));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(SystemFontPtr, systemFont, SystemFontPtr(), getSystemFont, setSystemFont));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SystemTextRenderer3D);
@@ -72,12 +68,9 @@ namespace Maze
 
     //////////////////////////////////////////
     SystemTextRenderer3D::SystemTextRenderer3D()
-        : m_color(ColorU32::c_white)
-        , m_fontSize(32)
-        , m_horizontalAlignment(HorizontalAlignment2D::Center)
-        , m_verticalAlignment(VerticalAlignment2D::Middle)
     {
-        
+        m_horizontalAlignment = HorizontalAlignment2D::Center;
+        m_verticalAlignment = VerticalAlignment2D::Middle;
     }
 
     //////////////////////////////////////////
@@ -124,28 +117,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemTextRenderer3D::setText(String const& _text)
-    {
-        if (m_text == _text)
-            return;
-
-        m_text = _text;
-
-        updateMeshData();
-    }
-    
-    //////////////////////////////////////////
-    void SystemTextRenderer3D::setColor(ColorU32 _color)
-    {
-        if (m_color == _color)
-            return;
-
-        m_color = _color;
-
-        updateMeshRendererColors();
-    }
-
-    //////////////////////////////////////////
     void SystemTextRenderer3D::setSystemFont(SystemFontPtr const& _systemFont)
     {
         if (m_systemFont == _systemFont)
@@ -178,7 +149,8 @@ namespace Maze
         S32 rowsCount = 1;
         S32 maxColumnsCount = 0;
         S32 charsCount = 0;
-        calculateTextData(
+        SystemFontHelper::CalculateSystemTextData(
+            m_text.c_str(),
             rowsCount,
             maxColumnsCount,
             charsCount);
@@ -295,7 +267,8 @@ namespace Maze
         S32 rowsCount = 1;
         S32 maxColumnsCount = 0;
         S32 charsCount = 0;
-        calculateTextData(
+        SystemFontHelper::CalculateSystemTextData(
+            m_text.c_str(),
             rowsCount,
             maxColumnsCount,
             charsCount);
@@ -355,35 +328,6 @@ namespace Maze
         Vec2F positionShiftV = Vec2F((F32)sx, (F32)sy) * fontScale + positionShift;
 
         return Vec2F(-0.5f + columnsCount, -0.5f) * sizeV + positionShiftV;
-    }
-
-    //////////////////////////////////////////
-    void SystemTextRenderer3D::calculateTextData(
-        S32& _rowsCount,
-        S32& _maxColumnsCount,
-        S32& _charsCount)
-    {
-        S32 columnsCounter = 0;
-
-        Char const* p0 = &m_text[0];
-        while (*p0 != 0)
-        {
-            if (*p0 == '\n')
-            {
-                ++_rowsCount;
-
-                _maxColumnsCount = Math::Max(_maxColumnsCount, columnsCounter);
-                columnsCounter = 0;
-            }
-            else
-            {
-                ++columnsCounter;
-                ++_charsCount;
-            }
-
-            ++p0;
-        }
-        _maxColumnsCount = Math::Max(_maxColumnsCount, columnsCounter);
     }
 
     //////////////////////////////////////////

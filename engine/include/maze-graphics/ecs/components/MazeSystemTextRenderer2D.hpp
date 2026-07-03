@@ -79,27 +79,6 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MeshRendererInstancedPtr const& getMeshRenderer() const { return m_meshRenderer; }
-
-
-        //////////////////////////////////////////
-        virtual void setText(String const& _text) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual String const& getText() const MAZE_OVERRIDE { return m_text; }
-
-
-        //////////////////////////////////////////
-        using AbstractTextRenderer2D::setColor;
-
-        //////////////////////////////////////////
-        virtual void setColor(ColorU32 _color) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual ColorU32 getColor() const MAZE_OVERRIDE { return m_color; }
-
-
-        //////////////////////////////////////////
         inline SystemFontPtr const& getSystemFont() const { return m_systemFont; }
 
         //////////////////////////////////////////
@@ -107,91 +86,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline U32 getFontSize() const { return m_fontSize; }
-
-        //////////////////////////////////////////
-        void setFontSize(U32 _fontSize)
-        {
-            if (m_fontSize == _fontSize)
-                return;
-
-            m_fontSize = _fontSize;
-
-            updateMeshData();
-        }
-
-        //////////////////////////////////////////
-        virtual F32 getLineSpacingScale() const MAZE_OVERRIDE { return m_lineSpacingScale; }
-
-        //////////////////////////////////////////
-        virtual void setLineSpacingScale(F32 _value) MAZE_OVERRIDE
-        {
-            if (m_lineSpacingScale == _value)
-                return;
-
-            m_lineSpacingScale = _value;
-
-            updateMeshData();
-        }
-
-
-        //////////////////////////////////////////
-        virtual HorizontalAlignment2D getHorizontalAlignment() const MAZE_OVERRIDE { return m_horizontalAlignment; }
-
-        //////////////////////////////////////////
-        virtual void setHorizontalAlignment(HorizontalAlignment2D _horizontalAlignment) MAZE_OVERRIDE
-        {
-            if (m_horizontalAlignment == _horizontalAlignment)
-                return;
-
-            m_horizontalAlignment = _horizontalAlignment;
-
-            updateMeshData();
-        }
-
-
-        //////////////////////////////////////////
-        virtual VerticalAlignment2D getVerticalAlignment() const MAZE_OVERRIDE { return m_verticalAlignment; }
-
-        //////////////////////////////////////////
-        virtual void setVerticalAlignment(VerticalAlignment2D _verticalAlignment) MAZE_OVERRIDE
-        {
-            if (m_verticalAlignment == _verticalAlignment)
-                return;
-
-            m_verticalAlignment = _verticalAlignment;
-
-            updateMeshData();
-        }
-
-
-        //////////////////////////////////////////
-        virtual bool getPixelPerfect() const MAZE_OVERRIDE { return m_pixelPerfect; }
-
-        //////////////////////////////////////////
-        virtual void setPixelPerfect(bool _value) MAZE_OVERRIDE
-        {
-            if (m_pixelPerfect == _value)
-                return;
-
-            m_pixelPerfect = _value;
-
-            updateMeshRendererModelMatrices();
-        }
-
-
-        //////////////////////////////////////////
-        void updateMeshData();
-
-
-        //////////////////////////////////////////
         virtual Vec2F getTextEnd(Size _rowIndex = 0) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        void updateMeshRendererColors();
-
-        //////////////////////////////////////////
-        void updateMeshRendererModelMatrices();
 
     protected:
 
@@ -200,7 +95,7 @@ namespace Maze
 
         //////////////////////////////////////////
         using Component::init;
-        
+
         //////////////////////////////////////////
         bool init(RenderSystem* _renderSystem = nullptr);
 
@@ -210,37 +105,16 @@ namespace Maze
             EntityCopyData _copyData) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void updateMaterial();
+        virtual void updateMeshDataNow() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processEntityAwakened() MAZE_OVERRIDE;
+        virtual void updateMaterial() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void calculateTextData(
-            S32& _rowsCount,
-            S32& _maxColumnsCount,
-            S32& _charsCount);
+        virtual Vec4F calculateMeshColor() const MAZE_OVERRIDE;
 
     protected:
-        MeshRendererInstancedPtr m_meshRenderer;
-
-        String m_text;
-
-        ShaderUniformVariantPtr m_colorUniform;
-        ShaderUniformVariantPtr m_baseMapUniform;
-        ShaderUniformVariantPtr m_baseMapTexelSizeUniform;
-
-        ColorU32 m_color;
-
         SystemFontPtr m_systemFont;
-        U32 m_fontSize;
-        F32 m_lineSpacingScale = 1.0f;
-
-        HorizontalAlignment2D m_horizontalAlignment;
-        VerticalAlignment2D m_verticalAlignment;
-        bool m_pixelPerfect = true;
-
-        Vector<TMat> m_localMatrices;
     };
 
 
