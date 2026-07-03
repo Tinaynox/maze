@@ -91,10 +91,22 @@ namespace Maze
         //////////////////////////////////////////
         inline void switchDebugInfoEnabled() { setDebugInfoEnabled(!getDebugInfoEnabled()); }
 
+
+        //////////////////////////////////////////
+        void setCSharpIdePath(String _value) { m_csharpIdePath = _value; }
+
+        //////////////////////////////////////////
+        inline String getCSharpIdePath() const { return m_csharpIdePath.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<String const&>& getCSharpIdePathChangedEvent() { return m_csharpIdePath.eventValueChanged; }
+
     protected:
         ObservableValue<String> m_projectFullPath;
 
         ObservableValue<bool> m_debugInfoEnabled = true;
+
+        ObservableValue<String> m_csharpIdePath = String("F:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/devenv.exe");
     };
 
 

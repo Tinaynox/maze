@@ -40,7 +40,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditorSettings, Settings,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(String, projectFullPath, String(), getProjectFullPath, setProjectFullPath),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, debugInfoEnabled, false, getDebugInfoEnabled, setDebugInfoEnabled));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, debugInfoEnabled, false, getDebugInfoEnabled, setDebugInfoEnabled),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, csharpIdePath, String(), getCSharpIdePath, setCSharpIdePath));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(EditorSettings);

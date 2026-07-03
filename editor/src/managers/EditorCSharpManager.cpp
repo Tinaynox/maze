@@ -33,6 +33,7 @@
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazeSystemHelper.hpp"
 #include "maze-core/helpers/MazeThreadHelper.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-plugin-csharp/MazeCSharpService.hpp"
 #include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
@@ -48,6 +49,7 @@
 #include "helpers/EditorAssetHelper.hpp"
 #include "managers/EditorUIManager.hpp"
 #include "managers/EditorAssetsManager.hpp"
+#include "settings/MazeEditorSettings.hpp"
 #include "Editor.hpp"
 
 
@@ -187,12 +189,17 @@ namespace Maze
             "Edit",
             [](AssetsController* _controller, Path const& _fullPath)
             {
-                // #TODO: move to setting
-                Path devenv = "F:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/devenv.exe";
-
-                Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharpPrj/prj/Assembly-CSharp.sln";
-                Path params = csharpPath + Path(" ") + _fullPath;
-                SystemHelper::ExecuteShell(devenv, params);
+                Path idePath = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>()->getCSharpIdePath();
+                if (!idePath.empty() && FileHelper::IsFileExists(idePath))
+                {
+                    Path csharpPath = EditorHelper::GetProjectFolder() + "/CSharpPrj/prj/Assembly-CSharp.sln";
+                    Path params = csharpPath + Path(" ") + _fullPath;
+                    SystemHelper::ExecuteShell(idePath, params);
+                }
+                else
+                {
+                    SystemHelper::OpenURL(_fullPath);
+                }
             });
 
         AssetEditorToolsManager::GetInstancePtr()->registerAssetFileContextMenuCallback(
