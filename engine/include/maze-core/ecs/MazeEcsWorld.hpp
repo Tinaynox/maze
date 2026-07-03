@@ -37,6 +37,7 @@
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeEntityAspect.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
+#include "maze-core/ecs/MazeEcsArchetype.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
@@ -233,11 +234,10 @@ namespace Maze
                 getSharedPtr(),
                 _flags);
             m_samples.push_back(sample);
+            ++m_samplesVersion;
 
-            for (Size i = 0, in = m_entities.size(); i < in; ++i)
-                if (m_entities[i].entity)
-                    sample->processEntity(m_entities[i].entity.get());
-            
+            processNewSampleForExistingEntities(sample.get());
+
             return sample;
         }
 
@@ -262,10 +262,9 @@ namespace Maze
             SharedPtr<DynamicIdEntitiesSample<TComponent>> sample = DynamicIdEntitiesSample<TComponent>::Create(
                 getSharedPtr(), _dynamicId, _flags);
             m_samples.push_back(sample);
+            ++m_samplesVersion;
 
-            for (Size i = 0, in = m_entities.size(); i < in; ++i)
-                if (m_entities[i].entity)
-                    sample->processEntity(m_entities[i].entity.get());
+            processNewSampleForExistingEntities(sample.get());
 
             return sample;
         }
@@ -417,10 +416,33 @@ namespace Maze
         //////////////////////////////////////////
         void processEntityAddedForSamples(Entity* _entity);
 
+
+        //////////////////////////////////////////
+        EcsArchetype* getArchetype(ArchetypeId _id) const;
+
+        //////////////////////////////////////////
+        EcsArchetype* requestArchetype(Vector<ComponentId> const& _sortedComponentIds);
+
+        //////////////////////////////////////////
+        inline Size getArchetypesCount() const { return m_archetypes.size(); }
+
+        //////////////////////////////////////////
+        inline UnorderedMap<ClassUID, Vector<ComponentSystemEventHandlerPtr>> const& getEventHandlers() const { return m_eventHandlers; }
+
+        //////////////////////////////////////////
+        inline Size getSamplesCount() const { return m_samples.size(); }
+
     public:
 
         //////////////////////////////////////////
         static EcsWorld* GetEcsWorld(EcsWorldId _id);
+
+        //////////////////////////////////////////
+        static Size GetEcsWorldsCount();
+
+        //////////////////////////////////////////
+        // May return nullptr for released world slots
+        static EcsWorld* GetEcsWorldByIndex(Size _index);
 
     public:
 
@@ -461,6 +483,25 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        EcsArchetype* evaluateEntityArchetype(Entity* _entity);
+
+        //////////////////////////////////////////
+        Vector<EcsArchetype::SampleEntry> const& updateArchetypeSamplesCache(EcsArchetype* _archetype);
+
+        //////////////////////////////////////////
+        void addEntityToArchetype(EcsArchetype* _archetype, Entity* _entity);
+
+        //////////////////////////////////////////
+        void removeEntityFromArchetype(Entity* _entity);
+
+        //////////////////////////////////////////
+        void processNewSampleForExistingEntities(IEntitiesSample* _sample);
+
+        //////////////////////////////////////////
+        void processEntitySampleRefs(Entity* _entity);
+
+
+        //////////////////////////////////////////
         void notifyMouse(InputEventMouseData const& _data);
 
         //////////////////////////////////////////
@@ -480,6 +521,11 @@ namespace Maze
         Stack<S32> m_freeEntityIndices;
 
         Vector<IEntitiesSamplePtr> m_samples;
+        U32 m_samplesVersion = 0u;
+
+        Vector<EcsArchetypePtr> m_archetypes;
+        UnorderedMap<U64, Vector<ArchetypeId>> m_archetypesByHash;
+        Vector<ComponentId> m_archetypeIdsScratch;
 
         UnorderedMap<ClassUID, Vector<ComponentSystemEventHandlerPtr>> m_eventHandlers;
         FastVector<ComponentSystemEntityAddedToSampleEventHandlerPtr> m_entityAddedToSampleEventHandlers;

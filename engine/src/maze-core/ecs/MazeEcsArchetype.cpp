@@ -25,24 +25,50 @@
 
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
-#include "maze-core/utils/MazeClassInfo.hpp"
+#include "maze-core/ecs/MazeEcsArchetype.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-    StdMap<ClassUID, StdString> g_classUIDByName;
-    StdUnorderedMap<StdString, ClassUID> g_classNameByUID;
+    //////////////////////////////////////////
+    // Class EcsArchetype
+    //
+    //////////////////////////////////////////
+    EcsArchetype::EcsArchetype(
+        ArchetypeId _id,
+        Vector<ComponentId> const& _sortedComponentIds,
+        U64 _hash)
+        : m_id(_id)
+        , m_componentIds(_sortedComponentIds)
+        , m_hash(_hash)
+    {
+        for (ComponentId componentId : m_componentIds)
+            m_componentsMask |= (S64)1 << U32(componentId % 64);
+    }
 
     //////////////////////////////////////////
-    MAZE_CORE_API CString GetClassNameByUID(ClassUID _uid)
+    EcsArchetypePtr EcsArchetype::Create(
+        ArchetypeId _id,
+        Vector<ComponentId> const& _sortedComponentIds,
+        U64 _hash)
     {
-        auto it = g_classUIDByName.find(_uid);
-        if (it != g_classUIDByName.end())
-            return it->second.c_str();
-
-        return nullptr;
+        return EcsArchetypePtr(new EcsArchetype(_id, _sortedComponentIds, _hash));
     }
+
+    //////////////////////////////////////////
+    U64 EcsArchetype::CalculateHash(Vector<ComponentId> const& _sortedComponentIds)
+    {
+        // FNV-1a
+        U64 hash = 14695981039346656037ULL;
+        for (ComponentId componentId : _sortedComponentIds)
+        {
+            hash ^= (U64)componentId;
+            hash *= 1099511628211ULL;
+        }
+        return hash;
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

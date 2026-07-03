@@ -48,6 +48,10 @@ namespace Maze
     //////////////////////////////////////////
     extern StdMap<ClassUID, StdString> g_classUIDByName;
     extern StdUnorderedMap<StdString, ClassUID> g_classNameByUID;
+
+    //////////////////////////////////////////
+    // Returns nullptr if the uid is unknown
+    MAZE_CORE_API CString GetClassNameByUID(ClassUID _uid);
     
 
     //////////////////////////////////////////

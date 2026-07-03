@@ -79,7 +79,8 @@ namespace Maze
     //////////////////////////////////////////
     EntitiesSample::~EntitiesSample()
     {
-
+        for (Entity* entity : m_entities)
+            entity->_removeSampleRef(this);
     }
 
     //////////////////////////////////////////
@@ -98,11 +99,15 @@ namespace Maze
     void EntitiesSample::clear()
     {
         for (Entity* entity : m_entities)
+        {
             eventEntityWillBeRemoved(entity);
+            entity->_removeSampleRef(this);
+        }
 
+        Vector<Entity*> entities = std::move(m_entities);
         m_entities.clear();
 
-        for (Entity* entity : m_entities)
+        for (Entity* entity : entities)
             eventEntityRemoved(entity);
     }
 
@@ -124,6 +129,7 @@ namespace Maze
         if (it == m_entities.end() && intersects)
         {
             m_entities.push_back(_entity);
+            _entity->_addSampleRef(this);
             eventEntityAdded(_entity);
         }
         else
@@ -131,6 +137,7 @@ namespace Maze
         {
             eventEntityWillBeRemoved(_entity);
             m_entities.erase(it);
+            _entity->_removeSampleRef(this);
             eventEntityRemoved(_entity);
         }
     }

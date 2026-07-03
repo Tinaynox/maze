@@ -157,6 +157,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        // Same test against a bare component combination (archetype signature).
+        // _sortedComponentIds must be sorted ascending
+        bool hasIntersection(
+            Vector<ComponentId> const& _sortedComponentIds,
+            S64 _componentsMask) const;
+
+        //////////////////////////////////////////
         inline S64 getComponentsMask() const { return m_componentsMask; }
 
     protected:

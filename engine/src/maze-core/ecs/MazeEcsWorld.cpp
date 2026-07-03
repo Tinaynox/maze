@@ -266,7 +266,11 @@ namespace Maze
         while (entitiesLeft > 0);
 
         m_samples.clear();
-        
+        ++m_samplesVersion;
+
+        m_archetypes.clear();
+        m_archetypesByHash.clear();
+
         m_eventHolders.other()->clear();
         m_eventHolders.current()->clear();
 
@@ -418,6 +422,7 @@ namespace Maze
             broadcastEventImmediate<PostUpdateEvent>(updateEvent);
         }
         
+        bool samplesChanged = false;
         for (Vector<IEntitiesSamplePtr>::const_iterator it = m_samples.begin(),
                                                         end = m_samples.end();
                                                         it != end;)
@@ -426,10 +431,13 @@ namespace Maze
             {
                 it = m_samples.erase(it);
                 end = m_samples.end();
+                samplesChanged = true;
             }
             else
                 ++it;
         }
+        if (samplesChanged)
+            ++m_samplesVersion;
 
         ++m_frameNumber;
         m_updatingNow = false;
@@ -594,11 +602,10 @@ namespace Maze
 
         EntitiesSamplePtr sample = EntitiesSample::Create(getSharedPtr(), _aspect, _flags);
         m_samples.push_back(sample);
+        ++m_samplesVersion;
 
-        for (Size i = 0, in = m_entities.size(); i < in; ++i)
-            if (m_entities[i].entity)
-                sample->processEntity(m_entities[i].entity.get());
-        
+        processNewSampleForExistingEntities(sample.get());
+
         return sample;
     }
 
@@ -607,19 +614,229 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("EcsWorld::processEntityForSamples");
 
-        for (Size i = 0, in = m_samples.size(); i < in; ++i)
-            m_samples[i]->processEntity(_entity);
+        EcsArchetype* oldArchetype = getArchetype(_entity->getArchetypeId());
+        EcsArchetype* newArchetype = _entity->getEcsWorld() == this ? evaluateEntityArchetype(_entity)
+                                                                    : nullptr;
+
+        if (newArchetype != oldArchetype)
+        {
+            if (oldArchetype)
+                removeEntityFromArchetype(_entity);
+
+            if (newArchetype)
+                addEntityToArchetype(newArchetype, _entity);
+        }
+
+        if (oldArchetype && newArchetype && oldArchetype != newArchetype)
+        {
+            // Archetype transition - process the union of both sample lists in m_samples order
+            Vector<EcsArchetype::SampleEntry> const& oldSamples = updateArchetypeSamplesCache(oldArchetype);
+            Vector<EcsArchetype::SampleEntry> const& newSamples = updateArchetypeSamplesCache(newArchetype);
+
+            Size i = 0;
+            Size j = 0;
+            while (i < oldSamples.size() && j < newSamples.size())
+            {
+                if (oldSamples[i].order < newSamples[j].order)
+                    oldSamples[i++].sample->processEntity(_entity);
+                else
+                if (newSamples[j].order < oldSamples[i].order)
+                    newSamples[j++].sample->processEntity(_entity);
+                else
+                {
+                    oldSamples[i++].sample->processEntity(_entity);
+                    ++j;
+                }
+            }
+            while (i < oldSamples.size())
+                oldSamples[i++].sample->processEntity(_entity);
+            while (j < newSamples.size())
+                newSamples[j++].sample->processEntity(_entity);
+        }
+        else
+        {
+            EcsArchetype* archetype = newArchetype ? newArchetype : oldArchetype;
+            if (archetype)
+            {
+                Vector<EcsArchetype::SampleEntry> const& samples = updateArchetypeSamplesCache(archetype);
+                for (Size i = 0, in = samples.size(); i < in; ++i)
+                    samples[i].sample->processEntity(_entity);
+            }
+        }
+
+        // Samples that still hold the entity but were not covered above
+        // (membership drifted due to component changes inside sample event callbacks)
+        processEntitySampleRefs(_entity);
     }
 
     //////////////////////////////////////////
     void EcsWorld::processEntityAddedForSamples(Entity* _entity)
     {
+        MAZE_PROFILE_EVENT("EcsWorld::processEntityAddedForSamples");
+
+        MAZE_DEBUG_ASSERT(_entity->getArchetypeId() == c_invalidArchetypeId);
+        if (_entity->getArchetypeId() != c_invalidArchetypeId)
+            removeEntityFromArchetype(_entity);
+
+        // Assign the archetype before any sample callbacks so component changes
+        // made inside them are detectable as an archetype transition later
+        EcsArchetype* archetype = evaluateEntityArchetype(_entity);
+        addEntityToArchetype(archetype, _entity);
+
         Vector<ComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[ClassInfo<EntityAddedToSampleEvent>::UID()];
         for (ComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
             if (_eventHandler->getSample())
                 _eventHandler->getSample()->processEntity(_entity);
-            
-        processEntityForSamples(_entity);
+
+        Vector<EcsArchetype::SampleEntry> const& samples = updateArchetypeSamplesCache(archetype);
+        for (Size i = 0, in = samples.size(); i < in; ++i)
+            samples[i].sample->processEntity(_entity);
+
+        processEntitySampleRefs(_entity);
+    }
+
+    //////////////////////////////////////////
+    EcsArchetype* EcsWorld::getArchetype(ArchetypeId _id) const
+    {
+        if (_id < 0 || _id >= (ArchetypeId)m_archetypes.size())
+            return nullptr;
+
+        return m_archetypes[_id].get();
+    }
+
+    //////////////////////////////////////////
+    EcsArchetype* EcsWorld::requestArchetype(Vector<ComponentId> const& _sortedComponentIds)
+    {
+        U64 hash = EcsArchetype::CalculateHash(_sortedComponentIds);
+
+        Vector<ArchetypeId>& bucket = m_archetypesByHash[hash];
+        for (ArchetypeId archetypeId : bucket)
+            if (m_archetypes[archetypeId]->getComponentIds() == _sortedComponentIds)
+                return m_archetypes[archetypeId].get();
+
+        ArchetypeId archetypeId = (ArchetypeId)m_archetypes.size();
+        m_archetypes.push_back(
+            EcsArchetype::Create(archetypeId, _sortedComponentIds, hash));
+        bucket.push_back(archetypeId);
+
+        return m_archetypes.back().get();
+    }
+
+    //////////////////////////////////////////
+    EcsArchetype* EcsWorld::evaluateEntityArchetype(Entity* _entity)
+    {
+        m_archetypeIdsScratch.clear();
+        for (auto const& componentData : _entity->getComponents())
+            m_archetypeIdsScratch.push_back(componentData.first);
+
+        return requestArchetype(m_archetypeIdsScratch);
+    }
+
+    //////////////////////////////////////////
+    Vector<EcsArchetype::SampleEntry> const& EcsWorld::updateArchetypeSamplesCache(EcsArchetype* _archetype)
+    {
+        if (_archetype->m_samplesCacheVersion != m_samplesVersion)
+        {
+            _archetype->m_samplesCache.clear();
+            for (U32 i = 0, in = (U32)m_samples.size(); i < in; ++i)
+            {
+                if (m_samples[i]->getAspect().hasIntersection(
+                    _archetype->getComponentIds(),
+                    _archetype->getComponentsMask()))
+                {
+                    EcsArchetype::SampleEntry entry;
+                    entry.sample = m_samples[i].get();
+                    entry.order = i;
+                    _archetype->m_samplesCache.push_back(entry);
+                }
+            }
+
+            _archetype->m_samplesCacheVersion = m_samplesVersion;
+        }
+
+        return _archetype->m_samplesCache;
+    }
+
+    //////////////////////////////////////////
+    void EcsWorld::addEntityToArchetype(EcsArchetype* _archetype, Entity* _entity)
+    {
+        _entity->m_archetypeId = _archetype->getId();
+        _entity->m_indexInArchetype = (S32)_archetype->m_entities.size();
+        _archetype->m_entities.push_back(_entity->getId());
+    }
+
+    //////////////////////////////////////////
+    void EcsWorld::removeEntityFromArchetype(Entity* _entity)
+    {
+        EcsArchetype* archetype = getArchetype(_entity->m_archetypeId);
+        if (!archetype)
+            return;
+
+        S32 index = _entity->m_indexInArchetype;
+        MAZE_DEBUG_ASSERT(
+            index >= 0 &&
+            index < (S32)archetype->m_entities.size() &&
+            archetype->m_entities[index] == _entity->getId());
+
+        S32 lastIndex = (S32)archetype->m_entities.size() - 1;
+        if (index != lastIndex)
+        {
+            archetype->m_entities[index] = archetype->m_entities[lastIndex];
+            EntityPtr const& movedEntity = getEntity(archetype->m_entities[index]);
+            MAZE_DEBUG_ASSERT(movedEntity);
+            if (movedEntity)
+                movedEntity->m_indexInArchetype = index;
+        }
+        archetype->m_entities.pop_back();
+
+        _entity->m_archetypeId = c_invalidArchetypeId;
+        _entity->m_indexInArchetype = -1;
+    }
+
+    //////////////////////////////////////////
+    void EcsWorld::processNewSampleForExistingEntities(IEntitiesSample* _sample)
+    {
+        MAZE_PROFILE_EVENT("EcsWorld::processNewSampleForExistingEntities");
+
+        for (Size i = 0, in = m_archetypes.size(); i < in; ++i)
+        {
+            EcsArchetype* archetype = m_archetypes[i].get();
+            if (archetype->getEntities().empty())
+                continue;
+
+            if (!_sample->getAspect().hasIntersection(
+                archetype->getComponentIds(),
+                archetype->getComponentsMask()))
+                continue;
+
+            FastVector<EntityId> const& entityIds = archetype->getEntities();
+            for (Size j = 0, jn = entityIds.size(); j < jn; ++j)
+            {
+                EntityPtr const& entity = getEntity(entityIds[j]);
+                if (entity)
+                    _sample->processEntity(entity.get());
+            }
+        }
+
+        // Entities that are still in the adding queues have no archetype yet
+        for (EntityPtr const& entity : m_eventHolders.current()->getAddingEntities())
+            _sample->processEntity(entity.get());
+        for (EntityPtr const& entity : m_eventHolders.other()->getAddingEntities())
+            _sample->processEntity(entity.get());
+    }
+
+    //////////////////////////////////////////
+    void EcsWorld::processEntitySampleRefs(Entity* _entity)
+    {
+        // processEntity may swap-erase the current ref, so only advance
+        // the index when the slot survived the call
+        for (Size i = 0; i < _entity->getSampleRefs().size();)
+        {
+            IEntitiesSample* sample = _entity->getSampleRefs()[i];
+            sample->processEntity(_entity);
+            if (i < _entity->getSampleRefs().size() && _entity->getSampleRefs()[i] == sample)
+                ++i;
+        }
     }
 
     //////////////////////////////////////////
@@ -779,6 +996,21 @@ namespace Maze
 
         Size index = (Size)_id.getIndex();
         return s_worlds[index];
+    }
+
+    //////////////////////////////////////////
+    Size EcsWorld::GetEcsWorldsCount()
+    {
+        return s_worlds.size();
+    }
+
+    //////////////////////////////////////////
+    EcsWorld* EcsWorld::GetEcsWorldByIndex(Size _index)
+    {
+        if (_index >= s_worlds.size())
+            return nullptr;
+
+        return s_worlds[_index];
     }
 
 

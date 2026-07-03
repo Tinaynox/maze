@@ -478,7 +478,13 @@ namespace Maze
 
         while (!m_eventTypes.empty()) { m_eventTypes.pop(); }
         for (EntityPtr const& entity : m_addingEntities)
+        {
             entity->setEcsWorld(nullptr);
+
+            // The entity may have been picked up by freshly requested samples
+            // while it was still in the adding queue - detach it properly
+            m_world->processEntitySampleRefs(entity.get());
+        }
         m_addingEntities.clear();
         m_addingEntitiesById.clear();
         while (!m_removingEntities.empty()) { m_removingEntities.pop(); }

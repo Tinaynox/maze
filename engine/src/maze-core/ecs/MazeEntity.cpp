@@ -35,6 +35,19 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    // Snapshot for callback loops - callbacks may add/remove components,
+    // which would invalidate iterators of the contiguous container
+    static inline void CollectComponents(
+        Entity::ComponentsContainer const& _components,
+        Vector<ComponentPtr>& _outComponents)
+    {
+        _outComponents.reserve(_components.size());
+        for (auto const& componentData : _components)
+            _outComponents.push_back(componentData.second);
+    }
+
+
+    //////////////////////////////////////////
     // Class Entity
     //
     //////////////////////////////////////////
@@ -58,8 +71,14 @@ namespace Maze
 
         while (!m_components.empty())
         {
-            m_components.begin()->second->setEntity(nullptr);
-            m_components.erase(m_components.begin());
+            // Keep the component alive across the detach callback - it may
+            // mutate the container, so re-find before erasing
+            ComponentPtr component = m_components.begin()->second;
+            component->setEntity(nullptr);
+
+            ComponentsContainer::iterator it = m_components.find(component->getComponentId());
+            if (it != m_components.end() && it->second == component)
+                m_components.erase(it);
         }
     }
 
@@ -286,10 +305,7 @@ namespace Maze
         }
         
         _component->removeFromEntity();
-        m_components.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_component->getComponentId()),
-            std::forward_as_tuple(_component));
+        m_components.insert(_component->getComponentId(), _component);
         _component->setEntity(this);
 
         m_flags |= (U8)Flags::ComponentsMaskDirty;
@@ -317,10 +333,16 @@ namespace Maze
         ComponentsContainer::iterator it = m_components.find(_componentUID);
         if (it == m_components.end())
             return false;
-        
-        it->second->setEntity(nullptr);
-        
-        m_components.erase(it);
+
+        // Keep the component alive across the detach callback - it may
+        // mutate the container, so re-find before erasing
+        ComponentPtr component = it->second;
+        component->setEntity(nullptr);
+
+        it = m_components.find(_componentUID);
+        if (it != m_components.end() && it->second == component)
+            m_components.erase(it);
+
         m_flags |= (U8)Flags::ComponentsMaskDirty;
             
         if (m_world)
@@ -344,8 +366,10 @@ namespace Maze
 
 
         // #TODO: Remove
-        for (auto const& componentData : m_components)
-            componentData.second->processEntityAwakened();
+        Vector<ComponentPtr> components;
+        CollectComponents(m_components, components);
+        for (ComponentPtr const& component : components)
+            component->processEntityAwakened();
     }
 
     //////////////////////////////////////////
@@ -370,8 +394,10 @@ namespace Maze
 
         if (m_scene)
         {
-            for (auto const& componentData : m_components)
-                componentData.second->processSceneReset();
+            Vector<ComponentPtr> components;
+            CollectComponents(m_components, components);
+            for (ComponentPtr const& component : components)
+                component->processSceneReset();
 
             m_scene->processEntityRemoved(this);
         }
@@ -382,9 +408,10 @@ namespace Maze
         {
             m_scene->processEntityAdded(this);
 
-            for (auto const& componentData : m_components)
-                componentData.second->processSceneSet();
-            
+            Vector<ComponentPtr> components;
+            CollectComponents(m_components, components);
+            for (ComponentPtr const& component : components)
+                component->processSceneSet();
         }
     }
 
@@ -423,15 +450,18 @@ namespace Maze
                 {
                     m_world->processEntityActiveChanged(getId());
 
+                    Vector<ComponentPtr> components;
+                    CollectComponents(m_components, components);
+
                     if (currentActiveInHierarchy)
                     {
-                        for (auto const& componentData : m_components)
-                            componentData.second->processEntityEnabled();
+                        for (ComponentPtr const& component : components)
+                            component->processEntityEnabled();
                     }
                     else
                     {
-                        for (auto const& componentData : m_components)
-                            componentData.second->processEntityDisabled();
+                        for (ComponentPtr const& component : components)
+                            component->processEntityDisabled();
                     }
                 }
             }
@@ -444,8 +474,10 @@ namespace Maze
         if (!getEcsWorld())
             return;
 
-        for (auto const& componentData : m_components)
-            componentData.second->processEvent(_event);
+        Vector<ComponentPtr> components;
+        CollectComponents(m_components, components);
+        for (ComponentPtr const& component : components)
+            component->processEvent(_event);
     }
     
     

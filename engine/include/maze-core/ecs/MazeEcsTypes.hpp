@@ -46,6 +46,8 @@ namespace Maze
 
     using EcsWorldId = IdWithGeneration<S8, 4>;
 
+    using ArchetypeId = S32;
+
     //////////////////////////////////////////
     using EcsSerializationId = S32;
 
@@ -53,6 +55,7 @@ namespace Maze
     static const EntityId c_invalidEntityId = EntityId();
     static const ComponentId c_invalidComponentId = 0;
     static const EcsWorldId c_invalidWorldId = EcsWorldId(-1);
+    static const ArchetypeId c_invalidArchetypeId = ArchetypeId(-1);
     static const EcsSerializationId c_invalidSerializationId = 0;
     
 

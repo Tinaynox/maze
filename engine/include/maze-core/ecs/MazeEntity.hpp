@@ -39,6 +39,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/containers/MazeFastVector.hpp"
 #include "maze-core/managers/MazeEventManager.hpp"
+#include <algorithm>
 
 
 //////////////////////////////////////////
@@ -49,6 +50,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(EcsScene);
     MAZE_USING_SHARED_PTR(ComponentEntityLinker);
+    class IEntitiesSample;
 
 
     //////////////////////////////////////////
@@ -56,6 +58,91 @@ namespace Maze
 
     //////////////////////////////////////////
     extern void SendEventImmediate(EcsWorld* _ecsWorld, EntityId _id, Event* _event);
+
+
+    //////////////////////////////////////////
+    // Class EntityComponentsContainer
+    //
+    // Contiguous storage sorted by ComponentId (ascending) - iteration order
+    // matches the former Map-based container. Sortedness is required: aspect
+    // checks binary search it and archetype signatures are read off in order.
+    //
+    //////////////////////////////////////////
+    class EntityComponentsContainer
+    {
+    public:
+
+        //////////////////////////////////////////
+        using PairType = Pair<ComponentId, ComponentPtr>;
+        using StorageType = Vector<PairType>;
+        using iterator = StorageType::iterator;
+        using const_iterator = StorageType::const_iterator;
+
+        //////////////////////////////////////////
+        inline iterator begin() { return m_data.begin(); }
+        inline iterator end() { return m_data.end(); }
+        inline const_iterator begin() const { return m_data.begin(); }
+        inline const_iterator end() const { return m_data.end(); }
+
+        //////////////////////////////////////////
+        inline Size size() const { return m_data.size(); }
+        inline bool empty() const { return m_data.empty(); }
+        inline void reserve(Size _capacity) { m_data.reserve(_capacity); }
+
+        //////////////////////////////////////////
+        inline iterator lowerBound(ComponentId _id)
+        {
+            return std::lower_bound(
+                m_data.begin(),
+                m_data.end(),
+                _id,
+                [](PairType const& _element, ComponentId _value) { return _element.first < _value; });
+        }
+
+        //////////////////////////////////////////
+        inline const_iterator lowerBound(ComponentId _id) const
+        {
+            return std::lower_bound(
+                m_data.begin(),
+                m_data.end(),
+                _id,
+                [](PairType const& _element, ComponentId _value) { return _element.first < _value; });
+        }
+
+        //////////////////////////////////////////
+        inline iterator find(ComponentId _id)
+        {
+            iterator it = lowerBound(_id);
+            if (it != m_data.end() && it->first == _id)
+                return it;
+            return m_data.end();
+        }
+
+        //////////////////////////////////////////
+        inline const_iterator find(ComponentId _id) const
+        {
+            const_iterator it = lowerBound(_id);
+            if (it != m_data.end() && it->first == _id)
+                return it;
+            return m_data.end();
+        }
+
+        //////////////////////////////////////////
+        // The id must not be present yet
+        inline iterator insert(ComponentId _id, ComponentPtr const& _component)
+        {
+            return m_data.insert(lowerBound(_id), PairType(_id, _component));
+        }
+
+        //////////////////////////////////////////
+        inline iterator erase(const_iterator _it) { return m_data.erase(_it); }
+
+        //////////////////////////////////////////
+        inline void clear() { m_data.clear(); }
+
+    private:
+        StorageType m_data;
+    };
 
 
     //////////////////////////////////////////
@@ -75,7 +162,7 @@ namespace Maze
         MAZE_DECLARE_MEMORY_ALLOCATION(Entity);
 
         //////////////////////////////////////////
-        using ComponentsContainer = Map<ComponentId, ComponentPtr>;
+        using ComponentsContainer = EntityComponentsContainer;
 
         //////////////////////////////////////////
         friend class EcsWorld;
@@ -441,7 +528,38 @@ namespace Maze
 
             return m_componentsMask;
         }
-        
+
+
+        //////////////////////////////////////////
+        inline ArchetypeId getArchetypeId() const { return m_archetypeId; }
+
+        //////////////////////////////////////////
+        inline S32 getIndexInArchetype() const { return m_indexInArchetype; }
+
+
+        //////////////////////////////////////////
+        // Internal (IEntitiesSample bookkeeping) - samples this entity is currently a member of
+        inline FastVector<IEntitiesSample*> const& getSampleRefs() const { return m_samplesRefs; }
+
+        //////////////////////////////////////////
+        // Internal (IEntitiesSample bookkeeping)
+        inline void _addSampleRef(IEntitiesSample* _sample) { m_samplesRefs.push_back(_sample); }
+
+        //////////////////////////////////////////
+        // Internal (IEntitiesSample bookkeeping)
+        inline void _removeSampleRef(IEntitiesSample* _sample)
+        {
+            for (Size i = 0, in = m_samplesRefs.size(); i < in; ++i)
+            {
+                if (m_samplesRefs[i] == _sample)
+                {
+                    m_samplesRefs.eraseUnordered(m_samplesRefs.begin() + i);
+                    return;
+                }
+            }
+        }
+
+
         //////////////////////////////////////////
         void tryAwake();
 
@@ -505,6 +623,10 @@ namespace Maze
         U8 m_flags = (U8(Flags::ActiveSelf) | U8(Flags::ActiveInHierarchyPrevFrame) | U8(Flags::ComponentsMaskDirty));
 
         S64 m_componentsMask = 0;
+
+        ArchetypeId m_archetypeId = c_invalidArchetypeId;
+        S32 m_indexInArchetype = -1;
+        FastVector<IEntitiesSample*> m_samplesRefs;
 
     protected:
         U8 m_transitionFlags = 0;

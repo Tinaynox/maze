@@ -63,7 +63,10 @@ namespace Maze
         Size _count,
         Size& _outTicket)
     {
-        MAZE_ERROR_IF(_start > m_vbo->getSizeBytes() || _start + _count > m_vbo->getSizeBytes(), "VBO out of bounds mapping!");
+        MAZE_ERROR_RETURN_VALUE_IF(
+            _start > m_vbo->getSizeBytes() || _start + _count > m_vbo->getSizeBytes(),
+            nullptr,
+            "VBO out of bounds mapping! start=%zu count=%zu capacity=%zu", _start, _count, m_vbo->getSizeBytes());
 
 
         if (m_mappedRanges.size() == m_freeRanges.size())
@@ -122,7 +125,9 @@ namespace Maze
         Size _flushStart,
         Size _flushCount)
     {
-        MAZE_ERROR_IF(
+        MAZE_ERROR_RETURN_IF(_ticket >= m_mappedRanges.size(), "Invalid flush ticket!");
+
+        MAZE_ERROR_RETURN_IF(
             m_mappedRanges[_ticket].start + _flushStart + _flushCount > m_vbo->getSizeBytes(),
             "VBO flush exceeds buffer bounds! absolute end=%zu capacity=%zu",
             m_mappedRanges[_ticket].start + _flushStart + _flushCount,
@@ -137,8 +142,8 @@ namespace Maze
     //////////////////////////////////////////
     void VertexBufferObjectMappingControllerOpenGL::unmap(Size _ticket)
     {
-        MAZE_ERROR_IF(_ticket >= m_mappedRanges.size(), "Invalid unmap ticket!");
-        MAZE_ERROR_IF(m_mappedRanges.size() == m_freeRanges.size(), "Unmapping an already unmapped buffer! Did you call unmap with the same ticket twice?");
+        MAZE_ERROR_RETURN_IF(_ticket >= m_mappedRanges.size(), "Invalid unmap ticket!");
+        MAZE_ERROR_RETURN_IF(m_mappedRanges.size() == m_freeRanges.size(), "Unmapping an already unmapped buffer! Did you call unmap with the same ticket twice?");
 
         m_freeRanges.emplace_back(_ticket);
 

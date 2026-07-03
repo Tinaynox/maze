@@ -31,6 +31,9 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/MazeEcsArchetype.hpp"
+#include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-plugin-console/MazeConsoleService.hpp"
 #include "maze-plugin-console/settings/MazeConsoleSettings.hpp"
 #include "maze-plugin-console/scene/MazeSceneConsole.hpp"
@@ -41,6 +44,146 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    static String BuildComponentsName(Vector<ComponentId> const& _componentIds)
+    {
+        String name;
+        for (ComponentId componentId : _componentIds)
+        {
+            if (!name.empty())
+                name += '+';
+
+            // ComponentId is a ClassUID - the class registry knows every
+            // component class and dynamic component id, unlike ComponentFactory
+            // which only lists serializable components (and errors on misses)
+            CString componentName = GetClassNameByUID(componentId);
+            if (componentName)
+                name += componentName;
+            else
+                name += StringHelper::ToString((U32)componentId);
+        }
+
+        if (name.empty())
+            name = "<no components>";
+
+        return name;
+    }
+
+    //////////////////////////////////////////
+    static CString GetEntityName(Entity* _entity)
+    {
+        Name* name = _entity->getComponentRaw<Name>();
+        if (name)
+            return name->getName().c_str();
+
+        StaticName* staticName = _entity->getComponentRaw<StaticName>();
+        if (staticName)
+            return staticName->getName();
+
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
+    static void DumpEcsWorldArchetypes(EcsWorld* _world)
+    {
+        for (ArchetypeId archetypeId = 0, archetypesCount = (ArchetypeId)_world->getArchetypesCount();
+                                          archetypeId < archetypesCount;
+                                          ++archetypeId)
+        {
+            EcsArchetype* archetype = _world->getArchetype(archetypeId);
+            if (!archetype || archetype->getEntities().empty())
+                continue;
+
+            Debug::Log(
+                "  Archetype #%d [%s] (entities: %d)",
+                (S32)archetypeId,
+                BuildComponentsName(archetype->getComponentIds()).c_str(),
+                (S32)archetype->getEntities().size());
+
+            for (EntityId entityId : archetype->getEntities())
+            {
+                EntityPtr const& entity = _world->getEntity(entityId);
+                if (!entity)
+                {
+                    Debug::Log("    - eid=%d <not found>", (S32)entityId.getId());
+                    continue;
+                }
+
+                CString name = GetEntityName(entity.get());
+                Debug::Log(
+                    "    - eid=%d%s%s%s%s",
+                    (S32)entityId.getId(),
+                    name ? " '" : "",
+                    name ? name : "",
+                    name ? "'" : "",
+                    entity->getActiveInHierarchy() ? "" : " (inactive)");
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    static void DumpEcsWorldSystems(EcsWorld* _world)
+    {
+        Debug::Log("  Systems:");
+
+        for (auto const& eventHandlersData : _world->getEventHandlers())
+        {
+            if (eventHandlersData.second.empty())
+                continue;
+
+            CString eventName = GetClassNameByUID(eventHandlersData.first);
+            Debug::Log(
+                "    %s (%d):",
+                eventName ? eventName : StringHelper::ToString((U32)eventHandlersData.first).c_str(),
+                (S32)eventHandlersData.second.size());
+
+            for (ComponentSystemEventHandlerPtr const& eventHandler : eventHandlersData.second)
+            {
+                if (eventHandler->getSample())
+                {
+                    Debug::Log(
+                        "      - %s [%s]",
+                        eventHandler->getName().c_str(),
+                        BuildComponentsName(eventHandler->getSample()->getAspect().getComponentIds()).c_str());
+                }
+                else
+                {
+                    Debug::Log("      - %s [global]", eventHandler->getName().c_str());
+                }
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    static void DumpEcsState(String const& _worldFilter)
+    {
+        Debug::Log("=============== ECS STATE ===============");
+
+        for (Size worldIndex = 0, worldsCount = EcsWorld::GetEcsWorldsCount(); worldIndex < worldsCount; ++worldIndex)
+        {
+            EcsWorld* world = EcsWorld::GetEcsWorldByIndex(worldIndex);
+            if (!world)
+                continue;
+
+            if (!_worldFilter.empty() && world->getName().getString().find(_worldFilter) == String::npos)
+                continue;
+
+            Debug::Log(
+                "World #%d '%s' (entities: %d, archetypes: %d, samples: %d)",
+                (S32)worldIndex,
+                world->getName().c_str(),
+                (S32)world->calculateEntitiesCount(),
+                (S32)world->getArchetypesCount(),
+                (S32)world->getSamplesCount());
+
+            DumpEcsWorldArchetypes(world);
+            DumpEcsWorldSystems(world);
+        }
+
+        Debug::Log("=========================================");
+    }
+
+
     //////////////////////////////////////////
     // Class ConsoleService
     //
@@ -93,6 +236,19 @@ namespace Maze
         updateActive();
 
         LogService::GetInstancePtr()->eventLog.subscribe(this, &ConsoleService::notifyLog);
+
+        registerCommand(
+            MAZE_HCS("ecs.dump"),
+            [](String const* _argv, S32 _argc)
+            {
+                if (_argc > 1)
+                    return false;
+
+                DumpEcsState(_argc == 1 ? _argv[0] : String());
+                return true;
+            },
+            1,
+            "Print full ECS state to log (worlds, archetypes, entities, systems). Optional arg - world name filter");
     }
 
     //////////////////////////////////////////

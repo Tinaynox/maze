@@ -270,7 +270,8 @@ namespace Maze
         //////////////////////////////////////////
         virtual ~GenericInclusiveEntitiesSample()
         {
-
+            for (EntityData const& entityData : m_entitiesData)
+                entityData.entity->_removeSampleRef(this);
         }
 
         //////////////////////////////////////////
@@ -311,6 +312,7 @@ namespace Maze
             for (EntityData const& entityData : m_entitiesData)
             {
                 eventEntityWillBeRemoved(entityData.entity);
+                entityData.entity->_removeSampleRef(this);
                 invokeEntityRemoved(entityData, typename Indices::Indexes());
             }
 
@@ -343,6 +345,7 @@ namespace Maze
                     std::piecewise_construct,
                     std::forward_as_tuple(eid),
                     std::forward_as_tuple(index));
+                _entity->_addSampleRef(this);
                 invokeEntityAdded(entityData, typename Indices::Indexes());
             }
             else
@@ -352,12 +355,13 @@ namespace Maze
 
                 Size index = it->second;
                 EntityData entityData = m_entitiesData[index];
-                
+
                 m_entityIndices.erase(it);
                 m_entitiesData.eraseUnordered(m_entitiesData.begin() + index);
                 if (index < m_entitiesData.size())
                     m_entityIndices[m_entitiesData[index].entity->getId()] = index;
 
+                _entity->_removeSampleRef(this);
                 invokeEntityRemoved(entityData, typename Indices::Indexes());
             }
         }
@@ -610,7 +614,8 @@ namespace Maze
         //////////////////////////////////////////
         virtual ~DynamicIdEntitiesSample()
         {
-
+            for (EntityData const& entityData : m_entitiesData)
+                entityData.entity->_removeSampleRef(this);
         }
 
         //////////////////////////////////////////
@@ -653,6 +658,7 @@ namespace Maze
             for (EntityData const& entityData : m_entitiesData)
             {
                 eventEntityWillBeRemoved(entityData.entity);
+                entityData.entity->_removeSampleRef(this);
                 invokeEntityRemoved(entityData);
             }
 
@@ -685,6 +691,7 @@ namespace Maze
                     std::piecewise_construct,
                     std::forward_as_tuple(eid),
                     std::forward_as_tuple(index));
+                _entity->_addSampleRef(this);
                 invokeEntityAdded(entityData);
             }
             else
@@ -700,6 +707,7 @@ namespace Maze
                 if (index < m_entitiesData.size())
                     m_entityIndices[m_entitiesData[index].entity->getId()] = index;
 
+                _entity->_removeSampleRef(this);
                 invokeEntityRemoved(entityData);
             }
         }

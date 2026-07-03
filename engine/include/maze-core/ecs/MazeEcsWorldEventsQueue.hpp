@@ -129,6 +129,9 @@ namespace Maze
         //////////////////////////////////////////
         EntityPtr const& getAddingEntity(EntityId _id);
 
+        //////////////////////////////////////////
+        inline Deque<EntityPtr> const& getAddingEntities() const { return m_addingEntities; }
+
 
         //////////////////////////////////////////
         void clear();

@@ -147,8 +147,8 @@ namespace Maze
 
         ContextOpenGL* context = rs->castRaw<RenderSystemOpenGL>()->ensureCurrentContext();
 
-        MAZE_ERROR_IF(_elementStart >= getElementsCount(), "Invalid elementStart!");
-        MAZE_ERROR_IF(_elementStart + _elementsCount > getElementsCount(), "Invalid elementStart!");
+        MAZE_ERROR_RETURN_IF(_elementStart >= getElementsCount(), "Invalid elementStart!");
+        MAZE_ERROR_RETURN_IF(_elementStart + _elementsCount > getElementsCount(), "Invalid elementStart!");
 
         Size offset = _elementStart * getBytesPerElement();
 

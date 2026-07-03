@@ -28,6 +28,7 @@
 #include "maze-core/ecs/MazeEntityAspect.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
+#include <algorithm>
 
 
 //////////////////////////////////////////
@@ -122,6 +123,65 @@ namespace Maze
         return false;
     }
 
-    
+    //////////////////////////////////////////
+    bool EntityAspect::hasIntersection(
+        Vector<ComponentId> const& _sortedComponentIds,
+        S64 _componentsMask) const
+    {
+        switch (m_type)
+        {
+            case EntityAspectType::HaveAllOfComponents:
+            {
+                if (!(_componentsMask & m_componentsMask))
+                    return false;
+
+                for (ComponentId componentId : m_componentIds)
+                {
+                    if (!std::binary_search(
+                        _sortedComponentIds.begin(),
+                        _sortedComponentIds.end(),
+                        componentId))
+                        return false;
+                }
+
+                return true;
+            }
+
+            case EntityAspectType::HaveAnyOfComponents:
+            {
+                for (ComponentId componentId : m_componentIds)
+                {
+                    if (std::binary_search(
+                        _sortedComponentIds.begin(),
+                        _sortedComponentIds.end(),
+                        componentId))
+                        return true;
+                }
+
+                return false;
+            }
+
+            case EntityAspectType::ExcludeOfComponents:
+            {
+                for (ComponentId componentId : m_componentIds)
+                {
+                    if (std::binary_search(
+                        _sortedComponentIds.begin(),
+                        _sortedComponentIds.end(),
+                        componentId))
+                        return false;
+                }
+
+                return true;
+            }
+
+            default:
+                break;
+        }
+
+        return false;
+    }
+
+
 } // namespace Maze
 //////////////////////////////////////////
