@@ -43,6 +43,17 @@ namespace Maze.Core
         public extern static NativePtr InstantiateEntity(NativePtr nativeComponentPtr, AssetUnitId auid);
         #endregion
 
+        #region EntitiesSample
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static int EcsSampleRequest(NativePtr nativeComponentPtr, int[] requiredComponentIds, int[] forbiddenComponentIds, byte flags);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EcsSampleRelease(int sampleHandle);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static IntPtr[] EcsSampleGetEntities(int sampleHandle);
+        #endregion
+
         #region EcsScene
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static string EcsSceneGetAssetFilePath(int sceneId);

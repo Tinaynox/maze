@@ -47,6 +47,11 @@ namespace Maze
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsCore();
 
+    //////////////////////////////////////////
+    // Releases all entity samples requested from the C# side.
+    // Must be called when the mono domain goes away (shutdown/reload)
+    void MAZE_PLUGIN_CSHARP_API ClearMonoEntitiesSamples();
+
 } // namespace Maze
 //////////////////////////////////////////
 

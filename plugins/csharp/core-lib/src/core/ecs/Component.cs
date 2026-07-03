@@ -164,6 +164,59 @@ namespace Maze.Core
             return new Entity(InternalCalls.ComponentGetEntityById(NativeComponentPtr, eid));
         }
 
+
+        int RequestSampleHandle(Type[] required, Type[] forbidden, bool includeInactive)
+        {
+            int[] requiredIds = new int[required != null ? required.Length : 0];
+            for (int i = 0; i < requiredIds.Length; ++i)
+                requiredIds[i] = InternalCalls.GetComponentIdByMonoType(required[i]);
+
+            int[] forbiddenIds = new int[forbidden != null ? forbidden.Length : 0];
+            for (int i = 0; i < forbiddenIds.Length; ++i)
+                forbiddenIds[i] = InternalCalls.GetComponentIdByMonoType(forbidden[i]);
+
+            byte flags = (byte)(includeInactive ? 1 : 0); // EntitiesSampleFlags::IncludeInactive
+
+            return InternalCalls.EcsSampleRequest(NativeComponentPtr, requiredIds, forbiddenIds, flags);
+        }
+
+        public EntitiesSample RequestSample(Type[] required, Type[] forbidden = null, bool includeInactive = false)
+        {
+            int handle = RequestSampleHandle(required, forbidden, includeInactive);
+            if (handle == EntitiesSample.InvalidHandle)
+                return null;
+
+            return new EntitiesSample(handle);
+        }
+
+        public EntitiesSample<T0> RequestSample<T0>(params Type[] forbidden)
+            where T0 : class
+        {
+            int handle = RequestSampleHandle(new Type[] { typeof(T0) }, forbidden, false);
+            return handle != EntitiesSample.InvalidHandle ? new EntitiesSample<T0>(handle) : null;
+        }
+
+        public EntitiesSample<T0, T1> RequestSample<T0, T1>(params Type[] forbidden)
+            where T0 : class where T1 : class
+        {
+            int handle = RequestSampleHandle(new Type[] { typeof(T0), typeof(T1) }, forbidden, false);
+            return handle != EntitiesSample.InvalidHandle ? new EntitiesSample<T0, T1>(handle) : null;
+        }
+
+        public EntitiesSample<T0, T1, T2> RequestSample<T0, T1, T2>(params Type[] forbidden)
+            where T0 : class where T1 : class where T2 : class
+        {
+            int handle = RequestSampleHandle(new Type[] { typeof(T0), typeof(T1), typeof(T2) }, forbidden, false);
+            return handle != EntitiesSample.InvalidHandle ? new EntitiesSample<T0, T1, T2>(handle) : null;
+        }
+
+        public EntitiesSample<T0, T1, T2, T3> RequestSample<T0, T1, T2, T3>(params Type[] forbidden)
+            where T0 : class where T1 : class where T2 : class where T3 : class
+        {
+            int handle = RequestSampleHandle(new Type[] { typeof(T0), typeof(T1), typeof(T2), typeof(T3) }, forbidden, false);
+            return handle != EntitiesSample.InvalidHandle ? new EntitiesSample<T0, T1, T2, T3>(handle) : null;
+        }
+
         public bool IsEditorMode()
         {
             return InternalCalls.ComponentIsEditorMode(NativeComponentPtr);

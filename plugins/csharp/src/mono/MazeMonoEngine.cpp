@@ -663,6 +663,9 @@ namespace Maze
         EventManager::GetInstancePtr()->broadcastEventImmediate<MonoPreShutdownEvent>();
         EventManager::GetInstancePtr()->broadcastEventImmediate<MonoShutdownEvent>();
 
+        // C#-side sample handles die with the domain
+        ClearMonoEntitiesSamples();
+
         mono_domain_set(mono_get_root_domain(), false);
         if (g_monoEngineData->appDomain)
             mono_domain_unload(g_monoEngineData->appDomain);

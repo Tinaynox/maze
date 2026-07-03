@@ -812,6 +812,113 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Entity samples requested from the C# side. The registry owns the
+    // sample ptrs (keeps them from being garbage collected by the world)
+    // and hands out stable S32 handles to the managed code
+    static Vector<EntitiesSamplePtr> g_monoEntitiesSamples;
+    static Stack<S32> g_monoEntitiesSamplesFreeHandles;
+
+    //////////////////////////////////////////
+    void MAZE_PLUGIN_CSHARP_API ClearMonoEntitiesSamples()
+    {
+        g_monoEntitiesSamples.clear();
+        while (!g_monoEntitiesSamplesFreeHandles.empty())
+            g_monoEntitiesSamplesFreeHandles.pop();
+    }
+
+    //////////////////////////////////////////
+    inline S32 EcsSampleRequest(
+        Component* _component,
+        MonoArray* _requiredComponentIds,
+        MonoArray* _forbiddenComponentIds,
+        U8 _flags)
+    {
+        if (!_component || !_component->getEntityRaw() || !_component->getEntityRaw()->getEcsWorld())
+            return -1;
+
+        EcsWorld* world = _component->getEntityRaw()->getEcsWorld();
+
+        Vector<ComponentId> requiredComponentIds;
+        if (_requiredComponentIds)
+        {
+            Size count = (Size)mono_array_length(_requiredComponentIds);
+            requiredComponentIds.reserve(count);
+            for (Size i = 0; i < count; ++i)
+                requiredComponentIds.push_back((ComponentId)mono_array_get(_requiredComponentIds, S32, i));
+        }
+
+        Vector<ComponentId> forbiddenComponentIds;
+        if (_forbiddenComponentIds)
+        {
+            Size count = (Size)mono_array_length(_forbiddenComponentIds);
+            forbiddenComponentIds.reserve(count);
+            for (Size i = 0; i < count; ++i)
+                forbiddenComponentIds.push_back((ComponentId)mono_array_get(_forbiddenComponentIds, S32, i));
+        }
+
+        // Canonicalize so the same component set shares one sample
+        // regardless of the order it was listed in
+        std::sort(requiredComponentIds.begin(), requiredComponentIds.end());
+
+        EntitiesSamplePtr sample = world->requestCommonSample(
+            EntityAspect(requiredComponentIds, forbiddenComponentIds),
+            _flags);
+        if (!sample)
+            return -1;
+
+        S32 handle;
+        if (!g_monoEntitiesSamplesFreeHandles.empty())
+        {
+            handle = g_monoEntitiesSamplesFreeHandles.top();
+            g_monoEntitiesSamplesFreeHandles.pop();
+            g_monoEntitiesSamples[handle] = sample;
+        }
+        else
+        {
+            handle = (S32)g_monoEntitiesSamples.size();
+            g_monoEntitiesSamples.push_back(sample);
+        }
+
+        return handle;
+    }
+
+    //////////////////////////////////////////
+    inline void EcsSampleRelease(S32 _sampleHandle)
+    {
+        if (_sampleHandle < 0 || _sampleHandle >= (S32)g_monoEntitiesSamples.size())
+            return;
+
+        if (!g_monoEntitiesSamples[_sampleHandle])
+            return;
+
+        g_monoEntitiesSamples[_sampleHandle].reset();
+        g_monoEntitiesSamplesFreeHandles.push(_sampleHandle);
+    }
+
+    //////////////////////////////////////////
+    inline MonoArray* EcsSampleGetEntities(S32 _sampleHandle)
+    {
+        if (_sampleHandle < 0 || _sampleHandle >= (S32)g_monoEntitiesSamples.size())
+            return nullptr;
+
+        EntitiesSamplePtr const& sample = g_monoEntitiesSamples[_sampleHandle];
+        if (!sample)
+            return nullptr;
+
+        Vector<Entity*> const& entities = sample->getEntities();
+
+        MonoArray* result = mono_array_new(
+            mono_domain_get(),
+            mono_get_intptr_class(),
+            entities.size());
+        for (Size i = 0, in = entities.size(); i < in; ++i)
+            mono_array_set(result, void*, i, (void*)entities[i]);
+
+        return result;
+    }
+
+
+    //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsCore()
     {
         // System
@@ -831,6 +938,11 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(GetComponentIdByMonoType);
         MAZE_CORE_MONO_BIND_FUNC(CreateEntity);
         MAZE_CORE_MONO_BIND_FUNC(InstantiateEntity);
+
+        // EntitiesSample
+        MAZE_CORE_MONO_BIND_FUNC(EcsSampleRequest);
+        MAZE_CORE_MONO_BIND_FUNC(EcsSampleRelease);
+        MAZE_CORE_MONO_BIND_FUNC(EcsSampleGetEntities);
 
         // EcsScene
         MAZE_CORE_MONO_BIND_FUNC(EcsSceneGetAssetFilePath);
