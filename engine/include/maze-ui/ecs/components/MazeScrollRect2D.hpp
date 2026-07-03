@@ -33,26 +33,17 @@
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
-#include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
-#include "maze-ui/ecs/components/MazeMenuListTree2D.hpp"
 #include "maze-ui/ecs/components/MazeScrollbar2D.hpp"
-#include "maze-core/managers/MazeInputManager.hpp"
-#include <functional>
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(ScrollRect2D);
     MAZE_USING_SHARED_PTR(UIElement2D);
-    MAZE_USING_SHARED_PTR(ClickButton2D);
-    MAZE_USING_SHARED_PTR(MeshRenderer);
 
 
     //////////////////////////////////////////
@@ -92,9 +83,6 @@ namespace Maze
         //////////////////////////////////////////
         friend class Entity;
 
-        //////////////////////////////////////////
-        using CallbackFunction = std::function<void(MenuListTree2DPtr const&)>;
-
     public:
 
         //////////////////////////////////////////
@@ -122,19 +110,19 @@ namespace Maze
         inline bool getHorizontalScroll() const { return m_horizontalScroll; }
 
         //////////////////////////////////////////
-        inline void setHorizontalScroll(bool _value) { m_horizontalScroll = _value; }
+        inline void setHorizontalScroll(bool _value) { m_horizontalScroll = _value; m_scrollRectDirty = true; }
 
         //////////////////////////////////////////
         inline bool getVerticalScroll() const { return m_verticalScroll; }
 
         //////////////////////////////////////////
-        inline void setVerticalScroll(bool _value) { m_verticalScroll = _value; }
+        inline void setVerticalScroll(bool _value) { m_verticalScroll = _value; m_scrollRectDirty = true; }
 
         //////////////////////////////////////////
         inline ScrollRect2DMovementType getMovementType() const { return m_movementType; }
 
         //////////////////////////////////////////
-        inline void setMovementType(ScrollRect2DMovementType _value) { m_movementType = _value; }
+        inline void setMovementType(ScrollRect2DMovementType _value) { m_movementType = _value; m_scrollRectDirty = true; }
 
         //////////////////////////////////////////
         inline F32 getElasticity() const { return m_elasticity; }
@@ -164,13 +152,13 @@ namespace Maze
         inline ScrollRect2DScrollbarVisibility getHorizontalScrollbarVisibility() const { return m_horizontalScrollbarVisibility; }
 
         //////////////////////////////////////////
-        inline void setHorizontalScrollbarVisibility(ScrollRect2DScrollbarVisibility _value) { m_horizontalScrollbarVisibility = _value; }
+        inline void setHorizontalScrollbarVisibility(ScrollRect2DScrollbarVisibility _value) { m_horizontalScrollbarVisibility = _value; m_scrollRectDirty = true; }
 
         //////////////////////////////////////////
         inline ScrollRect2DScrollbarVisibility getVerticalScrollbarVisibility() const { return m_verticalScrollbarVisibility; }
 
         //////////////////////////////////////////
-        inline void setVerticalScrollbarVisibility(ScrollRect2DScrollbarVisibility _value) { m_verticalScrollbarVisibility = _value; }
+        inline void setVerticalScrollbarVisibility(ScrollRect2DScrollbarVisibility _value) { m_verticalScrollbarVisibility = _value; m_scrollRectDirty = true; }
 
 
         //////////////////////////////////////////
@@ -198,8 +186,66 @@ namespace Maze
         void setNormalizedPosition(F32 _value, Size _axis);
 
         //////////////////////////////////////////
-        MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(Transform2D, contentTransform, ContentTransform);
-        MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(Transform2D, viewportTransform, ViewportTransform);
+        inline void setContentTransform(Transform2DPtr const& _value)
+        {
+            if (m_contentTransform == _value)
+                return;
+
+            m_contentTransform = _value;
+            dirtyBounds();
+        }
+
+        //////////////////////////////////////////
+        inline Transform2DPtr const& getContentTransform() const { return m_contentTransform; }
+
+        //////////////////////////////////////////
+        inline void setContentTransform(ComponentPtr _value)
+        {
+            if (_value)
+            {
+                MAZE_DEBUG_BP_RETURN_IF(_value->getClassUID() != ClassInfo<Transform2D>::UID());
+                setContentTransform(_value->cast<Transform2D>());
+            }
+            else
+            {
+                setContentTransform(Transform2DPtr());
+            }
+        }
+
+        //////////////////////////////////////////
+        inline ComponentPtr getContentTransformComponent() const { return m_contentTransform; }
+
+
+        //////////////////////////////////////////
+        inline void setViewportTransform(Transform2DPtr const& _value)
+        {
+            if (m_viewportTransform == _value)
+                return;
+
+            m_viewportTransform = _value;
+            m_viewRectTransform.reset();
+            dirtyBounds();
+        }
+
+        //////////////////////////////////////////
+        inline Transform2DPtr const& getViewportTransform() const { return m_viewportTransform; }
+
+        //////////////////////////////////////////
+        inline void setViewportTransform(ComponentPtr _value)
+        {
+            if (_value)
+            {
+                MAZE_DEBUG_BP_RETURN_IF(_value->getClassUID() != ClassInfo<Transform2D>::UID());
+                setViewportTransform(_value->cast<Transform2D>());
+            }
+            else
+            {
+                setViewportTransform(Transform2DPtr());
+            }
+        }
+
+        //////////////////////////////////////////
+        inline ComponentPtr getViewportTransformComponent() const { return m_viewportTransform; }
 
 
         //////////////////////////////////////////
@@ -281,6 +327,13 @@ namespace Maze
         void notifyVerticalScrollbarValueChanged(Scrollbar2D* _scrollbar, F32 _value);
 
         //////////////////////////////////////////
+        inline void dirtyBounds()
+        {
+            m_boundsDirty = true;
+            m_scrollRectDirty = true;
+        }
+
+        //////////////////////////////////////////
         void updateBounds();
 
         //////////////////////////////////////////
@@ -342,6 +395,15 @@ namespace Maze
 
         bool m_horizontalScrollbarExpand;
         bool m_verticalScrollbarExpand;
+
+        bool m_scrollRectDirty;
+        bool m_boundsDirty;
+
+        // Snapshot of the inputs the cached bounds were calculated from
+        Vec2F m_boundsViewSize;
+        TMat m_boundsViewWorldTransform;
+        Vec2F m_boundsContentSize;
+        TMat m_boundsContentWorldTransform;
     };
 
 

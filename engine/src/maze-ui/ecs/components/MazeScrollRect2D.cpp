@@ -26,26 +26,12 @@
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
-#include "maze-ui/ecs/components/MazeContextMenuCanvas2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
-#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
-#include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
-#include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
-#include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeEcsScene.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
-#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
-#include "maze-core/services/MazeLogStream.hpp"
-#include "maze-graphics/MazeMesh.hpp"
-#include "maze-graphics/MazeSubMesh.hpp"
-#include "maze-graphics/MazeVertexArrayObject.hpp"
-#include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
-#include "maze-graphics/MazeRenderMesh.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 
 
 //////////////////////////////////////////
@@ -100,15 +86,16 @@ namespace Maze
         , m_prevContentBoundsViewSpace(AABB2D::c_zero)
         , m_horizontalScrollbarExpand(false)
         , m_verticalScrollbarExpand(false)
+        , m_scrollRectDirty(true)
+        , m_boundsDirty(true)
+        , m_boundsViewSize(Vec2F::c_zero)
+        , m_boundsContentSize(Vec2F::c_zero)
     {
     }
 
     //////////////////////////////////////////
     ScrollRect2D::~ScrollRect2D()
     {
-        if (m_UIElement2D)
-            m_UIElement2D->eventCursorReleaseIn.unsubscribe(this);
-
         setHorizontalScrollbar(Scrollbar2DPtr());
         setVerticalScrollbar(Scrollbar2DPtr());
     }
@@ -157,29 +144,28 @@ namespace Maze
         if (!m_contentTransform)
             return;
 
-        // #TODO: Optimize this
-
         updateBounds();
 
-        Vec2F offset = calculateOffset(Vec2F::c_zero);
-
-        if (m_boundsViewSpace != m_prevBoundsViewSpace ||
+        bool changed =
+            m_scrollRectDirty ||
+            m_boundsViewSpace != m_prevBoundsViewSpace ||
             m_contentBoundsViewSpace != m_prevContentBoundsViewSpace ||
-            m_contentTransform->getLocalPosition() != m_prevPosition)
-        {
-            updateScrollbars(offset);
-            eventValueChanged(this, getNormalizedPosition());
-            updatePrevData();
-        }
+            m_contentTransform->getLocalPosition() != m_prevPosition;
+
+        if (!changed)
+            return;
+
+        m_scrollRectDirty = false;
+
+        updateScrollbars(calculateOffset(Vec2F::c_zero));
+        eventValueChanged(this, getNormalizedPosition());
+        updatePrevData();
 
         if (updateScrollbarVisibility())
         {
-            bool hScrollingNeeded = getHorizontalScrollingNeeded();
-            bool vScrollingNeeded = getVerticalScrollingNeeded();
-
-            if (!hScrollingNeeded)
+            if (!getHorizontalScrollingNeeded())
                 setHorizontalNormalizedPosition(0.0f);
-            if (!vScrollingNeeded)
+            if (!getVerticalScrollingNeeded())
                 setVerticalNormalizedPosition(0.0f);
         }
 
@@ -238,7 +224,8 @@ namespace Maze
     //////////////////////////////////////////
     F32 ScrollRect2D::getNormalizedPosition(Size _axis)
     {
-        return getNormalizedPosition()[_axis];
+        return (_axis == 0) ? getHorizontalNormalizedPosition()
+                            : getVerticalNormalizedPosition();
     }
 
     //////////////////////////////////////////
@@ -296,6 +283,8 @@ namespace Maze
         {
             m_horizontalScrollbar->eventValueChanged.subscribe(this, &ScrollRect2D::notifyHorizontalScrollbarValueChanged);
         }
+
+        m_scrollRectDirty = true;
     }
 
     //////////////////////////////////////////
@@ -315,6 +304,8 @@ namespace Maze
         {
             m_verticalScrollbar->eventValueChanged.subscribe(this, &ScrollRect2D::notifyVerticalScrollbarValueChanged);
         }
+
+        m_scrollRectDirty = true;
     }
 
     //////////////////////////////////////////
@@ -336,8 +327,30 @@ namespace Maze
         if (!viewTransform)
             return;
 
-        m_boundsViewSpace = AABB2D(0.0f, 0.0f, viewTransform->getWidth(), viewTransform->getHeight());
+        Vec2F const& viewSize = viewTransform->getSize();
+        TMat const& viewWorldTransform = viewTransform->getWorldTransform();
+
+        // Recalculate only if the inputs of the previous calculation have changed
+        if (!m_boundsDirty &&
+            viewSize == m_boundsViewSize &&
+            viewWorldTransform == m_boundsViewWorldTransform &&
+            (!m_contentTransform ||
+                (m_contentTransform->getSize() == m_boundsContentSize &&
+                 m_contentTransform->getWorldTransform() == m_boundsContentWorldTransform)))
+            return;
+
+        m_boundsViewSpace = AABB2D(0.0f, 0.0f, viewSize.x, viewSize.y);
         m_contentBoundsViewSpace = calculateContentBounds();
+
+        m_boundsViewSize = viewSize;
+        m_boundsViewWorldTransform = viewWorldTransform;
+        if (m_contentTransform)
+        {
+            m_boundsContentSize = m_contentTransform->getSize();
+            m_boundsContentWorldTransform = m_contentTransform->getWorldTransform();
+        }
+
+        m_boundsDirty = false;
     }
 
     //////////////////////////////////////////
@@ -346,23 +359,19 @@ namespace Maze
         if (!m_contentTransform)
             return AABB2D();
 
-        Vec2F corners[4];
-        m_contentTransform->calculateWorldCorners(corners);
-
         Transform2DPtr const& viewTransform = ensureViewTransform();
         if (!viewTransform)
             return AABB2D::c_zero;
 
-        TMat worldToViewMatrix = viewTransform->getWorldTransform().inversed();
+        TMat contentToViewMatrix = viewTransform->getWorldTransform().inversed().transform(
+            m_contentTransform->getWorldTransform());
 
-        Vec2F p = worldToViewMatrix.transform(corners[0]);
-        AABB2D bounds(p);
+        Vec2F const& contentSize = m_contentTransform->getSize();
 
-        for (Size i = 1; i < 4; ++i)
-        {
-            p = worldToViewMatrix.transform(corners[i]);
-            bounds.applyUnion(p);
-        }
+        AABB2D bounds(contentToViewMatrix.transform(Vec2F::c_zero));
+        bounds.applyUnion(contentToViewMatrix.transform(Vec2F(contentSize.x, 0.0f)));
+        bounds.applyUnion(contentToViewMatrix.transform(contentSize));
+        bounds.applyUnion(contentToViewMatrix.transform(Vec2F(0.0f, contentSize.y)));
 
         return bounds;
     }
@@ -537,17 +546,13 @@ namespace Maze
     //////////////////////////////////////////
     void ScrollRect2D::updateScrollbarsExpand()
     {
-        SizePolicy2DPtr viewTransformSizePolicy;
+        if (!m_horizontalScrollbarExpand && !m_verticalScrollbarExpand)
+            return;
 
         Transform2DPtr const& viewTransform = ensureViewTransform();
 
-        if (m_horizontalScrollbarExpand || m_verticalScrollbarExpand)
-        {
-
-            viewTransformSizePolicy = viewTransform->getEntityRaw()->ensureComponent<SizePolicy2D>();
-            viewTransformSizePolicy->setSizeDelta(0.0f, 0.0f);
-
-        }
+        SizePolicy2DPtr viewTransformSizePolicy = viewTransform->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        viewTransformSizePolicy->setSizeDelta(0.0f, 0.0f);
 
         if (m_verticalScrollbarExpand && getVerticalScrollingNeeded())
         {
@@ -556,8 +561,7 @@ namespace Maze
                 viewTransformSizePolicy->getSizeDelta().y);
             viewTransformSizePolicy->updateSize();
 
-            m_boundsViewSpace = AABB2D(0.0f, 0.0f, viewTransform->getWidth(), viewTransform->getHeight());
-            m_contentBoundsViewSpace = calculateContentBounds();
+            updateBounds();
         }
 
         if (m_horizontalScrollbarExpand && getHorizontalScrollingNeeded())
@@ -567,11 +571,12 @@ namespace Maze
                 -(m_horizontalScrollbar->getTransform()->getHeight()));
             viewTransformSizePolicy->updateSize();
 
-            m_boundsViewSpace = AABB2D(0.0f, 0.0f, viewTransform->getWidth(), viewTransform->getHeight());
-            m_contentBoundsViewSpace = calculateContentBounds();
+            updateBounds();
         }
 
-        if (m_verticalScrollbarExpand && getVerticalScrollingNeeded() && viewTransformSizePolicy->getSizeDelta().x == 0.0f && viewTransformSizePolicy->getSizeDelta().y < 0.0f)
+        if (m_verticalScrollbarExpand && getVerticalScrollingNeeded() &&
+            viewTransformSizePolicy->getSizeDelta().x == 0.0f &&
+            viewTransformSizePolicy->getSizeDelta().y < 0.0f)
         {
             viewTransformSizePolicy->setSizeDelta(
                 -(m_verticalScrollbar->getTransform()->getWidth()),
