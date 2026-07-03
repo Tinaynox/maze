@@ -58,6 +58,22 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void DeserializeMonoBehaviourModificaionFromDataBlock(DataBlock const& _modificationBlock, ComponentPtr const& _component, CString _propertyName, EntitiesFromDataBlockContext& _context);
 
+
+        //////////////////////////////////////////
+        // Invokes Clear() on a C# list object (no-op for nullptr)
+        MAZE_PLUGIN_CSHARP_API void ClearMonoListObject(MonoObject* _listMonoObject);
+
+        //////////////////////////////////////////
+        // Creates a new C# list instance of the given type via its default ctor
+        MAZE_PLUGIN_CSHARP_API MonoObject* CreateMonoListObject(MonoType* _listMonoType);
+
+        //////////////////////////////////////////
+        // Writes a C# string[] as a child data block (inverse of getDataBlockAsVectorCString)
+        MAZE_PLUGIN_CSHARP_API void SerializeMonoStringArrayToDataBlock(
+            MonoObject* _arrayMonoObject,
+            HashedCString _name,
+            DataBlock& _dataBlock);
+
     } // namespace MonoSerializationHelper
     //////////////////////////////////////////
 

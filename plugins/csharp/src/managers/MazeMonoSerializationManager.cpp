@@ -218,12 +218,24 @@ namespace Maze
                     {
                         MonoObject* listMonoObject = nullptr;
                         _instance.getPropertyValue(_prop, listMonoObject);
-                        if (listMonoObject)
-                            MonoHelper::DeserializeDataBlockToMonoObjectList(_world, *listDataBlock, listMonoObject);
+                        if (!listMonoObject)
+                        {
+                            // The instance has no list yet - create one of the property's type
+                            listMonoObject = MonoSerializationHelper::CreateMonoListObject(_prop->getMonoType());
+                            if (!listMonoObject)
+                                return;
+
+                            _instance.setPropertyValue(_prop, listMonoObject);
+                        }
+
+                        MonoHelper::DeserializeDataBlockToMonoObjectList(_world, *listDataBlock, listMonoObject);
                     }
                     else
                     {
-                        Debug::LogWarning("Not implemented - empty list object!");
+                        // No list data saved - reset the existing list to empty
+                        MonoObject* listMonoObject = nullptr;
+                        _instance.getPropertyValue(_prop, listMonoObject);
+                        MonoSerializationHelper::ClearMonoListObject(listMonoObject);
                     }
                 },
                 [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
@@ -243,12 +255,24 @@ namespace Maze
                     {
                         MonoObject* listMonoObject = nullptr;
                         _instance.getFieldValue(_field, listMonoObject);
-                        if (listMonoObject)
-                            MonoHelper::DeserializeDataBlockToMonoObjectList(_world, *listDataBlock, listMonoObject);
+                        if (!listMonoObject)
+                        {
+                            // The instance has no list yet - create one of the field's type
+                            listMonoObject = MonoSerializationHelper::CreateMonoListObject(_field->getMonoType());
+                            if (!listMonoObject)
+                                return;
+
+                            _instance.setFieldValue(_field, listMonoObject);
+                        }
+
+                        MonoHelper::DeserializeDataBlockToMonoObjectList(_world, *listDataBlock, listMonoObject);
                     }
                     else
                     {
-                        Debug::LogWarning("Not implemented - empty list object!");
+                        // No list data saved - reset the existing list to empty
+                        MonoObject* listMonoObject = nullptr;
+                        _instance.getFieldValue(_field, listMonoObject);
+                        MonoSerializationHelper::ClearMonoListObject(listMonoObject);
                     }
                 });
 
@@ -256,7 +280,9 @@ namespace Maze
             registerPropertyAndFieldDataBlockSerialization(MAZE_HCS("System.String[]"),
                 [](EcsWorld* _world, ScriptInstance const& _instance, ScriptPropertyPtr const& _prop, DataBlock& _dataBlock)
                 {
-                    MAZE_ERROR("NOT IMPLEMENTED");
+                    MonoObject* arrayMonoObject = nullptr;
+                    _instance.getPropertyValue(_prop, arrayMonoObject);
+                    MonoSerializationHelper::SerializeMonoStringArrayToDataBlock(arrayMonoObject, _prop->getName().asHashedCString(), _dataBlock);
                 },
                 [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
                 {
@@ -271,7 +297,9 @@ namespace Maze
                 },
                 [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
                 {
-                    MAZE_ERROR("NOT IMPLEMENTED");
+                    MonoObject* arrayMonoObject = nullptr;
+                    _instance.getFieldValue(_field, arrayMonoObject);
+                    MonoSerializationHelper::SerializeMonoStringArrayToDataBlock(arrayMonoObject, _field->getName().asHashedCString(), _dataBlock);
                 },
                 [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
                 {

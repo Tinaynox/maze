@@ -380,6 +380,73 @@ namespace Maze
         }
 
 
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void ClearMonoListObject(MonoObject* _listMonoObject)
+        {
+            if (!_listMonoObject)
+                return;
+
+            MonoClass* listMonoClass = mono_object_get_class(_listMonoObject);
+            MonoMethod* clearMethod = mono_class_get_method_from_name(listMonoClass, "Clear", 0);
+            if (clearMethod)
+                MonoHelper::InvokeMethod(_listMonoObject, clearMethod, nullptr);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* CreateMonoListObject(MonoType* _listMonoType)
+        {
+            if (!_listMonoType)
+                return nullptr;
+
+            MonoClass* listMonoClass = mono_class_from_mono_type(_listMonoType);
+            if (!listMonoClass)
+                return nullptr;
+
+            MonoObject* listMonoObject = mono_object_new(mono_domain_get(), listMonoClass);
+            if (!listMonoObject)
+                return nullptr;
+
+            // Invoke the default ctor
+            mono_runtime_object_init(listMonoObject);
+            return listMonoObject;
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API void SerializeMonoStringArrayToDataBlock(
+            MonoObject* _arrayMonoObject,
+            HashedCString _name,
+            DataBlock& _dataBlock)
+        {
+            if (!_arrayMonoObject)
+                return;
+
+            MonoArray* monoArray = (MonoArray*)_arrayMonoObject;
+            Size arrayLength = (Size)mono_array_length(monoArray);
+
+            // Own the utf8 copies for the duration of the write
+            Vector<String> strings;
+            strings.reserve(arrayLength);
+            for (Size i = 0; i < arrayLength; ++i)
+            {
+                MonoString* monoString = mono_array_get(monoArray, MonoString*, i);
+                if (monoString)
+                {
+                    Char* cstr = mono_string_to_utf8(monoString);
+                    strings.push_back(String(cstr));
+                    mono_free(cstr);
+                }
+                else
+                    strings.push_back(String());
+            }
+
+            Vector<CString> cstrings;
+            cstrings.reserve(strings.size());
+            for (String const& text : strings)
+                cstrings.push_back(text.c_str());
+
+            _dataBlock.setDataBlockAsVectorCString(_name, cstrings);
+        }
+
 
     } // namespace MonoSerializationHelper
     //////////////////////////////////////////
