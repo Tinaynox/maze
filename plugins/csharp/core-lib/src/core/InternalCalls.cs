@@ -11,6 +11,9 @@ namespace Maze.Core
         #region System
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static float GetAppTime();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static uint GetTimeMicroseconds();
         #endregion
 
         #region Log

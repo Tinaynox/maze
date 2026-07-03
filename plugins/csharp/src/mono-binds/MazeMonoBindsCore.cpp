@@ -96,6 +96,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline U32 GetTimeMicroseconds()
+    {
+        return UpdateManager::GetInstancePtr()->getMicroseconds();
+    }
+
+    //////////////////////////////////////////
     inline bool GetKeyState(S32 _keyCode)
     {
         return InputManager::GetInstancePtr()->getKeyState(KeyCode(_keyCode));
@@ -923,6 +929,7 @@ namespace Maze
     {
         // System
         MAZE_CORE_MONO_BIND_FUNC(GetAppTime);
+        MAZE_CORE_MONO_BIND_FUNC(GetTimeMicroseconds);
 
         // Log
         MAZE_CORE_MONO_BIND_FUNC(MazeLog);
