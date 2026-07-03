@@ -450,7 +450,7 @@ namespace Maze
 #   if MAZE_DEBUG
         Path compileAssemblyPath = csharpPath + "/compile_debug.bat";
 #   else
-        Path compileAssemblyPath = csharpPath + "/compile_release.bat";
+        Path compileAssemblyPath = csharpPath + "/compile_release_with_debug_info.bat";
 #   endif
 
         MAZE_ERROR_RETURN_IF(!SystemHelper::ExecuteSync(compileAssemblyPath, csharpPath), "Failed to compile charp assembly!");
