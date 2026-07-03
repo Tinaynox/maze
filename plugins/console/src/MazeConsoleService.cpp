@@ -141,10 +141,16 @@ namespace Maze
             {
                 if (eventHandler->getSample())
                 {
+                    EntityAspect const& aspect = eventHandler->getSample()->getAspect();
+
+                    String aspectName = BuildComponentsName(aspect.getRequiredComponentIds());
+                    if (!aspect.getForbiddenComponentIds().empty())
+                        aspectName += " -" + BuildComponentsName(aspect.getForbiddenComponentIds());
+
                     Debug::Log(
                         "      - %s [%s]",
                         eventHandler->getName().c_str(),
-                        BuildComponentsName(eventHandler->getSample()->getAspect().getComponentIds()).c_str());
+                        aspectName.c_str());
                 }
                 else
                 {

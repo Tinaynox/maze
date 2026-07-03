@@ -79,8 +79,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        using AddSystemFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, Set<HashedString> const&, ComponentSystemOrder const&, U8);
+        using AddSystemFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, Set<HashedString> const&, ComponentSystemOrder const&, U8, Vector<ComponentId> const&);
         using AddSystemGlobalFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, Set<HashedString> const&, ComponentSystemOrder const&);
+
+        //////////////////////////////////////////
+        // Lazy provider - component ids must not be calculated during static initialization
+        using ComponentIdsFunc = Vector<ComponentId> const& (*)();
 
 
         //////////////////////////////////////////
@@ -90,10 +94,12 @@ namespace Maze
             void(*_func)(TEventType&, Entity*, TComponents* ...),
             Set<HashedString> _tags = Set<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder(),
-            U8 _sampleFlags = 0)
+            U8 _sampleFlags = 0,
+            ComponentIdsFunc _forbiddenComponentsFunc = nullptr)
             : m_name(_name)
             , m_func((ComponentSystemEventHandler::Func)_func)
             , m_sampleFlags(_sampleFlags)
+            , m_forbiddenComponentsFunc(_forbiddenComponentsFunc)
         {
             for (HashedString const& tag : _tags)
                 m_tags.insert(tag.toStdString());
@@ -165,7 +171,13 @@ namespace Maze
             {
                 case Type::Default:
                 {
-                    m_systems[_world] = (_world->*m_addSystemFunc)(m_name, m_func, std::move(tags), std::move(order), m_sampleFlags);
+                    m_systems[_world] = (_world->*m_addSystemFunc)(
+                        m_name,
+                        m_func,
+                        std::move(tags),
+                        std::move(order),
+                        m_sampleFlags,
+                        m_forbiddenComponentsFunc ? m_forbiddenComponentsFunc() : Vector<ComponentId>());
                     break;
                 }
                 case Type::Global:
@@ -196,10 +208,16 @@ namespace Maze
         StdSet<StdString> m_orderAfter;
         StdSet<StdString> m_orderBefore;
         U8 m_sampleFlags = 0;
+        ComponentIdsFunc m_forbiddenComponentsFunc = nullptr;
         AddSystemFunc m_addSystemFunc;
         AddSystemGlobalFunc m_addSystemGlobalFunc;
         StdMap<EcsWorld*, WeakPtr<ComponentSystemEventHandler>> m_systems;
     };
+
+
+    //////////////////////////////////////////
+    // Forbidden components list for COMPONENT_SYSTEM_EVENT_HANDLER_FORBID
+    #define MAZE_ECS_FORBID(...) &Maze::GetStaticComponentIds<__VA_ARGS__>
 
 
     //////////////////////////////////////////
@@ -212,6 +230,20 @@ namespace Maze
     #define COMPONENT_SYSTEM_EVENT_HANDLER_EX(DName, DTags, DOrder, DSampleFlags, ...) \
         void DName(__VA_ARGS__); \
         static ComponentSystemHolder DName##_holder(MAZE_HCS(#DName), DName, DTags, DOrder, DSampleFlags); \
+        void DName(__VA_ARGS__)
+
+    //////////////////////////////////////////
+    // DForbiddenComponents - MAZE_ECS_FORBID(Comp0, Comp1, ...). Entities with
+    // any of the listed components are excluded from the system's sample
+    #define COMPONENT_SYSTEM_EVENT_HANDLER_FORBID(DName, DTags, DOrder, DForbiddenComponents, ...) \
+        void DName(__VA_ARGS__); \
+        static ComponentSystemHolder DName##_holder(MAZE_HCS(#DName), DName, DTags, DOrder, 0, DForbiddenComponents); \
+        void DName(__VA_ARGS__)
+
+    //////////////////////////////////////////
+    #define COMPONENT_SYSTEM_EVENT_HANDLER_FORBID_EX(DName, DTags, DOrder, DSampleFlags, DForbiddenComponents, ...) \
+        void DName(__VA_ARGS__); \
+        static ComponentSystemHolder DName##_holder(MAZE_HCS(#DName), DName, DTags, DOrder, DSampleFlags, DForbiddenComponents); \
         void DName(__VA_ARGS__)
         
 

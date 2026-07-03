@@ -277,13 +277,14 @@ namespace Maze
         //////////////////////////////////////////
         static inline SharedPtr<GenericInclusiveEntitiesSample> Create(
             EcsWorldPtr const& _ecs,
-            U8 _flags = 0)
+            U8 _flags = 0,
+            Vector<ComponentId> const& _forbiddenComponentIds = Vector<ComponentId>())
         {
             SharedPtr<GenericInclusiveEntitiesSample> object;
 
             object = MAZE_CREATE_SHARED_PTR(GenericInclusiveEntitiesSample);
 
-            EntityAspect aspect = EntityAspect::HaveAllOfComponents<TComponents...>();
+            EntityAspect aspect = EntityAspect::Require<TComponents...>(_forbiddenComponentIds);
 
             if (!object->init(_ecs, aspect, _flags))
                 object.reset();
@@ -629,7 +630,7 @@ namespace Maze
 
             object = MAZE_CREATE_SHARED_PTR(DynamicIdEntitiesSample);
 
-            EntityAspect aspect(EntityAspectType::HaveAllOfComponents, { _id });
+            EntityAspect aspect(Vector<ComponentId>{ _id });
 
             if (!object->init(_ecs, aspect, _flags))
                 object.reset();
@@ -683,7 +684,7 @@ namespace Maze
             {
                 EntityData entityData;
                 entityData.entity = _entity;
-                entityData.component = static_cast<TComponent*>(_entity->getComponentById(m_aspect.getComponentIds()[0]).get());
+                entityData.component = static_cast<TComponent*>(_entity->getComponentById(m_aspect.getRequiredComponentIds()[0]).get());
 
                 Size index = m_entitiesData.size();
                 m_entitiesData.push_back(entityData);

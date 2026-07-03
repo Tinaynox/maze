@@ -35,6 +35,7 @@
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
+#include <algorithm>
 
 
 //////////////////////////////////////////
@@ -46,16 +47,11 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class EntityAspectType
-    {
-        None = 0,
-        HaveAllOfComponents,
-        HaveAnyOfComponents,
-        ExcludeOfComponents,
-        MAX
-    };
-
-
+    // Class EntityAspect
+    //
+    // An entity matches the aspect when it has ALL required components
+    // and NONE of the forbidden ones
+    //
     //////////////////////////////////////////
     class MAZE_CORE_API EntityAspect
     {
@@ -68,84 +64,57 @@ namespace Maze
 
         //////////////////////////////////////////
         EntityAspect(
-            EntityAspectType _type = EntityAspectType::None,
-            Vector<ComponentId> const& _componentIds = Vector<ComponentId>());
+            Vector<ComponentId> const& _requiredComponentIds = Vector<ComponentId>(),
+            Vector<ComponentId> const& _forbiddenComponentIds = Vector<ComponentId>());
 
         //////////////////////////////////////////
         virtual ~EntityAspect();
 
         //////////////////////////////////////////
         template <typename ...TComponents>
-        static inline EntityAspect Construct(EntityAspectType _type)
+        static inline EntityAspect Require(
+            Vector<ComponentId> const& _forbiddenComponentIds = Vector<ComponentId>())
         {
-            EntityAspect aspect(_type, Vector<ComponentId>());
-            ExpandComponentIds<TComponents...>(aspect.m_componentIds);
-            aspect.updateComponentsMask();
+            EntityAspect aspect;
+            ExpandComponentIds<TComponents...>(aspect.m_requiredComponentIds);
+            aspect.m_forbiddenComponentIds = _forbiddenComponentIds;
+            std::sort(aspect.m_forbiddenComponentIds.begin(), aspect.m_forbiddenComponentIds.end());
+            aspect.updateComponentsMasks();
             return aspect;
         }
 
         //////////////////////////////////////////
+        // True when the required list matches TComponents exactly (in template order).
+        // Forbidden components are not considered
         template <typename ...TComponents>
-        static inline EntityAspect HaveAllOfComponents()
+        inline bool isRequiring() const
         {
-            EntityAspect aspect(EntityAspectType::HaveAllOfComponents, Vector<ComponentId>());
-            ExpandComponentIds<TComponents...>(aspect.m_componentIds);
-            aspect.updateComponentsMask();
-            return aspect;
-        }
-
-        //////////////////////////////////////////
-        template <typename ...TComponents>
-        static inline EntityAspect HaveAnyOfComponents()
-        {
-            EntityAspect aspect(EntityAspectType::HaveAnyOfComponents, Vector<ComponentId>());
-            ExpandComponentIds<TComponents...>(aspect.m_componentIds);
-            aspect.updateComponentsMask();
-            return aspect;
-        }
-
-        //////////////////////////////////////////
-        template <typename ...TComponents>
-        static inline EntityAspect ExcludeOfComponents()
-        {
-            EntityAspect aspect(EntityAspectType::ExcludeOfComponents, Vector<ComponentId>());
-            ExpandComponentIds< TComponents... >(aspect.m_componentIds);
-            aspect.updateComponentsMask();
-            return aspect;
-        }
-
-        //////////////////////////////////////////
-        template <typename ...TComponents>
-        inline bool isAspect(EntityAspectType _type) const
-        {
-            if (m_type != _type)
-                return false;
-
-            if (sizeof...(TComponents) != m_componentIds.size())
+            if (sizeof...(TComponents) != m_requiredComponentIds.size())
                 return false;
 
             Vector<ComponentId> const& componentIds = GetComponentIds<TComponents...>();
 
-            return equal(componentIds.begin(), componentIds.end(), m_componentIds.begin());
+            return equal(componentIds.begin(), componentIds.end(), m_requiredComponentIds.begin());
         }
 
         //////////////////////////////////////////
         inline bool operator==(EntityAspect const& _otherAspect) const
         {
-            if (m_type != _otherAspect.m_type)
+            if (m_requiredComponentIds != _otherAspect.m_requiredComponentIds)
                 return false;
 
-            if (m_componentIds != _otherAspect.m_componentIds)
+            if (m_forbiddenComponentIds != _otherAspect.m_forbiddenComponentIds)
                 return false;
 
             return true;
         }
 
         //////////////////////////////////////////
-        EntityAspectType const& getType() const { return m_type; }
+        Vector<ComponentId> const& getRequiredComponentIds() const { return m_requiredComponentIds; }
 
         //////////////////////////////////////////
-        Vector<ComponentId> const& getComponentIds() const { return m_componentIds; }
+        // Always sorted ascending
+        Vector<ComponentId> const& getForbiddenComponentIds() const { return m_forbiddenComponentIds; }
 
         //////////////////////////////////////////
         bool hasIntersection(Entity* _entity) const;
@@ -164,7 +133,10 @@ namespace Maze
             S64 _componentsMask) const;
 
         //////////////////////////////////////////
-        inline S64 getComponentsMask() const { return m_componentsMask; }
+        inline S64 getRequiredComponentsMask() const { return m_requiredComponentsMask; }
+
+        //////////////////////////////////////////
+        inline S64 getForbiddenComponentsMask() const { return m_forbiddenComponentsMask; }
 
     protected:
 
@@ -172,16 +144,9 @@ namespace Maze
         template <typename... TComponents>
         inline static void ExpandComponentIds(Vector<ComponentId>& _result)
         {
-#if 1
             ComponentId ids[] = { GetStaticComponentId<TComponents>()... };
             for (S32 i = 0, n = sizeof(ids) / sizeof(ids[0]); i < n; i++)
                 _result.push_back(ids[i]);
-#elif 0     
-            auto expand = [&_result](ComponentId id) { _result.push_back(id); };
-            (void)std::initializer_list<int>{(expand(GetStaticComponentId<TComponents>()), 0)...};
-#else
-            MAZE_NOT_IMPLEMENTED
-#endif
         }
 
 
@@ -192,23 +157,28 @@ namespace Maze
             static Vector<ComponentId> s_componentIds;
             if (s_componentIds.empty())
                 ExpandComponentIds<TComponents...>(s_componentIds);
-                
+
             return s_componentIds;
         }
 
         //////////////////////////////////////////
-        inline void updateComponentsMask()
+        inline void updateComponentsMasks()
         {
-            m_componentsMask = 0;
-            for (ComponentId componentId : m_componentIds)
-                m_componentsMask |= (S64)1 << U32(componentId % 64);
+            m_requiredComponentsMask = 0;
+            for (ComponentId componentId : m_requiredComponentIds)
+                m_requiredComponentsMask |= (S64)1 << U32(componentId % 64);
+
+            m_forbiddenComponentsMask = 0;
+            for (ComponentId componentId : m_forbiddenComponentIds)
+                m_forbiddenComponentsMask |= (S64)1 << U32(componentId % 64);
         }
 
     protected:
-        EntityAspectType m_type;
-        Vector<ComponentId> m_componentIds;
+        Vector<ComponentId> m_requiredComponentIds;
+        Vector<ComponentId> m_forbiddenComponentIds;
 
-        S64 m_componentsMask;
+        S64 m_requiredComponentsMask = 0;
+        S64 m_forbiddenComponentsMask = 0;
     };
 
 

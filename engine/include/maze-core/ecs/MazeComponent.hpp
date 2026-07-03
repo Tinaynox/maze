@@ -62,6 +62,14 @@ namespace Maze
         return CalculateClassUID(_name);
     }
 
+    //////////////////////////////////////////
+    template <typename ...TComponents>
+    inline Vector<ComponentId> const& GetStaticComponentIds()
+    {
+        static Vector<ComponentId> const s_componentIds = { GetStaticComponentId<TComponents>()... };
+        return s_componentIds;
+    }
+
 
     //////////////////////////////////////////
     // Struct EntityCopyData

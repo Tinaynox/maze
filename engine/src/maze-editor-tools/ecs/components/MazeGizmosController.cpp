@@ -120,9 +120,7 @@ namespace Maze
                 GizmosSample gizmosSample;
                 gizmosSample.componentId = gizmoPerComponentClass.first;
                 gizmosSample.sample = getEntityRaw()->getEcsWorld()->requestCommonSample(
-                    EntityAspect(
-                        EntityAspectType::HaveAllOfComponents,
-                        { gizmosSample.componentId }));
+                    EntityAspect(Vector<ComponentId>{ gizmosSample.componentId }));
                 gizmosSample.gizmos = gizmoPerComponentClass.second;
 
                 m_samples.push_back(gizmosSample);

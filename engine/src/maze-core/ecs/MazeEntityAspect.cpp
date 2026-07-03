@@ -43,11 +43,13 @@ namespace Maze
     //
     //////////////////////////////////////////
     EntityAspect::EntityAspect(
-        EntityAspectType _type, Vector<ComponentId> const& _componentIds)
-        : m_type(_type)
-        , m_componentIds(_componentIds)
+        Vector<ComponentId> const& _requiredComponentIds,
+        Vector<ComponentId> const& _forbiddenComponentIds)
+        : m_requiredComponentIds(_requiredComponentIds)
+        , m_forbiddenComponentIds(_forbiddenComponentIds)
     {
-        updateComponentsMask();
+        std::sort(m_forbiddenComponentIds.begin(), m_forbiddenComponentIds.end());
+        updateComponentsMasks();
     }
 
     //////////////////////////////////////////
@@ -59,68 +61,30 @@ namespace Maze
     //////////////////////////////////////////
     bool EntityAspect::hasIntersection(Entity* _entity) const
     {
-        switch (m_type)
+        S64 componentsMask = _entity->getComponentsMask();
+
+        if (!m_requiredComponentIds.empty())
         {
-            case EntityAspectType::HaveAllOfComponents:
-            {
-                if (!(_entity->getComponentsMask() & m_componentsMask))
-                    return false;                
-
-                /*
-                // Unstrict order
-                return std::includes(
-                    _entity->getComponentIds().begin(),
-                    _entity->getComponentIds().end(),
-                    getComponentIds().begin(),
-                    getComponentIds().end());
-                */
-
-                // Strict order
-                for (Vector<ComponentId>::const_iterator it = getComponentIds().begin(),
-                                                           end = getComponentIds().end();
-                                                           it != end;
-                                                           ++it)
-                {
-                    if (_entity->getComponents().find((*it)) == _entity->getComponents().end())
-                        return false;
-                }
-
-                return true;
-            }
-
-            case EntityAspectType::HaveAnyOfComponents:
-            {
-                for (Vector<ComponentId>::const_iterator it = getComponentIds().begin(),
-                                                      end = getComponentIds().end();
-                                                      it != end;
-                                                      ++it)
-                {
-                    if (_entity->getComponents().find((*it)) != _entity->getComponents().end())
-                        return true;
-                }
-
+            if (!(componentsMask & m_requiredComponentsMask))
                 return false;
-            }
 
-            case EntityAspectType::ExcludeOfComponents:
+            for (ComponentId componentId : m_requiredComponentIds)
             {
-                for (Vector<ComponentId>::const_iterator it = getComponentIds().begin(),
-                                                         end = getComponentIds().end();
-                                                         it != end;
-                                                         ++it)
-                {
-                    if (_entity->getComponents().find((*it)) != _entity->getComponents().end())
-                        return false;
-                }
-
-                return true;
+                if (_entity->getComponents().find(componentId) == _entity->getComponents().end())
+                    return false;
             }
-
-            default:
-                break;
         }
 
-        return false;
+        if (componentsMask & m_forbiddenComponentsMask)
+        {
+            for (ComponentId componentId : m_forbiddenComponentIds)
+            {
+                if (_entity->getComponents().find(componentId) != _entity->getComponents().end())
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     //////////////////////////////////////////
@@ -128,58 +92,34 @@ namespace Maze
         Vector<ComponentId> const& _sortedComponentIds,
         S64 _componentsMask) const
     {
-        switch (m_type)
+        if (!m_requiredComponentIds.empty())
         {
-            case EntityAspectType::HaveAllOfComponents:
-            {
-                if (!(_componentsMask & m_componentsMask))
-                    return false;
-
-                for (ComponentId componentId : m_componentIds)
-                {
-                    if (!std::binary_search(
-                        _sortedComponentIds.begin(),
-                        _sortedComponentIds.end(),
-                        componentId))
-                        return false;
-                }
-
-                return true;
-            }
-
-            case EntityAspectType::HaveAnyOfComponents:
-            {
-                for (ComponentId componentId : m_componentIds)
-                {
-                    if (std::binary_search(
-                        _sortedComponentIds.begin(),
-                        _sortedComponentIds.end(),
-                        componentId))
-                        return true;
-                }
-
+            if (!(_componentsMask & m_requiredComponentsMask))
                 return false;
-            }
 
-            case EntityAspectType::ExcludeOfComponents:
+            for (ComponentId componentId : m_requiredComponentIds)
             {
-                for (ComponentId componentId : m_componentIds)
-                {
-                    if (std::binary_search(
-                        _sortedComponentIds.begin(),
-                        _sortedComponentIds.end(),
-                        componentId))
-                        return false;
-                }
-
-                return true;
+                if (!std::binary_search(
+                    _sortedComponentIds.begin(),
+                    _sortedComponentIds.end(),
+                    componentId))
+                    return false;
             }
-
-            default:
-                break;
         }
 
-        return false;
+        if (_componentsMask & m_forbiddenComponentsMask)
+        {
+            for (ComponentId componentId : m_forbiddenComponentIds)
+            {
+                if (std::binary_search(
+                    _sortedComponentIds.begin(),
+                    _sortedComponentIds.end(),
+                    componentId))
+                    return false;
+            }
+        }
+
+        return true;
     }
 
 

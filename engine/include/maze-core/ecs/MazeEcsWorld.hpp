@@ -216,8 +216,12 @@ namespace Maze
         //////////////////////////////////////////
         template<typename ...TComponents>
         inline SharedPtr<GenericInclusiveEntitiesSample<TComponents...>> requestInclusiveSample(
-            U8 _flags = 0)
+            U8 _flags = 0,
+            Vector<ComponentId> const& _forbiddenComponentIds = Vector<ComponentId>())
         {
+            Vector<ComponentId> forbiddenComponentIds = _forbiddenComponentIds;
+            std::sort(forbiddenComponentIds.begin(), forbiddenComponentIds.end());
+
             for (Size i = 0, in = m_samples.size(); i < in; ++i)
             {
                 if (m_samples[i]->getType() != EntitiesSampleType::GenericInclusive)
@@ -226,13 +230,15 @@ namespace Maze
                 if (m_samples[i]->getFlags() != _flags)
                     continue;
 
-                if (m_samples[i]->getAspect().isAspect<TComponents...>(EntityAspectType::HaveAllOfComponents))
+                if (m_samples[i]->getAspect().isRequiring<TComponents...>() &&
+                    m_samples[i]->getAspect().getForbiddenComponentIds() == forbiddenComponentIds)
                     return m_samples[i]->cast<GenericInclusiveEntitiesSample<TComponents...>>();
             }
 
             SharedPtr<GenericInclusiveEntitiesSample<TComponents...>> sample = GenericInclusiveEntitiesSample<TComponents...>::Create(
                 getSharedPtr(),
-                _flags);
+                _flags,
+                forbiddenComponentIds);
             m_samples.push_back(sample);
             ++m_samplesVersion;
 
@@ -255,7 +261,7 @@ namespace Maze
                 if (m_samples[i]->getFlags() != _flags)
                     continue;
 
-                if (m_samples[i]->getAspect().getComponentIds().size() == 1 && m_samples[i]->getAspect().getComponentIds()[0] == _dynamicId)
+                if (m_samples[i]->getAspect().getRequiredComponentIds().size() == 1 && m_samples[i]->getAspect().getRequiredComponentIds()[0] == _dynamicId)
                     return m_samples[i]->cast<DynamicIdEntitiesSample<TComponent>>();
             }
 
@@ -276,13 +282,14 @@ namespace Maze
             void (*_func)(TEventType&, Entity*, TComponents* ...),
             Set<HashedString> const& _tags = Set<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder(),
-            U8 _sampleFlags = 0)
+            U8 _sampleFlags = 0,
+            Vector<ComponentId> const& _forbiddenComponentIds = Vector<ComponentId>())
         {
             ComponentSystemEventHandlerPtr system = ComponentSystemEventHandler::Create(
                 this,
                 _name,
                 ClassInfo<typename std::remove_const<TEventType>::type>::UID(),
-                requestInclusiveSample<TComponents...>(_sampleFlags),
+                requestInclusiveSample<TComponents...>(_sampleFlags, _forbiddenComponentIds),
                 (ComponentSystemEventHandler::Func)_func,
                 _tags,
                 _order);
