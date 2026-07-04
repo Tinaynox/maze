@@ -125,9 +125,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual bool loadTexture(
+        // Broadcasts eventTextureLoaded on success
+        bool loadTexture(
             Vector<PixelSheet2D> const& _pixelSheets,
-            PixelFormat::Enum _internalPixelFormat = PixelFormat::None) MAZE_ABSTRACT;
+            PixelFormat::Enum _internalPixelFormat = PixelFormat::None);
 
         //////////////////////////////////////////
         bool loadTexture(
@@ -239,6 +240,13 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        // Broadcasted (on the thread that uploaded the pixels, normally the main thread)
+        // every time new pixel data is successfully loaded into the texture
+        MultiDelegate<Texture2D*> eventTextureLoaded;
+
+    public:
+
+        //////////////////////////////////////////
         static void FromString(Texture2DPtr& _value, CString _data, Size _count);
 
         //////////////////////////////////////////
@@ -259,7 +267,12 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init(RenderSystem* _renderSystem) MAZE_OVERRIDE;
-    
+
+        //////////////////////////////////////////
+        virtual bool loadTextureImpl(
+            Vector<PixelSheet2D> const& _pixelSheets,
+            PixelFormat::Enum _internalPixelFormat) MAZE_ABSTRACT;
+
     protected:
         Vec2S m_size = Vec2S::c_zero;
         Vec2F m_invSize = Vec2F::c_zero;

@@ -27,9 +27,12 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/assets/MazeAssetUnitTexture2D.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazePixelSheet2D.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/managers/MazeTaskManager.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
 
 
 //////////////////////////////////////////
@@ -111,6 +114,75 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool AssetUnitTexture2D::loadAsyncImpl()
+    {
+        // Async path is scheduled from the main thread only - initTexture() and the
+        // texture library are not thread safe. Returning false falls back to sync loading
+        TaskManager* taskManager = TaskManager::GetInstancePtr();
+        if (!taskManager || !TaskManager::IsMainThread())
+            return false;
+
+        AssetFilePtr assetFile = m_assetFile.lock();
+        if (!assetFile)
+            return false;
+
+        // Registers the blank 1x1 texture in the library so the asset is usable immediately
+        initTexture();
+        if (!m_texture)
+            return false;
+
+        // Meta data is fetched on the main thread - AssetManager is not thread safe
+        DataBlock metaData;
+        AssetManager::GetInstancePtr()->loadMetaData(assetFile, metaData);
+
+        return taskManager->addBackgroundTask(
+            [weakPtr = (AssetUnitTexture2DWPtr)cast<AssetUnitTexture2D>(), assetFile, metaData]()
+            {
+                MAZE_PROFILE_EVENT("AssetUnitTexture2D::loadAsyncImpl");
+
+                // Background thread: file IO and decoding only.
+                // No AssetUnit state, AssetManager or OpenGL access is allowed here
+                GraphicsManager* graphicsManager = GraphicsManager::GetInstancePtr();
+                TaskManager* taskManager = TaskManager::GetInstancePtr();
+                if (!graphicsManager || !graphicsManager->getDefaultRenderSystemRaw() || !taskManager)
+                    return;
+
+                TextureManagerPtr const& textureManager = graphicsManager->getDefaultRenderSystemRaw()->getTextureManager();
+
+                SharedPtr<Vector<PixelSheet2D>> pixelSheets = MakeShared<Vector<PixelSheet2D>>(
+                    textureManager->loadPixelSheets2D(assetFile, metaData));
+
+                taskManager->addMainThreadTask(
+                    [weakPtr, pixelSheets]()
+                    {
+                        if (AssetUnitTexture2DPtr assetUnit = weakPtr.lock())
+                            assetUnit->finishLoadingAsync(*pixelSheets);
+                    });
+            });
+    }
+
+    //////////////////////////////////////////
+    void AssetUnitTexture2D::finishLoadingAsync(Vector<PixelSheet2D> const& _pixelSheets)
+    {
+        // A sync loadNow() or unload could have won the race while pixel sheets were decoding
+        if (m_loadingState != AssetUnitLoadingState::Loading)
+            return;
+
+        if (!m_texture || _pixelSheets.empty())
+        {
+            m_loadingState = AssetUnitLoadingState::Error;
+            return;
+        }
+
+        m_texture->loadTexture(_pixelSheets);
+
+        TextureManagerPtr const& textureManager = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager();
+        textureManager->loadTextureMetaData(m_texture, m_data);
+
+        m_loadingState = AssetUnitLoadingState::Loaded;
+    }
+
+    //////////////////////////////////////////
     bool AssetUnitTexture2D::unloadNowImpl()
     {
         if (m_texture)
@@ -132,7 +204,7 @@ namespace Maze
             return m_texture;
 
         m_texture = Texture2D::Create();
-        m_texture->loadTexture(PixelSheet2D(Vec2S(1)));
+        m_texture->loadTexture(PixelSheet2D(Vec2S(16)));
         m_texture->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
 
         if (TextureManager::GetCurrentInstancePtr())

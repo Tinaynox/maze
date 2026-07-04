@@ -38,9 +38,10 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_MANAGED_SHARED_PTR(AssetUnitTexture2D);   
+    MAZE_USING_MANAGED_SHARED_PTR(AssetUnitTexture2D);
     MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
     MAZE_USING_MANAGED_SHARED_PTR(Texture2D);
+    class PixelSheet2D;
 
 
     //////////////////////////////////////////
@@ -101,7 +102,14 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool unloadNowImpl() MAZE_OVERRIDE;
-    
+
+        //////////////////////////////////////////
+        virtual bool loadAsyncImpl() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        // Main thread only - uploads decoded pixel sheets to the GPU and finalizes the loading state
+        void finishLoadingAsync(Vector<PixelSheet2D> const& _pixelSheets);
+
     protected:
         Texture2DPtr m_texture;
     };

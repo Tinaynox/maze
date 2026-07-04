@@ -121,26 +121,10 @@ namespace Maze
 
         m_loadingState = AssetUnitLoadingState::Loading;
 
-#if (0)
-        // #TODO: async load test
-        if (TaskManager::GetInstancePtr())
-        {
-            TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
-                100,
-                [weakPtr = (AssetUnitWPtr)cast<AssetUnit>()]()
-            {
-                AssetUnitPtr assetUnit = weakPtr.lock();
-                if (!assetUnit)
-                    return;
+        if (loadAsyncImpl())
+            return;
 
-                assetUnit->loadNow();
-            });
-        }
-        else
-            loadNow();
-#else
         loadNow();
-#endif
     }
 
     //////////////////////////////////////////

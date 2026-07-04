@@ -113,11 +113,6 @@ namespace Maze
         //////////////////////////////////////////
         using Texture2D::loadTexture;
 
-        //////////////////////////////////////////
-        virtual bool loadTexture(
-            Vector<PixelSheet2D> const& _pixelSheets,
-            PixelFormat::Enum _internalPixelFormat = PixelFormat::None) MAZE_OVERRIDE;
-
 
         //////////////////////////////////////////
         virtual bool setMagFilter(TextureFilter _value) MAZE_OVERRIDE;
@@ -190,6 +185,11 @@ namespace Maze
         virtual bool init(
             RenderSystem* _renderSystem,
             ContextOpenGL* _contextOpenGL);
+
+        //////////////////////////////////////////
+        virtual bool loadTextureImpl(
+            Vector<PixelSheet2D> const& _pixelSheets,
+            PixelFormat::Enum _internalPixelFormat) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void generateGLObjects();

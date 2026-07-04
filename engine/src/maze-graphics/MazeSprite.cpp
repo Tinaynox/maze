@@ -87,6 +87,8 @@ namespace Maze
     //////////////////////////////////////////
     Sprite::~Sprite()
     {
+        if (m_texture)
+            m_texture->eventTextureLoaded.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -159,12 +161,14 @@ namespace Maze
     {
         if (_texture)
         {
+            // Zero color size means "mirror the texture size" -
+            // it is resolved in set() and tracked via m_autoSize
             set(
                 _texture,
                 Vec2F::c_zero,
-                _texture->getSize(),
                 Vec2F::c_zero,
-                _texture->getSize());
+                Vec2F::c_zero,
+                Vec2F::c_zero);
         }
     }
 
@@ -176,18 +180,30 @@ namespace Maze
         Vec2F const& _colorOffset,
         Vec2F const& _nativeSize)
     {
-        m_texture = _texture;
+        if (m_texture != _texture)
+        {
+            if (m_texture)
+                m_texture->eventTextureLoaded.unsubscribe(this);
+
+            m_texture = _texture;
+
+            if (m_texture)
+                m_texture->eventTextureLoaded.subscribe(this, &Sprite::notifyTextureLoaded);
+        }
+
         m_colorPosition = _colorPosition;
         m_colorSize = _colorSize;
         m_colorOffset = _colorOffset;
         m_nativeSize = _nativeSize;
+
+        m_autoSize = (m_colorSize == Vec2F::c_zero);
 
         if (m_texture)
         {
             if (m_name.empty())
                 m_name = m_texture->getName();
 
-            if (m_colorSize == Vec2F::c_zero)
+            if (m_autoSize)
                 m_colorSize = m_nativeSize = m_texture->getSize();
         }
 
@@ -197,8 +213,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Sprite::notifyTextureLoaded(Texture2D* _texture)
+    {
+        // Main thread (texture pixel data is always uploaded on the main thread).
+        // Sizes with auto tracking and texture coords are stale now - recalculate them
+        if (m_autoSize)
+            m_colorSize = m_nativeSize = m_texture->getSize();
+
+        updateTextureCoords();
+
+        eventDataChanged(this);
+    }
+
+    //////////////////////////////////////////
     void Sprite::setColorSize(Vec2F const& _colorSize)
     {
+        m_autoSize = false;
+
         m_colorSize = _colorSize;
         updateTextureCoords();
 
@@ -217,6 +248,8 @@ namespace Maze
     //////////////////////////////////////////
     void Sprite::setNativeSize(Vec2F const& _nativeSize)
     {
+        m_autoSize = false;
+
         m_nativeSize = _nativeSize;
         setColorSize(m_nativeSize);
 

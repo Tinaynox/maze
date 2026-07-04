@@ -1321,7 +1321,7 @@ namespace Maze
     inline bool SpriteGetId(MonoString* _spriteName, S32& _outValue)
     {
         Char* cstr = mono_string_to_utf8(_spriteName);
-        SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getOrLoadSprite(HashedCString(cstr));
+        SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getOrLoadSprite(HashedCString(cstr), true);
         mono_free(cstr);
         if (sprite)
         {

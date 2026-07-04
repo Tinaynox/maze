@@ -194,6 +194,21 @@ namespace Maze
 
     //////////////////////////////////////////
     bool Texture2D::loadTexture(
+        Vector<PixelSheet2D> const& _pixelSheets,
+        PixelFormat::Enum _internalPixelFormat)
+    {
+        MAZE_PROFILE_EVENT("Texture2D::loadTexture");
+
+        if (!loadTextureImpl(_pixelSheets, _internalPixelFormat))
+            return false;
+
+        eventTextureLoaded(this);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2D::loadTexture(
         PixelSheet2D const& _pixelSheet,
         PixelFormat::Enum _internalPixelFormat)
     {
@@ -237,7 +252,7 @@ namespace Maze
         }
         else
         {
-            _value = textureManager->getOrLoadTexture2D(MAZE_HASHED_CSTRING(_data));
+            _value = textureManager->getOrLoadTexture2D(MAZE_HASHED_CSTRING(_data), true);
         }
     }
 
@@ -329,7 +344,7 @@ namespace Maze
                     String const& name = _dataBlock.getString(paramIndex);
                     if (!name.empty())
                     {
-                        Texture2DPtr const& texture = TextureManager::GetCurrentInstancePtr()->getOrLoadTexture2D(name);
+                        Texture2DPtr const& texture = TextureManager::GetCurrentInstancePtr()->getOrLoadTexture2D(name, true);
                         setTexture2D(texture);
                     }
                     else

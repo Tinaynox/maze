@@ -105,8 +105,10 @@ namespace Maze
         if (!assetUnitTexture2D)
             return false;
 
+        Texture2DPtr const& texture2D = assetUnitTexture2D->loadTexture(true);
+
         m_sprite->set(
-            assetUnitTexture2D->loadTexture(true),
+            texture2D,
             m_sprite->getColorPosition(),
             m_sprite->getColorSize(),
             m_sprite->getColorOffset(),
@@ -197,12 +199,14 @@ namespace Maze
     //////////////////////////////////////////
     void AssetUnitSprite::applySpriteMetaData()
     {
+        // Zero default means "mirror the texture size" - Sprite::set resolves it and keeps
+        // auto size tracking, so the sizes are recalculated when async texture loading finishes
         m_sprite->set(
             m_sprite->getTexture(),
             m_data.getVec2F(MAZE_HCS("colorPosition"), Vec2S::c_zero),
-            m_data.getVec2F(MAZE_HCS("colorSize"), m_sprite->getTexture() ? m_sprite->getTexture()->getSize() : Vec2S::c_zero),
+            m_data.getVec2F(MAZE_HCS("colorSize"), Vec2S::c_zero),
             m_data.getVec2F(MAZE_HCS("colorOffset"), Vec2S::c_zero),
-            m_data.getVec2F(MAZE_HCS("nativeSize"), m_sprite->getTexture() ? m_sprite->getTexture()->getSize() : Vec2S::c_zero));
+            m_data.getVec2F(MAZE_HCS("nativeSize"), Vec2S::c_zero));
 
         if (DataBlock* sliceBorder = m_data.getDataBlock(MAZE_HCS("sliceBorder")))
         {

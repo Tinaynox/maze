@@ -542,6 +542,18 @@ namespace Maze
     //////////////////////////////////////////
     Vector<PixelSheet2D> TextureManager::loadPixelSheets2D(AssetFilePtr const& _assetFile)
     {
+        if (!_assetFile)
+            return Vector<PixelSheet2D>();
+
+        DataBlock metaData;
+        AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData);
+
+        return loadPixelSheets2D(_assetFile, metaData);
+    }
+
+    //////////////////////////////////////////
+    Vector<PixelSheet2D> TextureManager::loadPixelSheets2D(AssetFilePtr const& _assetFile, DataBlock const& _metaData)
+    {
         MAZE_PROFILE_EVENT("TextureManager::loadPixelSheets2D");
 
         Vector<PixelSheet2D> pixelSheets;
@@ -552,10 +564,7 @@ namespace Maze
         Debug::Log("Loading texture pixel sheet: %s...", _assetFile->getFileName().toUTF8().c_str());
         Timer timer;
 
-        DataBlock metaData;
-        AssetManager::GetInstancePtr()->loadMetaData(_assetFile, metaData);
-
-        if (metaData.isEmpty() || !metaData.isParamExists(MAZE_HCS("ext")))
+        if (_metaData.isEmpty() || !_metaData.isParamExists(MAZE_HCS("ext")))
         {
             String assetFileExtension = _assetFile->getExtension().toUTF8();
             bool loaderFound = false;
@@ -589,7 +598,7 @@ namespace Maze
         {
             HashedString fileExtension = HashedString(
                 StringHelper::ToLower(
-                    metaData.getString(MAZE_HCS("ext"))));
+                    _metaData.getString(MAZE_HCS("ext"))));
 
             auto it = m_textureLoaders.find(fileExtension);
             if (it != m_textureLoaders.end())

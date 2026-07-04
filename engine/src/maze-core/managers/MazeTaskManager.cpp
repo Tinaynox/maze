@@ -52,6 +52,8 @@ namespace Maze
     //////////////////////////////////////////
     TaskManager::~TaskManager()
     {
+        shutdownBackgroundThread();
+
         s_instance = nullptr;
     }
 
@@ -113,6 +115,72 @@ namespace Maze
         }
 
         m_update = false;
+    }
+
+    //////////////////////////////////////////
+    bool TaskManager::addBackgroundTask(Delegate<void> const& _delegate)
+    {
+        {
+            std::unique_lock<std::mutex> lock(m_backgroundTasksMutex);
+
+            if (m_backgroundThreadShutdown)
+                return false;
+
+            m_backgroundTasks.emplace_back(
+                new TaskDelegate0{ [_delegate]() { _delegate(); return 0; } });
+
+            // Lazy start - the thread is spawned on the first background task
+            if (!m_backgroundThread.joinable())
+                m_backgroundThread = std::thread(&TaskManager::backgroundThreadEntry, this);
+        }
+
+        m_backgroundTasksCondVar.notify_one();
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void TaskManager::shutdownBackgroundThread()
+    {
+        std::thread backgroundThread;
+
+        {
+            std::unique_lock<std::mutex> lock(m_backgroundTasksMutex);
+            m_backgroundThreadShutdown = true;
+            m_backgroundTasks.clear();
+            backgroundThread = std::move(m_backgroundThread);
+        }
+
+        m_backgroundTasksCondVar.notify_all();
+
+        if (backgroundThread.joinable())
+            backgroundThread.join();
+    }
+
+    //////////////////////////////////////////
+    void TaskManager::backgroundThreadEntry()
+    {
+        MAZE_PROFILE_THREAD("TaskManagerBackground");
+
+        for (;;)
+        {
+            SharedPtr<TaskDelegate> task;
+
+            {
+                std::unique_lock<std::mutex> lock(m_backgroundTasksMutex);
+                m_backgroundTasksCondVar.wait(
+                    lock,
+                    [this]() { return m_backgroundThreadShutdown || !m_backgroundTasks.empty(); });
+
+                if (m_backgroundThreadShutdown)
+                    return;
+
+                task = std::move(m_backgroundTasks.front());
+                m_backgroundTasks.pop_front();
+            }
+
+            task->run();
+        }
     }
 
 } // namespace Maze

@@ -296,7 +296,7 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderUniformVariant::setTexture2D(AssetFilePtr const& _assetFile)
     {
-        Texture2DPtr const& texture2D = m_renderSystem->getTextureManager()->getOrLoadTexture2D(_assetFile);
+        Texture2DPtr const& texture2D = m_renderSystem->getTextureManager()->getOrLoadTexture2D(_assetFile, true);
         if (texture2D)
             set(texture2D);
         else
@@ -308,7 +308,7 @@ namespace Maze
     {
         if (!_textureName.empty())
         {
-            Texture2DPtr const& texture = m_renderSystem->getTextureManager()->getOrLoadTexture2D(_textureName);
+            Texture2DPtr const& texture = m_renderSystem->getTextureManager()->getOrLoadTexture2D(_textureName, true);
             if (texture)
                 set(texture);
             else

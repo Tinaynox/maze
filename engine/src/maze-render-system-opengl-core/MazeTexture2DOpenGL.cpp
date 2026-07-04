@@ -228,11 +228,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool Texture2DOpenGL::loadTexture(
+    bool Texture2DOpenGL::loadTextureImpl(
         Vector<PixelSheet2D> const& _pixelSheets,
         PixelFormat::Enum _internalPixelFormat)
     {
-        MAZE_PROFILE_EVENT("Texture2DOpenGL::loadTexture");
+        MAZE_PROFILE_EVENT("Texture2DOpenGL::loadTextureImpl");
 
         if (_pixelSheets.empty())
             return false;

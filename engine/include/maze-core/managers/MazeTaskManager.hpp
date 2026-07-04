@@ -38,6 +38,8 @@
 #include "maze-core/system/MazeTaskDelegate.hpp"
 #include "maze-core/system/MazeMutex.hpp"
 #include <thread>
+#include <mutex>
+#include <condition_variable>
 
 
 //////////////////////////////////////////
@@ -143,6 +145,16 @@ namespace Maze
                 DelayedTask{ new TaskDelegate1<TArg0>{ [_delegate, _arg0, _arg1]() { _delegate(_arg0, _arg1); return 0; }, _arg0, _arg1 }, _framesDelay });
         }
 
+
+        //////////////////////////////////////////
+        // Returns false if the background thread is shut down and the task was not enqueued
+        bool addBackgroundTask(Delegate<void> const& _delegate);
+
+        //////////////////////////////////////////
+        // Drops pending background tasks, waits for the current one and joins the thread.
+        // After this call addBackgroundTask always returns false
+        void shutdownBackgroundThread();
+
     protected:
 
         //////////////////////////////////////////
@@ -154,6 +166,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        void backgroundThreadEntry();
+
     private:
 
         static TaskManager* s_instance;
@@ -162,6 +177,13 @@ namespace Maze
         Mutex m_mainThreadTasksMutex;
         SwitchableContainer<FastVector<SharedPtr<TaskDelegate>>> m_mainThreadTasks;
         List<DelayedTask> m_delayedMainThreadTasks;
+
+        // Background tasks state is guarded by m_backgroundTasksMutex (std::mutex for condition_variable)
+        std::mutex m_backgroundTasksMutex;
+        std::condition_variable m_backgroundTasksCondVar;
+        List<SharedPtr<TaskDelegate>> m_backgroundTasks;
+        std::thread m_backgroundThread;
+        bool m_backgroundThreadShutdown = false;
 
         bool m_update = false;
 

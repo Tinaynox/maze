@@ -84,6 +84,11 @@ namespace Maze
     //////////////////////////////////////////
     Engine::~Engine()
     {
+        // Background tasks may use AssetManager/GraphicsManager,
+        // so the background thread must be joined before managers destruction
+        if (m_taskManager)
+            m_taskManager->shutdownBackgroundThread();
+
         m_mainRenderWindow.reset();
         m_engineRenderTarget.reset();
 

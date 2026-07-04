@@ -242,6 +242,13 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool unloadNowImpl() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        // Called from load() on the main thread after the state is set to Loading.
+        // Returns true if async loading was scheduled - the implementation is then
+        // responsible for finalizing m_loadingState (Loaded/Error) on the main thread.
+        // Default implementation returns false, so load() falls back to loadNow()
+        virtual bool loadAsyncImpl() { return false; }
     
 
         

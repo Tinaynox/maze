@@ -232,7 +232,11 @@ namespace Maze
             Vec2F const& _colorSize,
             Vec2F const& _colorOffset,
             Vec2F const& _nativeSize);
-    
+
+        //////////////////////////////////////////
+        // Invoked when the texture receives new pixel data (e.g. async loading finished)
+        void notifyTextureLoaded(Texture2D* _texture);
+
     protected:
         HashedString m_name;
         Texture2DPtr m_texture;
@@ -246,6 +250,10 @@ namespace Maze
         Vec2F m_textureCoordRT;
 
         SpriteSliceBorder m_sliceBorder;
+
+        // True while colorSize/nativeSize mirror the texture size,
+        // so they are recalculated when the texture data arrives
+        bool m_autoSize = false;
     };
         
 

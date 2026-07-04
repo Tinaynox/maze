@@ -282,6 +282,11 @@ namespace Maze
         Vector<PixelSheet2D> loadPixelSheets2D(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
+        // Overload with pre-fetched meta data - does not touch AssetManager,
+        // so it is safe to call from a background thread
+        Vector<PixelSheet2D> loadPixelSheets2D(AssetFilePtr const& _assetFile, DataBlock const& _metaData);
+
+        //////////////////////////////////////////
         Vector<PixelSheet2D> loadPixelSheets2D(String const& _assetFileName);
 
 
