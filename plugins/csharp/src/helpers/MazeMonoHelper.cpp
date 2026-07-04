@@ -422,6 +422,9 @@ namespace Maze
             for (auto const& data : _scriptClass->getFields())
             {
                 ScriptFieldPtr const& field = data.second;
+                if (field->isStatic())
+                    continue;
+
                 if (field->isPublic() || field->isSerializable())
                     _cb(field);
             }

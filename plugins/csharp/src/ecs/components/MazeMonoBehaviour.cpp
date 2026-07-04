@@ -417,6 +417,9 @@ namespace Maze
                 MonoHelper::IterateAllFields(other->m_monoClass,
                     [&](ScriptFieldPtr const& _prop)
                 {
+                    if (_prop->isStatic())
+                        return;
+
                     MonoSerializationManager::GetInstancePtr()->saveFieldToDataBlock(
                         _event.copyData.getWorld(),
                         *other->m_monoInstance,
@@ -427,6 +430,9 @@ namespace Maze
                 MonoHelper::IterateSerializableProperties(other->m_monoClass,
                     [&](ScriptPropertyPtr const& _prop)
                 {
+                    if (_prop->isStaticGetter())
+                        return;
+
                     MonoSerializationManager::GetInstancePtr()->savePropertyToDataBlock(
                         _event.copyData.getWorld(),
                         *other->m_monoInstance,
