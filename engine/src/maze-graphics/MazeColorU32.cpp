@@ -173,9 +173,9 @@ namespace Maze
     //////////////////////////////////////////
     void ColorU32::setVec3F32(Vec3F const& _vec)
     {
-        r = (U8)(Math::Clamp(_vec.x*255.0f, 0.0f, 255.0f));
-        g = (U8)(Math::Clamp(_vec.y*255.0f, 0.0f, 255.0f));
-        b = (U8)(Math::Clamp(_vec.z*255.0f, 0.0f, 255.0f));
+        r = (U8)(Math::Clamp(Math::Round(_vec.x*255.0f), 0.0f, 255.0f));
+        g = (U8)(Math::Clamp(Math::Round(_vec.y*255.0f), 0.0f, 255.0f));
+        b = (U8)(Math::Clamp(Math::Round(_vec.z*255.0f), 0.0f, 255.0f));
         a = 255;
     }
 
@@ -188,10 +188,10 @@ namespace Maze
     //////////////////////////////////////////
     void ColorU32::setVec4F32(Vec4F const& _vec)
     {
-        r = (U8)(Math::Clamp(_vec.x*255.0f, 0.0f, 255.0f));
-        g = (U8)(Math::Clamp(_vec.y*255.0f, 0.0f, 255.0f));
-        b = (U8)(Math::Clamp(_vec.z*255.0f, 0.0f, 255.0f));
-        a = (U8)(Math::Clamp(_vec.w*255.0f, 0.0f, 255.0f));
+        r = (U8)(Math::Clamp(Math::Round(_vec.x*255.0f), 0.0f, 255.0f));
+        g = (U8)(Math::Clamp(Math::Round(_vec.y*255.0f), 0.0f, 255.0f));
+        b = (U8)(Math::Clamp(Math::Round(_vec.z*255.0f), 0.0f, 255.0f));
+        a = (U8)(Math::Clamp(Math::Round(_vec.w*255.0f), 0.0f, 255.0f));
     }
 
     //////////////////////////////////////////

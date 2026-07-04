@@ -28,6 +28,7 @@
 #include "maze-graphics/helpers/MazeColorHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
+#include <cmath>
 
 
 //////////////////////////////////////////
@@ -47,15 +48,15 @@ namespace Maze
 
             if (cmax == cmin)
                 h = 0.0f;
-            else 
+            else
             if (cmax == _r)
-                h = F32(S32(60 * ((_g - _b) / diff) + 360) % 360);
+                h = std::fmod(60.0f * ((_g - _b) / diff) + 360.0f, 360.0f);
             else
             if (cmax == _g)
-                h = F32(S32(60 * ((_b - _r) / diff) + 120) % 360);
+                h = std::fmod(60.0f * ((_b - _r) / diff) + 120.0f, 360.0f);
             else
             if (cmax == _b)
-                h = F32(S32(60 * ((_r - _g) / diff) + 240) % 360);
+                h = std::fmod(60.0f * ((_r - _g) / diff) + 240.0f, 360.0f);
 
             if (cmax == 0)
                 s = 0;
@@ -89,7 +90,7 @@ namespace Maze
             hh = _h;
 
             if (hh >= 360.0f)
-                hh = F32(S32(hh) % 360);
+                hh = std::fmod(hh, 360.0f);
 
             hh /= 60.0f;
             i = (S32)hh;

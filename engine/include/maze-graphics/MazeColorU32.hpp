@@ -109,9 +109,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline ColorU32(Vec3F const& _colorF32)
-            : r(U8(_colorF32.x * 255.0f))
-            , g(U8(_colorF32.y * 255.0f))
-            , b(U8(_colorF32.z * 255.0f))
+            : r(U8(Math::Round(_colorF32.x * 255.0f)))
+            , g(U8(Math::Round(_colorF32.y * 255.0f)))
+            , b(U8(Math::Round(_colorF32.z * 255.0f)))
             , a(255)
         {
         }
