@@ -1042,8 +1042,11 @@ namespace Maze
         SetForegroundWindow(hwnd);
         SetFocus(hwnd);
         
-        MAZE_WARNING_IF(!RegisterHotKey(hwnd, c_snapshotHotKeyId, MOD_NOREPEAT, VK_SNAPSHOT), "SNAPSHOT hotkey registration failed.");
-        MAZE_WARNING_IF(!RegisterHotKey(hwnd, c_altSnapshotHotKeyId, MOD_NOREPEAT | MOD_ALT, VK_SNAPSHOT), "ALT+SNAPSHOT hotkey registration failed.");
+        if (!RegisterHotKey(hwnd, c_snapshotHotKeyId, MOD_NOREPEAT, VK_SNAPSHOT))
+            Debug::Log("SNAPSHOT hotkey registration failed.");
+
+        if (!RegisterHotKey(hwnd, c_altSnapshotHotKeyId, MOD_NOREPEAT | MOD_ALT, VK_SNAPSHOT))
+            Debug::Log("ALT+SNAPSHOT hotkey registration failed.");
 
         HICON hIconSmall = LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(m_params->iconSmall));
         SendMessage(hwnd, WM_SETICON,ICON_SMALL, (LPARAM)hIconSmall);
