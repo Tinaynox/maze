@@ -242,6 +242,9 @@ namespace Maze
         addMeshPreview("TorusKnotUV.fbx", "Cel00.mzmaterial", "Cel/Toon", torusKnotScale);
         addMeshPreviewSpace();
 
+        addMeshPreview("TorusKnotUV.fbx", "ASCII00.mzmaterial", "ASCII Art", torusKnotScale);
+        addMeshPreviewSpace();
+
         addMeshPreview("TorusKnotUV.fbx", "BlinnPhongHDR00.mzmaterial", "Emission (HDR)", torusKnotScale);
         addMeshPreviewSpace();
 

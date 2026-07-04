@@ -1,0 +1,12 @@
+assetUnits
+{
+  texture2d
+  {
+    minFilter:String = Nearest
+    magFilter:String = Nearest
+    wrapS:String = ClampToEdge
+    wrapT:String = ClampToEdge
+    anisotropyLevel:F32 = 1.0
+  }
+}
+
