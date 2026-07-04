@@ -38,6 +38,7 @@
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
+#include "maze-plugin-csharp/ecs/events/MazeEcsCSharpEvents.hpp"
 #include "maze-plugin-csharp/events/MazeCSharpEvents.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -74,6 +75,7 @@ namespace Maze
         StringKeyMap<ScriptClassPtr> monoBehaviourSubClasses;
         UnorderedMap<ComponentId, ScriptClassPtr> monoBehaviourSubClassesByComponentId;
         Vector<SharedPtr<CustomComponentSystemHolder>> monoBehaviourSystems;
+        Vector<SharedPtr<CustomComponentSystemHolder>> staticEntitySystems;
 
         ScriptClassPtr entityClass;
         ScriptClassPtr componentClass;
@@ -143,6 +145,107 @@ namespace Maze
     //////////////////////////////////////////
     MonoEngineData* g_monoEngineData = nullptr;
 
+
+    //////////////////////////////////////////
+    static void StaticEntitySystemOnMonoEvent(Event& _event, void* _ctx)
+    {
+        MonoEvent& monoEvent = (MonoEvent&)_event;
+
+        void* params[1] = { monoEvent.getMonoEvent() };
+        MonoHelper::InvokeStaticMethod((MonoMethod*)_ctx, params);
+    }
+
+    //////////////////////////////////////////
+    static void StaticEntitySystemOnNativeEvent(Event& _event, void* _ctx)
+    {
+        MonoObject* monoEventObj = MonoHelper::CreateMonoEventObjectFromNativeEvent(_event);
+        if (!monoEventObj)
+            return;
+
+        void* params[1] = { monoEventObj };
+        MonoHelper::InvokeStaticMethod((MonoMethod*)_ctx, params);
+    }
+
+    //////////////////////////////////////////
+    void LoadStaticEntitySystems(
+        MonoClass* _monoClass,
+        String const& _fullName)
+    {
+        void* methodIter = nullptr;
+        MonoMethod* method;
+        while ((method = mono_class_get_methods(_monoClass, &methodIter)) != nullptr)
+        {
+            if (!MonoHelper::IsMethodStatic(method))
+                continue;
+
+            MonoMethodSignature* sig = mono_method_signature(method);
+            if (!sig || mono_signature_get_param_count(sig) != 1)
+                continue;
+
+            Set<HashedString> systemTags;
+            ComponentSystemOrder systemOrder;
+            U8 systemFlags = 0u;
+            if (!MonoHelper::ParseMonoEntitySystemAttributes(method, systemTags, systemOrder, systemFlags))
+                continue;
+
+            void* paramIter = nullptr;
+            MonoType* paramType = mono_signature_get_params(sig, &paramIter);
+            MonoClass* paramClass = mono_type_get_class(paramType);
+            if (!paramClass)
+                continue;
+
+            ClassUID eventUID = 0u;
+            ComponentSystemEventHandler::GlobalCtxFunc systemFunc = nullptr;
+
+            if (mono_class_is_subclass_of(paramClass, MonoEngine::GetMonoEventClass()->getMonoClass(), false))
+            {
+                // Native MonoEvent wrapper calculates its UID from the short class name
+                eventUID = CalculateClassUID(mono_class_get_name(paramClass));
+                systemFunc = &StaticEntitySystemOnMonoEvent;
+            }
+            else
+            if (mono_class_is_subclass_of(paramClass, MonoEngine::GetNativeEventClass()->getMonoClass(), false))
+            {
+                eventUID = CalculateClassUID((String("Maze::") + mono_class_get_name(paramClass)).c_str());
+                systemFunc = &StaticEntitySystemOnNativeEvent;
+            }
+            else
+            {
+                MAZE_ERROR(
+                    "Static entity system %s::%s param must be a MonoEvent or NativeEvent subclass!",
+                    _fullName.c_str(),
+                    mono_method_get_name(method));
+                continue;
+            }
+
+            HashedString systemName(_fullName + "::" + mono_method_get_name(method));
+
+            if (systemFlags & U8(MonoEntitySystemFlags::EnableInEditor))
+            {
+                Set<HashedString> systemEditorTags = systemTags;
+                systemEditorTags.insert(MAZE_HS("editor"));
+
+                g_monoEngineData->ecsData.staticEntitySystems.emplace_back(
+                    MakeShared<CustomComponentSystemHolder>(
+                        systemName,
+                        eventUID,
+                        systemFunc,
+                        (void*)method,
+                        systemEditorTags,
+                        systemOrder));
+            }
+
+            systemTags.insert(MAZE_HS("default"));
+            g_monoEngineData->ecsData.staticEntitySystems.emplace_back(
+                MakeShared<CustomComponentSystemHolder>(
+                    systemName,
+                    eventUID,
+                    systemFunc,
+                    (void*)method,
+                    systemTags,
+                    systemOrder));
+        }
+    }
 
     //////////////////////////////////////////
     void LoadAssemblyClasses(MonoAssembly* _assembly)
@@ -415,6 +518,9 @@ namespace Maze
                         HashedCString(fullName.c_str()),
                         scriptClass);
                 }
+
+                // Static entity systems (no-entity systems) can be declared in any class
+                LoadStaticEntitySystems(monoClass, fullName);
             }
         }
 
@@ -654,6 +760,7 @@ namespace Maze
             mono_domain_unload(g_monoEngineData->appDomain);
 
         g_monoEngineData->ecsData.monoBehaviourSystems.clear();
+        g_monoEngineData->ecsData.staticEntitySystems.clear();
 
         g_monoEngineData->ecsData = MonoEcsData();
 

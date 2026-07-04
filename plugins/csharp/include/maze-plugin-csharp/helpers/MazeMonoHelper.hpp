@@ -95,11 +95,16 @@ namespace Maze
         MAZE_PLUGIN_CSHARP_API MonoObject* InvokeStaticMethod(MonoMethod* _method, void** _params = nullptr);
 
         //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void ParseMonoEntitySystemAttributes(
+        // Returns true if EntitySystemAttribute is present on the method
+        MAZE_PLUGIN_CSHARP_API bool ParseMonoEntitySystemAttributes(
             MonoMethod* _method,
             Set<HashedString>& _outTags,
             ComponentSystemOrder& _outOrder,
             U8& _outFlags);
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* CreateMonoEventObjectFromNativeEvent(
+            Event const& _event);
 
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API bool IsMethodPublic(MonoMethod* _method);

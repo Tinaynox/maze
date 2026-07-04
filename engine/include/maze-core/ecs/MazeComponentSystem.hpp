@@ -100,6 +100,7 @@ namespace Maze
         //////////////////////////////////////////
         using Func = void (*)();
         using GlobalFunc = void(*)(Event&);
+        using GlobalCtxFunc = void(*)(Event&, void*);
 
         //////////////////////////////////////////
         static inline ComponentSystemEventHandlerPtr Create(
@@ -130,11 +131,32 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        static inline ComponentSystemEventHandlerPtr Create(
+            EcsWorld* _world,
+            HashedCString _name,
+            ClassUID _eventUID,
+            GlobalCtxFunc _func,
+            void* _ctx,
+            Set<HashedString> const& _tags = Set<HashedString>(),
+            ComponentSystemOrder const& _order = ComponentSystemOrder())
+        {
+            MAZE_DEBUG_ASSERT(_ctx);
+            return MAZE_CREATE_SHARED_PTR_WITH_ARGS(
+                ComponentSystemEventHandler, _world, _name, _eventUID, nullptr, (Func)_func, _tags, _order, _ctx);
+        }
+
+        //////////////////////////////////////////
         inline void processEvent(Event* _event, EcsEventParams _params = EcsEventParams())
         {
             if (m_sample)
             {
                 m_sample->processEvent(_event, _params, m_func);
+            }
+            else
+            if (m_ctx)
+            {
+                GlobalCtxFunc rawFunc = (GlobalCtxFunc)m_func;
+                rawFunc(*_event, m_ctx);
             }
             else
             {
@@ -191,7 +213,8 @@ namespace Maze
             IEntitiesSamplePtr _sample = nullptr,
             Func _func = nullptr,
             Set<HashedString> const& _tags = Set<HashedString>(),
-            ComponentSystemOrder const& _order = ComponentSystemOrder())
+            ComponentSystemOrder const& _order = ComponentSystemOrder(),
+            void* _ctx = nullptr)
             : m_world(_world)
             , m_name(_name)
             , m_eventUID(_eventUID)
@@ -199,6 +222,7 @@ namespace Maze
             , m_func(_func)
             , m_tags(_tags)
             , m_order(_order)
+            , m_ctx(_ctx)
         {
         }
 
@@ -208,6 +232,7 @@ namespace Maze
         ClassUID m_eventUID = 0;
         IEntitiesSamplePtr m_sample;
         Func m_func = nullptr;
+        void* m_ctx = nullptr;
 
         Set<HashedString> m_tags;
         ComponentSystemOrder m_order;

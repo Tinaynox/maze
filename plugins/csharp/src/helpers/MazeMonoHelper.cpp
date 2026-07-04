@@ -288,7 +288,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_PLUGIN_CSHARP_API void ParseMonoEntitySystemAttributes(
+        MAZE_PLUGIN_CSHARP_API bool ParseMonoEntitySystemAttributes(
             MonoMethod* _method,
             Set<HashedString>& _outTags,
             ComponentSystemOrder& _outOrder,
@@ -299,9 +299,11 @@ namespace Maze
             _outOrder.before.clear();
             _outFlags = 0u;
 
+            bool entitySystemAttributeFound = false;
+
             MonoCustomAttrInfo* attrInfo = mono_custom_attrs_from_method(_method);
             if (!attrInfo)
-                return;
+                return false;
 
             for (S32 i = 0; i < attrInfo->num_attrs; ++i)
             {
@@ -312,6 +314,8 @@ namespace Maze
                 CString attrNamespace = mono_class_get_namespace(attrClass);
                 if (strcmp(attrClassName, "EntitySystemAttribute") == 0 && strcmp(attrNamespace, "Maze.Core") == 0)
                 {
+                    entitySystemAttributeFound = true;
+
                     MonoObject* attrObj = mono_custom_attrs_get_attr(attrInfo, attrClass);
                     if (attrObj)
                     {
@@ -356,6 +360,55 @@ namespace Maze
             }
 
             mono_custom_attrs_free(attrInfo);
+
+            return entitySystemAttributeFound;
+        }
+
+        //////////////////////////////////////////
+        MAZE_PLUGIN_CSHARP_API MonoObject* CreateMonoEventObjectFromNativeEvent(
+            Event const& _event)
+        {
+            ClassUID eventUID = _event.getEventUID();
+
+            ScriptClassPtr const& monoEventScriptClass = MonoEngine::GetNativeEventSubClass(eventUID);
+            MAZE_ERROR_RETURN_VALUE_IF(
+                !monoEventScriptClass,
+                nullptr,
+                "There is no C# class for native event: %s",
+                _event.getClassName().str);
+
+            MonoObject* monoEventObj = mono_object_new(
+                MonoEngine::GetMonoDomain(),
+                monoEventScriptClass->getMonoClass());
+
+            MetaClass const* eventMetaClass = _event.getMetaClass();
+            for (S32 i = 0; i < eventMetaClass->getPropertiesCount(); ++i)
+            {
+                MetaProperty const* eventMetaProperty = eventMetaClass->getProperty(i);
+                ClassUID eventMetaPropertyClassUID = eventMetaProperty->getValueClassUID();
+
+                MonoClassField* monoField = mono_class_get_field_from_name(
+                    monoEventScriptClass->getMonoClass(),
+                    eventMetaProperty->getName());
+                MAZE_ERROR_CONTINUE_IF(
+                    !monoField,
+                    "Property is not found: %s",
+                    eventMetaProperty->getName().str);
+
+                auto writeFieldValueFunc = MonoSerializationManager::GetInstancePtr()->getWriteMetaPropertyToMonoClassFieldFunction(eventMetaPropertyClassUID);
+                MAZE_ERROR_CONTINUE_IF(
+                    !writeFieldValueFunc,
+                    "WriteMetaPropertyToMonoClassFieldFunction is not found for property: %s",
+                    eventMetaProperty->getName().str);
+
+                writeFieldValueFunc(
+                    _event.getMetaInstance(),
+                    eventMetaProperty,
+                    monoEventObj,
+                    monoField);
+            }
+
+            return monoEventObj;
         }
 
         //////////////////////////////////////////

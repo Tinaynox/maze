@@ -105,6 +105,27 @@ namespace Maze
                 attach(world);
         }
 
+        //////////////////////////////////////////
+        inline CustomComponentSystemHolder(
+            HashedString _name,
+            ClassUID _eventUID,
+            ComponentSystemEventHandler::GlobalCtxFunc _globalCtxFunc,
+            void* _ctx,
+            Set<HashedString> _tags = Set<HashedString>(),
+            ComponentSystemOrder const& _order = ComponentSystemOrder())
+            : m_name(_name)
+            , m_eventUID(_eventUID)
+            , m_globalCtxFunc(_globalCtxFunc)
+            , m_ctx(_ctx)
+            , m_tags(_tags)
+            , m_order(_order)
+        {
+            GetSystemHolders().insert(this);
+
+            for (EcsWorld* world : GetCurrentWorlds())
+                attach(world);
+        }
+
 
         //////////////////////////////////////////
         inline ~CustomComponentSystemHolder()
@@ -118,14 +139,24 @@ namespace Maze
         //////////////////////////////////////////
         inline void attach(EcsWorld* _world)
         {
-            ComponentSystemEventHandlerPtr system = ComponentSystemEventHandler::Create(
-                _world,
-                m_name,
-                m_eventUID,
-                m_createSampleFunc(_world),
-                m_func,
-                m_tags,
-                m_order);
+            ComponentSystemEventHandlerPtr system =
+                m_createSampleFunc
+                    ? ComponentSystemEventHandler::Create(
+                        _world,
+                        m_name,
+                        m_eventUID,
+                        m_createSampleFunc(_world),
+                        m_func,
+                        m_tags,
+                        m_order)
+                    : ComponentSystemEventHandler::Create(
+                        _world,
+                        m_name,
+                        m_eventUID,
+                        m_globalCtxFunc,
+                        m_ctx,
+                        m_tags,
+                        m_order);
 
             if (_world->addSystemEventHandler(system))
                 m_systems[_world] = system;
@@ -147,7 +178,9 @@ namespace Maze
         HashedString m_name;
         ClassUID m_eventUID = 0;
         std::function<IEntitiesSamplePtr(EcsWorld*)> m_createSampleFunc;
-        ComponentSystemEventHandler::Func m_func;
+        ComponentSystemEventHandler::Func m_func = nullptr;
+        ComponentSystemEventHandler::GlobalCtxFunc m_globalCtxFunc = nullptr;
+        void* m_ctx = nullptr;
         Set<HashedString> m_tags;
         ComponentSystemOrder m_order;
 
