@@ -24,8 +24,14 @@ namespace Maze.UI
 
         public UIElement2D(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
-        {  
+        {
         }
 
+        // Returns true if this element is the top-most element under renderTargetCoords
+        // (not covered by another cursor-capturing element)
+        public bool TraceElement(Vec2F renderTargetCoords, int[] ignoreEntityIds = null)
+        {
+            return InternalCalls.UIElement2DTraceElement(NativeComponentPtr, ref renderTargetCoords, ignoreEntityIds);
+        }
     }
 }

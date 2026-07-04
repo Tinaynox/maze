@@ -24,6 +24,9 @@ namespace Maze.UI
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void UIElement2DGetPressed(NativePtr nativeComponentPtr, out bool outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool UIElement2DTraceElement(NativePtr nativeComponentPtr, ref Vec2F renderTargetCoords, int[] ignoreEntityIds);
         #endregion
 
         #region TextRenderer2D

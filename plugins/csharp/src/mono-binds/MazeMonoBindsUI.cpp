@@ -33,6 +33,8 @@
 #include "maze-core/managers/MazeSystemCursorManager.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/ecs/components/MazeInputSystem2D.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionTranslation.hpp"
@@ -86,6 +88,45 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(UIElement2D);
         _outValue = _component->castRaw<UIElement2D>()->getPressed();
+    }
+
+
+    //////////////////////////////////////////
+    inline bool UIElement2DTraceElement(
+        Component* _component,
+        Vec2F const& _renderTargetCoords,
+        MonoArray* _ignoreEntityIds)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(UIElement2D, false);
+
+        EcsWorld* ecsWorld = _component->getEntityRaw()->getEcsWorld();
+        if (!ecsWorld)
+            return false;
+
+        CursorElementTraceParams traceParams;
+        if (_ignoreEntityIds)
+        {
+            Size count = (Size)mono_array_length(_ignoreEntityIds);
+            for (Size i = 0; i < count; ++i)
+            {
+                S32 eid = mono_array_get(_ignoreEntityIds, S32, i);
+                if (eid != 0)
+                    traceParams.ignoreElements.insert(EntityId(eid));
+            }
+        }
+
+        bool result = false;
+        ecsWorld->requestInclusiveSample<InputSystem2D>()->query(
+            [&](Entity*, InputSystem2D* _inputSystem)
+            {
+                if (!result)
+                    result = _inputSystem->traceElement(
+                        _component->castRaw<UIElement2D>(),
+                        _renderTargetCoords,
+                        traceParams);
+            });
+
+        return result;
     }
 
 
@@ -334,6 +375,7 @@ namespace Maze
         MAZE_UI_MONO_BIND_FUNC(UIElement2DGetFocused);
         MAZE_UI_MONO_BIND_FUNC(UIElement2DSetPressed);
         MAZE_UI_MONO_BIND_FUNC(UIElement2DGetPressed);
+        MAZE_UI_MONO_BIND_FUNC(UIElement2DTraceElement);
 
         // TextRenderer2D
         MAZE_UI_MONO_BIND_FUNC(TextRenderer2DGetText);
