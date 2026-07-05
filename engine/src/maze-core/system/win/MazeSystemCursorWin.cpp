@@ -115,7 +115,9 @@ namespace Maze
         else
         {
             ByteBufferPtr dataBuffer = _assetFile->readAsByteBuffer();
-            Path tempCursorFilePath = FileHelper::GetDefaultTemporaryDirectory() + L"/cursors/" + _assetFile->getFileName();
+            Path tempCursorFileDirPath = FileHelper::GetDefaultTemporaryDirectory() + L"/cursors/"; 
+            Path tempCursorFilePath = tempCursorFileDirPath + _assetFile->getFileName();
+            FileHelper::CreateDirectoryRecursive(tempCursorFileDirPath);
             ByteBufferHelper::SaveBinaryFile(*dataBuffer.get(), tempCursorFilePath);
 
             cursorHandle = LoadCursorFromFileW(tempCursorFilePath.c_str());
