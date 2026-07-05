@@ -315,7 +315,7 @@ namespace Maze
     {
         Timer timer;
 
-        EntityPtr objectEntity = createEntity("MeshPreview");
+        EntityPtr objectEntity = createEntity("MeshPreview - " + _text);
         Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
         MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
 
@@ -356,7 +356,7 @@ namespace Maze
 
 
         {
-            EntityPtr pedestalEntity = createEntity("Pedestal");
+            EntityPtr pedestalEntity = createEntity("Pedestal - " + _text);
             Transform3DPtr pedestalTransform = pedestalEntity->createComponent<Transform3D>();
             pedestalTransform->setLocalScale(1.0f, 0.2f, 1.0f);
             pedestalTransform->setLocalPosition(

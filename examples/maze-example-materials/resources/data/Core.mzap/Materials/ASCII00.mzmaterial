@@ -23,7 +23,7 @@ uniform
 {
   name:String = "u_backgroundColor"
   type:String = "UniformColorF128"
-  value:Vec4F = 0.01, 0.01, 0.01, 1.0
+  value:Vec4F = 0.00, 0.00, 0.00, 1.0
 }
 
 uniform
