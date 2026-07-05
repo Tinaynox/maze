@@ -248,6 +248,42 @@ namespace Maze
             },
             []() { return true; });
 
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Assets",
+            "Obfuscate/NC x1.0",
+            [](String const& _text)
+            {
+                EditorAssetHelper::ObfuscateAssets("1.0");
+            },
+            []() { return true; });
+
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Assets",
+            "Obfuscate/DXT x1.0",
+            [](String const& _text)
+            {
+                EditorAssetHelper::ObfuscateAssets("1.0", "dxt");
+            },
+            []() { return true; });
+
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Assets",
+            "Obfuscate Bin/NC x1.0",
+            [](String const& _text)
+            {
+                EditorAssetHelper::ObfuscateAssets("1.0", String(), true);
+            },
+            []() { return true; });
+
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Assets",
+            "Obfuscate Bin/DXT x1.0",
+            [](String const& _text)
+            {
+                EditorAssetHelper::ObfuscateAssets("1.0", "dxt", true);
+            },
+            []() { return true; });
+
         return true;
     }
 

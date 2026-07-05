@@ -102,6 +102,12 @@ namespace Maze
         void AssemblyAssets(
             String const& _textureScale,
             String const& _textureCompression = String());
+
+        //////////////////////////////////////////
+        void ObfuscateAssets(
+            String const& _textureScale,
+            String const& _textureCompression = String(),
+            bool _bin = false);
     };
 
 

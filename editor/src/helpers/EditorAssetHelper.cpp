@@ -87,6 +87,7 @@
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
+#include "maze-plugin-archive-assets/assets/MazeAssetObfuscation.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
@@ -425,6 +426,100 @@ namespace Maze
 #else
             MAZE_NOT_IMPLEMENTED;
 #endif
+        }
+
+        //////////////////////////////////////////
+        Path FindProjectObfuscator(String const& _obfuscatorName)
+        {
+            String exeRelPath = "first-party/" + _obfuscatorName + "/bin/" + _obfuscatorName + ".exe";
+
+            Path folder = EditorHelper::GetProjectFolder();
+            while (!folder.empty())
+            {
+                Path obfuscatorFullPath = folder + Path("/" + exeRelPath);
+                if (FileHelper::IsFileExists(obfuscatorFullPath))
+                    return obfuscatorFullPath;
+
+                Size pos = folder.getPath().find_last_of('/');
+                if (pos == Path::StringType::npos)
+                    break;
+
+                folder = folder.getPath().substr(0, pos);
+            }
+
+            return Path();
+        }
+
+        //////////////////////////////////////////
+        void ObfuscateAssets(
+            String const& _textureScale,
+            String const& _textureCompression,
+            bool _bin)
+        {
+            Path projectFolder = EditorHelper::GetProjectFolder();
+            MAZE_ERROR_RETURN_IF(projectFolder.empty(), "Project folder is not selected!");
+
+            String variant = "x" + _textureScale + "-" + (!_textureCompression.empty() ? _textureCompression : "nc");
+
+            String obfuscatorName = _bin ? "game-obfuscator-bin" : "game-obfuscator";
+            String obfSuffix = _bin ? "-obf-bin" : "-obf";
+
+            Path srcFolder = projectFolder + Path("/Build/data-" + variant);
+            Path destFolder = projectFolder + Path("/Build/data-" + variant + obfSuffix);
+            MAZE_ERROR_RETURN_IF(
+                !FileHelper::IsDirectory(srcFolder),
+                "Assembled assets folder %s is not found! Run Assets/Assembly first.",
+                srcFolder.toUTF8().c_str());
+
+            Path obfuscatorFullPath = FindProjectObfuscator(obfuscatorName);
+
+            if (!obfuscatorFullPath.empty())
+            {
+#if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
+                Path tempFolder = projectFolder + "/Temp";
+                FileHelper::CreateDirectoryRecursive(tempFolder);
+
+                String bat;
+                bat += "@echo off\n";
+                bat += "call \"" + obfuscatorFullPath.toUTF8() + "\"";
+                bat += " \"" + srcFolder.toUTF8() + "\"";
+                bat += " \"" + destFolder.toUTF8() + "\"\n";
+                bat += "if errorlevel 1 exit /b 1\n";
+
+                Path batFullPath = tempFolder + Path(
+                    String("/obfuscate-assets-") + (_bin ? "bin-" : "") + variant + ".bat");
+
+                std::ofstream batFile(batFullPath.c_str());
+                MAZE_ERROR_RETURN_IF(!batFile.is_open(), "Failed to create %s!", batFullPath.toUTF8().c_str());
+                batFile << bat;
+                batFile.close();
+
+                Debug::Log("Obfuscating assets (%s) with %s...", variant.c_str(), obfuscatorFullPath.toUTF8().c_str());
+                MAZE_ERROR_RETURN_IF(
+                    !SystemHelper::ExecuteSync(batFullPath, projectFolder),
+                    "Failed to execute assets obfuscation!");
+                Debug::Log("Assets obfuscation finished: %s", destFolder.toUTF8().c_str());
+#else
+                MAZE_NOT_IMPLEMENTED;
+#endif
+            }
+            else
+            {
+                MAZE_ERROR_RETURN_IF(
+                    _bin,
+                    "%s is not found! Build the project obfuscators first.",
+                    obfuscatorName.c_str());
+
+                MAZE_WARNING("Project obfuscator is not found! Obfuscating with the default engine obfuscation...");
+
+                Debug::Log("Obfuscating assets (%s)...", variant.c_str());
+
+                AssetManager::GetInstancePtr()->addAssetsDirectoryPath(srcFolder);
+                ObfuscateAssetPacks(srcFolder, destFolder);
+                AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(srcFolder);
+
+                Debug::Log("Assets obfuscation finished: %s", destFolder.toUTF8().c_str());
+            }
         }
     };
 

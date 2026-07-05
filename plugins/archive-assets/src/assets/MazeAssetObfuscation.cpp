@@ -78,6 +78,10 @@ namespace Maze
             {
                 ByteBufferPtr byteBuffer = file->readAsByteBuffer();
 
+                // Empty password must be passed as null, otherwise minizip marks
+                // the entry as encrypted and it cannot be read without a password
+                String password = CallObfuscationPasswordFunction(fileName);
+
                 S32 result = zipOpenNewFileInZip3(
                     zf,
                     (_path + Path('/') + fileName).toUTF8().c_str(),
@@ -93,7 +97,7 @@ namespace Maze
                     -MAX_WBITS,
                     DEF_MEM_LEVEL,
                     0,
-                    CallObfuscationPasswordFunction(fileName).c_str(),
+                    !password.empty() ? password.c_str() : nullptr,
                     0);
 
                 if (result == ZIP_OK)
