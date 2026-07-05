@@ -225,6 +225,9 @@ namespace Maze
         
         MAZE_LOG("Shutdown started!");
         m_running = false;
+
+        if (m_config.params.getBool(MAZE_HCS("deleteTemporaryDirectoryOnShutdown"), false))
+            FileHelper::DeleteDirectory(FileHelper::GetDefaultTemporaryDirectory());
         
         if (m_systemManager)
             m_systemManager->shutdownApplication();
