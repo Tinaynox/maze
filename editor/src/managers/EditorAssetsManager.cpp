@@ -232,7 +232,7 @@ namespace Maze
 
         EditorUIManager::GetInstancePtr()->addTopBarOption(
             "Assets",
-            "Assembly/NC x1.0",
+            "Build/Assembly/NC x1.0",
             [](String const& _text)
             {
                 EditorAssetHelper::AssemblyAssets("1.0");
@@ -241,7 +241,7 @@ namespace Maze
 
         EditorUIManager::GetInstancePtr()->addTopBarOption(
             "Assets",
-            "Assembly/DXT x1.0",
+            "Build/Assembly/DXT x1.0",
             [](String const& _text)
             {
                 EditorAssetHelper::AssemblyAssets("1.0", "dxt");
@@ -250,7 +250,7 @@ namespace Maze
 
         EditorUIManager::GetInstancePtr()->addTopBarOption(
             "Assets",
-            "Obfuscate/NC x1.0",
+            "Build/Obfuscate/NC x1.0 (Zip)",
             [](String const& _text)
             {
                 EditorAssetHelper::ObfuscateAssets("1.0");
@@ -259,7 +259,7 @@ namespace Maze
 
         EditorUIManager::GetInstancePtr()->addTopBarOption(
             "Assets",
-            "Obfuscate/DXT x1.0",
+            "Build/Obfuscate/DXT x1.0 (Zip)",
             [](String const& _text)
             {
                 EditorAssetHelper::ObfuscateAssets("1.0", "dxt");
@@ -268,7 +268,7 @@ namespace Maze
 
         EditorUIManager::GetInstancePtr()->addTopBarOption(
             "Assets",
-            "Obfuscate Bin/NC x1.0",
+            "Build/Obfuscate/NC x1.0 (Bin)",
             [](String const& _text)
             {
                 EditorAssetHelper::ObfuscateAssets("1.0", String(), true);
@@ -277,7 +277,7 @@ namespace Maze
 
         EditorUIManager::GetInstancePtr()->addTopBarOption(
             "Assets",
-            "Obfuscate Bin/DXT x1.0",
+            "Build/Obfuscate/DXT x1.0 (Bin)",
             [](String const& _text)
             {
                 EditorAssetHelper::ObfuscateAssets("1.0", "dxt", true);
