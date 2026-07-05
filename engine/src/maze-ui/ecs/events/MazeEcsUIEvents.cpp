@@ -37,6 +37,15 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, positionOS, Vec2F::c_zero, getPositionOS, setPositionOS),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(CursorInputEvent, inputEvent, CursorInputEvent(), getInputEvent, setInputEvent));
 
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditBox2DTextChangedEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(EntityId, editBoxEid, c_invalidEntityId, getEditBoxEid, setEditBoxEid));
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditBox2DSelectedChangedEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(EntityId, editBoxEid, c_invalidEntityId, getEditBoxEid, setEditBoxEid),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Bool, selected, false, getSelected, setSelected));
+
 
 } // namespace Maze
 //////////////////////////////////////////

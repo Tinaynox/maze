@@ -17,6 +17,8 @@ namespace Maze.Core
 
         protected NativePtr NativeComponentPtr { get; set; }
 
+        internal NativePtr GetNativePtr() => NativeComponentPtr;
+
         public int GetEntityId()
         {
             return InternalCalls.ComponentGetEntityId(NativeComponentPtr);

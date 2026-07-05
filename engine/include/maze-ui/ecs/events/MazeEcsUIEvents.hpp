@@ -91,7 +91,82 @@ namespace Maze
     };
 
 
-    
+    //////////////////////////////////////////
+    // Class EditBox2DTextChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API EditBox2DTextChangedEvent
+        : public GenericEvent<EditBox2DTextChangedEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EditBox2DTextChangedEvent, Event);
+
+
+        //////////////////////////////////////////
+        EditBox2DTextChangedEvent() = default;
+
+        //////////////////////////////////////////
+        EditBox2DTextChangedEvent(
+            EntityId const& _editBoxEid)
+            : editBoxEid(_editBoxEid)
+        {}
+
+        //////////////////////////////////////////
+        inline EntityId const& getEditBoxEid() const { return editBoxEid; }
+
+        //////////////////////////////////////////
+        inline void setEditBoxEid(EntityId const& _value) { editBoxEid = _value; }
+
+    public:
+        EntityId editBoxEid;
+    };
+
+
+    //////////////////////////////////////////
+    // Class EditBox2DSelectedChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API EditBox2DSelectedChangedEvent
+        : public GenericEvent<EditBox2DSelectedChangedEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EditBox2DSelectedChangedEvent, Event);
+
+
+        //////////////////////////////////////////
+        EditBox2DSelectedChangedEvent() = default;
+
+        //////////////////////////////////////////
+        EditBox2DSelectedChangedEvent(
+            EntityId const& _editBoxEid,
+            Bool _selected)
+            : editBoxEid(_editBoxEid)
+            , selected(_selected)
+        {}
+
+        //////////////////////////////////////////
+        inline EntityId const& getEditBoxEid() const { return editBoxEid; }
+
+        //////////////////////////////////////////
+        inline void setEditBoxEid(EntityId const& _value) { editBoxEid = _value; }
+
+        //////////////////////////////////////////
+        inline Bool getSelected() const { return selected; }
+
+        //////////////////////////////////////////
+        inline void setSelected(Bool _value) { selected = _value; }
+
+    public:
+        EntityId editBoxEid;
+        Bool selected = false;
+    };
+
+
+
 } // namespace Maze
 //////////////////////////////////////////
 

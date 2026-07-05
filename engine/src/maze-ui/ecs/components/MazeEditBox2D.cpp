@@ -31,6 +31,8 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-ui/ecs/events/MazeEcsUIEvents.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -52,7 +54,8 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, selected, false, getSelected, setSelected),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, systemTextRenderer, ComponentPtr(), getTextRendererComponent, setTextRenderer),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(U8, editBoxFlags, 0, getEditBoxFlags, setEditBoxFlags));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(U8, editBoxFlags, 0, getEditBoxFlags, setEditBoxFlags),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(EntityId, eventReceiverEid, c_invalidEntityId, getEventReceiverEid, setEventReceiverEid));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(EditBox2D);
@@ -255,6 +258,13 @@ namespace Maze
         updateCursorRendererEnabled();
 
         eventSelectedChanged(this, m_selected);
+
+        if (getEntityRaw() && getEntityRaw()->getEcsWorld())
+        {
+            EntityId receiverEid = (m_eventReceiverEid != c_invalidEntityId) ? m_eventReceiverEid : getEntityId();
+            getEntityRaw()->getEcsWorld()->sendEvent<EditBox2DSelectedChangedEvent>(
+                receiverEid, getEntityId(), m_selected);
+        }
     }
 
     //////////////////////////////////////////
@@ -310,6 +320,13 @@ namespace Maze
         updateCursorRendererEnabled();
 
         eventTextChanged(this, m_text);
+
+        if (getEntityRaw() && getEntityRaw()->getEcsWorld())
+        {
+            EntityId receiverEid = (m_eventReceiverEid != c_invalidEntityId) ? m_eventReceiverEid : getEntityId();
+            getEntityRaw()->getEcsWorld()->sendEvent<EditBox2DTextChangedEvent>(
+                receiverEid, getEntityId());
+        }
     }
 
     //////////////////////////////////////////

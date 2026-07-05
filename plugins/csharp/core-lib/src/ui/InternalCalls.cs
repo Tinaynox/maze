@@ -40,6 +40,29 @@ namespace Maze.UI
         internal extern static void TextRenderer2DCalculateRequiredSizeForText(NativePtr nativeComponentPtr, string text, out Vec2F outSize);
         #endregion
 
+        #region EditBox2D
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static string EditBox2DGetText(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EditBox2DSetText(NativePtr nativeComponentPtr, string text);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EditBox2DGetSelected(NativePtr nativeComponentPtr, out bool outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EditBox2DSetSelected(NativePtr nativeComponentPtr, bool value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EditBox2DSetTextRenderer(NativePtr nativeComponentPtr, NativePtr textRendererComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EditBox2DGetEventReceiverEid(NativePtr nativeComponentPtr, out int outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EditBox2DSetEventReceiverEid(NativePtr nativeComponentPtr, int value);
+        #endregion
+
         #region UITweenTransitionAlpha
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void UITweenTransitionAlphaSetHidden(NativePtr nativeComponentPtr, bool value, bool resetProgress = false);

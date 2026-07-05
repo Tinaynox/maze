@@ -39,6 +39,8 @@
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionTranslation.hpp"
 #include "maze-ui/ecs/components/MazeTextRenderer2D.hpp"
+#include "maze-ui/ecs/components/MazeEditBox2D.hpp"
+#include "maze-graphics/ecs/components/MazeAbstractTextRenderer2D.hpp"
 #include "maze-ui/ecs/components/MazeLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
@@ -155,6 +157,68 @@ namespace Maze
         Char* cstr = mono_string_to_utf8(_text);
         _outSize = _component->castRaw<TextRenderer2D>()->calculateRequiredSizeForText(cstr);
         mono_free(cstr);
+    }
+
+
+    //////////////////////////////////////////
+    inline MonoString* EditBox2DGetText(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(EditBox2D, nullptr);
+        return mono_string_new(mono_domain_get(), _component->castRaw<EditBox2D>()->getText().c_str());
+    }
+
+    //////////////////////////////////////////
+    inline void EditBox2DSetText(Component* _component, MonoString* _text)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(EditBox2D);
+
+        Char* cstr = mono_string_to_utf8(_text);
+        _component->castRaw<EditBox2D>()->setText(cstr);
+        mono_free(cstr);
+    }
+
+    //////////////////////////////////////////
+    inline void EditBox2DGetSelected(Component* _component, bool& _outValue)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(EditBox2D);
+        _outValue = _component->castRaw<EditBox2D>()->getSelected();
+    }
+
+    //////////////////////////////////////////
+    inline void EditBox2DSetSelected(Component* _component, bool _value)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(EditBox2D);
+        _component->castRaw<EditBox2D>()->setSelected(_value);
+    }
+
+    //////////////////////////////////////////
+    inline void EditBox2DSetTextRenderer(Component* _component, Component* _textRenderer)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(EditBox2D);
+
+        if (_textRenderer)
+        {
+            MAZE_ERROR_RETURN_IF(
+                !_textRenderer->getMetaClass()->isInheritedFrom<AbstractTextRenderer2D>(),
+                "Component is not AbstractTextRenderer2D!");
+            _component->castRaw<EditBox2D>()->setTextRenderer(_textRenderer->cast<AbstractTextRenderer2D>());
+        }
+        else
+            _component->castRaw<EditBox2D>()->setTextRenderer(AbstractTextRenderer2DPtr());
+    }
+
+    //////////////////////////////////////////
+    inline void EditBox2DGetEventReceiverEid(Component* _component, S32& _outValue)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(EditBox2D);
+        _outValue = (S32)_component->castRaw<EditBox2D>()->getEventReceiverEid();
+    }
+
+    //////////////////////////////////////////
+    inline void EditBox2DSetEventReceiverEid(Component* _component, S32 _value)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(EditBox2D);
+        _component->castRaw<EditBox2D>()->setEventReceiverEid(EntityId(_value));
     }
 
 
@@ -381,6 +445,15 @@ namespace Maze
         MAZE_UI_MONO_BIND_FUNC(TextRenderer2DGetText);
         MAZE_UI_MONO_BIND_FUNC(TextRenderer2DSetText);
         MAZE_UI_MONO_BIND_FUNC(TextRenderer2DCalculateRequiredSizeForText);
+
+        // EditBox2D
+        MAZE_UI_MONO_BIND_FUNC(EditBox2DGetText);
+        MAZE_UI_MONO_BIND_FUNC(EditBox2DSetText);
+        MAZE_UI_MONO_BIND_FUNC(EditBox2DGetSelected);
+        MAZE_UI_MONO_BIND_FUNC(EditBox2DSetSelected);
+        MAZE_UI_MONO_BIND_FUNC(EditBox2DSetTextRenderer);
+        MAZE_UI_MONO_BIND_FUNC(EditBox2DGetEventReceiverEid);
+        MAZE_UI_MONO_BIND_FUNC(EditBox2DSetEventReceiverEid);
 
         // UITweenTransitionAlpha
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaSetHidden);

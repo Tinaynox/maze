@@ -39,6 +39,17 @@ namespace Maze.UI
         public CursorWheelInputEvent inputEvent;
     }
 
+    public class EditBox2DTextChangedEvent : NativeEvent
+    {
+        public int editBoxEid;
+    }
+
+    public class EditBox2DSelectedChangedEvent : NativeEvent
+    {
+        public int editBoxEid;
+        public bool selected;
+    }
+
     public class UIElementFocusedChangedEvent : NativeEvent
     {
         public bool focused;

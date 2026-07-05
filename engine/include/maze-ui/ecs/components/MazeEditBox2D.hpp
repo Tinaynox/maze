@@ -227,6 +227,13 @@ namespace Maze
         void setVerticalAlignment(VerticalAlignment2D _alignment);
 
 
+        //////////////////////////////////////////
+        inline void setEventReceiverEid(EntityId const& _value) { m_eventReceiverEid = _value; }
+
+        //////////////////////////////////////////
+        inline EntityId const& getEventReceiverEid() const { return m_eventReceiverEid; }
+
+
     public:
 
         MultiDelegate<EditBox2D*, CursorInputEvent const&> eventClick;
@@ -305,6 +312,8 @@ namespace Maze
         F32 m_cursorBlinkTimer;
         F32 m_cursorBlinkTime;
         bool m_cursorBlink;
+
+        EntityId m_eventReceiverEid = c_invalidEntityId;
     };
 
 
