@@ -129,7 +129,7 @@ namespace Maze
         void incCurrentLine();
 
         //////////////////////////////////////////
-        void processSyntaxError(CString _message);
+        void processSyntaxError(CString _format, ...);
 
         //////////////////////////////////////////
         Char readCharNoRewind(Size _index = 0);

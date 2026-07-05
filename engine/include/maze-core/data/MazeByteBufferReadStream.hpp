@@ -110,6 +110,9 @@ namespace Maze
         U8 const* getDataRO() const;
 
         //////////////////////////////////////////
+        inline ByteBuffer const* getByteBuffer() const { return m_byteBuffer; }
+
+        //////////////////////////////////////////
         bool isEndOfBuffer() const;
 
     protected:

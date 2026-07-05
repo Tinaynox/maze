@@ -35,6 +35,7 @@
 #include "maze-core/helpers/MazeByteBufferHelper.hpp"
 #include "maze-core/hash/MazeHashFNV1.hpp"
 #include "maze-core/hash/MazeHashCRC.hpp"
+#include <cstdarg>
 
 
 //////////////////////////////////////////
@@ -521,7 +522,7 @@ namespace Maze
             {
                 if (!_isTopmost)
                 {
-                    processSyntaxError("Unexpected EOF");
+                    processSyntaxError("Unexpected EOF: missing closing '}'");
                     return false;
                 }
 
@@ -545,7 +546,8 @@ namespace Maze
             nameText.clear();
             if (!parseIdentifier(nameText))
             {
-                processSyntaxError("Expected identifier");
+                Char ch = readCharNoRewind();
+                processSyntaxError("Expected identifier, got '%c' (0x%02X)", ch ? ch : ' ', (S32)(U8)ch);
                 return false;
             }
 
@@ -554,7 +556,7 @@ namespace Maze
 
             if (isEndOfBuffer())
             {
-                processSyntaxError("Unexpected EOF");
+                processSyntaxError("Unexpected EOF after identifier '%s'", nameText.c_str());
                 return false;
             }
 
@@ -584,14 +586,14 @@ namespace Maze
                 typeNameText.clear();
                 if (!parseIdentifier(typeNameText))
                 {
-                    processSyntaxError("Expected type identifier");
+                    processSyntaxError("Expected type identifier for param '%s'", nameText.c_str());
                     return false;
                 }
 
                 DataBlockParamType paramType = GetDataBlockParamType(MAZE_HASHED_CSTRING(typeNameText.c_str()));
                 if (paramType == DataBlockParamType::None)
                 {
-                    processSyntaxError("Unknown type");
+                    processSyntaxError("Unknown type '%s' of param '%s'", typeNameText.c_str(), nameText.c_str());
                     return false;
                 }
 
@@ -600,13 +602,19 @@ namespace Maze
 
                 if (isEndOfBuffer())
                 {
-                    processSyntaxError("Unexpected EOF");
+                    processSyntaxError("Unexpected EOF while parsing param '%s:%s'", nameText.c_str(), typeNameText.c_str());
                     return false;
                 }
 
-                if (readChar() != '=')
+                Char equalCh = readChar();
+                if (equalCh != '=')
                 {
-                    processSyntaxError("Expected '='");
+                    processSyntaxError(
+                        "Expected '=' after param '%s:%s', got '%c' (0x%02X)",
+                        nameText.c_str(),
+                        typeNameText.c_str(),
+                        equalCh ? equalCh : ' ',
+                        (S32)(U8)equalCh);
                     return false;
                 }
 
@@ -615,13 +623,13 @@ namespace Maze
 
                 if (strchr("\r\n", readCharNoRewind()))
                 {
-                    processSyntaxError("Unexpected CR/LF");
+                    processSyntaxError("Unexpected CR/LF after '=' of param '%s:%s'", nameText.c_str(), typeNameText.c_str());
                     return false;
                 }
 
                 if (isEndOfBuffer())
                 {
-                    processSyntaxError("Unexpected EOF");
+                    processSyntaxError("Unexpected EOF after '=' of param '%s:%s'", nameText.c_str(), typeNameText.c_str());
                     return false;
                 }
 
@@ -642,7 +650,12 @@ namespace Maze
             }
             else
             {
-                processSyntaxError("Syntax error!");
+                Char ch = readCharNoRewind();
+                processSyntaxError(
+                    "Unexpected character '%c' (0x%02X) after identifier '%s' (expected '{', ':' or '=')",
+                    ch ? ch : ' ',
+                    (S32)(U8)ch,
+                    nameText.c_str());
                 return false;
             }
         }
@@ -765,7 +778,7 @@ namespace Maze
 
                         if (count > 0 && !m_readStream.canRead(2))
                         {
-                            processSyntaxError("Unexpected EOF inside comment");
+                            processSyntaxError("Unexpected EOF inside multiline comment (missing '*/')");
                             return false;
                         }
 
@@ -923,7 +936,7 @@ namespace Maze
                 else
                 if (ch == 0)
                 {
-                    processSyntaxError("Unclosed comment");
+                    processSyntaxError("Unclosed multiline comment inside value (missing '*/')");
                     return false;
                 }
                 else
@@ -974,7 +987,7 @@ namespace Maze
                 else
                 if (((ch == '\r' || ch == '\n') && !multiLineString) || ch == 0)
                 {
-                    processSyntaxError("Unclosed string");
+                    processSyntaxError("Unclosed string (opened with %c): '%.64s'", quotCh, _value.c_str());
                     return false;
                 }
                 else
@@ -984,7 +997,7 @@ namespace Maze
 
                     if (isEndOfBuffer())
                     {
-                        processSyntaxError("Unclosed string");
+                        processSyntaxError("Unexpected EOF after '~' escape in string: '%.64s'", _value.c_str());
                         return false;
                     }
 
@@ -1042,7 +1055,7 @@ namespace Maze
                 Char ch = readCharNoRewind();
                 if (ch == 0)
                 {
-                    processSyntaxError("Unclosed string");
+                    processSyntaxError("Unclosed multiline comment after value '%.64s' (missing '*/')", _value.c_str());
                     return false;
                 }
                 else
@@ -1095,9 +1108,34 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void DataBlockTextParser::processSyntaxError(CString _message)
+    void DataBlockTextParser::processSyntaxError(CString _format, ...)
     {
-        MAZE_ERROR("%s (Line: %d)", _message, m_currentLine);
+        Char message[512];
+        va_list args;
+        va_start(args, _format);
+        vsnprintf(message, sizeof(message), _format, args);
+        va_end(args);
+
+        S32 column = (S32)(m_readStream.getOffset() - m_currentLineOffset) + 1;
+
+        CString data = (CString)m_readStream.getDataRO();
+        Size bufferSize = (data && m_readStream.getByteBuffer()) ? m_readStream.getByteBuffer()->getSize() : 0u;
+        if (!data)
+            data = "";
+        Size lineEnd = m_currentLineOffset;
+        while (lineEnd < bufferSize && data[lineEnd] != '\r' && data[lineEnd] != '\n')
+            ++lineEnd;
+        Size lineLength = lineEnd - m_currentLineOffset;
+        if (lineLength > 256)
+            lineLength = 256;
+
+        MAZE_ERROR(
+            "DataBlock text parsing error: %s (Line: %d, Column: %d) >>> '%.*s'",
+            message,
+            m_currentLine,
+            column,
+            (S32)lineLength,
+            data + m_currentLineOffset);
     }
 
     //////////////////////////////////////////
@@ -1147,13 +1185,20 @@ namespace Maze
         DataBlock::ParamIndex itemId = _dataBlock.findParamIndex(_dataBlock.getShared()->getStringId(_name));
         if ((itemId >= 0) && (_dataBlock.getParamType(itemId) != _type))
         {
-            processSyntaxError("Invalid type");
+            processSyntaxError(
+                "Param '%s' redeclared with different type '%s' (previous type is '%s')",
+                _name.str,
+                c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                c_dataBlockParamTypeInfo[(S32)_dataBlock.getParamType(itemId)].name.str);
             return false;
         }
 
         if (_size == 0)
         {
-            processSyntaxError("Param is empty");
+            processSyntaxError(
+                "Param '%s:%s' has empty value",
+                _name.str,
+                c_dataBlockParamTypeInfo[(S32)_type].name.str);
             return false;
         }
 
@@ -1170,7 +1215,11 @@ namespace Maze
                     S8 value = 0;
                     if (!StringHelper::ParseNumber<S8>(_value, _value + _size, value))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addS8(_name, value);
@@ -1181,7 +1230,11 @@ namespace Maze
                     S16 value = 0;
                     if (!StringHelper::ParseNumber<S16>(_value, _value + _size, value))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addS16(_name, value);
@@ -1192,7 +1245,11 @@ namespace Maze
                     S32 value = 0;
                     if (!StringHelper::ParseNumber<S32>(_value, _value + _size, value))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addS32(_name, value);
@@ -1203,7 +1260,11 @@ namespace Maze
                     S64 value = 0;
                     if (!StringHelper::ParseNumber<S64>(_value, _value + _size, value))
                     {                        
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addS64(_name, value);
@@ -1214,7 +1275,11 @@ namespace Maze
                     U8 value = 0;
                     if (!StringHelper::ParseNumber<U8>(_value, _value + _size, value))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addU8(_name, value);
@@ -1225,7 +1290,11 @@ namespace Maze
                     U16 value = 0;
                     if (!StringHelper::ParseNumber<U16>(_value, _value + _size, value))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addU16(_name, value);
@@ -1236,7 +1305,11 @@ namespace Maze
                     U32 value = 0;
                     if (!StringHelper::ParseNumber<U32>(_value, _value + _size, value))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addU32(_name, value);
@@ -1247,7 +1320,11 @@ namespace Maze
                     U64 value = 0;
                     if (!StringHelper::ParseNumber<U64>(_value, _value + _size, value))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addU64(_name, value);
@@ -1258,7 +1335,11 @@ namespace Maze
                     F32 value = 0.0f;
                     if (!StringHelper::ParseNumber<F32>(_value, _value + _size, value))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addF32(_name, value);
@@ -1269,7 +1350,11 @@ namespace Maze
                     F64 value = 0.0f;
                     if (!StringHelper::ParseNumber<F64>(_value, _value + _size, value))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addF64(_name, value);
@@ -1280,7 +1365,11 @@ namespace Maze
                     Bool value = false;
                     if (!StringHelper::ParseBoolPretty(_value, _value + _size, value))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
 
@@ -1292,7 +1381,11 @@ namespace Maze
                     Vec4S8 value = Vec4S8::c_zero;
                     if (!Vec4S8::ParseString(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec4S8(_name, value);
@@ -1303,7 +1396,11 @@ namespace Maze
                     Vec4U8 value = Vec4U8::c_zero;
                     if (!Vec4U8::ParseString(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec4U8(_name, value);
@@ -1314,7 +1411,11 @@ namespace Maze
                     Vec2S value = Vec2S::c_zero;
                     if (!Vec2S::ParseString(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec2S32(_name, value);
@@ -1325,7 +1426,11 @@ namespace Maze
                     Vec3S value = Vec3S::c_zero;
                     if (!Vec3S::ParseString(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec3S32(_name, value);
@@ -1336,7 +1441,11 @@ namespace Maze
                     Vec4S value = Vec4S::c_zero;
                     if (!Vec4S::ParseString(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec4S32(_name, value);
@@ -1347,7 +1456,11 @@ namespace Maze
                     Vec2U value = Vec2U::c_zero;
                     if (!Vec2U::ParseString(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec2U32(_name, value);
@@ -1358,7 +1471,11 @@ namespace Maze
                     Vec3U value = Vec3U::c_zero;
                     if (!Vec3U::ParseString(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec3U32(_name, value);
@@ -1369,7 +1486,11 @@ namespace Maze
                     Vec4U value = Vec4U::c_zero;
                     if (!Vec4U::ParseString(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec4U32(_name, value);
@@ -1380,7 +1501,11 @@ namespace Maze
                     Vec2F value = Vec2F::c_zero;
                     if (!Vec2F::ParseString(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec2F32(_name, value);
@@ -1391,7 +1516,11 @@ namespace Maze
                     Vec3F value = Vec3F::c_zero;
                     if (!Vec3F::ParseString(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec3F32(_name, value);
@@ -1402,7 +1531,11 @@ namespace Maze
                     Vec4F value = Vec4F::c_zero;
                     if (!Vec4F::ParseString(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec4F32(_name, value);
@@ -1413,7 +1546,11 @@ namespace Maze
                     Vec2B value = Vec2B(false);
                     if (!Vec2B::ParseStringPretty(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec2B(_name, value);
@@ -1424,7 +1561,11 @@ namespace Maze
                     Vec3B value = Vec3B(false);
                     if (!Vec3B::ParseStringPretty(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec3B(_name, value);
@@ -1435,7 +1576,11 @@ namespace Maze
                     Vec4B value = Vec4B(false);
                     if (!Vec4B::ParseStringPretty(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addVec4B(_name, value);
@@ -1446,7 +1591,11 @@ namespace Maze
                     Mat3F value = Mat3F::c_zero;
                     if (!Mat3F::ParseStringPretty(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addMat3F32(_name, value);
@@ -1457,7 +1606,11 @@ namespace Maze
                     Mat4F value = Mat4F::c_zero;
                     if (!Mat4F::ParseStringPretty(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addMat4F32(_name, value);
@@ -1468,7 +1621,11 @@ namespace Maze
                     TMat value = TMat::c_zero;
                     if (!TMat::ParseStringPretty(_value, _size, value, ','))
                     {
-                        processSyntaxError("Syntax error");
+                        processSyntaxError(
+                            "Failed to parse %s value of param '%s': '%s'",
+                            c_dataBlockParamTypeInfo[(S32)_type].name.str,
+                            _name.str,
+                            _value);
                         return false;
                     }
                     _dataBlock.addTMat(_name, value);

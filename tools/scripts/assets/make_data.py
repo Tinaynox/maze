@@ -2,6 +2,7 @@ import argparse
 import errno
 import os
 import shutil
+import subprocess
 import time
 import data_block
 
@@ -174,12 +175,9 @@ class MakeData:
                     mzdata_binalizer = '{0}/{1}'.format(
                         self.first_party_tools,
                         'mzdata-converter/bin/maze-tool-mzdata-binalizer.exe')
-                    system_command = '{0} {1} {2}'.format(
-                        mzdata_binalizer,
-                        copy_to,
-                        copy_to)
-                    print(system_command)
-                    os.system(system_command)
+                    system_command = [mzdata_binalizer, copy_to, copy_to]
+                    print(subprocess.list2cmdline(system_command))
+                    subprocess.call(system_command)
 
                 if is_texture:
 

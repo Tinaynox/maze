@@ -94,6 +94,7 @@
 #include "settings/MazeEditorSettings.hpp"
 #include "scenes/SceneEditor.hpp"
 #include "helpers/EditorHelper.hpp"
+#include "helpers/EditorProjectHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -341,6 +342,89 @@ namespace Maze
             }
 
             Debug::Log("Calculation finished. Processed: %d, skipped: %d, failed: %d", processed, skipped, failed);
+        }
+
+        //////////////////////////////////////////
+        Path FindEngineRepoFolder()
+        {
+            Path folder = FileHelper::GetBinaryDirectory();
+            while (!folder.empty())
+            {
+                if (FileHelper::IsFileExists(folder + "/tools/scripts/assets/assembly_resources.py"))
+                    return folder;
+
+                Size pos = folder.getPath().find_last_of('/');
+                if (pos == Path::StringType::npos)
+                    break;
+
+                folder = folder.getPath().substr(0, pos);
+            }
+
+            return Path();
+        }
+
+        //////////////////////////////////////////
+        void AssemblyAssets(
+            String const& _textureScale,
+            String const& _textureCompression)
+        {
+#if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
+            Path projectFolder = EditorHelper::GetProjectFolder();
+            MAZE_ERROR_RETURN_IF(projectFolder.empty(), "Project folder is not selected!");
+
+            Path engineRepoFolder = FindEngineRepoFolder();
+            MAZE_ERROR_RETURN_IF(engineRepoFolder.empty(), "Engine repo folder with tools/scripts/assets is not found!");
+
+            String variant = "x" + _textureScale + "-" + (!_textureCompression.empty() ? _textureCompression : "nc");
+
+            String projectFolderU8 = projectFolder.toUTF8();
+            String engineRepoFolderU8 = engineRepoFolder.toUTF8();
+
+            String assetsFolderU8 = projectFolderU8 + "/Assets";
+            String tempFolderU8 = projectFolderU8 + "/Temp";
+            String assemblyFolderU8 = tempFolderU8 + "/assembly/assets-x" + _textureScale;
+            String buildFolderU8 = projectFolderU8 + "/Build/data-" + variant;
+            String assetsScriptsFolderU8 = engineRepoFolderU8 + "/tools/scripts/assets";
+
+            FileHelper::CreateDirectoryRecursive(Path(tempFolderU8));
+
+            String bat;
+            bat += "@echo off\n";
+            bat += "python \"" + assetsScriptsFolderU8 + "/assembly_resources.py\"";
+            bat += " --src \"" + assetsFolderU8 + "\"";
+            bat += " --dst \"" + assemblyFolderU8 + "\"";
+            bat += " --tscales " + _textureScale + "\n";
+            bat += "if errorlevel 1 exit /b 1\n";
+            bat += "python \"" + assetsScriptsFolderU8 + "/make_data.py\"";
+            bat += " --src \"" + assemblyFolderU8 + "\"";
+            bat += " --dst \"" + buildFolderU8 + "\"";
+            bat += " --first-party-tools \"" + engineRepoFolderU8 + "/tools\"";
+            bat += " --third-party-tools \"" + engineRepoFolderU8 + "/third-party/tools\"";
+            bat += " --temp \"" + tempFolderU8 + "\"";
+            bat += " --cache cache-win-" + variant + ".pkl";
+            if (!_textureCompression.empty())
+            {
+                bat += " --tcompression " + _textureCompression;
+                bat += " --tcompression-ext-policy 1";
+            }
+            bat += " --mzdata-extensions mzdata mzscene mzso mzmaterial mzshader mzprefab mzfont mzfontmaterial\n";
+            bat += "if errorlevel 1 exit /b 1\n";
+
+            Path batFullPath = Path(tempFolderU8 + "/assembly-assets-" + variant + ".bat");
+
+            std::ofstream batFile(batFullPath.c_str());
+            MAZE_ERROR_RETURN_IF(!batFile.is_open(), "Failed to create %s!", batFullPath.toUTF8().c_str());
+            batFile << bat;
+            batFile.close();
+
+            Debug::Log("Assembling assets (%s)...", variant.c_str());
+            MAZE_ERROR_RETURN_IF(
+                !SystemHelper::ExecuteSync(batFullPath, projectFolder),
+                "Failed to execute assets assembly!");
+            Debug::Log("Assets assembly finished: %s", buildFolderU8.c_str());
+#else
+            MAZE_NOT_IMPLEMENTED;
+#endif
         }
     };
 

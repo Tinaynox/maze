@@ -30,6 +30,8 @@
 #include "maze-core/helpers/MazeAssetHelper.hpp"
 #include "maze-core/assets/MazeAssetRegularFile.hpp"
 #include "maze-core/helpers/MazeXMLHelper.hpp"
+#include "maze-core/helpers/MazeStdHelper.hpp"
+#include "maze-core/serialization/MazeDataBlockBinarySerialization.hpp"
 #include "maze-core/system/MazeTimer.hpp"
 
 
@@ -122,6 +124,27 @@ S32 main(S32 _argc, S8 const* _argv[])
 
     Path destPath = FileHelper::ConvertLocalPathToFullPath(_argv[2]);
     Debug::Log("destPath=%s", destPath.toUTF8().c_str());
+
+    if (FILE* file = StdHelper::OpenFile(srcPath, "rb"))
+    {
+        U8 buff[sizeof(c_mzDataBlockBinaryHeaderMagic)] = {0};
+        fread(buff, sizeof(c_mzDataBlockBinaryHeaderMagic), 1, file);
+        fclose(file);
+
+        if (memcmp(buff, &c_mzDataBlockBinaryHeaderMagic, sizeof(c_mzDataBlockBinaryHeaderMagic)) == 0)
+        {
+            if (srcPath == destPath)
+            {
+                Debug::Log("Src file is already binary and equals dest - nothing to do");
+                return 0;
+            }
+
+            Debug::Log("Src file is already binary - copying...");
+            FileHelper::CreateDirectoryRecursive(FileHelper::GetDirectoryInPath(destPath));
+            MAZE_ERROR_RETURN_VALUE_IF(!FileHelper::CopyRegularFile(srcPath, destPath), 2, "Failed to copy file!");
+            return 0;
+        }
+    }
 
     DataBlock dataBlock;
     MAZE_ERROR_RETURN_VALUE_IF(!dataBlock.loadTextFile(srcPath), 1, "Failed to load src file!");

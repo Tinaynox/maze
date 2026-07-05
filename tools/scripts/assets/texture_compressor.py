@@ -1,6 +1,7 @@
 import os
 import platform
 import shutil
+import subprocess
 import texture_utils
 
 from utils import mkdir_p
@@ -244,13 +245,14 @@ class TextureCompressor:
                              final_ext).replace('\\', '/')
 
             print('\t{0} COMPRESSION...'.format(tool_format))
-            system_command = '{0} -convert -overwrite {1} {2} +fourCC {3}'.format(
+            system_command = [
                 self.tool,
+                '-convert', '-overwrite',
                 texture_full_path,
                 new_full_path,
-                tool_format)
-            print(system_command)
-            os.system(system_command)
+                '+fourCC', tool_format]
+            print(subprocess.list2cmdline(system_command))
+            subprocess.call(system_command)
             print(' ')
             if os.path.exists(new_full_path):
                 os.remove(texture_full_path)
@@ -269,14 +271,13 @@ class TextureCompressor:
                              final_ext).replace('\\', '/')
 
             print('\t{0} COMPRESSION...'.format(tool_format))
-            system_command = '{0} -i {1} -o {2} -f {3} {4}'.format(
+            system_command = [
                 self.tool,
-                texture_full_path,
-                prev_full_path,
-                tool_format,
-                self.tool_args)
-            print(system_command)
-            os.system(system_command)
+                '-i', texture_full_path,
+                '-o', prev_full_path,
+                '-f', tool_format] + self.tool_args.split()
+            print(subprocess.list2cmdline(system_command))
+            subprocess.call(system_command)
             print(' ')
             if os.path.exists(prev_full_path):
                 os.remove(texture_full_path)
@@ -295,14 +296,13 @@ class TextureCompressor:
                              final_ext).replace('\\', '/')
 
             print('\t{0} COMPRESSION...'.format(tool_format))
-            system_command = '{0} -file {1} -out {2} -fileformat {3} {4}'.format(
+            system_command = [
                 self.tool,
-                texture_full_path,
-                new_full_path,
-                tool_format,
-                self.tool_args)
-            print(system_command)
-            os.system(system_command)
+                '-file', texture_full_path,
+                '-out', new_full_path,
+                '-fileformat'] + tool_format.split() + self.tool_args.split()
+            print(subprocess.list2cmdline(system_command))
+            subprocess.call(system_command)
             print(' ')
             if os.path.exists(new_full_path):
                 os.remove(texture_full_path)
@@ -321,14 +321,14 @@ class TextureCompressor:
                              final_ext).replace('\\', '/')
 
             print('\t{0} COMPRESSION...'.format(tool_format))
-            system_command = '{0} -c {1} {2} 4x4 -f {3} {4}'.format(
+            system_command = [
                 self.tool,
-                texture_full_path,
+                '-c', texture_full_path,
                 astc_full_path,
-                tool_format,
-                self.tool_args)
-            print(system_command)
-            os.system(system_command)
+                '4x4',
+                '-f', tool_format] + self.tool_args.split()
+            print(subprocess.list2cmdline(system_command))
+            subprocess.call(system_command)
             print(' ')
             if os.path.exists(astc_full_path):
                 os.remove(texture_full_path)

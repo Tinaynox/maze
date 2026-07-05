@@ -230,6 +230,24 @@ namespace Maze
             },
             []() { return true; });
 
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Assets",
+            "Assembly/NC x1.0",
+            [](String const& _text)
+            {
+                EditorAssetHelper::AssemblyAssets("1.0");
+            },
+            []() { return true; });
+
+        EditorUIManager::GetInstancePtr()->addTopBarOption(
+            "Assets",
+            "Assembly/DXT x1.0",
+            [](String const& _text)
+            {
+                EditorAssetHelper::AssemblyAssets("1.0", "dxt");
+            },
+            []() { return true; });
+
         return true;
     }
 
