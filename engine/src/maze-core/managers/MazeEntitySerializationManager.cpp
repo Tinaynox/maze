@@ -284,8 +284,32 @@ namespace Maze
                             void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
                             if (propertyValuePointer)
                             {
-                                EcsSerializationId propertyValueIndex = _context.pointerIndices[propertyValuePointer];
-                                EcsHelper::EnsureComponentBlock(_componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
+                                auto componentIndexIt = _context.pointerIndices.find(propertyValuePointer);
+                                if (componentIndexIt != _context.pointerIndices.end())
+                                {
+                                    EcsHelper::EnsureComponentBlock(_componentBlock, propertyName)->setS32(MAZE_HCS("value"), componentIndexIt->second);
+                                }
+                                else
+                                {
+                                    // Component inside a prefab instance (of any nesting depth) - store the sid chain
+                                    Component* refComponent = static_cast<Component*>(propertyValuePointer);
+                                    Entity* refOwner = refComponent->getEntityRaw();
+
+                                    EcsSerializationId chain[EcsHelper::c_maxPrefabRefDepth];
+                                    S32 chainCount = refOwner ? EcsHelper::BuildPrefabSidChain(refOwner, _context.entityIndices, chain) : 0;
+                                    if (chainCount > 0 &&
+                                        refOwner->getSerializationId() != c_invalidSerializationId &&
+                                        refComponent->getSerializationId() != c_invalidSerializationId)
+                                    {
+                                        DataBlock* cmpBlock = EcsHelper::EnsureComponentBlock(_componentBlock, propertyName);
+                                        EcsHelper::WritePrefabRefParams(cmpBlock, chain, chainCount, refOwner->getSerializationId());
+                                        cmpBlock->setS32(MAZE_HCS("prefabComponentSid"), refComponent->getSerializationId());
+                                    }
+                                    else
+                                    {
+                                        MAZE_ERROR("Component reference cannot be serialized! property=%s", propertyName.str);
+                                    }
+                                }
                             }
                             continue;
                         }
@@ -390,18 +414,53 @@ namespace Maze
                         void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
                         if (propertyValuePointer)
                         {
+                            auto createModificationBlockFunc =
+                                [&]() -> DataBlock*
+                                {
+                                    DataBlock* modificationBlock = _prefabBlock.addNewDataBlock(MAZE_HCS("modification"));
+                                    modificationBlock->setCString(MAZE_HCS("component"), metaClass->getName());
+                                    if (strcmp(_component->getClassQualifiedName().str, _component->getComponentClassName()) != 0)
+                                        modificationBlock->setCString(MAZE_HCS("_ct"), _component->getComponentClassName());
+
+                                    modificationBlock->setCString(MAZE_HCS("property"), propertyName);
+                                    return modificationBlock;
+                                };
+
                             auto propertyValueIndexIt = _context.pointerIndices.find(propertyValuePointer);
                             if (propertyValueIndexIt != _context.pointerIndices.end())
                             {
-                                EcsSerializationId propertyValueIndex = propertyValueIndexIt->second;
+                                createModificationBlockFunc()->setS32(MAZE_HCS("value"), propertyValueIndexIt->second);
+                            }
+                            else
+                            {
+                                // Reference into a prefab instance (of any nesting depth) - store the sid chain
+                                Entity* refOwner = nullptr;
+                                Component* refComponent = nullptr;
+                                if (metaPropertyMetaClass->isInheritedFrom<Entity>())
+                                {
+                                    refOwner = static_cast<Entity*>(propertyValuePointer);
+                                }
+                                else
+                                {
+                                    refComponent = static_cast<Component*>(propertyValuePointer);
+                                    refOwner = refComponent->getEntityRaw();
+                                }
 
-                                DataBlock* modificationBlock = _prefabBlock.addNewDataBlock(MAZE_HCS("modification"));
-                                modificationBlock->setCString(MAZE_HCS("component"), metaClass->getName());
-                                if (strcmp(_component->getClassQualifiedName().str, _component->getComponentClassName()) != 0)
-                                    modificationBlock->setCString(MAZE_HCS("_ct"), _component->getComponentClassName());
-
-                                modificationBlock->setCString(MAZE_HCS("property"), propertyName);
-                                modificationBlock->setS32(MAZE_HCS("value"), propertyValueIndex);
+                                EcsSerializationId chain[EcsHelper::c_maxPrefabRefDepth];
+                                S32 chainCount = refOwner ? EcsHelper::BuildPrefabSidChain(refOwner, _context.entityIndices, chain) : 0;
+                                if (chainCount > 0 &&
+                                    refOwner->getSerializationId() != c_invalidSerializationId &&
+                                    (!refComponent || refComponent->getSerializationId() != c_invalidSerializationId))
+                                {
+                                    DataBlock* modificationBlock = createModificationBlockFunc();
+                                    EcsHelper::WritePrefabRefParams(modificationBlock, chain, chainCount, refOwner->getSerializationId());
+                                    if (refComponent)
+                                        modificationBlock->setS32(MAZE_HCS("prefabComponentSid"), refComponent->getSerializationId());
+                                }
+                                else
+                                {
+                                    MAZE_WARNING("Prefab modification reference cannot be serialized! property=%s", propertyName.str);
+                                }
                             }
                         }
 
@@ -538,18 +597,20 @@ namespace Maze
                     {
                         Entity* entity = _ecsWorld->getEntity(eid).get();
                         MAZE_ERROR_CONTINUE_IF(!entity, "Entity is not found: %d", (S32)eid);
-                        EcsSerializationId entityIndex = _pointerIndices[entity];
+
+                        auto pointerIndexIt = _pointerIndices.find(entity);
+                        EcsSerializationId entityIndex = pointerIndexIt != _pointerIndices.end() ? pointerIndexIt->second
+                                                                                                 : c_invalidSerializationId;
 
                         if (entityIndex == c_invalidSerializationId)
                         {
-                            PrefabInstance* prefabInstance = EcsHelper::GetFirstTrunkComponent<PrefabInstance>(entity);
-                            if (prefabInstance)
+                            // Entity inside a prefab instance (of any nesting depth) - store the sid chain
+                            EcsSerializationId chain[EcsHelper::c_maxPrefabRefDepth];
+                            S32 chainCount = EcsHelper::BuildPrefabSidChain(entity, _entityIndices, chain);
+                            if (chainCount > 0 && entity->getSerializationId() != c_invalidSerializationId)
                             {
-                                EcsSerializationId prefabEntityIndex = prefabInstance->getEntityRaw()->getSerializationId();
-                                MAZE_ERROR_CONTINUE_IF(prefabEntityIndex == c_invalidSerializationId, "Potential prefab instance is invalid");
                                 subBlock->removeParam(MAZE_HCS("value"));
-                                subBlock->setS32(MAZE_HCS("prefabSid"), prefabEntityIndex);
-                                subBlock->setS32(MAZE_HCS("prefabEntitySid"), entity->getSerializationId());
+                                EcsHelper::WritePrefabRefParams(subBlock, chain, chainCount, entity->getSerializationId());
                             }
                             else
                             {
@@ -597,22 +658,11 @@ namespace Maze
                 }
                 else
                 {
-                    EcsSerializationId prefabSid = subBlock->getS32(MAZE_HCS("prefabSid"), c_invalidSerializationId);
-                    if (prefabSid != c_invalidSerializationId)
+                    Entity* targetEntity = EcsHelper::ResolvePrefabSidChainTarget(*subBlock, _outEntities);
+                    if (targetEntity)
                     {
-                        auto it = _outEntities.find(prefabSid);
-                        MAZE_WARNING_CONTINUE_IF(it == _outEntities.end(), "Undefined prefab with sid=%d", prefabSid);
-
-                        EcsSerializationId prefabEntitySid = subBlock->getS32(MAZE_HCS("prefabEntitySid"), c_invalidSerializationId);
-                        if (prefabEntitySid != c_invalidSerializationId)
-                        {
-                            Entity* prefabEntity = it->second.get();
-                            Entity* targetEntity = EcsHelper::FindEntityWithSerializationId(prefabEntity, prefabEntitySid);
-                            MAZE_WARNING_CONTINUE_IF(!targetEntity, "Undefined prefab with prefabSid=%d and prefabEntitySid=%d", prefabSid, prefabEntitySid);
-                            subBlock->removeParam(MAZE_HCS("prefabSid"));
-                            subBlock->removeParam(MAZE_HCS("prefabEntitySid"));
-                            subBlock->setS32(MAZE_HCS("value"), (S32)targetEntity->getId());
-                        }
+                        EcsHelper::RemovePrefabRefParams(subBlock);
+                        subBlock->setS32(MAZE_HCS("value"), (S32)targetEntity->getId());
                     }
                 }
             }
@@ -848,15 +898,30 @@ namespace Maze
                             DataBlock const* cmpBlock = EcsHelper::GetComponentBlock(_componentBlock, propertyName.str);
                             if (cmpBlock)
                             {
-                                EcsSerializationId valueIndex = cmpBlock->getS32(MAZE_HCS("value"));
+                                if (cmpBlock->findParamIndex(MAZE_HCS("value")) >= 0)
+                                {
+                                    EcsSerializationId valueIndex = cmpBlock->getS32(MAZE_HCS("value"));
 
-                                MAZE_ERROR_IF(
-                                    valueIndex > 0 && !_context.outComponents[valueIndex],
-                                    "Component %d is not found! propertyName=%s",
-                                    valueIndex,
-                                    propertyName.str);
+                                    MAZE_ERROR_IF(
+                                        valueIndex > 0 && !_context.outComponents[valueIndex],
+                                        "Component %d is not found! propertyName=%s",
+                                        valueIndex,
+                                        propertyName.str);
 
-                                metaProperty->setValue(componentMetaInstance, &_context.outComponents[valueIndex]);
+                                    metaProperty->setValue(componentMetaInstance, &_context.outComponents[valueIndex]);
+                                }
+                                else
+                                {
+                                    // Reference into a prefab instance (of any nesting depth) - resolve the sid chain
+                                    ComponentPtr const& refComponent = EcsHelper::ResolvePrefabComponentRef(*cmpBlock, _context.outEntities);
+
+                                    MAZE_WARNING_IF(
+                                        !refComponent && cmpBlock->getParamsCount() > 0,
+                                        "Prefab component reference is not resolved! propertyName=%s",
+                                        propertyName.str);
+
+                                    metaProperty->setValue(componentMetaInstance, &refComponent);
+                                }
                             }
                             else
                             // #TODO: OBSOLETE, remove later
@@ -1033,24 +1098,56 @@ namespace Maze
             {
                 if (metaPropertyUID == ClassInfo<ComponentPtr>::UID())
                 {
-                    EcsSerializationId valueIndex = _modificationBlock.getS32(MAZE_HCS("value"));
-                    metaProperty->setValue(_component->getMetaInstance(), &_context.outComponents[valueIndex]);
+                    if (_modificationBlock.findParamIndex(MAZE_HCS("value")) >= 0)
+                    {
+                        EcsSerializationId valueIndex = _modificationBlock.getS32(MAZE_HCS("value"));
+                        metaProperty->setValue(_component->getMetaInstance(), &_context.outComponents[valueIndex]);
+                    }
+                    else
+                    {
+                        // Reference into a prefab instance (of any nesting depth) - resolve the sid chain
+                        ComponentPtr const& refComponent = EcsHelper::ResolvePrefabComponentRef(_modificationBlock, _context.outEntities);
+                        MAZE_WARNING_IF(!refComponent, "Prefab component reference is not resolved! propertyName=%s", _propertyName);
+                        metaProperty->setValue(_component->getMetaInstance(), &refComponent);
+                    }
                     return;
                 }
                 else
                 if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
                 {
-                    EcsSerializationId valueIndex = _modificationBlock.getS32(MAZE_HCS("value"));
-                    metaProperty->setValue(_component->getMetaInstance(), &_context.outEntities[valueIndex]);
+                    if (_modificationBlock.findParamIndex(MAZE_HCS("value")) >= 0)
+                    {
+                        EcsSerializationId valueIndex = _modificationBlock.getS32(MAZE_HCS("value"));
+                        metaProperty->setValue(_component->getMetaInstance(), &_context.outEntities[valueIndex]);
+                    }
+                    else
+                    {
+                        // Reference into a prefab instance (of any nesting depth) - resolve the sid chain
+                        Entity* targetEntity = EcsHelper::ResolvePrefabSidChainTarget(_modificationBlock, _context.outEntities);
+                        MAZE_WARNING_IF(!targetEntity, "Prefab entity reference is not resolved! propertyName=%s", _propertyName);
+                        EntityPtr targetEntityPtr = targetEntity ? targetEntity->getSharedPtr() : nullptr;
+                        metaProperty->setValue(_component->getMetaInstance(), &targetEntityPtr);
+                    }
                     return;
                 }
                 else
                 if (metaPropertyUID == ClassInfo<EntityId>::UID())
                 {
-                    EcsSerializationId valueIndex = _modificationBlock.getS32(MAZE_HCS("value"));
-                    EntityPtr const& entity = _context.outEntities[valueIndex];
-                    EntityId entityId = entity ? entity->getId() : c_invalidEntityId;
-                    metaProperty->setValue(_component->getMetaInstance(), &entityId);
+                    if (_modificationBlock.findParamIndex(MAZE_HCS("value")) >= 0)
+                    {
+                        EcsSerializationId valueIndex = _modificationBlock.getS32(MAZE_HCS("value"));
+                        EntityPtr const& entity = _context.outEntities[valueIndex];
+                        EntityId entityId = entity ? entity->getId() : c_invalidEntityId;
+                        metaProperty->setValue(_component->getMetaInstance(), &entityId);
+                    }
+                    else
+                    {
+                        // Reference into a prefab instance (of any nesting depth) - resolve the sid chain
+                        Entity* targetEntity = EcsHelper::ResolvePrefabSidChainTarget(_modificationBlock, _context.outEntities);
+                        MAZE_WARNING_IF(!targetEntity, "Prefab entity reference is not resolved! propertyName=%s", _propertyName);
+                        EntityId entityId = targetEntity ? targetEntity->getId() : c_invalidEntityId;
+                        metaProperty->setValue(_component->getMetaInstance(), &entityId);
+                    }
                     return;
                 }
                 else

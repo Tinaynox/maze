@@ -30,6 +30,7 @@
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/components/MazePrefabInstance.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
@@ -250,6 +251,218 @@ namespace Maze
                     return entity;
 
             return nullptr;
+        }
+
+        //////////////////////////////////////////
+        static Entity* FindEntityWithSerializationIdInPrefabSpaceHelper(Transform2D* _transform2D, EcsSerializationId _sid)
+        {
+            Entity* entity = _transform2D->getEntityRaw();
+
+            // Match before the boundary check - nested instance roots carry sids of the current space
+            if (entity->getSerializationId() == _sid)
+                return entity;
+
+            // Do not descend into nested prefab spaces
+            if (entity->getComponentRaw<PrefabInstance>())
+                return nullptr;
+
+            for (Transform2D* child : _transform2D->getChildren())
+                if (Entity* result = FindEntityWithSerializationIdInPrefabSpaceHelper(child, _sid))
+                    return result;
+
+            return nullptr;
+        }
+
+        //////////////////////////////////////////
+        static Entity* FindEntityWithSerializationIdInPrefabSpaceHelper(Transform3D* _transform3D, EcsSerializationId _sid)
+        {
+            Entity* entity = _transform3D->getEntityRaw();
+
+            // Match before the boundary check - nested instance roots carry sids of the current space
+            if (entity->getSerializationId() == _sid)
+                return entity;
+
+            // Do not descend into nested prefab spaces
+            if (entity->getComponentRaw<PrefabInstance>())
+                return nullptr;
+
+            for (Transform3D* child : _transform3D->getChildren())
+                if (Entity* result = FindEntityWithSerializationIdInPrefabSpaceHelper(child, _sid))
+                    return result;
+
+            return nullptr;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API Entity* FindEntityWithSerializationIdInPrefabSpace(Entity* _entity, EcsSerializationId _sid)
+        {
+            // The boundary check is not applied to the search root itself
+            if (_entity->getSerializationId() == _sid)
+                return _entity;
+
+            if (Transform2D* transform2D = _entity->getComponentRaw<Transform2D>())
+            {
+                for (Transform2D* child : transform2D->getChildren())
+                    if (Entity* result = FindEntityWithSerializationIdInPrefabSpaceHelper(child, _sid))
+                        return result;
+            }
+            else
+            if (Transform3D* transform3D = _entity->getComponentRaw<Transform3D>())
+            {
+                for (Transform3D* child : transform3D->getChildren())
+                    if (Entity* result = FindEntityWithSerializationIdInPrefabSpaceHelper(child, _sid))
+                        return result;
+            }
+
+            return nullptr;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API Entity* GetEnclosingPrefabInstanceRootEntity(Entity* _entity)
+        {
+            PrefabInstance* prefabInstance = nullptr;
+
+            if (Transform2D* transform2D = _entity->getComponentRaw<Transform2D>())
+            {
+                if (Transform2DPtr const& parent = transform2D->getParent())
+                    prefabInstance = parent->getFirstTrunkComponent<PrefabInstance>();
+            }
+            else
+            if (Transform3D* transform3D = _entity->getComponentRaw<Transform3D>())
+            {
+                if (Transform3DPtr const& parent = transform3D->getParent())
+                    prefabInstance = parent->getFirstTrunkComponent<PrefabInstance>();
+            }
+
+            return prefabInstance ? prefabInstance->getEntityRaw() : nullptr;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API S32 BuildPrefabSidChain(
+            Entity* _entity,
+            Map<EntityId, EcsSerializationId> const& _entityIndices,
+            EcsSerializationId (&_outChain)[c_maxPrefabRefDepth])
+        {
+            // The entity itself is a prefab instance root serialized in this document
+            // (used for refs to components owned by instance roots)
+            auto selfIt = _entityIndices.find(_entity->getId());
+            if (selfIt != _entityIndices.end())
+            {
+                _outChain[0] = selfIt->second;
+                return 1;
+            }
+
+            EcsSerializationId reversedChain[c_maxPrefabRefDepth];
+            S32 count = 0;
+
+            Entity* cur = _entity;
+            while (true)
+            {
+                Entity* root = GetEnclosingPrefabInstanceRootEntity(cur);
+                if (!root)
+                    return 0;
+
+                if (count == c_maxPrefabRefDepth)
+                    return 0;
+
+                auto it = _entityIndices.find(root->getId());
+                if (it != _entityIndices.end())
+                {
+                    // Reached a top-level prefab instance of this document
+                    reversedChain[count++] = it->second;
+                    break;
+                }
+
+                // Nested instance root - its sid belongs to the enclosing prefab's space
+                if (root->getSerializationId() == c_invalidSerializationId)
+                    return 0;
+
+                reversedChain[count++] = root->getSerializationId();
+                cur = root;
+            }
+
+            for (S32 i = 0; i < count; ++i)
+                _outChain[i] = reversedChain[count - 1 - i];
+
+            return count;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void WritePrefabRefParams(
+            DataBlock* _block,
+            EcsSerializationId const* _chain,
+            S32 _chainCount,
+            EcsSerializationId _entitySid)
+        {
+            for (S32 i = 0; i < _chainCount; ++i)
+                _block->addS32(MAZE_HCS("prefabSid"), _chain[i]);
+            _block->setS32(MAZE_HCS("prefabEntitySid"), _entitySid);
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void RemovePrefabRefParams(DataBlock* _block)
+        {
+            while (_block->removeParam(MAZE_HCS("prefabSid")));
+            _block->removeParam(MAZE_HCS("prefabEntitySid"));
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API Entity* ResolvePrefabSidChainTarget(
+            DataBlock const& _block,
+            Map<EcsSerializationId, EntityPtr> const& _outEntities)
+        {
+            DataBlock::SharedStringId prefabSidNameId = _block.getSharedStringId(MAZE_HCS("prefabSid"));
+
+            Entity* cur = nullptr;
+            for (DataBlock::ParamIndex i = 0, count = (DataBlock::ParamIndex)_block.getParamsCount(); i < count; ++i)
+            {
+                DataBlock::Param const& param = _block.getParam(i);
+                if ((DataBlock::SharedStringId)param.nameId != prefabSidNameId ||
+                    (DataBlockParamType)param.type != DataBlockParamType::ParamS32)
+                    continue;
+
+                EcsSerializationId sid = _block.getS32(i);
+                if (!cur)
+                {
+                    auto it = _outEntities.find(sid);
+                    MAZE_WARNING_RETURN_VALUE_IF(
+                        it == _outEntities.end() || !it->second,
+                        nullptr,
+                        "Undefined prefab with sid=%d", sid);
+                    cur = it->second.get();
+                }
+                else
+                {
+                    cur = FindEntityWithSerializationIdInPrefabSpace(cur, sid);
+                    MAZE_WARNING_RETURN_VALUE_IF(!cur, nullptr, "Undefined nested prefab with sid=%d", sid);
+                }
+            }
+
+            if (!cur)
+                return nullptr;
+
+            EcsSerializationId prefabEntitySid = _block.getS32(MAZE_HCS("prefabEntitySid"), c_invalidSerializationId);
+            if (prefabEntitySid == c_invalidSerializationId)
+                return nullptr;
+
+            Entity* target = FindEntityWithSerializationIdInPrefabSpace(cur, prefabEntitySid);
+            MAZE_WARNING_RETURN_VALUE_IF(!target, nullptr, "Undefined prefab entity with sid=%d", prefabEntitySid);
+            return target;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API ComponentPtr const& ResolvePrefabComponentRef(
+            DataBlock const& _block,
+            Map<EcsSerializationId, EntityPtr> const& _outEntities)
+        {
+            static ComponentPtr const nullPointer;
+
+            Entity* targetEntity = ResolvePrefabSidChainTarget(_block, _outEntities);
+            if (!targetEntity)
+                return nullPointer;
+
+            return targetEntity->getComponentBySerializationId(
+                _block.getS32(MAZE_HCS("prefabComponentSid"), c_invalidSerializationId));
         }
 
     } // namespace EcsHelper

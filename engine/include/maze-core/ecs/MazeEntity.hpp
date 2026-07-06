@@ -286,6 +286,21 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline ComponentPtr const& getComponentBySerializationId(EcsSerializationId _sid) const
+        {
+            static ComponentPtr const nullPointer;
+
+            if (_sid == c_invalidSerializationId)
+                return nullPointer;
+
+            for (ComponentsContainer::const_iterator it = m_components.begin(), end = m_components.end(); it != end; ++it)
+                if (it->second->getSerializationId() == _sid)
+                    return it->second;
+
+            return nullPointer;
+        }
+
+        //////////////////////////////////////////
         template <typename TComponent>
         inline SharedPtr<TComponent> getComponent() const
         {

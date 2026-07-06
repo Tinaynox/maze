@@ -126,6 +126,58 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Entity* FindEntityWithSerializationId(Transform3D* _transform3D, EcsSerializationId _sid);
 
+        //////////////////////////////////////////
+        // Searches _entity's subtree for _sid within _entity's prefab sid space only:
+        // subtrees of nested prefab instances are skipped (their internals belong to
+        // foreign sid spaces), but nested instance root entities themselves are
+        // matchable - their sids belong to the current space.
+        MAZE_CORE_API Entity* FindEntityWithSerializationIdInPrefabSpace(Entity* _entity, EcsSerializationId _sid);
+
+
+        //////////////////////////////////////////
+        // Prefab sid chain refs: a serialized reference to an entity/component inside
+        // a prefab instance of any nesting depth. Stored as repeated 'prefabSid' params
+        // (one per prefab space, outermost first) + 'prefabEntitySid' for the target
+        // entity (+ 'prefabComponentSid' for component refs).
+        //////////////////////////////////////////
+        static MAZE_CONSTEXPR S32 c_maxPrefabRefDepth = 16;
+
+        //////////////////////////////////////////
+        // Returns the root entity of the nearest prefab instance strictly above _entity
+        MAZE_CORE_API Entity* GetEnclosingPrefabInstanceRootEntity(Entity* _entity);
+
+        //////////////////////////////////////////
+        // Builds the chain of prefab instance sids leading from the serialized document
+        // down to _entity's prefab space (outermost first). Each hop sid belongs to the
+        // sid space of the previous hop's prefab. Returns the hops count, or 0 if _entity
+        // is not reachable through a prefab instance registered in _entityIndices.
+        MAZE_CORE_API S32 BuildPrefabSidChain(
+            Entity* _entity,
+            Map<EntityId, EcsSerializationId> const& _entityIndices,
+            EcsSerializationId (&_outChain)[c_maxPrefabRefDepth]);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void WritePrefabRefParams(
+            DataBlock* _block,
+            EcsSerializationId const* _chain,
+            S32 _chainCount,
+            EcsSerializationId _entitySid);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void RemovePrefabRefParams(DataBlock* _block);
+
+        //////////////////////////////////////////
+        // Resolves a sid chain written by WritePrefabRefParams back to the target entity.
+        // Returns nullptr if _block has no prefabSid params or the chain is broken.
+        MAZE_CORE_API Entity* ResolvePrefabSidChainTarget(
+            DataBlock const& _block,
+            Map<EcsSerializationId, EntityPtr> const& _outEntities);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API ComponentPtr const& ResolvePrefabComponentRef(
+            DataBlock const& _block,
+            Map<EcsSerializationId, EntityPtr> const& _outEntities);
+
     } // namespace EcsHelper
     //////////////////////////////////////////
 
