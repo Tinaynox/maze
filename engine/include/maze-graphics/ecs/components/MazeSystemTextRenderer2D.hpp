@@ -88,6 +88,12 @@ namespace Maze
         //////////////////////////////////////////
         virtual Vec2F getTextEnd(Size _rowIndex = 0) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual Vec2F getSymbolPosition(Size _symbolIndex) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual Size getSymbolIndexAtPosition(Vec2F const& _position) MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////

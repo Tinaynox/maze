@@ -221,6 +221,186 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void TextRenderer2D::calculateSymbolSlots(
+        Vector<Pair<S32, F32>>& _outSlots,
+        Vector<F32>& _outRowLengths)
+    {
+        _outSlots.clear();
+        _outRowLengths.clear();
+
+        FontMaterialPtr const& fontMaterial = getFontMaterial();
+        Font* font = fontMaterial ? fontMaterial->getFont().get() : nullptr;
+        if (!font || !font->getDefaultFont())
+        {
+            _outSlots.emplace_back(Pair<S32, F32>(0, 0.0f));
+            _outRowLengths.push_back(0.0f);
+            return;
+        }
+
+        ensureAllGlyphs();
+
+        TrueTypeFontPtr const& defaultFont = font->getDefaultFont();
+
+        String finalText = m_text;
+
+        // Keep the text transforms in sync with updateMeshDataNow
+        if (getColorTags())
+        {
+            Deque<Pair<Size, ColorF128>> colorTags;
+            TextRenderer2DHelper::ExtractColorTags(
+                finalText,
+                ColorF128(m_color.toVec4F32()),
+                colorTags);
+        }
+        TextRenderer2DHelper::ApplySymbolsLimitPolicy(finalText, m_symbolsLimit, m_symbolsLimitPolicy);
+
+        FontGlyphStorageData* glyphStorageData = nullptr;
+        auto ttfPage = &defaultFont->ensureTTFPage(m_fontSize, m_bold);
+
+        F32 hSpace = static_cast<F32>(defaultFont->ensureGlyph(L' ', m_fontSize, m_bold, *ttfPage).advance);
+
+        S32 row = 0;
+        F32 x = 0.0f;
+
+        U32 prevChar = 0;
+        U32 curChar = 0;
+        String::iterator it = finalText.begin();
+        String::iterator end = finalText.end();
+
+        while ((it != end) && (curChar = utf8::next(it, end)))
+        {
+            // #TODO: Rework - take kerning from the current glyph storage
+            F32 kerning = font->getKerning(prevChar, curChar, m_fontSize);
+            x += kerning;
+            prevChar = curChar;
+
+            _outSlots.emplace_back(Pair<S32, F32>(row, x));
+
+            if (curChar == ' ')
+            {
+                x += hSpace;
+                continue;
+            }
+            if (curChar == '\t')
+            {
+                x += hSpace * 4;
+                continue;
+            }
+            if (curChar == '\n')
+            {
+                _outRowLengths.push_back(x);
+
+                ++row;
+                x = 0.0f;
+                continue;
+            }
+
+            FontGlyphStorageData* curGlyphStorageData = font->getGlyphStorageData(curChar);
+            if (glyphStorageData != curGlyphStorageData)
+            {
+                glyphStorageData = curGlyphStorageData;
+
+                if (glyphStorageData && glyphStorageData->getTrueTypeFont())
+                    ttfPage = &glyphStorageData->getTrueTypeFont()->ensureTTFPage(m_fontSize, m_bold);
+                else
+                    ttfPage = &defaultFont->ensureTTFPage(m_fontSize, m_bold);
+            }
+
+            FontGlyph const& glyph = font->ensureGlyphFromStorage(glyphStorageData, curChar, m_fontSize, m_bold, *ttfPage);
+            x += glyph.advance;
+
+            if (glyphStorageData &&
+                (glyphStorageData->type == FontGlyphStorageType::Sprite ||
+                 glyphStorageData->type == FontGlyphStorageType::Entity))
+                x = Math::Round(x);
+        }
+
+        _outRowLengths.push_back(x);
+        _outSlots.emplace_back(Pair<S32, F32>(row, x));
+    }
+
+    //////////////////////////////////////////
+    Vec2F TextRenderer2D::getSymbolPosition(Size _symbolIndex)
+    {
+        // Apply pending changes so the result reflects the actual state
+        prepareForRender();
+
+        FontMaterialPtr const& fontMaterial = getFontMaterial();
+        if (!fontMaterial || !fontMaterial->getFont() || !fontMaterial->getFont()->getDefaultFont() || !m_transform)
+            return Vec2F::c_zero;
+
+        Vector<Pair<S32, F32>> slots;
+        Vector<F32> rowLengths;
+        calculateSymbolSlots(slots, rowLengths);
+
+        if (_symbolIndex >= slots.size())
+            _symbolIndex = slots.size() - 1;
+
+        S32 row = slots[_symbolIndex].first;
+        F32 x = slots[_symbolIndex].second;
+
+        Vec2F const& size = m_transform->getSize();
+        F32 vSpace = fontMaterial->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
+        Size rowsCount = rowLengths.size();
+
+        F32 xAlignOffset = TextRenderer2DHelper::CalculateXAlignOffset(
+            m_widthPolicy, m_horizontalAlignment, size.x, rowLengths[row]);
+        if (m_pixelPerfect)
+            xAlignOffset = Math::Round(xAlignOffset);
+
+        F32 y = calculateY((F32)rowsCount * vSpace, rowsCount) - (F32)row * vSpace;
+
+        return Vec2F(x + xAlignOffset + m_outlineThickness, y);
+    }
+
+    //////////////////////////////////////////
+    Size TextRenderer2D::getSymbolIndexAtPosition(Vec2F const& _position)
+    {
+        // Apply pending changes so the result reflects the actual state
+        prepareForRender();
+
+        FontMaterialPtr const& fontMaterial = getFontMaterial();
+        if (!fontMaterial || !fontMaterial->getFont() || !fontMaterial->getFont()->getDefaultFont() || !m_transform || m_text.empty())
+            return m_text.size();
+
+        Vector<Pair<S32, F32>> slots;
+        Vector<F32> rowLengths;
+        calculateSymbolSlots(slots, rowLengths);
+
+        Vec2F const& size = m_transform->getSize();
+        F32 vSpace = fontMaterial->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
+        Size rowsCount = rowLengths.size();
+
+        F32 y0 = calculateY((F32)rowsCount * vSpace, rowsCount);
+        S32 row = (S32)Math::Round((y0 - _position.y) / vSpace);
+        row = Math::Clamp(row, 0, (S32)rowsCount - 1);
+
+        F32 xAlignOffset = TextRenderer2DHelper::CalculateXAlignOffset(
+            m_widthPolicy, m_horizontalAlignment, size.x, rowLengths[row]);
+        if (m_pixelPerfect)
+            xAlignOffset = Math::Round(xAlignOffset);
+
+        F32 localX = _position.x - xAlignOffset;
+
+        Size bestIndex = slots.size() - 1;
+        F32 bestDistance = 1e37f;
+        for (Size i = 0, in = slots.size(); i < in; ++i)
+        {
+            if (slots[i].first != row)
+                continue;
+
+            F32 distance = Math::Abs(slots[i].second - localX);
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                bestIndex = i;
+            }
+        }
+
+        return bestIndex;
+    }
+
+    //////////////////////////////////////////
     F32 TextRenderer2D::calculateY(
         F32 _totalTextHeight,
         Size _actualRowsCount)

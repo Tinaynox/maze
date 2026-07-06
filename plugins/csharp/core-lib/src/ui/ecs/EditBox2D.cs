@@ -17,6 +17,12 @@ namespace Maze.UI
             set => InternalCalls.EditBox2DSetSelected(NativeComponentPtr, value);
         }
 
+        public int CursorPosition
+        {
+            get { InternalCalls.EditBox2DGetCursorPosition(NativeComponentPtr, out int value); return value; }
+            set => InternalCalls.EditBox2DSetCursorPosition(NativeComponentPtr, value);
+        }
+
         public int EventReceiverEid
         {
             get { InternalCalls.EditBox2DGetEventReceiverEid(NativeComponentPtr, out int value); return value; }

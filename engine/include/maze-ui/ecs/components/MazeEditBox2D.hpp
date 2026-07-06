@@ -37,6 +37,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -67,6 +68,7 @@ namespace Maze
 
         //////////////////////////////////////////
         friend class Entity;
+        friend void EditBox2DAppear(EntityAddedToSampleEvent const&, Entity*, EditBox2D*);
 
         //////////////////////////////////////////
         enum class MAZE_UI_API EditBoxFlags : U8
@@ -195,24 +197,31 @@ namespace Maze
         //////////////////////////////////////////
         inline String const& getText() const { return m_text; }
 
-        //////////////////////////////////////////
-        inline void addChar(char _char)
-        {
-            m_text.push_back(_char);
-
-            processTextChanged();
-        }
 
         //////////////////////////////////////////
-        inline void popChar()
-        {
-            if (m_text.empty())
-                return;
+        inline Size getCursorPosition() const { return m_cursorPosition; }
 
-            m_text.pop_back();
+        //////////////////////////////////////////
+        void setCursorPosition(Size _position);
 
-            processTextChanged();
-        }
+        //////////////////////////////////////////
+        void insertTextAtCursor(String const& _text);
+
+        //////////////////////////////////////////
+        void deleteSymbolBeforeCursor();
+
+        //////////////////////////////////////////
+        void deleteSymbolAtCursor();
+
+        //////////////////////////////////////////
+        void moveCursor(S32 _delta, bool _wordJump = false);
+
+
+        //////////////////////////////////////////
+        inline void addChar(char _char) { insertTextAtCursor(String(1, _char)); }
+
+        //////////////////////////////////////////
+        inline void popChar() { deleteSymbolBeforeCursor(); }
 
         //////////////////////////////////////////
         inline bool isTextInputAvailable()
@@ -262,7 +271,10 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
-            
+
+        //////////////////////////////////////////
+        void notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
+
         //////////////////////////////////////////
         void notifyCursorPressOut(CursorInputEvent& _inputEvent);
 
@@ -297,6 +309,9 @@ namespace Maze
             m_cursorBlinkTimer = 0.0f;
         }
 
+        //////////////////////////////////////////
+        void processAppear();
+
     protected:
         Transform2DPtr m_transform;
         UIElement2DPtr m_UIElement2D;
@@ -304,6 +319,7 @@ namespace Maze
         SpriteRenderer2DPtr m_cursorRenderer;
 
         String m_text;
+        Size m_cursorPosition = 0;
 
         bool m_selected;
 

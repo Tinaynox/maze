@@ -170,6 +170,14 @@ namespace Maze
         //////////////////////////////////////////
         virtual Vec2F getTextEnd(Size _rowIndex = 0) MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        // Position of the caret placed before the symbol at _symbolIndex (text-local space)
+        virtual Vec2F getSymbolPosition(Size _symbolIndex) { return getTextEnd(0); }
+
+        //////////////////////////////////////////
+        // Nearest caret index for the point in text-local space
+        virtual Size getSymbolIndexAtPosition(Vec2F const& _position) { return m_text.size(); }
+
 
         //////////////////////////////////////////
         virtual F32 getLineSpacingScale() const { return m_lineSpacingScale; }

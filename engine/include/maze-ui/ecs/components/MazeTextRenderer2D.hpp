@@ -275,6 +275,12 @@ namespace Maze
         //////////////////////////////////////////
         virtual Vec2F getTextEnd(Size _rowIndex = 0) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual Vec2F getSymbolPosition(Size _symbolIndex) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual Size getSymbolIndexAtPosition(Vec2F const& _position) MAZE_OVERRIDE;
+
 
         //////////////////////////////////////////
         void ensureAllGlyphs();
@@ -338,6 +344,13 @@ namespace Maze
         F32 calculateY(
             F32 _totalTextHeight,
             Size _actualRowsCount);
+
+        //////////////////////////////////////////
+        // Caret slots of the final text: one per symbol plus a trailing end slot,
+        // each slot is the row index and the x offset within that row
+        void calculateSymbolSlots(
+            Vector<Pair<S32, F32>>& _outSlots,
+            Vector<F32>& _outRowLengths);
 
     protected:
         FontMaterialAssetRef m_fontMaterialRef;

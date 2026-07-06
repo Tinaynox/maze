@@ -32,6 +32,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-ui/ecs/events/MazeEcsUIEvents.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -53,6 +54,7 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditBox2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, selected, false, getSelected, setSelected),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, systemTextRenderer, ComponentPtr(), getTextRendererComponent, setTextRenderer),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, cursorRenderer, ComponentPtr(), getCursorRendererComponent, setCursorRenderer),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(U8, editBoxFlags, 0, getEditBoxFlags, setEditBoxFlags),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(EntityId, eventReceiverEid, c_invalidEntityId, getEventReceiverEid, setEventReceiverEid));
@@ -77,6 +79,7 @@ namespace Maze
 
         if (m_UIElement2D)
         {
+            m_UIElement2D->eventCursorPressIn.unsubscribe(this);
             m_UIElement2D->eventCursorPressOut.unsubscribe(this);
             m_UIElement2D->eventCursorReleaseOut.unsubscribe(this);
             m_UIElement2D->eventFocusChanged.unsubscribe(this);
@@ -159,11 +162,53 @@ namespace Maze
                 {
                     case KeyCode::Backspace:
                     {
-                        popChar();
+                        deleteSymbolBeforeCursor();
                         break;
                     }
                     case KeyCode::Delete:
                     {
+                        deleteSymbolAtCursor();
+                        break;
+                    }
+                    case KeyCode::Left:
+                    {
+                        moveCursor(-1, _event.isControlDown());
+                        break;
+                    }
+                    case KeyCode::Right:
+                    {
+                        moveCursor(1, _event.isControlDown());
+                        break;
+                    }
+                    case KeyCode::Home:
+                    {
+                        setCursorPosition(0);
+                        break;
+                    }
+                    case KeyCode::End:
+                    {
+                        setCursorPosition(m_text.size());
+                        break;
+                    }
+                    case KeyCode::C:
+                    {
+                        if (_event.isControlDown() && SystemManager::GetInstancePtr())
+                            SystemManager::GetInstancePtr()->setClipboardString(m_text);
+                        break;
+                    }
+                    case KeyCode::X:
+                    {
+                        if (_event.isControlDown() && SystemManager::GetInstancePtr())
+                        {
+                            SystemManager::GetInstancePtr()->setClipboardString(m_text);
+                            setText(String());
+                        }
+                        break;
+                    }
+                    case KeyCode::V:
+                    {
+                        if (_event.isControlDown() && SystemManager::GetInstancePtr())
+                            insertTextAtCursor(SystemManager::GetInstancePtr()->getClipboardAsString());
                         break;
                     }
                     case KeyCode::Enter:
@@ -194,11 +239,24 @@ namespace Maze
         m_UIElement2D = getEntityRaw()->ensureComponent<UIElement2D>();
         m_UIElement2D->setCaptureCursorHits(true);
         
+        m_UIElement2D->eventCursorPressIn.subscribe(this, &EditBox2D::notifyCursorPressIn);
         m_UIElement2D->eventCursorPressOut.subscribe(this, &EditBox2D::notifyCursorPressOut);
         m_UIElement2D->eventCursorReleaseOut.subscribe(this, &EditBox2D::notifyCursorReleaseOut);
         m_UIElement2D->eventFocusChanged.subscribe(this, &EditBox2D::notifyFocusChanged);
         m_UIElement2D->eventPressedChanged.subscribe(this, &EditBox2D::notifyPressedChanged);
         m_UIElement2D->eventClick.subscribe(this, &EditBox2D::notifyClick);
+    }
+
+    //////////////////////////////////////////
+    void EditBox2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
+    {
+        if (!m_textRenderer || !m_textRenderer->getTransform() || !m_transform)
+            return;
+
+        Vec2F positionWS = m_transform->getWorldTransform().transform(_positionOS);
+        Vec2F positionTextLocal = m_textRenderer->getTransform()->getWorldTransform().inversed().transform(positionWS);
+
+        setCursorPosition(m_textRenderer->getSymbolIndexAtPosition(positionTextLocal));
     }
 
     //////////////////////////////////////////
@@ -274,8 +332,92 @@ namespace Maze
             return;
 
         m_text = _text;
+        m_cursorPosition = m_text.size();
 
         processTextChanged();
+    }
+
+    //////////////////////////////////////////
+    void EditBox2D::setCursorPosition(Size _position)
+    {
+        m_cursorPosition = Math::Min(_position, m_text.size());
+
+        resetBlinkTimer();
+        updateCursorRendererPosition();
+        updateCursorRendererEnabled();
+    }
+
+    //////////////////////////////////////////
+    void EditBox2D::insertTextAtCursor(String const& _text)
+    {
+        String filteredText;
+        filteredText.reserve(_text.size());
+        for (S8 c : _text)
+            if (c >= 32 && c < 127)
+                filteredText.push_back(c);
+
+        if (filteredText.empty())
+            return;
+
+        m_cursorPosition = Math::Min(m_cursorPosition, m_text.size());
+        m_text.insert(m_cursorPosition, filteredText);
+        m_cursorPosition += filteredText.size();
+
+        processTextChanged();
+    }
+
+    //////////////////////////////////////////
+    void EditBox2D::deleteSymbolBeforeCursor()
+    {
+        m_cursorPosition = Math::Min(m_cursorPosition, m_text.size());
+        if (m_cursorPosition == 0)
+            return;
+
+        m_text.erase(m_cursorPosition - 1, 1);
+        --m_cursorPosition;
+
+        processTextChanged();
+    }
+
+    //////////////////////////////////////////
+    void EditBox2D::deleteSymbolAtCursor()
+    {
+        m_cursorPosition = Math::Min(m_cursorPosition, m_text.size());
+        if (m_cursorPosition >= m_text.size())
+            return;
+
+        m_text.erase(m_cursorPosition, 1);
+
+        processTextChanged();
+    }
+
+    //////////////////////////////////////////
+    void EditBox2D::moveCursor(S32 _delta, bool _wordJump)
+    {
+        Size pos = Math::Min(m_cursorPosition, m_text.size());
+
+        if (_wordJump)
+        {
+            if (_delta < 0)
+            {
+                while (pos > 0 && m_text[pos - 1] == ' ') --pos;
+                while (pos > 0 && m_text[pos - 1] != ' ') --pos;
+            }
+            else if (_delta > 0)
+            {
+                while (pos < m_text.size() && m_text[pos] != ' ') ++pos;
+                while (pos < m_text.size() && m_text[pos] == ' ') ++pos;
+            }
+        }
+        else
+        {
+            if (_delta < 0 && pos > 0)
+                --pos;
+            else if (_delta > 0 && pos < m_text.size())
+                ++pos;
+        }
+
+        setCursorPosition(pos);
     }
     
     //////////////////////////////////////////
@@ -297,8 +439,9 @@ namespace Maze
         if (!m_textRenderer)
             return;
 
-        Vec2F textShift = m_textRenderer->getTextEnd();
-        m_cursorRenderer->getTransform()->setLocalPosition(textShift);
+        Vec2F cursorPosition = m_textRenderer->getSymbolPosition(Math::Min(m_cursorPosition, m_text.size()));
+        if (m_cursorRenderer->getTransform())
+            m_cursorRenderer->getTransform()->setLocalPosition(cursorPosition);
     }
 
     //////////////////////////////////////////
@@ -308,7 +451,14 @@ namespace Maze
             return;
 
         bool cursorEnabled = isTextInputAvailable() && m_cursorBlink;
-        m_cursorRenderer->getMeshRenderer()->setEnabled(cursorEnabled);
+        if (m_cursorRenderer->getMeshRenderer())
+            m_cursorRenderer->getMeshRenderer()->setEnabled(cursorEnabled);
+        else
+        {
+            MeshRendererInstanced* meshRendererInstanced = m_cursorRenderer->getEntityRaw()->getComponentRaw<MeshRendererInstanced>();
+            if (meshRendererInstanced)
+                meshRendererInstanced->setEnabled(cursorEnabled);
+        }
     }
 
     //////////////////////////////////////////
@@ -345,6 +495,25 @@ namespace Maze
         
         resetBlinkTimer();
         updateCursorRendererPosition();
+    }
+
+    //////////////////////////////////////////
+    void EditBox2D::processAppear()
+    {
+        updateTextRenderer();
+        updateCursorRendererPosition();
+        updateCursorRendererEnabled();
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(EditBox2DAppear,
+        {},
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        EditBox2D* _editBox2D)
+    {
+        _editBox2D->processAppear();
     }
 
 } // namespace Maze

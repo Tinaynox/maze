@@ -48,6 +48,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "maze-core/math/MazeMath.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 
 
@@ -324,6 +325,137 @@ namespace Maze
         Vec2F positionShiftV = Vec2F(sx, sy) * fontScale + positionShift;
 
         return Vec2F((F32)columnsCount, 0.0f) * sizeV + positionShiftV;
+    }
+
+    //////////////////////////////////////////
+    Vec2F SystemTextRenderer2D::getSymbolPosition(Size _symbolIndex)
+    {
+        // Apply pending changes so the result reflects the actual state
+        prepareForRender();
+
+        if (!m_systemFont || !m_transform)
+            return Vec2F::c_zero;
+
+        Vec2F const& size = m_transform->getSize();
+        F32 fontScale = (F32)m_fontSize / (F32)(m_systemFont->charSize.x - m_systemFont->outline * 2);
+
+        F32 const rowSize = (F32)m_systemFont->charSize.y;
+        F32 const rowAdvance = rowSize * m_lineSpacingScale;
+
+        S32 rowsCount = 1;
+        S32 maxColumnsCount = 0;
+        S32 charsCount = 0;
+        SystemFontHelper::CalculateSystemTextData(
+            m_text.c_str(),
+            rowsCount,
+            maxColumnsCount,
+            charsCount);
+
+        // Locate the caret row/column
+        S32 caretRow = 0;
+        S32 caretColumn = 0;
+        Char const* rowStart = m_text.c_str();
+
+        Char const* p = m_text.c_str();
+        for (Size i = 0; *p != 0 && i < _symbolIndex; ++p, ++i)
+        {
+            if (*p == '\n')
+            {
+                ++caretRow;
+                caretColumn = 0;
+                rowStart = p + 1;
+            }
+            else
+                ++caretColumn;
+        }
+
+        S32 rowColumnsCount = SystemFontHelper::CalculateSystemTextRowColumns(rowStart);
+
+        Vec2F positionShift = SystemFontHelper::CalculateSystemTextShift(
+            m_systemFont,
+            m_horizontalAlignment,
+            m_verticalAlignment,
+            size,
+            fontScale,
+            m_lineSpacingScale,
+            rowsCount,
+            rowColumnsCount);
+
+        F32 sy = -rowSize - (F32)caretRow * rowAdvance;
+
+        Vec2F sizeV = (Vec2F)m_systemFont->charSize * fontScale;
+        return Vec2F((F32)caretColumn, 0.0f) * sizeV + Vec2F(0.0f, sy) * fontScale + positionShift;
+    }
+
+    //////////////////////////////////////////
+    Size SystemTextRenderer2D::getSymbolIndexAtPosition(Vec2F const& _position)
+    {
+        // Apply pending changes so the result reflects the actual state
+        prepareForRender();
+
+        if (!m_systemFont || !m_transform || m_text.empty())
+            return m_text.size();
+
+        Vec2F const& size = m_transform->getSize();
+        F32 fontScale = (F32)m_fontSize / (F32)(m_systemFont->charSize.x - m_systemFont->outline * 2);
+
+        F32 const rowSize = (F32)m_systemFont->charSize.y;
+        F32 const rowAdvance = rowSize * m_lineSpacingScale;
+
+        S32 rowsCount = 1;
+        S32 maxColumnsCount = 0;
+        S32 charsCount = 0;
+        SystemFontHelper::CalculateSystemTextData(
+            m_text.c_str(),
+            rowsCount,
+            maxColumnsCount,
+            charsCount);
+
+        // The vertical part of the shift is independent from the columns count
+        F32 shiftY = SystemFontHelper::CalculateSystemTextShift(
+            m_systemFont,
+            m_horizontalAlignment,
+            m_verticalAlignment,
+            size,
+            fontScale,
+            m_lineSpacingScale,
+            rowsCount,
+            0).y;
+
+        // Row top: shiftY - row * rowAdvance * fontScale
+        S32 row = (S32)Math::Floor((shiftY - _position.y) / (rowAdvance * fontScale));
+        row = Math::Clamp(row, 0, rowsCount - 1);
+
+        // Find the row start offset
+        Size rowStartIndex = 0;
+        S32 rowsToSkip = row;
+        Char const* p = m_text.c_str();
+        while (*p != 0 && rowsToSkip > 0)
+        {
+            if (*p == '\n')
+                --rowsToSkip;
+
+            ++p;
+            ++rowStartIndex;
+        }
+
+        S32 rowColumnsCount = SystemFontHelper::CalculateSystemTextRowColumns(p);
+
+        F32 shiftX = SystemFontHelper::CalculateSystemTextShift(
+            m_systemFont,
+            m_horizontalAlignment,
+            m_verticalAlignment,
+            size,
+            fontScale,
+            m_lineSpacingScale,
+            rowsCount,
+            rowColumnsCount).x;
+
+        F32 charWidth = (F32)m_systemFont->charSize.x * fontScale;
+        S32 column = (S32)Math::Round((_position.x - shiftX) / charWidth);
+        column = Math::Clamp(column, 0, rowColumnsCount);
+
+        return rowStartIndex + (Size)column;
     }
 
 

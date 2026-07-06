@@ -208,6 +208,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void EditBox2DGetCursorPosition(Component* _component, S32& _outValue)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(EditBox2D);
+        _outValue = (S32)_component->castRaw<EditBox2D>()->getCursorPosition();
+    }
+
+    //////////////////////////////////////////
+    inline void EditBox2DSetCursorPosition(Component* _component, S32 _value)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(EditBox2D);
+        _component->castRaw<EditBox2D>()->setCursorPosition((Size)(_value > 0 ? _value : 0));
+    }
+
+    //////////////////////////////////////////
     inline void EditBox2DGetEventReceiverEid(Component* _component, S32& _outValue)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(EditBox2D);
@@ -452,6 +466,8 @@ namespace Maze
         MAZE_UI_MONO_BIND_FUNC(EditBox2DGetSelected);
         MAZE_UI_MONO_BIND_FUNC(EditBox2DSetSelected);
         MAZE_UI_MONO_BIND_FUNC(EditBox2DSetTextRenderer);
+        MAZE_UI_MONO_BIND_FUNC(EditBox2DGetCursorPosition);
+        MAZE_UI_MONO_BIND_FUNC(EditBox2DSetCursorPosition);
         MAZE_UI_MONO_BIND_FUNC(EditBox2DGetEventReceiverEid);
         MAZE_UI_MONO_BIND_FUNC(EditBox2DSetEventReceiverEid);
 

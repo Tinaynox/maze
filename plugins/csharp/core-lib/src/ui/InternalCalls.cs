@@ -57,6 +57,12 @@ namespace Maze.UI
         internal extern static void EditBox2DSetTextRenderer(NativePtr nativeComponentPtr, NativePtr textRendererComponentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EditBox2DGetCursorPosition(NativePtr nativeComponentPtr, out int outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EditBox2DSetCursorPosition(NativePtr nativeComponentPtr, int value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void EditBox2DGetEventReceiverEid(NativePtr nativeComponentPtr, out int outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
