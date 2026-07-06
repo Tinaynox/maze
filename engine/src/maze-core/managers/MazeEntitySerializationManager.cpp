@@ -292,11 +292,13 @@ namespace Maze
                         else
                         if (metaPropertyMetaClass == Entity::GetMetaClass())
                         {
+                            // Write the runtime id here - replaceDataBlockEcsIds converts all
+                            // ':EntityId' blocks to serialization ids in a single uniform pass
                             void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
                             if (propertyValuePointer)
                             {
-                                EcsSerializationId propertyValueIndex = _context.pointerIndices[propertyValuePointer];
-                                EcsHelper::EnsureEntityIdBlock(_componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
+                                EntityId eid = static_cast<Entity*>(propertyValuePointer)->getId();
+                                EcsHelper::EnsureEntityIdBlock(_componentBlock, propertyName)->setS32(MAZE_HCS("value"), (S32)eid);
                             }
                             continue;
                         }
@@ -304,10 +306,11 @@ namespace Maze
                     else
                     if (metaPropertyUID == ClassInfo<EntityId>::UID())
                     {
+                        // Write the runtime id here - replaceDataBlockEcsIds converts all
+                        // ':EntityId' blocks to serialization ids in a single uniform pass
                         EntityId eid;
                         metaProperty->getValue(metaInstance, eid);
-                        EcsSerializationId propertyValueIndex = _context.entityIndices[eid];
-                        EcsHelper::EnsureEntityIdBlock(_componentBlock, propertyName)->setS32(MAZE_HCS("value"), propertyValueIndex);
+                        EcsHelper::EnsureEntityIdBlock(_componentBlock, propertyName)->setS32(MAZE_HCS("value"), (S32)eid);
                         continue;
                     }
                     else
