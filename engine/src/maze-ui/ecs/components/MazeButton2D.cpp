@@ -158,10 +158,11 @@ namespace Maze
 
         eventClick(this, _inputEvent);
 
-        if (m_eventReceiverEid != c_invalidEntityId && getEntityRaw() && getEntityRaw()->getEcsWorld())
+        if (getEntityRaw() && getEntityRaw()->getEcsWorld())
         {
+            EntityId receiverEid = (m_eventReceiverEid != c_invalidEntityId) ? m_eventReceiverEid : getEntityId();
             getEntityRaw()->getEcsWorld()->sendEvent<ButtonClickEvent>(
-                m_eventReceiverEid, getEntityId(), _positionOS, _inputEvent);
+                receiverEid, getEntityId(), _positionOS, _inputEvent);
         }
     }
 
