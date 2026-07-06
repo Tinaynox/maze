@@ -158,10 +158,8 @@ namespace Maze
 
         eventClick(this, _inputEvent);
 
-        Debug::LogError("CLICK!!");
         if (m_eventReceiverEid != c_invalidEntityId && getEntityRaw() && getEntityRaw()->getEcsWorld())
         {
-            Debug::LogError("SEND!!! %d", (S32)m_eventReceiverEid);
             getEntityRaw()->getEcsWorld()->sendEvent<ButtonClickEvent>(
                 m_eventReceiverEid, getEntityId(), _positionOS, _inputEvent);
         }
