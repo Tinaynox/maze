@@ -33,6 +33,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
@@ -248,6 +249,27 @@ namespace Maze
         m_UIElement2D->eventFocusChanged.subscribe(this, &EditBox2D::notifyFocusChanged);
         m_UIElement2D->eventPressedChanged.subscribe(this, &EditBox2D::notifyPressedChanged);
         m_UIElement2D->eventClick.subscribe(this, &EditBox2D::notifyClick);
+    }
+
+    //////////////////////////////////////////
+    void EditBox2D::processEvent(Event* _event)
+    {
+        if (_event->getEventUID() == ClassInfo<EntityPostCopyEvent>::UID())
+        {
+            // Remap the event receiver to the copied entity
+            EntityPostCopyEvent* postCopyEvent = _event->castRaw<EntityPostCopyEvent>();
+            if (m_eventReceiverEid != c_invalidEntityId)
+            {
+                for (auto const& entityData : postCopyEvent->copyData.getEntities())
+                {
+                    if (entityData.first->getId() == m_eventReceiverEid)
+                    {
+                        m_eventReceiverEid = entityData.second->getId();
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     //////////////////////////////////////////

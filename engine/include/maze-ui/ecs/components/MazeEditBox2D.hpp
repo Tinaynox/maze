@@ -273,6 +273,9 @@ namespace Maze
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        virtual void processEvent(Event* _event) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         void notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////

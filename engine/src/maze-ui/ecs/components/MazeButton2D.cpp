@@ -32,6 +32,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -109,6 +110,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Button2D::processEvent(Event* _event)
+    {
+        if (_event->getEventUID() == ClassInfo<EntityPostCopyEvent>::UID())
+        {
+            // Remap the event receiver to the copied entity
+            EntityPostCopyEvent* postCopyEvent = _event->castRaw<EntityPostCopyEvent>();
+            if (m_eventReceiverEid != c_invalidEntityId)
+            {
+                for (auto const& entityData : postCopyEvent->copyData.getEntities())
+                {
+                    if (entityData.first->getId() == m_eventReceiverEid)
+                    {
+                        m_eventReceiverEid = entityData.second->getId();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    //////////////////////////////////////////
     void Button2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent& _inputEvent)
     {
         eventCursorPressIn(this, _positionOS, _inputEvent);
@@ -136,9 +158,13 @@ namespace Maze
 
         eventClick(this, _inputEvent);
 
+        Debug::LogError("CLICK!!");
         if (m_eventReceiverEid != c_invalidEntityId && getEntityRaw() && getEntityRaw()->getEcsWorld())
+        {
+            Debug::LogError("SEND!!! %d", (S32)m_eventReceiverEid);
             getEntityRaw()->getEcsWorld()->sendEvent<ButtonClickEvent>(
                 m_eventReceiverEid, getEntityId(), _positionOS, _inputEvent);
+        }
     }
 
     //////////////////////////////////////////
