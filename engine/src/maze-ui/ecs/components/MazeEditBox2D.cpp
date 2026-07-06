@@ -31,8 +31,11 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeStaticName.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-ui/ecs/events/MazeEcsUIEvents.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -500,9 +503,48 @@ namespace Maze
     //////////////////////////////////////////
     void EditBox2D::processAppear()
     {
+        if (m_textRenderer && !m_cursorRenderer)
+            createCursorRenderer();
+
         updateTextRenderer();
         updateCursorRendererPosition();
         updateCursorRendererEnabled();
+    }
+
+    //////////////////////////////////////////
+    void EditBox2D::createCursorRenderer()
+    {
+        if (!m_textRenderer || !m_textRenderer->getTransform())
+            return;
+
+        if (!getEntityRaw() || !getEntityRaw()->getEcsScene())
+            return;
+
+        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        if (!renderSystem)
+            return;
+
+        F32 fontSize = (F32)m_textRenderer->getFontSize();
+        F32 cursorHeight = fontSize + 4.0f;
+        F32 descent = (0.5f * (cursorHeight - fontSize) - 1);
+
+        SpriteRenderer2DPtr cursorRenderer = SpriteHelper::CreateSprite(
+            m_textRenderer->getColor(),
+            Vec2F(1.0f, cursorHeight),
+            Vec2F::c_zero,
+            renderSystem->getMaterialManager()->getSpriteMaterial(),
+            m_textRenderer->getTransform(),
+            getEntityRaw()->getEcsScene(),
+            Vec2F::c_zero,
+            Vec2F(0.0f, descent / cursorHeight));
+
+        cursorRenderer->getEntityRaw()->ensureComponent<StaticName>()->setStaticName("Cursor");
+
+        // Runtime-created helper - keep it out of the serialized data
+        for (auto const& componentData : cursorRenderer->getEntityRaw()->getComponents())
+            componentData.second->setFlag(Component::Flags::SerializationDisabled, true);
+
+        setCursorRenderer(cursorRenderer);
     }
 
     //////////////////////////////////////////

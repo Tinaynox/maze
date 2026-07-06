@@ -312,6 +312,10 @@ namespace Maze
         //////////////////////////////////////////
         void processAppear();
 
+        //////////////////////////////////////////
+        // Creates a default blink cursor based on the text renderer look
+        void createCursorRenderer();
+
     protected:
         Transform2DPtr m_transform;
         UIElement2DPtr m_UIElement2D;
