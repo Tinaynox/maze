@@ -23,6 +23,9 @@ namespace Maze.Editor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool GetEditorPlaytestModeEnabled();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static string GetEditorProjectAssetsFolder();
         #endregion
 
     }

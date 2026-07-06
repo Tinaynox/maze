@@ -33,6 +33,7 @@
 #include "managers/EditorManager.hpp"
 #include "managers/EditorSceneManager.hpp"
 #include "ecs/events/EcsEditorEvents.hpp"
+#include "helpers/EditorProjectHelper.hpp"
 #include "Editor.hpp"
 
 
@@ -111,6 +112,12 @@ namespace Maze
         return EditorManager::GetInstancePtr()->getPlaytestModeEnabled();
     }
 
+    //////////////////////////////////////////
+    inline MonoString* GetEditorProjectAssetsFolder()
+    {
+        return mono_string_new(mono_domain_get(), EditorHelper::GetProjectAssetsFolder().toUTF8().c_str());
+    }
+
 
     //////////////////////////////////////////
     void BindCppFunctionsEditor()
@@ -121,6 +128,7 @@ namespace Maze
         MAZE_EDITOR_MONO_BIND_FUNC(GetEditorOpenedScene);
         MAZE_EDITOR_MONO_BIND_FUNC(GetEditorMainRenderWindow);
         MAZE_EDITOR_MONO_BIND_FUNC(GetEditorPlaytestModeEnabled);
+        MAZE_EDITOR_MONO_BIND_FUNC(GetEditorProjectAssetsFolder);
     }
 
 
