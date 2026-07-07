@@ -54,6 +54,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(HierarchyLine);
     MAZE_USING_SHARED_PTR(EcsAssetScene);
     MAZE_USING_SHARED_PTR(EditorHierarchyControllerAgent);
+    MAZE_USING_SHARED_PTR(Button2D);
 
 
     //////////////////////////////////////////
@@ -186,6 +187,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifyHierarchyLineCursorPressIn(HierarchyLine* _hierarchyLine);
+
+        //////////////////////////////////////////
+        void notifyBodyBackgroundClick(Button2D* _button, CursorInputEvent& _inputEvent);
 
         //////////////////////////////////////////
         void notifyEventManagerEvent(

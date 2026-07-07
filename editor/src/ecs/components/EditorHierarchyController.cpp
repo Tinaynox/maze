@@ -31,6 +31,7 @@
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
+#include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -73,6 +74,7 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
+#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "scenes/ScenePlaytest.hpp"
 #include "scenes/SceneWorkspace.hpp"
@@ -113,6 +115,13 @@ namespace Maze
 
         if (SelectionManager::GetInstancePtr())
             SelectionManager::GetInstancePtr()->eventSelectionChanged.unsubscribe(this);
+
+        if (m_bodyBackground && m_bodyBackground->getEntityRaw())
+        {
+            ClickButton2D* bodyBackgroundButton = m_bodyBackground->getEntityRaw()->getComponentRaw<ClickButton2D>();
+            if (bodyBackgroundButton)
+                bodyBackgroundButton->eventClick.unsubscribe(this);
+        }
 
         setEcsWorld(nullptr);
 
@@ -219,6 +228,9 @@ namespace Maze
             Vec2F::c_zero);
         m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
         m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setSizeDelta(0.0f, -EditorToolsStyles::GetInstancePtr()->getTitleHeight());
+
+        ClickButton2DPtr bodyBackgroundButton = m_bodyBackground->getEntityRaw()->ensureComponent<ClickButton2D>();
+        bodyBackgroundButton->eventClick.subscribe(this, &EditorHierarchyController::notifyBodyBackgroundClick);
 
         ScrollRect2DPtr scrollRect = UIHelper::CreateDefaultScrollRect(
             m_bodyBackground->getTransform()->getSize(),
@@ -819,6 +831,8 @@ namespace Maze
             EntityPtr const& entity = m_world->getEntity(entityId);
             if (entity)
             {
+                EditorActionHelper::SelectEntities(entity);
+
                 if (Transform3D* transform3D = entity->getComponentRaw<Transform3D>())
                 {
                     focusCameraOnEntity(transform3D);
@@ -859,10 +873,21 @@ namespace Maze
                 EntityPtr const& entity = m_world->getEntity(entityId);
                 if (entity)
                 {
-                    if (SelectionManager::GetInstancePtr()->isObjectSelected(entity))
-                        EditorActionHelper::UnselectEntities(entity);
+                    bool multiSelectModifier =
+                        InputManager::GetInstancePtr()->getKeyState(KeyCode::LControl) ||
+                        InputManager::GetInstancePtr()->getKeyState(KeyCode::RControl);
+
+                    if (multiSelectModifier)
+                    {
+                        if (SelectionManager::GetInstancePtr()->isObjectSelected(entity))
+                            EditorActionHelper::UnselectEntities(entity);
+                        else
+                            EditorActionHelper::SelectEntities(entity, false);
+                    }
                     else
+                    {
                         EditorActionHelper::SelectEntities(entity);
+                    }
                 }
 
                 break;
@@ -870,6 +895,12 @@ namespace Maze
             default:
                 break;
         }
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::notifyBodyBackgroundClick(Button2D* _button, CursorInputEvent& _inputEvent)
+    {
+        EditorActionHelper::SelectEntities(Vector<EntityPtr>());
     }
 
     //////////////////////////////////////////
