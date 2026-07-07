@@ -29,6 +29,8 @@
 #include "maze-graphics/loaders/mesh/MazeLoaderMZMESH.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
+#include "maze-graphics/MazeMeshSkeleton.hpp"
+#include "maze-graphics/MazeMeshSkeletonAnimation.hpp"
 #include "maze-graphics/helpers/MazeSubMeshHelper.hpp"
 
 
@@ -39,7 +41,7 @@ namespace Maze
     #pragma warning(push)
     #pragma warning(disable:4307)
     MAZE_CONSTEXPR U32 const c_mzMeshHeaderMagic = Hash::CalculateFNV1("MZMESH");
-    MAZE_CONSTEXPR S32 const c_mzMeshHeaderVersion = 1;
+    MAZE_CONSTEXPR S32 const c_mzMeshHeaderVersion = 2;
     #pragma warning(pop)
 
 
@@ -62,8 +64,51 @@ namespace Maze
         SubMeshEnd          = 2,
         VertexIndices       = 3,
         VertexAttributes    = 4,
+        SkeletonStart       = 5,
+        SkeletonEnd         = 6,
     };
-    
+
+
+    //////////////////////////////////////////
+    inline MeshSkeletonAnimationCurve LoadMZMESHAnimationCurve(
+        ByteBuffer const& _fileData,
+        U32& _bytesRead)
+    {
+        U32 keysCount = 0u;
+        _bytesRead += _fileData.read(_bytesRead, &keysCount, sizeof(keysCount));
+
+        FastVector<F32> times((Size)keysCount, 0.0f);
+        FastVector<F32> values((Size)keysCount, 0.0f);
+
+        if (keysCount > 0u)
+        {
+            _bytesRead += _fileData.read(_bytesRead, times.begin(), keysCount * sizeof(F32));
+            _bytesRead += _fileData.read(_bytesRead, values.begin(), keysCount * sizeof(F32));
+        }
+
+        return MeshSkeletonAnimationCurve(std::move(times), std::move(values));
+    }
+
+    //////////////////////////////////////////
+    inline MeshSkeletonRotationCurve LoadMZMESHRotationCurve(
+        ByteBuffer const& _fileData,
+        U32& _bytesRead)
+    {
+        U32 keysCount = 0u;
+        _bytesRead += _fileData.read(_bytesRead, &keysCount, sizeof(keysCount));
+
+        FastVector<F32> times((Size)keysCount, 0.0f);
+        FastVector<Quaternion> values((Size)keysCount, Quaternion::c_identity);
+
+        if (keysCount > 0u)
+        {
+            _bytesRead += _fileData.read(_bytesRead, times.begin(), keysCount * sizeof(F32));
+            _bytesRead += _fileData.read(_bytesRead, values.begin(), keysCount * sizeof(Quaternion));
+        }
+
+        return MeshSkeletonRotationCurve(std::move(times), std::move(values));
+    }
+
 
     //////////////////////////////////////////
     MAZE_GRAPHICS_API bool LoadMZMESH(
@@ -178,6 +223,76 @@ namespace Maze
             _mesh.addSubMesh(subMesh);
         }
 
+        // Skeleton (optional, appended after submeshes)
+        if (header.version >= 2 && bytesRead < _fileData.getSize())
+        {
+            MZMESHTag tag = MZMESHTag::None;
+            bytesRead += _fileData.read(bytesRead, &tag, sizeof(tag));
+            MAZE_ERROR_RETURN_VALUE_IF(tag != MZMESHTag::SkeletonStart, false, "MZMESH structure broken");
+
+            MeshSkeletonPtr const& skeleton = _mesh.ensureSkeleton();
+
+            S32 bonesCount = 0;
+            bytesRead += _fileData.read(bytesRead, &bonesCount, sizeof(bonesCount));
+            for (S32 i = 0; i < bonesCount; ++i)
+            {
+                U16 nameLength = 0u;
+                bytesRead += _fileData.read(bytesRead, &nameLength, sizeof(nameLength));
+                String boneName;
+                boneName.resize((Size)nameLength);
+                bytesRead += _fileData.read(bytesRead, (void*)boneName.data(), (Size)nameLength);
+
+                MeshSkeleton::BoneIndex parentBoneIndex = -1;
+                bytesRead += _fileData.read(bytesRead, &parentBoneIndex, sizeof(parentBoneIndex));
+
+                TMat inversedBindPoseTransformMS = TMat::c_identity;
+                bytesRead += _fileData.read(bytesRead, &inversedBindPoseTransformMS, sizeof(TMat));
+
+                skeleton->addBone(boneName, inversedBindPoseTransformMS, parentBoneIndex);
+            }
+
+            TMat rootTransform = TMat::c_identity;
+            bytesRead += _fileData.read(bytesRead, &rootTransform, sizeof(TMat));
+            skeleton->setRootTransform(rootTransform);
+
+            S32 animationsCount = 0;
+            bytesRead += _fileData.read(bytesRead, &animationsCount, sizeof(animationsCount));
+            for (S32 i = 0; i < animationsCount; ++i)
+            {
+                U16 nameLength = 0u;
+                bytesRead += _fileData.read(bytesRead, &nameLength, sizeof(nameLength));
+                String animationName;
+                animationName.resize((Size)nameLength);
+                bytesRead += _fileData.read(bytesRead, (void*)animationName.data(), (Size)nameLength);
+
+                F32 animationTime = 0.0f;
+                bytesRead += _fileData.read(bytesRead, &animationTime, sizeof(animationTime));
+
+                MeshSkeletonAnimationPtr const& animation = skeleton->ensureAnimation(animationName);
+                animation->setAnimationTime(animationTime);
+
+                Vector<MeshSkeletonAnimationBone> boneAnimations((Size)bonesCount);
+                for (S32 b = 0; b < bonesCount; ++b)
+                {
+                    MeshSkeletonAnimationBone& boneAnimation = boneAnimations[(Size)b];
+
+                    for (S32 axis = 0; axis < 3; ++axis)
+                        boneAnimation.translation[axis] = LoadMZMESHAnimationCurve(_fileData, bytesRead);
+
+                    boneAnimation.rotation = LoadMZMESHRotationCurve(_fileData, bytesRead);
+
+                    for (S32 axis = 0; axis < 3; ++axis)
+                        boneAnimation.scale[axis] = LoadMZMESHAnimationCurve(_fileData, bytesRead);
+                }
+
+                animation->setBoneAnimations(std::move(boneAnimations));
+            }
+
+            // End tag
+            bytesRead += _fileData.read(bytesRead, &tag, sizeof(tag));
+            MAZE_ERROR_RETURN_VALUE_IF(tag != MZMESHTag::SkeletonEnd, false, "MZMESH structure broken");
+        }
+
         if (_props.mergeSubMeshes)
             _mesh.mergeSubMeshes();
 
@@ -250,6 +365,36 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void SaveMZMESHAnimationCurve(
+        std::ofstream& _outputFile,
+        MeshSkeletonAnimationCurve const& _curve)
+    {
+        U32 keysCount = (U32)_curve.getValues().size();
+        _outputFile.write((S8 const*)&keysCount, sizeof(keysCount));
+
+        if (keysCount > 0u)
+        {
+            _outputFile.write((S8 const*)_curve.getTimes().begin(), keysCount * sizeof(F32));
+            _outputFile.write((S8 const*)_curve.getValues().begin(), keysCount * sizeof(F32));
+        }
+    }
+
+    //////////////////////////////////////////
+    inline void SaveMZMESHRotationCurve(
+        std::ofstream& _outputFile,
+        MeshSkeletonRotationCurve const& _curve)
+    {
+        U32 keysCount = (U32)_curve.getValues().size();
+        _outputFile.write((S8 const*)&keysCount, sizeof(keysCount));
+
+        if (keysCount > 0u)
+        {
+            _outputFile.write((S8 const*)_curve.getTimes().begin(), keysCount * sizeof(F32));
+            _outputFile.write((S8 const*)_curve.getValues().begin(), keysCount * sizeof(Quaternion));
+        }
+    }
+
+    //////////////////////////////////////////
     MAZE_GRAPHICS_API bool SaveMZMESH(
         Mesh const& _mesh,
         Path _filePath)
@@ -311,6 +456,66 @@ namespace Maze
 
             // End tag
             tag = MZMESHTag::SubMeshEnd;
+            outputFile.write((S8 const*)&tag, sizeof(tag));
+        }
+
+        // Skeleton (optional, appended after submeshes)
+        MeshSkeletonPtr const& skeleton = _mesh.getSkeleton();
+        if (skeleton && skeleton->getBonesCount() > 0)
+        {
+            tag = MZMESHTag::SkeletonStart;
+            outputFile.write((S8 const*)&tag, sizeof(tag));
+
+            S32 bonesCount = (S32)skeleton->getBonesCount();
+            outputFile.write((S8 const*)&bonesCount, sizeof(bonesCount));
+            for (S32 i = 0; i < bonesCount; ++i)
+            {
+                MeshSkeleton::Bone const& bone = skeleton->getBone(i);
+
+                U16 nameLength = (U16)bone.name.size();
+                outputFile.write((S8 const*)&nameLength, sizeof(nameLength));
+                outputFile.write(bone.name.c_str(), (Size)nameLength);
+
+                outputFile.write((S8 const*)&bone.parentBoneIndex, sizeof(bone.parentBoneIndex));
+                outputFile.write((S8 const*)&bone.inversedBindPoseTransformMS, sizeof(TMat));
+            }
+
+            TMat rootTransform = skeleton->getRootTransform();
+            outputFile.write((S8 const*)&rootTransform, sizeof(TMat));
+
+            StringKeyMap<MeshSkeletonAnimationPtr> const& animations = skeleton->getAnimations();
+            S32 animationsCount = (S32)animations.size();
+            outputFile.write((S8 const*)&animationsCount, sizeof(animationsCount));
+            for (auto const& animationEntry : animations)
+            {
+                MeshSkeletonAnimationPtr const& animation = animationEntry.second;
+
+                U16 nameLength = (U16)animation->getName().size();
+                outputFile.write((S8 const*)&nameLength, sizeof(nameLength));
+                outputFile.write(animation->getName().c_str(), (Size)nameLength);
+
+                F32 animationTime = animation->getAnimationTime();
+                outputFile.write((S8 const*)&animationTime, sizeof(animationTime));
+
+                Vector<MeshSkeletonAnimationBone> const& boneAnimations = animation->getBoneAnimations();
+                static MeshSkeletonAnimationBone const c_emptyBoneAnimation;
+                for (S32 b = 0; b < bonesCount; ++b)
+                {
+                    MeshSkeletonAnimationBone const& boneAnimation =
+                        (b < (S32)boneAnimations.size()) ? boneAnimations[(Size)b] : c_emptyBoneAnimation;
+
+                    for (S32 axis = 0; axis < 3; ++axis)
+                        SaveMZMESHAnimationCurve(outputFile, boneAnimation.translation[axis]);
+
+                    SaveMZMESHRotationCurve(outputFile, boneAnimation.rotation);
+
+                    for (S32 axis = 0; axis < 3; ++axis)
+                        SaveMZMESHAnimationCurve(outputFile, boneAnimation.scale[axis]);
+                }
+            }
+
+            // End tag
+            tag = MZMESHTag::SkeletonEnd;
             outputFile.write((S8 const*)&tag, sizeof(tag));
         }
 
