@@ -33,6 +33,8 @@
 #include "maze-sound-system-openal/MazeSoundSystemOpenALHeader.hpp"
 #include "maze-sound-system-openal/MazeHeaderOpenAL.hpp"
 #include "maze-sound/MazeSoundSource.hpp"
+#include "maze-sound/MazeSoundStream.hpp"
+#include "maze-core/MazeTypes.hpp"
 
 
 //////////////////////////////////////////
@@ -87,6 +89,24 @@ namespace Maze
         //////////////////////////////////////////
         virtual void setPitch(F32 _pitch) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual void setPosition(Vec3F const& _position) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setVelocity(Vec3F const& _velocity) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setSourceRelative(bool _sourceRelative) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setMinDistance(F32 _minDistance) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setMaxDistance(F32 _maxDistance) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setRolloffFactor(F32 _rolloffFactor) MAZE_OVERRIDE;
+
 
         //////////////////////////////////////////
         inline MZALuint getSourceID() const { return m_sourceID; }
@@ -119,8 +139,45 @@ namespace Maze
         //////////////////////////////////////////
         virtual void updateLooped() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual void updatePosition() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void updateVelocity() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void updateSourceRelative() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void updateMinDistance() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void updateMaxDistance() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void updateRolloffFactor() MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        void bindStream();
+
+        //////////////////////////////////////////
+        // Decodes the next chunk from m_stream into _bufferId and queues it.
+        // Handles looping (seekStart) at end-of-stream if m_looped is set.
+        // Returns false if there was no more data to queue (real end of stream).
+        bool fillAndQueueStreamBuffer(MZALuint _bufferId);
+
     protected:
         MZALuint m_sourceID = 0;
+
+        static const S32 c_streamBufferCount = 3;
+        static const S32 c_streamBufferSampleFrames = 8192;
+
+        SoundStreamPtr m_stream;
+        MZALuint m_streamBufferIds[c_streamBufferCount] = {};
+        MZALenum m_streamBufferFormat = 0;
+        Vector<S16> m_streamScratch;
+        bool m_streamEndReached = false;
 
     private:
     };

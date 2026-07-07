@@ -135,6 +135,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Sound::loadStreamFromAssetFile(AssetFilePtr const& _assetFile)
+    {
+        MAZE_PROFILE_EVENT("Sound::loadStreamFromAssetFile");
+
+        if (!_assetFile)
+            return;
+
+        HashedString extension = HashedString(StringHelper::ToLower(_assetFile->getExtension().toUTF8()));
+        ByteBufferPtr fileData = _assetFile->readAsByteBuffer();
+
+        SoundStreamPtr probeStream = SoundManager::GetInstancePtr()->openSoundStream(fileData, extension);
+        MAZE_ERROR_RETURN_IF(!probeStream, "Failed to open sound stream - '%s'!", _assetFile->getFileName().toUTF8().c_str());
+
+        m_streamFileData = fileData;
+        m_streamExtension = extension;
+        m_streamLength = probeStream->getLength();
+    }
+
+    //////////////////////////////////////////
     SoundSourcePtr Sound::play(
         bool _looped,
         SoundGroupPtr const& _soundGroup,

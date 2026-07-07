@@ -33,6 +33,7 @@
 #include "maze-sound/MazeSoundHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-sound/MazeSoundSystem.hpp"
+#include "maze-sound/MazeSoundStream.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
@@ -53,6 +54,7 @@ namespace Maze
     using LoadSoundByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData, SoundDataPtr& _soundData);
     using IsSoundAssetFileFunction = bool(*)(AssetFilePtr const& _file);
     using IsSoundByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData);
+    using OpenSoundStreamFunction = SoundStreamPtr(*)(ByteBufferPtr const& _fileData);
 
 
     //////////////////////////////////////////
@@ -69,17 +71,20 @@ namespace Maze
             LoadSoundAssetFileFunction _loadSoundAssetFileFunc,
             LoadSoundByteBufferFunction _loadSoundByteBufferFunc,
             IsSoundAssetFileFunction _isSoundAssetFileFunc,
-            IsSoundByteBufferFunction _isSoundByteBufferFunc)
+            IsSoundByteBufferFunction _isSoundByteBufferFunc,
+            OpenSoundStreamFunction _openSoundStreamFunc = nullptr)
             : loadSoundAssetFileFunc(_loadSoundAssetFileFunc)
             , loadSoundByteBufferFunc(_loadSoundByteBufferFunc)
             , isSoundAssetFileFunc(_isSoundAssetFileFunc)
             , isSoundByteBufferFunc(_isSoundByteBufferFunc)
+            , openSoundStreamFunc(_openSoundStreamFunc)
         {}
 
         LoadSoundAssetFileFunction loadSoundAssetFileFunc = nullptr;
         LoadSoundByteBufferFunction loadSoundByteBufferFunc = nullptr;
         IsSoundAssetFileFunction isSoundAssetFileFunc = nullptr;
         IsSoundByteBufferFunction isSoundByteBufferFunc = nullptr;
+        OpenSoundStreamFunction openSoundStreamFunc = nullptr;
     };
 
 
@@ -197,6 +202,12 @@ namespace Maze
 
         //////////////////////////////////////////
         SoundDataPtr loadSoundData(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
+        // Opens a fresh, independent streaming decode cursor for the given
+        // compressed file data, using the loader registered for _extension.
+        // Returns nullptr if no streaming-capable loader is registered for it.
+        SoundStreamPtr openSoundStream(ByteBufferPtr const& _fileData, HashedString const& _extension);
 
         //////////////////////////////////////////
         void loadAssetSounds(Set<String> const& _tags);

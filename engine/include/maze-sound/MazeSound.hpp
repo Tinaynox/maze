@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-sound/MazeSoundHeader.hpp"
 #include "maze-sound/MazeSoundData.hpp"
+#include "maze-sound/MazeSoundStream.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/serialization/MazeStringSerializable.hpp"
@@ -113,6 +114,29 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline bool getStreamed() const { return m_streamed; }
+
+        //////////////////////////////////////////
+        inline void setStreamed(bool _value) { m_streamed = _value; }
+
+        //////////////////////////////////////////
+        // Reads raw (compressed) bytes from _assetFile and opens a streaming
+        // decode cursor just to probe format/length - does NOT decode the
+        // whole file to memory. Used instead of loadFromAssetFile() when
+        // getStreamed() is true.
+        void loadStreamFromAssetFile(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
+        inline ByteBufferPtr const& getStreamFileData() const { return m_streamFileData; }
+
+        //////////////////////////////////////////
+        inline HashedString const& getStreamExtension() const { return m_streamExtension; }
+
+        //////////////////////////////////////////
+        inline F32 getStreamLength() const { return m_streamLength; }
+
+
+        //////////////////////////////////////////
         SoundSourcePtr play(
             bool _looped = false,
             SoundGroupPtr const& _soundGroup = nullptr,
@@ -181,6 +205,11 @@ namespace Maze
         SoundSystem* m_soundSystem = nullptr;
 
         HashedString m_name;
+
+        bool m_streamed = false;
+        ByteBufferPtr m_streamFileData;
+        HashedString m_streamExtension;
+        F32 m_streamLength = 0.0f;
 
     protected:
         static Sound* s_instancesList;

@@ -35,6 +35,7 @@
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsEngine.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsEditorTools.hpp"
 #include "maze-plugin-csharp/mono-binds/MazeMonoBindsUI.hpp"
+#include "maze-plugin-csharp/mono-binds/MazeMonoBindsSound.hpp"
 #include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
 #include "maze-plugin-csharp/ecs/components/MazeMonoBehaviour.hpp"
@@ -725,6 +726,7 @@ namespace Maze
         BindCppFunctionsUI();
         BindCppFunctionsEngine();
         BindCppFunctionsEditorTools();
+        BindCppFunctionsSound();
 
         MonoImage* systemImage = mono_get_corlib();
         CreateScriptClass("System", "String", systemImage);

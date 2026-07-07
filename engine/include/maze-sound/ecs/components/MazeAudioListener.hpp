@@ -25,85 +25,94 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeAssetUnitSound_hpp_))
-#define _MazeAssetUnitSound_hpp_
+#if (!defined(_MazeAudioListener_hpp_))
+#define _MazeAudioListener_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-sound/MazeSoundHeader.hpp"
-#include "maze-core/assets/MazeAssetUnit.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_MANAGED_SHARED_PTR(AssetUnitSound);   
-    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(Sound);
+    MAZE_USING_SHARED_PTR(AudioListener);
+    MAZE_USING_SHARED_PTR(Transform3D);
 
 
     //////////////////////////////////////////
-    // Class AssetUnitSound
+    // Class AudioListener
+    //
+    // Unity-like audio listener component. Exactly one AudioListener is
+    // "active" at a time (matches Unity semantics) - its Transform3D position/
+    // orientation is what 3D AudioSources are heard relative to.
     //
     //////////////////////////////////////////
-    class MAZE_SOUND_API AssetUnitSound
-        : public AssetUnit
+    class MAZE_SOUND_API AudioListener
+        : public Component
     {
     public:
-        
+
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitSound, AssetUnit);
-        
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AudioListener, Component);
+
         //////////////////////////////////////////
-        MAZE_FORCEINLINE static HashedCString GetDataBlockId() { return MAZE_HCS("sound"); }
+        MAZE_DECLARE_MEMORY_ALLOCATION(AudioListener);
+
+        //////////////////////////////////////////
+        friend class Entity;
 
     public:
 
         //////////////////////////////////////////
-        virtual ~AssetUnitSound();
+        virtual ~AudioListener();
 
         //////////////////////////////////////////
-        virtual HashedCString getDataBlockId() const MAZE_OVERRIDE { return GetDataBlockId(); }
-
-        //////////////////////////////////////////
-        static AssetUnitSoundPtr Create(
-            AssetFilePtr const& _assetFile,
-            DataBlock const& _data = DataBlock::c_empty);
+        static AudioListenerPtr Create();
 
 
         //////////////////////////////////////////
-        inline SoundPtr const& getSound() const { return m_sound; }
+        void setActive(bool _value);
 
         //////////////////////////////////////////
-        SoundPtr const& loadSound(bool _syncLoad = false);
+        inline bool getActive() const { return m_active; }
 
 
         //////////////////////////////////////////
-        SoundPtr const& initSound();
+        static inline AudioListener* GetActiveListenerRaw() { return s_activeListener; }
+
 
         //////////////////////////////////////////
-        inline bool getStreamed() const { return m_streamed; }
+        // Called once per frame by AudioListenerOnUpdate - pushes this
+        // listener's Transform3D world position/orientation into the current
+        // SoundSystem, if this is the active listener.
+        void updateSpatial(F32 _dt);
 
     protected:
 
         //////////////////////////////////////////
-        AssetUnitSound();
+        AudioListener();
 
         //////////////////////////////////////////
-        virtual bool init(
-            AssetFilePtr const& _assetFile,
-            DataBlock const& _data) MAZE_OVERRIDE;
+        using Component::init;
 
         //////////////////////////////////////////
-        virtual bool loadNowImpl() MAZE_OVERRIDE;
+        bool init();
 
         //////////////////////////////////////////
-        virtual bool unloadNowImpl() MAZE_OVERRIDE;
-    
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
+
     protected:
-        SoundPtr m_sound;
-        bool m_streamed = false;
+        bool m_active = true;
+        Transform3D* m_transform3D = nullptr;
+
+        Vec3F m_lastWorldPosition = Vec3F::c_zero;
+        bool m_hasLastWorldPosition = false;
+
+        static AudioListener* s_activeListener;
     };
 
 
@@ -111,5 +120,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeAssetUnitSound_hpp_
+#endif // _MazeAudioListener_hpp_
 //////////////////////////////////////////

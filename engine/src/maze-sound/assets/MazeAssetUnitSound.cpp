@@ -72,7 +72,9 @@ namespace Maze
     {
         if (!AssetUnit::init(_assetFile, _data))
             return false;
-            
+
+        m_streamed = _data.getBool(MAZE_HCS("streamed"), false);
+
         return true;
     }
 
@@ -99,7 +101,10 @@ namespace Maze
         if (!m_sound)
             return false;
 
-        m_sound->loadFromAssetFile(assetFile);
+        if (m_streamed)
+            m_sound->loadStreamFromAssetFile(assetFile);
+        else
+            m_sound->loadFromAssetFile(assetFile);
         return true;
     }
 
@@ -126,6 +131,7 @@ namespace Maze
 
         m_sound = Sound::Create();
         m_sound->setName(m_data.getString(MAZE_HCS("name"), assetFile->getFileName()));
+        m_sound->setStreamed(m_streamed);
 
         if (SoundManager::GetInstancePtr())
         {

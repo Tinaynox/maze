@@ -33,9 +33,13 @@
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
+#include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-sound/MazeSound.hpp"
 #include "maze-sound/loaders/MazeLoaderWAV.hpp"
 #include "maze-sound/assets/MazeAssetUnitSound.hpp"
+#include "maze-sound/ecs/components/MazeAudioSource.hpp"
+#include "maze-sound/ecs/components/MazeAudioListener.hpp"
+#include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/system/MazeTimer.hpp"
 
 
@@ -82,6 +86,12 @@ namespace Maze
                 (IsSoundAssetFileFunction)&IsWAVFile,
                 (IsSoundByteBufferFunction)&IsWAVFile));
 
+
+        if (EntityManager::GetInstancePtr())
+        {
+            EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<AudioSource>("Sound");
+            EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<AudioListener>("Sound");
+        }
 
         if (AssetUnitManager::GetInstancePtr())
         {
@@ -355,6 +365,19 @@ namespace Maze
         MAZE_LOG("Sound data %s loaded for %.1fms.", _assetFile->getFileName().toUTF8().c_str(), msTime);
 
         return soundData;
+    }
+
+    //////////////////////////////////////////
+    SoundStreamPtr SoundManager::openSoundStream(ByteBufferPtr const& _fileData, HashedString const& _extension)
+    {
+        auto it = m_soundLoaders.find(_extension);
+        if (it == m_soundLoaders.end() || !it->second.openSoundStreamFunc)
+        {
+            MAZE_ERROR("No streaming sound loader registered for extension - '%s'!", _extension.c_str());
+            return SoundStreamPtr();
+        }
+
+        return it->second.openSoundStreamFunc(_fileData);
     }
 
     //////////////////////////////////////////

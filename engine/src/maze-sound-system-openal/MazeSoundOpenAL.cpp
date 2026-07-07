@@ -85,37 +85,8 @@ namespace Maze
 
         Debug::Log("SoundOpenAL loading started (channels=%d, bps=%d)...", channels, bitsPerSample);
 
-        if (channels == 1)
-        {
-            switch (bitsPerSample)
-            {
-                case 4: MAZE_AL_CALL(m_bufferFormat = mzalGetEnumValue("AL_FORMAT_MONO_IMA4")); break;
-                case 8: MAZE_AL_CALL(m_bufferFormat = mzalGetEnumValue("AL_FORMAT_MONO8")); break;
-                case 16: MAZE_AL_CALL(m_bufferFormat = mzalGetEnumValue("AL_FORMAT_MONO16")); break;
-                default: MAZE_ERROR("Sound '%s' - unknown format(c=%d, bps=%d)!", getName().c_str(), channels, bitsPerSample); return false;
-            }
-        }
-        else
-        if (channels == 2)
-        {
-            switch (bitsPerSample)
-            {
-                case 4: MAZE_AL_CALL(m_bufferFormat = mzalGetEnumValue("AL_FORMAT_STEREO_IMA4")); break;
-                case 8: MAZE_AL_CALL(m_bufferFormat = mzalGetEnumValue("AL_FORMAT_STEREO8")); break;
-                case 16: MAZE_AL_CALL(m_bufferFormat = mzalGetEnumValue("AL_FORMAT_STEREO16")); break;
-                default: MAZE_ERROR("Sound '%s' - unknown format(c=%d, bps=%d)!", getName().c_str(), channels, bitsPerSample); return false;
-            }
-        }
-        else
-        if (channels == 4)
-        {
-            switch (bitsPerSample)
-            {
-                case 16: MAZE_AL_CALL(m_bufferFormat = mzalGetEnumValue("AL_FORMAT_QUAD16")); break;
-                default: MAZE_ERROR("Sound '%s' - unknown format(c=%d, bps=%d)!", getName().c_str(), channels, bitsPerSample); return false;
-            }
-        }
-        else
+        m_bufferFormat = GetALFormat(channels, bitsPerSample);
+        if (m_bufferFormat == 0)
         {
             MAZE_ERROR("Sound '%s' - unknown format(c=%d, bps=%d)!", getName().c_str(), channels, bitsPerSample);
             return false;
@@ -169,8 +140,47 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    MZALenum SoundOpenAL::GetALFormat(S32 _channels, S32 _bitsPerSample)
+    {
+        MZALenum format = 0;
+
+        if (_channels == 1)
+        {
+            switch (_bitsPerSample)
+            {
+                case 4: MAZE_AL_CALL(format = mzalGetEnumValue("AL_FORMAT_MONO_IMA4")); break;
+                case 8: MAZE_AL_CALL(format = mzalGetEnumValue("AL_FORMAT_MONO8")); break;
+                case 16: MAZE_AL_CALL(format = mzalGetEnumValue("AL_FORMAT_MONO16")); break;
+                default: break;
+            }
+        }
+        else
+        if (_channels == 2)
+        {
+            switch (_bitsPerSample)
+            {
+                case 4: MAZE_AL_CALL(format = mzalGetEnumValue("AL_FORMAT_STEREO_IMA4")); break;
+                case 8: MAZE_AL_CALL(format = mzalGetEnumValue("AL_FORMAT_STEREO8")); break;
+                case 16: MAZE_AL_CALL(format = mzalGetEnumValue("AL_FORMAT_STEREO16")); break;
+                default: break;
+            }
+        }
+        else
+        if (_channels == 4)
+        {
+            if (_bitsPerSample == 16)
+                MAZE_AL_CALL(format = mzalGetEnumValue("AL_FORMAT_QUAD16"));
+        }
+
+        return format;
+    }
+
+    //////////////////////////////////////////
     F32 SoundOpenAL::getLength() const
     {
+        if (getStreamed())
+            return getStreamLength();
+
         MZALint size;
         MZALint bits;
         MZALint channels;

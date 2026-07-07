@@ -29,6 +29,7 @@
 #include "maze-sound-system-openal/MazeFunctionsOpenAL.hpp"
 #include "maze-sound-system-openal/MazeSoundOpenAL.hpp"
 #include "maze-sound/MazeSoundSystem.hpp"
+#include "maze-sound/managers/MazeSoundManager.hpp"
 
 
 //////////////////////////////////////////
@@ -73,10 +74,22 @@ namespace Maze
         generateALObjects();
 
         if (_sound)
-            bindSound(_sound->castRaw<SoundOpenAL>()->getBufferID());
+        {
+            SoundOpenAL* soundAL = _sound->castRaw<SoundOpenAL>();
+            if (soundAL->getStreamed())
+                bindStream();
+            else
+                bindSound(soundAL->getBufferID());
+        }
 
         updateVolume();
         updateLooped();
+        updatePosition();
+        updateVelocity();
+        updateSourceRelative();
+        updateMinDistance();
+        updateMaxDistance();
+        updateRolloffFactor();
 
         return true;
     }
@@ -115,6 +128,35 @@ namespace Maze
     //////////////////////////////////////////
     bool SoundSourceOpenAL::update(F32 _dt)
     {
+        if (m_stream)
+        {
+            MZALint processed = 0;
+            MAZE_AL_CALL(mzalGetSourcei(m_sourceID, AL_BUFFERS_PROCESSED, &processed));
+            while (processed-- > 0)
+            {
+                MZALuint freedBuffer;
+                MAZE_AL_CALL(mzalSourceUnqueueBuffers(m_sourceID, 1, &freedBuffer));
+                fillAndQueueStreamBuffer(freedBuffer);
+            }
+
+            MZALint state;
+            MAZE_AL_CALL(mzalGetSourcei(m_sourceID, AL_SOURCE_STATE, &state));
+            if (state == AL_STOPPED)
+            {
+                if (m_streamEndReached)
+                    return false;
+
+                // AL can auto-stop if the refill lagged behind playback - if there is
+                // still data queued, this isn't a real end of stream, just resume
+                MZALint queued = 0;
+                MAZE_AL_CALL(mzalGetSourcei(m_sourceID, AL_BUFFERS_QUEUED, &queued));
+                if (queued > 0)
+                    MAZE_AL_CALL(mzalSourcePlay(m_sourceID));
+            }
+
+            return true;
+        }
+
         MZALint state;
         MAZE_AL_CALL(mzalGetSourcei(m_sourceID, AL_SOURCE_STATE, &state));
         if (state == AL_STOPPED)
@@ -142,6 +184,48 @@ namespace Maze
     {
         SoundSource::setPitch(_pitch);
         updatePitch();
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::setPosition(Vec3F const& _position)
+    {
+        SoundSource::setPosition(_position);
+        updatePosition();
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::setVelocity(Vec3F const& _velocity)
+    {
+        SoundSource::setVelocity(_velocity);
+        updateVelocity();
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::setSourceRelative(bool _sourceRelative)
+    {
+        SoundSource::setSourceRelative(_sourceRelative);
+        updateSourceRelative();
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::setMinDistance(F32 _minDistance)
+    {
+        SoundSource::setMinDistance(_minDistance);
+        updateMinDistance();
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::setMaxDistance(F32 _maxDistance)
+    {
+        SoundSource::setMaxDistance(_maxDistance);
+        updateMaxDistance();
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::setRolloffFactor(F32 _rolloffFactor)
+    {
+        SoundSource::setRolloffFactor(_rolloffFactor);
+        updateRolloffFactor();
     }
 
     //////////////////////////////////////////
@@ -183,7 +267,49 @@ namespace Maze
     //////////////////////////////////////////
     void SoundSourceOpenAL::updateLooped()
     {
+        // For streamed sources, looping is handled by fillAndQueueStreamBuffer()
+        // reseeking the decode cursor - AL_LOOPING only applies to a single
+        // statically-bound buffer and is meaningless for queued streaming playback.
+        if (m_stream)
+            return;
+
         MAZE_AL_CALL(mzalSourcei(m_sourceID, AL_LOOPING, m_looped ? 1 : 0));
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::updatePosition()
+    {
+        MAZE_AL_CALL(mzalSource3f(m_sourceID, AL_POSITION, m_position.x, m_position.y, m_position.z));
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::updateVelocity()
+    {
+        MAZE_AL_CALL(mzalSource3f(m_sourceID, AL_VELOCITY, m_velocity.x, m_velocity.y, m_velocity.z));
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::updateSourceRelative()
+    {
+        MAZE_AL_CALL(mzalSourcei(m_sourceID, AL_SOURCE_RELATIVE, m_sourceRelative ? 1 : 0));
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::updateMinDistance()
+    {
+        MAZE_AL_CALL(mzalSourcef(m_sourceID, AL_REFERENCE_DISTANCE, m_minDistance));
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::updateMaxDistance()
+    {
+        MAZE_AL_CALL(mzalSourcef(m_sourceID, AL_MAX_DISTANCE, m_maxDistance));
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::updateRolloffFactor()
+    {
+        MAZE_AL_CALL(mzalSourcef(m_sourceID, AL_ROLLOFF_FACTOR, m_rolloffFactor));
     }
 
     //////////////////////////////////////////
@@ -203,6 +329,22 @@ namespace Maze
         if (m_sourceID == 0)
             return;
 
+        MAZE_AL_CALL(mzalSourceStop(m_sourceID));
+
+        if (m_stream)
+        {
+            MZALint queued = 0;
+            MAZE_AL_CALL(mzalGetSourcei(m_sourceID, AL_BUFFERS_QUEUED, &queued));
+            while (queued-- > 0)
+            {
+                MZALuint freedBuffer;
+                MAZE_AL_CALL(mzalSourceUnqueueBuffers(m_sourceID, 1, &freedBuffer));
+            }
+
+            MAZE_AL_CALL(mzalDeleteBuffers(c_streamBufferCount, m_streamBufferIds));
+            m_stream.reset();
+        }
+
         MAZE_AL_CALL(mzalSourcei(m_sourceID, AL_BUFFER, AL_NONE));
         MAZE_AL_CALL(mzalDeleteSources(1, &m_sourceID));
         m_sourceID = 0;
@@ -212,6 +354,53 @@ namespace Maze
     void SoundSourceOpenAL::bindSound(MZALuint _bufferID)
     {
         MAZE_AL_CALL(mzalSourcei(m_sourceID, AL_BUFFER, _bufferID));
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::bindStream()
+    {
+        SoundOpenAL* soundAL = m_sound->castRaw<SoundOpenAL>();
+
+        m_stream = SoundManager::GetInstancePtr()->openSoundStream(
+            soundAL->getStreamFileData(),
+            soundAL->getStreamExtension());
+        MAZE_ERROR_RETURN_IF(!m_stream, "Failed to open sound stream for playback - '%s'!", m_sound->getName().c_str());
+
+        m_streamBufferFormat = SoundOpenAL::GetALFormat(m_stream->getChannels(), m_stream->getBitsPerSample());
+        m_streamScratch.resize((Size)(c_streamBufferSampleFrames * m_stream->getChannels()));
+
+        MAZE_AL_CALL(mzalGenBuffers(c_streamBufferCount, m_streamBufferIds));
+
+        m_streamEndReached = false;
+        for (S32 i = 0; i < c_streamBufferCount; ++i)
+            fillAndQueueStreamBuffer(m_streamBufferIds[i]);
+    }
+
+    //////////////////////////////////////////
+    bool SoundSourceOpenAL::fillAndQueueStreamBuffer(MZALuint _bufferId)
+    {
+        Size framesGot = m_stream->getSamplesInterleaved(m_streamScratch.data(), (Size)c_streamBufferSampleFrames);
+        if (framesGot == 0)
+        {
+            if (!m_looped)
+            {
+                m_streamEndReached = true;
+                return false;
+            }
+
+            m_stream->seekStart();
+            framesGot = m_stream->getSamplesInterleaved(m_streamScratch.data(), (Size)c_streamBufferSampleFrames);
+            if (framesGot == 0)
+            {
+                m_streamEndReached = true;
+                return false;
+            }
+        }
+
+        MZALsizei byteSize = (MZALsizei)(framesGot * m_stream->getChannels() * sizeof(S16));
+        MAZE_AL_CALL(mzalBufferData(_bufferId, m_streamBufferFormat, m_streamScratch.data(), byteSize, m_stream->getFrequency()));
+        MAZE_AL_CALL(mzalSourceQueueBuffers(m_sourceID, 1, &_bufferId));
+        return true;
     }
 
 } // namespace Maze

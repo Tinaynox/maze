@@ -30,6 +30,7 @@
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-sound/MazeSoundSystem.hpp"
 #include "maze-plugin-loader-ogg/loaders/MazeLoaderOGG.hpp"
+#include "maze-plugin-loader-ogg/loaders/MazeSoundStreamOGG.hpp"
 
 
 //////////////////////////////////////////
@@ -121,7 +122,8 @@ namespace Maze
                     (LoadSoundAssetFileFunction)&LoadOGG,
                     (LoadSoundByteBufferFunction)&LoadOGG,
                     (IsSoundAssetFileFunction)&IsOGGFile,
-                    (IsSoundByteBufferFunction)&IsOGGFile));
+                    (IsSoundByteBufferFunction)&IsOGGFile,
+                    (OpenSoundStreamFunction)&OpenOGGStream));
         }
         
     }

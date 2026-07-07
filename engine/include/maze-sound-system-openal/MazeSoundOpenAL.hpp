@@ -72,6 +72,12 @@ namespace Maze
         //////////////////////////////////////////
         inline MZALuint getBufferID() const { return m_bufferID; }
 
+
+        //////////////////////////////////////////
+        // Maps a (channels, bitsPerSample) PCM format pair to an AL_FORMAT_* enum.
+        // Shared by both the one-shot buffer upload path and streaming buffer fills.
+        static MZALenum GetALFormat(S32 _channels, S32 _bitsPerSample);
+
     protected:
 
         //////////////////////////////////////////

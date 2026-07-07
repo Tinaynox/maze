@@ -112,6 +112,16 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool findSoundSource(std::function<bool(SoundSource*)> const& _callback) MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        virtual void setListenerPosition(Vec3F const& _position) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setListenerVelocity(Vec3F const& _velocity) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setListenerOrientation(Vec3F const& _forward, Vec3F const& _up) MAZE_OVERRIDE;
+
     public:
 
         //////////////////////////////////////////

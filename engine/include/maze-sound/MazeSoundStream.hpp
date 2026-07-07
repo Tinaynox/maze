@@ -25,91 +25,63 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeAssetUnitSound_hpp_))
-#define _MazeAssetUnitSound_hpp_
+#if (!defined(_MazeSoundStream_hpp_))
+#define _MazeSoundStream_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-sound/MazeSoundHeader.hpp"
-#include "maze-core/assets/MazeAssetUnit.hpp"
+#include "maze-core/MazeTypes.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_MANAGED_SHARED_PTR(AssetUnitSound);   
-    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(Sound);
+    MAZE_USING_SHARED_PTR(SoundStream);
 
 
     //////////////////////////////////////////
-    // Class AssetUnitSound
+    // Class SoundStream
+    //
+    // Format-agnostic incremental PCM decoder used for streamed (not fully
+    // decoded to memory) sound playback. One instance is a single live decode
+    // cursor - it is not meant to be shared across simultaneous playbacks of
+    // the same sound.
     //
     //////////////////////////////////////////
-    class MAZE_SOUND_API AssetUnitSound
-        : public AssetUnit
+    class MAZE_SOUND_API SoundStream
     {
     public:
-        
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitSound, AssetUnit);
-        
-        //////////////////////////////////////////
-        MAZE_FORCEINLINE static HashedCString GetDataBlockId() { return MAZE_HCS("sound"); }
-
-    public:
 
         //////////////////////////////////////////
-        virtual ~AssetUnitSound();
+        virtual ~SoundStream() {}
 
         //////////////////////////////////////////
-        virtual HashedCString getDataBlockId() const MAZE_OVERRIDE { return GetDataBlockId(); }
+        virtual S32 getChannels() const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        static AssetUnitSoundPtr Create(
-            AssetFilePtr const& _assetFile,
-            DataBlock const& _data = DataBlock::c_empty);
-
+        virtual S32 getFrequency() const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        inline SoundPtr const& getSound() const { return m_sound; }
+        virtual S32 getBitsPerSample() const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        SoundPtr const& loadSound(bool _syncLoad = false);
-
-
-        //////////////////////////////////////////
-        SoundPtr const& initSound();
+        virtual F32 getLength() const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        inline bool getStreamed() const { return m_streamed; }
-
-    protected:
-
-        //////////////////////////////////////////
-        AssetUnitSound();
+        // Decodes up to _maxSampleFrames interleaved sample-frames into _buffer.
+        // Returns the number of frames actually written; 0 means end of stream.
+        virtual Size getSamplesInterleaved(S16* _buffer, Size _maxSampleFrames) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual bool init(
-            AssetFilePtr const& _assetFile,
-            DataBlock const& _data) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual bool loadNowImpl() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual bool unloadNowImpl() MAZE_OVERRIDE;
-    
-    protected:
-        SoundPtr m_sound;
-        bool m_streamed = false;
+        // Rewinds the decode cursor back to the start of the stream.
+        virtual void seekStart() MAZE_ABSTRACT;
     };
-
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeAssetUnitSound_hpp_
+#endif // _MazeSoundStream_hpp_
 //////////////////////////////////////////

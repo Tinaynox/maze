@@ -385,5 +385,24 @@ namespace Maze
         return result;
     }
 
+    //////////////////////////////////////////
+    void SoundSystemOpenAL::setListenerPosition(Vec3F const& _position)
+    {
+        MAZE_AL_CALL(mzalListener3f(AL_POSITION, _position.x, _position.y, _position.z));
+    }
+
+    //////////////////////////////////////////
+    void SoundSystemOpenAL::setListenerVelocity(Vec3F const& _velocity)
+    {
+        MAZE_AL_CALL(mzalListener3f(AL_VELOCITY, _velocity.x, _velocity.y, _velocity.z));
+    }
+
+    //////////////////////////////////////////
+    void SoundSystemOpenAL::setListenerOrientation(Vec3F const& _forward, Vec3F const& _up)
+    {
+        MZALfloat orientation[6] = { _forward.x, _forward.y, _forward.z, _up.x, _up.y, _up.z };
+        MAZE_AL_CALL(mzalListenerfv(AL_ORIENTATION, orientation));
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

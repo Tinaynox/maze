@@ -25,91 +25,82 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeAssetUnitSound_hpp_))
-#define _MazeAssetUnitSound_hpp_
+#if (!defined(_MazeSoundStreamOGG_hpp_))
+#define _MazeSoundStreamOGG_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-sound/MazeSoundHeader.hpp"
-#include "maze-core/assets/MazeAssetUnit.hpp"
+#include "maze-plugin-loader-ogg/MazeLoaderOGGHeader.hpp"
+#include "maze-sound/MazeSoundStream.hpp"
+#include "maze-core/data/MazeByteBuffer.hpp"
+
+
+//////////////////////////////////////////
+struct stb_vorbis;
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_MANAGED_SHARED_PTR(AssetUnitSound);   
-    MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
-    MAZE_USING_SHARED_PTR(Sound);
+    MAZE_USING_SHARED_PTR(SoundStreamOGG);
 
 
     //////////////////////////////////////////
-    // Class AssetUnitSound
+    // Class SoundStreamOGG
     //
     //////////////////////////////////////////
-    class MAZE_SOUND_API AssetUnitSound
-        : public AssetUnit
+    class MAZE_PLUGIN_LOADER_OGG_API SoundStreamOGG
+        : public SoundStream
     {
     public:
-        
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetUnitSound, AssetUnit);
-        
-        //////////////////////////////////////////
-        MAZE_FORCEINLINE static HashedCString GetDataBlockId() { return MAZE_HCS("sound"); }
-
-    public:
 
         //////////////////////////////////////////
-        virtual ~AssetUnitSound();
+        virtual ~SoundStreamOGG();
 
         //////////////////////////////////////////
-        virtual HashedCString getDataBlockId() const MAZE_OVERRIDE { return GetDataBlockId(); }
+        static SoundStreamOGGPtr Create(ByteBufferPtr const& _fileData);
 
         //////////////////////////////////////////
-        static AssetUnitSoundPtr Create(
-            AssetFilePtr const& _assetFile,
-            DataBlock const& _data = DataBlock::c_empty);
-
+        virtual S32 getChannels() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        inline SoundPtr const& getSound() const { return m_sound; }
+        virtual S32 getFrequency() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        SoundPtr const& loadSound(bool _syncLoad = false);
-
-
-        //////////////////////////////////////////
-        SoundPtr const& initSound();
+        virtual S32 getBitsPerSample() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        inline bool getStreamed() const { return m_streamed; }
+        virtual F32 getLength() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual Size getSamplesInterleaved(S16* _buffer, Size _maxSampleFrames) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void seekStart() MAZE_OVERRIDE;
 
     protected:
 
         //////////////////////////////////////////
-        AssetUnitSound();
+        SoundStreamOGG();
 
         //////////////////////////////////////////
-        virtual bool init(
-            AssetFilePtr const& _assetFile,
-            DataBlock const& _data) MAZE_OVERRIDE;
+        bool init(ByteBufferPtr const& _fileData);
 
-        //////////////////////////////////////////
-        virtual bool loadNowImpl() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual bool unloadNowImpl() MAZE_OVERRIDE;
-    
     protected:
-        SoundPtr m_sound;
-        bool m_streamed = false;
+        ByteBufferPtr m_fileData;
+        stb_vorbis* m_vorbis = nullptr;
+        S32 m_channels = 0;
+        S32 m_frequency = 0;
+        F32 m_length = 0.0f;
     };
 
+    //////////////////////////////////////////
+    MAZE_PLUGIN_LOADER_OGG_API SoundStreamPtr OpenOGGStream(ByteBufferPtr const& _fileData);
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeAssetUnitSound_hpp_
+#endif // _MazeSoundStreamOGG_hpp_
 //////////////////////////////////////////

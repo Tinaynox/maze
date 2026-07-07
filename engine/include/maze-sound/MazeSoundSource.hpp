@@ -36,6 +36,7 @@
 #include "maze-sound/MazeSoundData.hpp"
 #include "maze-sound/MazeSoundSystem.hpp"
 #include "maze-sound/MazeSoundGroup.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 
 
 //////////////////////////////////////////
@@ -86,6 +87,48 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        virtual void setPosition(Vec3F const& _position) { m_position = _position; }
+
+        //////////////////////////////////////////
+        inline Vec3F const& getPosition() const { return m_position; }
+
+
+        //////////////////////////////////////////
+        virtual void setVelocity(Vec3F const& _velocity) { m_velocity = _velocity; }
+
+        //////////////////////////////////////////
+        inline Vec3F const& getVelocity() const { return m_velocity; }
+
+
+        //////////////////////////////////////////
+        virtual void setSourceRelative(bool _sourceRelative) { m_sourceRelative = _sourceRelative; }
+
+        //////////////////////////////////////////
+        inline bool getSourceRelative() const { return m_sourceRelative; }
+
+
+        //////////////////////////////////////////
+        virtual void setMinDistance(F32 _minDistance) { m_minDistance = _minDistance; }
+
+        //////////////////////////////////////////
+        inline F32 getMinDistance() const { return m_minDistance; }
+
+
+        //////////////////////////////////////////
+        virtual void setMaxDistance(F32 _maxDistance) { m_maxDistance = _maxDistance; }
+
+        //////////////////////////////////////////
+        inline F32 getMaxDistance() const { return m_maxDistance; }
+
+
+        //////////////////////////////////////////
+        virtual void setRolloffFactor(F32 _rolloffFactor) { m_rolloffFactor = _rolloffFactor; }
+
+        //////////////////////////////////////////
+        inline F32 getRolloffFactor() const { return m_rolloffFactor; }
+
+
+        //////////////////////////////////////////
         virtual void play() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
@@ -128,6 +171,24 @@ namespace Maze
         //////////////////////////////////////////
         virtual void updateLooped() MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual void updatePosition() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void updateVelocity() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void updateSourceRelative() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void updateMinDistance() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void updateMaxDistance() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void updateRolloffFactor() MAZE_ABSTRACT;
+
 
         //////////////////////////////////////////
         void notifySoundGroupVolumeChanged(F32 _volume);
@@ -143,6 +204,13 @@ namespace Maze
         F32 m_volume = 1.0f;
         F32 m_pitch = 1.0f;
         bool m_looped = false;
+
+        Vec3F m_position = Vec3F::c_zero;
+        Vec3F m_velocity = Vec3F::c_zero;
+        bool m_sourceRelative = false;
+        F32 m_minDistance = 1.0f;
+        F32 m_maxDistance = 1000000.0f;
+        F32 m_rolloffFactor = 1.0f;
 
 
     protected:

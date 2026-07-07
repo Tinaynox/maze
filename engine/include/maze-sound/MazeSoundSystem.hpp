@@ -34,6 +34,7 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-sound/MazeSoundData.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 
 
 //////////////////////////////////////////
@@ -105,6 +106,16 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool findSoundSource(std::function<bool(SoundSource*)> const& _callback) MAZE_ABSTRACT;
+
+
+        //////////////////////////////////////////
+        virtual void setListenerPosition(Vec3F const& _position) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void setListenerVelocity(Vec3F const& _velocity) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void setListenerOrientation(Vec3F const& _forward, Vec3F const& _up) MAZE_ABSTRACT;
 
     protected:
 
