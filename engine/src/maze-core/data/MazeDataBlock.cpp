@@ -456,6 +456,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    String DataBlock::toString(U32 _flags) const
+    {
+        return std::move(DataBlockTextSerialization::SaveText(*this, _flags));
+    }
+
+    //////////////////////////////////////////
     bool DataBlock::loadText(ByteBuffer const& _byteBuffer)
     {
         return DataBlockTextSerialization::LoadText(*this, _byteBuffer);

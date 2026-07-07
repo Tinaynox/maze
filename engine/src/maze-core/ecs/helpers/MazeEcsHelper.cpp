@@ -174,6 +174,9 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Component* DeserializeComponentFromDataBlock(EcsWorld* _ecsWorld, DataBlock const& _cmpBlock)
         {
+            if (!_ecsWorld)
+                return nullptr;
+
             EntityId eid = DeserializeEntityIdFromDataBlock(_cmpBlock, "eid");
             EntityPtr const& entity = _ecsWorld->getEntity(eid);
             if (!entity)
@@ -463,6 +466,125 @@ namespace Maze
 
             return targetEntity->getComponentBySerializationId(
                 _block.getS32(MAZE_HCS("prefabComponentSid"), c_invalidSerializationId));
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool IsEntityAncestor(Entity* _ancestor, Entity* _entity)
+        {
+            Entity* cur = _entity;
+            while (cur)
+            {
+                if (cur == _ancestor)
+                    return true;
+
+                if (Transform2D* transform2D = cur->getComponentRaw<Transform2D>())
+                    cur = transform2D->getParent() ? transform2D->getParent()->getEntityRaw() : nullptr;
+                else
+                if (Transform3D* transform3D = cur->getComponentRaw<Transform3D>())
+                    cur = transform3D->getParent() ? transform3D->getParent()->getEntityRaw() : nullptr;
+                else
+                    cur = nullptr;
+            }
+
+            return false;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API S32 BuildPrefabSidPathToRoot(
+            Entity* _target,
+            Entity* _root,
+            EcsSerializationId (&_outPath)[c_maxPrefabRefDepth])
+        {
+            if (_target == _root)
+                return 0;
+
+            if (!IsEntityAncestor(_root, _target))
+                return -1;
+
+            if (_target->getSerializationId() == c_invalidSerializationId)
+                return -1;
+
+            EcsSerializationId reversedPath[c_maxPrefabRefDepth];
+            S32 count = 0;
+            reversedPath[count++] = _target->getSerializationId();
+
+            Entity* cur = _target;
+            while (true)
+            {
+                Entity* enclosingRoot = GetEnclosingPrefabInstanceRootEntity(cur);
+
+                // Reached _root's own prefab space (_root may have no PrefabInstance
+                // itself - e.g. the root of an identity prefab)
+                if (!enclosingRoot || enclosingRoot == _root)
+                    break;
+
+                if (count == c_maxPrefabRefDepth)
+                    return -1;
+
+                if (enclosingRoot->getSerializationId() == c_invalidSerializationId)
+                    return -1;
+
+                reversedPath[count++] = enclosingRoot->getSerializationId();
+                cur = enclosingRoot;
+            }
+
+            for (S32 i = 0; i < count; ++i)
+                _outPath[i] = reversedPath[count - 1 - i];
+
+            return count;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void NormalizeEntityIdBlocksToPrefabSpace(
+            DataBlock& _dataBlock,
+            Entity* _root,
+            EcsWorld* _world)
+        {
+            for (DataBlock* subBlock : _dataBlock)
+            {
+                if (StringHelper::IsEndsWith(subBlock->getName().str, ":EntityId"))
+                {
+                    // Mirror replaceDataBlockEcsIds - the world param is not part of the saved data
+                    if (_dataBlock.getU8(MAZE_HCS("world"), (U8)c_invalidWorldId) != (U8)c_invalidWorldId)
+                        _dataBlock.removeParam(MAZE_HCS("world"));
+
+                    EntityId eid = EntityId(subBlock->getS32(MAZE_HCS("value"), (S32)c_invalidEntityId));
+                    if (eid == c_invalidEntityId)
+                        continue;
+
+                    subBlock->removeParam(MAZE_HCS("value"));
+
+                    Entity* entity = _world ? _world->getEntity(eid).get() : nullptr;
+                    if (!entity)
+                    {
+                        subBlock->setBool(MAZE_HCS("missing"), true);
+                        continue;
+                    }
+
+                    EcsSerializationId path[c_maxPrefabRefDepth];
+                    S32 pathLength = BuildPrefabSidPathToRoot(entity, _root, path);
+                    if (pathLength == 0)
+                    {
+                        subBlock->setBool(MAZE_HCS("self"), true);
+                    }
+                    else
+                    if (pathLength > 0)
+                    {
+                        for (S32 i = 0; i < pathLength; ++i)
+                            subBlock->addS32(MAZE_HCS("relSid"), path[i]);
+                    }
+                    else
+                    {
+                        // Reference outside _root's subtree - keep the eid, it is only
+                        // comparable to another external ref to the same entity
+                        subBlock->setS32(MAZE_HCS("external"), (S32)eid);
+                    }
+                }
+                else
+                {
+                    NormalizeEntityIdBlocksToPrefabSpace(*subBlock, _root, _world);
+                }
+            }
         }
 
     } // namespace EcsHelper

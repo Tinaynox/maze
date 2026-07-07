@@ -90,6 +90,36 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        // Serialized values contain runtime eids that never match across the live and
+        // identity prefab worlds - when the raw compare fails, compare again with eids
+        // normalized to prefab-root-relative sid paths
+        static bool IsModificationValueEqual(
+            DataBlock const& _value,
+            DataBlock const& _identityValue,
+            Entity* _rootEntity,
+            Entity* _identityRootEntity)
+        {
+            if (_value.isEqual(_identityValue))
+                return true;
+
+            DataBlock normalizedValue;
+            normalizedValue.copyFrom(&_value);
+            EcsHelper::NormalizeEntityIdBlocksToPrefabSpace(
+                normalizedValue,
+                _rootEntity,
+                _rootEntity->getEcsWorld());
+
+            DataBlock normalizedIdentityValue;
+            normalizedIdentityValue.copyFrom(&_identityValue);
+            EcsHelper::NormalizeEntityIdBlocksToPrefabSpace(
+                normalizedIdentityValue,
+                _identityRootEntity,
+                _identityRootEntity->getEcsWorld());
+
+            return normalizedValue.isEqual(normalizedIdentityValue);
+        }
+
+        //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API void SerializeMonoBehaviourModificationsToDataBlock(EntitiesToDataBlockContext& _context, ComponentPtr const& _component, ComponentPtr const& _identityComponent, DataBlock& _prefabBlock)
         {
             MonoBehaviour* monoBehaviour = _component->castRaw<MonoBehaviour>();
@@ -121,6 +151,8 @@ namespace Maze
                     if (_field->isStatic())
                         return;
 
+                    // #TODO: for debug (remove later)
+                    /*
                     MonoClass* fieldMonoClass = mono_class_from_mono_type(_field->getMonoType());
                     if (fieldMonoClass)
                     {
@@ -134,7 +166,10 @@ namespace Maze
 
                             // #TODO: Ignore entity eid modifications for now
                             if (entityInstance0 && entityInstance1)
-                                return;
+                            {
+                                int a = 0;
+                                // return;
+                            }
                         }
                         else
                         if (mono_class_is_subclass_of(fieldMonoClass, MonoEngine::GetComponentClass()->getMonoClass(), false))
@@ -147,7 +182,10 @@ namespace Maze
 
                             // #TODO: Ignore component eid modifications for now
                             if (componentInstance0 && componentInstance1)
-                                return;
+                            {
+                                int a = 0;
+                                // return;
+                            }
                         }
                         else
                         if (mono_type_get_type(_field->getMonoType()) == MONO_TYPE_GENERICINST)
@@ -159,7 +197,9 @@ namespace Maze
                                 monoTypeName,
                                 monoTypeBaseNameBuffer,
                                 sizeof(monoTypeBaseNameBuffer)))
+                            {
                                 return;
+                            }
 
                             if (strcmp(monoTypeBaseNameBuffer, "System.Collections.Generic.List") == 0)
                             {
@@ -173,10 +213,14 @@ namespace Maze
 
                                 // #TODO: Ignore component eid modifications for now
                                 if (MonoEngine::GetMonoBehaviourSubClass(monoTypeArgBaseNameHCS))
-                                    return;
+                                {
+                                    int a = 0;
+                                    // return;
+                                }
                             }
                         }
                     }
+                    */
 
                     DataBlock value;
                     MonoSerializationManager::GetInstancePtr()->saveFieldToDataBlock(
@@ -192,7 +236,11 @@ namespace Maze
                         _field,
                         identityValue);
 
-                    if (value.isEqual(identityValue))
+                    if (IsModificationValueEqual(
+                        value,
+                        identityValue,
+                        monoBehaviour->getEntityRaw(),
+                        identityMonoBehaviour->getEntityRaw()))
                         return;
 
                     DataBlock* modificationBlock = _prefabBlock.addNewDataBlock(MAZE_HCS("modification"));
@@ -210,6 +258,8 @@ namespace Maze
                     if (_property->isStaticGetter() || _property->isStaticSetter())
                         return;
 
+                    // #TODO: for debug (remove later)
+                    /*
                     MonoClass* fieldMonoClass = mono_class_from_mono_type(_property->getMonoType());
                     if (fieldMonoClass)
                     {
@@ -223,7 +273,10 @@ namespace Maze
 
                             // #TODO: Ignore entity eid modifications for now
                             if (entityInstance0 && entityInstance1)
-                                return;
+                            {
+                                int a = 0;
+                                // return;
+                            }
                         }
                         else
                         if (mono_class_is_subclass_of(fieldMonoClass, MonoEngine::GetComponentClass()->getMonoClass(), false))
@@ -236,7 +289,10 @@ namespace Maze
 
                             // #TODO: Ignore component eid modifications for now
                             if (componentInstance0 && componentInstance1)
-                                return;
+                            {
+                                int a = 0;
+                                // return;
+                            }
                         }
                         else
                         if (mono_type_get_type(_property->getMonoType()) == MONO_TYPE_GENERICINST)
@@ -248,7 +304,9 @@ namespace Maze
                                 monoTypeName,
                                 monoTypeBaseNameBuffer,
                                 sizeof(monoTypeBaseNameBuffer)))
+                            {
                                 return;
+                            }
 
                             if (strcmp(monoTypeBaseNameBuffer, "System.Collections.Generic.List") == 0)
                             {
@@ -262,10 +320,14 @@ namespace Maze
 
                                 // #TODO: Ignore component eid modifications for now
                                 if (MonoEngine::GetMonoBehaviourSubClass(monoTypeArgBaseNameHCS))
-                                    return;
+                                {
+                                    int a = 0;
+                                    // return;
+                                }
                             }
                         }
                     }
+                    */
 
                     DataBlock value;
                     MonoSerializationManager::GetInstancePtr()->savePropertyToDataBlock(
@@ -281,7 +343,11 @@ namespace Maze
                         _property,
                         identityValue);
 
-                    if (value.isEqual(identityValue))
+                    if (IsModificationValueEqual(
+                        value,
+                        identityValue,
+                        monoBehaviour->getEntityRaw(),
+                        identityMonoBehaviour->getEntityRaw()))
                         return;
 
                     DataBlock* modificationBlock = _prefabBlock.addNewDataBlock(MAZE_HCS("modification"));
@@ -351,6 +417,7 @@ namespace Maze
             EcsWorld* ecsWorld = _component->getEntityRaw()->getEcsWorld();
 
             DataBlock const* valueBlock = _modificationBlock.getDataBlock(MAZE_HCS("value"));
+            MAZE_WARNING_RETURN_IF(!valueBlock, "MonoBehaviour modification without value block! property=%s", _propertyName);
 
             HashedCString propertyName(_propertyName);
 

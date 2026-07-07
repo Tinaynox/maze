@@ -507,15 +507,15 @@ namespace Maze
     //////////////////////////////////////////
     bool DataBlockTextParser::parseDataBlock(DataBlock& _dataBlock, Bool _isTopmost)
     {
-        m_dataBlock = &_dataBlock;
-
         String nameText;
         String typeNameText;
         String valueText;
 
         for (;;)
         {
-            if (!skipWhite(true))
+            m_dataBlock = &_dataBlock;
+
+            if (!skipWhite(true, true))
                 return false;
 
             if (isEndOfBuffer())
@@ -963,8 +963,11 @@ namespace Maze
                 if (ch == quotCh && !multiLineString)
                 {
                     m_readStream.rewind(1);
-                    if (!skipWhite())
-                        return false;
+
+                    // Skip same-line whitespace only: newlines and comments after the value
+                    // must stay in the stream so they are attached to the param, not consumed here
+                    while (!isEndOfBuffer() && (readCharNoRewind() == ' ' || readCharNoRewind() == '\t'))
+                        m_readStream.rewind(1);
 
                     if (readCharNoRewind() == ';')
                         m_readStream.rewind(1);
@@ -978,8 +981,9 @@ namespace Maze
                         _value.erase(_value.size() - 1, 1);
                     m_readStream.rewind(3);
 
-                    if (!skipWhite())
-                        return false;
+                    while (!isEndOfBuffer() && (readCharNoRewind() == ' ' || readCharNoRewind() == '\t'))
+                        m_readStream.rewind(1);
+
                     if (readCharNoRewind() == ';')
                         m_readStream.rewind(1);
                     break;

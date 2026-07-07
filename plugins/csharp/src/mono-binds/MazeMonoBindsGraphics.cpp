@@ -990,6 +990,12 @@ namespace Maze
     //////////////////////////////////////////
     inline bool MaterialGetId(MonoString* _materialName, S32& _outValue)
     {
+        if (!_materialName)
+        {
+            _outValue = c_invalidResourceId;
+            return false;
+        }
+
         Char* cstr = mono_string_to_utf8(_materialName);
         MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(HashedCString(cstr));
         mono_free(cstr);

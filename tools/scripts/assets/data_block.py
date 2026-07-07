@@ -539,12 +539,12 @@ class DataBlock:
 
                 if name.startswith(MAZE_DATA_BLOCK_COMMENT_C):
                     file.write("/*")
-                    file.write(param.value)
+                    file.write(data_block.params[0].value)
                     file.write("*/")
                     _write_eol(file)
                 elif name.startswith(MAZE_DATA_BLOCK_COMMENT_CPP):
                     file.write("//")
-                    file.write(param.value)
+                    file.write(data_block.params[0].value)
                     _write_eol(file)
                 continue
 
@@ -624,11 +624,10 @@ class DataBlockTextParser:
         return data_block
 
     def _parse_data_block(self, data_block, is_topmost):
-
-        self.data_block = data_block
-
         while True:
-            if not self._skip_white(True):
+            self.data_block = data_block
+
+            if not self._skip_white(True, True):
                 return False
 
             if self._is_eof():
@@ -815,7 +814,7 @@ class DataBlockTextParser:
                                 MAZE_DATA_BLOCK_COMMENT_ENDLINE_C,
                                 self._read_text(
                                     c_comment_start_offset,
-                                    self.file.tell() - c_comment_start_offset - 1))
+                                    self.file.tell() - c_comment_start_offset - 2))
 
                         continue
                     else:
@@ -924,8 +923,10 @@ class DataBlockTextParser:
             if quot_ch != 0:
                 if ch == quot_ch and not multi_line_string:
                     self._rewind(1)
-                    if not self._skip_white():
-                        return ""
+                    # Skip same-line whitespace only: newlines and comments after the value
+                    # must stay in the stream so they are attached to the param, not consumed here
+                    while not self._is_eof() and self._read_char_no_rewind() in (' ', '\t'):
+                        self._rewind(1)
                     if self._read_char_no_rewind() == ';':
                         self._rewind(1)
                     break
@@ -937,8 +938,8 @@ class DataBlockTextParser:
                         value = value[0:len(value) - 1]
                     self._rewind(3)
 
-                    if not self._skip_white():
-                        return ""
+                    while not self._is_eof() and self._read_char_no_rewind() in (' ', '\t'):
+                        self._rewind(1)
                     if self._read_char_no_rewind() == ';':
                         self._rewind(1)
                     break

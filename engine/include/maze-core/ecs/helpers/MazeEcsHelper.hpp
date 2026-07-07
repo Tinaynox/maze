@@ -178,6 +178,31 @@ namespace Maze
             DataBlock const& _block,
             Map<EcsSerializationId, EntityPtr> const& _outEntities);
 
+
+        //////////////////////////////////////////
+        // Returns true if _ancestor is a transform ancestor of _entity (or the entity itself)
+        MAZE_CORE_API bool IsEntityAncestor(Entity* _ancestor, Entity* _entity);
+
+        //////////////////////////////////////////
+        // Builds the sid path from _root's prefab space down to _target: sids of nested
+        // prefab instance roots (outermost first) followed by _target's own sid.
+        // Returns the path length, 0 if _target == _root, or -1 if _target is not
+        // inside _root's subtree.
+        MAZE_CORE_API S32 BuildPrefabSidPathToRoot(
+            Entity* _target,
+            Entity* _root,
+            EcsSerializationId (&_outPath)[c_maxPrefabRefDepth]);
+
+        //////////////////////////////////////////
+        // Rewrites every ':EntityId' block's runtime eid in _dataBlock (recursively) into
+        // a _root-relative form ('self' flag / 'relSid' path / 'external' eid) resolved in
+        // _world. Used to compare serialized data of a prefab instance against its identity
+        // prefab independently of runtime eids.
+        MAZE_CORE_API void NormalizeEntityIdBlocksToPrefabSpace(
+            DataBlock& _dataBlock,
+            Entity* _root,
+            EcsWorld* _world);
+
     } // namespace EcsHelper
     //////////////////////////////////////////
 

@@ -474,6 +474,9 @@ namespace Maze
         ByteBufferPtr saveText(U32 _flags = 0u) const;
 
         //////////////////////////////////////////
+        String toString(U32 _flags = 0u) const;
+
+        //////////////////////////////////////////
         bool loadText(ByteBuffer const& _byteBuffer);
 
         //////////////////////////////////////////

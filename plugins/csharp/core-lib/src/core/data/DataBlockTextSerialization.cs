@@ -57,7 +57,7 @@ namespace Maze.Core
             }
             else if (hasQuote && !hasTick)
             {
-                quote = new byte[(byte)'\''];
+                quote = new byte[] { (byte)'\'' };
             }
 
             // Opening quote
@@ -526,15 +526,15 @@ namespace Maze.Core
 
         public bool ParseDataBlock(DataBlock dataBlock, bool isTopmost)
         {
-            m_DataBlock = dataBlock;
-
             m_NameText.Clear();
             m_TypeNameText.Clear();
             m_ValueText.Clear();
 
             while (true)
             {
-                if (!SkipWhite(true))
+                m_DataBlock = dataBlock;
+
+                if (!SkipWhite(true, true))
                     return false;
 
                 if (IsEndOfBuffer())
@@ -969,8 +969,11 @@ namespace Maze.Core
                     if (ch == quotCh && !multiLineString)
                     {
                         m_ReadStream.Rewind(1);
-                        if (!SkipWhite())
-                            return false;
+
+                        // Skip same-line whitespace only: newlines and comments after the value
+                        // must stay in the stream so they are attached to the param, not consumed here
+                        while (!IsEndOfBuffer() && (ReadCharNoRewind() == ' ' || ReadCharNoRewind() == '\t'))
+                            m_ReadStream.Rewind(1);
 
                         if (ReadCharNoRewind() == ';')
                             m_ReadStream.Rewind(1);
@@ -985,8 +988,8 @@ namespace Maze.Core
 
                         m_ReadStream.Rewind(3);
 
-                        if (!SkipWhite())
-                            return false;
+                        while (!IsEndOfBuffer() && (ReadCharNoRewind() == ' ' || ReadCharNoRewind() == '\t'))
+                            m_ReadStream.Rewind(1);
 
                         if (ReadCharNoRewind() == ';')
                             m_ReadStream.Rewind(1);
