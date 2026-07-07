@@ -813,8 +813,38 @@ namespace Maze
     //////////////////////////////////////////
     void EditorHierarchyController::notifyHierarchyLineDoubleClick(HierarchyLine* _hierarchyLine)
     {
+        if (_hierarchyLine->getType() == HierarchyLineType::Entity)
+        {
+            EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(_hierarchyLine->getUserData()));
+            EntityPtr const& entity = m_world->getEntity(entityId);
+            if (entity)
+            {
+                if (Transform3D* transform3D = entity->getComponentRaw<Transform3D>())
+                {
+                    focusCameraOnEntity(transform3D);
+                    return;
+                }
+            }
+        }
+
         if (_hierarchyLine->hasChildren())
             _hierarchyLine->setExpanded(!_hierarchyLine->getExpanded());
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::focusCameraOnEntity(Transform3D* _transform3D)
+    {
+        SceneMainToolsPtr const& sceneMainTools = EditorManager::GetInstancePtr()->getSceneMainTools();
+        if (!sceneMainTools)
+            return;
+
+        Vec3F32 targetPosition = _transform3D->getWorldPosition();
+
+        Vec3F32 cameraForwardDirection =
+            Quaternion(sceneMainTools->getPitchAngle(), sceneMainTools->getYawAngle(), 0.0f) * Vec3F32::c_unitZ;
+
+        F32 const focusDistance = 5.0f;
+        sceneMainTools->setCamera3DTargetPosition(targetPosition - cameraForwardDirection * focusDistance);
     }
 
     //////////////////////////////////////////

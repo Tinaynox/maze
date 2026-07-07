@@ -179,6 +179,9 @@ namespace Maze
         void notifyHierarchyLineDoubleClick(HierarchyLine* _hierarchyLine);
 
         //////////////////////////////////////////
+        void focusCameraOnEntity(Transform3D* _transform3D);
+
+        //////////////////////////////////////////
         void notifyHierarchyLineClick(HierarchyLine* _hierarchyLine);
 
         //////////////////////////////////////////
