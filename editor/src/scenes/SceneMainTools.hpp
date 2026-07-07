@@ -124,6 +124,7 @@ namespace Maze
         F32 m_pitchAngle = 0.0f;
         Vec2F32 m_cursorPositionLastFrame = Vec2F32::c_zero;
         bool m_cursorDrag = false;
+        bool m_cursorPan = false;
 
         CanvasPtr m_mainCanvas;
     };

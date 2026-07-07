@@ -304,6 +304,22 @@ namespace Maze
                         m_pitchAngle -= deltaPosition.y * 0.0075f;
                     }
                 }
+                else
+                if (m_cursorPan)
+                {
+                    Vec2F32 deltaPosition = cursorPosition - m_cursorPositionLastFrame;
+
+                    if (m_camera3D && m_camera3D->getEntityRaw()->getActiveSelf())
+                    {
+                        Vec3F32 cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F32::c_unitX;
+                        Vec3F32 cameraUpDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F32::c_unitY;
+
+                        F32 panSpeed = 0.02f;
+                        m_camera3DTargetPosition +=
+                            -cameraRightDirection * deltaPosition.x * panSpeed +
+                            -cameraUpDirection * deltaPosition.y * panSpeed;
+                    }
+                }
 
                 m_cursorPositionLastFrame = cursorPosition;
                 break;
@@ -328,6 +344,25 @@ namespace Maze
                         }
                     }
                 }
+                else
+                if (_data.buttonId == 2)
+                {
+                    if (m_camera3D && m_camera3D->getEntityRaw()->getActiveSelf())
+                    {
+                        Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
+                        Rect2F viewportRect(
+                            m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
+                            m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
+                            m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
+                            m_camera3D->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
+
+                        if (viewportRect.contains(cursorPosition))
+                        {
+                            m_cursorPan = true;
+                            m_cursorPositionLastFrame = cursorPosition;
+                        }
+                    }
+                }
                 break;
             }
             case InputEventMouseType::ButtonUp:
@@ -336,6 +371,32 @@ namespace Maze
                 {
                     m_cursorDrag = false;
                 }
+                else
+                if (_data.buttonId == 2)
+                {
+                    m_cursorPan = false;
+                }
+                break;
+            }
+            case InputEventMouseType::Wheel:
+            {
+                if (m_camera3D)
+                {
+                    Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
+                    Rect2F viewportRect(
+                        m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
+                        m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
+                        m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
+                        m_camera3D->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
+
+                    if (viewportRect.contains(cursorPosition))
+                    {
+                        Vec3F32 cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F32::c_unitZ;
+                        F32 zoomSpeed = 0.005f;
+                        m_camera3DTargetPosition += cameraForwardDirection * (F32)_data.z * zoomSpeed;
+                    }
+                }
+
                 break;
             }
             default:
