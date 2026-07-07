@@ -39,6 +39,7 @@
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeContextMenuCanvas2D.hpp"
+#include "maze-ui/ecs/components/MazeSearchableMenuList2D.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
@@ -376,10 +377,10 @@ namespace Maze
         Canvas* canvas = _button->getTransform()->getFirstTrunkComponent<Canvas>();
         Vec2F positionRTS = canvas->convertViewportCoordsToRenderTargetCoords(_inputEvent.position);
 
-        MenuListTree2DPtr const& menuListTree = contextMenuCanvas->openContextMenu(
+        contextMenuCanvas->openSearchableMenuList(
             this,
             positionRTS,
-            [this](MenuListTree2DPtr const& _menuListTree)
+            [this](SearchableMenuList2DPtr const& _searchableMenuList)
             {
                 ComponentFactoryPtr const& componentFactory = EntityManager::GetInstancePtr()->getComponentFactory();
                 for (auto const& sceneObjectCreationData : componentFactory->getSceneObjectCreationData())
@@ -393,7 +394,7 @@ namespace Maze
                         itemName += String(sceneObjectCreationData.second.group) + "/";
                     itemName += sceneObjectCreationData.second.name;
 
-                    _menuListTree->addItem(
+                    _searchableMenuList->addItem(
                         itemName,
                         [this, sceneObjectCreationData](String const& _text)
                         {
@@ -426,7 +427,7 @@ namespace Maze
                 for (AddComponentCallback const& callbackData : InspectorManager::GetInstancePtr()->getExtraAddComponentCallbacks())
                 {
                     std::function<void(EntityPtr const&)> callback = callbackData.callback;
-                    _menuListTree->addItem(
+                    _searchableMenuList->addItem(
                         callbackData.menuName,
                         [this, callback](String const& _text)
                         {
@@ -436,9 +437,9 @@ namespace Maze
                         callbackData.validate,
                         false);
                 }
-            });
 
-        menuListTree->rebuildItems();
+                _searchableMenuList->rebuildItems();
+            });
     }
 
     //////////////////////////////////////////

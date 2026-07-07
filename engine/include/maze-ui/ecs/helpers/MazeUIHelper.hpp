@@ -47,6 +47,7 @@
 #include "maze-ui/ecs/components/MazeMenuListItem2D.hpp"
 #include "maze-ui/ecs/components/MazeMenuList2D.hpp"
 #include "maze-ui/ecs/components/MazeMenuListTree2D.hpp"
+#include "maze-ui/ecs/components/MazeSearchableMenuList2D.hpp"
 #include "maze-ui/ecs/components/MazeMenuBar2D.hpp"
 #include "maze-ui/ecs/components/MazeScrollbar2D.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
@@ -302,6 +303,26 @@ namespace Maze
             Vec2F const& _pivot = Vec2F(0.0f, 1.0f))
         {
             return CreateDefaultMenuListTree(FontMaterialPtr(), _position, _parent, _ecsScene, _anchor, _pivot);
+        }
+
+        //////////////////////////////////////////
+        MAZE_UI_API SearchableMenuList2DPtr CreateDefaultSearchableMenuList(
+            FontMaterialPtr const& _fontMaterial,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            EcsScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.0f, 1.0f));
+
+        //////////////////////////////////////////
+        inline SearchableMenuList2DPtr CreateDefaultSearchableMenuList(
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            EcsScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.0f, 1.0f))
+        {
+            return CreateDefaultSearchableMenuList(FontMaterialPtr(), _position, _parent, _ecsScene, _anchor, _pivot);
         }
 
         //////////////////////////////////////////

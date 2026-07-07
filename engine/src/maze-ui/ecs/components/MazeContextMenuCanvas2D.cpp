@@ -54,7 +54,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ContextMenuCanvas2D, Component,
-        MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(menuListTreePrefab, MenuListTreePrefab));
+        MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(menuListTreePrefab, MenuListTreePrefab),
+        MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(searchableMenuListPrefab, SearchableMenuListPrefab));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(ContextMenuCanvas2D);
@@ -70,6 +71,9 @@ namespace Maze
     {
         if (m_menuListTree)
             m_menuListTree->eventEnabledInHierarchyChanged.unsubscribe(this);
+
+        if (m_searchableMenuList)
+            m_searchableMenuList->eventEnabledInHierarchyChanged.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -111,12 +115,26 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ContextMenuCanvas2D::closeSearchableMenuList()
+    {
+        m_contextMenuHolder = nullptr;
+
+        if (!m_searchableMenuList)
+            return;
+
+        m_searchableMenuList->eventEnabledInHierarchyChanged.unsubscribe(this);
+        m_searchableMenuList->getEntityRaw()->removeFromEcsWorld();
+        m_searchableMenuList = nullptr;
+    }
+
+    //////////////////////////////////////////
     MenuListTree2DPtr const& ContextMenuCanvas2D::openContextMenu(
         void* _contextMenuHolder,
         Vec2F const& _positionWS,
         std::function<void(MenuListTree2DPtr const&)> _initMenuFunc)
     {
         closeContextMenu();
+        closeSearchableMenuList();
 
         m_contextMenuHolder = _contextMenuHolder;
 
@@ -141,6 +159,39 @@ namespace Maze
 
 
         return m_menuListTree;
+    }
+
+    //////////////////////////////////////////
+    SearchableMenuList2DPtr const& ContextMenuCanvas2D::openSearchableMenuList(
+        void* _contextMenuHolder,
+        Vec2F const& _positionWS,
+        std::function<void(SearchableMenuList2DPtr const&)> _initMenuFunc)
+    {
+        closeContextMenu();
+        closeSearchableMenuList();
+
+        m_contextMenuHolder = _contextMenuHolder;
+
+        EntityPtr searchableMenuListEntity = m_searchableMenuListPrefab->getEntityRaw()->createCopy();
+        searchableMenuListEntity->setActiveSelf(true);
+        m_searchableMenuList = searchableMenuListEntity->getComponent<SearchableMenuList2D>();
+
+        m_searchableMenuList->getTransform()->setParent(m_transform);
+
+        m_searchableMenuList->eventEnabledInHierarchyChanged.subscribe(this, &ContextMenuCanvas2D::notifySearchableMenuListEnabledInHierarchyChanged);
+
+        _initMenuFunc(m_searchableMenuList);
+
+        Vec2F searchableMenuListSize = m_searchableMenuList->getTransform()->getSize();
+        m_searchableMenuList->getTransform()->setLocalPosition(
+            {
+                Math::Clamp(_positionWS.x, 0.0f, m_transform->getWidth() - searchableMenuListSize.x),
+                Math::Clamp(_positionWS.y, searchableMenuListSize.y, m_transform->getHeight())
+            });
+
+        m_searchableMenuList->focusFilterEditBox();
+
+        return m_searchableMenuList;
     }
 
     //////////////////////////////////////////
@@ -174,6 +225,16 @@ namespace Maze
                 Vec2F(0.0f, 1.0f));
             menuListTree->getEntityRaw()->setActiveSelf(false);
             contextMenuCanvas->setMenuListTreePrefab(menuListTree);
+
+            SearchableMenuList2DPtr searchableMenuList = UIHelper::CreateDefaultSearchableMenuList(
+                _fontMaterial,
+                Vec2F(0.0f, 0.0f),
+                contextMenuCanvas->getTransform(),
+                contextMenuCanvas->getEntityRaw()->getEcsScene(),
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 1.0f));
+            searchableMenuList->getEntityRaw()->setActiveSelf(false);
+            contextMenuCanvas->setSearchableMenuListPrefab(searchableMenuList);
         }
 
         return contextMenuCanvas;
@@ -191,6 +252,13 @@ namespace Maze
             closeContextMenu();
             eventContextMenuClosed(this, _tree->cast<MenuListTree2D>());
         }
+    }
+
+    //////////////////////////////////////////
+    void ContextMenuCanvas2D::notifySearchableMenuListEnabledInHierarchyChanged(SearchableMenuList2D* _list, bool _enabled)
+    {
+        if (!_enabled)
+            closeSearchableMenuList();
     }
 
 } // namespace Maze

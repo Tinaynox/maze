@@ -39,6 +39,7 @@
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-ui/ecs/components/MazeMenuListTree2D.hpp"
+#include "maze-ui/ecs/components/MazeSearchableMenuList2D.hpp"
 
 
 //////////////////////////////////////////
@@ -99,6 +100,9 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(MenuListTree2D, menuListTreePrefab, MenuListTreePrefab);
 
+        //////////////////////////////////////////
+        MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(SearchableMenuList2D, searchableMenuListPrefab, SearchableMenuListPrefab);
+
 
         //////////////////////////////////////////
         void closeContextMenu();
@@ -108,6 +112,15 @@ namespace Maze
             void* _contextMenuHolder,
             Vec2F const& _positionWS,
             std::function<void(MenuListTree2DPtr const&)> _initMenuFunc);
+
+        //////////////////////////////////////////
+        void closeSearchableMenuList();
+
+        //////////////////////////////////////////
+        SearchableMenuList2DPtr const& openSearchableMenuList(
+            void* _contextMenuHolder,
+            Vec2F const& _positionWS,
+            std::function<void(SearchableMenuList2DPtr const&)> _initMenuFunc);
 
         //////////////////////////////////////////
         bool isContextMenuOpened() const;
@@ -139,16 +152,21 @@ namespace Maze
         //////////////////////////////////////////
         void notifyEnabledInHierarchyChanged(MenuListTree2D* _tree, bool _enabled);
 
-    
+        //////////////////////////////////////////
+        void notifySearchableMenuListEnabledInHierarchyChanged(SearchableMenuList2D* _list, bool _enabled);
+
+
     protected:
         Transform2DPtr m_transform;
 
         MenuListTree2DPtr m_menuListTreePrefab;
+        SearchableMenuList2DPtr m_searchableMenuListPrefab;
         CanvasPtr m_canvas;
 
         void* m_contextMenuHolder;
 
         MenuListTree2DPtr m_menuListTree;
+        SearchableMenuList2DPtr m_searchableMenuList;
     };
 
 

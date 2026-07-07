@@ -1245,6 +1245,127 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_UI_API SearchableMenuList2DPtr CreateDefaultSearchableMenuList(
+            FontMaterialPtr const& _fontMaterial,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            EcsScene* _ecsScene,
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
+        {
+            RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+
+            F32 const width = 220.0f;
+            F32 const filterHeight = 20.0f;
+            F32 const rowHeight = 18.0f;
+
+            EntityPtr entity = _ecsScene->createEntity();
+            entity->ensureComponent<Name>("Searchable Menu List");
+
+            SearchableMenuList2DPtr searchableMenuList = entity->createComponent<SearchableMenuList2D>();
+
+            Transform2DPtr const& transform = searchableMenuList->getTransform();
+            transform->setSize(Vec2F(width, filterHeight));
+            transform->setParent(_parent);
+            transform->setLocalPosition(_position);
+            transform->setAnchor(_anchor);
+            transform->setPivot(_pivot);
+
+            CanvasPtr canvas = entity->ensureComponent<Canvas>();
+            canvas->setClearColorFlag(false);
+            canvas->setSortOrder(3000000);
+            canvas->getCanvasScaler()->setScaleMode(CanvasScalerScaleMode::None);
+            canvas->setViewportTransformPolicy(ViewportTransformPolicy::TransformToViewport);
+            canvas->setRenderTarget(_ecsScene->castRaw<EcsRenderScene>()->getRenderTarget());
+
+            SpriteRenderer2DPtr backgroundSpriteRenderer = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel03),
+                transform->getSize(),
+                Vec2F::c_zero,
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
+                transform,
+                _ecsScene,
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
+            backgroundSpriteRenderer->setColor(240, 240, 240);
+            backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
+            backgroundSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            searchableMenuList->setBackgroundSpriteRenderer(backgroundSpriteRenderer);
+
+            EditBox2DPtr filterEditBox = CreateDefaultEditBox(
+                "",
+                _fontMaterial,
+                12,
+                Vec2F(width - 8.0f, filterHeight - 4.0f),
+                Vec2F(4.0f, -2.0f),
+                transform,
+                _ecsScene,
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
+            filterEditBox->setEditBoxFlag(EditBox2D::EditBoxFlags::DontDeselectOnTextInput, true);
+            filterEditBox->getEntityRaw()->ensureComponent<Name>()->setName("Filter");
+            SizePolicy2DPtr filterSizePolicy = filterEditBox->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            filterSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
+            filterSizePolicy->setSizeDelta(-8.0f, 0.0f);
+            searchableMenuList->setFilterEditBox(filterEditBox);
+
+            ScrollRect2DPtr scrollRect = CreateDefaultScrollRect(
+                Vec2F(width, 150.0f),
+                Vec2F(0.0f, -filterHeight),
+                transform,
+                _ecsScene,
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f),
+                false,
+                true);
+            scrollRect->getEntityRaw()->ensureComponent<Name>()->setName("ScrollRect");
+            SizePolicy2DPtr scrollRectSizePolicy = scrollRect->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            scrollRectSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
+            searchableMenuList->setScrollRect(scrollRect);
+
+            // Keep the scrollbar permanently reserved instead of the default
+            // AutoHideAndExpandViewport behavior - that mode has ScrollRect2D itself drive the
+            // viewport's SizePolicy2D delta between 0 and -18 depending on whether scrolling is
+            // "needed", which fights with resizing the scroll rect's own transform every
+            // rebuildItems() call (the viewport would keep expanding to match, so scrolling would
+            // never appear needed and the scrollbar would never show).
+            scrollRect->setVerticalScrollbarVisibility(ScrollRect2DScrollbarVisibility::Permanent);
+
+            // The viewport is otherwise a fixed size set once at creation time - it needs to
+            // track the scroll rect's own transform so resizing it in rebuildItems() actually
+            // affects the visible/scrollable area (and not just the outer container).
+            SizePolicy2DPtr viewportSizePolicy = scrollRect->getViewportTransform()->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            viewportSizePolicy->setSizeDelta(0.0f, -18.0f);
+
+            VerticalLayout2DPtr itemsLayout = scrollRect->getContentTransform()->getEntityRaw()->ensureComponent<VerticalLayout2D>();
+            itemsLayout->setHorizontalAlignment(HorizontalAlignment2D::Left);
+            itemsLayout->setVerticalAlignment(VerticalAlignment2D::Top);
+            itemsLayout->setAutoWidth(false);
+            itemsLayout->setAutoHeight(true);
+            itemsLayout->setSpacing(0.0f);
+            SizePolicy2DPtr contentSizePolicy = scrollRect->getContentTransform()->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            contentSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
+            searchableMenuList->setItemsListTransform(scrollRect->getContentTransform());
+
+            MenuListItem2DPtr itemPrefab = CreateDefaultMenuListItem(
+                "",
+                _fontMaterial,
+                Vec2F(width - 4.0f, rowHeight),
+                Vec2F(2.0f, 0.0f),
+                transform,
+                _ecsScene,
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
+            itemPrefab->getEntityRaw()->setActiveSelf(false);
+            SizePolicy2DPtr itemPrefabSizePolicy = itemPrefab->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            itemPrefabSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
+            itemPrefabSizePolicy->setSizeDelta(-4.0f, 0.0f);
+            searchableMenuList->setItemPrefab(itemPrefab);
+
+            return searchableMenuList;
+        }
+
+        //////////////////////////////////////////
         MAZE_UI_API MenuBar2DPtr CreateDefaultMenuBarList(
             FontMaterialPtr const& _fontMaterial,
             Vec2F const& _size,

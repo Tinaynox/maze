@@ -103,9 +103,6 @@ namespace Maze
     //////////////////////////////////////////
     bool EditBox2D::init()
     {
-        InputManager::GetInstancePtr()->eventText.subscribe(this, &EditBox2D::notifyText);
-        InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &EditBox2D::notifyKeyboard);
-
         return true;
     }
 
@@ -249,6 +246,13 @@ namespace Maze
         m_UIElement2D->eventFocusChanged.subscribe(this, &EditBox2D::notifyFocusChanged);
         m_UIElement2D->eventPressedChanged.subscribe(this, &EditBox2D::notifyPressedChanged);
         m_UIElement2D->eventClick.subscribe(this, &EditBox2D::notifyClick);
+
+        // Subscribed here rather than in init() - init() only runs when the component is
+        // constructed via EditBox2D::Create(), but not when it's cloned as part of an entity
+        // copy (Entity::createCopy(), used eg. by prefab-based popups), which would otherwise
+        // silently produce an edit box that never receives text/keyboard input.
+        InputManager::GetInstancePtr()->eventText.subscribe(this, &EditBox2D::notifyText);
+        InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &EditBox2D::notifyKeyboard);
     }
 
     //////////////////////////////////////////
