@@ -7,6 +7,10 @@ import texture_utils
 from utils import mkdir_p
 
 
+class TextureCompressionError(Exception):
+    pass
+
+
 class TextureCompressor:
 
     COMPRESSOR_NONE = 0
@@ -234,6 +238,25 @@ class TextureCompressor:
             self.tool_args = tools[system]['args']
             self.tool_file_extension = 'etc'
 
+    def _run_compressor_tool(self, system_command, expected_output_path, source_texture_path):
+        print(subprocess.list2cmdline(system_command))
+        return_code = subprocess.call(system_command)
+        print(' ')
+
+        if return_code != 0:
+            print('\tCOMPRESSION ERROR: tool exited with code {0} (it may have crashed) while compressing "{1}"'.format(
+                return_code, source_texture_path))
+            raise TextureCompressionError(
+                'Texture compression tool crashed or failed (exit code {0}) on "{1}". Command: {2}'.format(
+                    return_code, source_texture_path, subprocess.list2cmdline(system_command)))
+
+        if not os.path.exists(expected_output_path):
+            print('\tCOMPRESSION ERROR: tool exited with code 0 but did not produce output file "{0}" for "{1}"'.format(
+                expected_output_path, source_texture_path))
+            raise TextureCompressionError(
+                'Texture compression tool did not produce expected output "{0}" for "{1}". Command: {2}'.format(
+                    expected_output_path, source_texture_path, subprocess.list2cmdline(system_command)))
+
     def compress_texture(self, texture_full_path, is_normal_map=False):
 
         if self.tool_index == TextureCompressor.COMPRESSOR_NONE:
@@ -269,16 +292,10 @@ class TextureCompressor:
                 texture_full_path,
                 new_full_path,
                 '+fourCC', tool_format]
-            print(subprocess.list2cmdline(system_command))
-            subprocess.call(system_command)
-            print(' ')
-            if os.path.exists(new_full_path):
-                os.remove(texture_full_path)
-                print('\tCOMPRESSED.')
-                return new_full_path
-            else:
-                print('\tCOMPRESSION FAILED.')
-                return texture_full_path
+            self._run_compressor_tool(system_command, new_full_path, texture_full_path)
+            os.remove(texture_full_path)
+            print('\tCOMPRESSED.')
+            return new_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_PVRTEXTOOL:
             prev_full_path = (os.path.dirname(texture_full_path) + '/' + name + '.pvr').replace('\\', '/')
@@ -294,17 +311,11 @@ class TextureCompressor:
                 '-i', texture_full_path,
                 '-o', prev_full_path,
                 '-f', tool_format] + self.tool_args.split()
-            print(subprocess.list2cmdline(system_command))
-            subprocess.call(system_command)
-            print(' ')
-            if os.path.exists(prev_full_path):
-                os.remove(texture_full_path)
-                os.rename(prev_full_path, new_full_path)
-                print('\tCOMPRESSED.')
-                return new_full_path
-            else:
-                print('\tCOMPRESSION FAILED.')
-                return texture_full_path
+            self._run_compressor_tool(system_command, prev_full_path, texture_full_path)
+            os.remove(texture_full_path)
+            os.rename(prev_full_path, new_full_path)
+            print('\tCOMPRESSED.')
+            return new_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_CRUNCH:
             new_full_path = (os.path.dirname(texture_full_path) +
@@ -319,16 +330,10 @@ class TextureCompressor:
                 '-file', texture_full_path,
                 '-out', new_full_path,
                 '-fileformat'] + tool_format.split() + self.tool_args.split()
-            print(subprocess.list2cmdline(system_command))
-            subprocess.call(system_command)
-            print(' ')
-            if os.path.exists(new_full_path):
-                os.remove(texture_full_path)
-                print('\tCOMPRESSED.')
-                return new_full_path
-            else:
-                print('\tCOMPRESSION FAILED.')
-                return texture_full_path
+            self._run_compressor_tool(system_command, new_full_path, texture_full_path)
+            os.remove(texture_full_path)
+            print('\tCOMPRESSED.')
+            return new_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_ASTCEVALUATIONCODEC:
             astc_full_path = (os.path.dirname(texture_full_path) + '/' + name + '.astc').replace('\\', '/')
@@ -345,17 +350,11 @@ class TextureCompressor:
                 astc_full_path,
                 '4x4',
                 '-f', tool_format] + self.tool_args.split()
-            print(subprocess.list2cmdline(system_command))
-            subprocess.call(system_command)
-            print(' ')
-            if os.path.exists(astc_full_path):
-                os.remove(texture_full_path)
-                os.rename(astc_full_path, new_full_path)
-                print('\tCOMPRESSED.')
-                return new_full_path
-            else:
-                print('\tCOMPRESSION FAILED.')
-                return texture_full_path
+            self._run_compressor_tool(system_command, astc_full_path, texture_full_path)
+            os.remove(texture_full_path)
+            os.rename(astc_full_path, new_full_path)
+            print('\tCOMPRESSED.')
+            return new_full_path
 
         return texture_full_path
 

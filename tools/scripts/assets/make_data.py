@@ -14,6 +14,7 @@ import folder_iterator
 import maze_config
 import resource_encryptor
 import texture_compressor
+from texture_compressor import TextureCompressionError
 import atlas_animator.atlas_animator
 from utils import mkdir_p
 
@@ -186,6 +187,16 @@ class MakeData:
                     im_src = Image.open(copy_to)
                     parameters.add_param_s32('width', im_src.size[0])
                     parameters.add_param_s32('height', im_src.size[1])
+
+                    if copy_to.lower().endswith('.png'):
+                        # Some third-party compressors (TheCompressonator in particular)
+                        # ship a minimal, unmaintained PNG decoder that can crash (access
+                        # violation) on the large ICC profile / XMP metadata chunks that
+                        # Photoshop/Affinity embed by default. Re-saving here strips that
+                        # metadata before any external tool touches the file.
+                        im_src.info.pop('icc_profile', None)
+                        im_src.save(copy_to)
+
                     im_src.close()
 
                     if compression_enabled:
@@ -452,6 +463,10 @@ if __name__ == '__main__':
         print('ValueError({0))!.'.format(e))
         wait = input('Press Enter to continue......')
     except AssertionError as error:
+        print('Error!')
+        print(error)
+        wait = input('Press Enter to continue......')
+    except TextureCompressionError as error:
         print('Error!')
         print(error)
         wait = input('Press Enter to continue......')
