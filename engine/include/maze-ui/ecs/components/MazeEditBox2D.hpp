@@ -230,6 +230,11 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        // Returns true if any EditBox2D in the application is currently selected for text editing.
+        // Use this to skip global keyboard shortcuts (hotkeys, camera controls, etc) while the user is typing.
+        static inline bool IsTextInputActive() { return s_selectedEditBoxCount > 0; }
+
+        //////////////////////////////////////////
         void setHorizontalAlignment(HorizontalAlignment2D _alignment);
 
         //////////////////////////////////////////
@@ -337,6 +342,8 @@ namespace Maze
         bool m_cursorBlink;
 
         EntityId m_eventReceiverEid = c_invalidEntityId;
+
+        static S32 s_selectedEditBoxCount;
     };
 
 

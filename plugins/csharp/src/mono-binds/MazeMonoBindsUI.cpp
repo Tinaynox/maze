@@ -235,6 +235,12 @@ namespace Maze
         _component->castRaw<EditBox2D>()->setEventReceiverEid(EntityId(_value));
     }
 
+    //////////////////////////////////////////
+    inline bool EditBox2DIsTextInputActive()
+    {
+        return EditBox2D::IsTextInputActive();
+    }
+
 
     //////////////////////////////////////////
     inline void UITweenTransitionAlphaSetHidden(Component* _component, bool _value, bool _resetProgress)
@@ -470,6 +476,7 @@ namespace Maze
         MAZE_UI_MONO_BIND_FUNC(EditBox2DSetCursorPosition);
         MAZE_UI_MONO_BIND_FUNC(EditBox2DGetEventReceiverEid);
         MAZE_UI_MONO_BIND_FUNC(EditBox2DSetEventReceiverEid);
+        MAZE_UI_MONO_BIND_FUNC(EditBox2DIsTextInputActive);
 
         // UITweenTransitionAlpha
         MAZE_UI_MONO_BIND_FUNC(UITweenTransitionAlphaSetHidden);

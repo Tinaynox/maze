@@ -74,6 +74,7 @@
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-editor-tools/managers/MazeColorPickerManager.hpp"
 #include "maze-ui/ecs/components/MazeExperimental.hpp"
+#include "maze-ui/ecs/components/MazeEditBox2D.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
@@ -206,7 +207,7 @@ namespace Maze
         Vec2F32 cursorPositionRWS = InputManager::GetInstancePtr()->getCursorPosition(0);
         Vec2F32 cursorPosition = EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(cursorPositionRWS);
 
-        if (m_camera3D && getViewportAABB2D().contains(cursorPosition))
+        if (m_camera3D && getViewportAABB2D().contains(cursorPosition) && !EditBox2D::IsTextInputActive())
         {
             Vec3F32 cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F32::c_unitZ;
             Vec3F32 cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F32::c_unitX;
@@ -218,32 +219,32 @@ namespace Maze
                 speed *= 3.0f;
             }
 
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::W))
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::Up))
             {
                 m_camera3DTargetPosition += cameraForwardDirection * _dt * speed;
             }
             else
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::S))
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::Down))
             {
                 m_camera3DTargetPosition += -cameraForwardDirection * _dt * speed;
             }
 
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::A))
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::Left))
             {
                 m_camera3DTargetPosition += -cameraRightDirection * _dt * speed;
             }
             else
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::D))
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::Right))
             {
                 m_camera3DTargetPosition += cameraRightDirection * _dt * speed;
             }
             else
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::Q))
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::Comma))
             {
                 m_yawAngle -= _dt * Math::c_pi;
             }
             else
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::E))
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::Period))
             {
                 m_yawAngle += _dt * Math::c_pi;
             }

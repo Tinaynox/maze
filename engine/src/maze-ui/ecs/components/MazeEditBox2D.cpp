@@ -76,8 +76,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    S32 EditBox2D::s_selectedEditBoxCount = 0;
+
+    //////////////////////////////////////////
     EditBox2D::~EditBox2D()
     {
+        if (m_selected)
+            --s_selectedEditBoxCount;
+
         InputManager::GetInstancePtr()->eventText.unsubscribe(this);
         InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
 
@@ -339,7 +345,12 @@ namespace Maze
 
         if (m_selected)
         {
+            ++s_selectedEditBoxCount;
             resetBlinkTimer();
+        }
+        else
+        {
+            --s_selectedEditBoxCount;
         }
 
         updateCursorRendererEnabled();

@@ -66,6 +66,7 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/ecs/components/MazeEditBox2D.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -171,7 +172,8 @@ namespace Maze
 
         AABB2D aabb = AABB2D::FromRect2(viewportRect);
 
-        if (aabb.contains(InputManager::GetInstancePtr()->getCursorPosition(0)))
+        if (aabb.contains(InputManager::GetInstancePtr()->getCursorPosition(0)) &&
+            !EditBox2D::IsTextInputActive())
         {
             Vec3F cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F::c_unitZ;
             Vec3F cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F::c_unitX;

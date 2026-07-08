@@ -67,6 +67,9 @@ namespace Maze.UI
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void EditBox2DSetEventReceiverEid(NativePtr nativeComponentPtr, int value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool EditBox2DIsTextInputActive();
         #endregion
 
         #region UITweenTransitionAlpha

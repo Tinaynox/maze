@@ -27,6 +27,7 @@
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/managers/MazeGizmoToolsManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
+#include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
@@ -42,6 +43,7 @@
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/ecs/components/MazeEditBox2D.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeLight3DGizmos.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeCamera3DGizmos.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeMeshRendererGizmos.hpp"
@@ -87,6 +89,9 @@ namespace Maze
             editorToolsSettings->getSelectedGizmoToolChangedEvent().unsubscribe(this);
         }
 
+        if (InputManager::GetInstancePtr())
+            InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
+
         s_instance = nullptr;
     }
 
@@ -109,6 +114,8 @@ namespace Maze
 
         EditorToolsSettings* editorToolsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
         editorToolsSettings->getSelectedGizmoToolChangedEvent().subscribe(this, &GizmoToolsManager::notifySelectedGizmoToolChanged);
+
+        InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &GizmoToolsManager::notifyKeyboard);
 
         updateSelectedGizmoTool();
 
@@ -297,11 +304,58 @@ namespace Maze
             case GizmoToolType::Translate: m_gizmoTool = GizmoToolTranslation::Create(); break;
             case GizmoToolType::Rotate: m_gizmoTool = GizmoToolRotation::Create(); break;
             case GizmoToolType::Scale: m_gizmoTool = GizmoToolScale::Create(); break;
+            case GizmoToolType::None: break;
             default:
             {
                 MAZE_NOT_IMPLEMENTED;
                 break;
             }
+        }
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::notifyKeyboard(InputEventKeyboardData const& _data)
+    {
+        if (_data.type != InputEventKeyboardType::KeyDown)
+            return;
+
+        if (_data.isModifierDown())
+            return;
+
+        if (EditBox2D::IsTextInputActive())
+            return;
+
+        EditorToolsSettings* editorToolsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+
+        switch (_data.keyCode)
+        {
+            case KeyCode::Q:
+            {
+                editorToolsSettings->setSelectedGizmoTool(GizmoToolType::None);
+                break;
+            }
+            case KeyCode::W:
+            {
+                editorToolsSettings->setSelectedGizmoTool(GizmoToolType::Translate);
+                break;
+            }
+            case KeyCode::E:
+            {
+                editorToolsSettings->setSelectedGizmoTool(GizmoToolType::Rotate);
+                break;
+            }
+            case KeyCode::R:
+            {
+                editorToolsSettings->setSelectedGizmoTool(GizmoToolType::Scale);
+                break;
+            }
+            case KeyCode::X:
+            {
+                editorToolsSettings->switchGizmoWorldSpace();
+                break;
+            }
+            default:
+                break;
         }
     }
 

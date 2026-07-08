@@ -29,6 +29,10 @@ namespace Maze.UI
             set => InternalCalls.EditBox2DSetEventReceiverEid(NativeComponentPtr, value);
         }
 
+        // Returns true if any EditBox2D in the application is currently selected for text editing.
+        // Use this to skip global keyboard shortcuts (hotkeys, camera controls, etc) while the user is typing.
+        public static bool IsTextInputActive => InternalCalls.EditBox2DIsTextInputActive();
+
         public EditBox2D(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
         {

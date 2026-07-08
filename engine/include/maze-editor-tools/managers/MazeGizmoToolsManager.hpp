@@ -129,6 +129,9 @@ namespace Maze
         //////////////////////////////////////////
         void updateSelectedGizmoTool();
 
+        //////////////////////////////////////////
+        void notifyKeyboard(InputEventKeyboardData const& _data);
+
     protected:
         static GizmoToolsManager* s_instance;
 

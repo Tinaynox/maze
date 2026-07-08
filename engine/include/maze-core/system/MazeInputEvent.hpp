@@ -201,6 +201,9 @@ namespace Maze
         //////////////////////////////////////////
         inline bool isKeyRepeat() const { return (modifiers & InputEventKeyboardModifiers::IsKeyRepeat) != 0; }
 
+        //////////////////////////////////////////
+        inline bool isModifierDown() const { return isShiftDown() || isControlDown() || isAltDown() || isCommandDown(); }
+
     public:
         // #TODO: Reorder fields for better alignment
         InputEventKeyboardType type = InputEventKeyboardType::None;
