@@ -21,6 +21,21 @@ namespace Maze.Core
             return null;
         }
 
+        // Enumerates files inside a virtual asset folder (e.g. "Assets/Localization.mzap"), filtered by extension if given.
+        // Works for both loose folders and obfuscated/archived .mzap packs.
+        public static AssetFile[] GetFilesInFolder(string folderFullPath, string extension = null)
+        {
+            uint[] ids = InternalCalls.AssetManagerGetAssetFilesInFolder(folderFullPath, extension);
+            if (ids == null)
+                return default(AssetFile[]);
+
+            AssetFile[] result = new AssetFile[ids.Length];
+            for (int i = 0; i < ids.Length; ++i)
+                result[i] = new AssetFile(new AssetFileId(ids[i]));
+
+            return result;
+        }
+
         public unsafe ByteBuffer ReadAsByteBuffer()
         {
             if (!InternalCalls.AssetFileReadAsDataBlock(
@@ -30,6 +45,16 @@ namespace Maze.Core
                 return null;
 
             return ByteBuffer.LoadBytes(bytes, size);
+        }
+
+        public string GetFileName()
+        {
+            return InternalCalls.AssetFileGetFileName(m_Id.Id);
+        }
+
+        public string ReadAsString()
+        {
+            return InternalCalls.AssetFileReadAsString(m_Id.Id);
         }
     }
 }

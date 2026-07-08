@@ -283,6 +283,15 @@ namespace Maze.Core
             uint assetFileId,
             out uint size,
             out byte* bytes);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static uint[] AssetManagerGetAssetFilesInFolder(string folderFullPath, string extension);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static string AssetFileGetFileName(uint assetFileId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static string AssetFileReadAsString(uint assetFileId);
         #endregion
 
         #region ScriptableObject

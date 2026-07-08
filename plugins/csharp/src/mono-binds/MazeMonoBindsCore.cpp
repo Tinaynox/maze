@@ -33,6 +33,7 @@
 #include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
@@ -210,6 +211,83 @@ namespace Maze
             });
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    // Enumerates asset files inside a virtual folder (works for both loose and obfuscated/archived .mzap folders),
+    // returning their AssetFileIds (assigned via .mzmeta sidecars, same as any other tracked asset file)
+    inline MonoArray* AssetManagerGetAssetFilesInFolder(MonoString* _folderFullPath, MonoString* _extension)
+    {
+        if (!AssetManager::GetInstancePtr())
+            return nullptr;
+
+        Char* folderCStr = mono_string_to_utf8(_folderFullPath);
+        Path folderFullPath = FileHelper::ConvertLocalPathToFullPath(Path(folderCStr));
+        mono_free(folderCStr);
+
+        Vector<AssetFilePtr> files = AssetManager::GetInstancePtr()->getAssetFilesInFolder(folderFullPath, false);
+
+        if (_extension)
+        {
+            Char* extCStr = mono_string_to_utf8(_extension);
+            Path extension(extCStr);
+            mono_free(extCStr);
+
+            if (!extension.empty())
+            {
+                files.erase(
+                    std::remove_if(
+                        files.begin(), files.end(),
+                        [&](AssetFilePtr const& _file) { return _file->getExtension() != extension; }),
+                    files.end());
+            }
+        }
+
+        files.erase(
+            std::remove_if(
+                files.begin(), files.end(),
+                [](AssetFilePtr const& _file)
+                {
+                    if (_file->getAssetFileId() != c_invalidAssetFileId)
+                        return false;
+
+                    MAZE_WARNING("Asset file '%s' has no AssetFileId assigned (missing .mzmeta?) - skipping", _file->getFileName().toUTF8().c_str());
+                    return true;
+                }),
+            files.end());
+
+        std::sort(
+            files.begin(), files.end(),
+            [](AssetFilePtr const& _a, AssetFilePtr const& _b)
+            {
+                return _a->getFileName().getPath() < _b->getFileName().getPath();
+            });
+
+        MonoArray* result = mono_array_new(mono_domain_get(), mono_get_uint32_class(), files.size());
+        for (Size i = 0, in = files.size(); i < in; ++i)
+            mono_array_set(result, U32, i, (U32)files[i]->getAssetFileId());
+
+        return result;
+    }
+
+    //////////////////////////////////////////
+    inline MonoString* AssetFileGetFileName(U32 _assetFileId)
+    {
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_assetFileId);
+        if (!assetFile)
+            return nullptr;
+
+        return mono_string_new(mono_domain_get(), assetFile->getFileName().toUTF8().c_str());
+    }
+
+    //////////////////////////////////////////
+    inline MonoString* AssetFileReadAsString(U32 _assetFileId)
+    {
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_assetFileId);
+        if (!assetFile)
+            return nullptr;
+
+        return mono_string_new(mono_domain_get(), assetFile->readAsString().c_str());
     }
 
     //////////////////////////////////////////
@@ -1034,6 +1112,9 @@ namespace Maze
         // AssetFile
         MAZE_CORE_MONO_BIND_FUNC(AssetFileIdIsValid);
         MAZE_CORE_MONO_BIND_FUNC(AssetFileReadAsDataBlock);
+        MAZE_CORE_MONO_BIND_FUNC(AssetManagerGetAssetFilesInFolder);
+        MAZE_CORE_MONO_BIND_FUNC(AssetFileGetFileName);
+        MAZE_CORE_MONO_BIND_FUNC(AssetFileReadAsString);
 
         // ScriptableObject
         MAZE_CORE_MONO_BIND_FUNC(GetScriptableObject);
