@@ -683,10 +683,17 @@ namespace Maze
 
         if (g_monoEngineData->debugEnabled)
         {
+            Path logDir = FileHelper::GetDefaultLogDirectory();
+            FileHelper::CreateDirectoryRecursive(logDir);
+            String monoDebuggerLogPath = logDir.toUTF8() + "/MonoDebugger.log";
+            String debuggerAgentArg =
+                "--debugger-agent=transport=dt_socket,address=127.0.0.1:2550,server=y,suspend=n,loglevel=3,logfile=" +
+                monoDebuggerLogPath;
+
             S32 const argc = 2;
             CString argv[argc] =
             {
-                "--debugger-agent=transport=dt_socket,address=127.0.0.1:2550,server=y,suspend=n,loglevel=3,logfile=MonoDebugger.log",
+                debuggerAgentArg.c_str(),
                 "--soft-breakpoints"
             };
 
