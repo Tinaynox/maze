@@ -319,10 +319,13 @@ namespace Maze
         //////////////////////////////////////////
         bool SaveMeshTangentsToFile(
             Mesh const& _mesh,
-            Path const& _filePath)
+            Path const& _filePath,
+            UnixTime _sourceMeshTimestamp)
         {
             std::ofstream outputFile(_filePath.c_str(), std::ios::binary);
             MAZE_ERROR_RETURN_VALUE_IF(!outputFile, false, "Failed to open file - %s", _filePath.toUTF8().c_str());
+
+            outputFile.write((S8 const*)&_sourceMeshTimestamp, sizeof(_sourceMeshTimestamp));
 
             U32 subMeshesCount = (U32)_mesh.getSubMeshesCount();
             outputFile.write((S8 const*)&subMeshesCount, sizeof(subMeshesCount));
@@ -382,12 +385,44 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        bool IsMeshTangentsFileUpToDate(
+            Path const& _filePath,
+            UnixTime _sourceMeshTimestamp)
+        {
+            std::ifstream inputFile(_filePath.c_str(), std::ios::binary);
+            if (!inputFile)
+                return false;
+
+            UnixTime storedTimestamp = 0;
+            inputFile.read((S8*)&storedTimestamp, sizeof(storedTimestamp));
+            if (!inputFile)
+                return false;
+
+            return storedTimestamp == _sourceMeshTimestamp;
+        }
+
+        //////////////////////////////////////////
+        bool IsMeshTangentsBufferUpToDate(
+            ByteBuffer const& _byteBuffer,
+            UnixTime _sourceMeshTimestamp)
+        {
+            UnixTime storedTimestamp = 0;
+            if (_byteBuffer.read(0u, (S8*)&storedTimestamp, sizeof(storedTimestamp)) != sizeof(storedTimestamp))
+                return false;
+
+            return storedTimestamp == _sourceMeshTimestamp;
+        }
+
+        //////////////////////////////////////////
         bool LoadMeshTangentsFromFile(
             MeshPtr& _mesh,
             Path const& _filePath)
         {
             std::ifstream outputFile(_filePath.c_str(), std::ios::binary);
             MAZE_ERROR_RETURN_VALUE_IF(!outputFile, false, "Failed to open file - %s", _filePath.toUTF8().c_str());
+
+            UnixTime sourceMeshTimestamp = 0;
+            outputFile.read((S8*)&sourceMeshTimestamp, sizeof(sourceMeshTimestamp));
 
             U32 subMeshesCount = 0u;
             outputFile.read((S8*)&subMeshesCount, sizeof(subMeshesCount));
@@ -443,8 +478,11 @@ namespace Maze
             Mesh& _mesh,
             ByteBuffer const& _byteBuffer)
         {
+            UnixTime sourceMeshTimestamp = 0;
+            U32 bytesRead = _byteBuffer.read(0u, (S8*)&sourceMeshTimestamp, sizeof(sourceMeshTimestamp));
+
             U32 subMeshesCount = 0u;
-            U32 bytesRead = _byteBuffer.read(0u, (S8*)&subMeshesCount, sizeof(subMeshesCount));
+            bytesRead += _byteBuffer.read(bytesRead, (S8*)&subMeshesCount, sizeof(subMeshesCount));
 
             if (subMeshesCount != _mesh.getSubMeshesCount())
                 return false;

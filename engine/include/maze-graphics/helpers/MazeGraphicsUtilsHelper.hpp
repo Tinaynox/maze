@@ -72,13 +72,30 @@ namespace Maze
             ColorU32 const& _outlineColor);
 
         //////////////////////////////////////////
+        // Saves mesh tangents/bitangents to a sidecar file, tagged with the
+        // timestamp of the source mesh it was calculated from
         MAZE_GRAPHICS_API bool SaveMeshTangentsToFile(
             Mesh const& _mesh,
-            Path const& _filePath);
+            Path const& _filePath,
+            UnixTime _sourceMeshTimestamp);
+
+        //////////////////////////////////////////
+        // Checks the tangents sidecar file's embedded source mesh timestamp
+        // against the current one, without loading the full file
+        MAZE_GRAPHICS_API bool IsMeshTangentsFileUpToDate(
+            Path const& _filePath,
+            UnixTime _sourceMeshTimestamp);
+
+        //////////////////////////////////////////
+        // Checks the tangents buffer's embedded source mesh timestamp
+        // against the current one, without parsing the full buffer
+        MAZE_GRAPHICS_API bool IsMeshTangentsBufferUpToDate(
+            ByteBuffer const& _byteBuffer,
+            UnixTime _sourceMeshTimestamp);
 
         //////////////////////////////////////////
         MAZE_GRAPHICS_API bool LoadMeshTangentsFromFile(
-            Mesh& _mesh,
+            MeshPtr& _mesh,
             Path const& _filePath);
 
         //////////////////////////////////////////

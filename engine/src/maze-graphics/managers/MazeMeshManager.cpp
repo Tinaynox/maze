@@ -39,6 +39,7 @@
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderMZMESH.hpp"
+#include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -214,7 +215,20 @@ namespace Maze
         Path tangentsFilePath = _assetFile->getFullPath() + ".mztangents";
         AssetFilePtr tangentsAsset = AssetManager::GetInstancePtr()->getAssetFileByFullPath(tangentsFilePath);
         if (tangentsAsset)
-            loaderProps.tangentsData = tangentsAsset->readAsByteBuffer();
+        {
+            UnixTime meshTimestamp = _assetFile->getFileStats().modifiedTimeUTC;
+            ByteBufferPtr tangentsData = tangentsAsset->readAsByteBuffer();
+            if (tangentsData && GraphicsUtilsHelper::IsMeshTangentsBufferUpToDate(*tangentsData, meshTimestamp))
+            {
+                loaderProps.tangentsData = tangentsData;
+            }
+            else
+            {
+                Debug::LogWarning(
+                    "Tangents file is outdated for mesh '%s', ignoring and recalculating...",
+                    _assetFile->getFileName().toUTF8().c_str());
+            }
+        }
 
         if (metaData.isEmpty() || !metaData.isParamExists(MAZE_HCS("ext")))
         {
