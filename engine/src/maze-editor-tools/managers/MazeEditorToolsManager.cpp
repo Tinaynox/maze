@@ -223,6 +223,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EditorToolsManager::notifyDrawGizmos2D(
+        ComponentGizmosPtr const& _gizmos,
+        Entity* _entity,
+        ComponentPtr const& _component,
+        GizmosDrawer2D* _drawer)
+    {
+        if (m_selectionManager->isObjectSelected(_entity->getSharedPtr()))
+        {
+            _gizmos->drawGizmosSelected2D(_entity, _component, _drawer);
+        }
+    }
+
+    //////////////////////////////////////////
     void EditorToolsManager::setGizmosController(GizmosController* _gizmosController)
     {
         if (m_gizmosController == _gizmosController)
@@ -231,6 +244,7 @@ namespace Maze
         if (m_gizmosController)
         {
             m_gizmosController->eventDrawGizmosEvent.unsubscribe(this);
+            m_gizmosController->eventDrawGizmosEvent2D.unsubscribe(this);
         }
 
         m_gizmosController = _gizmosController;
@@ -238,6 +252,7 @@ namespace Maze
         if (m_gizmosController)
         {
             m_gizmosController->eventDrawGizmosEvent.subscribe(this, &EditorToolsManager::notifyDrawGizmos);
+            m_gizmosController->eventDrawGizmosEvent2D.subscribe(this, &EditorToolsManager::notifyDrawGizmos2D);
         }
     }
 

@@ -25,71 +25,73 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeComponentGizmos_hpp_))
-#define _MazeComponentGizmos_hpp_
+#if (!defined(_MazeTransform2DGizmos_hpp_))
+#define _MazeTransform2DGizmos_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-editor-tools/ecs/components/MazeGizmosDrawer.hpp"
-#include "maze-editor-tools/ecs/components/MazeGizmosDrawer2D.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ComponentGizmos);
+    MAZE_USING_SHARED_PTR(Transform2DGizmos);
 
 
     //////////////////////////////////////////
-    // Class ComponentGizmos
+    // Class Transform2DGizmos
+    //
+    // Draws a Unity RectTransform-style overlay for the selected 2D entity:
+    // the rect outline, its pivot and, if parented, a marker for its anchor
+    // point plus a connecting line from the anchor to the pivot.
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API ComponentGizmos
+    class MAZE_EDITOR_TOOLS_API Transform2DGizmos
+        : public ComponentGizmos
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS(ComponentGizmos);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Transform2DGizmos, ComponentGizmos);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(ComponentGizmos);
+        MAZE_DECLARE_MEMORY_ALLOCATION(Transform2DGizmos);
 
     public:
-
-        //////////////////////////////////////////
-        virtual void drawGizmos(
-            Entity* _entity,
-            ComponentPtr const& _component,
-            GizmosDrawer* _drawer) {};
-
-        //////////////////////////////////////////
-        virtual void drawGizmosSelected(
-            Entity* _entity,
-            ComponentPtr const& _component,
-            GizmosDrawer* _drawer) {};
-
-
-        //////////////////////////////////////////
-        virtual void drawGizmos2D(
-            Entity* _entity,
-            ComponentPtr const& _component,
-            GizmosDrawer2D* _drawer) {};
 
         //////////////////////////////////////////
         virtual void drawGizmosSelected2D(
             Entity* _entity,
             ComponentPtr const& _component,
-            GizmosDrawer2D* _drawer) {};
+            GizmosDrawer2D* _drawer) MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
+        virtual ~Transform2DGizmos();
+
+        //////////////////////////////////////////
+        static Transform2DGizmosPtr Create();
+
+
+    protected:
+
+        //////////////////////////////////////////
+        Transform2DGizmos();
+
+        //////////////////////////////////////////
+        bool init();
+
+    protected:
     };
 
 
 } // namespace Maze
 //////////////////////////////////////////
- 
 
-#endif // _MazeComponentGizmos_hpp_
+
+#endif // _MazeTransform2DGizmos_hpp_
 //////////////////////////////////////////

@@ -27,6 +27,7 @@
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
 #include "maze-editor-tools/ecs/components/MazeGizmosDrawer.hpp"
+#include "maze-editor-tools/ecs/components/MazeGizmosDrawer2D.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-editor-tools/ecs/events/MazeEcsEditorToolsEvents.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
@@ -95,6 +96,7 @@ namespace Maze
     void GizmosController::processEntityAwakened()
     {
         m_drawer = GizmosDrawer::Create(getEntityRaw()->getEcsWorld(), m_renderTarget);
+        m_drawer2D = GizmosDrawer2D::Create();
         m_canvasesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Canvas>();
         m_cameras3DSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Camera3D>();
 
@@ -151,17 +153,30 @@ namespace Maze
                     gizmosSample.gizmos->drawGizmos(entity, component, m_drawer.get());
 
                     eventDrawGizmosEvent(gizmosSample.gizmos, entity, component, m_drawer.get());
+
+                    if (m_drawer2D)
+                    {
+                        gizmosSample.gizmos->drawGizmos2D(entity, component, m_drawer2D.get());
+
+                        eventDrawGizmosEvent2D(gizmosSample.gizmos, entity, component, m_drawer2D.get());
+                    }
                 }
             }
         }
 
         m_drawer->update(_dt);
+
+        if (m_drawer2D)
+            m_drawer2D->update(_dt);
     }
 
     //////////////////////////////////////////
     void GizmosController::clear()
     {
         m_drawer->clear();
+
+        if (m_drawer2D)
+            m_drawer2D->clear();
     }
 
     //////////////////////////////////////////
@@ -170,8 +185,12 @@ namespace Maze
         if (m_drawer)
             m_drawer->destroy();
 
+        if (m_drawer2D)
+            m_drawer2D->destroy();
+
         m_samples.clear();
         m_drawer.reset();
+        m_drawer2D.reset();
 
         if (_renderTarget)
             _renderTarget->eventRenderTargetDestroyed.unsubscribe(this);
@@ -185,8 +204,12 @@ namespace Maze
         if (m_drawer)
             m_drawer->destroy();
 
+        if (m_drawer2D)
+            m_drawer2D->destroy();
+
         m_samples.clear();
         m_drawer.reset();
+        m_drawer2D.reset();
     }
 
 

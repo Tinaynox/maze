@@ -43,7 +43,9 @@
 #include "maze-editor-tools/ecs/components/gizmos/MazeCamera3DGizmos.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeMeshRendererGizmos.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeSkinnedMeshSkeletonGizmos.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeTransform2DGizmos.hpp"
 #include "maze-editor-tools/managers/MazeGizmoToolsManager.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 
 
@@ -100,6 +102,7 @@ namespace Maze
         registerGizmos<Camera3D, Camera3DGizmos>();
         registerGizmos<MeshRenderer, MeshRendererGizmos>();
         registerGizmos<SkinnedMeshSkeleton, SkinnedMeshSkeletonGizmos>();
+        registerGizmos<Transform2D, Transform2DGizmos>();
 
         return true;
     }
