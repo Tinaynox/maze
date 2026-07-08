@@ -80,7 +80,10 @@ namespace Maze
             case DXT3_RGBA:     return "DXT3_RGBA";
             // case DXT4_RGBA:     return "DXT4_RGBA";
             case DXT5_RGBA:     return "DXT5_RGBA";
-                
+
+            case RGTC1_R:       return "RGTC1_R";
+            case RGTC2_RG:      return "RGTC2_RG";
+
             case PVRTC1_RGBA4:  return "PVRTC1_RGBA4";
             case PVRTC1_RGB4:   return "PVRTC1_RGB4";
             case PVRTC1_RGBA2:  return "PVRTC1_RGBA2";
@@ -186,7 +189,10 @@ namespace Maze
         if (strcmp(_value, "DXT3_RGBA") == 0) return DXT3_RGBA;
         // if (strcmp(_value, "DXT4_RGBA") == 0) return DXT4_RGBA;
         if (strcmp(_value, "DXT5_RGBA") == 0) return DXT5_RGBA;
-        
+
+        if (strcmp(_value, "RGTC1_R") == 0) return RGTC1_R;
+        if (strcmp(_value, "RGTC2_RG") == 0) return RGTC2_RG;
+
         if (strcmp(_value, "PVRTC1_RGBA4") == 0) return PVRTC1_RGBA4;
         if (strcmp(_value, "PVRTC1_RGB4") == 0) return PVRTC1_RGB4;
         if (strcmp(_value, "PVRTC1_RGBA2") == 0) return PVRTC1_RGBA2;
@@ -289,7 +295,10 @@ namespace Maze
             case PixelFormat::DXT3_RGBA: return 0;
             // case PixelFormat::DXT4_RGBA: return 0;
             case PixelFormat::DXT5_RGBA: return 0;
-            
+
+            case PixelFormat::RGTC1_R: return 0;
+            case PixelFormat::RGTC2_RG: return 0;
+
             case PixelFormat::PVRTC1_RGBA4: return 0;
             case PixelFormat::PVRTC1_RGB4: return 0;
             case PixelFormat::PVRTC1_RGBA2: return 0;
@@ -366,7 +375,11 @@ namespace Maze
             // case PixelFormat::DXT4_RGBA:
             case PixelFormat::DXT5_RGBA:
                 return 0;
-            
+
+            case PixelFormat::RGTC1_R:
+            case PixelFormat::RGTC2_RG:
+                return 0;
+
             case PixelFormat::PVRTC1_RGBA4:
             case PixelFormat::PVRTC1_RGB4:
             case PixelFormat::PVRTC1_RGBA2:
@@ -379,7 +392,7 @@ namespace Maze
             case PixelFormat::ETC2_RGBA:
             case PixelFormat::ETC2_RGB_A1:
                 return 0;
-            
+
             case PixelFormat::DEPTH_U16:
             case PixelFormat::DEPTH_U24:
             case PixelFormat::DEPTH_U32:
@@ -394,7 +407,7 @@ namespace Maze
 
          return 0;
     }
-    
+
     //////////////////////////////////////////
     MAZE_GRAPHICS_API bool PixelFormat::IsCompressed(PixelFormat::Enum _pixelFormat)
     {
@@ -405,7 +418,10 @@ namespace Maze
             case PixelFormat::DXT3_RGBA:
             // case PixelFormat::DXT4_RGBA:
             case PixelFormat::DXT5_RGBA:
-                
+
+            case PixelFormat::RGTC1_R:
+            case PixelFormat::RGTC2_RG:
+
             case PixelFormat::PVRTC1_RGBA4:
             case PixelFormat::PVRTC1_RGB4:
             case PixelFormat::PVRTC1_RGBA2:
@@ -497,7 +513,12 @@ namespace Maze
             // case PixelFormat::DXT4_RGBA:
             case PixelFormat::DXT5_RGBA:
                 return ((_width + 3) / 4) * ((_height + 3) / 4) * 16 * _depth;
-            
+
+            case PixelFormat::RGTC1_R:
+                return ((_width + 3) / 4) * ((_height + 3) / 4) * 8 * _depth;
+            case PixelFormat::RGTC2_RG:
+                return ((_width + 3) / 4) * ((_height + 3) / 4) * 16 * _depth;
+
             case PixelFormat::PVRTC1_RGBA2:
             case PixelFormat::PVRTC1_RGB2:
             case PixelFormat::PVRTC2_RGBA2:

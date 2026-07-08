@@ -47,6 +47,9 @@ class TextureCompressor:
                         'index': TextureCompressor.COMPRESSOR_CRUNCH,
                         'format': 'dds -dxt1',
                         'format_alpha': 'dds -dxt5',
+                        # crunch/crnlib has no BC4/BC5 encoder - normal maps are
+                        # left uncompressed on this platform (see compress_texture).
+                        'format_normal': None,
                         'args': ''
                     },
                 "Linux":
@@ -55,6 +58,8 @@ class TextureCompressor:
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'DXT1',
                         'format_alpha': 'DXT5',
+                        # BC5 (two-channel, X/Y only - Z is reconstructed in the shader)
+                        'format_normal': 'BC5',
                         'args': ''
                     },
                 "Windows":
@@ -63,6 +68,11 @@ class TextureCompressor:
                         'index': TextureCompressor.COMPRESSOR_COMPRESSONATOR,
                         'format': 'DXT1',
                         'format_alpha': 'DXT5',
+                        # BC5 (two-channel, X/Y only - Z is reconstructed in the shader).
+                        # Verify this fourCC token against the installed Compressonator
+                        # CLI version - it must produce a DDS with 'ATI2' fourCC so the
+                        # engine's DDS loader (ID_ATI2) recognizes it.
+                        'format_normal': 'ATI2',
                         'args': ''
                     }
             }
@@ -72,6 +82,7 @@ class TextureCompressor:
             self.tool_index = tools[system]['index']
             self.tool_format = tools[system]['format']
             self.tool_format_alpha = tools[system]['format_alpha']
+            self.tool_format_normal = tools[system]['format_normal']
             self.tool_args = tools[system]['args']
             self.tool_file_extension = 'dds'
 
@@ -223,7 +234,7 @@ class TextureCompressor:
             self.tool_args = tools[system]['args']
             self.tool_file_extension = 'etc'
 
-    def compress_texture(self, texture_full_path):
+    def compress_texture(self, texture_full_path, is_normal_map=False):
 
         if self.tool_index == TextureCompressor.COMPRESSOR_NONE:
             return texture_full_path
@@ -231,8 +242,15 @@ class TextureCompressor:
         if not texture_utils.is_pot_texture(texture_full_path):
             return texture_full_path
 
-        has_alpha = texture_utils.has_transparent_pixel(texture_full_path)
-        tool_format = self.tool_format_alpha if has_alpha else self.tool_format
+        if is_normal_map:
+            # Normal maps get their own codec (BC5/RGTC2 where available) instead of
+            # DXT1/DXT5, since color-endpoint compression distorts stored directions.
+            tool_format = getattr(self, 'tool_format_normal', None)
+            if not tool_format:
+                return texture_full_path
+        else:
+            has_alpha = texture_utils.has_transparent_pixel(texture_full_path)
+            tool_format = self.tool_format_alpha if has_alpha else self.tool_format
 
         name, ext = os.path.splitext(os.path.basename(texture_full_path))
         final_ext = self.tool_file_extension

@@ -86,6 +86,10 @@ namespace Maze
             case PixelFormat::DXT5_RGBA:
                 return 0;
 
+            case PixelFormat::RGTC1_R:
+            case PixelFormat::RGTC2_RG:
+                return 0;
+
             case PixelFormat::PVRTC1_RGBA4:
             case PixelFormat::PVRTC1_RGB4:
             case PixelFormat::PVRTC1_RGBA2:
@@ -193,6 +197,9 @@ namespace Maze
             case PixelFormat::DXT3_RGBA:     return MAZE_GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
             // case PixelFormat::DXT4_RGBA:     MAZE_ERROR("Not supported"); return 0;
             case PixelFormat::DXT5_RGBA:     return MAZE_GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+
+            case PixelFormat::RGTC1_R:       return MAZE_GL_COMPRESSED_RED_RGTC1;
+            case PixelFormat::RGTC2_RG:      return MAZE_GL_COMPRESSED_RG_RGTC2;
 
             case PixelFormat::PVRTC1_RGBA4:
                 return MAZE_GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
@@ -341,6 +348,10 @@ namespace Maze
             case PixelFormat::DXT3_RGBA:
             // case PixelFormat::DXT4_RGBA:
             case PixelFormat::DXT5_RGBA:
+                return 0;
+
+            case PixelFormat::RGTC1_R:
+            case PixelFormat::RGTC2_RG:
                 return 0;
 
             case PixelFormat::PVRTC1_RGBA4:

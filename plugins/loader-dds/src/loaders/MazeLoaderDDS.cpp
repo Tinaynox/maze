@@ -188,6 +188,7 @@ namespace Maze
     #define ID_DXT1   0x31545844
     #define ID_DXT3   0x33545844
     #define ID_DXT5   0x35545844
+    #define ID_ATI2   FOURCC('A', 'T', 'I', '2')   // BC5 / 3Dc / RGTC2 (compressed normal maps)
 
 
     //////////////////////////////////////////
@@ -231,17 +232,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    // Flips the 8-byte interpolated-index sub-block shared by DXT5's alpha
+    // channel and RGTC1/BC4's single channel:
+    // [0]    endpoint0.
+    // [1]    endpoint1.
+    // [2-7]  bitmap, 3 bits per pixel.
+    //
     // From http://src.chromium.org/viewvc/chrome/trunk/src/o3d/core/cross/bitmap_dds.cc?view=markup&pathrev=21227
     // Original source contained bugs; fixed here.
-    static void FlipDXT5BlockFull(unsigned char *block)
+    static void FlipBC4BlockFull(U8* block)
     {
-        // A DXT5 block layout is:
-        // [0]    alpha0.
-        // [1]    alpha1.
-        // [2-7]  alpha bitmap, 3 bits per pixel.
-        // [8-15] a DXT1 block.
-
-        // The alpha bitmap doesn't easily map lines to bytes, so we have to
+        // The bitmap doesn't easily map lines to bytes, so we have to
         // interpret it correctly.  Extracted from
         // http://www.opengl.org/registry/specs/EXT/texture_compression_s3tc.txt :
         //
@@ -273,9 +274,26 @@ namespace Maze
         block[5] = line_1_0 & 0xff;
         block[6] = (line_1_0 & 0xff00) >> 8;
         block[7] = (line_1_0 & 0xff0000) >> 16;
+    }
 
-        // And flip the DXT1 block using the above function.
+    //////////////////////////////////////////
+    static void FlipDXT5BlockFull(unsigned char *block)
+    {
+        // A DXT5 block layout is:
+        // [0-7]  alpha bitmap (BC4-style sub-block).
+        // [8-15] a DXT1 block.
+        FlipBC4BlockFull(block);
         FlipDXT1BlockFull(block + 8);
+    }
+
+    //////////////////////////////////////////
+    static void FlipRGTC2BlockFull(U8* block)
+    {
+        // An RGTC2/BC5 block layout is two independent BC4-style sub-blocks:
+        // [0-7]  red channel.
+        // [8-15] green channel.
+        FlipBC4BlockFull(block);
+        FlipBC4BlockFull(block + 8);
     }
 
 
@@ -350,6 +368,11 @@ namespace Maze
                 if (fourCC == ID_DXT5)
                 {
                     pixelFormat = PixelFormat::DXT5_RGBA;
+                }
+                else
+                if (fourCC == ID_ATI2)
+                {
+                    pixelFormat = PixelFormat::RGTC2_RG;
                 }
                 else
                 {
@@ -431,6 +454,11 @@ namespace Maze
                         {
                             for (k = 0; k < widBytes / blockSize; k++)
                                 FlipDXT1BlockFull(d + k * blockSize);
+                        }
+                        else if (pixelFormat == PixelFormat::RGTC2_RG)
+                        {
+                            for (k = 0; k < widBytes / blockSize; k++)
+                                FlipRGTC2BlockFull((U8*)d + k * blockSize);
                         }
                         else
                         {

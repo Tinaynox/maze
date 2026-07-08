@@ -105,6 +105,10 @@ namespace Maze
             // DXT4_RGBA            = 203,
             DXT5_RGBA               = 204,
 
+            // RGTC (BC4/BC5, core since OpenGL 3.0 - used for compressed normal maps)
+            RGTC1_R                 = 210,    // BC4 - single channel
+            RGTC2_RG                = 211,    // BC5 - two channel
+
             // PVRTC
             PVRTC1_RGBA4            = 250,
             PVRTC1_RGB4             = 251,

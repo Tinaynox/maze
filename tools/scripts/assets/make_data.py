@@ -181,8 +181,7 @@ class MakeData:
 
                 if is_texture:
 
-                    if name.endswith('_Normal'):
-                        compression_enabled = False
+                    is_normal_map = name.endswith('_Normal')
 
                     im_src = Image.open(copy_to)
                     parameters.add_param_s32('width', im_src.size[0])
@@ -190,7 +189,7 @@ class MakeData:
                     im_src.close()
 
                     if compression_enabled:
-                        copy_to = self.texture_compressor.compress_texture(copy_to)
+                        copy_to = self.texture_compressor.compress_texture(copy_to, is_normal_map=is_normal_map)
                 compressed_name, compressed_ext = os.path.splitext(copy_to)
 
                 if is_texture and compression_enabled:
