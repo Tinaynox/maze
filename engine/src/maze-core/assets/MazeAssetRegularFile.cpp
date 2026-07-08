@@ -188,16 +188,7 @@ namespace Maze
 
         _byteBuffer.resize(size);
         if (size > 0)
-        {
-            U8* dataPointer = _byteBuffer.getDataRW();
-            Size totalBytesRead = 0;
-            while (!feof(fileHandler))
-            {
-                Size bytesRead = fread(dataPointer, sizeof(U8), 1024, fileHandler);
-                totalBytesRead += bytesRead;
-                dataPointer += bytesRead;
-            }
-        }
+            fread(_byteBuffer.getDataRW(), sizeof(U8), size, fileHandler);
 
         fclose(fileHandler);
 

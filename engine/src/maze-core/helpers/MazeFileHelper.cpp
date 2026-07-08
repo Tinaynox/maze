@@ -156,11 +156,20 @@ namespace Maze
         {
             MAZE_PROFILE_EVENT("ReadFileToString");
 
-            std::ifstream ifs(_fileFullPath.c_str());
-            _string.assign(
-                (std::istreambuf_iterator<S8>(ifs)),
-                (std::istreambuf_iterator<S8>()));
-        
+            _string.clear();
+
+            InputFileStream file;
+            file.open(_fileFullPath.c_str(), std::ios::binary | std::ios::ate);
+            if (!file.is_open())
+                return 0;
+
+            std::streamsize size = file.tellg();
+            file.seekg(0, std::ios::beg);
+
+            _string.resize((Size)size);
+            if (size > 0)
+                file.read(&_string[0], size);
+
             return _string.size();
         }
 

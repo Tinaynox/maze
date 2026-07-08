@@ -219,7 +219,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void reloadShaders();
+        virtual void reloadShaders();
 
 
         //////////////////////////////////////////

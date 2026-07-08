@@ -630,6 +630,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    // Shader header files (#include "*.mzglsl") are shared by the vast majority of shaders
+    // and never change at runtime outside of manual dev reloads, so their contents are cached
+    // here to avoid re-reading the same handful of files from disk for every single shader load.
+    static UnorderedMap<String, String> s_shaderIncludeFilesCache;
+
+    //////////////////////////////////////////
+    void ShaderOpenGL::ClearShaderIncludeFilesCache()
+    {
+        s_shaderIncludeFilesCache.clear();
+    }
+
+    //////////////////////////////////////////
     String ShaderOpenGL::makeInternalShaderPreprocessing(String _shader)
     {
         Size index = 0;
@@ -647,15 +659,25 @@ namespace Maze
                 Size fileNameLastSlashIndex = fileName.find_last_of('/');
                 if (fileNameLastSlashIndex != String::npos)
                     fileName = fileName.substr(fileNameLastSlashIndex + 1, fileName.size() - fileNameLastSlashIndex - 1);
-                
+
                 _shader.erase(index, symbols);
 
                 String fileText;
 
-                AssetFilePtr const& shaderFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(fileName);
+                auto cacheIt = s_shaderIncludeFilesCache.find(fileName);
+                if (cacheIt != s_shaderIncludeFilesCache.end())
+                {
+                    fileText = cacheIt->second;
+                }
+                else
+                {
+                    AssetFilePtr const& shaderFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(fileName);
 
-                if (shaderFile)
-                    shaderFile->readToString(fileText);
+                    if (shaderFile)
+                        shaderFile->readToString(fileText);
+
+                    s_shaderIncludeFilesCache.emplace(fileName, fileText);
+                }
 
                 if (fileText.size())
                     _shader.insert(index, fileText);
@@ -664,7 +686,7 @@ namespace Maze
                     MAZE_ERROR("Undefined shader file include: %s!", fileName.c_str());
                 }
             }
-            
+
         }
         while (index != String::npos);
 

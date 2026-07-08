@@ -135,6 +135,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual void recompile() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        static void ClearShaderIncludeFilesCache();
+
     protected:
 
         //////////////////////////////////////////

@@ -250,6 +250,16 @@ namespace Maze
             _shaderFile);
     }
 
+    //////////////////////////////////////////
+    void ShaderSystemOpenGL::reloadShaders()
+    {
+        // Dev-time shader reload (see Alt+S) - drop cached #include contents
+        // so edited shared header files are picked up
+        ShaderOpenGL::ClearShaderIncludeFilesCache();
+
+        ShaderSystem::reloadShaders();
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////
