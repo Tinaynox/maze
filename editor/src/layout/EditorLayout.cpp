@@ -86,7 +86,7 @@ namespace Maze
     //////////////////////////////////////////
     F32 const EditorLayout::c_menuBarHeight = 17.0f;
     F32 const topBarHeight = 0.025f;
-    F32 const sceneViewportX = 0.15f;
+    F32 const sceneViewportX = 0.2f;
     F32 const sceneViewportY = 0.2f;
     F32 const sceneViewportWidth = 1.0f - sceneViewportX * 2.0f;
     F32 const sceneViewportHeight = 1.0f - sceneViewportY - topBarHeight;
