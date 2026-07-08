@@ -33,7 +33,6 @@
 #include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
-#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
@@ -214,34 +213,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    // Enumerates asset files inside a virtual folder (works for both loose and obfuscated/archived .mzap folders),
-    // returning their AssetFileIds (assigned via .mzmeta sidecars, same as any other tracked asset file)
-    inline MonoArray* AssetManagerGetAssetFilesInFolder(MonoString* _folderFullPath, MonoString* _extension)
+    // Enumerates all asset files with a given extension anywhere under Assets (works for both loose and
+    // obfuscated/archived .mzap folders, whose names/paths get rewritten at packing time), returning their
+    // AssetFileIds (assigned via .mzmeta sidecars, same as any other tracked asset file)
+    inline MonoArray* AssetManagerGetAssetFilesWithExtension(MonoString* _extension)
     {
         if (!AssetManager::GetInstancePtr())
             return nullptr;
 
-        Char* folderCStr = mono_string_to_utf8(_folderFullPath);
-        Path folderFullPath = FileHelper::ConvertLocalPathToFullPath(Path(folderCStr));
-        mono_free(folderCStr);
+        Char* extCStr = mono_string_to_utf8(_extension);
+        Path extension(extCStr);
+        mono_free(extCStr);
 
-        Vector<AssetFilePtr> files = AssetManager::GetInstancePtr()->getAssetFilesInFolder(folderFullPath, false);
-
-        if (_extension)
-        {
-            Char* extCStr = mono_string_to_utf8(_extension);
-            Path extension(extCStr);
-            mono_free(extCStr);
-
-            if (!extension.empty())
-            {
-                files.erase(
-                    std::remove_if(
-                        files.begin(), files.end(),
-                        [&](AssetFilePtr const& _file) { return _file->getExtension() != extension; }),
-                    files.end());
-            }
-        }
+        Vector<AssetFilePtr> files = AssetManager::GetInstancePtr()->getAssetFilesWithExtension(extension);
 
         files.erase(
             std::remove_if(
@@ -1112,7 +1096,7 @@ namespace Maze
         // AssetFile
         MAZE_CORE_MONO_BIND_FUNC(AssetFileIdIsValid);
         MAZE_CORE_MONO_BIND_FUNC(AssetFileReadAsDataBlock);
-        MAZE_CORE_MONO_BIND_FUNC(AssetManagerGetAssetFilesInFolder);
+        MAZE_CORE_MONO_BIND_FUNC(AssetManagerGetAssetFilesWithExtension);
         MAZE_CORE_MONO_BIND_FUNC(AssetFileGetFileName);
         MAZE_CORE_MONO_BIND_FUNC(AssetFileReadAsString);
 

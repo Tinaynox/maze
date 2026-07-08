@@ -285,7 +285,7 @@ namespace Maze.Core
             out byte* bytes);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static uint[] AssetManagerGetAssetFilesInFolder(string folderFullPath, string extension);
+        public extern static uint[] AssetManagerGetAssetFilesWithExtension(string extension);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static string AssetFileGetFileName(uint assetFileId);
