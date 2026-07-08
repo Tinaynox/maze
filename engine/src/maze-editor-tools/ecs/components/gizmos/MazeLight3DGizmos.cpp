@@ -118,6 +118,8 @@ namespace Maze
             case Light3DType::Directional:
             {
                 Vec3F directionForward = mat.transform(Vec3F::c_unitZ).normalizedCopy();
+                Vec3F directionRight = mat.transform(Vec3F::c_unitX).normalizedCopy();
+                Vec3F directionUp = mat.transform(Vec3F::c_unitY).normalizedCopy();
 
                 F32 const radius = 0.33f;
 
@@ -129,7 +131,7 @@ namespace Maze
                     F32 c = Math::Cos(i);
                     F32 s = Math::Sin(i);
 
-                    Vec3F d = directionForward.crossProduct(Vec3F(c, s, 0.0f) * radius);
+                    Vec3F d = (directionRight * c + directionUp * s) * radius;
                     circlePoints.emplace_back(position + d);
                 }
 
