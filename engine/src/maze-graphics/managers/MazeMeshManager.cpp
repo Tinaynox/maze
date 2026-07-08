@@ -216,17 +216,26 @@ namespace Maze
         AssetFilePtr tangentsAsset = AssetManager::GetInstancePtr()->getAssetFileByFullPath(tangentsFilePath);
         if (tangentsAsset)
         {
-            UnixTime meshTimestamp = _assetFile->getFileStats().modifiedTimeUTC;
             ByteBufferPtr tangentsData = tangentsAsset->readAsByteBuffer();
-            if (tangentsData && GraphicsUtilsHelper::IsMeshTangentsBufferUpToDate(*tangentsData, meshTimestamp))
+            if (tangentsData)
             {
-                loaderProps.tangentsData = tangentsData;
+#if MAZE_DEBUG
+                U32 meshContentHash = GraphicsUtilsHelper::CalculateMeshSourceContentHash(_assetFile);
+                if (!GraphicsUtilsHelper::IsMeshTangentsBufferUpToDate(*tangentsData, meshContentHash))
+                {
+                    Debug::LogWarning(
+                        "Tangents file is outdated for mesh '%s', ignoring and recalculating...",
+                        _assetFile->getFileName().toUTF8().c_str());
+                }
+                else
+#endif
+                {
+                    loaderProps.tangentsData = tangentsData;
+                }
             }
             else
             {
-                Debug::LogWarning(
-                    "Tangents file is outdated for mesh '%s', ignoring and recalculating...",
-                    _assetFile->getFileName().toUTF8().c_str());
+                
             }
         }
 

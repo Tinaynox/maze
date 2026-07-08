@@ -72,26 +72,33 @@ namespace Maze
             ColorU32 const& _outlineColor);
 
         //////////////////////////////////////////
+        // Hashes the raw contents of a mesh source asset file (eg. .fbx).
+        // Used instead of file timestamps to detect staleness, since mtimes
+        // are not preserved by asset assembly (plain copy) or zip archiving,
+        // while content bytes are
+        MAZE_GRAPHICS_API U32 CalculateMeshSourceContentHash(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
         // Saves mesh tangents/bitangents to a sidecar file, tagged with the
-        // timestamp of the source mesh it was calculated from
+        // content hash of the source mesh it was calculated from
         MAZE_GRAPHICS_API bool SaveMeshTangentsToFile(
             Mesh const& _mesh,
             Path const& _filePath,
-            UnixTime _sourceMeshTimestamp);
+            U32 _sourceMeshHash);
 
         //////////////////////////////////////////
-        // Checks the tangents sidecar file's embedded source mesh timestamp
+        // Checks the tangents sidecar file's embedded source mesh content hash
         // against the current one, without loading the full file
         MAZE_GRAPHICS_API bool IsMeshTangentsFileUpToDate(
             Path const& _filePath,
-            UnixTime _sourceMeshTimestamp);
+            U32 _sourceMeshHash);
 
         //////////////////////////////////////////
-        // Checks the tangents buffer's embedded source mesh timestamp
+        // Checks the tangents buffer's embedded source mesh content hash
         // against the current one, without parsing the full buffer
         MAZE_GRAPHICS_API bool IsMeshTangentsBufferUpToDate(
             ByteBuffer const& _byteBuffer,
-            UnixTime _sourceMeshTimestamp);
+            U32 _sourceMeshHash);
 
         //////////////////////////////////////////
         MAZE_GRAPHICS_API bool LoadMeshTangentsFromFile(

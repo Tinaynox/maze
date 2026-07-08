@@ -320,10 +320,10 @@ namespace Maze
             for (AssetFilePtr const& assetFile : assetFiles)
             {
                 Path tangentsFilePath = assetFile->getFullPath() + ".mztangents";
-                UnixTime meshTimestamp = assetFile->getFileStats().modifiedTimeUTC;
+                U32 meshContentHash = GraphicsUtilsHelper::CalculateMeshSourceContentHash(assetFile);
 
                 if (FileHelper::IsFileExists(tangentsFilePath) &&
-                    GraphicsUtilsHelper::IsMeshTangentsFileUpToDate(tangentsFilePath, meshTimestamp))
+                    GraphicsUtilsHelper::IsMeshTangentsFileUpToDate(tangentsFilePath, meshContentHash))
                 {
                     ++skipped;
                     continue;
@@ -339,7 +339,7 @@ namespace Maze
                 MeshPtr const& mesh = renderMesh->getMesh();
                 MAZE_ERROR_CONTINUE_IF(!mesh, "RenderMesh mesh is null!", tangentsFilePath.toUTF8().c_str());
 
-                if (GraphicsUtilsHelper::SaveMeshTangentsToFile(*mesh.get(), tangentsFilePath, meshTimestamp))
+                if (GraphicsUtilsHelper::SaveMeshTangentsToFile(*mesh.get(), tangentsFilePath, meshContentHash))
                     ++processed;
                 else
                     ++failed;

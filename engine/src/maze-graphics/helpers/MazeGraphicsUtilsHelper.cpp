@@ -32,6 +32,7 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
+#include "maze-core/hash/MazeHashCRC.hpp"
 
 
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
@@ -317,15 +318,28 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        U32 CalculateMeshSourceContentHash(AssetFilePtr const& _assetFile)
+        {
+            if (!_assetFile)
+                return 0u;
+
+            ByteBufferPtr sourceData = _assetFile->readAsByteBuffer();
+            if (!sourceData || sourceData->getSize() == 0u)
+                return 0u;
+
+            return Hash::CalculateCRC32(sourceData->getDataRO(), sourceData->getSize());
+        }
+
+        //////////////////////////////////////////
         bool SaveMeshTangentsToFile(
             Mesh const& _mesh,
             Path const& _filePath,
-            UnixTime _sourceMeshTimestamp)
+            U32 _sourceMeshHash)
         {
             std::ofstream outputFile(_filePath.c_str(), std::ios::binary);
             MAZE_ERROR_RETURN_VALUE_IF(!outputFile, false, "Failed to open file - %s", _filePath.toUTF8().c_str());
 
-            outputFile.write((S8 const*)&_sourceMeshTimestamp, sizeof(_sourceMeshTimestamp));
+            outputFile.write((S8 const*)&_sourceMeshHash, sizeof(_sourceMeshHash));
 
             U32 subMeshesCount = (U32)_mesh.getSubMeshesCount();
             outputFile.write((S8 const*)&subMeshesCount, sizeof(subMeshesCount));
@@ -387,30 +401,30 @@ namespace Maze
         //////////////////////////////////////////
         bool IsMeshTangentsFileUpToDate(
             Path const& _filePath,
-            UnixTime _sourceMeshTimestamp)
+            U32 _sourceMeshHash)
         {
             std::ifstream inputFile(_filePath.c_str(), std::ios::binary);
             if (!inputFile)
                 return false;
 
-            UnixTime storedTimestamp = 0;
-            inputFile.read((S8*)&storedTimestamp, sizeof(storedTimestamp));
+            U32 storedHash = 0;
+            inputFile.read((S8*)&storedHash, sizeof(storedHash));
             if (!inputFile)
                 return false;
 
-            return storedTimestamp == _sourceMeshTimestamp;
+            return storedHash == _sourceMeshHash;
         }
 
         //////////////////////////////////////////
         bool IsMeshTangentsBufferUpToDate(
             ByteBuffer const& _byteBuffer,
-            UnixTime _sourceMeshTimestamp)
+            U32 _sourceMeshHash)
         {
-            UnixTime storedTimestamp = 0;
-            if (_byteBuffer.read(0u, (S8*)&storedTimestamp, sizeof(storedTimestamp)) != sizeof(storedTimestamp))
+            U32 storedHash = 0;
+            if (_byteBuffer.read(0u, (S8*)&storedHash, sizeof(storedHash)) != sizeof(storedHash))
                 return false;
 
-            return storedTimestamp == _sourceMeshTimestamp;
+            return storedHash == _sourceMeshHash;
         }
 
         //////////////////////////////////////////
@@ -421,8 +435,8 @@ namespace Maze
             std::ifstream outputFile(_filePath.c_str(), std::ios::binary);
             MAZE_ERROR_RETURN_VALUE_IF(!outputFile, false, "Failed to open file - %s", _filePath.toUTF8().c_str());
 
-            UnixTime sourceMeshTimestamp = 0;
-            outputFile.read((S8*)&sourceMeshTimestamp, sizeof(sourceMeshTimestamp));
+            U32 sourceMeshHash = 0;
+            outputFile.read((S8*)&sourceMeshHash, sizeof(sourceMeshHash));
 
             U32 subMeshesCount = 0u;
             outputFile.read((S8*)&subMeshesCount, sizeof(subMeshesCount));
@@ -478,8 +492,8 @@ namespace Maze
             Mesh& _mesh,
             ByteBuffer const& _byteBuffer)
         {
-            UnixTime sourceMeshTimestamp = 0;
-            U32 bytesRead = _byteBuffer.read(0u, (S8*)&sourceMeshTimestamp, sizeof(sourceMeshTimestamp));
+            U32 sourceMeshHash = 0;
+            U32 bytesRead = _byteBuffer.read(0u, (S8*)&sourceMeshHash, sizeof(sourceMeshHash));
 
             U32 subMeshesCount = 0u;
             bytesRead += _byteBuffer.read(bytesRead, (S8*)&subMeshesCount, sizeof(subMeshesCount));
