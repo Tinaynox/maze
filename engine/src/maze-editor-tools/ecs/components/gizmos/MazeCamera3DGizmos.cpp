@@ -79,10 +79,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Camera3DGizmos::drawGizmos(
+    void Camera3DGizmos::drawGizmos3D(
         Entity* _entity,
         ComponentPtr const& _component,
-        GizmosDrawer* _drawer)
+        GizmosDrawer3D* _drawer)
     {
         Camera3D* camera3D = _component->castRaw<Camera3D>();
 
@@ -100,10 +100,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Camera3DGizmos::drawGizmosSelected(
+    void Camera3DGizmos::drawGizmosSelected3D(
         Entity* _entity,
         ComponentPtr const& _component, 
-        GizmosDrawer* _drawer)
+        GizmosDrawer3D* _drawer)
     {
         Camera3D* camera3D = _component->castRaw<Camera3D>();
 

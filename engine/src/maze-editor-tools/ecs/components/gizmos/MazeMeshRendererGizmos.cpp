@@ -80,19 +80,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MeshRendererGizmos::drawGizmos(
+    void MeshRendererGizmos::drawGizmos3D(
         Entity* _entity,
         ComponentPtr const& _component,
-        GizmosDrawer* _drawer)
+        GizmosDrawer3D* _drawer)
     {
         
     }
 
     //////////////////////////////////////////
-    void MeshRendererGizmos::drawGizmosSelected(
+    void MeshRendererGizmos::drawGizmosSelected3D(
         Entity* _entity,
         ComponentPtr const& _component,
-        GizmosDrawer* _drawer)
+        GizmosDrawer3D* _drawer)
     {
         MeshRenderer* meshRenderer = _component->castRaw<MeshRenderer>();    
 

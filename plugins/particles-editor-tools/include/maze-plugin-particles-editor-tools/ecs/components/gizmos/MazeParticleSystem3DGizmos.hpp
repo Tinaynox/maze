@@ -59,16 +59,16 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual void drawGizmos(
+        virtual void drawGizmos3D(
             Entity* _entity,
             ComponentPtr const& _component,
-            GizmosDrawer* _drawer) MAZE_OVERRIDE;
+            GizmosDrawer3D* _drawer) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void drawGizmosSelected(
+        virtual void drawGizmosSelected3D(
             Entity* _entity,
             ComponentPtr const& _component,
-            GizmosDrawer* _drawer) MAZE_OVERRIDE;
+            GizmosDrawer3D* _drawer) MAZE_OVERRIDE;
 
     public:
 

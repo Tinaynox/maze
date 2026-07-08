@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
-#include "maze-editor-tools/ecs/components/MazeGizmosDrawer.hpp"
+#include "maze-editor-tools/ecs/components/MazeGizmosDrawer3D.hpp"
 #include "maze-editor-tools/ecs/components/MazeGizmosDrawer2D.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-editor-tools/ecs/events/MazeEcsEditorToolsEvents.hpp"
@@ -95,7 +95,7 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosController::processEntityAwakened()
     {
-        m_drawer = GizmosDrawer::Create(getEntityRaw()->getEcsWorld(), m_renderTarget);
+        m_drawer3D = GizmosDrawer3D::Create(getEntityRaw()->getEcsWorld(), m_renderTarget);
         m_drawer2D = GizmosDrawer2D::Create();
         m_canvasesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Canvas>();
         m_cameras3DSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Camera3D>();
@@ -135,10 +135,10 @@ namespace Maze
         F32 _dt,
         bool _draw)
     {
-        if (!m_drawer)
+        if (!m_drawer3D)
             return;
 
-        // m_drawer->clear();
+        // m_drawer3D->clear();
 
         if (_draw)
         {
@@ -150,9 +150,9 @@ namespace Maze
                         continue;
 
                     ComponentPtr const& component = entity->getComponentById(gizmosSample.componentId);
-                    gizmosSample.gizmos->drawGizmos(entity, component, m_drawer.get());
+                    gizmosSample.gizmos->drawGizmos3D(entity, component, m_drawer3D.get());
 
-                    eventDrawGizmosEvent(gizmosSample.gizmos, entity, component, m_drawer.get());
+                    eventDrawGizmosEvent3D(gizmosSample.gizmos, entity, component, m_drawer3D.get());
 
                     if (m_drawer2D)
                     {
@@ -164,7 +164,7 @@ namespace Maze
             }
         }
 
-        m_drawer->update(_dt);
+        m_drawer3D->update(_dt);
 
         if (m_drawer2D)
             m_drawer2D->update(_dt);
@@ -173,7 +173,7 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosController::clear()
     {
-        m_drawer->clear();
+        m_drawer3D->clear();
 
         if (m_drawer2D)
             m_drawer2D->clear();
@@ -182,14 +182,14 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosController::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
     {
-        if (m_drawer)
-            m_drawer->destroy();
+        if (m_drawer3D)
+            m_drawer3D->destroy();
 
         if (m_drawer2D)
             m_drawer2D->destroy();
 
         m_samples.clear();
-        m_drawer.reset();
+        m_drawer3D.reset();
         m_drawer2D.reset();
 
         if (_renderTarget)
@@ -201,14 +201,14 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosController::processEcsWorldWillBeDestroyed()
     {
-        if (m_drawer)
-            m_drawer->destroy();
+        if (m_drawer3D)
+            m_drawer3D->destroy();
 
         if (m_drawer2D)
             m_drawer2D->destroy();
 
         m_samples.clear();
-        m_drawer.reset();
+        m_drawer3D.reset();
         m_drawer2D.reset();
     }
 

@@ -111,6 +111,12 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosDrawer2D::destroyLinesEntity()
     {
+        if (m_linesRenderTarget)
+        {
+            m_linesRenderTarget->eventRenderTargetDestroyed.unsubscribe(this);
+            m_linesRenderTarget = nullptr;
+        }
+
         if (m_linesEntity)
             m_linesEntity->removeFromEcsWorld();
 
@@ -120,6 +126,15 @@ namespace Maze
         m_linesVao.reset();
         m_linesRenderMesh.reset();
         m_canvasKey = nullptr;
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer2D::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
+    {
+        // The RenderMesh/VAO pooled by this RenderTarget must be released
+        // synchronously here, while the target (and its pool) is still alive
+        // -- see the comment on m_linesRenderTarget for why.
+        destroyLinesEntity();
     }
 
     //////////////////////////////////////////
@@ -163,6 +178,9 @@ namespace Maze
             m_linesMeshRenderer = m_linesEntity->createComponent<MeshRenderer>();
             m_linesMeshRenderer->setRenderMesh(m_linesRenderMesh);
             m_linesMeshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getColorMaterial());
+
+            m_linesRenderTarget = renderTarget.get();
+            m_linesRenderTarget->eventRenderTargetDestroyed.subscribe(this, &GizmosDrawer2D::notifyRenderTargetDestroyed);
         }
     }
 

@@ -50,7 +50,7 @@ namespace Maze
     MAZE_USING_MANAGED_SHARED_PTR(RenderTarget);
     MAZE_USING_SHARED_PTR(ComponentGizmos);
     MAZE_USING_SHARED_PTR(GizmosController);
-    MAZE_USING_SHARED_PTR(GizmosDrawer);
+    MAZE_USING_SHARED_PTR(GizmosDrawer3D);
     MAZE_USING_SHARED_PTR(GizmosDrawer2D);
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(Component);
@@ -122,7 +122,7 @@ namespace Maze
             ComponentGizmosPtr const& _gizmos,
             Entity* _entity,
             ComponentPtr const& _component,
-            GizmosDrawer* _drawer);
+            GizmosDrawer3D* _drawer);
 
         //////////////////////////////////////////
         void notifyDrawGizmos2D(

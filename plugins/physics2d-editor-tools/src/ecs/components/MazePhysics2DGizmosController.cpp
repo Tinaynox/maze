@@ -86,7 +86,7 @@ namespace Maze
     //////////////////////////////////////////
     void Physics2DGizmosController::processEntityAwakened()
     {
-        m_drawer = GizmosDrawer::Create(getEntityRaw()->getEcsWorld(), m_renderTarget);
+        m_drawer = GizmosDrawer3D::Create(getEntityRaw()->getEcsWorld(), m_renderTarget);
     }
 
     //////////////////////////////////////////

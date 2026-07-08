@@ -37,6 +37,7 @@
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/containers/MazeFastVector.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
 
 
@@ -51,6 +52,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
     MAZE_USING_MANAGED_SHARED_PTR(Material);
+    MAZE_USING_MANAGED_SHARED_PTR(RenderTarget);
 
 
     //////////////////////////////////////////
@@ -58,7 +60,7 @@ namespace Maze
     //
     // Draws debug gizmos for 2D (Transform2D/Canvas) entities.
     //
-    // Unlike GizmosDrawer, which renders 3D wireframe meshes through the
+    // Unlike GizmosDrawer3D, which renders 3D wireframe meshes through the
     // scene-view Camera3D, Canvas content is rendered through its own
     // pixel-space pipeline that is entirely independent of any camera.
     // To stay pixel-aligned with the actual UI regardless of the scene-view
@@ -73,6 +75,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API GizmosDrawer2D
+        : public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -157,10 +160,23 @@ namespace Maze
         //////////////////////////////////////////
         void rebuildMesh();
 
+        //////////////////////////////////////////
+        void notifyRenderTargetDestroyed(RenderTarget* _renderTarget);
+
     protected:
         ColorF128 m_color = ColorF128::c_white;
 
         void* m_canvasKey = nullptr;
+
+        // The overlay canvas can be swapped to a different RenderTarget (e.g.
+        // edit <-> playtest), independently of any single owning controller's
+        // fixed render target -- so this drawer must track and watch whichever
+        // RenderTarget its pooled RenderMesh currently belongs to itself, and
+        // release it synchronously when that target announces its own
+        // destruction. Otherwise the RenderMesh's pool can already be gone by
+        // the time a later, generic teardown path (e.g. EcsWorld destruction)
+        // tries to release it, crashing on a dangling pool.
+        RenderTarget* m_linesRenderTarget = nullptr;
 
         EntityPtr m_linesEntity;
         Transform2DPtr m_linesTransform;

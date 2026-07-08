@@ -46,7 +46,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(EntitiesSample);
     MAZE_USING_SHARED_PTR(ComponentGizmos);
-    MAZE_USING_SHARED_PTR(GizmosDrawer);
+    MAZE_USING_SHARED_PTR(GizmosDrawer3D);
     MAZE_USING_SHARED_PTR(GizmosDrawer2D);
 
 
@@ -94,7 +94,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline GizmosDrawerPtr const& getDrawer() const { return m_drawer; }
+        inline GizmosDrawer3DPtr const& getDrawer() const { return m_drawer3D; }
 
         //////////////////////////////////////////
         inline GizmosDrawer2DPtr const& getDrawer2D() const { return m_drawer2D; }
@@ -110,7 +110,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        MultiDelegate<ComponentGizmosPtr const&, Entity*, ComponentPtr const&, GizmosDrawer*> eventDrawGizmosEvent;
+        MultiDelegate<ComponentGizmosPtr const&, Entity*, ComponentPtr const&, GizmosDrawer3D*> eventDrawGizmosEvent3D;
 
         //////////////////////////////////////////
         MultiDelegate<ComponentGizmosPtr const&, Entity*, ComponentPtr const&, GizmosDrawer2D*> eventDrawGizmosEvent2D;
@@ -143,7 +143,7 @@ namespace Maze
 
         Vector<GizmosSample> m_samples;
 
-        GizmosDrawerPtr m_drawer;
+        GizmosDrawer3DPtr m_drawer3D;
         GizmosDrawer2DPtr m_drawer2D;
 
         SharedPtr<GenericInclusiveEntitiesSample<Canvas>> m_canvasesSample;

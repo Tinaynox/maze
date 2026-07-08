@@ -33,7 +33,7 @@
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-editor-tools/ecs/components/MazeGizmosDrawer.hpp"
+#include "maze-editor-tools/ecs/components/MazeGizmosDrawer3D.hpp"
 #include "maze-editor-tools/ecs/components/MazeGizmosDrawer2D.hpp"
 
 
@@ -61,16 +61,16 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual void drawGizmos(
+        virtual void drawGizmos3D(
             Entity* _entity,
             ComponentPtr const& _component,
-            GizmosDrawer* _drawer) {};
+            GizmosDrawer3D* _drawer) {};
 
         //////////////////////////////////////////
-        virtual void drawGizmosSelected(
+        virtual void drawGizmosSelected3D(
             Entity* _entity,
             ComponentPtr const& _component,
-            GizmosDrawer* _drawer) {};
+            GizmosDrawer3D* _drawer) {};
 
 
         //////////////////////////////////////////

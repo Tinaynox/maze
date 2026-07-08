@@ -56,8 +56,8 @@ namespace Maze
             _point0,
             _point1,
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -72,8 +72,8 @@ namespace Maze
             _point,
             _delta,
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -94,8 +94,8 @@ namespace Maze
             _scale,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -112,8 +112,8 @@ namespace Maze
             _direction,
             _radius,
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -132,8 +132,8 @@ namespace Maze
             _up,
             _radius,
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -154,8 +154,8 @@ namespace Maze
             _up,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -172,8 +172,8 @@ namespace Maze
             _radius,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -192,8 +192,8 @@ namespace Maze
             _radius,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -212,8 +212,8 @@ namespace Maze
             _radius,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -232,8 +232,8 @@ namespace Maze
             _angle,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -254,8 +254,8 @@ namespace Maze
             _angle,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -276,8 +276,8 @@ namespace Maze
             _torusRadius,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -294,8 +294,8 @@ namespace Maze
             _direction,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -314,8 +314,8 @@ namespace Maze
             _radius,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -328,8 +328,8 @@ namespace Maze
         GizmosHelper::DrawWireAABB(
             _aabb,
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -342,8 +342,8 @@ namespace Maze
         GizmosHelper::DrawWireAABB(
             _aabb,
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -356,8 +356,8 @@ namespace Maze
         GizmosHelper::DrawSolidAABB(
             _aabb,
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -374,8 +374,8 @@ namespace Maze
             _point1,
             _point2,
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -396,8 +396,8 @@ namespace Maze
             _scale,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -418,8 +418,8 @@ namespace Maze
             _scale,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -436,8 +436,8 @@ namespace Maze
             _radius,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -460,8 +460,8 @@ namespace Maze
             _height,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -482,8 +482,8 @@ namespace Maze
             _height,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////
@@ -502,8 +502,8 @@ namespace Maze
             _radius,
             ColorF128(_color),
             _duration,
-            GizmosDrawer::GizmosMode(_gizmosMode),
-            GizmosDrawer::MeshRenderMode(_renderMode));
+            GizmosDrawer3D::GizmosMode(_gizmosMode),
+            GizmosDrawer3D::MeshRenderMode(_renderMode));
     }
 
     //////////////////////////////////////////

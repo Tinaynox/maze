@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeGizmosDrawer_hpp_))
-#define _MazeGizmosDrawer_hpp_
+#if (!defined(_MazeGizmosDrawer3D_hpp_))
+#define _MazeGizmosDrawer3D_hpp_
 
 
 //////////////////////////////////////////
@@ -47,7 +47,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(GizmosDrawer);
+    MAZE_USING_SHARED_PTR(GizmosDrawer3D);
     MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     MAZE_USING_MANAGED_SHARED_PTR(RenderMesh);
@@ -56,10 +56,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class GizmosDrawer
+    // Class GizmosDrawer3D
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API GizmosDrawer
+    class MAZE_EDITOR_TOOLS_API GizmosDrawer3D
     {
     public:
 
@@ -128,10 +128,10 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~GizmosDrawer();
+        virtual ~GizmosDrawer3D();
 
         //////////////////////////////////////////
-        static GizmosDrawerPtr Create(EcsWorld* _world, RenderTarget* _renderTarget);
+        static GizmosDrawer3DPtr Create(EcsWorld* _world, RenderTarget* _renderTarget);
 
 
         //////////////////////////////////////////
@@ -691,7 +691,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        GizmosDrawer();
+        GizmosDrawer3D();
 
         //////////////////////////////////////////
         bool init(EcsWorld* _world, RenderTarget* _renderTarget);
@@ -722,5 +722,5 @@ namespace Maze
 //////////////////////////////////////////
  
 
-#endif // _MazeGizmosDrawer_hpp_
+#endif // _MazeGizmosDrawer3D_hpp_
 //////////////////////////////////////////

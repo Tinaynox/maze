@@ -74,19 +74,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void BoxCollider2DGizmos::drawGizmos(
+    void BoxCollider2DGizmos::drawGizmos3D(
         Entity* _entity,
         ComponentPtr const& _component,
-        GizmosDrawer* _drawer)
+        GizmosDrawer3D* _drawer)
     {
 
     }
 
     //////////////////////////////////////////
-    void BoxCollider2DGizmos::drawGizmosSelected(
+    void BoxCollider2DGizmos::drawGizmosSelected3D(
         Entity* _entity,
         ComponentPtr const& _component,
-        GizmosDrawer* _drawer)
+        GizmosDrawer3D* _drawer)
     {
         BoxCollider2D* boxCollider = _component->castRaw<BoxCollider2D>();
 

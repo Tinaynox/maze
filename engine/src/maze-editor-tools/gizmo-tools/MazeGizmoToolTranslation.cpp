@@ -98,8 +98,8 @@ namespace Maze
             transform = basisTransform * TMat::CreateTranslation(pos);
         }
 
-        GizmosDrawer::GizmosMode const gizmosMode = GizmosDrawer::GizmosMode::Debug;
-        GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::TransparentTop;
+        GizmosDrawer3D::GizmosMode const gizmosMode = GizmosDrawer3D::GizmosMode::Debug;
+        GizmosDrawer3D::MeshRenderMode const renderMode = GizmosDrawer3D::MeshRenderMode::TransparentTop;
 
         F32 const length = GizmoToolConfig::c_transformGizmoToolLength;
 

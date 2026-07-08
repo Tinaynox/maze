@@ -81,19 +81,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SkinnedMeshSkeletonGizmos::drawGizmos(
+    void SkinnedMeshSkeletonGizmos::drawGizmos3D(
         Entity* _entity,
         ComponentPtr const& _component,
-        GizmosDrawer* _drawer)
+        GizmosDrawer3D* _drawer)
     {
         
     }
 
     //////////////////////////////////////////
-    void SkinnedMeshSkeletonGizmos::drawGizmosSelected(
+    void SkinnedMeshSkeletonGizmos::drawGizmosSelected3D(
         Entity* _entity,
         ComponentPtr const& _component,
-        GizmosDrawer* _drawer)
+        GizmosDrawer3D* _drawer)
     {
         SkinnedMeshSkeleton* meshSkeleton = _component->castRaw<SkinnedMeshSkeleton>();
         MeshSkeletonAnimatorPtr const& animator = meshSkeleton->getAnimator();
@@ -138,8 +138,8 @@ namespace Maze
                             boneLen * 0.05f,
                             boneLen,
                             ColorF128(0.0f, 1.0f, 0.0f, 0.25f),
-                            GizmosDrawer::GizmosMode::Debug,
-                            GizmosDrawer::MeshRenderMode::TransparentTop);
+                            GizmosDrawer3D::GizmosMode::Debug,
+                            GizmosDrawer3D::MeshRenderMode::TransparentTop);
                     }
                     
                     /*
@@ -153,8 +153,8 @@ namespace Maze
                             boneLen * 0.05f,
                             boneLen,
                             ColorF128(0.0f, 1.0f, 0.0f, 0.25f),
-                            GizmosDrawer::GizmosMode::Debug,
-                            GizmosDrawer::MeshRenderMode::TransparentTop);
+                            GizmosDrawer3D::GizmosMode::Debug,
+                            GizmosDrawer3D::MeshRenderMode::TransparentTop);
                     }
                     */
                 }
@@ -164,8 +164,8 @@ namespace Maze
                     boneLen * (bone.parentBoneIndex != -1 ? 0.1f : 0.15f),
                     bone.parentBoneIndex != -1 ? ColorF128(0.0f, 1.0f, 0.0f, 0.5f) : ColorF128(1.0f, 0.66f, 0.0f, 1.0f),
                     0.0f,
-                    GizmosDrawer::GizmosMode::Debug,
-                    GizmosDrawer::MeshRenderMode::TransparentTop);
+                    GizmosDrawer3D::GizmosMode::Debug,
+                    GizmosDrawer3D::MeshRenderMode::TransparentTop);
 
 
                 // Bind pose
@@ -178,8 +178,8 @@ namespace Maze
                         boneLen * 0.2f,
                         ColorF128(1.0f, 0.0f, 0.0f, 0.5f),
                         0.0f,
-                        GizmosDrawer::GizmosMode::Debug,
-                        GizmosDrawer::MeshRenderMode::TransparentTop);
+                        GizmosDrawer3D::GizmosMode::Debug,
+                        GizmosDrawer3D::MeshRenderMode::TransparentTop);
                 }
             }
         }

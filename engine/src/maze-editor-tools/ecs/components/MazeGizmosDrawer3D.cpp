@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/ecs/components/MazeGizmosDrawer.hpp"
+#include "maze-editor-tools/ecs/components/MazeGizmosDrawer3D.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
@@ -60,10 +60,10 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class GizmosDrawer
+    // Class GizmosDrawer3D
     //
     //////////////////////////////////////////
-    GizmosDrawer::GizmosDrawer()
+    GizmosDrawer3D::GizmosDrawer3D()
         : m_color(ColorF128::c_white)
         , m_world(nullptr)
     {
@@ -71,21 +71,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    GizmosDrawer::~GizmosDrawer()
+    GizmosDrawer3D::~GizmosDrawer3D()
     {
         destroy();
     }
 
     //////////////////////////////////////////
-    GizmosDrawerPtr GizmosDrawer::Create(EcsWorld* _world, RenderTarget* _renderTarget)
+    GizmosDrawer3DPtr GizmosDrawer3D::Create(EcsWorld* _world, RenderTarget* _renderTarget)
     {
-        GizmosDrawerPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(GizmosDrawer, object, init(_world, _renderTarget));
+        GizmosDrawer3DPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(GizmosDrawer3D, object, init(_world, _renderTarget));
         return object;
     }
 
     //////////////////////////////////////////
-    bool GizmosDrawer::init(EcsWorld* _world, RenderTarget* _renderTarget)
+    bool GizmosDrawer3D::init(EcsWorld* _world, RenderTarget* _renderTarget)
     {
         m_world = _world;
 
@@ -208,7 +208,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::clear()
+    void GizmosDrawer3D::clear()
     {
         for (S32 gizmosMode = 0; gizmosMode < (S32)GizmosMode::MAX; ++gizmosMode)
         {
@@ -230,7 +230,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::destroy()
+    void GizmosDrawer3D::destroy()
     {
         clear();
 
@@ -254,7 +254,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawLine(
+    void GizmosDrawer3D::drawLine(
         Vec3F const& _point0,
         Vec3F const& _point1,
         GizmosMode _gizmosMode,
@@ -276,7 +276,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawLine(
+    void GizmosDrawer3D::drawLine(
         Vec3F const& _point0,
         Vec3F const& _point1,
         F32 _duration,
@@ -294,7 +294,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireQuad(
+    void GizmosDrawer3D::drawWireQuad(
         Vec3F const& _position,
         Vec3F const& _forward,
         Vec3F const& _up,
@@ -337,7 +337,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireCircle(
+    void GizmosDrawer3D::drawWireCircle(
         Vec3F const& _position,
         Vec3F const& _direction,
         F32 _radius,
@@ -367,7 +367,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireHemicircle(
+    void GizmosDrawer3D::drawWireHemicircle(
         Vec3F const& _position,
         Vec3F const& _forward,
         Vec3F const& _up,
@@ -398,7 +398,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireCube(
+    void GizmosDrawer3D::drawWireCube(
         Vec3F const& _position,
         Vec3F const& _forward,
         Vec3F const& _up,
@@ -468,7 +468,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireSphere(
+    void GizmosDrawer3D::drawWireSphere(
         Vec3F const& _position,
         F32 _radius,
         ColorF128 const& _color,
@@ -501,7 +501,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireHemisphere(
+    void GizmosDrawer3D::drawWireHemisphere(
         Vec3F const& _position,
         Vec3F const& _direction,
         F32 _radius,
@@ -522,7 +522,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireCylinder(
+    void GizmosDrawer3D::drawWireCylinder(
         Vec3F const& _start,
         Vec3F const& _end,
         F32 _radius,
@@ -559,7 +559,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireCone(
+    void GizmosDrawer3D::drawWireCone(
         Vec3F const& _position,
         Vec3F const& _direction,
         F32 _angle,
@@ -595,7 +595,7 @@ namespace Maze
         drawWireCircle(_position + (forward * 0.5f), direction, ((forward * 0.5f) - (slerpedVector.normalizedCopy() * (dist * 0.5f))).length(), _duration, _gizmosMode, _renderMode);
     }
 
-    void GizmosDrawer::drawWireCone(
+    void GizmosDrawer3D::drawWireCone(
         Vec3F const& _position,
         Vec3F const& _direction,
         F32 _radius,
@@ -633,7 +633,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireTruncatedCone(
+    void GizmosDrawer3D::drawWireTruncatedCone(
         Vec3F const& _position,
         Vec3F const& _direction,
         F32 _radius,
@@ -677,7 +677,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireTorus(
+    void GizmosDrawer3D::drawWireTorus(
         Vec3F const& _position,
         Vec3F const& _direction,
         F32 _radius,
@@ -704,7 +704,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireArrow(
+    void GizmosDrawer3D::drawWireArrow(
         Vec3F const& _position,
         Vec3F const& _direction,
         ColorF128 const& _color,
@@ -718,7 +718,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireCapsule(
+    void GizmosDrawer3D::drawWireCapsule(
         Vec3F const& _start,
         Vec3F const& _end,
         F32 _radius,
@@ -768,7 +768,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireAABB(
+    void GizmosDrawer3D::drawWireAABB(
         AABB2D const& _aabb,
         F32 _duration,
         GizmosMode _gizmosMode,
@@ -781,7 +781,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawWireAABB(
+    void GizmosDrawer3D::drawWireAABB(
         AABB3D const& _aabb,
         F32 _duration,
         GizmosMode _gizmosMode,
@@ -804,7 +804,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawSolidAABB(
+    void GizmosDrawer3D::drawSolidAABB(
         AABB3D const& _aabb,
         F32 _duration,
         GizmosMode _gizmosMode,
@@ -884,7 +884,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawTriangle(
+    void GizmosDrawer3D::drawTriangle(
         Vec3F const& _point0,
         Vec3F const& _point1,
         Vec3F const& _point2,
@@ -911,7 +911,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawTriangle(
+    void GizmosDrawer3D::drawTriangle(
         Vec3F const& _point0,
         Vec3F const& _point1,
         Vec3F const& _point2,
@@ -939,7 +939,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawMesh(
+    void GizmosDrawer3D::drawMesh(
         MeshPtr const& _mesh,
         Vec3F const& _position,
         ColorF128 const& _color,
@@ -974,7 +974,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawQuad(
+    void GizmosDrawer3D::drawQuad(
         Vec3F const& _position,
         Vec3F const& _forward,
         Vec3F const& _up,
@@ -998,7 +998,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawCube(
+    void GizmosDrawer3D::drawCube(
         Vec3F const& _position,
         Vec3F const& _forward,
         Vec3F const& _up,
@@ -1022,7 +1022,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawSphere(
+    void GizmosDrawer3D::drawSphere(
         Vec3F const& _position,
         F32 _radius,
         ColorF128 const& _color,
@@ -1041,7 +1041,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawCone(
+    void GizmosDrawer3D::drawCone(
         Vec3F const& _position,
         Vec3F const& _forward,
         Vec3F const& _up,
@@ -1066,7 +1066,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawCylinder(
+    void GizmosDrawer3D::drawCylinder(
         Vec3F const& _position,
         Vec3F const& _forward,
         Vec3F const& _up,
@@ -1091,7 +1091,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawTorus(
+    void GizmosDrawer3D::drawTorus(
         Vec3F const& _position,
         Vec3F const& _forward,
         F32 _radius,
@@ -1115,7 +1115,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawBillboard(
+    void GizmosDrawer3D::drawBillboard(
         Vec3F const& _point,
         SpritePtr const& _sprite,
         ColorF128 const& _color)
@@ -1140,7 +1140,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::pushTransform(TMat const& _tm)
+    void GizmosDrawer3D::pushTransform(TMat const& _tm)
     {
         if (!m_transformStack.empty())
             m_transformStack.push_back(m_transformStack.back().transform(_tm));
@@ -1149,14 +1149,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::popTransform()
+    void GizmosDrawer3D::popTransform()
     {
         MAZE_ERROR_RETURN_IF(m_transformStack.empty(), "Transform stack is empty!");
         m_transformStack.pop_back();
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::update(F32 _dt)
+    void GizmosDrawer3D::update(F32 _dt)
     {
         // Buffered lines
         for (auto it = m_timedBufferedLines.begin(), end = m_timedBufferedLines.end(); it != end;)
@@ -1188,7 +1188,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::rebuildMeshes()
+    void GizmosDrawer3D::rebuildMeshes()
     {
         RenderSystem* renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
 
@@ -1290,7 +1290,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec3F GizmosDrawer::transformPoint(Vec3F const& _p)
+    Vec3F GizmosDrawer3D::transformPoint(Vec3F const& _p)
     {
         if (m_transformStack.empty())
             return _p;
