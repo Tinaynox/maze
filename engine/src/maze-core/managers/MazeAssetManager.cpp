@@ -43,6 +43,22 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    namespace
+    {
+        // Cached to avoid re-converting these literals (UTF8->UCS2 on Windows) on every call
+        inline Path const& GetMetaFileSuffix()
+        {
+            static Path const suffix(".mzmeta");
+            return suffix;
+        }
+
+        inline Path const& GetMetaFileExtension()
+        {
+            static Path const extension("mzmeta");
+            return extension;
+        }
+    }
 
     //////////////////////////////////////////
     // Class AssetManager
@@ -199,9 +215,9 @@ namespace Maze
             if (m_clearSingleMetaFiles)
             {
                 if (addFile->getClassUID() == ClassInfo<AssetRegularFile>::UID() &&
-                    StringHelper::IsEndsWith(addFile->getFullPath().getPath(), Path(".mzmeta").getPath()))
+                    StringHelper::IsEndsWith(addFile->getFullPath().getPath(), GetMetaFileSuffix().getPath()))
                 {
-                    auto filePath = Path(addFile->getFullPath().getPath().substr(0, addFile->getFullPath().getPath().length() - Path(".mzmeta").size()));
+                    auto filePath = Path(addFile->getFullPath().getPath().substr(0, addFile->getFullPath().getPath().length() - GetMetaFileSuffix().size()));
                     if (!FileHelper::IsFileExists(filePath))
                     {
                         MAZE_WARNING("Cleaning single meta file: %s", addFile->getFullPath().toUTF8().c_str());
@@ -287,7 +303,7 @@ namespace Maze
     {
         static AssetFilePtr nullPtr;
 
-        MAZE_ERROR_RETURN_VALUE_IF(strcmp(_fileName.toUTF8().c_str(), "") == 0, nullPtr, "Empty file name!");
+        MAZE_ERROR_RETURN_VALUE_IF(_fileName.empty(), nullPtr, "Empty file name!");
 
         UnorderedMap<Path, AssetFilePtr>::iterator it = m_assetFilesByFileName.find(_fileName);
         if (it == m_assetFilesByFileName.end())
@@ -324,7 +340,7 @@ namespace Maze
             return;
 
         FileHelper::Delete(_assetFile->getFullPath());
-        FileHelper::Delete(_assetFile->getFullPath() + Path(".mzmeta"));
+        FileHelper::Delete(_assetFile->getFullPath() + GetMetaFileSuffix());
         updateAssets();
     }
 
@@ -364,15 +380,15 @@ namespace Maze
         {
             for (auto movedFileData : movedFiles)
             {
-                if (movedFileData.second->getExtension() == Path("mzmeta"))
+                if (movedFileData.second->getExtension() == GetMetaFileExtension())
                     continue;
 
                 Path const& fullPath = movedFileData.first;
-                AssetFilePtr const& metaAssetFile = getAssetFileByFullPath(fullPath + ".mzmeta");
+                AssetFilePtr const& metaAssetFile = getAssetFileByFullPath(fullPath + GetMetaFileSuffix());
                 if (metaAssetFile)
                 {
                     Vector<Pair<Path, AssetFilePtr>> movedMetaFiles;
-                    if (metaAssetFile->move(movedFileData.second->getFullPath() + ".mzmeta", movedMetaFiles))
+                    if (metaAssetFile->move(movedFileData.second->getFullPath() + GetMetaFileSuffix(), movedMetaFiles))
                     {
                         for (auto movedMetaFileData : movedMetaFiles)
                         {
@@ -557,7 +573,7 @@ namespace Maze
     //////////////////////////////////////////
     Path AssetManager::getMetaDataFullPath(AssetFilePtr const& _assetFile)
     {
-        return _assetFile->getFullPath() + ".mzmeta";
+        return _assetFile->getFullPath() + GetMetaFileSuffix();
     }
 
     //////////////////////////////////////////
