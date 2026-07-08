@@ -115,6 +115,9 @@ namespace Maze
             Vector<EntityPtr> const& _entities,
             bool _clearSelectionList)
         {
+            if (_clearSelectionList && SelectionManager::GetInstancePtr()->isSelectedObjectsEqual(_entities))
+                return;
+
             if (EditorToolsActionManager::GetInstancePtr())
             {
                 EditorToolsActionManager::GetInstancePtr()->applyAction(
