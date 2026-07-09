@@ -328,7 +328,7 @@ namespace Maze
                 case DataBlockParamType::ParamS32:
                 {
                     ResourceId resourceId(_dataBlock.getS32(paramIndex));
-                    setRenderMesh(RenderMesh::GetResource(resourceId));
+                    setRenderMesh(RenderMesh::GetResourceFast(resourceId));
                     return true;
                 }
                 // by name

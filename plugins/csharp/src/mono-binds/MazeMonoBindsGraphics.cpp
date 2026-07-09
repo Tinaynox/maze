@@ -88,7 +88,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRenderer);
 
-        Material* material = Material::GetResource(_resourceId);
+        Material* material = Material::GetResourceFast(_resourceId);
         Vector<MaterialAssetRef> materials = _component->castRaw<MeshRenderer>()->getMaterialRefs();
 
         if (_index >= materials.size())
@@ -103,7 +103,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRenderer);
 
-        Material* material = Material::GetResource(_resourceId);
+        Material* material = Material::GetResourceFast(_resourceId);
         _component->castRaw<MeshRenderer>()->setMaterial(material ? material->getSharedPtr() : MaterialPtr());
     }
 
@@ -124,7 +124,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRenderer);
 
-        RenderMesh* renderMesh = RenderMesh::GetResource(_resourceId);
+        RenderMesh* renderMesh = RenderMesh::GetResourceFast(_resourceId);
         _component->castRaw<MeshRenderer>()->setRenderMesh(renderMesh ? renderMesh->getSharedPtr() : RenderMeshPtr());
     }
 
@@ -145,7 +145,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRendererInstanced);
 
-        Material* material = Material::GetResource(_resourceId);
+        Material* material = Material::GetResourceFast(_resourceId);
         _component->castRaw<MeshRendererInstanced>()->setMaterial(material ? material->getSharedPtr() : MaterialPtr());
     }
 
@@ -166,7 +166,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRendererInstanced);
 
-        RenderMesh* renderMesh = RenderMesh::GetResource(_resourceId);
+        RenderMesh* renderMesh = RenderMesh::GetResourceFast(_resourceId);
         _component->castRaw<MeshRendererInstanced>()->setRenderMesh(renderMesh ? renderMesh->getSharedPtr() : RenderMeshPtr());
     }
 
@@ -224,7 +224,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
 
-        Material* material = Material::GetResource(_resourceId);
+        Material* material = Material::GetResourceFast(_resourceId);
         _component->castRaw<SkinnedMeshRenderer>()->setMaterial(material ? material->getSharedPtr() : MaterialPtr());
     }
 
@@ -245,7 +245,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
 
-        RenderMesh* renderMesh = RenderMesh::GetResource(_resourceId);
+        RenderMesh* renderMesh = RenderMesh::GetResourceFast(_resourceId);
         _component->castRaw<SkinnedMeshRenderer>()->setRenderMesh(renderMesh ? renderMesh->getSharedPtr() : RenderMeshPtr());
     }
 
@@ -266,7 +266,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshSkeleton);
 
-        RenderMesh* renderMesh = RenderMesh::GetResource(_resourceId);
+        RenderMesh* renderMesh = RenderMesh::GetResourceFast(_resourceId);
         _component->castRaw<SkinnedMeshSkeleton>()->setRenderMesh(renderMesh ? renderMesh->getSharedPtr() : RenderMeshPtr());
     }
 
@@ -413,7 +413,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(SpriteRenderer2D);
 
-        Material* material = Material::GetResource(_resourceId);
+        Material* material = Material::GetResourceFast(_resourceId);
         _component->castRaw<SpriteRenderer2D>()->setMaterial(material ? material->getSharedPtr() : MaterialPtr());
     }
 
@@ -431,7 +431,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(SpriteRenderer2D);
 
-        Sprite* sprite = Sprite::GetResource(_resourceId);
+        Sprite* sprite = Sprite::GetResourceFast(_resourceId);
         _component->castRaw<SpriteRenderer2D>()->setSprite(sprite ? sprite->getSharedPtr() : SpritePtr());
     }
 
@@ -535,7 +535,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
 
-        RenderTarget* renderTarget = RenderWindow::GetResource(_resourceId);
+        RenderTarget* renderTarget = RenderWindow::GetResourceFast(_resourceId);
         _component->castRaw<Camera3D>()->setRenderTarget(renderTarget ? renderTarget->getSharedPtr() : nullptr);
     }
 
@@ -576,7 +576,7 @@ namespace Maze
         TaskManager::GetInstancePtr()->addMainThreadTask(
             [_subMeshId]()
             {
-                if (SubMesh* subMesh = SubMesh::GetResource(_subMeshId))
+                if (SubMesh* subMesh = SubMesh::GetResourceFast(_subMeshId))
                     subMesh->getSharedPtr().decRef();
             });
     }
@@ -716,7 +716,7 @@ namespace Maze
         TaskManager::GetInstancePtr()->addMainThreadTask(
             [_meshId]()
             {
-                if (Mesh* mesh = Mesh::GetResource(_meshId))
+                if (Mesh* mesh = Mesh::GetResourceFast(_meshId))
                     mesh->getSharedPtr().decRef();
             });
     }
@@ -724,15 +724,15 @@ namespace Maze
     //////////////////////////////////////////
     inline void MeshAddSubMesh(S32 _meshId, S32 _subMeshId)
     {
-        if (Mesh* mesh = Mesh::GetResource(_meshId))
-            if (SubMesh* subMesh = SubMesh::GetResource(_subMeshId))
+        if (Mesh* mesh = Mesh::GetResourceFast(_meshId))
+            if (SubMesh* subMesh = SubMesh::GetResourceFast(_subMeshId))
                 mesh->addSubMesh(subMesh->getSharedPtr());
     }
 
     //////////////////////////////////////////
     inline void MeshClear(S32 _meshId)
     {
-        if (Mesh* mesh = Mesh::GetResource(_meshId))
+        if (Mesh* mesh = Mesh::GetResourceFast(_meshId))
             mesh->clear();
     }
 
@@ -752,7 +752,7 @@ namespace Maze
         TaskManager::GetInstancePtr()->addMainThreadTask(
             [_renderMeshId]()
             {
-                if (RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId))
+                if (RenderMesh* renderMesh = RenderMesh::GetResourceFast(_renderMeshId))
                 {
                     // Debug::Log("Mono Mesh destroyed(%x).", renderMesh);
                     renderMesh->getSharedPtr().decRef();
@@ -763,22 +763,22 @@ namespace Maze
     //////////////////////////////////////////
     inline void RenderMeshLoadFromMesh(S32 _renderMeshId, S32 _meshId)
     {
-        if (RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId))
-            if (Mesh* mesh = Mesh::GetResource(_meshId))
+        if (RenderMesh* renderMesh = RenderMesh::GetResourceFast(_renderMeshId))
+            if (Mesh* mesh = Mesh::GetResourceFast(_meshId))
                 renderMesh->loadFromMesh(mesh->getSharedPtr());
     }
 
     //////////////////////////////////////////
     inline void RenderMeshClear(S32 _renderMeshId)
     {
-        if (RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId))
+        if (RenderMesh* renderMesh = RenderMesh::GetResourceFast(_renderMeshId))
             renderMesh->clear();
     }
 
     //////////////////////////////////////////
     inline bool RenderMeshIsValid(S32 _renderMeshId)
     {
-        RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId);
+        RenderMesh* renderMesh = RenderMesh::GetResourceFast(_renderMeshId);
         return !!renderMesh;
     }
 
@@ -803,7 +803,7 @@ namespace Maze
     //////////////////////////////////////////
     inline F32 RenderMeshCalculateBoundingSphereRadius(S32 _renderMeshId)
     {
-        if (RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId))
+        if (RenderMesh* renderMesh = RenderMesh::GetResourceFast(_renderMeshId))
             return renderMesh->calculateBoundingSphereRadius();
         return 0.0f;
     }
@@ -811,7 +811,7 @@ namespace Maze
     //////////////////////////////////////////
     inline bool RenderMeshTraceRay(S32 _renderMeshId, Vec3F const& _origin, Vec3F const& _direction, F32 &_t)
     {
-        if (RenderMesh* renderMesh = RenderMesh::GetResource(_renderMeshId))
+        if (RenderMesh* renderMesh = RenderMesh::GetResourceFast(_renderMeshId))
             return renderMesh->traceRay(_origin, _direction, _t);
         return false;
     }
@@ -843,7 +843,7 @@ namespace Maze
         auto func =
             [_resourceId]()
             {
-                if (RenderWindow* renderTarget = (RenderWindow*)RenderWindow::GetResource(_resourceId))
+                if (RenderWindow* renderTarget = (RenderWindow*)RenderWindow::GetResourceFast(_resourceId))
                     renderTarget->getSharedPtr().decRef();
             };
 
@@ -874,7 +874,7 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(Canvas);
 
-        RenderTarget* renderTarget = RenderWindow::GetResource(_resourceId);
+        RenderTarget* renderTarget = RenderWindow::GetResourceFast(_resourceId);
         _component->castRaw<Canvas>()->setRenderTarget(renderTarget ? renderTarget->getSharedPtr() : nullptr);
     }
 
@@ -925,7 +925,7 @@ namespace Maze
     //////////////////////////////////////////
     inline bool GlobalShaderUniformIdIsValid(S32 _globalShaderUniformId)
     {
-        GlobalShaderUniform* uniform = GlobalShaderUniform::GetResource(_globalShaderUniformId);
+        GlobalShaderUniform* uniform = GlobalShaderUniform::GetResourceFast(_globalShaderUniformId);
         return !!uniform;
     }
 
@@ -950,7 +950,7 @@ namespace Maze
     #define IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(DType)                                \
         inline void GlobalShaderUniformSet ## DType (S32 _id, DType const& _value)    \
         {                                                                             \
-            if (GlobalShaderUniform* uniform = GlobalShaderUniform::GetResource(_id)) \
+            if (GlobalShaderUniform* uniform = GlobalShaderUniform::GetResourceFast(_id)) \
                 uniform->setValue(_value);                                            \
         }
     IMPLEMENT_GLOBAL_SHADER_UNIFORM_SET(S32);
@@ -975,7 +975,7 @@ namespace Maze
 
     inline void GlobalShaderUniformSetColorF128(S32 _id, Vec4F const& _value)
     {
-        if (GlobalShaderUniform* uniform = GlobalShaderUniform::GetResource(_id))
+        if (GlobalShaderUniform* uniform = GlobalShaderUniform::GetResourceFast(_id))
             uniform->setValue(ColorF128(_value));
     }
 
@@ -983,7 +983,7 @@ namespace Maze
     //////////////////////////////////////////
     inline bool MaterialIsValid(S32 _materialId)
     {
-        Material* material = Material::GetResource(_materialId);
+        Material* material = Material::GetResourceFast(_materialId);
         return !!material;
     }
 
@@ -1014,7 +1014,7 @@ namespace Maze
     //////////////////////////////////////////
     inline S32 MaterialCreateCopy(S32 _materialId)
     {
-        Material* material = Material::GetResource(_materialId);
+        Material* material = Material::GetResourceFast(_materialId);
         if (material == nullptr)
             return c_invalidResourceId;
 
@@ -1031,7 +1031,7 @@ namespace Maze
         TaskManager::GetInstancePtr()->addMainThreadTask(
             [_materialId]()
             {
-                if (Material* material = Material::GetResource(_materialId))
+                if (Material* material = Material::GetResourceFast(_materialId))
                 {
                     // Debug::Log("Mono Material destroyed(%x).", material);
                     material->getSharedPtr().decRef();
@@ -1042,7 +1042,7 @@ namespace Maze
     //////////////////////////////////////////
     inline S32 MaterialEnsureUniformIndex(S32 _materialId, MonoString* _name)
     {
-        if (Material* material = Material::GetResource(_materialId))
+        if (Material* material = Material::GetResourceFast(_materialId))
         {
             Char* cstr = mono_string_to_utf8(_name);
             ShaderUniformVariantPtr const& shaderUniformVariant = material->ensureUniform(HashedCString(cstr));
@@ -1059,7 +1059,7 @@ namespace Maze
     #define IMPLEMENT_MATERIAL_UNIFORM_SET(DType)                                                             \
         inline void MaterialUniformSet ## DType (S32 _materialId, S32 _uniformId, DType const& _value)        \
         {                                                                                                     \
-            if (Material* material = Material::GetResource(_materialId))                                      \
+            if (Material* material = Material::GetResourceFast(_materialId))                                      \
             {                                                                                                 \
                 ShaderUniformVariantPtr const& uniform = material->getUniform(_uniformId);                    \
                 if (uniform)                                                                                  \
@@ -1090,7 +1090,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void MaterialUniformSetColorF128(S32 _materialId, S32 _uniformId, Vec4F const& _value)
     {
-        if (Material* material = Material::GetResource(_materialId))
+        if (Material* material = Material::GetResourceFast(_materialId))
         {
             ShaderUniformVariantPtr const& uniform = material->getUniform(_uniformId);
             if (uniform)
@@ -1101,12 +1101,12 @@ namespace Maze
     //////////////////////////////////////////
     inline void MaterialUniformSetTexture2D(S32 _materialId, S32 _uniformId, S32 _texture2DId)
     {
-        if (Material* material = Material::GetResource(_materialId))
+        if (Material* material = Material::GetResourceFast(_materialId))
         {
             ShaderUniformVariantPtr const& uniform = material->getUniform(_uniformId);
             if (uniform)
             {
-                if (Texture2D* texture2D = Texture2D::GetResource(_texture2DId))
+                if (Texture2D* texture2D = Texture2D::GetResourceFast(_texture2DId))
                     uniform->set(texture2D);
             }
         }
@@ -1128,7 +1128,7 @@ namespace Maze
         TaskManager::GetInstancePtr()->addMainThreadTask(
             [_textureId]()
         {
-            if (Texture2D* texture = Texture2D::GetResource(_textureId))
+            if (Texture2D* texture = Texture2D::GetResourceFast(_textureId))
                 texture->getSharedPtr().decRef();
         });
     }
@@ -1136,7 +1136,7 @@ namespace Maze
     //////////////////////////////////////////
     inline S32 Texture2DReadAsPixelSheet(S32 _textureId)
     {
-        if (Texture2D* texture = Texture2D::GetResource(_textureId))
+        if (Texture2D* texture = Texture2D::GetResourceFast(_textureId))
         {
             PixelSheet2D* sheet = MemoryBlockAllocationNew<PixelSheet2D>();
             if (texture->readAsPixelSheet(*sheet))
@@ -1150,8 +1150,8 @@ namespace Maze
     //////////////////////////////////////////
     inline void Texture2DLoad(S32 _textureId, S32 _pixelSheetId)
     {
-        if (Texture2D* texture = Texture2D::GetResource(_textureId))
-            if (PixelSheet2D const* pixelSheet = PixelSheet2D::GetResource(_pixelSheetId))
+        if (Texture2D* texture = Texture2D::GetResourceFast(_textureId))
+            if (PixelSheet2D const* pixelSheet = PixelSheet2D::GetResourceFast(_pixelSheetId))
                 texture->loadTexture(*pixelSheet);
     }
 
@@ -1169,7 +1169,7 @@ namespace Maze
         TaskManager::GetInstancePtr()->addMainThreadTask(
             [_sheet2DId]()
             {
-                if (PixelSheet2D* sheet = PixelSheet2D::GetResource(_sheet2DId))
+                if (PixelSheet2D* sheet = PixelSheet2D::GetResourceFast(_sheet2DId))
                     MemoryBlockAllocationDelete<PixelSheet2D>(sheet);
             });
     }
@@ -1180,7 +1180,7 @@ namespace Maze
         MonoString* _filename,
         bool _resetAlpha)
     {
-        if (PixelSheet2D const* sheet = PixelSheet2D::GetResource(_sheet2DId))
+        if (PixelSheet2D const* sheet = PixelSheet2D::GetResourceFast(_sheet2DId))
         {
             Char* cstr = mono_string_to_utf8(_filename);
             PixelSheet2DHelper::SaveTGA(*sheet, cstr, _resetAlpha);
@@ -1193,7 +1193,7 @@ namespace Maze
         S32 _sheet2DId,
         Vec2S& _outValue)
     {
-        if (PixelSheet2D const* sheet = PixelSheet2D::GetResource(_sheet2DId))
+        if (PixelSheet2D const* sheet = PixelSheet2D::GetResourceFast(_sheet2DId))
             _outValue = sheet->getSize();
     }
 
@@ -1202,14 +1202,14 @@ namespace Maze
         S32 _sheet2DId,
         Vec2S const& _value)
     {
-        if (PixelSheet2D* sheet = PixelSheet2D::GetResource(_sheet2DId))
+        if (PixelSheet2D* sheet = PixelSheet2D::GetResourceFast(_sheet2DId))
             sheet->setSize(_value);
     }
 
     //////////////////////////////////////////
     inline S32 PixelSheet2DGetFormat(S32 _sheet2DId)
     {
-        if (PixelSheet2D const* sheet = PixelSheet2D::GetResource(_sheet2DId))
+        if (PixelSheet2D const* sheet = PixelSheet2D::GetResourceFast(_sheet2DId))
             return (S32)sheet->getFormat();
         return S32(PixelFormat::Unknown);
     }
@@ -1219,7 +1219,7 @@ namespace Maze
         S32 _sheet2DId,
         S32 _format)
     {
-        if (PixelSheet2D* sheet = PixelSheet2D::GetResource(_sheet2DId))
+        if (PixelSheet2D* sheet = PixelSheet2D::GetResourceFast(_sheet2DId))
             return sheet->setFormat(PixelFormat::Enum(_format));
     }
 
@@ -1229,7 +1229,7 @@ namespace Maze
         S32 _x,
         S32 _y)
     {
-        if (PixelSheet2D const* sheet = PixelSheet2D::GetResource(_sheet2DId))
+        if (PixelSheet2D const* sheet = PixelSheet2D::GetResourceFast(_sheet2DId))
         {
             MAZE_DEBUG_ASSERT(sheet->getBytesPerPixel() == 4);
             return *((U32 const*)sheet->getPixel(_x, _y));
@@ -1245,7 +1245,7 @@ namespace Maze
         S32 _y,
         U32 _color)
     {
-        if (PixelSheet2D* sheet = PixelSheet2D::GetResource(_sheet2DId))
+        if (PixelSheet2D* sheet = PixelSheet2D::GetResourceFast(_sheet2DId))
         {
             MAZE_DEBUG_ASSERT(sheet->getBytesPerPixel() == 4);
             sheet->setPixel(_x, _y, _color);
@@ -1255,16 +1255,16 @@ namespace Maze
     //////////////////////////////////////////
     inline void PixelSheet2DFillU32(S32 _sheet2DId, U32 _color)
     {
-        if (PixelSheet2D* sheet = PixelSheet2D::GetResource(_sheet2DId))
+        if (PixelSheet2D* sheet = PixelSheet2D::GetResourceFast(_sheet2DId))
             sheet->fill(ColorU32(_color));
     }
 
     //////////////////////////////////////////
     inline void PixelSheet2DBlend(S32 _sheet2DBaseId, S32 _sheet2DApplyId)
     {
-        if (PixelSheet2D* sheetBase = PixelSheet2D::GetResource(_sheet2DBaseId))
+        if (PixelSheet2D* sheetBase = PixelSheet2D::GetResourceFast(_sheet2DBaseId))
         {
-            if (PixelSheet2D* sheetApply = PixelSheet2D::GetResource(_sheet2DApplyId))
+            if (PixelSheet2D* sheetApply = PixelSheet2D::GetResourceFast(_sheet2DApplyId))
             {
                 MAZE_ERROR_RETURN_IF(sheetBase->getFormat() != sheetApply->getFormat(), "Failed to blend pixel sheets because of different format %s vs %s",
                     PixelFormat::ToCString(sheetBase->getFormat()), PixelFormat::ToCString(sheetApply->getFormat()));
@@ -1311,7 +1311,7 @@ namespace Maze
         TaskManager::GetInstancePtr()->addMainThreadTask(
             [_spriteId]()
             {
-                if (Sprite* texture = Sprite::GetResource(_spriteId))
+                if (Sprite* texture = Sprite::GetResourceFast(_spriteId))
                     texture->getSharedPtr().decRef();
             });
     }
@@ -1319,7 +1319,7 @@ namespace Maze
     //////////////////////////////////////////
     inline bool SpriteIsValid(S32 _spriteId)
     {
-        Sprite* sprite = Sprite::GetResource(_spriteId);
+        Sprite* sprite = Sprite::GetResourceFast(_spriteId);
         return !!sprite;
     }
 
@@ -1344,7 +1344,7 @@ namespace Maze
     //////////////////////////////////////////
     inline bool SpriteGetColorOffset(S32 _spriteId, Vec2F& _outValue)
     {
-        if (Sprite* sprite = Sprite::GetResource(_spriteId))
+        if (Sprite* sprite = Sprite::GetResourceFast(_spriteId))
         {
             _outValue = sprite->getColorOffset();
             return true;
@@ -1356,7 +1356,7 @@ namespace Maze
     //////////////////////////////////////////
     inline bool SpriteGetColorPosition(S32 _spriteId, Vec2F& _outValue)
     {
-        if (Sprite* sprite = Sprite::GetResource(_spriteId))
+        if (Sprite* sprite = Sprite::GetResourceFast(_spriteId))
         {
             _outValue = sprite->getColorPosition();
             return true;
@@ -1368,7 +1368,7 @@ namespace Maze
     //////////////////////////////////////////
     inline bool SpriteGetColorSize(S32 _spriteId, Vec2F& _outValue)
     {
-        if (Sprite* sprite = Sprite::GetResource(_spriteId))
+        if (Sprite* sprite = Sprite::GetResourceFast(_spriteId))
         {
             _outValue = sprite->getColorSize();
             return true;
@@ -1380,7 +1380,7 @@ namespace Maze
     //////////////////////////////////////////
     inline bool SpriteGetNativeSize(S32 _spriteId, Vec2F& _outValue)
     {
-        if (Sprite* sprite = Sprite::GetResource(_spriteId))
+        if (Sprite* sprite = Sprite::GetResourceFast(_spriteId))
         {
             _outValue = sprite->getNativeSize();
             return true;

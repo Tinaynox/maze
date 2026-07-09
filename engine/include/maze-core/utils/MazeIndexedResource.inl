@@ -45,7 +45,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename T>
-    MAZE_FORCEINLINE T* IndexedResource<T>::GetResource(ResourceId _id)
+    MAZE_FORCEINLINE T* IndexedResource<T>::GetResourceFast(ResourceId _id)
     {
         Size index = (Size)_id.getIndex();
 
@@ -53,6 +53,17 @@ namespace Maze
             return nullptr;
 
         return s_resources[index];
+    }
+
+    //////////////////////////////////////////
+    template <typename T>
+    MAZE_FORCEINLINE T* IndexedResource<T>::GetResourceSafe(ResourceId _id)
+    {
+        T* resource = GetResourceFast(_id);
+        if (resource && resource->getResourceId() != _id)
+            return nullptr;
+
+        return resource;
     }
 
     //////////////////////////////////////////

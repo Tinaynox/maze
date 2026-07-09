@@ -615,7 +615,7 @@ namespace Maze
                     MonoObject* indexedResourceInstance = nullptr;
                     _instance.getPropertyValue(_prop, indexedResourceInstance);
                     ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-                    if (Material* material = Material::GetResource(resourceId))
+                    if (Material* material = Material::GetResourceFast(resourceId))
                         MaterialAssetRef(material).toDataBlock(*_dataBlock.ensureDataBlock(_prop->getName()));
                     
                 },
@@ -638,7 +638,7 @@ namespace Maze
                     MonoObject* indexedResourceInstance = nullptr;
                     _instance.getFieldValue(_field, indexedResourceInstance);
                     ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-                    if (Material* material = Material::GetResource(resourceId))
+                    if (Material* material = Material::GetResourceFast(resourceId))
                         MaterialAssetRef(material).toDataBlock(*_dataBlock.ensureDataBlock(_field->getName()));
                 },
                 [dataBlockToMonoDataBlock, monoDataBlockToDataBlock](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
@@ -663,7 +663,7 @@ namespace Maze
                     MonoObject* indexedResourceInstance = nullptr;
                     _instance.getPropertyValue(_prop, indexedResourceInstance);
                     ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-                    if (Texture2D* texture = Texture2D::GetResource(resourceId))
+                    if (Texture2D* texture = Texture2D::GetResourceFast(resourceId))
                         Texture2DAssetRef(texture).toDataBlock(*_dataBlock.ensureDataBlock(_prop->getName()));
 
                 },
@@ -686,7 +686,7 @@ namespace Maze
                     MonoObject* indexedResourceInstance = nullptr;
                     _instance.getFieldValue(_field, indexedResourceInstance);
                     ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-                    if (Texture2D* texture = Texture2D::GetResource(resourceId))
+                    if (Texture2D* texture = Texture2D::GetResourceFast(resourceId))
                         Texture2DAssetRef(texture).toDataBlock(*_dataBlock.ensureDataBlock(_field->getName()));
                 },
                 [dataBlockToMonoDataBlock, monoDataBlockToDataBlock](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
@@ -711,7 +711,7 @@ namespace Maze
                 MonoObject* indexedResourceInstance = nullptr;
                 _instance.getPropertyValue(_prop, indexedResourceInstance);
                 ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-                if (Sprite* sprite = Sprite::GetResource(resourceId))
+                if (Sprite* sprite = Sprite::GetResourceFast(resourceId))
                     SpriteAssetRef(sprite).toDataBlock(*_dataBlock.ensureDataBlock(_prop->getName()));
 
             },
@@ -734,7 +734,7 @@ namespace Maze
                 MonoObject* indexedResourceInstance = nullptr;
                 _instance.getFieldValue(_field, indexedResourceInstance);
                 ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-                if (Sprite* sprite = Sprite::GetResource(resourceId))
+                if (Sprite* sprite = Sprite::GetResourceFast(resourceId))
                     SpriteAssetRef(sprite).toDataBlock(*_dataBlock.ensureDataBlock(_field->getName()));
             },
                 [dataBlockToMonoDataBlock, monoDataBlockToDataBlock](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)

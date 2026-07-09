@@ -912,7 +912,7 @@ namespace Maze
                 MonoObject* indexedResourceInstance = nullptr;
                 _instance.getPropertyValue(_property, indexedResourceInstance);
                 ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-                Material* material = Material::GetResource(resourceId);
+                Material* material = Material::GetResourceFast(resourceId);
                 _drawer->setValue(material ? material->getSharedPtr() : nullptr);
             },
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerMaterial const* _drawer)
@@ -926,7 +926,7 @@ namespace Maze
                 MonoObject* indexedResourceInstance = nullptr;
                 _instance.getFieldValue(_field, indexedResourceInstance);
                 ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-                Material* texture = Material::GetResource(resourceId);
+                Material* texture = Material::GetResourceFast(resourceId);
                 _drawer->setValue(texture ? texture->getSharedPtr() : nullptr);
             },
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerMaterial const* _drawer)
@@ -942,7 +942,7 @@ namespace Maze
                 MonoObject* indexedResourceInstance = nullptr;
                 _instance.getPropertyValue(_property, indexedResourceInstance);
                 ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-                Texture2D* texture = Texture2D::GetResource(resourceId);
+                Texture2D* texture = Texture2D::GetResourceFast(resourceId);
                 _drawer->setValue(texture ? texture->getSharedPtr() : nullptr);
             },
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerTexture2D const* _drawer)
@@ -956,7 +956,7 @@ namespace Maze
                 MonoObject* indexedResourceInstance = nullptr;
                 _instance.getFieldValue(_field, indexedResourceInstance);
                 ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-                Texture2D* texture = Texture2D::GetResource(resourceId);
+                Texture2D* texture = Texture2D::GetResourceFast(resourceId);
                 _drawer->setValue(texture ? texture->getSharedPtr() : nullptr);
             },
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerTexture2D const* _drawer)
@@ -972,7 +972,7 @@ namespace Maze
             MonoObject* indexedResourceInstance = nullptr;
             _instance.getPropertyValue(_property, indexedResourceInstance);
             ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-            Sprite* sprite = Sprite::GetResource(resourceId);
+            Sprite* sprite = Sprite::GetResourceFast(resourceId);
             _drawer->setValue(sprite ? sprite->getSharedPtr() : nullptr);
         },
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _property, PropertyDrawerSprite const* _drawer)
@@ -986,7 +986,7 @@ namespace Maze
             MonoObject* indexedResourceInstance = nullptr;
             _instance.getFieldValue(_field, indexedResourceInstance);
             ResourceId resourceId = MonoHelper::GetIndexedResourceId(indexedResourceInstance);
-            Sprite* sprite = Sprite::GetResource(resourceId);
+            Sprite* sprite = Sprite::GetResourceFast(resourceId);
             _drawer->setValue(sprite ? sprite->getSharedPtr() : nullptr);
         },
             [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, PropertyDrawerSprite const* _drawer)

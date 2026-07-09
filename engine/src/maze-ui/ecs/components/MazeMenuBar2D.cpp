@@ -209,7 +209,7 @@ namespace Maze
                                 return true;
 
                             Vec2F const& positionWS = _inputEvent.position;
-                            Canvas* rootCanvas = Canvas::GetResource(_inputEvent.rootCanvasId);
+                            Canvas* rootCanvas = Canvas::GetResourceFast(_inputEvent.rootCanvasId);
                             Vec2F positionRTS = rootCanvas->convertViewportCoordsToRenderTargetCoords(positionWS);
 
                             Canvas* buttonRootCanvas = optionsIt->second.button->getTransform()->getLastTrunkComponent<Canvas>();

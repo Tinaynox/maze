@@ -232,7 +232,7 @@ namespace Maze
                 case DataBlockParamType::ParamS32:
                 {
                     ResourceId resourceId(_dataBlock.getS32(paramIndex));
-                    setTextureCube(TextureCube::GetResource(resourceId));
+                    setTextureCube(TextureCube::GetResourceFast(resourceId));
                     return true;
                 }
                 // by name

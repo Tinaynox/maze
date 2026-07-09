@@ -910,7 +910,7 @@ namespace Maze
                 case DataBlockParamType::ParamS32:
                 {
                     ResourceId resourceId(_dataBlock.getS32(paramIndex));
-                    setMaterial(Material::GetResource(resourceId));
+                    setMaterial(Material::GetResourceFast(resourceId));
                     return true;
                 }
                 // by name

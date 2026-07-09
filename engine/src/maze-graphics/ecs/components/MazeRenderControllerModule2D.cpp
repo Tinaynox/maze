@@ -326,7 +326,7 @@ namespace Maze
                         case CanvasRenderCommandType::DrawSpriteRenderer:
                         {
                             ResourceId texture2DId = commandData.spriteRenderer->getSpriteTextureId();
-                            Texture2D const* spriteTexture = Texture2D::GetResource(texture2DId);
+                            Texture2D const* spriteTexture = Texture2D::GetResourceFast(texture2DId);
                             if (!spriteTexture)
                                 spriteTexture = TextureManager::GetCurrentInstancePtr()->getBuiltinTexture2D(BuiltinTexture2DType::Error).get();
 
@@ -361,7 +361,7 @@ namespace Maze
                         case CanvasRenderCommandType::DrawSpriteRendererInstanced:
                         {
                             ResourceId texture2DId = commandData.spriteRenderer->getSpriteTextureId();
-                            Texture2D const* spriteTexture = Texture2D::GetResource(texture2DId);
+                            Texture2D const* spriteTexture = Texture2D::GetResourceFast(texture2DId);
                             if (!spriteTexture)
                                 spriteTexture = TextureManager::GetCurrentInstancePtr()->getBuiltinTexture2D(BuiltinTexture2DType::Error).get();
                             if (spriteTexture)

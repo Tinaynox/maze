@@ -388,7 +388,7 @@ namespace Maze
     //////////////////////////////////////////
     inline bool SystemCursorIsValid(S32 _systemCursorId)
     {
-        SystemCursor* systemCursor = SystemCursor::GetResource(_systemCursorId);
+        SystemCursor* systemCursor = SystemCursor::GetResourceFast(_systemCursorId);
         return !!systemCursor;
     }
 

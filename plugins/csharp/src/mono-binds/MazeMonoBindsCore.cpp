@@ -846,7 +846,7 @@ namespace Maze
     //////////////////////////////////////////
     inline MonoString* ScriptableObjectGetName(S32 _resourceId)
     {
-        if (ScriptableObject* scriptableObject = ScriptableObject::GetResource(_resourceId))
+        if (ScriptableObject* scriptableObject = ScriptableObject::GetResourceFast(_resourceId))
             return mono_string_new(mono_domain_get(), scriptableObject->getName().c_str());
 
         return nullptr;

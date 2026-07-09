@@ -96,7 +96,7 @@ namespace Maze
     ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D const* _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTexture2D)
-        , m_texture(_value ? const_cast<Texture2D*>(_value)->cast<Texture2D>() : nullptr)
+        , m_resourceId(_value ? _value->getResourceId() : c_invalidResourceId)
     {
     }
 
@@ -104,9 +104,9 @@ namespace Maze
     ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Texture2DPtr const& _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTexture2D)
-        , m_texture(_value)
+        , m_resourceId(_value ? _value->getResourceId() : c_invalidResourceId)
     {
-    
+
     }
 
     //////////////////////////////////////////
@@ -123,7 +123,7 @@ namespace Maze
     ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, TextureCube const* _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTextureCube)
-        , m_texture(_value ? const_cast<TextureCube*>(_value)->cast<TextureCube>() : nullptr)
+        , m_resourceId(_value ? _value->getResourceId() : c_invalidResourceId)
     {
     }
 
@@ -131,7 +131,7 @@ namespace Maze
     ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, TextureCubePtr const& _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTextureCube)
-        , m_texture(_value)
+        , m_resourceId(_value ? _value->getResourceId() : c_invalidResourceId)
     {
 
     }
@@ -369,9 +369,7 @@ namespace Maze
             case ShaderUniformType::UniformTexture2D:
             case ShaderUniformType::UniformTextureCube:
             {
-                Texture const* textureRaw = m_texture.get();
-                U32 hash = Hash::CalculateCRC32((const S8*)&textureRaw, sizeof(Texture*), _seed);
-                return hash;
+                return Hash::CalculateCRC32((const S8*)&m_resourceId, sizeof(ResourceId), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec2S32:
@@ -658,14 +656,14 @@ namespace Maze
             }
             case ShaderUniformType::UniformTexture2D:
             {
-                if (m_texture)
-                    data = m_texture->castRaw<Texture2D>()->toString();
+                if (Texture2D* texture = IndexedResource<Texture2D>::GetResourceSafe(m_resourceId))
+                    data = texture->toString();
                 return data;
             }
             case ShaderUniformType::UniformTextureCube:
             {
-                if (m_texture)
-                    data = m_texture->castRaw<TextureCube>()->getAssetFileName();
+                if (TextureCube* texture = IndexedResource<TextureCube>::GetResourceSafe(m_resourceId))
+                    data = texture->getAssetFileName();
                 return data;
             }
             case ShaderUniformType::UniformVec2S32:
@@ -788,7 +786,7 @@ namespace Maze
             case ShaderUniformType::UniformTexture2D:
             case ShaderUniformType::UniformTextureCube:
             {
-                return m_texture == _variant.m_texture;
+                return m_resourceId == _variant.m_resourceId;
                 break;
             }
             case ShaderUniformType::UniformTexture2DArray:
@@ -933,8 +931,8 @@ namespace Maze
             case ShaderUniformType::UniformF32:             set(_variant.getF32()); break;
             case ShaderUniformType::UniformF64:             set(_variant.getF64()); break;
             case ShaderUniformType::UniformBool:            set(_variant.getBool()); break;
-            case ShaderUniformType::UniformTexture2D:       set(Maze::static_pointer_cast<Texture2D>(_variant.getTexture())); break;
-            case ShaderUniformType::UniformTextureCube:     set(Maze::static_pointer_cast<TextureCube>(_variant.getTexture())); break;
+            case ShaderUniformType::UniformTexture2D:       m_resourceId = _variant.m_resourceId; m_type = ShaderUniformType::UniformTexture2D; break;
+            case ShaderUniformType::UniformTextureCube:     m_resourceId = _variant.m_resourceId; m_type = ShaderUniformType::UniformTextureCube; break;
             case ShaderUniformType::UniformTexture2DArray:  set((Texture2D const**)_variant.getPtr(), _variant.getCount()); break;
             case ShaderUniformType::UniformVec2S32:         set(_variant.getVec2S32()); break;
             case ShaderUniformType::UniformVec3S32:         set(_variant.getVec3S32()); break;
@@ -1143,16 +1141,16 @@ namespace Maze
             case ShaderUniformType::UniformBool:                _dataBlock.setBool(MAZE_HCS("value"), getBool()); break;
             case ShaderUniformType::UniformTexture2D:
             {
-                if (m_texture)
+                if (Texture2D* texture = IndexedResource<Texture2D>::GetResourceSafe(m_resourceId))
                 {
                     // Save as AUID
                     if (AssetUnitManager::GetInstancePtr())
                     {
-                        AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_texture->getName());
+                        AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(texture->getName());
                         if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTexture2D>::UID())
                         {
                             Texture2DPtr const& assetUnitTexture = assetUnit->castRaw<AssetUnitTexture2D>()->getTexture();
-                            if (assetUnitTexture == m_texture)
+                            if (assetUnitTexture.get() == texture)
                             {
                                 _dataBlock.setU32(MAZE_HCS("value"), assetUnit->getAssetUnitId());
                                 break;
@@ -1166,16 +1164,16 @@ namespace Maze
             }
             case ShaderUniformType::UniformTextureCube:
             {
-                if (m_texture)
+                if (TextureCube* texture = IndexedResource<TextureCube>::GetResourceSafe(m_resourceId))
                 {
                     // Save as AUID
                     if (AssetUnitManager::GetInstancePtr())
                     {
-                        AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(m_texture->getName());
+                        AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(texture->getName());
                         if (assetUnit && assetUnit->getClassUID() == ClassInfo<AssetUnitTextureCube>::UID())
                         {
                             TextureCubePtr const& assetUnitTexture = assetUnit->castRaw<AssetUnitTextureCube>()->getTexture();
-                            if (assetUnitTexture == m_texture)
+                            if (assetUnitTexture.get() == texture)
                             {
                                 _dataBlock.setU32(MAZE_HCS("value"), assetUnit->getAssetUnitId());
                                 break;
@@ -1219,8 +1217,9 @@ namespace Maze
         {
             case ShaderUniformType::UniformTexture2D:
             {
-                if (_variant.getTexture())
-                    _o << " " << (_variant.getTexture()->castRaw<Texture2D>()->isValid() ? "[Valid]" : "[Invalid]");
+                Texture2DPtr texture = _variant.getTexture2D();
+                if (texture)
+                    _o << " " << (texture->isValid() ? "[Valid]" : "[Invalid]");
                 else
                     _o << " " << "[None]";
                 break;

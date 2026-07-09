@@ -61,7 +61,7 @@ namespace Maze
         }
         else
         {
-            if (RenderTarget* renderTarget = RenderWindow::GetResource(_renderTargetId))
+            if (RenderTarget* renderTarget = RenderWindow::GetResourceFast(_renderTargetId))
             {
                 scene = Engine::GetInstancePtr()->loadAssetScene(
                     sceneName,
@@ -111,7 +111,7 @@ namespace Maze
             return;
         }
 
-        if (SystemCursor* systemCursor = SystemCursor::GetResource(_systemCursorId))
+        if (SystemCursor* systemCursor = SystemCursor::GetResourceFast(_systemCursorId))
             renderWindow->getWindow()->setCursor(systemCursor->getSharedPtr());
         else
             Debug::LogError("Undefined cursor!");

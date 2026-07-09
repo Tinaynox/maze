@@ -37,6 +37,7 @@
 #include "maze-graphics/MazeColorF128.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
@@ -237,13 +238,41 @@ namespace Maze
         MAZE_FORCEINLINE bool getBool() const { return m_bool; }
 
         //////////////////////////////////////////
-        MAZE_FORCEINLINE TexturePtr const& getTexture() const { return m_texture; }
+        MAZE_FORCEINLINE ResourceId getTextureResourceId() const { return m_resourceId; }
 
         //////////////////////////////////////////
-        MAZE_FORCEINLINE Texture2DPtr getTexture2D() const { return Maze::static_pointer_cast<Texture2D>(m_texture); }
+        MAZE_FORCEINLINE TexturePtr getTexture() const
+        {
+            switch (m_type)
+            {
+                case ShaderUniformType::UniformTexture2D:
+                    if (Texture2D* texture = IndexedResource<Texture2D>::GetResourceSafe(m_resourceId))
+                        return texture->cast<Texture>();
+                    return nullptr;
+                case ShaderUniformType::UniformTextureCube:
+                    if (TextureCube* texture = IndexedResource<TextureCube>::GetResourceSafe(m_resourceId))
+                        return texture->cast<Texture>();
+                    return nullptr;
+                default:
+                    return nullptr;
+            }
+        }
 
         //////////////////////////////////////////
-        MAZE_FORCEINLINE TextureCubePtr getTextureCube() const { return Maze::static_pointer_cast<TextureCube>(m_texture); }
+        MAZE_FORCEINLINE Texture2DPtr getTexture2D() const
+        {
+            if (Texture2D* texture = IndexedResource<Texture2D>::GetResourceSafe(m_resourceId))
+                return texture->cast<Texture2D>();
+            return nullptr;
+        }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE TextureCubePtr getTextureCube() const
+        {
+            if (TextureCube* texture = IndexedResource<TextureCube>::GetResourceSafe(m_resourceId))
+                return texture->cast<TextureCube>();
+            return nullptr;
+        }
 
         //////////////////////////////////////////
         MAZE_FORCEINLINE Vec4F const& getVecF() const { return m_vectorF; }
@@ -327,10 +356,10 @@ namespace Maze
         MAZE_FORCEINLINE void set(bool _value) { m_bool = _value; m_type = ShaderUniformType::UniformBool; }
         
         //////////////////////////////////////////
-        MAZE_FORCEINLINE void set(Texture2DPtr const& _texture) { m_texture = _texture; m_type = ShaderUniformType::UniformTexture2D; }
+        MAZE_FORCEINLINE void set(Texture2DPtr const& _texture) { m_resourceId = _texture ? _texture->getResourceId() : c_invalidResourceId; m_type = ShaderUniformType::UniformTexture2D; }
 
         //////////////////////////////////////////
-        MAZE_FORCEINLINE void set(TextureCubePtr const& _texture) { m_texture = _texture; m_type = ShaderUniformType::UniformTextureCube; }
+        MAZE_FORCEINLINE void set(TextureCubePtr const& _texture) { m_resourceId = _texture ? _texture->getResourceId() : c_invalidResourceId; m_type = ShaderUniformType::UniformTextureCube; }
 
         //////////////////////////////////////////
         MAZE_FORCEINLINE void set(Texture2D const** _textures, U32 _count) { m_ptr = _textures; m_count = _count; m_type = ShaderUniformType::UniformTexture2DArray; }
@@ -479,8 +508,6 @@ namespace Maze
 
         ShaderUniformType m_type = ShaderUniformType::None;
 
-        TexturePtr m_texture; // #TODO: Replace with ResourceId (m_S32)
-
         union
         {
             struct
@@ -489,11 +516,13 @@ namespace Maze
                 U32 m_count;
             };
 
-            S32 m_S32;
+            S32 m_S32 = 0;
             F32 m_F32;
             F64 m_F64;
             bool m_bool;
-        
+
+            ResourceId m_resourceId;
+
             Vec4F m_vectorF;
             Vec4S m_vectorS;
             Vec4U m_vectorU;

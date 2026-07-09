@@ -62,10 +62,16 @@ namespace Maze
         MAZE_FORCEINLINE ResourceId getResourceId() const { return m_resourceId; }
 
         //////////////////////////////////////////
-        MAZE_FORCEINLINE static T* GetResource(ResourceId _id);
+        MAZE_FORCEINLINE static T* GetResourceFast(ResourceId _id);
 
         //////////////////////////////////////////
-        MAZE_FORCEINLINE static T* GetResource(S32 _id) { return GetResource(ResourceId(_id)); }
+        MAZE_FORCEINLINE static T* GetResourceFast(S32 _id) { return GetResourceFast(ResourceId(_id)); }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE static T* GetResourceSafe(ResourceId _id);
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE static T* GetResourceSafe(S32 _id) { return GetResourceSafe(ResourceId(_id)); }
 
         //////////////////////////////////////////
         MAZE_FORCEINLINE static T* GetResourceUnsafe(ResourceId _id);

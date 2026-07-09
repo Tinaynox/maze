@@ -607,7 +607,7 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyMouse(Maze::InputEventMouseData const& _mouseData)
     {
-        Window* window = Window::GetResource(_mouseData.windowId);
+        Window* window = Window::GetResourceFast(_mouseData.windowId);
         Vec2F mousePosition = m_coordsConverter(window, Vec2F((F32)_mouseData.x, (F32)_mouseData.y));
 
         switch (_mouseData.type)
@@ -647,7 +647,7 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyTouch(Maze::InputEventTouchData const& _touchData)
     {
-        Window* window = Window::GetResource(_touchData.windowId);
+        Window* window = Window::GetResourceFast(_touchData.windowId);
         Vec2F touchPosition = m_coordsConverter(window, Vec2F((F32)_touchData.x, (F32)_touchData.y));
 
         switch (_touchData.type)
@@ -679,7 +679,7 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyVirtualCursor(Maze::InputEventVirtualCursorData const& _virtualCursorData)
     {
-        Window* window = Window::GetResource(_virtualCursorData.windowId);
+        Window* window = Window::GetResourceFast(_virtualCursorData.windowId);
         Vec2F mousePosition = m_coordsConverter(window, Vec2F((F32)_virtualCursorData.x, (F32)_virtualCursorData.y));
 
         switch (_virtualCursorData.type)

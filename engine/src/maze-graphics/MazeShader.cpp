@@ -959,7 +959,7 @@ namespace Maze
         if (_eventUID == ClassInfo<GlobalShaderUniformAddedEvent>::UID())
         {
             ResourceId globalShaderUniformId = ResourceId(_event->castRaw<GlobalShaderUniformAddedEvent>()->globalShaderUniformId);
-            GlobalShaderUniform* globalShaderUniform = GlobalShaderUniform::GetResource(globalShaderUniformId);
+            GlobalShaderUniform* globalShaderUniform = GlobalShaderUniform::GetResourceFast(globalShaderUniformId);
             if (globalShaderUniform)
             {
                 UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(
@@ -990,7 +990,7 @@ namespace Maze
                 auto uniformIt = m_uniformsCache.find(it->second);
                 if (uniformIt != m_uniformsCache.end())
                 {
-                    GlobalShaderUniform* globalShaderUniform = GlobalShaderUniform::GetResource(globalShaderUniformId);
+                    GlobalShaderUniform* globalShaderUniform = GlobalShaderUniform::GetResourceFast(globalShaderUniformId);
                     if (globalShaderUniform)
                     {
                         if (uniformIt->second)
@@ -1052,7 +1052,7 @@ namespace Maze
                 case DataBlockParamType::ParamS32:
                 {
                     ResourceId resourceId(_dataBlock.getS32(paramIndex));
-                    setShader(Shader::GetResource(resourceId));
+                    setShader(Shader::GetResourceFast(resourceId));
                     return true;
                 }
                 // by name

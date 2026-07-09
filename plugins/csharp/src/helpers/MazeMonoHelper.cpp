@@ -1081,7 +1081,7 @@ namespace Maze
         MAZE_PLUGIN_CSHARP_API ScriptableObject* GetScriptableObject(MonoObject* _scritableObjectInstance)
         {
             S32 resourceId = GetIndexedResourceId(_scritableObjectInstance);
-            if (ScriptableObject* scriptableObject = ScriptableObject::GetResource(resourceId))
+            if (ScriptableObject* scriptableObject = ScriptableObject::GetResourceFast(resourceId))
                 return scriptableObject;
 
             return nullptr;

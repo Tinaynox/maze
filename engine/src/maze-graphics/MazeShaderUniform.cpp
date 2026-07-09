@@ -136,7 +136,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Texture2DPtr const& _texture2D)
     {
-        if (getTexture2D() == _texture2D &&
+        ResourceId newResourceId = _texture2D ? _texture2D->getResourceId() : c_invalidResourceId;
+        if (getTextureResourceId() == newResourceId &&
             getType() == ShaderUniformType::UniformTexture2D)
             return false;
 
@@ -164,7 +165,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(TextureCubePtr const& _textureCube)
     {
-        if (getTextureCube() == _textureCube &&
+        ResourceId newResourceId = _textureCube ? _textureCube->getResourceId() : c_invalidResourceId;
+        if (getTextureResourceId() == newResourceId &&
             getType() == ShaderUniformType::UniformTextureCube)
             return false;
 

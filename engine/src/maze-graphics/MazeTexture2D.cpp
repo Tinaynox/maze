@@ -335,7 +335,7 @@ namespace Maze
                 case DataBlockParamType::ParamS32:
                 {
                     ResourceId resourceId(_dataBlock.getS32(paramIndex));
-                    setTexture2D(Texture2D::GetResource(resourceId));
+                    setTexture2D(Texture2D::GetResourceFast(resourceId));
                     return true;
                 }
                 // by name

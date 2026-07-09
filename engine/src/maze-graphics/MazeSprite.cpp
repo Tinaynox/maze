@@ -387,7 +387,7 @@ namespace Maze
                 case DataBlockParamType::ParamS32:
                 {
                     ResourceId resourceId(_dataBlock.getS32(paramIndex));
-                    setSprite(Sprite::GetResource(resourceId));
+                    setSprite(Sprite::GetResourceFast(resourceId));
                     return true;
                 }
                 // by name

@@ -337,7 +337,7 @@ namespace Maze
                     case RenderCommandType::SetShaderUniformTexture2D:
                     {
                         RenderCommandSetShaderUniformTexture2D* command = static_cast<RenderCommandSetShaderUniformTexture2D*>(_command);
-                        if (Texture2D const* texture = Texture2D::GetResource(command->texture2DId))
+                        if (Texture2D const* texture = Texture2D::GetResourceFast(command->texture2DId))
                         {
                             ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
                             ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
