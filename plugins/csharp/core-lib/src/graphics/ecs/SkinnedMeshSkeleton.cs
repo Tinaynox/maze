@@ -118,5 +118,12 @@ namespace Maze.Graphics
         {
             InternalCalls.SkinnedMeshSkeletonPlayerStop(NativeComponentPtr, playerIndex);
         }
+
+        // Current (post-animation) world-space position of a bone, resolved by name.
+        // Returns false if the bone name is not found in the skeleton.
+        public bool TryGetBoneWorldPosition(string boneName, out Vec3F outPosition)
+        {
+            return InternalCalls.SkinnedMeshSkeletonGetBoneWorldPosition(NativeComponentPtr, boneName, out outPosition);
+        }
     }
 }

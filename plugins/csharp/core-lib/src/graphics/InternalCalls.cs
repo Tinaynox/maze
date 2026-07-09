@@ -120,6 +120,12 @@ namespace Maze.Graphics
         internal extern static void SkinnedMeshSkeletonSetAnimationSpeed(
             NativePtr nativeComponentPtr,
             float animationSpeed);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool SkinnedMeshSkeletonGetBoneWorldPosition(
+            NativePtr nativeComponentPtr,
+            string boneName,
+            out Vec3F outPosition);
         #endregion
 
         #region SpriteRenderer2D

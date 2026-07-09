@@ -35,6 +35,8 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeSkinnedMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeSkinnedMeshSkeleton.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -405,6 +407,44 @@ namespace Maze
 
         MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshSkeleton>()->getAnimator();
         animator->setAnimationSpeed(_animationSpeed);
+    }
+
+    //////////////////////////////////////////
+    inline bool SkinnedMeshSkeletonGetBoneWorldPosition(
+        Component* _component,
+        MonoString* _boneName,
+        Vec3F& _outPosition)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshSkeleton, false);
+
+        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshSkeleton>()->getAnimator();
+        if (!animator)
+            return false;
+
+        MeshSkeletonPtr const& skeleton = animator->getSkeleton();
+        if (!skeleton)
+            return false;
+
+        Char* cstr = mono_string_to_utf8(_boneName);
+        MeshSkeleton::BoneIndex boneIndex = skeleton->findBoneIndex(HashedCString(cstr));
+        mono_free(cstr);
+
+        if (boneIndex < 0)
+            return false;
+
+        Vector<TMat> const& bonesGlobalTransforms = animator->getBonesGlobalTransforms();
+        if (boneIndex >= (MeshSkeleton::BoneIndex)bonesGlobalTransforms.size())
+            return false;
+
+        Transform3D* transform3D = _component->getEntityRaw()->getComponentRaw<Transform3D>();
+        if (!transform3D)
+            return false;
+
+        TMat boneWorldTm = transform3D->getWorldTransform().transform(
+            skeleton->getRootTransform().transform(bonesGlobalTransforms[boneIndex]));
+
+        _outPosition = boneWorldTm.getTranslation();
+        return true;
     }
 
 
@@ -1429,6 +1469,7 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonPlayerStop);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonGetAnimationSpeed);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonSetAnimationSpeed);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonGetBoneWorldPosition);
 
         // SpriteRenderer2D
         MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DSetMaterial);
