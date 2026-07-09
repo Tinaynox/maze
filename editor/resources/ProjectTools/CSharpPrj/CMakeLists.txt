@@ -34,6 +34,10 @@ file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../Assets/*.cs")
 
 
 ##########################################
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/../Assets" FILES ${SOURCE_FILES})
+
+
+##########################################
 set(CMAKE_CSharp_FLAGS "/langversion:7")
 
 
