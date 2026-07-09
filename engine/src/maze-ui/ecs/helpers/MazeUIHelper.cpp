@@ -1335,7 +1335,7 @@ namespace Maze
             // track the scroll rect's own transform so resizing it in rebuildItems() actually
             // affects the visible/scrollable area (and not just the outer container).
             SizePolicy2DPtr viewportSizePolicy = scrollRect->getViewportTransform()->getEntityRaw()->ensureComponent<SizePolicy2D>();
-            viewportSizePolicy->setSizeDelta(0.0f, -18.0f);
+            viewportSizePolicy->setSizeDelta(-18.0f, 0.0f);
 
             VerticalLayout2DPtr itemsLayout = scrollRect->getContentTransform()->getEntityRaw()->ensureComponent<VerticalLayout2D>();
             itemsLayout->setHorizontalAlignment(HorizontalAlignment2D::Left);
