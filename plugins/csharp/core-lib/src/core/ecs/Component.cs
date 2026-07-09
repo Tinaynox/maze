@@ -226,17 +226,17 @@ namespace Maze.Core
 
         public static bool operator !(Component instance)
         {
-            return instance.NativeComponentPtr == NativePtr.Zero;
+            return instance is null || instance.NativeComponentPtr == NativePtr.Zero;
         }
 
         public static bool operator true(Component instance)
         {
-            return instance.NativeComponentPtr != NativePtr.Zero;
+            return !(instance is null) && instance.NativeComponentPtr != NativePtr.Zero;
         }
 
         public static bool operator false(Component instance)
         {
-            return instance.NativeComponentPtr == NativePtr.Zero;
+            return instance is null || instance.NativeComponentPtr == NativePtr.Zero;
         }
     }
 }
