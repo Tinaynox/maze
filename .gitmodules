@@ -46,3 +46,12 @@
 [submodule "third-party/mono"]
 	path = third-party/mono
 	url = git@github.com:Tinaynox/mono.git
+[submodule "third-party/vecmath"]
+	path = third-party/vecmath
+	url = git@github.com:Tinaynox/vecmath.git
+[submodule "third-party/EASTL"]
+	path = third-party/EASTL
+	url = git@github.com:Tinaynox/EASTL.git
+[submodule "third-party/EABase"]
+	path = third-party/EABase
+	url = git@github.com:Tinaynox/EABase.git

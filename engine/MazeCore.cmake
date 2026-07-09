@@ -31,17 +31,20 @@ maze_add_module(
     FORWARD_HEADER MazeCoreHeader)
     
     
-target_link_libraries(maze-core 
+target_link_libraries(maze-core
     PUBLIC nedmalloc
     PUBLIC tinyxml2
-    PUBLIC jsoncpp_static)
-    
+    PUBLIC jsoncpp_static
+    PUBLIC EASTL)
+
 target_include_directories(
     maze-core
     PUBLIC "${MAZE_DIR}/third-party/utf8"
     PUBLIC "${MAZE_DIR}/third-party/tinyxml2"
     PUBLIC "${MAZE_DIR}/third-party/jsoncpp/include"
-    PUBLIC "${MAZE_DIR}/third-party/fast_float/include")
+    PUBLIC "${MAZE_DIR}/third-party/fast_float/include"
+    PUBLIC "${MAZE_DIR}/third-party"
+    PUBLIC "${MAZE_DIR}/third-party/EASTL/include")
 
 if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
 

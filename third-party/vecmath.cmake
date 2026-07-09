@@ -23,28 +23,7 @@
 ##########################################
 
 
-# nedmalloc
-include("${MAZE_DIR}/third-party/nedmalloc.cmake")
-
-# tinyxml2
-include("${MAZE_DIR}/third-party/tinyxml2.cmake")
-
-# jsoncpp
-include("${MAZE_DIR}/third-party/jsoncpp.cmake")
-
-# zlib
-include("${MAZE_DIR}/third-party/zlib.cmake")
-
-# vecmath
-include("${MAZE_DIR}/third-party/vecmath.cmake")
-
-# EASTL
-include("${MAZE_DIR}/third-party/EASTL.cmake")
-
-# optick
-if (MAZE_USE_OPTICK)
-    if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
-        add_definitions(-DMAZE_USE_OPTICK)
-        include("${MAZE_DIR}/third-party/optick.cmake")
-    endif()
-endif()
+##########################################
+# Header-only. Headers are included as <vecmath/dag_vecMath.h>, so the
+# include dir is third-party/ itself (the parent of the vecmath/ submodule).
+include_directories(${CMAKE_CURRENT_LIST_DIR})
