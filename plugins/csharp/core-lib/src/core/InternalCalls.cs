@@ -22,6 +22,12 @@ namespace Maze.Core
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void MazeProfileEventEnd();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static NativePtr MazeProfileCreateEventDescription(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void MazeProfileEventBeginDescription(NativePtr description);
         #endregion
 
         #region Log

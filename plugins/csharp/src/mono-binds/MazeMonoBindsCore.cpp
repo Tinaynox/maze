@@ -104,6 +104,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    // Creates a cached event description once (name is hashed/looked-up a single time).
+    // The returned handle should be stored on the C# side and reused across calls
+    // to MazeProfileEventBeginDescription, instead of paying the lookup cost every time.
+    inline void* MazeProfileCreateEventDescription(MonoString* _name)
+    {
+        Char* cstr = mono_string_to_utf8(_name);
+        void* description = MAZE_PROFILE_EVENT_CREATE_DESCRIPTION(cstr);
+        mono_free(cstr);
+        return description;
+    }
+
+    //////////////////////////////////////////
+    inline void MazeProfileEventBeginDescription(void* _description)
+    {
+        MAZE_PROFILE_EVENT_BEGIN_DESCRIPTION(_description);
+    }
+
+    //////////////////////////////////////////
     inline float GetAppTime()
     {
         return UpdateManager::GetInstancePtr()->getAppTime();
@@ -1010,6 +1028,8 @@ namespace Maze
         // Profiler
         MAZE_CORE_MONO_BIND_FUNC(MazeProfileEventBegin);
         MAZE_CORE_MONO_BIND_FUNC(MazeProfileEventEnd);
+        MAZE_CORE_MONO_BIND_FUNC(MazeProfileCreateEventDescription);
+        MAZE_CORE_MONO_BIND_FUNC(MazeProfileEventBeginDescription);
 
         // Log
         MAZE_CORE_MONO_BIND_FUNC(MazeLog);
