@@ -291,6 +291,16 @@ namespace Maze
                 contentTransform->setLocalPosition(Vec2F::c_zero);
 
             m_scrollRect->update(0.0f);
+
+            // ScrollRect2D::update() only pushes a new handle size/position through
+            // Scrollbar2D::updateUI() when the normalized ratio it computes actually differs
+            // from the scrollbar's previously stored value (setHandleSize()/setValue() both
+            // no-op otherwise). The sliding area was just resized above, so the handle's pixel
+            // geometry (computed from the sliding area's size) is stale even when the ratio is
+            // unchanged - force it to recompute here rather than waiting for a focus/press event
+            // to call updateUI() incidentally.
+            if (Scrollbar2DPtr const& verticalScrollbar = m_scrollRect->getVerticalScrollbar())
+                verticalScrollbar->updateUI();
         }
 
         F32 topOffset = m_filterEditBox ? m_filterEditBox->getTransform()->getHeight() + 4.0f : 0.0f;
