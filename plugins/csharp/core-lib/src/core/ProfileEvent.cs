@@ -32,9 +32,9 @@ namespace Maze.Core
     // and reuse it, mirroring the native MAZE_PROFILE_EVENT scoped macro.
     //
     // Usage:
-    //     static readonly ProfileMarker s_marker = new ProfileMarker("MyScope");
+    //     static readonly ProfileMarker s_ProfileMarker = new ProfileMarker("MyScope");
     //     ...
-    //     using (s_marker.Begin())
+    //     using (s_ProfileMarker.Begin())
     //     {
     //         ...
     //     }
