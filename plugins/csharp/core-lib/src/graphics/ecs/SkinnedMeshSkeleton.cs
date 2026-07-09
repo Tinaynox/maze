@@ -119,11 +119,28 @@ namespace Maze.Graphics
             InternalCalls.SkinnedMeshSkeletonPlayerStop(NativeComponentPtr, playerIndex);
         }
 
+        public const int InvalidBoneIndex = -1;
+
+        // Resolves a bone name to its index within the skeleton, for repeated lookups
+        // via TryGetBoneWorldPosition(int, ...) without re-hashing the name every time.
+        // Returns InvalidBoneIndex if the bone name is not found.
+        public int FindBoneIndex(string boneName)
+        {
+            return InternalCalls.SkinnedMeshSkeletonFindBoneIndex(NativeComponentPtr, boneName);
+        }
+
         // Current (post-animation) world-space position of a bone, resolved by name.
         // Returns false if the bone name is not found in the skeleton.
         public bool TryGetBoneWorldPosition(string boneName, out Vec3F outPosition)
         {
             return InternalCalls.SkinnedMeshSkeletonGetBoneWorldPosition(NativeComponentPtr, boneName, out outPosition);
+        }
+
+        // Current (post-animation) world-space position of a bone, resolved by index
+        // (see FindBoneIndex). Cheaper than the name-based overload for repeated queries.
+        public bool TryGetBoneWorldPosition(int boneIndex, out Vec3F outPosition)
+        {
+            return InternalCalls.SkinnedMeshSkeletonGetBoneWorldPositionByIndex(NativeComponentPtr, boneIndex, out outPosition);
         }
     }
 }

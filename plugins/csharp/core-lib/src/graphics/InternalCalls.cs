@@ -126,6 +126,17 @@ namespace Maze.Graphics
             NativePtr nativeComponentPtr,
             string boneName,
             out Vec3F outPosition);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static int SkinnedMeshSkeletonFindBoneIndex(
+            NativePtr nativeComponentPtr,
+            string boneName);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool SkinnedMeshSkeletonGetBoneWorldPositionByIndex(
+            NativePtr nativeComponentPtr,
+            int boneIndex,
+            out Vec3F outPosition);
         #endregion
 
         #region SpriteRenderer2D

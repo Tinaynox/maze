@@ -410,12 +410,37 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline bool SkinnedMeshSkeletonGetBoneWorldPosition(
+    inline S32 SkinnedMeshSkeletonFindBoneIndex(
         Component* _component,
-        MonoString* _boneName,
+        MonoString* _boneName)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshSkeleton, -1);
+
+        MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshSkeleton>()->getAnimator();
+        if (!animator)
+            return -1;
+
+        MeshSkeletonPtr const& skeleton = animator->getSkeleton();
+        if (!skeleton)
+            return -1;
+
+        Char* cstr = mono_string_to_utf8(_boneName);
+        MeshSkeleton::BoneIndex boneIndex = skeleton->findBoneIndex(HashedCString(cstr));
+        mono_free(cstr);
+
+        return (S32)boneIndex;
+    }
+
+    //////////////////////////////////////////
+    inline bool SkinnedMeshSkeletonGetBoneWorldPositionByIndex(
+        Component* _component,
+        S32 _boneIndex,
         Vec3F& _outPosition)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshSkeleton, false);
+
+        if (_boneIndex < 0)
+            return false;
 
         MeshSkeletonAnimatorPtr const& animator = _component->castRaw<SkinnedMeshSkeleton>()->getAnimator();
         if (!animator)
@@ -425,15 +450,8 @@ namespace Maze
         if (!skeleton)
             return false;
 
-        Char* cstr = mono_string_to_utf8(_boneName);
-        MeshSkeleton::BoneIndex boneIndex = skeleton->findBoneIndex(HashedCString(cstr));
-        mono_free(cstr);
-
-        if (boneIndex < 0)
-            return false;
-
         Vector<TMat> const& bonesGlobalTransforms = animator->getBonesGlobalTransforms();
-        if (boneIndex >= (MeshSkeleton::BoneIndex)bonesGlobalTransforms.size())
+        if ((Size)_boneIndex >= bonesGlobalTransforms.size())
             return false;
 
         Transform3D* transform3D = _component->getEntityRaw()->getComponentRaw<Transform3D>();
@@ -441,10 +459,23 @@ namespace Maze
             return false;
 
         TMat boneWorldTm = transform3D->getWorldTransform().transform(
-            skeleton->getRootTransform().transform(bonesGlobalTransforms[boneIndex]));
+            skeleton->getRootTransform().transform(bonesGlobalTransforms[_boneIndex]));
 
         _outPosition = boneWorldTm.getTranslation();
         return true;
+    }
+
+    //////////////////////////////////////////
+    inline bool SkinnedMeshSkeletonGetBoneWorldPosition(
+        Component* _component,
+        MonoString* _boneName,
+        Vec3F& _outPosition)
+    {
+        S32 boneIndex = SkinnedMeshSkeletonFindBoneIndex(_component, _boneName);
+        if (boneIndex < 0)
+            return false;
+
+        return SkinnedMeshSkeletonGetBoneWorldPositionByIndex(_component, boneIndex, _outPosition);
     }
 
 
@@ -1470,6 +1501,8 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonGetAnimationSpeed);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonSetAnimationSpeed);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonGetBoneWorldPosition);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonFindBoneIndex);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonGetBoneWorldPositionByIndex);
 
         // SpriteRenderer2D
         MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DSetMaterial);
