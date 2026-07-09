@@ -63,14 +63,14 @@ namespace Maze
             ++hash;
 
         m_hashToString.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(hash),
-            std::forward_as_tuple(_string));
+            eastl::piecewise_construct,
+            eastl::forward_as_tuple(hash),
+            eastl::forward_as_tuple(_string));
 
         m_stringToHash.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_string),
-            std::forward_as_tuple(hash));
+            eastl::piecewise_construct,
+            eastl::forward_as_tuple(_string),
+            eastl::forward_as_tuple(hash));
 
         return hash;
     }

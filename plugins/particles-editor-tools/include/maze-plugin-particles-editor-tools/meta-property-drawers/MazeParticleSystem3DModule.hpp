@@ -93,9 +93,9 @@ namespace Maze
             std::function<MetaPropertyDrawerPtr(MetaProperty*)> _func)
         {
             m_customPropertyDrawers.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(_metaProperty),
-                std::forward_as_tuple(_func));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(_metaProperty),
+                eastl::forward_as_tuple(_func));
         }
 
         //////////////////////////////////////////

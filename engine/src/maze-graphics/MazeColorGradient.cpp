@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazeColorGradient.hpp"
+#include <EASTL/sort.h>
 
 
 //////////////////////////////////////////
@@ -145,7 +146,7 @@ namespace Maze
             result.emplace_back(Pair<F32, Vec4F>{time, color});
         }
 
-        std::sort(
+        eastl::sort(
             result.begin(),
             result.end(),
             [](Pair<F32, Vec4F> const& _a, Pair<F32, Vec4F> const& _b)

@@ -113,16 +113,14 @@ namespace Maze
     //////////////////////////////////////////
     String ColorF128::toStringHex() const
     {
-        StringStream hexValue;
-         
-         hexValue << '#';
-
-         hexValue << std::setfill('0')
-                  << std::setw(2)
-                  << std::hex
-                  << Math::Clamp01(r) << Math::Clamp01(g) << Math::Clamp01(b) << Math::Clamp01(a);
-
-         return hexValue.str();
+        String result;
+        StringHelper::FormatString(
+            result,
+            "#%02X%02X%02X",
+            static_cast<U32>(Math::Clamp01(r) * 255.0f + 0.5f),
+            static_cast<U32>(Math::Clamp01(g) * 255.0f + 0.5f),
+            static_cast<U32>(Math::Clamp01(b) * 255.0f + 0.5f));
+        return result;
     }
 
     //////////////////////////////////////////

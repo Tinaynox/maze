@@ -1040,9 +1040,9 @@ namespace Maze
             if (_value == F32(s32))
                 return S32ToString(s32);
 
-            StringStream ss;
-            ss << std::fixed << std::setprecision(_precision) << _value;
-            return ss.str();
+            String result;
+            FormatString(result, "%.*f", _precision, _value);
+            return result;
         }
 
         //////////////////////////////////////////
@@ -1150,9 +1150,9 @@ namespace Maze
             if (_value == F64(s64))
                 return S64ToString(s64);
 
-            StringStream ss;
-            ss << std::fixed << std::setprecision(_precision) << _value;
-            return ss.str();
+            String result;
+            FormatString(result, "%.*f", _precision, _value);
+            return result;
         }
 
         //////////////////////////////////////////

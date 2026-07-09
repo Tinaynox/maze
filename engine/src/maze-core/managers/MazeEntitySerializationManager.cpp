@@ -247,9 +247,9 @@ namespace Maze
                     prefabInstance->getAssetUnitId());
 
                 _outIdentityPrefabs.emplace(
-                    std::piecewise_construct,
-                    std::forward_as_tuple(prefabInstance->getAssetUnitId()),
-                    std::forward_as_tuple(identityPrefab));
+                    eastl::piecewise_construct,
+                    eastl::forward_as_tuple(prefabInstance->getAssetUnitId()),
+                    eastl::forward_as_tuple(identityPrefab));
             }
         }
     }
@@ -1383,9 +1383,9 @@ namespace Maze
                 it->second->setSerializationId(it->second->getSerializationId() - it->first);
                 it = _context.outEntities.erase(it);
                 _context.outEntities.emplace(
-                    std::piecewise_construct,
-                    std::forward_as_tuple(it->second->getSerializationId()),
-                    std::forward_as_tuple(it->second));
+                    eastl::piecewise_construct,
+                    eastl::forward_as_tuple(it->second->getSerializationId()),
+                    eastl::forward_as_tuple(it->second));
                 end = _context.outEntities.end();
             }
             else
@@ -1399,9 +1399,9 @@ namespace Maze
                 it->second->setSerializationId(it->second->getSerializationId() - it->first);
                 it = _context.outComponents.erase(it);
                 _context.outComponents.emplace(
-                    std::piecewise_construct,
-                    std::forward_as_tuple(it->second->getSerializationId()),
-                    std::forward_as_tuple(it->second));
+                    eastl::piecewise_construct,
+                    eastl::forward_as_tuple(it->second->getSerializationId()),
+                    eastl::forward_as_tuple(it->second));
                 end = _context.outComponents.end();
             }
             else
@@ -1411,9 +1411,9 @@ namespace Maze
         for (auto const& entityData : _context.outEntities)
         {
             _context.entitiesPerEntityId.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(entityData.second->getId()),
-                std::forward_as_tuple(entityData.second));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(entityData.second->getId()),
+                eastl::forward_as_tuple(entityData.second));
         }
 
         restoreDataBlockEcsIds(_dataBlock, _context.outEntities, _context.outComponents);
@@ -1640,9 +1640,9 @@ namespace Maze
         ComponentSerializationFunctions _funcs)
     {
         m_componentCustomSerializationByClassUID.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_classUID),
-            std::forward_as_tuple(_funcs));
+            eastl::piecewise_construct,
+            eastl::forward_as_tuple(_classUID),
+            eastl::forward_as_tuple(_funcs));
     }
 
 } // namespace Maze

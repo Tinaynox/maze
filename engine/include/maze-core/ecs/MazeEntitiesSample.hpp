@@ -343,9 +343,9 @@ namespace Maze
                 Size index = m_entitiesData.size();
                 m_entitiesData.push_back(entityData);
                 m_entityIndices.emplace(
-                    std::piecewise_construct,
-                    std::forward_as_tuple(eid),
-                    std::forward_as_tuple(index));
+                    eastl::piecewise_construct,
+                    eastl::forward_as_tuple(eid),
+                    eastl::forward_as_tuple(index));
                 _entity->_addSampleRef(this);
                 invokeEntityAdded(entityData, typename Indices::Indexes());
             }
@@ -689,9 +689,9 @@ namespace Maze
                 Size index = m_entitiesData.size();
                 m_entitiesData.push_back(entityData);
                 m_entityIndices.emplace(
-                    std::piecewise_construct,
-                    std::forward_as_tuple(eid),
-                    std::forward_as_tuple(index));
+                    eastl::piecewise_construct,
+                    eastl::forward_as_tuple(eid),
+                    eastl::forward_as_tuple(index));
                 _entity->_addSampleRef(this);
                 invokeEntityAdded(entityData);
             }

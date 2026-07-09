@@ -467,7 +467,7 @@ namespace Maze
                 DataBlock data;
                 curve.toDataBlock(data);
                 ByteBufferPtr buffer = data.saveText();
-                String text(buffer->getDataRO(), buffer->getDataRO() + buffer->getSize());
+                String text(reinterpret_cast<CString>(buffer->getDataRO()), buffer->getSize());
 
                 SystemManager::GetInstancePtr()->setClipboardString(text);
             });

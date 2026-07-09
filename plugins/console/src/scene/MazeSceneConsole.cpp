@@ -280,7 +280,7 @@ namespace Maze
                 hintsAdded++;
             }
 
-            m_hintText->setText(hintText.str());
+            m_hintText->setText(String(hintText.str().c_str()));
         }
     }
 

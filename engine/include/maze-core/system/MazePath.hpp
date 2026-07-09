@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include MAZE_PLATFORM_FILE(MazePath)
+#include <EASTL/functional.h>
 
 
 //////////////////////////////////////////
@@ -69,7 +70,25 @@ namespace std
 
 } // namespace std
 //////////////////////////////////////////
-    
+
+
+//////////////////////////////////////////
+namespace eastl
+{
+    //////////////////////////////////////////
+    template<>
+    struct hash<Maze::Path>
+    {
+        inline size_t operator()(Maze::Path const& _path) const noexcept
+        {
+            return _path.getHash();
+        }
+    };
+
+
+} // namespace eastl
+//////////////////////////////////////////
+
 
 #endif // _MazePath_hpp_
 //////////////////////////////////////////

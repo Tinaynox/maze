@@ -206,9 +206,9 @@ namespace Maze
 
         m_addingEntities.push_back(_entity);
         m_addingEntitiesById.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_entity->getId()),
-            std::forward_as_tuple(_entity));
+            eastl::piecewise_construct,
+            eastl::forward_as_tuple(_entity->getId()),
+            eastl::forward_as_tuple(_entity));
         m_eventTypes.push(EcsWorldEventType::AddingEntity);
 
         processEntityComponentsChanged(entityId);

@@ -253,5 +253,23 @@ namespace std
 //////////////////////////////////////////
 
 
+//////////////////////////////////////////
+namespace eastl
+{
+    //////////////////////////////////////////
+    template<>
+    struct hash<Maze::HashedCString>
+    {
+        inline size_t operator()(Maze::HashedCString const& _s) const noexcept
+        {
+            return _s.hash;
+        }
+    };
+
+
+} // namespace eastl
+//////////////////////////////////////////
+
+
 #endif // _MazeHashedCString_h_
 //////////////////////////////////////////

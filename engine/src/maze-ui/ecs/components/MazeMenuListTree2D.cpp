@@ -212,9 +212,9 @@ namespace Maze
 
                 MenuListItem2D* listItem = menuList->getListItemRaw(words[w]);
                 m_listsByListItem.emplace(
-                    std::piecewise_construct,
-                    std::forward_as_tuple(listItem),
-                    std::forward_as_tuple(menuList));
+                    eastl::piecewise_construct,
+                    eastl::forward_as_tuple(listItem),
+                    eastl::forward_as_tuple(menuList));
 
                 listItem->setIsSubMenu(isSubMenu);
 
@@ -339,15 +339,15 @@ namespace Maze
             if (_parentItem)
             {
                 m_subMenuLists.emplace(
-                    std::piecewise_construct,
-                    std::forward_as_tuple(_parentItem),
-                    std::forward_as_tuple(menuList));
+                    eastl::piecewise_construct,
+                    eastl::forward_as_tuple(_parentItem),
+                    eastl::forward_as_tuple(menuList));
             }
 
             m_lists.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(_fullListId),
-                std::forward_as_tuple(menuList));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(_fullListId),
+                eastl::forward_as_tuple(menuList));
 
             return menuList;
         }

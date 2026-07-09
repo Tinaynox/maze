@@ -281,9 +281,9 @@ namespace Maze
         {
             // Mark with empty pointer
             m_uniformsCache.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(_uniformName.hash),
-                std::forward_as_tuple(nullptr));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(_uniformName.hash),
+                eastl::forward_as_tuple(nullptr));
             return nullPointer;
         }
 
@@ -292,9 +292,9 @@ namespace Maze
         newUniform->setLocation(uniformLocation);
         newUniform->setName(_uniformName);
         auto at = m_uniformsCache.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_uniformName.hash),
-            std::forward_as_tuple(newUniform));
+            eastl::piecewise_construct,
+            eastl::forward_as_tuple(_uniformName.hash),
+            eastl::forward_as_tuple(newUniform));
         if (at.second)
             return at.first->second;
 

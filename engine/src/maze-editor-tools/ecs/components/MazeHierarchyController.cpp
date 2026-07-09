@@ -376,9 +376,9 @@ namespace Maze
                 continue;
 
             m_delayedEntitiesToAdd.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(entity->getId()),
-                std::forward_as_tuple(entity->cast<Entity>()));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(entity->getId()),
+                eastl::forward_as_tuple(entity->cast<Entity>()));
         }
 
         Debug::Log("HierarchyController::addEcsScene %s finished.", _scene->getClassName().str);
@@ -802,9 +802,9 @@ namespace Maze
             return;
 
         m_delayedEntitiesToAdd.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_entity->getId()),
-            std::forward_as_tuple(_entity->cast<Entity>()));
+            eastl::piecewise_construct,
+            eastl::forward_as_tuple(_entity->getId()),
+            eastl::forward_as_tuple(_entity->cast<Entity>()));
     }
 
     //////////////////////////////////////////

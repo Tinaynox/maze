@@ -58,7 +58,7 @@ namespace Maze
                     color = ColorU32::FromString(colorString, ',');
 
                 _text.erase(startTagPosition, endTagPosition - startTagPosition + 1);
-                _outColorTags.push_back(std::make_pair(startTagPosition, color));
+                _outColorTags.push_back(Pair<Size, ColorF128>(startTagPosition, color));
                 tagsFound = true;
 
                 startTagPosition = _text.find("#{");

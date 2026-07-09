@@ -147,7 +147,12 @@ namespace Maze
         FileHelper::CreateDirectoryRecursive(_destPath);
 
         CString mzapMetaExt = "mzap.mzmeta";
-        Path::StringType mzapMetaExtPath = Path::StringType((Char*)mzapMetaExt, (Char*)mzapMetaExt + strlen(mzapMetaExt));
+        // Path::StringType may be a narrow or wide string depending on platform, and EASTL's
+        // basic_string ctors (unlike std::basic_string's generic iterator-range ctor) don't
+        // implicitly widen a plain char* range, so convert each ASCII char explicitly.
+        Path::StringType mzapMetaExtPath;
+        for (CString c = mzapMetaExt; *c; ++c)
+            mzapMetaExtPath.push_back(static_cast<Path::StringType::value_type>(*c));
 
         Vector<AssetFilePtr> files = AssetHelper::GetAllAssetFilesInDirectory(_srcPath);
         for (AssetFilePtr const& file : files)

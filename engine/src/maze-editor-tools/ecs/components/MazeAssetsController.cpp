@@ -387,9 +387,9 @@ namespace Maze
             line->getIconRenderer()->setColor(ColorU32(192, 192, 192));
 
             m_assetsTreeLines.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(assetFile->getFullPath()),
-                std::forward_as_tuple(line));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(assetFile->getFullPath()),
+                eastl::forward_as_tuple(line));
             line->eventExpandedChanged.subscribe(this, &AssetsController::notifyAssetTreeLineExpandedChanged);            
             line->eventLineClick.subscribe(this, &AssetsController::notifyAssetTreeLineClick);
             line->eventLineDoubleClick.subscribe(this, &AssetsController::notifyAssetTreeLineDoubleClick);
@@ -564,9 +564,9 @@ namespace Maze
             line->eventLineDoubleClick.subscribe(this, &AssetsController::notifyAssetTreeLineDoubleClick);
 
             m_selectedAssetsFolderLines.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(fullPath),
-                std::forward_as_tuple(line));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(fullPath),
+                eastl::forward_as_tuple(line));
 
             ContextMenu2DPtr const& lineContextMenu = line->getContextMenu();
             lineContextMenu->setCallbackFunction(

@@ -155,9 +155,9 @@ namespace Maze
         inline void registerComponentEditor(ComponentId _componentId, std::function<ComponentEditorPtr(ComponentId, MetaClass*)> _func)
         {
             m_componentEditors.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(_componentId),
-                std::forward_as_tuple(_func));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(_componentId),
+                eastl::forward_as_tuple(_func));
         }
 
         //////////////////////////////////////////
@@ -177,9 +177,9 @@ namespace Maze
         inline void registerPropertyDrawer(ClassUID _propertyUID, std::function<PropertyDrawerPtr(DataBlock const&)> _func)
         {
             m_propertyDrawers.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(_propertyUID),
-                std::forward_as_tuple(_func));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(_propertyUID),
+                eastl::forward_as_tuple(_func));
         }
 
         //////////////////////////////////////////
@@ -199,9 +199,9 @@ namespace Maze
         inline void registerMetaPropertyDrawer(ClassUID _propertyUID, std::function<MetaPropertyDrawerPtr(MetaProperty*)> _func)
         {
             m_metaPropertyDrawers.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(_propertyUID),
-                std::forward_as_tuple(_func));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(_propertyUID),
+                eastl::forward_as_tuple(_func));
         }
 
         //////////////////////////////////////////

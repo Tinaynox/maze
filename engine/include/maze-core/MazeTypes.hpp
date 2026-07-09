@@ -36,37 +36,54 @@
 #include "maze-core/hash/MazeHashSuperFast.hpp"
 #include "maze-core/hash/MazeHashFNV1.hpp"
 #include "maze-core/data/MazeSpan.hpp"
+#include <EASTL/string.h>
+#include <EASTL/string_view.h>
+#include <EASTL/array.h>
+#include <EASTL/vector.h>
+#include <EASTL/list.h>
+#include <EASTL/utility.h>
+#include <EASTL/tuple.h>
+#include <EASTL/map.h>
+#include <EASTL/unordered_map.h>
+#include <EASTL/set.h>
+#include <EASTL/deque.h>
+#include <EASTL/stack.h>
+#include <EASTL/queue.h>
+#include <EASTL/functional.h>
 #include <string>
-#include <vector>
-#include <list>
-#include <map>
-#include <unordered_map>
-#include <set>
-#include <stack>
-#include <deque>
-#include <queue>
+#include <sstream>
 #include <memory>
 
 
 //////////////////////////////////////////
+// Note: the containers below (String, Vector, Map, etc) are backed by EASTL,
+// using EASTL's default allocator (EASTLAllocatorType, see MazeEASTLAllocator.cpp
+// for the global operator new[] overloads it requires) rather than
+// NedMemoryAllocator. EASTL has no stringstream equivalent, so StringStream/
+// InStringStream/OutStringStream/WStringStream remain std::basic_stringstream-based;
+// converting between them and String/WString requires going through c_str().
+//////////////////////////////////////////
 namespace Maze
 {
-    //////////////////////////////////////////
-    using StringAllocator = StdMemoryAllocator<char, NedMemoryAllocator>;
-    using WStringAllocator = StdMemoryAllocator<wchar_t, NedMemoryAllocator>;
-
-
     //////////////////////////////////////////
     using CStringSpan = Span<Char const>;
 
     //////////////////////////////////////////
-    using String = std::basic_string<char, std::char_traits<char>, StringAllocator>;
+    using String = eastl::basic_string<char>;
+
+    //////////////////////////////////////////
+    using StringView = eastl::basic_string_view<char>;
 
     //////////////////////////////////////////
     template <typename>
     struct IsString : std::false_type {};
     template <>
     struct IsString<Maze::String> : std::true_type {};
+
+
+    //////////////////////////////////////////
+    using StringAllocator = StdMemoryAllocator<char, NedMemoryAllocator>;
+    using WStringAllocator = StdMemoryAllocator<wchar_t, NedMemoryAllocator>;
 
 
     //////////////////////////////////////////
@@ -82,7 +99,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    using WString = std::basic_string<wchar_t, std::char_traits<wchar_t>, WStringAllocator>;
+    using WString = eastl::basic_string<wchar_t>;
+
+    //////////////////////////////////////////
+    using WStringView = eastl::basic_string_view<wchar_t>;
 
     //////////////////////////////////////////
     template <typename>
@@ -102,7 +122,7 @@ namespace Maze
     template <
         class _Ty,
         size_t _Size>
-    using Array = std::array<_Ty, _Size>;
+    using Array = eastl::array<_Ty, _Size>;
 
     //////////////////////////////////////////
     template <typename>
@@ -118,7 +138,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <class _Ty>
-    using Vector = std::vector<_Ty, StdMemoryAllocator<_Ty, NedMemoryAllocator>>;
+    using Vector = eastl::vector<_Ty>;
 
     //////////////////////////////////////////
     template <typename>
@@ -132,7 +152,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <class _Ty>
-    using List = std::list<_Ty, StdMemoryAllocator<_Ty, NedMemoryAllocator>>;
+    using List = eastl::list<_Ty>;
 
     //////////////////////////////////////////
     template <typename>
@@ -147,7 +167,7 @@ namespace Maze
     template <
         class _Ty1,
         class _Ty2>
-    using Pair = std::pair<_Ty1, _Ty2>;
+    using Pair = eastl::pair<_Ty1, _Ty2>;
 
     //////////////////////////////////////////
     template <typename>
@@ -165,8 +185,8 @@ namespace Maze
     template <
         class _Kty,
         class _Ty,
-        class _Pr = std::less<_Kty>>
-    using Map = std::map<_Kty, _Ty, _Pr, StdMemoryAllocator<Pair<const _Kty, _Ty>, NedMemoryAllocator>>;
+        class _Pr = eastl::less<_Kty>>
+    using Map = eastl::map<_Kty, _Ty, _Pr>;
 
     //////////////////////////////////////////
     template <typename>
@@ -185,8 +205,8 @@ namespace Maze
     template <
         class _Kty,
         class _Ty,
-        class _Pr = std::less<_Kty>>
-    using MultiMap = std::multimap<_Kty, _Ty, _Pr, StdMemoryAllocator<Pair<const _Kty, _Ty>, NedMemoryAllocator>>;
+        class _Pr = eastl::less<_Kty>>
+    using MultiMap = eastl::multimap<_Kty, _Ty, _Pr>;
 
     //////////////////////////////////////////
     template <typename>
@@ -205,9 +225,9 @@ namespace Maze
     template <
         class _Kty,
         class _Ty,
-        class _Hasher = std::hash<_Kty>,
-        class _Keyeq = std::equal_to<_Kty>>
-    using UnorderedMap = std::unordered_map<_Kty, _Ty, _Hasher, _Keyeq, StdMemoryAllocator<Pair<const _Kty, _Ty>, NedMemoryAllocator>>;
+        class _Hasher = eastl::hash<_Kty>,
+        class _Keyeq = eastl::equal_to<_Kty>>
+    using UnorderedMap = eastl::unordered_map<_Kty, _Ty, _Hasher, _Keyeq>;
 
     //////////////////////////////////////////
     template <typename>
@@ -226,8 +246,8 @@ namespace Maze
     //////////////////////////////////////////
     template <
         class _Kty,
-        class _Pr = std::less<_Kty>>
-    using Set = std::set<_Kty, _Pr, StdMemoryAllocator<_Kty, NedMemoryAllocator>>;
+        class _Pr = eastl::less<_Kty>>
+    using Set = eastl::set<_Kty, _Pr>;
 
     //////////////////////////////////////////
     template <typename>
@@ -244,8 +264,8 @@ namespace Maze
     //////////////////////////////////////////
     template <
         class _Kty,
-        class _Pr = std::less<_Kty>>
-        using MultiSet = std::multiset<_Kty, _Pr, StdMemoryAllocator<_Kty, NedMemoryAllocator>>;
+        class _Pr = eastl::less<_Kty>>
+        using MultiSet = eastl::multiset<_Kty, _Pr>;
 
     //////////////////////////////////////////
     template <typename>
@@ -261,7 +281,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <class _Ty>
-    using Deque = std::deque<_Ty, StdMemoryAllocator<_Ty, NedMemoryAllocator>>;
+    using Deque = eastl::deque<_Ty>;
 
     //////////////////////////////////////////
     template <typename>
@@ -276,7 +296,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <class _Ty>
-    using Stack = std::stack<_Ty, Deque<_Ty>>;
+    using Stack = eastl::stack<_Ty, Deque<_Ty>>;
 
     //////////////////////////////////////////
     template <typename>
@@ -291,7 +311,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <class _Ty>
-    using Queue = std::queue<_Ty, Deque<_Ty>>;
+    using Queue = eastl::queue<_Ty, Deque<_Ty>>;
 
     //////////////////////////////////////////
     template <typename>
@@ -329,33 +349,6 @@ namespace Maze
     //////////////////////////////////////////
 
 } // namespace Maze
-//////////////////////////////////////////
-
-
-//////////////////////////////////////////
-namespace std
-{
-    //////////////////////////////////////////
-    template <>
-    struct hash<Maze::String>
-    {
-        inline std::size_t operator()(const Maze::String& k) const
-        {
-            return static_cast<std::size_t>(Maze::Hash::CalculateFNV1(k.c_str()));
-        }
-    };
-
-    //////////////////////////////////////////
-    template <>
-    struct hash<Maze::WString>
-    {
-        inline std::size_t operator()(const Maze::WString& k) const
-        {
-            return static_cast<std::size_t>(Maze::Hash::CalculateFNV1(k.c_str()));
-        }
-    };
-
-} // namespace std
 //////////////////////////////////////////
 
 

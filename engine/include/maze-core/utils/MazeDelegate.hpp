@@ -35,6 +35,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/memory/MazeNedMemoryAllocator.hpp"
 #include "maze-core/helpers/MazeLogHelper.hpp"
+#include <EASTL/functional.h>
 
 
 //////////////////////////////////////////
@@ -684,6 +685,27 @@ namespace std
 
 
 } // namespace std
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+namespace eastl
+{
+    //////////////////////////////////////////
+    template <typename TReturnType, typename ...TArgs>
+    struct hash<Maze::Delegate<TReturnType, TArgs...>>
+    {
+        size_t operator()(Maze::Delegate<TReturnType, TArgs...> const& _d) const noexcept
+        {
+            auto const seed(hash<void*>()(_d.m_functorObject));
+
+            return hash<typename Maze::Delegate<TReturnType, TArgs...>::StubFunction>()(
+                _d.m_stubFunction) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        }
+    };
+
+
+} // namespace eastl
 //////////////////////////////////////////
 
 

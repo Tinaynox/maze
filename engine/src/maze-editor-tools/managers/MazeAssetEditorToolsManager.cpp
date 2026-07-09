@@ -291,9 +291,9 @@ namespace Maze
         std::function<AssetFileEditorIconData()> _callback)
     {
         m_iconCallbackPerAssetFileClass.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_assetFileClass),
-            std::forward_as_tuple(_callback));
+            eastl::piecewise_construct,
+            eastl::forward_as_tuple(_assetFileClass),
+            eastl::forward_as_tuple(_callback));
     }
 
     //////////////////////////////////////////

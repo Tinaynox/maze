@@ -121,20 +121,14 @@ namespace Maze
     //////////////////////////////////////////
     String ColorU32::toStringHex() const
     {
-        StringStream hexValue;
-         
-         hexValue << '#';
-
-         hexValue << std::setfill('0')
-                  << std::hex
-                  << std::setw(2)
-                  << static_cast<U32>(r)
-                  << std::setw(2)
-                  << static_cast<U32>(g)
-                  << std::setw(2)
-                  << static_cast<U32>(b);
-
-         return hexValue.str();
+        String result;
+        StringHelper::FormatString(
+            result,
+            "#%02X%02X%02X",
+            static_cast<U32>(r),
+            static_cast<U32>(g),
+            static_cast<U32>(b));
+        return result;
     }
 
     //////////////////////////////////////////

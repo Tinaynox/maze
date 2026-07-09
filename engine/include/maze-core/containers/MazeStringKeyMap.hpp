@@ -243,9 +243,9 @@ namespace Maze
                 std::forward<TValue>(_value));
 
             auto at = m_map.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(_key.asHashedCString()),
-                std::forward_as_tuple(std::move(valueData)));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(_key.asHashedCString()),
+                eastl::forward_as_tuple(std::move(valueData)));
 
             if (at.second)
             {

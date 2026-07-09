@@ -98,9 +98,9 @@ namespace Maze
                 return nullPtr;
 
             DynLibPtr* insertedDynLib = &m_loadedLibs.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(_libraryFullPath),
-                std::forward_as_tuple(dynLib)).first->second;
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(_libraryFullPath),
+                eastl::forward_as_tuple(dynLib)).first->second;
             return *insertedDynLib;
         }
     }

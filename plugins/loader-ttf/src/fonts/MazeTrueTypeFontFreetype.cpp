@@ -237,7 +237,7 @@ namespace Maze
         else
         {
             FontGlyph glyph = loadGlyph(_page, _codePoint, _fontSize, _bold, _outlineThickness);
-            return glyphs.insert(std::make_pair(_codePoint, glyph)).first->second;
+            return glyphs.insert(Pair<U32, FontGlyph>(_codePoint, glyph)).first->second;
         }
     }
 

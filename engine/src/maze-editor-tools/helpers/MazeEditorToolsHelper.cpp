@@ -127,9 +127,9 @@ namespace Maze
             for (auto const& componentData : firstEntity->getComponents())
             {
                 result.emplace(
-                    std::piecewise_construct,
-                    std::forward_as_tuple(componentData.first),
-                    std::forward_as_tuple(componentData.second->getMetaClass()));
+                    eastl::piecewise_construct,
+                    eastl::forward_as_tuple(componentData.first),
+                    eastl::forward_as_tuple(componentData.second->getMetaClass()));
             }
 
             for (; it != end; ++it)

@@ -102,9 +102,9 @@ namespace Maze
         inline void registerGizmos(ClassUID _componentClassUID, ComponentGizmosPtr const& _gizmos)
         {
             m_gizmosPerComponentClass.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(_componentClassUID),
-                std::forward_as_tuple(_gizmos));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(_componentClassUID),
+                eastl::forward_as_tuple(_gizmos));
 
             eventGizmosPerComponentClassChanged();
         }

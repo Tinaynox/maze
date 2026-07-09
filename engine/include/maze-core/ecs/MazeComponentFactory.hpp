@@ -100,9 +100,9 @@ namespace Maze
             objectData.group = _group;
 
             m_sceneObjectCreationData.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(staticId),
-                std::forward_as_tuple(objectData));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(staticId),
+                eastl::forward_as_tuple(objectData));
         }
 
         //////////////////////////////////////////

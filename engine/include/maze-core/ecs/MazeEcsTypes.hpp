@@ -81,5 +81,23 @@ namespace std
 //////////////////////////////////////////
 
 
+//////////////////////////////////////////
+namespace eastl
+{
+    //////////////////////////////////////////
+    template<>
+    struct hash<Maze::EntityId>
+    {
+        inline size_t operator()(Maze::EntityId const& _id) const noexcept
+        {
+            return static_cast<size_t>(_id.getId());
+        }
+    };
+
+
+} // namespace eastl
+//////////////////////////////////////////
+
+
 #endif // _MazeEcsTypes_hpp_
 //////////////////////////////////////////

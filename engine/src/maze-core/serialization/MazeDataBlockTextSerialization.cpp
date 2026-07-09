@@ -440,7 +440,7 @@ namespace Maze
             if (!SaveText(_dataBlock, buffer, _flags))
                 return String();
 
-            return String(buffer.getDataRO(), buffer.getDataRO() + buffer.getSize());
+            return String(reinterpret_cast<CString>(buffer.getDataRO()), buffer.getSize());
         }
 
         //////////////////////////////////////////
@@ -736,14 +736,14 @@ namespace Maze
                         {
                             m_dataBlock->addString(
                                 MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP),
-                                String(m_readStream.getDataRO() + cppCommentStartOffset, m_readStream.getDataRO() + m_readStream.getOffset() - 1));
+                                String(reinterpret_cast<CString>(m_readStream.getDataRO() + cppCommentStartOffset), (m_readStream.getOffset() - 1) - cppCommentStartOffset));
                         }
                         else
                         {
                             m_dataBlock->addNewDataBlock(
                                 MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP))->addString(
                                     MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP),
-                                    String(m_readStream.getDataRO() + cppCommentStartOffset, m_readStream.getDataRO() + m_readStream.getOffset() - 1));
+                                    String(reinterpret_cast<CString>(m_readStream.getDataRO() + cppCommentStartOffset), (m_readStream.getOffset() - 1) - cppCommentStartOffset));
                         }
 
                         continue;
@@ -789,14 +789,14 @@ namespace Maze
                         {
                             m_dataBlock->addString(
                                 MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_C),
-                                String(m_readStream.getDataRO() + cCommentStartOffset, m_readStream.getDataRO() + m_readStream.getOffset() - 2));
+                                String(reinterpret_cast<CString>(m_readStream.getDataRO() + cCommentStartOffset), (m_readStream.getOffset() - 2) - cCommentStartOffset));
                         }
                         else
                         {
                             m_dataBlock->addNewDataBlock(
                                 MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_C))->addString(
                                     MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_C),
-                                    String(m_readStream.getDataRO() + cCommentStartOffset, m_readStream.getDataRO() + m_readStream.getOffset() - 2));
+                                    String(reinterpret_cast<CString>(m_readStream.getDataRO() + cCommentStartOffset), (m_readStream.getOffset() - 2) - cCommentStartOffset));
                         }
 
                         continue;
@@ -1169,11 +1169,11 @@ namespace Maze
             if (_toParams)
                 _dataBlock.addString(
                     commentKey,
-                    String(m_readStream.getDataRO() + pendingComment.startOffset, m_readStream.getDataRO() + pendingComment.endOffset));
+                    String(reinterpret_cast<CString>(m_readStream.getDataRO() + pendingComment.startOffset), pendingComment.endOffset - pendingComment.startOffset));
             else
                 _dataBlock.addNewDataBlock(commentKey)->addString(
                     commentKey,
-                    String(m_readStream.getDataRO() + pendingComment.startOffset, m_readStream.getDataRO() + pendingComment.endOffset));
+                    String(reinterpret_cast<CString>(m_readStream.getDataRO() + pendingComment.startOffset), pendingComment.endOffset - pendingComment.startOffset));
         }
         m_pendingComments.clear();
     }

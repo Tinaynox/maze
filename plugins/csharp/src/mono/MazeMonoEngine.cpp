@@ -489,9 +489,9 @@ namespace Maze
                         scriptClass);
 
                     g_monoEngineData->ecsData.nativeEventSubClassesByClassUID.emplace(
-                        std::piecewise_construct,
-                        std::forward_as_tuple(eventUID),
-                        std::forward_as_tuple(scriptClass));
+                        eastl::piecewise_construct,
+                        eastl::forward_as_tuple(eventUID),
+                        eastl::forward_as_tuple(scriptClass));
                 }
                 else
                 // ScriptableObject subclasses

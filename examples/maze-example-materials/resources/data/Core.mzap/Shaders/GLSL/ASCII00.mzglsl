@@ -157,5 +157,5 @@ void main()
 
     vec3 finalColor = mix(u_backgroundColor.rgb, linearColor, ink);
 
-    out_color = vec4(finalColor, ink.r);
+    out_color = vec4(finalColor, ink);
 }

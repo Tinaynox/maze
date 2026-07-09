@@ -228,9 +228,9 @@ namespace Maze
                         ClassUID eventUID = CalculateClassUID(typeName);
 
                         m_onMonoEventMethods.emplace(
-                            std::piecewise_construct,
-                            std::forward_as_tuple(eventUID),
-                            std::forward_as_tuple(method));
+                            eastl::piecewise_construct,
+                            eastl::forward_as_tuple(eventUID),
+                            eastl::forward_as_tuple(method));
                     }
                     else
                     if (mono_class_is_subclass_of(paramClass, MonoEngine::GetNativeEventClass()->getMonoClass(), false))
@@ -241,9 +241,9 @@ namespace Maze
                         ClassUID eventUID = CalculateClassUID((String("Maze::") + paramName).c_str());
 
                         m_onNativeEventMethods.emplace(
-                            std::piecewise_construct,
-                            std::forward_as_tuple(eventUID),
-                            std::forward_as_tuple(method));
+                            eastl::piecewise_construct,
+                            eastl::forward_as_tuple(eventUID),
+                            eastl::forward_as_tuple(method));
                     }
                 }
             }

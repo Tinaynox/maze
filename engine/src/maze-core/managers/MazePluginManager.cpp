@@ -153,9 +153,9 @@ namespace Maze
         if (m_pluginLibs.find(_pluginLibraryFullPath) == m_pluginLibs.end())
         {
             m_pluginLibs.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(_pluginLibraryFullPath),
-                std::forward_as_tuple(pluginLibrary));
+                eastl::piecewise_construct,
+                eastl::forward_as_tuple(_pluginLibraryFullPath),
+                eastl::forward_as_tuple(pluginLibrary));
 
             // Call startup function
 #if (defined(__GNUC__))

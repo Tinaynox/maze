@@ -150,6 +150,7 @@ endif()
 
 if(MAZE_COMPILER_IS_CLANG OR MAZE_COMPILER_IS_EMSCRIPTEN)
     add_compile_options(-Wno-undefined-var-template)
+    add_compile_options(-Wno-c++20-extensions)
 endif()
 
 set(ARCHDETECT_C_CODE "

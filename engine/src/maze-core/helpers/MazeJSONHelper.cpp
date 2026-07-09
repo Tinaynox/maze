@@ -43,7 +43,7 @@ namespace Maze
             builder["indentation"] = "";
             StdString string = Json::writeString(builder, _value);
 
-            return String(string.begin(), string.end());
+            return String(string.c_str(), string.size());
         }
 
         //////////////////////////////////////////

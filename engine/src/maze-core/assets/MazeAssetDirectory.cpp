@@ -116,9 +116,9 @@ namespace Maze
                 if (file)
                 {
                     m_childrenAssets.emplace(
-                        std::piecewise_construct,
-                        std::forward_as_tuple(file->getFullPath()),
-                        std::forward_as_tuple(file));
+                        eastl::piecewise_construct,
+                        eastl::forward_as_tuple(file->getFullPath()),
+                        eastl::forward_as_tuple(file));
                     continue;
                 }
 
@@ -150,9 +150,9 @@ namespace Maze
                 if (file)
                 {
                     m_childrenAssets.emplace(
-                        std::piecewise_construct,
-                        std::forward_as_tuple(file->getFullPath()),
-                        std::forward_as_tuple(file));
+                        eastl::piecewise_construct,
+                        eastl::forward_as_tuple(file->getFullPath()),
+                        eastl::forward_as_tuple(file));
 
                     if (_addedFiles)
                         _addedFiles->push_back(file);

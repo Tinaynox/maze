@@ -207,9 +207,9 @@ namespace Maze
                 if (evt->getNewAssetUnitId() != c_invalidAssetUnitId)
                 {
                     m_assetUnitsById.emplace(
-                        std::piecewise_construct,
-                        std::forward_as_tuple(evt->getNewAssetUnitId()),
-                        std::forward_as_tuple(std::move(assetUnit)));
+                        eastl::piecewise_construct,
+                        eastl::forward_as_tuple(evt->getNewAssetUnitId()),
+                        eastl::forward_as_tuple(std::move(assetUnit)));
                 }
                 else
                 {

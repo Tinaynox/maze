@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "preprocessor/MazePreprocessor_Memory.hpp"
+#include <EASTL/functional.h>
 #include <atomic>
 
 
@@ -627,6 +628,24 @@ namespace std
 
 
 } // namespace std
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+namespace eastl
+{
+    //////////////////////////////////////////
+    template <typename T>
+    struct hash<Maze::ManagedSharedPtr<T>>
+    {
+        inline size_t operator()(Maze::ManagedSharedPtr<T> const& _ptr) const noexcept
+        {
+            return reinterpret_cast<size_t>(_ptr.getPtr());
+        }
+    };
+
+
+} // namespace eastl
 //////////////////////////////////////////
 
 

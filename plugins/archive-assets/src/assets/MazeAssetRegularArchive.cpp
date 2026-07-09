@@ -101,9 +101,9 @@ namespace Maze
                     confirmedFileFullPathes.emplace(archivedFile->getFullPath());
 
                     m_childrenAssets.emplace(
-                        std::piecewise_construct,
-                        std::forward_as_tuple(archivedFile->getFullPath()),
-                        std::forward_as_tuple(archivedFile));
+                        eastl::piecewise_construct,
+                        eastl::forward_as_tuple(archivedFile->getFullPath()),
+                        eastl::forward_as_tuple(archivedFile));
 
                     if (_addedFiles)
                         _addedFiles->push_back(archivedFile);

@@ -34,6 +34,9 @@ set(EASTL_BUILD_BENCHMARK OFF CACHE BOOL "" FORCE)
 set(EASTL_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 add_subdirectory("${MAZE_DIR}/third-party/EASTL" "${CMAKE_CURRENT_BINARY_DIR}/third-party/EASTL")
 set_property(TARGET EASTL PROPERTY FOLDER "MazeThirdParty")
+if(MSVC)
+    target_compile_options(EASTL PRIVATE /wd5311)
+endif()
 set_target_properties(EASTL
     PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${MAZE_OUTPUT_DIR}/lib/${MAZE_ARCH_SUFFIX}/$<CONFIG>"

@@ -94,7 +94,7 @@ namespace Maze
 
             Vector<ComponentId> const& componentIds = GetComponentIds<TComponents...>();
 
-            return equal(componentIds.begin(), componentIds.end(), m_requiredComponentIds.begin());
+            return std::equal(componentIds.begin(), componentIds.end(), m_requiredComponentIds.begin());
         }
 
         //////////////////////////////////////////
