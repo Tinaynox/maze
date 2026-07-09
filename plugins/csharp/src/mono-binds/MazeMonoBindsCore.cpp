@@ -90,6 +90,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void MazeProfileEventBegin(MonoString* _name)
+    {
+        Char* cstr = mono_string_to_utf8(_name);
+        MAZE_PROFILE_EVENT_BEGIN(cstr);
+        mono_free(cstr);
+    }
+
+    //////////////////////////////////////////
+    inline void MazeProfileEventEnd()
+    {
+        MAZE_PROFILE_EVENT_END();
+    }
+
+    //////////////////////////////////////////
     inline float GetAppTime()
     {
         return UpdateManager::GetInstancePtr()->getAppTime();
@@ -992,6 +1006,10 @@ namespace Maze
         // System
         MAZE_CORE_MONO_BIND_FUNC(GetAppTime);
         MAZE_CORE_MONO_BIND_FUNC(GetTimeMicroseconds);
+
+        // Profiler
+        MAZE_CORE_MONO_BIND_FUNC(MazeProfileEventBegin);
+        MAZE_CORE_MONO_BIND_FUNC(MazeProfileEventEnd);
 
         // Log
         MAZE_CORE_MONO_BIND_FUNC(MazeLog);

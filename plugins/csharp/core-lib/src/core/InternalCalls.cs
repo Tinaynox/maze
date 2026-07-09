@@ -16,6 +16,14 @@ namespace Maze.Core
         internal extern static uint GetTimeMicroseconds();
         #endregion
 
+        #region Profiler
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void MazeProfileEventBegin(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void MazeProfileEventEnd();
+        #endregion
+
         #region Log
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void MazeLog(string text);
