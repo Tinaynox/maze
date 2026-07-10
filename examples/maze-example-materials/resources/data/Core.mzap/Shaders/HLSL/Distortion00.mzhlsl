@@ -1,0 +1,138 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+
+
+//////////////////////////////////////////
+struct VSInput
+{
+    float3 a_position : POSITION;
+    float3 a_normal : NORMAL;
+    float4 a_color : COLOR;
+    float2 a_texCoords0 : TEXCOORD0;
+    uint instanceId : SV_InstanceID;
+};
+
+
+//////////////////////////////////////////
+struct VSOutput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_normalOS : TEXCOORD5;
+    float3 v_normalWS : NORMAL;
+    float3 v_viewDirWS : TEXCOORD6;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float3 v_positionVS : TEXCOORD10;
+    float4 v_positionCS : TEXCOORD11;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+VSOutput main(VSInput In)
+{
+    VSOutput Out;
+
+    int instanceId = (int)In.instanceId;
+
+    float4x4 modelMatrix = GetModelMatrix(instanceId);
+    float4x4 viewMatrix = GetViewMatrix();
+
+    float4 positionOS = float4(In.a_position, 1.0);
+    float4 positionWS = mul(modelMatrix, positionOS);
+    Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
+    float4 positionVS = mul(viewMatrix, positionWS);
+    float4 positionCS = mul(u_projectionMatrix, positionVS);
+
+    float4 normalOS = float4(In.a_normal, 1.0);
+
+    float3x3 normalMatrix = (float3x3)modelMatrix;
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    Out.v_positionOS = positionOS.xyz;
+    Out.v_positionWS = positionWS.xyz;
+    Out.v_positionVS = positionVS.xyz;
+    Out.v_positionCS = positionCS;
+
+    float3 normalWS = normalize(mul(normalMatrix, normalOS.xyz));
+
+    Out.v_normalOS = normalOS.xyz;
+    Out.v_normalWS = normalWS;
+
+    Out.v_color = In.a_color;
+    Out.v_uv0 = In.a_texCoords0;
+
+    Out.v_viewDirWS = u_viewPosition - positionWS.xyz;
+
+    Out.positionCS = MazeFinalizePositionCS(positionCS);
+    return Out;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+
+
+//////////////////////////////////////////
+float4 u_color;
+float u_refractionIndex;
+float u_refractionFactor;
+MAZE_TEXTURE2D(u_depthMap)
+
+
+//////////////////////////////////////////
+struct PSInput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_normalOS : TEXCOORD5;
+    float3 v_normalWS : NORMAL;
+    float3 v_viewDirWS : TEXCOORD6;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float3 v_positionVS : TEXCOORD10;
+    float4 v_positionCS : TEXCOORD11;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+float4 main(PSInput In) : SV_Target
+{
+    // Check depth buffer
+    float2 screenUV = (In.v_positionCS.xy / In.v_positionCS.w) * 0.5 + 0.5;
+    float depth0 = MAZE_GET_TEXEL2D(u_depthMap, screenUV).r;
+    float depth1 = (In.v_positionCS.z / In.v_positionCS.w) * 0.5 + 0.5;
+
+    if (depth1 >= depth0)
+        discard;
+
+    // View direction
+    float3 viewToFragmentDirection = -normalize(In.v_viewDirWS);
+
+    // Calculate the refraction vector
+    float3 refractDir = refract(viewToFragmentDirection, In.v_normalWS, 1.0 / u_refractionIndex);
+
+    float2 distortion = refractDir.xy * float2(u_refractionFactor, u_refractionFactor);
+    return float4(distortion * u_color.rg, 0.0, 1.0);
+}

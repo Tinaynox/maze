@@ -136,3 +136,8 @@ GLSL
 {
   shader:String = "Universal00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "Universal00.mzhlsl"
+}

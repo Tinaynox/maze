@@ -1,0 +1,163 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+
+
+//////////////////////////////////////////
+struct VSInput
+{
+    float3 a_position : POSITION;
+    float3 a_normal : NORMAL;
+    float4 a_color : COLOR;
+    float2 a_texCoords0 : TEXCOORD0;
+    uint instanceId : SV_InstanceID;
+};
+
+
+//////////////////////////////////////////
+struct VSOutput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_normalWS : NORMAL;
+    float3 v_viewDirWS : TEXCOORD6;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+VSOutput main(VSInput In)
+{
+    VSOutput Out;
+
+    int instanceId = (int)In.instanceId;
+
+    float4x4 modelMatrix = GetModelMatrix(instanceId);
+    float4x4 viewMatrix = GetViewMatrix();
+
+    float4 positionOS = float4(In.a_position, 1.0);
+    float4 positionWS = mul(modelMatrix, positionOS);
+    Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
+    float4 positionVS = mul(viewMatrix, positionWS);
+    float4 positionCS = mul(u_projectionMatrix, positionVS);
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    float3x3 normalMatrix = (float3x3)modelMatrix;
+    float3 normalWS = normalize(mul(normalMatrix, In.a_normal));
+
+    Out.v_positionOS = positionOS.xyz;
+    Out.v_positionWS = positionWS.xyz;
+    Out.v_normalWS = normalWS;
+    Out.v_color = In.a_color;
+    Out.v_uv0 = In.a_texCoords0;
+
+    Out.v_viewDirWS = u_viewPosition - positionWS.xyz;
+
+    Out.positionCS = MazeFinalizePositionCS(positionCS);
+    return Out;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+#include "Utils/Math.mzhlsl"
+#include "Utils/Color.mzhlsl"
+
+
+//////////////////////////////////////////
+float4 u_color;
+MAZE_TEXTURECUBE(u_skyboxMap)
+
+// Thin film
+float u_filmThickness;
+float u_thicknessVariation;
+float u_filmScale;
+float u_filmSpeed;
+float u_hueScale;
+float u_hueShift;
+float u_saturation;
+float u_brightness;
+
+// Reflection / fresnel
+float u_fresnelPower;
+float u_reflectionStrength;
+float u_minAlpha;
+float u_maxAlpha;
+
+// Specular glint
+float u_specularPower;
+float u_specularIntensity;
+
+
+//////////////////////////////////////////
+struct PSInput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_normalWS : NORMAL;
+    float3 v_viewDirWS : TEXCOORD6;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+float4 main(PSInput In) : SV_Target
+{
+    float3 normalWS = normalize(In.v_normalWS);
+    float3 toView = normalize(In.v_viewDirWS);
+
+    float NdotV = clamp(dot(normalWS, toView), 0.0, 1.0);
+
+    float fresnel = pow(1.0 - NdotV, u_fresnelPower);
+
+    // Slowly swirling, noise-driven film thickness - mimics the uneven,
+    // ever-shifting thickness of a real soap film
+    float thicknessNoise = MazeNoise3D(In.v_positionOS * u_filmScale + float3(0.0, 0.0, u_time * u_filmSpeed));
+    float thickness = u_filmThickness + u_thicknessVariation * thicknessNoise;
+
+    // The optical path length through the film grows at grazing angles,
+    // which is what produces the characteristic rainbow rings near a
+    // bubble's silhouette
+    float opticalPath = thickness / max(NdotV, 0.2);
+    float hue = MazeMod(opticalPath * u_hueScale + u_hueShift, 360.0);
+    float3 filmColor = ConvertHSVToRGB(hue, u_saturation, u_brightness);
+
+    // Reflected environment, tinted brighter towards the silhouette
+    float3 reflectDir = reflect(-toView, normalWS);
+    float3 envColor = MAZE_GET_TEXELCUBE(u_skyboxMap, reflectDir).rgb;
+
+    float3 linearColor = lerp(filmColor, envColor, u_reflectionStrength * fresnel) * u_color.rgb;
+
+    // Tiny bright specular glint where the main light reflects directly
+    float3 lightReflectDir = reflect(normalize(u_mainLightDirection), normalWS);
+    float specular = pow(clamp(dot(lightReflectDir, toView), 0.0, 1.0), u_specularPower);
+    linearColor += specular * u_specularIntensity * u_mainLightColor.rgb;
+
+    // Mostly see-through in the middle of the film, nearly opaque at the
+    // grazing silhouette - the defining look of a soap bubble
+    float alpha = lerp(u_minAlpha, u_maxAlpha, fresnel) * u_color.a;
+
+    return float4(linearColor, alpha);
+}

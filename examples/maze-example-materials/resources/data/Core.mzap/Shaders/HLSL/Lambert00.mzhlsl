@@ -1,0 +1,179 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+
+
+//////////////////////////////////////////
+float4 u_baseMapST;
+
+
+//////////////////////////////////////////
+struct VSInput
+{
+    float3 a_position : POSITION;
+    float3 a_normal : NORMAL;
+    float3 a_tangent : TANGENT;
+    float3 a_bitangent : BINORMAL;
+    float4 a_color : COLOR;
+    float2 a_texCoords0 : TEXCOORD0;
+    uint instanceId : SV_InstanceID;
+};
+
+
+//////////////////////////////////////////
+struct VSOutput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_normalOS : TEXCOORD5;
+    float3 v_normalWS : NORMAL;
+    float3 v_viewDirWS : TEXCOORD6;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float3 v_positionVS : TEXCOORD10;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+VSOutput main(VSInput In)
+{
+    VSOutput Out;
+
+    int instanceId = (int)In.instanceId;
+
+    float4x4 modelMatrix = GetModelMatrix(instanceId);
+    float4x4 viewMatrix = GetViewMatrix();
+
+    float4 positionOS = float4(In.a_position, 1.0);
+    float4 positionWS = mul(modelMatrix, positionOS);
+    Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
+    float4 positionVS = mul(viewMatrix, positionWS);
+    float4 positionCS = mul(u_projectionMatrix, positionVS);
+
+    float4 normalOS = float4(In.a_normal, 1.0);
+
+    float3x3 normalMatrix = (float3x3)modelMatrix;
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    Out.v_positionOS = positionOS.xyz;
+    Out.v_positionWS = positionWS.xyz;
+    Out.v_positionVS = positionVS.xyz;
+
+    float3 normalWS = normalize(mul(normalMatrix, normalOS.xyz));
+
+    Out.v_normalOS = normalOS.xyz;
+    Out.v_normalWS = normalWS;
+
+    Out.v_color = In.a_color;
+
+    Out.v_uv0 = u_baseMapST.xy * In.a_texCoords0 + u_baseMapST.zw;
+
+    Out.v_viewDirWS = u_viewPosition - positionWS.xyz;
+
+    Out.positionCS = MazeFinalizePositionCS(positionCS);
+    return Out;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+
+
+//////////////////////////////////////////
+MAZE_TEXTURE2D(u_baseMap)
+float4 u_color;
+float4 u_ambientLightColor;
+
+
+//////////////////////////////////////////
+struct PSInput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_normalOS : TEXCOORD5;
+    float3 v_normalWS : NORMAL;
+    float3 v_viewDirWS : TEXCOORD6;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float3 v_positionVS : TEXCOORD10;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Lambert
+float3 LambertLighting(
+    float3 _diffuseColor,
+    float3 _normalWS,
+    float3 _fragmentToViewDirection,
+    float3 _lightDirection,
+    float3 _lightColor)
+{
+    // Light
+    float3 fragmentToLightDirection = -_lightDirection;
+    float lightAttenuation = 1.0;
+
+    // Lambertian
+    float NdotL = dot(_normalWS, fragmentToLightDirection);
+    float lambertian = clamp(NdotL, 0.0, 1.0);
+
+
+    // Light final
+    float3 lightColorFinal = _lightColor * lightAttenuation;
+
+    return
+        _diffuseColor * lambertian * lightColorFinal;
+}
+
+
+//////////////////////////////////////////
+// Main
+float4 main(PSInput In) : SV_Target
+{
+    // View direction
+    float3 fragmentToViewDirection = normalize(In.v_viewDirWS);
+
+    // Normal
+    float3 normalWS = normalize(In.v_normalWS);
+
+    // Ambient light
+    float3 ambientLightColor = u_ambientLightColor.rgb;
+
+    // Albedo
+    float4 albedo = MAZE_GET_TEXEL2D(u_baseMap, In.v_uv0) * u_color;
+
+    // Diffuse color
+    float3 diffuseColor = albedo.rgb;
+
+    // Linear color
+    float3 linearColor = diffuseColor * ambientLightColor;
+
+    // Main light
+    linearColor += LambertLighting(diffuseColor, normalWS, fragmentToViewDirection, normalize(u_mainLightDirection), u_mainLightColor.rgb);
+
+    // Reset to LDR
+    linearColor.r = min(linearColor.r, 1.0);
+    linearColor.g = min(linearColor.g, 1.0);
+    linearColor.b = min(linearColor.b, 1.0);
+
+
+    return float4(linearColor, albedo.a);
+}

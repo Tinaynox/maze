@@ -16,3 +16,8 @@ GLSL
 {
   shader:String = "Fresnel00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "Fresnel00.mzhlsl"
+}

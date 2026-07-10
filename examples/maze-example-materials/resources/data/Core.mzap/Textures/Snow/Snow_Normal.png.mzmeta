@@ -2,7 +2,7 @@ assetUnits
 {
   texture2d
   {
-    minFilter:String = Linear
+    minFilter:String = LinearMipmapLinear
     magFilter:String = Linear
     wrapS:String = Repeat
     wrapT:String = Repeat

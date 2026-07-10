@@ -1,0 +1,381 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+#include "Utils/Math.mzhlsl"
+
+
+//////////////////////////////////////////
+struct VSInput
+{
+    float3 a_position : POSITION;
+    float3 a_normal : NORMAL;
+    float4 a_color : COLOR;
+    float2 a_texCoords0 : TEXCOORD0;
+    uint instanceId : SV_InstanceID;
+};
+
+
+//////////////////////////////////////////
+struct VSOutput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_cameraPosOS : TEXCOORD1;
+    // Rows of the object-to-world normal matrix
+    float3 v_normalMatrix0 : TEXCOORD2;
+    float3 v_normalMatrix1 : TEXCOORD3;
+    float3 v_normalMatrix2 : TEXCOORD4;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+VSOutput main(VSInput In)
+{
+    VSOutput Out;
+
+    int instanceId = (int)In.instanceId;
+
+    float4x4 modelMatrix = GetModelMatrix(instanceId);
+    float4x4 viewMatrix = GetViewMatrix();
+
+    float4 positionOS = float4(In.a_position, 1.0);
+    float4 positionWS = mul(modelMatrix, positionOS);
+    Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
+    float4 positionVS = mul(viewMatrix, positionWS);
+    float4 positionCS = mul(u_projectionMatrix, positionVS);
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    // Camera position in object space, used as the raymarch origin in the fragment shader
+    float4x4 invModelMatrix = MazeInverseAffine(modelMatrix);
+    Out.v_cameraPosOS = mul(invModelMatrix, float4(u_viewPosition, 1.0)).xyz;
+
+    float3x3 normalMatrix = (float3x3)modelMatrix;
+    Out.v_normalMatrix0 = normalMatrix[0];
+    Out.v_normalMatrix1 = normalMatrix[1];
+    Out.v_normalMatrix2 = normalMatrix[2];
+
+    Out.v_positionOS = positionOS.xyz;
+    Out.v_positionWS = positionWS.xyz;
+    Out.v_color = In.a_color;
+    Out.v_uv0 = In.a_texCoords0;
+
+    Out.positionCS = MazeFinalizePositionCS(positionCS);
+    return Out;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+#include "Utils/Math.mzhlsl"
+#include "Utils/Color.mzhlsl"
+
+
+//////////////////////////////////////////
+float4 u_color;
+float4 u_glowColor;
+float4 u_ambientLightColor;
+float u_speed;
+float u_tubeRadius;
+float u_colorCycles;
+
+// Knot geometry
+float u_knotR;
+float u_knotR2;
+
+// Animation
+float u_breathingAmplitude;
+float u_breathingSpeed;
+float u_hueSpeed;
+
+// Shading
+float u_saturation;
+float u_specularPower;
+float u_specularIntensity;
+float u_fresnelPower;
+float u_aoStrength;
+
+// Raymarch quality (higher = cleaner/less noisy, more expensive)
+float u_maxDist;
+float u_surfaceDistance;
+float u_normalEpsilon;
+
+// Metaballs orbiting and merging into the knot
+float u_metaballRadius;
+float u_metaballOrbitRadius;
+float u_metaballSpeed;
+float u_metaballSmoothness;
+
+// How smoothly the knot curve's nearest-point search blends between its
+// lobes/crossings. Too low here is what causes flat, badly-shaded creases
+float u_knotSmoothness;
+
+
+//////////////////////////////////////////
+struct PSInput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_cameraPosOS : TEXCOORD1;
+    float3 v_normalMatrix0 : TEXCOORD2;
+    float3 v_normalMatrix1 : TEXCOORD3;
+    float3 v_normalMatrix2 : TEXCOORD4;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// (2, 3) torus knot - same family of curve as the TorusKnotUV.fbx preview mesh,
+// but defined analytically so it can be raymarched as a true SDF
+static const float KNOT_P = 2.0;
+static const float KNOT_Q = 3.0;
+static const float KNOT_TAU = 6.28318530718;
+
+static const int MAX_STEPS = 64;
+static const int NEWTON_ITERATIONS = 5;
+static const int METABALL_COUNT = 3;
+
+// Newton's method only converges to the *nearest* local minimum to its
+// starting guess. The (p, q) torus knot curve has p * q lobes as seen from
+// a generic nearby point, so a single starting guess per point can lock
+// onto the wrong lobe and flip discontinuously as the point moves - that's
+// what shows up as a sharp, badly-shaded crease along the tube. Seeding
+// Newton from one evenly-spaced guess per lobe and smoothly blending the
+// results fixes this.
+static const int KNOT_SEEDS = 6;
+
+
+//////////////////////////////////////////
+float3 TorusKnotCurve(float _t)
+{
+    float qt = KNOT_Q * _t;
+    float pt = KNOT_P * _t;
+    float a = u_knotR + u_knotR2 * cos(qt);
+    return float3(a * cos(pt), a * sin(pt), u_knotR2 * sin(qt));
+}
+
+//////////////////////////////////////////
+float3 TorusKnotCurveDerivative(float _t)
+{
+    float qt = KNOT_Q * _t;
+    float pt = KNOT_P * _t;
+    float a = u_knotR + u_knotR2 * cos(qt);
+    float da = -u_knotR2 * KNOT_Q * sin(qt);
+
+    float dx = da * cos(pt) - a * KNOT_P * sin(pt);
+    float dy = da * sin(pt) + a * KNOT_P * cos(pt);
+    float dz = u_knotR2 * KNOT_Q * cos(qt);
+
+    return float3(dx, dy, dz);
+}
+
+//////////////////////////////////////////
+// Returns (blended distance, blend weight favouring 'a' - used to also
+// blend the surface color in lock-step with the geometry, so the seam
+// between blended shapes never has to jump between two unrelated hues)
+float2 SmoothMinH(float _a, float _b, float _k)
+{
+    float h = clamp(0.5 + 0.5 * (_b - _a) / _k, 0.0, 1.0);
+    float d = lerp(_b, _a, h) - _k * h * (1.0 - h);
+    return float2(d, h);
+}
+
+//////////////////////////////////////////
+// Distance to the curve found via a few Newton iterations starting from
+// a fixed seed parameter t0
+float2 NearestPointOnKnotSeed(float3 _p, float _t0)
+{
+    float t = _t0;
+
+    for (int i = 0; i < NEWTON_ITERATIONS; ++i)
+    {
+        float3 c = TorusKnotCurve(t);
+        float3 dc = TorusKnotCurveDerivative(t);
+        float3 diff = c - _p;
+        float denom = dot(dc, dc);
+        if (denom > 1.0e-6)
+            t -= dot(diff, dc) / denom;
+    }
+
+    float3 c2 = TorusKnotCurve(t);
+    return float2(length(_p - c2), t);
+}
+
+//////////////////////////////////////////
+// Returns (distance to curve, curve parameter t at the nearest point).
+// Newton's method is seeded once per lobe of the knot and all results are
+// blended smoothly rather than picked with a hard min, so there is never a
+// sharp ridge where two seeds converge to nearly-equal distances (which
+// would otherwise break the finite-difference normal and show up as a
+// flat/dark, incorrectly-lit crease)
+float2 NearestPointOnKnot(float3 _p)
+{
+    float2 best = NearestPointOnKnotSeed(_p, 0.0);
+
+    for (int k = 1; k < KNOT_SEEDS; ++k)
+    {
+        float t0 = KNOT_TAU * (float)k / (float)KNOT_SEEDS;
+        float2 cand = NearestPointOnKnotSeed(_p, t0);
+
+        float2 sm = SmoothMinH(best.x, cand.x, u_knotSmoothness);
+        best = float2(sm.x, lerp(cand.y, best.y, sm.y));
+    }
+
+    return best;
+}
+
+//////////////////////////////////////////
+float3 HueColor(float _hueDegrees)
+{
+    return ConvertHSVToRGB(MazeMod(_hueDegrees, 360.0), u_saturation, 1.0);
+}
+
+//////////////////////////////////////////
+// Lissajous-style orbit, staggered per-ball so they swing in and out
+// of the knot's tube independently
+float3 MetaballCenter(int _i, float _time)
+{
+    float phase = (float)_i * 2.39996;
+    float orbitR = u_metaballOrbitRadius;
+    return float3(
+        orbitR * cos(_time + phase),
+        orbitR * sin(_time * 1.3 + phase * 1.7),
+        orbitR * 0.6 * sin(_time * 0.8 + phase * 2.3));
+}
+
+//////////////////////////////////////////
+// Evaluates the scene's distance and its smoothly-blended base color together,
+// so the color always transitions using the exact same weight as the geometry
+float SDFSceneColor(float3 _p, out float3 _outColor)
+{
+    float breathing = 1.0 + u_breathingAmplitude * sin(u_time * u_speed * u_breathingSpeed);
+    float2 knotRes = NearestPointOnKnot(_p);
+    float d = knotRes.x - u_tubeRadius * breathing;
+
+    float hueKnot = degrees(knotRes.y) * u_colorCycles + u_time * u_speed * u_hueSpeed;
+    _outColor = HueColor(hueKnot);
+
+    float metaTime = u_time * u_speed * u_metaballSpeed;
+    for (int i = 0; i < METABALL_COUNT; ++i)
+    {
+        float3 c = MetaballCenter(i, metaTime);
+        float dBall = length(_p - c) - u_metaballRadius;
+
+        // Each ball's own hue depends only on time and its index - never on
+        // position - so it can't introduce a spatial discontinuity of its own
+        float hueBall = u_time * u_speed * u_hueSpeed + (float)i * (360.0 / (float)METABALL_COUNT);
+        float3 ballColor = HueColor(hueBall);
+
+        float2 sm = SmoothMinH(d, dBall, u_metaballSmoothness);
+        d = sm.x;
+        _outColor = lerp(ballColor, _outColor, sm.y);
+    }
+
+    return d;
+}
+
+//////////////////////////////////////////
+float SDFScene(float3 _p)
+{
+    float3 unusedColor;
+    return SDFSceneColor(_p, unusedColor);
+}
+
+//////////////////////////////////////////
+float3 SDFNormal(float3 _p)
+{
+    float2 e = float2(u_normalEpsilon, 0.0);
+    return normalize(float3(
+        SDFScene(_p + e.xyy) - SDFScene(_p - e.xyy),
+        SDFScene(_p + e.yxy) - SDFScene(_p - e.yxy),
+        SDFScene(_p + e.yyx) - SDFScene(_p - e.yyx)));
+}
+
+//////////////////////////////////////////
+// Main
+float4 main(PSInput In) : SV_Target
+{
+    float3x3 normalMatrix = float3x3(In.v_normalMatrix0, In.v_normalMatrix1, In.v_normalMatrix2);
+
+    // Raymarch in object space, starting from the visible point on the bounding cube
+    float3 ro = In.v_positionOS;
+    float3 rd = normalize(In.v_positionOS - In.v_cameraPosOS);
+
+    float t = 0.0;
+    bool hit = false;
+    int stepsTaken = 0;
+    float3 p = ro;
+
+    for (int i = 0; i < MAX_STEPS; ++i)
+    {
+        p = ro + rd * t;
+        float d = SDFScene(p);
+        stepsTaken = i;
+
+        if (d < u_surfaceDistance)
+        {
+            hit = true;
+            break;
+        }
+
+        t += d;
+        if (t > u_maxDist)
+            break;
+    }
+
+    if (!hit)
+        discard;
+
+    float3 normalOS = SDFNormal(p);
+    float3 normalWS = normalize(mul(normalMatrix, normalOS));
+    float3 toViewWS = normalize(mul(normalMatrix, (In.v_cameraPosOS - p)));
+
+    // Rainbow gradient along the knot's strand, smoothly blended with each
+    // metaball's own color using the same weight as the geometry union
+    float3 rainbowColor;
+    SDFSceneColor(p, rainbowColor);
+
+    // Lighting
+    float3 fragmentToLightDirection = -normalize(u_mainLightDirection);
+    float NdotL = clamp(dot(normalWS, fragmentToLightDirection), 0.0, 1.0);
+
+    float3 H = normalize(fragmentToLightDirection + toViewWS);
+    float NdotH = clamp(dot(normalWS, H), 0.0, 1.0);
+    float specular = pow(NdotH, u_specularPower);
+
+    // Rim/fresnel glow
+    float fresnel = pow(1.0 - clamp(dot(normalWS, toViewWS), 0.0, 1.0), u_fresnelPower);
+
+    // Cheap ambient occlusion from how many steps it took to converge
+    float ao = clamp(u_aoStrength * (1.0 - (float)stepsTaken / (float)MAX_STEPS), 0.0, 1.0);
+
+    float3 baseColor = rainbowColor * u_color.rgb;
+    float3 ambient = u_ambientLightColor.rgb * baseColor;
+    float3 diffuse = baseColor * NdotL * u_mainLightColor.rgb;
+    float3 glow = u_glowColor.rgb * fresnel;
+
+    float3 linearColor = (ambient + diffuse) * ao + specular * u_mainLightColor.rgb * u_specularIntensity + glow;
+
+    return float4(linearColor, u_color.a);
+}

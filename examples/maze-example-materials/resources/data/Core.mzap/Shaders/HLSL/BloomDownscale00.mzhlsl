@@ -1,0 +1,127 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+
+
+//////////////////////////////////////////
+float2 u_baseMapTexelSize;
+float u_bloomSpread;
+
+
+//////////////////////////////////////////
+struct VSInput
+{
+    float3 a_position : POSITION;
+    float3 a_normal : NORMAL;
+    float4 a_color : COLOR;
+    float2 a_texCoords0 : TEXCOORD0;
+    uint instanceId : SV_InstanceID;
+};
+
+
+//////////////////////////////////////////
+struct VSOutput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_uv12 : TEXCOORD1;
+    float4 v_uv34 : TEXCOORD2;
+    float4 v_color : COLOR0;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float3 v_positionVS : TEXCOORD10;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+VSOutput main(VSInput In)
+{
+    VSOutput Out;
+
+    int instanceId = (int)In.instanceId;
+
+    float4x4 modelMatrix = GetModelMatrix(instanceId);
+    float4x4 viewMatrix = GetViewMatrix();
+
+    float4 positionOS = float4(In.a_position, 1.0);
+    float4 positionWS = mul(modelMatrix, positionOS);
+    Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
+    float4 positionVS = mul(viewMatrix, positionWS);
+    float4 positionCS = mul(u_projectionMatrix, positionVS);
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    Out.v_positionOS = positionOS.xyz;
+    Out.v_positionWS = positionWS.xyz;
+    Out.v_positionVS = positionVS.xyz;
+    Out.v_color = In.a_color;
+    Out.v_uv0 = In.a_texCoords0;
+
+    float2 bloomTexelSpread = u_baseMapTexelSize * u_bloomSpread;
+    Out.v_uv12.xy = In.a_texCoords0 + float2(1.0, 1.0) * bloomTexelSpread;
+    Out.v_uv12.zw = In.a_texCoords0 + float2(-1.0, 1.0) * bloomTexelSpread;
+    Out.v_uv34.xy = In.a_texCoords0 + float2(-1.0, -1.0) * bloomTexelSpread;
+    Out.v_uv34.zw = In.a_texCoords0 + float2(1.0, -1.0) * bloomTexelSpread;
+
+    Out.positionCS = MazeFinalizePositionCS(positionCS);
+    return Out;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+
+
+//////////////////////////////////////////
+MAZE_TEXTURE2D(u_baseMap)
+float4 u_color;
+float u_bloomThreshold;
+
+
+//////////////////////////////////////////
+struct PSInput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_uv12 : TEXCOORD1;
+    float4 v_uv34 : TEXCOORD2;
+    float4 v_color : COLOR0;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float3 v_positionVS : TEXCOORD10;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+float4 main(PSInput In) : SV_Target
+{
+    float3 diffuseColor0 = MAZE_GET_TEXEL2D(u_baseMap, In.v_uv0).rgb;
+    float3 diffuseColor1 = MAZE_GET_TEXEL2D(u_baseMap, In.v_uv12.xy).rgb;
+    float3 diffuseColor2 = MAZE_GET_TEXEL2D(u_baseMap, In.v_uv12.zw).rgb;
+    float3 diffuseColor3 = MAZE_GET_TEXEL2D(u_baseMap, In.v_uv34.xy).rgb;
+    float3 diffuseColor4 = MAZE_GET_TEXEL2D(u_baseMap, In.v_uv34.zw).rgb;
+
+    float3 diffuseColor = diffuseColor0 * 0.5 + diffuseColor1 * 0.125 + diffuseColor2 * 0.125 + diffuseColor3 * 0.125 + diffuseColor4 * 0.125;
+
+    // Linear color
+    float3 linearColor = diffuseColor;
+
+    return float4(linearColor, 1.0);
+}

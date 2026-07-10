@@ -1,0 +1,135 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+
+
+//////////////////////////////////////////
+struct VSInput
+{
+    float3 a_position : POSITION;
+    float3 a_normal : NORMAL;
+    float4 a_color : COLOR;
+    float2 a_texCoords0 : TEXCOORD0;
+    uint instanceId : SV_InstanceID;
+};
+
+
+//////////////////////////////////////////
+struct VSOutput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float3 v_positionVS : TEXCOORD10;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+VSOutput main(VSInput In)
+{
+    VSOutput Out;
+
+    int instanceId = (int)In.instanceId;
+
+    float4x4 modelMatrix = GetModelMatrix(instanceId);
+    float4x4 viewMatrix = GetViewMatrix();
+
+    float4 positionOS = float4(In.a_position, 1.0);
+    float4 positionWS = mul(modelMatrix, positionOS);
+    Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
+    float4 positionVS = mul(viewMatrix, positionWS);
+    float4 positionCS = mul(u_projectionMatrix, positionVS);
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    Out.v_positionOS = positionOS.xyz;
+    Out.v_positionWS = positionWS.xyz;
+    Out.v_positionVS = positionVS.xyz;
+    Out.v_color = In.a_color;
+    Out.v_uv0 = In.a_texCoords0;
+
+    Out.positionCS = MazeFinalizePositionCS(positionCS);
+    return Out;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+
+
+//////////////////////////////////////////
+MAZE_TEXTURE2D(u_baseMap)
+MAZE_TEXTURE2D(u_bloomMap)
+MAZE_TEXTURE2D(u_distortionMap)
+float u_invAspectRatio;
+float u_distortionMult;
+
+
+//////////////////////////////////////////
+struct PSInput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float3 v_positionVS : TEXCOORD10;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+#define DISTORTION_BORDER_OFFSET 0.1
+
+
+//////////////////////////////////////////
+// Main
+float4 main(PSInput In) : SV_Target
+{
+    // Distortion color
+    float2 distortion = MAZE_GET_TEXEL2D(u_distortionMap, In.v_uv0).rg;
+    float2 uv = In.v_uv0;
+
+    distortion.x *= u_invAspectRatio;
+    distortion *= u_distortionMult;
+
+    distortion.x *= smoothstep(0.0, DISTORTION_BORDER_OFFSET * u_invAspectRatio, uv.x) * (1.0 - smoothstep(1.0 - DISTORTION_BORDER_OFFSET * u_invAspectRatio, 1.0, uv.x));
+    distortion.y *= smoothstep(0.0, DISTORTION_BORDER_OFFSET, uv.y) * (1.0 - smoothstep(1.0 - DISTORTION_BORDER_OFFSET, 1.0, uv.y));
+
+    float2 distortedUV = uv + distortion;
+    uv = distortedUV;
+    uv.x = clamp(uv.x, 0.0, 1.0);
+    uv.y = clamp(uv.y, 0.0, 1.0);
+
+
+    // Albedo
+    float4 albedo = MAZE_GET_TEXEL2D(u_baseMap, uv);
+
+    // Diffuse color
+    float3 diffuseColor = albedo.rgb;
+
+    // Bloom color
+    float3 bloomColor = MAZE_GET_TEXEL2D(u_bloomMap, uv).rgb;
+
+    // Linear color
+    float3 linearColor = diffuseColor + bloomColor * 1.75;
+
+    return float4(linearColor, 1.0);
+}

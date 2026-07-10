@@ -51,3 +51,8 @@ GLSL
 {
   shader:String = "Gem00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "Gem00.mzhlsl"
+}

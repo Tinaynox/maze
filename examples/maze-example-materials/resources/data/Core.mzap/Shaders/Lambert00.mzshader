@@ -30,3 +30,8 @@ GLSL
 {
   shader:String = "Lambert00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "Lambert00.mzhlsl"
+}

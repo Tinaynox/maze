@@ -30,3 +30,8 @@ GLSL
 {
   shader:String = "Hologram00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "Hologram00.mzhlsl"
+}

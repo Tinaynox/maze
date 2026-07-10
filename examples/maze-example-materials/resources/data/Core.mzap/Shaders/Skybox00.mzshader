@@ -9,3 +9,8 @@ GLSL
 {
   shader:String = "Skybox00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "Skybox00.mzhlsl"
+}

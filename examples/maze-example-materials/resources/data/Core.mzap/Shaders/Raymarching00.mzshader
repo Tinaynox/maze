@@ -170,3 +170,8 @@ GLSL
 {
   shader:String = "Raymarching00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "Raymarching00.mzhlsl"
+}

@@ -1,0 +1,210 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+#include "Utils/Math.mzhlsl"
+
+
+// HOLOGRAM
+float u_hologramDistortionSpeed;
+float u_hologramDistortionYFactor;
+float u_hologramDistortionValue;
+float u_hologramDistortionStep;
+float u_hologramDistortionGradientSpeed;
+
+
+//////////////////////////////////////////
+struct VSInput
+{
+    float3 a_position : POSITION;
+    float3 a_normal : NORMAL;
+    float3 a_tangent : TANGENT;
+    float3 a_bitangent : BINORMAL;
+    float4 a_color : COLOR;
+    float2 a_texCoords0 : TEXCOORD0;
+    uint instanceId : SV_InstanceID;
+};
+
+
+//////////////////////////////////////////
+struct VSOutput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_normalOS : TEXCOORD5;
+    float3 v_normalWS : NORMAL;
+    float3 v_tangentWS : TANGENT;
+    float3 v_bitangentWS : BINORMAL;
+    float3 v_viewDirWS : TEXCOORD6;
+    float v_distortionPower : TEXCOORD7;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float3 v_positionVS : TEXCOORD10;
+    float4 v_positionCS : TEXCOORD11;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+VSOutput main(VSInput In)
+{
+    VSOutput Out;
+
+    int instanceId = (int)In.instanceId;
+
+    float4x4 modelMatrix = GetModelMatrix(instanceId);
+    float4x4 viewMatrix = GetViewMatrix();
+
+    float4 positionOS = float4(In.a_position, 1.0);
+    float4 positionWS = mul(modelMatrix, positionOS);
+
+    float3 cameraXAxisWS = normalize(MazeGetColumn3(MazeInverseAffine(viewMatrix), 0));
+    float distortionValue = sin(u_time * u_hologramDistortionSpeed + positionOS.y * u_hologramDistortionYFactor) * u_hologramDistortionValue;
+    float randTime = MazeGradientNoise(float2(u_time * u_hologramDistortionGradientSpeed, 0.0));
+    Out.v_distortionPower = pow((randTime + 1.0) * 0.5, 3.0);
+    positionWS.xyz += cameraXAxisWS * distortionValue * Out.v_distortionPower;
+
+    Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
+    float4 positionVS = mul(viewMatrix, positionWS);
+    float4 positionCS = mul(u_projectionMatrix, positionVS);
+
+    float4 normalOS = float4(In.a_normal, 1.0);
+    float4 tangentOS = float4(In.a_tangent, 1.0);
+    float4 bitangentOS = float4(In.a_bitangent, 1.0);
+
+    float3x3 normalMatrix = (float3x3)modelMatrix;
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    Out.v_positionOS = positionOS.xyz;
+    Out.v_positionWS = positionWS.xyz;
+    Out.v_positionVS = positionVS.xyz;
+    Out.v_positionCS = positionCS;
+
+    float3 normalWS = normalize(mul(normalMatrix, normalOS.xyz));
+
+    Out.v_tangentWS = float3(0.0, 0.0, 0.0);
+    Out.v_bitangentWS = float3(0.0, 0.0, 0.0);
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    float3 tangentWS = normalize(mul(normalMatrix, tangentOS.xyz));
+    float3 bitangentWS = normalize(mul(normalMatrix, bitangentOS.xyz));
+
+    Out.v_tangentWS = tangentWS;
+    Out.v_bitangentWS = bitangentWS;
+#endif
+
+    Out.v_normalOS = normalOS.xyz;
+    Out.v_normalWS = normalWS;
+
+    Out.v_color = In.a_color;
+    Out.v_uv0 = In.a_texCoords0;
+
+    Out.v_viewDirWS = u_viewPosition - positionWS.xyz;
+
+    Out.positionCS = MazeFinalizePositionCS(positionCS);
+    return Out;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+#include "Utils/Math.mzhlsl"
+
+
+//////////////////////////////////////////
+MAZE_TEXTURE2D(u_baseMap)
+float4 u_color;
+float u_progress;
+float u_fresnelPower;
+
+// NORMAL_MAP
+MAZE_TEXTURE2D(u_normalMap)
+float u_normalScale;
+
+// HOLOGRAM
+float u_hologramLines1;
+float u_hologramLines2;
+
+
+//////////////////////////////////////////
+struct PSInput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_normalOS : TEXCOORD5;
+    float3 v_normalWS : NORMAL;
+    float3 v_tangentWS : TANGENT;
+    float3 v_bitangentWS : BINORMAL;
+    float3 v_viewDirWS : TEXCOORD6;
+    float v_distortionPower : TEXCOORD7;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float3 v_positionVS : TEXCOORD10;
+    float4 v_positionCS : TEXCOORD11;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+float4 main(PSInput In) : SV_Target
+{
+    // View direction
+    float3 toView = normalize(In.v_viewDirWS);
+
+    // Normal
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    float3 normalTS = SampleNormalTS(u_normalMap, u_normalMapSampler, In.v_uv0, u_normalScale);
+    float3x3 tangentToWorld = MazeBuildTangentToWorld(normalize(In.v_tangentWS), normalize(In.v_bitangentWS), normalize(In.v_normalWS));
+    float3 normalWS = normalize(TransformTangentToWorld(normalTS, tangentToWorld));
+#else
+    float3 normalWS = normalize(In.v_normalWS);
+#endif
+
+    float NdotV = dot(normalWS, toView);
+    float fresnel = clamp(1.0 - NdotV, 0.0, 1.0);
+    fresnel = pow(fresnel, u_fresnelPower);
+
+
+    float2 screenUV = (In.v_positionCS.xy / In.v_positionCS.w) * 0.5 + 0.5;
+
+
+    // Noise
+    float noise = MazeRandom(screenUV * u_time);
+
+    // Lines 1
+    float2 igrid = floor(screenUV * u_hologramLines1);
+    float l1 = MazeMod(igrid.y, 2.0);
+    l1 = lerp(0.4, 1.0, l1);
+
+    // Lines 2
+    float2 uv2 = screenUV;
+    uv2.y += u_time * 0.06;
+    float2 igrid2 = floor(uv2 * u_hologramLines2);
+    float l2 = MazeRandom(igrid2.y);
+    l2 = step(0.2, l2);
+    l2 = lerp(0.2, 1.0, l2);
+
+    // Final mask
+    float mask = fresnel * fresnel * noise * noise * l1 * l2;
+
+    // Linear color
+    float3 linearColor = float3(mask, mask, mask) * u_color.rgb * lerp(1.0, 4.0, In.v_distortionPower);
+
+    return float4(linearColor * u_progress, u_color.a);
+}

@@ -114,3 +114,8 @@ GLSL
 {
   shader:String = "SoapBubble00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "SoapBubble00.mzhlsl"
+}

@@ -9,3 +9,8 @@ GLSL
 {
   shader:String = "Unlit00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "Unlit00.mzhlsl"
+}

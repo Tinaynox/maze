@@ -44,3 +44,8 @@ GLSL
 {
   shader:String = "GameObjectReflection00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "GameObjectReflection00.mzhlsl"
+}

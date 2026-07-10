@@ -65,3 +65,8 @@ GLSL
 {
   shader:String = "Dissolve00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "Dissolve00.mzhlsl"
+}

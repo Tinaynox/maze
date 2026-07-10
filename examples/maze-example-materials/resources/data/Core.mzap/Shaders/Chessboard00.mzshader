@@ -65,3 +65,8 @@ GLSL
 {
   shader:String = "Chessboard00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "Chessboard00.mzhlsl"
+}

@@ -37,3 +37,8 @@ GLSL
 {
   shader:String = "ASCII00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "ASCII00.mzhlsl"
+}
