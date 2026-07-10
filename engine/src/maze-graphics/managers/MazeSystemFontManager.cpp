@@ -188,6 +188,7 @@ namespace Maze
         if (systemFont)
         {
             registerSystemFont(_fontType.toCString(), systemFont);
+            systemFont->material->markAsReadOnly();
         }
 
         return systemFont;
