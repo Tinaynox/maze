@@ -153,9 +153,12 @@ namespace Maze
         {
             for (Size mip = 0; mip < _pixelSheets[face].size() && mip < (Size)mipLevels; ++mip)
             {
-                PixelSheet2D const& pixelSheet = _pixelSheets[face][mip];
+                // Pixel sheets are stored bottom-up (GL 2D convention), but cube map faces
+                // use the top-down convention in both APIs (see TextureCubeOpenGL::loadTexture)
+                PixelSheet2D pixelSheet = _pixelSheets[face][mip];
                 if (pixelSheet.getTotalBytesCount() == 0)
                     continue;
+                pixelSheet.flipY();
 
                 U8 const* data = pixelSheet.getDataRO();
                 UINT rowPitch = (UINT)pixelSheet.getBytesPerRow();

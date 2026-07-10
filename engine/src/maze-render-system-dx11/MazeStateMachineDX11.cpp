@@ -510,9 +510,10 @@ namespace Maze
         else
             desc.CullMode = D3D11_CULL_NONE;
 
-        // Maze meshes use OpenGL-style CCW front faces.
+        // The GL backend runs with glFrontFace(GL_CW) (see StateMachineOpenGL::setup),
+        // so Maze front faces are clockwise in screen space - same as the D3D11 default.
         // Rendering to offscreen targets flips clip-space Y, which reverses the winding
-        desc.FrontCounterClockwise = m_flipY ? FALSE : TRUE;
+        desc.FrontCounterClockwise = m_flipY ? TRUE : FALSE;
         desc.DepthClipEnable = TRUE;
         desc.ScissorEnable = m_scissorTestEnabled ? TRUE : FALSE;
         desc.MultisampleEnable = TRUE;
