@@ -189,6 +189,11 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // Drops cached #include contents (dev-time shader reload)
+        static void ClearShaderIncludeFilesCache();
+
+
+        //////////////////////////////////////////
         ShaderDX11UniformData const* getUniformData(HashedCString _uniformName) const;
 
         //////////////////////////////////////////
@@ -252,6 +257,10 @@ namespace Maze
 
         //////////////////////////////////////////
         String buildLocalShaderFeatures();
+
+        //////////////////////////////////////////
+        // Resolves '#include "File.mzhlsl"' directives via the asset manager
+        String makeInternalShaderPreprocessing(String _shader);
 
         //////////////////////////////////////////
         UnorderedMap<S32, String> preProcessSource(String const& _source);

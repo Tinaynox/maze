@@ -53,6 +53,9 @@ namespace Maze
     static U32 s_inputSignatureCounter = 0u;
 
     //////////////////////////////////////////
+    static UnorderedMap<String, String> s_shaderIncludeFilesCacheDX11;
+
+    //////////////////////////////////////////
     inline static S32 ShaderStageFromString(String const& _type)
     {
         if (_type == "vertex")
@@ -282,7 +285,8 @@ namespace Maze
         ID3D11Device* device = getRenderSystemDX11Raw()->getDevice();
 
         // Vertex shader
-        String completeVertexShader = buildShaderCodeHeader(ShaderDX11Stage::Vertex) + '\n' + _vertexShaderSource;
+        String vertexShaderBody = makeInternalShaderPreprocessing(_vertexShaderSource);
+        String completeVertexShader = buildShaderCodeHeader(ShaderDX11Stage::Vertex) + '\n' + vertexShaderBody;
         m_vertexShaderCode = compileDXShader(completeVertexShader, ShaderDX11Stage::Vertex);
         if (!m_vertexShaderCode)
             return false;
@@ -295,7 +299,8 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(FAILED(hr), false, "CreateVertexShader failed! Shader: %s hr=0x%08x", getName().c_str(), (U32)hr);
 
         // Pixel shader
-        String completeFragmentShader = buildShaderCodeHeader(ShaderDX11Stage::Pixel) + '\n' + _fragmentShaderSource;
+        String fragmentShaderBody = makeInternalShaderPreprocessing(_fragmentShaderSource);
+        String completeFragmentShader = buildShaderCodeHeader(ShaderDX11Stage::Pixel) + '\n' + fragmentShaderBody;
         ID3DBlob* pixelShaderCode = compileDXShader(completeFragmentShader, ShaderDX11Stage::Pixel);
         if (!pixelShaderCode)
         {
@@ -604,6 +609,64 @@ namespace Maze
             result += (String)"#define " + localFeatureData.first + " " + localFeatureData.second + '\n';
 
         return result;
+    }
+
+    //////////////////////////////////////////
+    void ShaderDX11::ClearShaderIncludeFilesCache()
+    {
+        s_shaderIncludeFilesCacheDX11.clear();
+    }
+
+    //////////////////////////////////////////
+    String ShaderDX11::makeInternalShaderPreprocessing(String _shader)
+    {
+        Size index = 0;
+        do
+        {
+            index = _shader.find("#include");
+            if (index != String::npos)
+            {
+                Size endOfLineIndex = _shader.find_first_of('\n', index);
+                MAZE_DEBUG_BP_IF(endOfLineIndex == String::npos);
+                Size symbols = endOfLineIndex - index;
+                String line = _shader.substr(index, symbols);
+
+                String fileName = line.substr(line.find_first_of('"') + 1, line.find_last_of('"') - line.find_first_of('"') - 1);
+                Size fileNameLastSlashIndex = fileName.find_last_of('/');
+                if (fileNameLastSlashIndex != String::npos)
+                    fileName = fileName.substr(fileNameLastSlashIndex + 1, fileName.size() - fileNameLastSlashIndex - 1);
+
+                _shader.erase(index, symbols);
+
+                String fileText;
+
+                auto cacheIt = s_shaderIncludeFilesCacheDX11.find(fileName);
+                if (cacheIt != s_shaderIncludeFilesCacheDX11.end())
+                {
+                    fileText = cacheIt->second;
+                }
+                else
+                {
+                    AssetFilePtr const& shaderFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(fileName);
+
+                    if (shaderFile)
+                        shaderFile->readToString(fileText);
+
+                    s_shaderIncludeFilesCacheDX11.emplace(fileName, fileText);
+                }
+
+                if (fileText.size())
+                    _shader.insert(index, fileText);
+                else
+                {
+                    MAZE_ERROR("Undefined shader file include: %s!", fileName.c_str());
+                }
+            }
+
+        }
+        while (index != String::npos);
+
+        return _shader;
     }
 
     //////////////////////////////////////////

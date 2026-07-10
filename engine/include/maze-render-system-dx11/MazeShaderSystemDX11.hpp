@@ -71,6 +71,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual ShaderPtr const& createBuiltinShader(BuiltinShaderType _shaderType) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual void reloadShaders() MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////

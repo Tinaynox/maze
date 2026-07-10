@@ -181,6 +181,16 @@ namespace Maze
         return ShaderDX11::CreateFromFile(getRenderSystem(), _shaderFile);
     }
 
+    //////////////////////////////////////////
+    void ShaderSystemDX11::reloadShaders()
+    {
+        // Dev-time shader reload - drop cached #include contents
+        // so edited shared header files are picked up
+        ShaderDX11::ClearShaderIncludeFilesCache();
+
+        ShaderSystem::reloadShaders();
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

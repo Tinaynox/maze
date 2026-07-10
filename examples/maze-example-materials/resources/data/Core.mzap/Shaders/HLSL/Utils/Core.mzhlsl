@@ -1,0 +1,75 @@
+//////////////////////////////////////////
+// Model matrices, view matrix and instance streams (GetModelMatrix,
+// GetViewMatrix, GetColorStream etc.) are provided by the engine-injected
+// DX11 common shader header - only the extra helpers live here.
+
+
+//////////////////////////////////////////
+#ifndef MAZE_COLOR_STREAM
+#define MAZE_COLOR_STREAM (0)
+#endif
+#ifndef MAZE_UV0_STREAM
+#define MAZE_UV0_STREAM (0)
+#endif
+#ifndef MAZE_UV1_STREAM
+#define MAZE_UV1_STREAM (0)
+#endif
+
+
+//////////////////////////////////////////
+float4 GetPackedNormal(
+    Texture2D _normalMap,
+    SamplerState _normalMapSampler,
+    float2 _uv)
+{
+    float4 packedNormal = _normalMap.Sample(_normalMapSampler, _uv);
+
+#if defined(NORMAL_MAP_INV_Y) && (NORMAL_MAP_INV_Y)
+    packedNormal.y = 1.0 - packedNormal.y;
+#endif
+
+    return packedNormal;
+}
+
+//////////////////////////////////////////
+float3 UnpackNormal(
+    Texture2D _normalMap,
+    SamplerState _normalMapSampler,
+    float2 _uv)
+{
+    float4 packedNormal = GetPackedNormal(_normalMap, _normalMapSampler, _uv);
+
+    float3 normal;
+    normal.xyz = packedNormal.rgb * 2.0 - 1.0;
+    return normal;
+}
+
+//////////////////////////////////////////
+float3 SampleNormalTS(
+    Texture2D _normalMap,
+    SamplerState _normalMapSampler,
+    float2 _uv,
+    float _normalScale)
+{
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    float3 normal = UnpackNormal(_normalMap, _normalMapSampler, _uv);
+    normal.xy *= _normalScale;
+    return normal;
+#else
+    return float3(0.0, 0.0, 1.0);
+#endif
+}
+
+//////////////////////////////////////////
+// Builds a tangent-space to world-space matrix from basis vectors
+// (the GLSL 'mat3(t, b, n)' - basis vectors become matrix columns)
+float3x3 MazeBuildTangentToWorld(float3 _tangentWS, float3 _bitangentWS, float3 _normalWS)
+{
+    return transpose(float3x3(_tangentWS, _bitangentWS, _normalWS));
+}
+
+//////////////////////////////////////////
+float3 TransformTangentToWorld(float3 _vecTS, float3x3 _tangentToWorld)
+{
+    return mul(_tangentToWorld, _vecTS);
+}
