@@ -825,7 +825,7 @@ namespace Maze
                     ID3D11ShaderResourceView* srv = nullptr;
                     ID3D11SamplerState* sampler = nullptr;
 
-                    Texture2DPtr const& texture = uniform->getTexture2D();
+                    Texture2D* texture = uniform->getTexture2DRaw();
                     if (texture)
                     {
                         Texture2DDX11* textureDX11 = texture->castRaw<Texture2DDX11>();
@@ -844,7 +844,7 @@ namespace Maze
                     ID3D11ShaderResourceView* srv = nullptr;
                     ID3D11SamplerState* sampler = nullptr;
 
-                    TextureCubePtr const& texture = uniform->getTextureCube();
+                    TextureCube* texture = uniform->getTextureCubeRaw();
                     if (texture)
                     {
                         TextureCubeDX11* textureDX11 = texture->castRaw<TextureCubeDX11>();

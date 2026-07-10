@@ -267,11 +267,23 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_FORCEINLINE Texture2D* getTexture2DRaw() const
+        {
+            return IndexedResource<Texture2D>::GetResourceSafe(m_resourceId);
+        }
+
+        //////////////////////////////////////////
         MAZE_FORCEINLINE TextureCubePtr getTextureCube() const
         {
             if (TextureCube* texture = IndexedResource<TextureCube>::GetResourceSafe(m_resourceId))
                 return texture->cast<TextureCube>();
             return nullptr;
+        }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE TextureCube* getTextureCubeRaw() const
+        {
+            return IndexedResource<TextureCube>::GetResourceSafe(m_resourceId);
         }
 
         //////////////////////////////////////////
