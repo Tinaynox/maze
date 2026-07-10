@@ -1,0 +1,275 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+
+
+//////////////////////////////////////////
+float4 u_baseMapST;
+
+
+//////////////////////////////////////////
+struct VSInput
+{
+    float3 a_position : POSITION;
+    float3 a_normal : NORMAL;
+    float3 a_tangent : TANGENT;
+    float3 a_bitangent : BINORMAL;
+    float4 a_color : COLOR;
+    float2 a_texCoords0 : TEXCOORD0;
+    uint instanceId : SV_InstanceID;
+};
+
+
+//////////////////////////////////////////
+struct VSOutput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_normalOS : TEXCOORD5;
+    float3 v_normalWS : NORMAL;
+    float3 v_tangentWS : TANGENT;
+    float3 v_bitangentWS : BINORMAL;
+    float3 v_viewDirWS : TEXCOORD6;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float3 v_positionVS : TEXCOORD10;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+VSOutput main(VSInput In)
+{
+    VSOutput Out;
+
+    int instanceId = (int)In.instanceId;
+
+    float4x4 modelMatrix = GetModelMatrix(instanceId);
+    float4x4 viewMatrix = GetViewMatrix();
+
+    float4 positionOS = float4(In.a_position, 1.0);
+    float4 positionWS = mul(modelMatrix, positionOS);
+    Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
+    float4 positionVS = mul(viewMatrix, positionWS);
+    float4 positionCS = mul(u_projectionMatrix, positionVS);
+
+    float4 normalOS = float4(In.a_normal, 1.0);
+    float4 tangentOS = float4(In.a_tangent, 1.0);
+    float4 bitangentOS = float4(In.a_bitangent, 1.0);
+
+    float3x3 normalMatrix = (float3x3)modelMatrix;
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    Out.v_positionOS = positionOS.xyz;
+    Out.v_positionWS = positionWS.xyz;
+    Out.v_positionVS = positionVS.xyz;
+
+    float3 normalWS = normalize(mul(normalMatrix, normalOS.xyz));
+
+    Out.v_tangentWS = float3(0.0, 0.0, 0.0);
+    Out.v_bitangentWS = float3(0.0, 0.0, 0.0);
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    float3 tangentWS = normalize(mul(normalMatrix, tangentOS.xyz));
+    float3 bitangentWS = normalize(mul(normalMatrix, bitangentOS.xyz));
+
+    Out.v_tangentWS = tangentWS;
+    Out.v_bitangentWS = bitangentWS;
+#endif
+
+    Out.v_normalOS = normalOS.xyz;
+    Out.v_normalWS = normalWS;
+
+    Out.v_color = In.a_color;
+
+    Out.v_uv0 = u_baseMapST.xy * In.a_texCoords0 + u_baseMapST.zw;
+
+    Out.v_viewDirWS = u_viewPosition - positionWS.xyz;
+
+    Out.positionCS = MazeFinalizePositionCS(positionCS);
+    return Out;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+#include "Utils/Math.mzhlsl"
+
+
+//////////////////////////////////////////
+MAZE_TEXTURE2D(u_baseMap)
+float4 u_color;
+float4 u_ambientLightColor;
+float u_shininess;
+float4 u_specularColor;
+
+// EMISSION_MAP
+MAZE_TEXTURE2D(u_emissionMap)
+float4 u_emissionColor;
+
+// SPECULAR_MAP
+MAZE_TEXTURE2D(u_specularMap)
+
+// NORMAL_MAP
+MAZE_TEXTURE2D(u_normalMap)
+float u_normalScale;
+
+// LAMBERT_THRESHOLD
+float u_lambertThreshold;
+
+// SNOW
+MAZE_TEXTURE2D(u_snowNormalMap)
+float u_snowNormalScale;
+float4 u_snowColor;
+float3 u_snowDirection;
+float u_snowAmount;
+float u_snowFadeRange;
+float u_snowNoiseScale;
+float u_snowNoiseStrength;
+
+
+//////////////////////////////////////////
+struct PSInput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_normalOS : TEXCOORD5;
+    float3 v_normalWS : NORMAL;
+    float3 v_tangentWS : TANGENT;
+    float3 v_bitangentWS : BINORMAL;
+    float3 v_viewDirWS : TEXCOORD6;
+    float3 v_positionOS : TEXCOORD8;
+    float3 v_positionWS : TEXCOORD9;
+    float3 v_positionVS : TEXCOORD10;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// BlinnPhong
+float3 BlinnPhongLighting(
+    float2 _uv0,
+    float3 _diffuseColor,
+    float3 _normalWS,
+    float3 _fragmentToViewDirection,
+    float3 _lightDirection,
+    float3 _lightColor)
+{
+    // Light
+    float3 fragmentToLightDirection = -_lightDirection;
+    float lightAttenuation = 1.0;
+
+    // Lambertian
+    float NdotL = dot(_normalWS, fragmentToLightDirection);
+    float lambertian = clamp(NdotL, 0.0, 1.0);
+
+    // Lambertian threshold
+#if defined(LAMBERT_THRESHOLD) && (LAMBERT_THRESHOLD)
+    lambertian = u_lambertThreshold + lambertian * (1.0f - u_lambertThreshold);
+#endif
+
+    // Light final
+    float3 lightColorFinal = _lightColor * lightAttenuation;
+
+    // Half vector
+    float3 H = normalize(fragmentToLightDirection + _fragmentToViewDirection);
+
+    // Shininess
+    float shininess = u_shininess;
+#if defined(SPECULAR_MAP) && (SPECULAR_MAP)
+    shininess *= max(0.01, MAZE_GET_TEXEL2D(u_specularMap, _uv0).a);
+#endif
+
+    // Specular
+    float NdotH = dot(_normalWS, H);
+    float specular = pow(clamp(NdotH, 0.0, 1.0), shininess * 512.0);
+    float3 specularColor = u_specularColor.rgb * specular;
+
+    // Specular map
+#if defined(SPECULAR_MAP) && (SPECULAR_MAP)
+    specularColor *= MAZE_GET_TEXEL2D(u_specularMap, _uv0).rgb;
+#endif
+
+    return
+        _diffuseColor * lambertian * lightColorFinal +
+        specularColor * lightColorFinal;
+}
+
+
+//////////////////////////////////////////
+// Main
+float4 main(PSInput In) : SV_Target
+{
+    // View direction
+    float3 fragmentToViewDirection = normalize(In.v_viewDirWS);
+
+    // Normal
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    float3 normalTS = SampleNormalTS(u_normalMap, u_normalMapSampler, In.v_uv0, u_normalScale);
+    float3x3 tangentToWorld = MazeBuildTangentToWorld(normalize(In.v_tangentWS), normalize(In.v_bitangentWS), normalize(In.v_normalWS));
+    float3 normalWS = normalize(TransformTangentToWorld(normalTS, tangentToWorld));
+#else
+    float3 normalWS = normalize(In.v_normalWS);
+#endif
+
+    // Ambient light
+    float3 ambientLightColor = u_ambientLightColor.rgb;
+
+    // Albedo
+    float4 albedo = MAZE_GET_TEXEL2D(u_baseMap, In.v_uv0) * u_color;
+
+    // Diffuse color
+    float3 diffuseColor = albedo.rgb;
+
+    // Snow
+#if defined(SNOW) && (SNOW)
+    float2 snowNormalUV = In.v_positionOS.xz * u_snowNormalScale;
+    float snowDot = dot(In.v_normalWS, u_snowDirection);
+
+    float snowNoise = MazeNoise3D(In.v_positionOS * u_snowNoiseScale) * u_snowNoiseStrength;
+    snowDot += snowNoise;
+
+    snowDot = clamp(smoothstep(1.0 - u_snowAmount - u_snowFadeRange, 1.0 - u_snowAmount, snowDot), 0.0, 1.0);
+
+    float3 snowNormalTS = SampleNormalTS(u_snowNormalMap, u_snowNormalMapSampler, snowNormalUV, 0.5);
+    float3 snowNormalWS = normalize(TransformTangentToWorld(snowNormalTS, tangentToWorld));
+
+    diffuseColor = lerp(diffuseColor, u_snowColor.xyz, snowDot);
+    normalWS = normalize(lerp(normalWS, snowNormalWS, snowDot));
+#endif
+
+    // Linear color
+    float3 linearColor = diffuseColor * ambientLightColor;
+
+    // Main light
+    linearColor += BlinnPhongLighting(In.v_uv0, diffuseColor, normalWS, fragmentToViewDirection, normalize(u_mainLightDirection), u_mainLightColor.rgb);
+
+    // Reset to LDR
+    linearColor.r = min(linearColor.r, 1.0);
+    linearColor.g = min(linearColor.g, 1.0);
+    linearColor.b = min(linearColor.b, 1.0);
+
+    // Emission map
+#if defined(EMISSION_MAP) && (EMISSION_MAP)
+    float3 emissionColor = u_emissionColor.rgb * MAZE_GET_TEXEL2D(u_emissionMap, In.v_uv0).rgb;
+    linearColor += emissionColor;
+#endif
+
+    return float4(linearColor, albedo.a);
+}

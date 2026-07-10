@@ -2,3 +2,8 @@ GLSL
 {
   shader:String = "BloomFinalPass00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "BloomFinalPass00.mzhlsl"
+}

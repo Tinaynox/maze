@@ -9,3 +9,8 @@ GLSL
 {
   shader:String = "PostFX00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "PostFX00.mzhlsl"
+}

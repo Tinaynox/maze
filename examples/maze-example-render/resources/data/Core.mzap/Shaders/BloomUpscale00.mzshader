@@ -2,3 +2,8 @@ GLSL
 {
   shader:String = "BloomUpscale00.mzglsl"
 }
+
+HLSL
+{
+  shader:String = "BloomUpscale00.mzhlsl"
+}
