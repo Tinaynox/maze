@@ -43,13 +43,21 @@
 #define MAZE_CPP_STANDARD_CPP14      (4)
 #define MAZE_CPP_STANDARD_CPP17      (5)
 #define MAZE_CPP_STANDARD_CPP20      (6)
+#define MAZE_CPP_STANDARD_CPP23      (7)
+#define MAZE_CPP_STANDARD_CPP26      (8)
 
-#if (__cplusplus > 201703L)
+#if (__cplusplus > 202400L)
 #    pragma error "Error! Unknown CPP standart!"
-#elif (__cplusplus == 201703L)
+#elif (__cplusplus >= 202400L)
+#    define MAZE_CPP_STANDARD         MAZE_CPP_STANDARD_CPP26
+#    define MAZE_CPP_STANDARD_NAME    "C++26"
+#elif (__cplusplus >= 202302L)
+#    define MAZE_CPP_STANDARD         MAZE_CPP_STANDARD_CPP23
+#    define MAZE_CPP_STANDARD_NAME    "C++23"
+#elif (__cplusplus >= 201703L)
 #    define MAZE_CPP_STANDARD         MAZE_CPP_STANDARD_CPP17
 #    define MAZE_CPP_STANDARD_NAME    "C++17"
-#elif (__cplusplus == 201402L)
+#elif (__cplusplus >= 201402L)
 #    define MAZE_CPP_STANDARD         MAZE_CPP_STANDARD_CPP14
 #    define MAZE_CPP_STANDARD_NAME    "C++14"
 #elif (__cplusplus == 201103L) || (__cplusplus > 199711L) || \
@@ -91,6 +99,23 @@
 #    define MAZE_CONSTEXPR17
 #endif
 
+
+//////////////////////////////////////////
+// Branch prediction hints
+//
+//////////////////////////////////////////
+#if (MAZE_COMPILER == MAZE_COMPILER_GNUC) || (MAZE_COMPILER == MAZE_COMPILER_CLANG)
+#   define MAZE_LIKELY(__x)     __builtin_expect(!!(__x), 1)
+#   define MAZE_UNLIKELY(__x)   __builtin_expect(!!(__x), 0)
+#elif (MAZE_CPP_STANDARD >= MAZE_CPP_STANDARD_CPP20)
+#   define MAZE_LIKELY(__x)     (__x) [[likely]]
+#   define MAZE_UNLIKELY(__x)   (__x) [[unlikely]]
+#else    
+#   define MAZE_LIKELY(__x)     (__x)
+#   define MAZE_UNLIKELY(__x)   (__x)
+#endif
+
+
 //////////////////////////////////////////
 #define MAZE_EXPLICIT_TEMPLATE_SPECIALIZATION                template <>
 
@@ -98,9 +123,6 @@
 
 //////////////////////////////////////////
 // Smart pointers
-
-//////////////////////////////////////////
-// Aliases
 //
 //////////////////////////////////////////
 #define MAZE_USING_SHARED_PTR(__DClass)                     using __DClass##Ptr             = Maze::SharedPtr<class __DClass>; \
