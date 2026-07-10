@@ -1,0 +1,86 @@
+R"(
+    //////////////////////////////////////////
+    // Texture sampling (the sampler follows the '<textureName>Sampler' convention)
+    #define MAZE_TEXTURE2D(_name) Texture2D _name; SamplerState _name##Sampler;
+    #define MAZE_TEXTURECUBE(_name) TextureCube _name; SamplerState _name##Sampler;
+    #define MAZE_GET_TEXEL2D(_texture, _uv) _texture.Sample(_texture##Sampler, _uv)
+    #define MAZE_GET_TEXELCUBE(_texture, _uvw) _texture.Sample(_texture##Sampler, _uvw)
+
+
+    //////////////////////////////////////////
+    // Global uniforms (reflected from the '$Globals' constant buffer)
+    float4 u_clipDistance0;
+    bool4 u_clipDistanceEnable;
+    float4x4 u_projectionMatrix;
+    float4 u_projectionParams;
+    float3 u_viewMatrix[4];
+    float3 u_viewPosition;
+    float4 u_mainLightColor;
+    float3 u_mainLightDirection;
+    float u_time;
+
+    // Offscreen render targets are rendered flipped so their memory layout
+    // matches OpenGL render buffers (set to -1.0 by the render queue)
+    float u_renderTargetFlipY;
+
+
+    //////////////////////////////////////////
+    // Instance streams (constant buffer arrays)
+    float3 u_modelMatrices[32 * 4];
+    float4 u_colorsStream[32];
+    float4 u_uv0Stream[32];
+    float4 u_uv1Stream[32];
+
+
+    //////////////////////////////////////////
+    // TMat rows are stored as float3[4] and become the columns of the transform matrix
+    // so that mul(M, v) matches the GLSL 'M * v' convention
+    float4x4 GetModelMatrix(int _instanceId)
+    {
+        int i = _instanceId * 4;
+        return transpose(float4x4(
+            float4(u_modelMatrices[i + 0], 0.0),
+            float4(u_modelMatrices[i + 1], 0.0),
+            float4(u_modelMatrices[i + 2], 0.0),
+            float4(u_modelMatrices[i + 3], 1.0)));
+    }
+
+    //////////////////////////////////////////
+    float4x4 GetViewMatrix()
+    {
+        return transpose(float4x4(
+            float4(u_viewMatrix[0], 0.0),
+            float4(u_viewMatrix[1], 0.0),
+            float4(u_viewMatrix[2], 0.0),
+            float4(u_viewMatrix[3], 1.0)));
+    }
+
+    //////////////////////////////////////////
+    float4 GetColorStream(int _instanceId)
+    {
+        return u_colorsStream[_instanceId];
+    }
+
+    //////////////////////////////////////////
+    float4 GetUV0Stream(int _instanceId)
+    {
+        return u_uv0Stream[_instanceId];
+    }
+
+    //////////////////////////////////////////
+    float4 GetUV1Stream(int _instanceId)
+    {
+        return u_uv1Stream[_instanceId];
+    }
+
+    //////////////////////////////////////////
+    // Adapts an OpenGL-convention clip-space position to DX11:
+    //  - flips Y for offscreen render targets
+    //  - remaps depth from [-w, w] to [0, w]
+    float4 MazeFinalizePositionCS(float4 _positionCS)
+    {
+        _positionCS.y *= (u_renderTargetFlipY < 0.0) ? -1.0 : 1.0;
+        _positionCS.z = (_positionCS.z + _positionCS.w) * 0.5;
+        return _positionCS;
+    }
+)"

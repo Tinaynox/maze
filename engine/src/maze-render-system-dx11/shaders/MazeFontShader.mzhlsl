@@ -1,0 +1,118 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+    #define MAZE_COLOR_STREAM (1)
+    #define MAZE_UV0_STREAM (1)
+    #define MAZE_UV1_STREAM (1)
+
+    //////////////////////////////////////////
+    struct VSInput
+    {
+        float3 a_position : POSITION;
+        float2 a_texCoords0 : TEXCOORD0;
+        float4 a_color : COLOR;
+        uint instanceId : SV_InstanceID;
+    };
+
+    //////////////////////////////////////////
+    struct VSOutput
+    {
+        float4 positionCS : SV_Position;
+        float2 v_uv0 : TEXCOORD0;
+        float v_uv1 : TEXCOORD1;
+        float4 v_color : COLOR0;
+        float3 v_positionOS : TEXCOORD8;
+        float3 v_positionWS : TEXCOORD9;
+        float3 v_positionVS : TEXCOORD10;
+        float v_clipDistance0 : SV_ClipDistance;
+    };
+
+    //////////////////////////////////////////
+    VSOutput main(VSInput In)
+    {
+        VSOutput Out;
+
+        int instanceId = (int)In.instanceId;
+
+        float4x4 modelMatrix = GetModelMatrix(instanceId);
+        float4x4 viewMatrix = GetViewMatrix();
+
+        float4 positionOS = float4(In.a_position, 1.0);
+        float4 positionWS = mul(modelMatrix, positionOS);
+        Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
+        float4 positionVS = mul(viewMatrix, positionWS);
+        float4 positionCS = mul(u_projectionMatrix, positionVS);
+
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+
+        Out.v_positionOS = positionOS.xyz;
+        Out.v_positionWS = positionWS.xyz;
+        Out.v_positionVS = positionVS.xyz;
+
+        Out.v_uv0 = In.a_texCoords0;
+        Out.v_uv1 = 0.0;
+
+        Out.v_color = In.a_color;
+
+    #if (MAZE_COLOR_STREAM)
+        Out.v_color *= GetColorStream(instanceId);
+    #endif
+
+    #if (MAZE_UV0_STREAM)
+        float4 uv0Stream = GetUV0Stream(instanceId);
+        Out.v_uv0 = float2(
+            lerp(uv0Stream.x, uv0Stream.z, Out.v_uv0.x),
+            lerp(uv0Stream.y, uv0Stream.w, Out.v_uv0.y));
+    #endif
+    #if (MAZE_UV1_STREAM)
+        float4 uv1Stream = GetUV1Stream(instanceId);
+        Out.v_uv1 = uv1Stream.x;
+    #endif
+
+        Out.positionCS = MazeFinalizePositionCS(positionCS);
+        return Out;
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+    //////////////////////////////////////////
+    Texture2D u_baseMaps[8];
+    SamplerState u_baseMapsSampler[8];
+    float4 u_color;
+
+    //////////////////////////////////////////
+    struct PSInput
+    {
+        float4 positionCS : SV_Position;
+        float2 v_uv0 : TEXCOORD0;
+        float v_uv1 : TEXCOORD1;
+        float4 v_color : COLOR0;
+        float3 v_positionOS : TEXCOORD8;
+        float3 v_positionWS : TEXCOORD9;
+        float3 v_positionVS : TEXCOORD10;
+        float v_clipDistance0 : SV_ClipDistance;
+    };
+
+    //////////////////////////////////////////
+    float4 main(PSInput In) : SV_Target
+    {
+        float4 color;
+        switch ((int)In.v_uv1)
+        {
+            case 0: color = In.v_color * u_baseMaps[0].Sample(u_baseMapsSampler[0], In.v_uv0) * u_color; break;
+            case 1: color = In.v_color * u_baseMaps[1].Sample(u_baseMapsSampler[1], In.v_uv0) * u_color; break;
+            case 2: color = In.v_color * u_baseMaps[2].Sample(u_baseMapsSampler[2], In.v_uv0) * u_color; break;
+            case 3: color = In.v_color * u_baseMaps[3].Sample(u_baseMapsSampler[3], In.v_uv0) * u_color; break;
+            case 4: color = In.v_color * u_baseMaps[4].Sample(u_baseMapsSampler[4], In.v_uv0) * u_color; break;
+            case 5: color = In.v_color * u_baseMaps[5].Sample(u_baseMapsSampler[5], In.v_uv0) * u_color; break;
+            case 6: color = In.v_color * u_baseMaps[6].Sample(u_baseMapsSampler[6], In.v_uv0) * u_color; break;
+            case 7: color = In.v_color * u_baseMaps[7].Sample(u_baseMapsSampler[7], In.v_uv0) * u_color; break;
+            default: color = float4(0.0, 0.0, 0.0, 0.0); break;
+        }
+        return color;
+    }
+)"

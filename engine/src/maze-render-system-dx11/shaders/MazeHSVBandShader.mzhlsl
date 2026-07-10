@@ -1,0 +1,82 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+    //////////////////////////////////////////
+    struct VSInput
+    {
+        float3 a_position : POSITION;
+        float2 a_texCoords0 : TEXCOORD0;
+        uint instanceId : SV_InstanceID;
+    };
+
+    //////////////////////////////////////////
+    struct VSOutput
+    {
+        float4 positionCS : SV_Position;
+        float2 v_uv0 : TEXCOORD0;
+        float3 v_positionOS : TEXCOORD8;
+        float3 v_positionWS : TEXCOORD9;
+        float3 v_positionVS : TEXCOORD10;
+        float v_clipDistance0 : SV_ClipDistance;
+    };
+
+    //////////////////////////////////////////
+    VSOutput main(VSInput In)
+    {
+        VSOutput Out;
+
+        int instanceId = (int)In.instanceId;
+
+        float4x4 modelMatrix = GetModelMatrix(instanceId);
+        float4x4 viewMatrix = GetViewMatrix();
+
+        float4 positionOS = float4(In.a_position, 1.0);
+        float4 positionWS = mul(modelMatrix, positionOS);
+        Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
+        float4 positionVS = mul(viewMatrix, positionWS);
+        float4 positionCS = mul(u_projectionMatrix, positionVS);
+
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+
+        Out.v_positionOS = positionOS.xyz;
+        Out.v_positionWS = positionWS.xyz;
+        Out.v_positionVS = positionVS.xyz;
+
+        Out.v_uv0 = In.a_texCoords0;
+
+        Out.positionCS = MazeFinalizePositionCS(positionCS);
+        return Out;
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+)"
+#include "MazeHSV.mzhlsl"
+R"(
+    //////////////////////////////////////////
+    struct PSInput
+    {
+        float4 positionCS : SV_Position;
+        float2 v_uv0 : TEXCOORD0;
+        float3 v_positionOS : TEXCOORD8;
+        float3 v_positionWS : TEXCOORD9;
+        float3 v_positionVS : TEXCOORD10;
+        float v_clipDistance0 : SV_ClipDistance;
+    };
+
+    //////////////////////////////////////////
+    float4 main(PSInput In) : SV_Target
+    {
+        float h = In.v_uv0.y * 360.0;
+        float s = 1.0;
+        float v = 1.0;
+
+        float3 rgb = ConvertHSVToRGB(h, s, v);
+
+        return float4(rgb, 1);
+    }
+)"

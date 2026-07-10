@@ -269,8 +269,6 @@ namespace Maze
 
         Vector<ShaderDX11ConstantBuffer> m_constantBuffers[(Size)ShaderDX11Stage::MAX];
         UnorderedMap<U32, ShaderDX11UniformData> m_uniformsReflection;
-
-        FastVector<U8> m_uniformScratch;
     };
 
 

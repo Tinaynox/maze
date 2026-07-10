@@ -478,7 +478,7 @@ namespace Maze
         _outResult.setSize(m_size);
 
         U32 bytesPerRow = (U32)_outResult.getBytesPerRow();
-        U8* dstData = const_cast<U8*>(_outResult.getDataRO());
+        U8* dstData = _outResult.getDataRW();
         for (S32 r = 0; r < m_size.y; ++r)
         {
             memcpy(

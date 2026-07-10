@@ -771,9 +771,9 @@ namespace Maze
                     }
 
                     if (stage == (Size)ShaderDX11Stage::Vertex)
-                        stateMachine->bindVertexShaderResource(binding.srvSlot, srv, sampler);
+                        stateMachine->bindVertexShaderResource(binding.srvSlot, srv, binding.samplerSlot, sampler);
                     else
-                        stateMachine->bindPixelShaderResource(binding.srvSlot, srv, sampler);
+                        stateMachine->bindPixelShaderResource(binding.srvSlot, srv, binding.samplerSlot, sampler);
                 }
                 else
                 if (uniform->getType() == ShaderUniformType::UniformTextureCube)
@@ -790,9 +790,9 @@ namespace Maze
                     }
 
                     if (stage == (Size)ShaderDX11Stage::Vertex)
-                        stateMachine->bindVertexShaderResource(binding.srvSlot, srv, sampler);
+                        stateMachine->bindVertexShaderResource(binding.srvSlot, srv, binding.samplerSlot, sampler);
                     else
-                        stateMachine->bindPixelShaderResource(binding.srvSlot, srv, sampler);
+                        stateMachine->bindPixelShaderResource(binding.srvSlot, srv, binding.samplerSlot, sampler);
                 }
                 else
                 if (uniform->getType() == ShaderUniformType::UniformTexture2DArray)
@@ -812,12 +812,11 @@ namespace Maze
                         }
 
                         S32 samplerSlot = binding.samplerSlot >= 0 ? binding.samplerSlot + (S32)i : -1;
-                        MAZE_UNUSED(samplerSlot);
 
                         if (stage == (Size)ShaderDX11Stage::Vertex)
-                            stateMachine->bindVertexShaderResource(binding.srvSlot + (S32)i, srv, sampler);
+                            stateMachine->bindVertexShaderResource(binding.srvSlot + (S32)i, srv, samplerSlot, sampler);
                         else
-                            stateMachine->bindPixelShaderResource(binding.srvSlot + (S32)i, srv, sampler);
+                            stateMachine->bindPixelShaderResource(binding.srvSlot + (S32)i, srv, samplerSlot, sampler);
                     }
                 }
             }

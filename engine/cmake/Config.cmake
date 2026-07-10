@@ -319,7 +319,29 @@ if(       (MAZE_TARGET_PLATFORM_IS_WINDOWS AND (NOT IS_ARM_ARCH))
 
     set(MAZE_SOUND_SYSTEM_OPENAL_ENABLED 1)
     add_definitions("-DMAZE_SOUND_SYSTEM_OPENAL_ENABLED=1")
-    
+
+endif()
+
+# Maze Render System DX11 is not compiled by default.
+# Projects that want it (e.g. maze-example-materials, maze-example-render) set
+# MAZE_RENDER_SYSTEM_DX11_REQUESTED before including this config
+if(MAZE_RENDER_SYSTEM_DX11_REQUESTED)
+
+    if(MAZE_TARGET_PLATFORM_IS_WINDOWS AND (NOT IS_ARM_ARCH))
+
+        # Don't compile DX11 plugins if no DX SDK found
+        include(CheckIncludeFileCXX)
+        check_include_file_cxx("d3d11.h" MAZE_DX11_SDK_FOUND)
+
+        if(MAZE_DX11_SDK_FOUND)
+            set(MAZE_RENDER_SYSTEM_DX11_ENABLED 1)
+            add_definitions("-DMAZE_RENDER_SYSTEM_DX11_ENABLED=1")
+        else()
+            message(WARNING "DirectX SDK (d3d11.h) is not found - maze-render-system-dx11 will not be compiled")
+        endif()
+
+    endif()
+
 endif()
 
 # Production mode

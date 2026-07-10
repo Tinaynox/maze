@@ -152,6 +152,16 @@ endif()
 
 
 ##########################################
+# Maze Render System DX11
+#
+##########################################
+if(MAZE_RENDER_SYSTEM_DX11_ENABLED)
+    include("MazeRenderSystemDX11.cmake")
+endif()
+
+
+
+##########################################
 # Maze Sound System OpenAL
 #
 ##########################################

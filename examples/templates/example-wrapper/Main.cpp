@@ -94,6 +94,11 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
     engineConfig.commandLineArguments = commandLineArguments;
     engineConfig.projectName = Maze::GetExampleName();
 
+    // Optional engine config (e.g. 'renderSystem:String = "DX11"')
+    Maze::Path engineConfigPath = Maze::FileHelper::GetBinaryDirectory() + "/engine.mzdata";
+    if (Maze::FileHelper::IsFileExists(engineConfigPath))
+        engineConfig.params.loadTextFile(engineConfigPath);
+
     {
         Maze::ExamplePtr example = Maze::Example::Create(engineConfig);
         if (example)

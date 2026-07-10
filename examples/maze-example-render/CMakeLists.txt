@@ -46,9 +46,20 @@ set(EXAMPLE_MAZE_LIBS
 
 
 ##########################################
+# Compile the DX11 render system plugin for this example (if the DX SDK is available)
+set(MAZE_RENDER_SYSTEM_DX11_REQUESTED ON)
+
+
+##########################################
 include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Utils.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Config.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Macros.cmake")
+
+
+##########################################
+if(MAZE_RENDER_SYSTEM_DX11_ENABLED)
+    list(APPEND EXAMPLE_MAZE_LIBS maze-render-system-dx11)
+endif()
 
 
 ##########################################
