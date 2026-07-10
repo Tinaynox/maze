@@ -362,6 +362,7 @@ namespace Maze
 
             EntityPtr assetLineObject = getEntityRaw()->getEcsScene()->createEntity();
             AssetLinePtr line = assetLineObject->ensureComponent<AssetLine>(this, assetFile);
+            line->setUserData(reinterpret_cast<void*>(1));
             line->setDragAndDropEnabled(false);
 
             Size fullPathLastSlashPosition = fullPath.getPath().find_last_of('/');
@@ -479,7 +480,7 @@ namespace Maze
     {
         Path fullPath = _line->getAssetFile()->getFullPath();
 
-        const AssetFilePtr& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFullPath(fullPath);
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFullPath(fullPath);
         if (assetFile)
         {
             auto it = m_assetsTreeLines.find(fullPath);
@@ -488,7 +489,25 @@ namespace Maze
                 if (it->second->getDropDownVisible())
                 {
                     if (assetFile->getMetaClass()->isInheritedFrom<AssetDirectory>())
-                        setAssetFileExpanded(assetFile, !getAssetFileExpanded(assetFile));
+                    {
+                        if (_line->getUserData() == reinterpret_cast<void*>(1))
+                            setAssetFileExpanded(assetFile, !getAssetFileExpanded(assetFile));
+                        else
+                        {
+                            setSelectedAssetFolder(fullPath);
+                            setAssetFileExpanded(assetFile, true);
+
+                            // Recursive expand
+                            AssetFilePtr parentAssetFile = AssetManager::GetInstancePtr()->getAssetFileByFullPath(
+                                FileHelper::GetParentDirectoryInPath(fullPath));
+                            while (parentAssetFile)
+                            {
+                                setAssetFileExpanded(parentAssetFile, true);
+                                parentAssetFile = AssetManager::GetInstancePtr()->getAssetFileByFullPath(
+                                    FileHelper::GetParentDirectoryInPath(parentAssetFile->getFullPath()));
+                            }
+                        }
+                    }
                 }
                 else
                 if (assetFile->getMetaClass()->isInheritedFrom<AssetDirectory>())
@@ -553,6 +572,7 @@ namespace Maze
 
             EntityPtr assetLineObject = getEntityRaw()->getEcsScene()->createEntity();
             AssetLinePtr line = assetLineObject->ensureComponent<AssetLine>(this, assetFile);
+            line->setUserData(reinterpret_cast<void*>(2));
             line->setDragAndDropEnabled(true);
 
             line->getTransform()->setParent(lineParent);

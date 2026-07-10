@@ -155,6 +155,14 @@ namespace Maze
         //////////////////////////////////////////
         void processCursorRelease(InputCursorReleaseEvent const& _event);
 
+
+
+        //////////////////////////////////////////
+        inline void setUserData(void* _ptr) { m_userData = _ptr; }
+
+        //////////////////////////////////////////
+        inline void* getUserData() const { return m_userData; }
+
     public:
 
         //////////////////////////////////////////
@@ -240,6 +248,8 @@ namespace Maze
         bool m_dragAndDropEnabled = true;
 
         bool m_selectAssetFileByClick;
+
+        void* m_userData = nullptr;
     };
 
 
