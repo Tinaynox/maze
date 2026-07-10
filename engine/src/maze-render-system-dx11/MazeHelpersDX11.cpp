@@ -134,6 +134,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ExpandRGBToRGBADX11(
+        U8 const* _src,
+        U8* _dst,
+        Size _pixelsCount)
+    {
+        for (Size i = 0; i < _pixelsCount; ++i)
+        {
+            _dst[i * 4 + 0] = _src[i * 3 + 0];
+            _dst[i * 4 + 1] = _src[i * 3 + 1];
+            _dst[i * 4 + 2] = _src[i * 3 + 2];
+            _dst[i * 4 + 3] = 255;
+        }
+    }
+
+    //////////////////////////////////////////
     D3D11_BLEND GetBlendFactorDX11(BlendFactor _blendFactor)
     {
         switch (_blendFactor)

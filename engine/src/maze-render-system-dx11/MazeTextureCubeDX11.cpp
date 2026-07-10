@@ -104,10 +104,8 @@ namespace Maze
         if (_internalPixelFormat == PixelFormat::None)
             _internalPixelFormat = _pixelSheets[0][0].getFormat();
 
-        MAZE_ERROR_RETURN_VALUE_IF(
-            _internalPixelFormat == PixelFormat::RGB_U8,
-            false,
-            "24-bit RGB cube textures are not supported by the DX11 render system!");
+        // DXGI has no 24-bit RGB - expand to RGBA
+        bool expandRGB = (_internalPixelFormat == PixelFormat::RGB_U8);
 
         DXGI_FORMAT resourceFormat = GetPixelFormatResourceDX11(_internalPixelFormat);
         MAZE_ERROR_RETURN_VALUE_IF(
@@ -159,7 +157,19 @@ namespace Maze
                 if (pixelSheet.getTotalBytesCount() == 0)
                     continue;
 
+                U8 const* data = pixelSheet.getDataRO();
                 UINT rowPitch = (UINT)pixelSheet.getBytesPerRow();
+
+                Vector<U8> expandedData;
+                if (expandRGB)
+                {
+                    Size pixelsCount = (Size)pixelSheet.getSize().x * (Size)pixelSheet.getSize().y;
+                    expandedData.resize(pixelsCount * 4);
+                    ExpandRGBToRGBADX11(data, &expandedData[0], pixelsCount);
+                    data = &expandedData[0];
+                    rowPitch = (UINT)pixelSheet.getSize().x * 4u;
+                }
+
                 if (isCompressed)
                 {
                     U32 blockSize = (m_internalPixelFormat == PixelFormat::DXT1_RGB || m_internalPixelFormat == PixelFormat::RGTC1_R) ? 8u : 16u;
@@ -172,7 +182,7 @@ namespace Maze
                     m_texture,
                     subresource,
                     nullptr,
-                    pixelSheet.getDataRO(),
+                    data,
                     rowPitch,
                     0);
             }

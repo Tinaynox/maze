@@ -38,23 +38,6 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Expands tightly packed 24-bit RGB data to 32-bit RGBA (DXGI has no 24-bit formats)
-    inline static void ExpandRGBToRGBA(
-        U8 const* _src,
-        U8* _dst,
-        Size _pixelsCount)
-    {
-        for (Size i = 0; i < _pixelsCount; ++i)
-        {
-            _dst[i * 4 + 0] = _src[i * 3 + 0];
-            _dst[i * 4 + 1] = _src[i * 3 + 1];
-            _dst[i * 4 + 2] = _src[i * 3 + 2];
-            _dst[i * 4 + 3] = 255;
-        }
-    }
-
-
-    //////////////////////////////////////////
     // Class Texture2DDX11
     //
     //////////////////////////////////////////
@@ -221,7 +204,7 @@ namespace Maze
             {
                 Size pixelsCount = (Size)pixelSheet.getSize().x * (Size)pixelSheet.getSize().y;
                 expandedData.resize(pixelsCount * 4);
-                ExpandRGBToRGBA(data, &expandedData[0], pixelsCount);
+                ExpandRGBToRGBADX11(data, &expandedData[0], pixelsCount);
                 data = &expandedData[0];
                 rowPitch = (UINT)pixelSheet.getSize().x * 4u;
             }
@@ -410,7 +393,7 @@ namespace Maze
         {
             Size pixelsCount = (Size)_width * (Size)_height;
             expandedData.resize(pixelsCount * 4);
-            ExpandRGBToRGBA(data, &expandedData[0], pixelsCount);
+            ExpandRGBToRGBADX11(data, &expandedData[0], pixelsCount);
             data = &expandedData[0];
             rowPitch = _width * 4u;
         }

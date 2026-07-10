@@ -347,10 +347,12 @@ namespace Maze
     //////////////////////////////////////////
     bool Example::createMainRenderWindow()
     {
+        RenderSystem* renderSystem = RenderSystem::GetCurrentInstancePtr();
+
         RenderWindowParams params;
         params.windowParams = WindowParams::Create();
         params.windowParams->clientSize = Vec2U32(1280, 800);
-        params.windowParams->title = GetExampleName();
+        params.windowParams->title = GetExampleName() + " (" + renderSystem->getName() + ")";
         params.windowParams->flags |= WindowStyleFlags::MinimizeButton;
         params.windowParams->flags |= WindowStyleFlags::MaximizeButton;
         params.windowParams->flags |= WindowStyleFlags::Resizable;

@@ -80,7 +80,7 @@ namespace Maze
     //////////////////////////////////////////
     String const& RenderSystemOpenGL3EGL::getName()
     {
-        static String s_name = "Render System GL3+ (EGL)";
+        static String s_name = "GL3+ (EGL)";
         return s_name;
     }
 

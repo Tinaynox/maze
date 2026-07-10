@@ -78,7 +78,7 @@ namespace Maze
     //////////////////////////////////////////
     String const& RenderSystemOpenGL3WGL::getName()
     {
-        static String s_name = "Render System GL3+ (WGL)";
+        static String s_name = "GL3+ (WGL)";
         return s_name;
     }
 

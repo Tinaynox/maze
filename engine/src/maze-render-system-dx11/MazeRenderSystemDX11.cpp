@@ -220,7 +220,7 @@ namespace Maze
     //////////////////////////////////////////
     String const& RenderSystemDX11::getName()
     {
-        static String s_name = "Render System DX11";
+        static String s_name = "DX11";
         return s_name;
     }
 

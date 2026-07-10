@@ -59,6 +59,13 @@ namespace Maze
     MAZE_RENDER_SYSTEM_DX11_API bool IsDepthPixelFormatDX11(PixelFormat::Enum _pixelFormat);
 
     //////////////////////////////////////////
+    // Expands tightly packed 24-bit RGB data to 32-bit RGBA (DXGI has no 24-bit formats)
+    MAZE_RENDER_SYSTEM_DX11_API void ExpandRGBToRGBADX11(
+        U8 const* _src,
+        U8* _dst,
+        Size _pixelsCount);
+
+    //////////////////////////////////////////
     MAZE_RENDER_SYSTEM_DX11_API D3D11_BLEND GetBlendFactorDX11(BlendFactor _blendFactor);
 
     //////////////////////////////////////////
