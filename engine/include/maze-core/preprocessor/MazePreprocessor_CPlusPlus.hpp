@@ -73,6 +73,75 @@
 
 
 //////////////////////////////////////////
+// C++ Feature Detection
+//
+//////////////////////////////////////////
+#define MAZE_CPP14_OR_HIGHER (MAZE_CPP_STANDARD >= MAZE_CPP_STANDARD_CPP14)
+#define MAZE_CPP17_OR_HIGHER (MAZE_CPP_STANDARD >= MAZE_CPP_STANDARD_CPP17)
+#define MAZE_CPP20_OR_HIGHER (MAZE_CPP_STANDARD >= MAZE_CPP_STANDARD_CPP20)
+#define MAZE_CPP23_OR_HIGHER (MAZE_CPP_STANDARD >= MAZE_CPP_STANDARD_CPP23)
+#define MAZE_CPP26_OR_HIGHER (MAZE_CPP_STANDARD >= MAZE_CPP_STANDARD_CPP26)
+
+
+//////////////////////////////////////////
+// Attributes
+//
+//////////////////////////////////////////
+#if defined(__has_cpp_attribute)
+#    define MAZE_HAS_CPP_ATTRIBUTE(x)   __has_cpp_attribute(x)
+#else
+#    define MAZE_HAS_CPP_ATTRIBUTE(x)   (0)
+#endif
+
+//////////////////////////////////////////
+// likely/unlikely
+#if (MAZE_COMPILER == MAZE_COMPILER_GNUC) || (MAZE_COMPILER == MAZE_COMPILER_CLANG)
+#   define MAZE_LIKELY(__x)     __builtin_expect(!!(__x), 1)
+#   define MAZE_UNLIKELY(__x)   __builtin_expect(!!(__x), 0)
+#elif MAZE_HAS_CPP_ATTRIBUTE(likely) && MAZE_CPP20_OR_HIGHER
+#   define MAZE_LIKELY(__x)     (__x) [[likely]]
+#   define MAZE_UNLIKELY(__x)   (__x) [[unlikely]]
+#else    
+#   define MAZE_LIKELY(__x)     (__x)
+#   define MAZE_UNLIKELY(__x)   (__x)
+#endif
+
+//////////////////////////////////////////
+// nodiscard
+#if MAZE_HAS_CPP_ATTRIBUTE(nodiscard)
+#    define MAZE_NODISCARD        [[nodiscard]]
+#else
+#    define MAZE_NODISCARD
+#endif
+
+//////////////////////////////////////////
+// maybe_unused
+#if MAZE_HAS_CPP_ATTRIBUTE(maybe_unused)
+#    define MAZE_MAYBE_UNUSED     [[maybe_unused]]
+#else
+#    define MAZE_MAYBE_UNUSED
+#endif
+
+//////////////////////////////////////////
+// fallthrough
+#if MAZE_HAS_CPP_ATTRIBUTE(fallthrough)
+#    define MAZE_FALLTHROUGH      [[fallthrough]]
+#else
+#    define MAZE_FALLTHROUGH
+#endif
+
+//////////////////////////////////////////
+// assume
+#if (MAZE_COMPILER == MAZE_COMPILER_GNUC) || (MAZE_COMPILER == MAZE_COMPILER_CLANG)
+#    define MAZE_ASSUME(cond)   __builtin_assume(cond)
+#elif (MAZE_COMPILER == MAZE_COMPILER_MSVC)
+#    define MAZE_ASSUME(cond)   __assume(cond)
+#else
+#    define MAZE_ASSUME(cond)   ((void)0)
+#endif
+
+
+//////////////////////////////////////////
 // Define the macroses for C++ keywords
 //
 //////////////////////////////////////////
@@ -97,22 +166,6 @@
 #    define MAZE_CONSTEXPR17                                 MAZE_CONSTEXPR
 #else
 #    define MAZE_CONSTEXPR17
-#endif
-
-
-//////////////////////////////////////////
-// Branch prediction hints
-//
-//////////////////////////////////////////
-#if (MAZE_COMPILER == MAZE_COMPILER_GNUC) || (MAZE_COMPILER == MAZE_COMPILER_CLANG)
-#   define MAZE_LIKELY(__x)     __builtin_expect(!!(__x), 1)
-#   define MAZE_UNLIKELY(__x)   __builtin_expect(!!(__x), 0)
-#elif (MAZE_CPP_STANDARD >= MAZE_CPP_STANDARD_CPP20)
-#   define MAZE_LIKELY(__x)     (__x) [[likely]]
-#   define MAZE_UNLIKELY(__x)   (__x) [[unlikely]]
-#else    
-#   define MAZE_LIKELY(__x)     (__x)
-#   define MAZE_UNLIKELY(__x)   (__x)
 #endif
 
 
@@ -302,6 +355,17 @@
 #   define MAZE_DEBUG_BP_RETURN_VALUE(__value)
 #   define MAZE_DEBUG_BP_CONTINUE_IF(__condition)
 #   define MAZE_DEBUG_BP_CONTINUE
+#endif
+
+
+//////////////////////////////////////////
+// Thread local
+//
+//////////////////////////////////////////
+#if MAZE_CPP20_OR_HIGHER
+#    define MAZE_THREAD_LOCAL thread_local
+#else
+#    define MAZE_THREAD_LOCAL __thread   // or thread_local if supported
 #endif
 
 

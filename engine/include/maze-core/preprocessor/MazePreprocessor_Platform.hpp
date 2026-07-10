@@ -219,6 +219,9 @@
 
 
 //////////////////////////////////////////
+// Force inline
+//
+//////////////////////////////////////////
 #if (MAZE_COMPILER == MAZE_COMPILER_MSVC)
 #   if (MAZE_COMPILER_VERSION >= 1200)
 #       define MAZE_FORCEINLINE __forceinline
@@ -229,6 +232,29 @@
 #   endif
 #else
 #   define MAZE_FORCEINLINE __inline
+#endif
+
+//////////////////////////////////////////
+// No inline
+//
+//////////////////////////////////////////
+#if (MAZE_COMPILER == MAZE_COMPILER_GNUC) || (MAZE_COMPILER == MAZE_COMPILER_CLANG)
+#    define MAZE_NOINLINE __attribute__((noinline))
+#elif (MAZE_COMPILER == MAZE_COMPILER_MSVC)
+#    define MAZE_NOINLINE __declspec(noinline)
+#else
+#    define MAZE_NOINLINE
+#endif
+
+
+//////////////////////////////////////////
+// Alignment
+//
+//////////////////////////////////////////
+#if (MAZE_COMPILER == MAZE_COMPILER_MSVC)
+#    define MAZE_ALIGN(n)   __declspec(align(n))
+#else
+#    define MAZE_ALIGN(n)   __attribute__((aligned(n)))
 #endif
 
 
