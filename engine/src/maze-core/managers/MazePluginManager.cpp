@@ -225,13 +225,13 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("PluginManager::installPlugin");
 
-        Debug::log << "Installing plugin: " << _plugin->getName() << "..." << endl;
+        Debug::log << "Installing plugin: " << _plugin->getName().c_str() << "..." << endl;
 
         m_plugins.push_back(_plugin);
 
         _plugin->install();
 
-        Debug::log << "Plugin installed: " << _plugin->getName() << "." << endl;
+        Debug::log << "Plugin installed: " << _plugin->getName().c_str() << "." << endl;
     }
 
     //////////////////////////////////////////
@@ -250,10 +250,10 @@ namespace Maze
 
         if (it != m_plugins.end())
         {
-            Debug::log << "Uninstalling plugin: " << _plugin->getName() << "..." << endl;
+            Debug::log << "Uninstalling plugin: " << _plugin->getName().c_str() << "..." << endl;
             _plugin->uninstall();
             m_plugins.erase(it);
-            Debug::log << "Plugin uninstalled: " << _plugin->getName() << "." << endl;
+            Debug::log << "Plugin uninstalled: " << _plugin->getName().c_str() << "." << endl;
         }
     }
 

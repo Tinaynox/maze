@@ -63,7 +63,7 @@ namespace Maze
     //////////////////////////////////////////
     bool DynLibWin::load()
     {
-        Debug::log << "Loading dynamic library: " << m_libraryFullPath.toUTF8() << "..." << endl;
+        Debug::log << "Loading dynamic library: " << m_libraryFullPath.toUTF8().c_str() << "..." << endl;
 
         Path libraryFullPath = m_libraryFullPath;
         
@@ -73,7 +73,7 @@ namespace Maze
         m_handle = LoadLibraryEx(libraryFullPath.toUTF8().c_str(), NULL, 0);
         MAZE_ERROR_RETURN_VALUE_IF(m_handle == nullptr, false, "Failed to load dynamic library: %s", libraryFullPath.toUTF8().c_str());
 
-        Debug::log << "Dynamic library loaded: " << m_libraryFullPath.toUTF8() << endl;
+        Debug::log << "Dynamic library loaded: " << m_libraryFullPath.toUTF8().c_str() << endl;
 
         return true;
     }
@@ -84,7 +84,7 @@ namespace Maze
         if (m_handle == nullptr)
             return;
 
-        Debug::log << "Unloading dynamic library: " << m_libraryFullPath.toUTF8() << "..." << endl;
+        Debug::log << "Unloading dynamic library: " << m_libraryFullPath.toUTF8().c_str() << "..." << endl;
 
         if (!FreeLibrary(m_handle))
         {
@@ -92,7 +92,7 @@ namespace Maze
         }
         else
         {
-            Debug::log << "Dynamic library unloaded: " << m_libraryFullPath.toUTF8() << endl;
+            Debug::log << "Dynamic library unloaded: " << m_libraryFullPath.toUTF8().c_str() << endl;
         }
 
         m_handle = nullptr;

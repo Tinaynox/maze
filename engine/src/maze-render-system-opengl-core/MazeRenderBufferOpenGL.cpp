@@ -209,7 +209,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderBufferOpenGL::notifyContextOpenGLContextSetup(ContextOpenGL* _contextOpenGL)
     {
-        Debug::log << "RenderBufferOpenGL<" << getName() << ">: notifyContextOpenGLContextSetup started..." << endl;
+        Debug::log << "RenderBufferOpenGL<" << getName().c_str() << ">: notifyContextOpenGLContextSetup started..." << endl;
 
         generateGLObjects();
 
@@ -225,7 +225,7 @@ namespace Maze
         reloadTexture(m_stencilTexture);
         setStencilTexture(m_stencilTexture);
 
-        Debug::log << "RenderBufferOpenGL<" << getName() << ">: notifyContextOpenGLContextSetup finished." << endl;
+        Debug::log << "RenderBufferOpenGL<" << getName().c_str() << ">: notifyContextOpenGLContextSetup finished." << endl;
     }
 
     //////////////////////////////////////////
