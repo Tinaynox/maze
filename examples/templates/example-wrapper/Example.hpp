@@ -62,6 +62,19 @@ namespace Maze
         Error
     };
 
+    //////////////////////////////////////////
+	enum class ExampleRenderSystemType
+	{
+		OpenGL = 0,
+#if MAZE_RENDER_SYSTEM_DX11_ENABLED
+		DirectX11,
+#endif
+#if MAZE_RENDER_SYSTEM_VULKAN_ENABLED
+		Vulkan,
+#endif
+        MAX
+	};
+
 
     //////////////////////////////////////////
     // Class Example
@@ -127,6 +140,9 @@ namespace Maze
         //////////////////////////////////////////
         bool isWindowFocused() const;
 
+        //////////////////////////////////////////
+		inline bool getRestart() const { return m_restart; }
+
     public:
 
         //////////////////////////////////////////
@@ -140,7 +156,10 @@ namespace Maze
         Example();
 
         //////////////////////////////////////////
-        bool init(EngineConfig const& _config) MAZE_OVERRIDE;
+        bool init(EngineConfig const& _config);
+
+        //////////////////////////////////////////
+        using Engine::init;
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
@@ -192,6 +211,8 @@ namespace Maze
         F32 m_debugEditorProgress;
 
         Timer m_timer;
+
+        bool m_restart = false;
     };
 
 

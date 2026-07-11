@@ -56,6 +56,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
+#include "maze-core/helpers/MazeThreadHelper.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
@@ -69,6 +70,9 @@ namespace Maze
 {
     //////////////////////////////////////////
     extern String GetExampleName();
+
+    //////////////////////////////////////////
+    Maze::ExampleRenderSystemType g_renderSystemType = Maze::ExampleRenderSystemType::OpenGL;
 
 } // namespace Maze
 //////////////////////////////////////////
@@ -97,13 +101,36 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
     // Optional engine config (e.g. 'renderSystem:String = "DX11"')
     Maze::Path engineConfigPath = Maze::FileHelper::GetBinaryDirectory() + "/engine.mzdata";
     if (Maze::FileHelper::IsFileExists(engineConfigPath))
+    {
         engineConfig.params.loadTextFile(engineConfigPath);
 
+        Maze::String const& renderSystemName = engineConfig.params.getString(MAZE_HCS("renderSystem"));
+
+#if MAZE_RENDER_SYSTEM_DX11_ENABLED
+        if (renderSystemName == "DX11")
+            Maze::g_renderSystemType = Maze::ExampleRenderSystemType::DirectX11;
+#endif
+#if MAZE_RENDER_SYSTEM_VULKAN_ENABLED
+		Maze::ThreadHelper::SleepCurrentThread(1000); // Give some time for Vulkan to loads DLLs to avoid conflicts with OpenGL
+        if (renderSystemName == "Vulkan")
+        {
+            Maze::g_renderSystemType = Maze::ExampleRenderSystemType::Vulkan;
+        }
+#endif
+
+    }
+
+    bool restart = false;
+    do
     {
         Maze::ExamplePtr example = Maze::Example::Create(engineConfig);
-        if (example)
-            example->run();
+        if (!example)
+            break;
+
+        example->run();
+        restart = example->getRestart();
     }
+    while (restart);
 
 #if (MAZE_DEBUG_MEMORY)
     Maze::MemoryTrackerService::StopMemoryTracking();

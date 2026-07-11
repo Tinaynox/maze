@@ -95,6 +95,9 @@ namespace Maze
     //////////////////////////////////////////
     extern bool LoadPlugins();
 
+    //////////////////////////////////////////
+    extern ExampleRenderSystemType g_renderSystemType;
+
 
     //////////////////////////////////////////
     // Class Example
@@ -267,43 +270,32 @@ namespace Maze
         if (!LoadPlugins())
             return false;
 
-        // Engine config describes what render system should be loaded (OpenGL by default)
-        static String const c_renderSystemOpenGL = "OpenGL";
-        String const& renderSystemName = getConfig().params.getString(MAZE_HCS("renderSystem"), c_renderSystemOpenGL);
+        
         bool renderSystemLoaded = false;
 
 #if MAZE_RENDER_SYSTEM_DX11_ENABLED
-        if (renderSystemName == "DX11")
+        if (g_renderSystemType == ExampleRenderSystemType::DirectX11)
         {
             RenderSystemDX11Config config;
             config.debugLayer = getConfig().params.getBool(MAZE_HCS("dx11DebugLayer"), false);
             MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemDX11, config);
             renderSystemLoaded = true;
         }
-#else
-        MAZE_WARNING_IF(renderSystemName == "DX11", "DX11 render system is not compiled - falling back to OpenGL!");
 #endif
 
 #if MAZE_RENDER_SYSTEM_VULKAN_ENABLED
-        if (renderSystemName == "Vulkan")
+        if (g_renderSystemType == ExampleRenderSystemType::Vulkan)
         {
             RenderSystemVulkanConfig config;
             config.validationLayer = getConfig().params.getBool(MAZE_HCS("vulkanValidationLayer"), false);
             MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemVulkan, config);
             renderSystemLoaded = true;
         }
-#else
-        MAZE_WARNING_IF(renderSystemName == "Vulkan", "Vulkan render system is not compiled - falling back to OpenGL!");
 #endif
 
 #if MAZE_RENDER_SYSTEM_OPENGL_ENABLED
         if (!renderSystemLoaded)
         {
-            MAZE_WARNING_IF(
-                renderSystemName != c_renderSystemOpenGL && renderSystemName != "DX11" && renderSystemName != "Vulkan",
-                "Unknown render system '%s' - falling back to OpenGL!",
-                renderSystemName.c_str());
-
             RenderSystemOpenGLConfig config;
             config.multiContextPolicy = OpenGLMultiContextPolicy::Unified;
 #   if MAZE_PLATFORM == MAZE_PLATFORM_OSX
@@ -499,6 +491,17 @@ namespace Maze
                         {
                             Debug::Log("Reload shaders");
                             RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->reloadShaders();
+                        }
+
+                        break;
+                    }
+                    case KeyCode::R:
+                    {
+                        if (_data.isControlDown() && _data.isShiftDown())
+                        {
+							g_renderSystemType = ExampleRenderSystemType(((S32)g_renderSystemType + 1) % (S32)ExampleRenderSystemType::MAX);
+                            m_restart = true;
+                            shutdown();
                         }
 
                         break;
