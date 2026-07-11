@@ -78,6 +78,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        virtual bool setSize(Vec2U const& _size) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void endDraw() MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
         virtual bool processRenderTargetWillSet() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
@@ -102,6 +109,9 @@ namespace Maze
 
         //////////////////////////////////////////
         bool init(RenderBufferDX11Ptr const& _renderBuffer);
+
+        //////////////////////////////////////////
+        void resizeTexture(TexturePtr const& _texture, Vec2U const& _size);
     };
 
 

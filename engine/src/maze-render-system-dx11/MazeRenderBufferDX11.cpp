@@ -114,6 +114,58 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool RenderBufferDX11::setSize(Vec2U const& _size)
+    {
+        if (!RenderBuffer::setSize(_size))
+            return false;
+
+        for (Size i = 0; i < c_renderBufferColorTexturesMax; ++i)
+            resizeTexture(m_colorTextures[i], _size);
+
+        resizeTexture(m_depthTexture, _size);
+        resizeTexture(m_stencilTexture, _size);
+
+        eventRenderBufferSizeChanged(cast<RenderBuffer>());
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void RenderBufferDX11::resizeTexture(TexturePtr const& _texture, Vec2U const& _size)
+    {
+        if (!_texture)
+            return;
+
+        switch (_texture->getType())
+        {
+            case TextureType::TwoDimensional:
+            {
+                Texture2D* texture2D = _texture->castRaw<Texture2D>();
+                texture2D->loadEmpty(_size, texture2D->getInternalPixelFormat());
+                break;
+            }
+            case TextureType::TwoDimensionalMultisample:
+            {
+                Texture2DMS* texture2D = _texture->castRaw<Texture2DMS>();
+                texture2D->loadEmpty(_size, texture2D->getInternalPixelFormat(), texture2D->getSamples());
+                break;
+            }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void RenderBufferDX11::endDraw()
+    {
+        RenderBuffer::endDraw();
+
+        eventRenderBufferEndDraw(this);
+    }
+
+    //////////////////////////////////////////
     bool RenderBufferDX11::processRenderTargetWillSet()
     {
         return true;

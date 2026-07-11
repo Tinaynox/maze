@@ -481,7 +481,11 @@ namespace Maze
         desc.BorderColor[2] = _borderColor.z;
         desc.BorderColor[3] = _borderColor.w;
         desc.MinLOD = 0.0f;
-        desc.MaxLOD = D3D11_FLOAT32_MAX;
+        // GL non-mipmap min filters (Nearest/Linear) sample the base level only - clamp LOD to match
+        bool mipmapsEnabled =
+            (_minFilter != TextureFilter::Nearest) &&
+            (_minFilter != TextureFilter::Linear);
+        desc.MaxLOD = mipmapsEnabled ? D3D11_FLOAT32_MAX : 0.0f;
 
         ID3D11SamplerState* sampler = nullptr;
         HRESULT hr = m_device->CreateSamplerState(&desc, &sampler);
