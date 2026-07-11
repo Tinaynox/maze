@@ -351,28 +351,46 @@ if(MAZE_RENDER_SYSTEM_VULKAN_REQUESTED)
 
     if(MAZE_TARGET_PLATFORM_IS_WINDOWS AND (NOT IS_ARM_ARCH))
 
-        # Both the Release (shaderc_combined) and Debug (shaderc_combinedd)
-        # static libs are requested - the SDK builds them against different
-        # CRTs (/MD vs /MDd), and linking the wrong one into a given
-        # configuration causes LNK2038 CRT-mismatch errors. Only
-        # shaderc_combined is strictly required to enable the backend;
-        # shaderc_combinedd is used opportunistically for Debug builds (see
-        # the config-aware target_link_libraries in MazeRenderSystemVulkan.cmake) -
-        # older SDKs that don't ship it will just link shaderc_combined into
-        # Debug too and the CRT mismatch will resurface, needing a manual
-        # MSVC_RUNTIME_LIBRARY override on the example targets instead.
-        find_package(Vulkan COMPONENTS shaderc_combined shaderc_combinedd)
+        find_package(Vulkan)
 
-        if(Vulkan_FOUND AND TARGET Vulkan::shaderc_combined)
-            set(MAZE_RENDER_SYSTEM_VULKAN_ENABLED 1)
-            add_definitions("-DMAZE_RENDER_SYSTEM_VULKAN_ENABLED=1")
-            if(TARGET Vulkan::shaderc_combinedd)
-                set(MAZE_VULKAN_SHADERC_COMBINED_DEBUG_FOUND 1)
+        # Link shaderc's SHARED (DLL) variant, not the static shaderc_combined.
+        # The SDK typically only ships shaderc_combined as a Release-CRT
+        # (/MD) static lib with no Debug-CRT counterpart on every SDK
+        # release, and statically linking a foreign-CRT lib into a /MDd
+        # (Debug) build fails with LNK2038 mismatches. shaderc_shared.dll
+        # sidesteps this entirely - DLL-boundary linking doesn't require CRT
+        # consistency the way static linking does, exactly like vulkan-1.dll
+        # (Vulkan::Vulkan) already works in this same build without issue.
+        # CMake's bundled FindVulkan module has no COMPONENT for this shared
+        # variant, so it's located manually under the SDK's Lib/Bin dirs.
+        if(Vulkan_FOUND)
+            find_library(MAZE_VULKAN_SHADERC_SHARED_LIBRARY
+                NAMES shaderc_shared
+                HINTS "$ENV{VULKAN_SDK}/Lib")
+            find_file(MAZE_VULKAN_SHADERC_SHARED_DLL
+                NAMES shaderc_shared.dll
+                HINTS "$ENV{VULKAN_SDK}/Bin")
+
+            if(MAZE_VULKAN_SHADERC_SHARED_LIBRARY)
+                set(MAZE_RENDER_SYSTEM_VULKAN_ENABLED 1)
+                add_definitions("-DMAZE_RENDER_SYSTEM_VULKAN_ENABLED=1")
+
+                if(NOT TARGET Vulkan::shaderc_shared)
+                    add_library(Vulkan::shaderc_shared SHARED IMPORTED)
+                    set_target_properties(Vulkan::shaderc_shared PROPERTIES
+                        IMPORTED_IMPLIB "${MAZE_VULKAN_SHADERC_SHARED_LIBRARY}")
+                    if(MAZE_VULKAN_SHADERC_SHARED_DLL)
+                        set_target_properties(Vulkan::shaderc_shared PROPERTIES
+                            IMPORTED_LOCATION "${MAZE_VULKAN_SHADERC_SHARED_DLL}")
+                    else()
+                        message(WARNING "shaderc_shared.dll not found next to shaderc_shared.lib under $ENV{VULKAN_SDK} - it must be reachable via PATH at runtime instead (the Vulkan SDK installer normally adds its Bin directory to PATH)")
+                    endif()
+                endif()
             else()
-                message(WARNING "Vulkan SDK does not have a shaderc_combinedd (Debug) component - Debug builds of maze-render-system-vulkan consumers will link the Release shaderc_combined and may hit LNK2038 CRT mismatches unless MSVC_RUNTIME_LIBRARY is overridden to match")
+                message(WARNING "Vulkan SDK shaderc_shared library not found under $ENV{VULKAN_SDK}/Lib - maze-render-system-vulkan will not be compiled")
             endif()
         else()
-            message(WARNING "Vulkan SDK (with shaderc_combined component) is not found - maze-render-system-vulkan will not be compiled")
+            message(WARNING "Vulkan SDK is not found - maze-render-system-vulkan will not be compiled")
         endif()
 
     endif()
