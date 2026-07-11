@@ -54,6 +54,9 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, restitution, 0.35f, getRestitution, setRestitution));
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(PhysicsMaterial2D);
+
+    //////////////////////////////////////////
     PhysicsMaterial2D::PhysicsMaterial2D()
         : m_density(0.75f)
         , m_friction(0.25f)
@@ -232,10 +235,10 @@ namespace Maze
         if (_count == 0)
             _count = strlen(_data);
 
-        if (StringHelper::IsStartsWith(_data, "ptr:"))
+        if (IsResourceIdString(_data))
         {
-            String data = String(_data + 4, _data + _count);
-            StringHelper::StringToObjectPtr(_value, data);
+            PhysicsMaterial2D* resource = ResourceFromString(_data, _count);
+            _value = resource ? resource->getSharedPtr() : nullptr;
         }
         else
         {
@@ -261,8 +264,7 @@ namespace Maze
         }
         else
         {
-            // #TODO: Replace with ResourceId
-            StringHelper::FormatString(_data, "ptr:%p", _value);
+            ResourceToString(_value, _data);
         }
     }
 

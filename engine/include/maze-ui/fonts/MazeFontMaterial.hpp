@@ -38,6 +38,7 @@
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
 #include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 
 
 //////////////////////////////////////////
@@ -77,6 +78,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_UI_API FontMaterial
         : public SharedObject<FontMaterial>
+        , public IndexedResource<FontMaterial>
         , public MultiDelegateCallbackReceiver
         , public IDataBlockSerializable
         , public IStringSerializable

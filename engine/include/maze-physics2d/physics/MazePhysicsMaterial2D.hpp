@@ -39,6 +39,7 @@
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 #include <box2d/box2d.h>
 
 
@@ -56,6 +57,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PHYSICS2D_API PhysicsMaterial2D
         : public SharedObject<PhysicsMaterial2D>
+        , public IndexedResource<PhysicsMaterial2D>
         , public IXMLElementSerializable
         , public IDataBlockSerializable
         , public MultiDelegateCallbackReceiver

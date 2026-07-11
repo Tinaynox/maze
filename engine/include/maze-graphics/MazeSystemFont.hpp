@@ -39,6 +39,7 @@
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 
@@ -53,6 +54,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API SystemFont
         : public SharedObject<SystemFont>
+        , public IndexedResource<SystemFont>
         , public IStringSerializable
     {
     public:

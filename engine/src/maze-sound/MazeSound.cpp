@@ -46,6 +46,9 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS(Sound);
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_INDEXED_RESOURCE(Sound);
+
+    //////////////////////////////////////////
     Sound* Sound::s_instancesList = nullptr;
 
     //////////////////////////////////////////
@@ -198,10 +201,10 @@ namespace Maze
         if (_count == 0)
             _count = strlen(_data);
 
-        if (StringHelper::IsStartsWith(_data, "ptr:"))
+        if (IsResourceIdString(_data))
         {
-            String data = String(_data + 4, _data + _count);
-            StringHelper::StringToObjectPtr(_value, data);
+            Sound* resource = ResourceFromString(_data, _count);
+            _value = resource ? resource->getSharedPtr() : nullptr;
         }
         else
         {
@@ -227,8 +230,7 @@ namespace Maze
         }
         else
         {
-            // #TODO: Replace with ResourceId
-            StringHelper::FormatString(_data, "ptr:%p", _value);
+            ResourceToString(_value, _data);
         }
     }
 

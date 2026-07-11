@@ -24,6 +24,7 @@
 
 
 //////////////////////////////////////////
+#include "maze-core/helpers/MazeStringHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -113,6 +114,30 @@ namespace Maze
                 break;
         }
     }
-    
+
+    //////////////////////////////////////////
+    template <typename T>
+    MAZE_FORCEINLINE bool IndexedResource<T>::IsResourceIdString(CString _data)
+    {
+        return _data && _data[0] == c_resourceIdStringPrefix;
+    }
+
+    //////////////////////////////////////////
+    template <typename T>
+    MAZE_FORCEINLINE void IndexedResource<T>::ResourceToString(T const* _value, String& _data)
+    {
+        _data.assign(1, c_resourceIdStringPrefix);
+        _data += StringHelper::S32ToString((S32)_value->getResourceId().getId());
+    }
+
+    //////////////////////////////////////////
+    template <typename T>
+    MAZE_FORCEINLINE T* IndexedResource<T>::ResourceFromString(CString _data, Size _count)
+    {
+        S32 id = 0;
+        StringHelper::ParseS32(_data + 1, _count - 1, id);
+        return GetResourceSafe(ResourceId(id));
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

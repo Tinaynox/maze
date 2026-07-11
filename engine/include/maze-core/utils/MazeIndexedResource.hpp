@@ -45,6 +45,10 @@ namespace Maze
     using ResourceId = IdWithGeneration<S32, 8>;
     ResourceId const c_invalidResourceId = ResourceId(-1);
 
+    //////////////////////////////////////////
+    // Prefix marking a serialized string as a ResourceId reference instead of a resource name
+    Char const c_resourceIdStringPrefix = '~';
+
 
     //////////////////////////////////////////
     template <typename T>
@@ -81,6 +85,18 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_FORCEINLINE static void IterateResources(std::function<bool(T*)> _cb);
+
+        //////////////////////////////////////////
+        // Returns true if the given string is a serialized ResourceId reference (starts with c_resourceIdStringPrefix)
+        MAZE_FORCEINLINE static bool IsResourceIdString(CString _data);
+
+        //////////////////////////////////////////
+        // Serializes a resource as "<c_resourceIdStringPrefix><ResourceId>"
+        MAZE_FORCEINLINE static void ResourceToString(T const* _value, String& _data);
+
+        //////////////////////////////////////////
+        // Parses a string previously produced by ResourceToString (_data must satisfy IsResourceIdString)
+        MAZE_FORCEINLINE static T* ResourceFromString(CString _data, Size _count);
 
     private:
 

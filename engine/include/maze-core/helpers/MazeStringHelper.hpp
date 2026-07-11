@@ -1552,38 +1552,6 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        template <typename TClass>
-        inline void StringToObjectPtr(SharedPtr<TClass>& _value, String const& _str)
-        {
-            void* ptr;
-            std::stringstream ss;
-            ss << std::hex << _str;
-            ss >> ptr;
-
-            TClass* object = reinterpret_cast<TClass*>(ptr);
-            if (object)
-                _value = object->template cast<TClass>();
-            else
-                _value.reset();
-        }
-
-        //////////////////////////////////////////
-        template <typename TClass>
-        inline void StringToObjectPtr(ManagedSharedPtr<TClass>& _value, String const& _str)
-        {
-            void* ptr;
-            std::stringstream ss;
-            ss << std::hex << _str;
-            ss >> ptr;
-
-            TClass* object = reinterpret_cast<TClass*>(ptr);
-            if (object)
-                _value = object->template cast<TClass>();
-            else
-                _value.reset();
-        }
-
-        //////////////////////////////////////////
         #define MAZE_FORMAT_VA_STRING(__text, __destString)                         \
         {                                                                           \
             va_list ___args;                                                        \

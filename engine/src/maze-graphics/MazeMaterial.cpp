@@ -802,10 +802,10 @@ namespace Maze
         RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
-        if (StringHelper::IsStartsWith(_data, "ptr:"))
+        if (IsResourceIdString(_data))
         {
-            String data = String(_data + 4, _data + _count);
-            StringHelper::StringToObjectPtr(_value, data);
+            Material* resource = ResourceFromString(_data, _count);
+            _value = resource ? resource->getSharedPtr() : nullptr;
         }
         else
         {
@@ -834,8 +834,7 @@ namespace Maze
         }
         else
         {
-            // #TODO: Replace with ResourceId
-            StringHelper::FormatString(_data, "ptr:%p", _value);            
+            ResourceToString(_value, _data);
         }
     }
 

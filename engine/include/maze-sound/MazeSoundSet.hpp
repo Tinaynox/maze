@@ -37,6 +37,7 @@
 #include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 #include "maze-core/helpers/MazeJSONHelper.hpp"
 #include "maze-core/helpers/MazeDataBlockHelper.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 #include "maze-sound/MazeSound.hpp"
 
 
@@ -53,6 +54,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_SOUND_API SoundSet
         : public SharedObject<SoundSet>
+        , public IndexedResource<SoundSet>
         , public IJSONValueSerializable
         , public IDataBlockSerializable
         , public IStringSerializable
