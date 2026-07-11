@@ -21,3 +21,8 @@ HLSL
 {
   shader:String = "Fresnel00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "Fresnel00.mzglslvk"
+}

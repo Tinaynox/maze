@@ -1,0 +1,81 @@
+//////////////////////////////////////////
+// Vertex-stage-ONLY instance-stream interface (descriptor set 0, bindings
+// 1-3, plus the push constant). '#include' this file only from inside a
+// shader's '#type vertex' section - see the long banner comment in the
+// engine's MazeCommonShaderHeader.mzglslvk (maze-render-system-vulkan) for
+// why this text must never reach a fragment-stage compile: the global
+// descriptor set layout only grants VK_SHADER_STAGE_VERTEX_BIT access to
+// these 3 SSBO bindings, and the push-constant range below is likewise
+// VK_SHADER_STAGE_VERTEX_BIT only.
+//
+// Content mirrors the engine's MazeInstanceStream.mzglslvk exactly - these
+// are the same 3 shared instance-stream SSBOs / the same push constant,
+// just duplicated here since asset shaders live outside the engine shader
+// include path.
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+// Instance-stream batch offset for the current draw call - written
+// directly by RenderQueueVulkan via vkCmdPushConstants, not through the
+// named-uniform system.
+layout(push_constant) uniform PushConstants
+{
+    int u_instanceOffset;
+};
+
+
+//////////////////////////////////////////
+layout(std430, set = 0, binding = 1) readonly buffer ModelMatricesBuffer
+{
+    mat4 u_modelMatrices[];
+};
+
+//////////////////////////////////////////
+layout(std430, set = 0, binding = 2) readonly buffer ColorsStreamBuffer
+{
+    vec4 u_colorsStream[];
+};
+
+//////////////////////////////////////////
+// Both UV instance-stream channels packed together, one struct per
+// instance, in a single buffer/binding.
+struct MazeUVStreamData
+{
+    vec4 uv0;
+    vec4 uv1;
+};
+
+layout(std430, set = 0, binding = 3) readonly buffer UVStreamsBuffer
+{
+    MazeUVStreamData u_uvStreams[];
+};
+
+
+//////////////////////////////////////////
+// gl_InstanceIndex is used as the direct equivalent of GL's gl_InstanceID
+// here - this backend always records draws with firstInstance=0
+// (gl_InstanceIndex = firstInstance + the driver-side instance counter),
+// so the two are numerically identical.
+mat4 GetModelMatrix(int instanceId)
+{
+    return u_modelMatrices[instanceId + u_instanceOffset];
+}
+
+//////////////////////////////////////////
+vec4 GetColorStream(int instanceId)
+{
+    return u_colorsStream[instanceId + u_instanceOffset];
+}
+
+//////////////////////////////////////////
+vec4 GetUV0Stream(int instanceId)
+{
+    return u_uvStreams[instanceId + u_instanceOffset].uv0;
+}
+
+//////////////////////////////////////////
+vec4 GetUV1Stream(int instanceId)
+{
+    return u_uvStreams[instanceId + u_instanceOffset].uv1;
+}

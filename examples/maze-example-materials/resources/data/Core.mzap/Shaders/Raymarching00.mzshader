@@ -175,3 +175,8 @@ HLSL
 {
   shader:String = "Raymarching00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "Raymarching00.mzglslvk"
+}

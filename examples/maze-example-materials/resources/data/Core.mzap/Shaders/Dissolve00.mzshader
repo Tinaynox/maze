@@ -70,3 +70,8 @@ HLSL
 {
   shader:String = "Dissolve00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "Dissolve00.mzglslvk"
+}

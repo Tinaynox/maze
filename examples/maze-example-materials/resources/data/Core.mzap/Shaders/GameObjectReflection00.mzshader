@@ -49,3 +49,8 @@ HLSL
 {
   shader:String = "GameObjectReflection00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "GameObjectReflection00.mzglslvk"
+}

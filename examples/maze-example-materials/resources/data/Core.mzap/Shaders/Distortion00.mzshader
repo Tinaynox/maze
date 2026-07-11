@@ -35,3 +35,8 @@ HLSL
 {
   shader:String = "Distortion00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "Distortion00.mzglslvk"
+}

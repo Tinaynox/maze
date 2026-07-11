@@ -1,0 +1,75 @@
+//////////////////////////////////////////
+#type vertex
+
+#include "Utils/InstanceStream.mzglslvk"
+
+//////////////////////////////////////////
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec3 a_normal;
+layout(location = 4) in vec4 a_color;
+layout(location = 5) in vec2 a_texCoords0;
+
+//////////////////////////////////////////
+layout(location = 0) out vec3 v_positionOS;
+layout(location = 1) out vec3 v_positionWS;
+layout(location = 2) out vec3 v_positionVS;
+layout(location = 3) out vec4 v_color;
+layout(location = 4) out vec3 v_cubeCoords;
+layout(location = 5) out float v_clipDistance0;
+
+//////////////////////////////////////////
+void main()
+{
+    int instanceId = gl_InstanceIndex;
+
+    mat4 modelMatrix = GetModelMatrix(instanceId);
+    mat4 viewMatrix = GetViewMatrix();
+
+    vec4 positionOS = vec4(a_position, 1.0);
+    vec4 positionWS = modelMatrix * positionOS;
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+    vec4 positionVS = viewMatrix * positionWS;
+    vec4 positionCS = u_projectionMatrix * positionVS;
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    v_positionOS = positionOS.xyz;
+    v_positionWS = positionWS.xyz;
+    v_positionVS = positionVS.xyz;
+    v_color = a_color;
+    v_cubeCoords = a_position;
+
+    gl_Position = MazeFinalizePositionCS(positionCS);
+}
+
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+{
+    vec4 u_color;
+};
+layout(set = 1, binding = 1) uniform samplerCube u_baseMap;
+
+//////////////////////////////////////////
+layout(location = 0) in vec3 v_positionOS;
+layout(location = 1) in vec3 v_positionWS;
+layout(location = 2) in vec3 v_positionVS;
+layout(location = 3) in vec4 v_color;
+layout(location = 4) in vec3 v_cubeCoords;
+layout(location = 5) in float v_clipDistance0;
+
+//////////////////////////////////////////
+layout(location = 0) out vec4 out_color;
+
+//////////////////////////////////////////
+void main()
+{
+    MAZE_CLIP_DISTANCE_FRAGMENT;
+
+    vec3 cubeCoords = v_cubeCoords;
+    out_color = v_color * texture(u_baseMap, cubeCoords) * u_color;
+}

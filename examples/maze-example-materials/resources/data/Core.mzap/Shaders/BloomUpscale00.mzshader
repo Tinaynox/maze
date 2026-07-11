@@ -7,3 +7,8 @@ HLSL
 {
   shader:String = "BloomUpscale00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "BloomUpscale00.mzglslvk"
+}

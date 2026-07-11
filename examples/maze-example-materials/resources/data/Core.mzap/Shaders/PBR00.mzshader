@@ -103,3 +103,8 @@ HLSL
 {
   shader:String = "PBR00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "PBR00.mzglslvk"
+}

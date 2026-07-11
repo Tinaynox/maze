@@ -49,3 +49,8 @@ HLSL
 {
   shader:String = "SkyboxReflection00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "SkyboxReflection00.mzglslvk"
+}

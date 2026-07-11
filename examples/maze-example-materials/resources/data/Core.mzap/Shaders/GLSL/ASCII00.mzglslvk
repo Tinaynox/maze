@@ -1,0 +1,140 @@
+//////////////////////////////////////////
+#type vertex
+
+#include "Utils/InstanceStream.mzglslvk"
+
+//////////////////////////////////////////
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec3 a_normal;
+layout(location = 4) in vec4 a_color;
+layout(location = 5) in vec2 a_texCoords0;
+
+//////////////////////////////////////////
+layout(location = 0) out vec3 v_positionWS;
+layout(location = 1) out vec4 v_positionCS;
+layout(location = 2) out vec3 v_normalWS;
+layout(location = 3) out vec4 v_color;
+layout(location = 4) out vec2 v_uv0;
+layout(location = 5) out vec3 v_viewDirWS;
+layout(location = 6) out float v_clipDistance0;
+
+//////////////////////////////////////////
+void main()
+{
+    int instanceId = gl_InstanceIndex;
+
+    mat4 modelMatrix = GetModelMatrix(instanceId);
+    mat4 viewMatrix = GetViewMatrix();
+
+    vec4 positionOS = vec4(a_position, 1.0);
+    vec4 positionWS = modelMatrix * positionOS;
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+    vec4 positionVS = viewMatrix * positionWS;
+    vec4 positionCS = u_projectionMatrix * positionVS;
+
+    vec4 normalOS = vec4(a_normal, 1.0);
+    mat3 normalMatrix = mat3(modelMatrix);
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    v_positionWS = positionWS.xyz;
+    // NOTE: v_positionCS is the pre-MazeFinalizePositionCS clip position (no
+    // Y-flip/Z-remap), exactly matching the value used for screen-space UV
+    // math in the DX11 port of this shader (see ASCII00.mzhlsl, which
+    // stores the same un-finalized positionCS). gl_Position below goes
+    // through MazeFinalizePositionCS separately.
+    v_positionCS = positionCS;
+
+    v_normalWS = normalize(normalMatrix * normalOS.xyz).xyz;
+
+    v_color = a_color;
+    v_uv0 = a_texCoords0;
+
+    v_viewDirWS = u_viewPosition - v_positionWS;
+
+    gl_Position = MazeFinalizePositionCS(positionCS);
+}
+
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+{
+    vec4 u_color;
+    vec4 u_ambientLightColor;
+    vec4 u_backgroundColor;
+    float u_asciiColumns;
+};
+layout(set = 1, binding = 1) uniform sampler2D u_asciiMap;
+
+//////////////////////////////////////////
+#define ASCII_MAP_GRID_SIZE 10.0
+
+//////////////////////////////////////////
+layout(location = 0) in vec3 v_positionWS;
+layout(location = 1) in vec4 v_positionCS;
+layout(location = 2) in vec3 v_normalWS;
+layout(location = 3) in vec4 v_color;
+layout(location = 4) in vec2 v_uv0;
+layout(location = 5) in vec3 v_viewDirWS;
+layout(location = 6) in float v_clipDistance0;
+
+//////////////////////////////////////////
+layout(location = 0) out vec4 out_color;
+
+//////////////////////////////////////////
+// Samples the "ascii.png" atlas - a 10x10 grid of glyphs sorted by ink
+// coverage ascending (index 0 = blank/sparsest, index 99 = '@'/densest).
+// cellUV is the local position within the on-screen glyph cell, in the
+// same bottom-left-origin convention as the texture's V axis.
+float SampleAsciiInk(float level, vec2 cellUV)
+{
+    float clampedLevel = clamp(floor(level), 0.0, 99.0);
+    float atlasCol = mod(clampedLevel, ASCII_MAP_GRID_SIZE);
+    float atlasRowFromTop = floor(clampedLevel / ASCII_MAP_GRID_SIZE);
+    float atlasRowFromBottom = (ASCII_MAP_GRID_SIZE - 1.0) - atlasRowFromTop;
+
+    vec2 atlasUV = (vec2(atlasCol, atlasRowFromBottom) + cellUV) / ASCII_MAP_GRID_SIZE;
+
+    return MAZE_GET_TEXEL2D(u_asciiMap, atlasUV).r;
+}
+
+//////////////////////////////////////////
+void main()
+{
+    MAZE_CLIP_DISTANCE_FRAGMENT;
+
+    // View direction
+    vec3 fragmentToViewDirection = normalize(v_viewDirWS);
+
+    // Normal
+    vec3 normalWS = normalize(v_normalWS);
+
+    // Simple diffuse lighting (ambient + main light Lambert)
+    vec3 diffuseColor = u_color.rgb;
+    vec3 linearColor = diffuseColor * u_ambientLightColor.rgb;
+
+    float NdotL = clamp(dot(normalWS, -normalize(u_mainLightDirection)), 0.0, 1.0);
+    linearColor += diffuseColor * NdotL * u_mainLightColor.rgb;
+
+    linearColor = clamp(linearColor, 0.0, 1.0);
+
+    // Brightness drives which ASCII glyph is picked for this cell
+    float brightness = dot(linearColor, vec3(0.299, 0.587, 0.114));
+    float level = clamp(brightness, 0.0, 0.999) * (ASCII_MAP_GRID_SIZE * ASCII_MAP_GRID_SIZE);
+
+    // Screen-space glyph grid (square cells, independent of viewport resolution)
+    float aspect = u_projectionMatrix[1][1] / u_projectionMatrix[0][0];
+    vec2 screenUV = (v_positionCS.xy / v_positionCS.w) * 0.5 + 0.5;
+    vec2 gridUV = screenUV * vec2(u_asciiColumns, u_asciiColumns / aspect);
+    vec2 cellUV = fract(gridUV);
+
+    float ink = SampleAsciiInk(level, cellUV);
+
+    vec3 finalColor = mix(u_backgroundColor.rgb, linearColor, ink);
+
+    out_color = vec4(finalColor, ink);
+}

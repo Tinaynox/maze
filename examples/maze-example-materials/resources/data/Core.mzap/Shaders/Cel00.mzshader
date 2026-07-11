@@ -56,3 +56,8 @@ HLSL
 {
   shader:String = "Cel00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "Cel00.mzglslvk"
+}

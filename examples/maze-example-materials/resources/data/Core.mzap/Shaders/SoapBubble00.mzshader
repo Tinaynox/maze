@@ -119,3 +119,8 @@ HLSL
 {
   shader:String = "SoapBubble00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "SoapBubble00.mzglslvk"
+}

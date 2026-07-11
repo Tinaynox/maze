@@ -141,3 +141,8 @@ HLSL
 {
   shader:String = "Universal00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "Universal00.mzglslvk"
+}

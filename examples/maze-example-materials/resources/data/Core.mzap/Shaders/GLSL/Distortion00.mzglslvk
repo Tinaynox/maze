@@ -1,0 +1,118 @@
+//////////////////////////////////////////
+#type vertex
+
+#include "Utils/InstanceStream.mzglslvk"
+
+//////////////////////////////////////////
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec3 a_normal;
+layout(location = 4) in vec4 a_color;
+layout(location = 5) in vec2 a_texCoords0;
+
+//////////////////////////////////////////
+layout(location = 0) out vec3 v_positionOS;
+layout(location = 1) out vec3 v_positionWS;
+layout(location = 2) out vec3 v_positionVS;
+layout(location = 3) out vec4 v_positionCS;
+layout(location = 4) out vec3 v_normalOS;
+layout(location = 5) out vec3 v_normalWS;
+layout(location = 6) out vec4 v_color;
+layout(location = 7) out vec2 v_uv0;
+layout(location = 8) out vec3 v_viewDirWS;
+layout(location = 9) out float v_clipDistance0;
+
+//////////////////////////////////////////
+void main()
+{
+    int instanceId = gl_InstanceIndex;
+
+    mat4 modelMatrix = GetModelMatrix(instanceId);
+    mat4 viewMatrix = GetViewMatrix();
+
+    vec4 positionOS = vec4(a_position, 1.0);
+    vec4 positionWS = modelMatrix * positionOS;
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+    vec4 positionVS = viewMatrix * positionWS;
+    vec4 positionCS = u_projectionMatrix * positionVS;
+
+    vec4 normalOS = vec4(a_normal, 1.0);
+
+    mat3 normalMatrix = mat3(modelMatrix);
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    v_positionOS = positionOS.xyz;
+    v_positionWS = positionWS.xyz;
+    v_positionVS = positionVS.xyz;
+    // NOTE: v_positionCS is the pre-MazeFinalizePositionCS clip position (no
+    // Y-flip/Z-remap) - the fragment stage manually reconstructs a
+    // Vulkan-native [0,1] depth value from it using the same (z+w)*0.5
+    // formula MazeFinalizePositionCS applies, so the result is directly
+    // comparable to u_depthMap regardless of backend. gl_Position below
+    // goes through MazeFinalizePositionCS separately.
+    v_positionCS = positionCS;
+
+    vec3 normalWS = normalize(normalMatrix * normalOS.xyz).xyz;
+
+    v_normalOS = normalOS.xyz;
+    v_normalWS = normalWS.xyz;
+
+    v_color = a_color;
+    v_uv0 = a_texCoords0;
+
+    v_viewDirWS = u_viewPosition - v_positionWS;
+
+    gl_Position = MazeFinalizePositionCS(positionCS);
+}
+
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+{
+    vec4 u_color;
+    float u_refractionIndex;
+    float u_refractionFactor;
+};
+layout(set = 1, binding = 1) uniform sampler2D u_depthMap;
+
+//////////////////////////////////////////
+layout(location = 0) in vec3 v_positionOS;
+layout(location = 1) in vec3 v_positionWS;
+layout(location = 2) in vec3 v_positionVS;
+layout(location = 3) in vec4 v_positionCS;
+layout(location = 4) in vec3 v_normalOS;
+layout(location = 5) in vec3 v_normalWS;
+layout(location = 6) in vec4 v_color;
+layout(location = 7) in vec2 v_uv0;
+layout(location = 8) in vec3 v_viewDirWS;
+layout(location = 9) in float v_clipDistance0;
+
+//////////////////////////////////////////
+layout(location = 0) out vec4 out_color;
+
+//////////////////////////////////////////
+void main()
+{
+    MAZE_CLIP_DISTANCE_FRAGMENT;
+
+    // Check depth buffer
+    vec2 screenUV = (v_positionCS.xy / v_positionCS.w) * 0.5 + 0.5;
+    float depth0 = MAZE_GET_TEXEL2D(u_depthMap, screenUV).r;
+    float depth1 = (v_positionCS.z / v_positionCS.w) * 0.5 + 0.5;
+
+    if (depth1 >= depth0)
+        discard;
+
+    // View direction
+    vec3 viewToFragmentDirection = -normalize(v_viewDirWS);
+
+    // Calculate the refraction vector
+    vec3 refractDir = refract(viewToFragmentDirection, v_normalWS, 1.0 / u_refractionIndex);
+
+    vec2 distortion = refractDir.xy * vec2(u_refractionFactor, u_refractionFactor);
+    out_color = vec4(distortion * u_color.rg, 0.0, 1.0);
+}

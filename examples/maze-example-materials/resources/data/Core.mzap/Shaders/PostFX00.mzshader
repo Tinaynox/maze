@@ -14,3 +14,8 @@ HLSL
 {
   shader:String = "PostFX00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "PostFX00.mzglslvk"
+}

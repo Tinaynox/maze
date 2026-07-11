@@ -7,3 +7,8 @@ HLSL
 {
   shader:String = "BloomFinalPass00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "BloomFinalPass00.mzglslvk"
+}

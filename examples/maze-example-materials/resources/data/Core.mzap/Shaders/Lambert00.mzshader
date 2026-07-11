@@ -35,3 +35,8 @@ HLSL
 {
   shader:String = "Lambert00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "Lambert00.mzglslvk"
+}

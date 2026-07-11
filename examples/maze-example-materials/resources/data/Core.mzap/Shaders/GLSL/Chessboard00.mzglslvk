@@ -1,0 +1,183 @@
+//////////////////////////////////////////
+#type vertex
+
+#include "Utils/InstanceStream.mzglslvk"
+
+//////////////////////////////////////////
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec3 a_normal;
+layout(location = 2) in vec3 a_tangent;
+layout(location = 3) in vec3 a_bitangent;
+layout(location = 4) in vec4 a_color;
+layout(location = 5) in vec2 a_texCoords0;
+
+//////////////////////////////////////////
+layout(location = 0) out vec3 v_positionOS;
+layout(location = 1) out vec3 v_positionWS;
+layout(location = 2) out vec3 v_positionVS;
+layout(location = 3) out vec3 v_normalOS;
+layout(location = 4) out vec3 v_normalWS;
+layout(location = 5) out vec4 v_color;
+layout(location = 6) out vec2 v_uv0;
+layout(location = 7) out vec3 v_viewDirWS;
+layout(location = 8) out float v_clipDistance0;
+
+//////////////////////////////////////////
+void main()
+{
+    int instanceId = gl_InstanceIndex;
+
+    mat4 modelMatrix = GetModelMatrix(instanceId);
+    mat4 viewMatrix = GetViewMatrix();
+
+    vec4 positionOS = vec4(a_position, 1.0);
+    vec4 positionWS = modelMatrix * positionOS;
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+    vec4 positionVS = viewMatrix * positionWS;
+    vec4 positionCS = u_projectionMatrix * positionVS;
+
+    vec4 normalOS = vec4(a_normal, 1.0);
+    mat3 normalMatrix = mat3(modelMatrix);
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    v_positionOS = positionOS.xyz;
+    v_positionWS = positionWS.xyz;
+    v_positionVS = positionVS.xyz;
+
+    vec3 normalWS = normalize(normalMatrix * normalOS.xyz).xyz;
+
+    v_normalOS = normalOS.xyz;
+    v_normalWS = normalWS.xyz;
+
+    v_color = a_color;
+    v_uv0 = a_texCoords0;
+
+    v_viewDirWS = u_viewPosition - v_positionWS;
+
+    gl_Position = MazeFinalizePositionCS(positionCS);
+}
+
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+{
+    vec4 u_color;
+    vec4 u_ambientLightColor;
+    float u_shininess;
+    vec4 u_specularColor;
+    float u_lambertThreshold;
+    float u_checkerScale;
+    vec4 u_checkerColor0;
+    vec4 u_checkerColor1;
+    vec4 u_checkerColor0b;
+    vec4 u_checkerColor1b;
+};
+
+//////////////////////////////////////////
+layout(location = 0) in vec3 v_positionOS;
+layout(location = 1) in vec3 v_positionWS;
+layout(location = 2) in vec3 v_positionVS;
+layout(location = 3) in vec3 v_normalOS;
+layout(location = 4) in vec3 v_normalWS;
+layout(location = 5) in vec4 v_color;
+layout(location = 6) in vec2 v_uv0;
+layout(location = 7) in vec3 v_viewDirWS;
+layout(location = 8) in float v_clipDistance0;
+
+//////////////////////////////////////////
+layout(location = 0) out vec4 out_color;
+
+//////////////////////////////////////////
+// BlinnPhong
+vec3 BlinnPhongLighting(
+    vec3 diffuseColor,
+    vec3 normalWS,
+    vec3 fragmentToViewDirection,
+    vec3 lightDirection,
+    vec3 lightColor)
+{
+    // Light
+    vec3 fragmentToLightDirection = -lightDirection;
+    float lightAttenuation = 1.0;
+
+    // Lambertian
+    float NdotL = dot(normalWS, fragmentToLightDirection);
+    float lambertian = clamp(NdotL, 0.0, 1.0);
+
+    // Lambertian threshold
+#if defined(LAMBERT_THRESHOLD) && (LAMBERT_THRESHOLD)
+    lambertian = u_lambertThreshold + lambertian * (1.0f - u_lambertThreshold);
+#endif
+
+    // Light final
+    vec3 lightColorFinal = lightColor * lightAttenuation;
+
+    // Half vector
+    vec3 H = normalize(fragmentToLightDirection + fragmentToViewDirection);
+
+    // Shininess
+    float shininess = u_shininess;
+
+    // Specular
+    float NdotH = dot(normalWS, H);
+    float specular = pow(clamp(NdotH, 0.0, 1.0), shininess * 512.0);
+    vec3 specularColor = u_specularColor.rgb * specular;
+
+    return
+        diffuseColor * lambertian * lightColorFinal +
+        specularColor * lightColorFinal;
+}
+
+//////////////////////////////////////////
+float Checkerboard3d(vec3 positionWS)
+{
+    vec3 bias = vec3(0.0001);
+
+    vec3 f = floor(positionWS + bias);
+    float value = clamp(mod(f.x + f.y + f.z, 2.0), 0.0, 1.0);
+
+    return value;
+}
+
+//////////////////////////////////////////
+void main()
+{
+    MAZE_CLIP_DISTANCE_FRAGMENT;
+
+    // View direction
+    vec3 fragmentToViewDirection = normalize(v_viewDirWS);
+
+    // Normal
+    vec3 normalWS = normalize(v_normalWS);
+
+    // Ambient light
+    vec3 ambientLightColor = u_ambientLightColor.rgb;
+
+    // Checkerboard
+    float check0 = Checkerboard3d(v_positionWS * u_checkerScale);
+    vec3 checkColor0 = mix(u_checkerColor0.xyz, u_checkerColor1.xyz, check0);
+
+    vec3 checkerColor2 = mix(u_checkerColor0b.xyz, u_checkerColor1b.xyz, check0);
+    float check1 = Checkerboard3d(v_positionWS * u_checkerScale * 4.0);
+
+    // Diffuse color
+    vec3 diffuseColor = mix(checkColor0, checkerColor2, check1);
+
+    // Linear color
+    vec3 linearColor = diffuseColor * ambientLightColor;
+
+    // Main light
+    linearColor += BlinnPhongLighting(diffuseColor, normalWS, fragmentToViewDirection, normalize(u_mainLightDirection), u_mainLightColor.rgb);
+
+    // Reset to LDR
+    linearColor.r = min(linearColor.r, 1.0);
+    linearColor.g = min(linearColor.g, 1.0);
+    linearColor.b = min(linearColor.b, 1.0);
+
+    out_color = vec4(linearColor, 1.0);
+}

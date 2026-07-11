@@ -1,0 +1,138 @@
+//////////////////////////////////////////
+#type vertex
+
+#include "Utils/InstanceStream.mzglslvk"
+
+//////////////////////////////////////////
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec3 a_normal;
+layout(location = 4) in vec4 a_color;
+layout(location = 5) in vec2 a_texCoords0;
+
+//////////////////////////////////////////
+layout(location = 0) out vec3 v_positionOS;
+layout(location = 1) out vec3 v_positionWS;
+layout(location = 2) out vec3 v_normalWS;
+layout(location = 3) out vec4 v_color;
+layout(location = 4) out vec2 v_uv0;
+layout(location = 5) out vec3 v_viewDirWS;
+layout(location = 6) out float v_clipDistance0;
+
+//////////////////////////////////////////
+void main()
+{
+    int instanceId = gl_InstanceIndex;
+
+    mat4 modelMatrix = GetModelMatrix(instanceId);
+    mat4 viewMatrix = GetViewMatrix();
+
+    vec4 positionOS = vec4(a_position, 1.0);
+    vec4 positionWS = modelMatrix * positionOS;
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+    vec4 positionVS = viewMatrix * positionWS;
+    vec4 positionCS = u_projectionMatrix * positionVS;
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    mat3 normalMatrix = mat3(modelMatrix);
+    vec3 normalWS = normalize(normalMatrix * a_normal);
+
+    v_positionOS = positionOS.xyz;
+    v_positionWS = positionWS.xyz;
+    v_normalWS = normalWS;
+    v_color = a_color;
+    v_uv0 = a_texCoords0;
+
+    v_viewDirWS = u_viewPosition - v_positionWS;
+
+    gl_Position = MazeFinalizePositionCS(positionCS);
+}
+
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+{
+    vec4 u_color;
+
+    // Thin film
+    float u_filmThickness;
+    float u_thicknessVariation;
+    float u_filmScale;
+    float u_filmSpeed;
+    float u_hueScale;
+    float u_hueShift;
+    float u_saturation;
+    float u_brightness;
+
+    // Reflection / fresnel
+    float u_fresnelPower;
+    float u_reflectionStrength;
+    float u_minAlpha;
+    float u_maxAlpha;
+
+    // Specular glint
+    float u_specularPower;
+    float u_specularIntensity;
+};
+layout(set = 1, binding = 1) uniform samplerCube u_skyboxMap;
+
+#include "Utils/Math.mzglslvk"
+#include "Utils/Color.mzglslvk"
+
+//////////////////////////////////////////
+layout(location = 0) in vec3 v_positionOS;
+layout(location = 1) in vec3 v_positionWS;
+layout(location = 2) in vec3 v_normalWS;
+layout(location = 3) in vec4 v_color;
+layout(location = 4) in vec2 v_uv0;
+layout(location = 5) in vec3 v_viewDirWS;
+layout(location = 6) in float v_clipDistance0;
+
+//////////////////////////////////////////
+layout(location = 0) out vec4 out_color;
+
+//////////////////////////////////////////
+void main()
+{
+    MAZE_CLIP_DISTANCE_FRAGMENT;
+
+    vec3 normalWS = normalize(v_normalWS);
+    vec3 toView = normalize(v_viewDirWS);
+
+    float NdotV = clamp(dot(normalWS, toView), 0.0, 1.0);
+
+    float fresnel = pow(1.0 - NdotV, u_fresnelPower);
+
+    // Slowly swirling, noise-driven film thickness - mimics the uneven,
+    // ever-shifting thickness of a real soap film
+    float thicknessNoise = MazeNoise3D(v_positionOS * u_filmScale + vec3(0.0, 0.0, u_time * u_filmSpeed));
+    float thickness = u_filmThickness + u_thicknessVariation * thicknessNoise;
+
+    // The optical path length through the film grows at grazing angles,
+    // which is what produces the characteristic rainbow rings near a
+    // bubble's silhouette
+    float opticalPath = thickness / max(NdotV, 0.2);
+    float hue = mod(opticalPath * u_hueScale + u_hueShift, 360.0);
+    vec3 filmColor = ConvertHSVToRGB(hue, u_saturation, u_brightness);
+
+    // Reflected environment, tinted brighter towards the silhouette
+    vec3 reflectDir = reflect(-toView, normalWS);
+    vec3 envColor = texture(u_skyboxMap, reflectDir).rgb;
+
+    vec3 linearColor = mix(filmColor, envColor, u_reflectionStrength * fresnel) * u_color.rgb;
+
+    // Tiny bright specular glint where the main light reflects directly
+    vec3 lightReflectDir = reflect(normalize(u_mainLightDirection), normalWS);
+    float specular = pow(clamp(dot(lightReflectDir, toView), 0.0, 1.0), u_specularPower);
+    linearColor += specular * u_specularIntensity * u_mainLightColor.rgb;
+
+    // Mostly see-through in the middle of the film, nearly opaque at the
+    // grazing silhouette - the defining look of a soap bubble
+    float alpha = mix(u_minAlpha, u_maxAlpha, fresnel) * u_color.a;
+
+    out_color = vec4(linearColor, alpha);
+}

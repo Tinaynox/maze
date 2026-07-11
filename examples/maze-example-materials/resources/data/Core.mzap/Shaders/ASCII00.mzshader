@@ -42,3 +42,8 @@ HLSL
 {
   shader:String = "ASCII00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "ASCII00.mzglslvk"
+}

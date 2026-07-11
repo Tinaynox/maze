@@ -70,3 +70,8 @@ HLSL
 {
   shader:String = "Chessboard00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "Chessboard00.mzglslvk"
+}

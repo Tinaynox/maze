@@ -1,0 +1,136 @@
+//////////////////////////////////////////
+#type vertex
+
+#include "Utils/InstanceStream.mzglslvk"
+
+//////////////////////////////////////////
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec3 a_normal;
+layout(location = 2) in vec3 a_tangent;
+layout(location = 3) in vec3 a_bitangent;
+layout(location = 4) in vec4 a_color;
+layout(location = 5) in vec2 a_texCoords0;
+
+//////////////////////////////////////////
+layout(location = 0) out vec3 v_positionOS;
+layout(location = 1) out vec3 v_positionWS;
+layout(location = 2) out vec3 v_positionVS;
+layout(location = 3) out vec3 v_normalOS;
+layout(location = 4) out vec3 v_normalWS;
+layout(location = 5) out vec3 v_tangentWS;
+layout(location = 6) out vec3 v_bitangentWS;
+layout(location = 7) out vec4 v_color;
+layout(location = 8) out vec2 v_uv0;
+layout(location = 9) out vec3 v_viewDirWS;
+layout(location = 10) out float v_clipDistance0;
+
+//////////////////////////////////////////
+void main()
+{
+    int instanceId = gl_InstanceIndex;
+
+    mat4 modelMatrix = GetModelMatrix(instanceId);
+    mat4 viewMatrix = GetViewMatrix();
+
+    vec4 positionOS = vec4(a_position, 1.0);
+    vec4 positionWS = modelMatrix * positionOS;
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+    vec4 positionVS = viewMatrix * positionWS;
+    vec4 positionCS = u_projectionMatrix * positionVS;
+
+    vec4 normalOS = vec4(a_normal, 1.0);
+    vec4 tangentOS = vec4(a_tangent, 1.0);
+    vec4 bitangentOS = vec4(a_bitangent, 1.0);
+
+    mat3 normalMatrix = mat3(modelMatrix);
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    v_positionOS = positionOS.xyz;
+    v_positionWS = positionWS.xyz;
+    v_positionVS = positionVS.xyz;
+
+    vec3 normalWS = normalize(normalMatrix * normalOS.xyz).xyz;
+
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    vec3 tangentWS = normalize(normalMatrix * tangentOS.xyz).xyz;
+    vec3 bitangentWS = normalize(normalMatrix * bitangentOS.xyz).xyz;
+
+    v_tangentWS = tangentWS.xyz;
+    v_bitangentWS = bitangentWS.xyz;
+#endif
+
+    v_normalOS = normalOS.xyz;
+    v_normalWS = normalWS.xyz;
+
+    v_color = a_color;
+    v_uv0 = a_texCoords0;
+
+    v_viewDirWS = u_viewPosition - v_positionWS;
+
+    gl_Position = MazeFinalizePositionCS(positionCS);
+}
+
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+{
+    vec4 u_color;
+    float u_progress;
+    float u_fresnelPower;
+    float u_normalScale;
+};
+layout(set = 1, binding = 1) uniform sampler2D u_baseMap;
+
+// NORMAL_MAP
+layout(set = 1, binding = 2) uniform sampler2D u_normalMap;
+
+#include "Utils/Core.mzglslvk"
+#include "Utils/Math.mzglslvk"
+
+//////////////////////////////////////////
+layout(location = 0) in vec3 v_positionOS;
+layout(location = 1) in vec3 v_positionWS;
+layout(location = 2) in vec3 v_positionVS;
+layout(location = 3) in vec3 v_normalOS;
+layout(location = 4) in vec3 v_normalWS;
+layout(location = 5) in vec3 v_tangentWS;
+layout(location = 6) in vec3 v_bitangentWS;
+layout(location = 7) in vec4 v_color;
+layout(location = 8) in vec2 v_uv0;
+layout(location = 9) in vec3 v_viewDirWS;
+layout(location = 10) in float v_clipDistance0;
+
+//////////////////////////////////////////
+layout(location = 0) out vec4 out_color;
+
+//////////////////////////////////////////
+void main()
+{
+    MAZE_CLIP_DISTANCE_FRAGMENT;
+
+    // View direction
+    vec3 toView = normalize(v_viewDirWS);
+
+    // Normal
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    vec3 normalTS = SampleNormalTS(u_normalMap, v_uv0, u_normalScale);
+    mat3 tangentToWorld = mat3(normalize(v_tangentWS), normalize(v_bitangentWS), normalize(v_normalWS));
+    vec3 normalWS = normalize(TransformTangentToWorld(normalTS, tangentToWorld));
+#else
+    vec3 normalWS = normalize(v_normalWS);
+#endif
+
+    float NdotV = dot(normalWS, toView);
+    float fresnel = clamp(1.0 - NdotV, 0.0, 1.0);
+    fresnel = pow(fresnel, u_fresnelPower);
+
+    // Linear color
+    vec3 linearColor = u_color.rgb * fresnel * fresnel;
+
+    out_color = vec4(linearColor * u_progress, u_color.a);
+}

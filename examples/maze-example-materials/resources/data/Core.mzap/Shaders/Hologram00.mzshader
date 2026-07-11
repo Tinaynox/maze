@@ -35,3 +35,8 @@ HLSL
 {
   shader:String = "Hologram00.mzhlsl"
 }
+
+SPIRV
+{
+  shader:String = "Hologram00.mzglslvk"
+}
