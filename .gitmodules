@@ -55,3 +55,6 @@
 [submodule "third-party/EABase"]
 	path = third-party/EABase
 	url = git@github.com:Tinaynox/EABase.git
+[submodule "third-party/flat_hash_map"]
+	path = third-party/flat_hash_map
+	url = git@github.com:Tinaynox/flat_hash_map.git
