@@ -37,6 +37,22 @@ target_link_libraries(
     maze-render-system-vulkan
     PUBLIC maze-graphics
     PUBLIC Vulkan::Vulkan
-    PUBLIC Vulkan::shaderc_combined
     PUBLIC spirv-reflect
     PUBLIC vma)
+
+# shaderc_combined.lib is Release-CRT-only in most Vulkan SDK installs;
+# linking it into a /MDd (Debug) build fails with LNK2038 CRT mismatches.
+# Use the Debug-CRT shaderc_combinedd variant for Debug configs when the SDK
+# provides it (see MAZE_VULKAN_SHADERC_COMBINED_DEBUG_FOUND in Config.cmake);
+# Release/RelWithDebInfo/MinSizeRel keep using shaderc_combined.
+if(MAZE_VULKAN_SHADERC_COMBINED_DEBUG_FOUND)
+    target_link_libraries(
+        maze-render-system-vulkan
+        PUBLIC
+            $<$<CONFIG:Debug>:Vulkan::shaderc_combinedd>
+            $<$<NOT:$<CONFIG:Debug>>:Vulkan::shaderc_combined>)
+else()
+    target_link_libraries(
+        maze-render-system-vulkan
+        PUBLIC Vulkan::shaderc_combined)
+endif()

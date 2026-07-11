@@ -351,11 +351,26 @@ if(MAZE_RENDER_SYSTEM_VULKAN_REQUESTED)
 
     if(MAZE_TARGET_PLATFORM_IS_WINDOWS AND (NOT IS_ARM_ARCH))
 
-        find_package(Vulkan COMPONENTS shaderc_combined)
+        # Both the Release (shaderc_combined) and Debug (shaderc_combinedd)
+        # static libs are requested - the SDK builds them against different
+        # CRTs (/MD vs /MDd), and linking the wrong one into a given
+        # configuration causes LNK2038 CRT-mismatch errors. Only
+        # shaderc_combined is strictly required to enable the backend;
+        # shaderc_combinedd is used opportunistically for Debug builds (see
+        # the config-aware target_link_libraries in MazeRenderSystemVulkan.cmake) -
+        # older SDKs that don't ship it will just link shaderc_combined into
+        # Debug too and the CRT mismatch will resurface, needing a manual
+        # MSVC_RUNTIME_LIBRARY override on the example targets instead.
+        find_package(Vulkan COMPONENTS shaderc_combined shaderc_combinedd)
 
         if(Vulkan_FOUND AND TARGET Vulkan::shaderc_combined)
             set(MAZE_RENDER_SYSTEM_VULKAN_ENABLED 1)
             add_definitions("-DMAZE_RENDER_SYSTEM_VULKAN_ENABLED=1")
+            if(TARGET Vulkan::shaderc_combinedd)
+                set(MAZE_VULKAN_SHADERC_COMBINED_DEBUG_FOUND 1)
+            else()
+                message(WARNING "Vulkan SDK does not have a shaderc_combinedd (Debug) component - Debug builds of maze-render-system-vulkan consumers will link the Release shaderc_combined and may hit LNK2038 CRT mismatches unless MSVC_RUNTIME_LIBRARY is overridden to match")
+            endif()
         else()
             message(WARNING "Vulkan SDK (with shaderc_combined component) is not found - maze-render-system-vulkan will not be compiled")
         endif()
