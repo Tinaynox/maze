@@ -206,6 +206,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ExpandDepth24ToDepth24Stencil8Vulkan(
+        U8 const* _src,
+        U8* _dst,
+        Size _texelsCount)
+    {
+        for (Size i = 0; i < _texelsCount; ++i)
+        {
+            _dst[i * 4 + 0] = _src[i * 3 + 0];
+            _dst[i * 4 + 1] = _src[i * 3 + 1];
+            _dst[i * 4 + 2] = _src[i * 3 + 2];
+            _dst[i * 4 + 3] = 0;
+        }
+    }
+
+    //////////////////////////////////////////
     VkBlendFactor GetBlendFactorVulkan(BlendFactor _blendFactor)
     {
         switch (_blendFactor)
@@ -623,15 +638,59 @@ namespace Maze
                 return;
             }
 
-            // SHADER_READ_ONLY_OPTIMAL / TRANSFER_SRC_OPTIMAL -> DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-            // The reverse - resuming depth writes into a depth texture that was just sampled/resolved.
-            if ((_oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL || _oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) &&
+            // SHADER_READ_ONLY_OPTIMAL / TRANSFER_SRC_OPTIMAL / TRANSFER_DST_OPTIMAL -> DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+            // The reverse - resuming depth writes into a depth texture that was just
+            // sampled/resolved/copied-into (RenderWindowVulkan/RenderBufferVulkan reuse
+            // the same depth buffer across frames, and it can arrive here from any of
+            // these three prior states depending on what the previous frame did with it).
+            if ((_oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL || _oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL || _oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) &&
                 _newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
             {
-                _outSrcStage = (_oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) ? VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT : VK_PIPELINE_STAGE_TRANSFER_BIT;
-                _outSrcAccess = (_oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) ? VK_ACCESS_SHADER_READ_BIT : VK_ACCESS_TRANSFER_READ_BIT;
+                switch (_oldLayout)
+                {
+                    case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+                        _outSrcStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+                        _outSrcAccess = VK_ACCESS_SHADER_READ_BIT;
+                        break;
+                    case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
+                        _outSrcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                        _outSrcAccess = VK_ACCESS_TRANSFER_READ_BIT;
+                        break;
+                    default: // VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+                        _outSrcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                        _outSrcAccess = VK_ACCESS_TRANSFER_WRITE_BIT;
+                        break;
+                }
                 _outDstStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
                 _outDstAccess = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+                return;
+            }
+
+            // SHADER_READ_ONLY_OPTIMAL -> TRANSFER_DST_OPTIMAL
+            // Hot path: a texture that was sampled last frame (e.g. a
+            // ping-pong PostFX/Bloom target, or any Texture2DVulkan that
+            // tracks its real current layout via transitionTo()) is about to
+            // be written into again via a staging-buffer upload or blit.
+            if (_oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && _newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+            {
+                _outSrcStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+                _outSrcAccess = VK_ACCESS_SHADER_READ_BIT;
+                _outDstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                _outDstAccess = VK_ACCESS_TRANSFER_WRITE_BIT;
+                return;
+            }
+
+            // TRANSFER_DST_OPTIMAL -> TRANSFER_DST_OPTIMAL
+            // Same-layout no-op transition (e.g. consecutive mip levels/faces of the same
+            // image each independently requesting TRANSFER_DST_OPTIMAL during upload,
+            // without checking whether it's already there) - layout doesn't change, but a
+            // write-after-write hazard barrier is still correct to keep.
+            if (_oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && _newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+            {
+                _outSrcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                _outSrcAccess = VK_ACCESS_TRANSFER_WRITE_BIT;
+                _outDstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                _outDstAccess = VK_ACCESS_TRANSFER_WRITE_BIT;
                 return;
             }
 

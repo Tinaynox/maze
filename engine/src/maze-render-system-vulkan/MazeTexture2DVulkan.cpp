@@ -159,6 +159,12 @@ namespace Maze
         // Most desktop Vulkan drivers don't support 24-bit RGB for optimal tiling - expand
         // to RGBA on upload (mirrors DX11/ExpandRGBToRGBADX11 exactly)
         bool expandRGB = (_internalPixelFormat == PixelFormat::RGB_U8);
+        // DEPTH_U24 is nominally 3 bytes/texel at the engine level (see
+        // PixelFormat::GetBytesPerPixel) but is backed by the 4-byte-packed
+        // VK_FORMAT_D24_UNORM_S8_UINT on Vulkan (see GetPixelFormatVulkan) -
+        // needs the same kind of upload-time expansion as RGB_U8, or the
+        // staging buffer ends up 25% undersized for the copy
+        bool expandDepth24 = (_internalPixelFormat == PixelFormat::DEPTH_U24);
 
         VkFormat format = GetPixelFormatVulkan(_internalPixelFormat);
         MAZE_ERROR_RETURN_VALUE_IF(
@@ -259,6 +265,15 @@ namespace Maze
                 data = &expandedData[0];
                 dataSize = pixelsCount * 4;
             }
+            else
+            if (expandDepth24)
+            {
+                Size texelsCount = (Size)pixelSheet.getSize().x * (Size)pixelSheet.getSize().y;
+                expandedData.resize(texelsCount * 4);
+                ExpandDepth24ToDepth24Stencil8Vulkan(data, &expandedData[0], texelsCount);
+                data = &expandedData[0];
+                dataSize = texelsCount * 4;
+            }
 
             VkBufferCreateInfo stagingBufferInfo;
             memset(&stagingBufferInfo, 0, sizeof(stagingBufferInfo));
@@ -287,7 +302,14 @@ namespace Maze
             region.bufferOffset = 0;
             region.bufferRowLength = 0;
             region.bufferImageHeight = 0;
-            region.imageSubresource.aspectMask = m_aspect;
+            // vkCmdCopyBufferToImage requires a single aspect bit per region -
+            // unlike layout transitions/clears, which need the whole
+            // DEPTH_BIT|STENCIL_BIT mask on a combined depth-stencil image
+            // (see GetImageAspectFlagsVulkan's comment) - CPU-provided pixel
+            // data for a nominally depth-only format is depth-only data, so
+            // narrow to just the depth plane here
+            region.imageSubresource.aspectMask =
+                (m_aspect & VK_IMAGE_ASPECT_STENCIL_BIT) ? VK_IMAGE_ASPECT_DEPTH_BIT : m_aspect;
             region.imageSubresource.mipLevel = (U32)mip;
             region.imageSubresource.baseArrayLayer = 0;
             region.imageSubresource.layerCount = 1;
@@ -487,6 +509,15 @@ namespace Maze
             data = &expandedData[0];
             dataSize = pixelsCount * 4;
         }
+        else
+        if (_pixelFormat == PixelFormat::DEPTH_U24)
+        {
+            Size texelsCount = (Size)_width * (Size)_height;
+            expandedData.resize(texelsCount * 4);
+            ExpandDepth24ToDepth24Stencil8Vulkan(data, &expandedData[0], texelsCount);
+            data = &expandedData[0];
+            dataSize = texelsCount * 4;
+        }
 
         RenderSystemVulkan* renderSystem = getRenderSystemVulkanRaw();
         VmaAllocator allocator = renderSystem->getAllocator();
@@ -516,7 +547,10 @@ namespace Maze
 
         VkBufferImageCopy region;
         memset(&region, 0, sizeof(region));
-        region.imageSubresource.aspectMask = m_aspect;
+        // See the identical narrowing in loadTextureImpl() - buffer<->image
+        // copies need a single aspect bit, unlike whole-resource transitions
+        region.imageSubresource.aspectMask =
+            (m_aspect & VK_IMAGE_ASPECT_STENCIL_BIT) ? VK_IMAGE_ASPECT_DEPTH_BIT : m_aspect;
         region.imageSubresource.mipLevel = 0;
         region.imageSubresource.baseArrayLayer = 0;
         region.imageSubresource.layerCount = 1;
@@ -559,7 +593,14 @@ namespace Maze
         RenderSystemVulkan* renderSystem = getRenderSystemVulkanRaw();
         VmaAllocator allocator = renderSystem->getAllocator();
 
-        Size dataSize = (Size)PixelFormat::GetBytesPerPixel(m_internalPixelFormat) * (Size)m_size.x * (Size)m_size.y;
+        Size texelsCount = (Size)m_size.x * (Size)m_size.y;
+
+        // The GPU image is physically 4 bytes/texel (VK_FORMAT_D24_UNORM_S8_UINT)
+        // even though DEPTH_U24 is nominally 3 bytes/texel at the engine level -
+        // see the identical comment in loadTextureImpl() - so the staging buffer
+        // must be sized for the wider GPU layout, narrowed back down after copy
+        bool isDepth24 = (m_internalPixelFormat == PixelFormat::DEPTH_U24);
+        Size dataSize = isDepth24 ? (texelsCount * 4) : ((Size)PixelFormat::GetBytesPerPixel(m_internalPixelFormat) * texelsCount);
 
         VkBufferCreateInfo stagingBufferInfo;
         memset(&stagingBufferInfo, 0, sizeof(stagingBufferInfo));
@@ -585,7 +626,10 @@ namespace Maze
 
         VkBufferImageCopy region;
         memset(&region, 0, sizeof(region));
-        region.imageSubresource.aspectMask = m_aspect;
+        // See the identical narrowing in loadTextureImpl() - buffer<->image
+        // copies need a single aspect bit, unlike whole-resource transitions
+        region.imageSubresource.aspectMask =
+            (m_aspect & VK_IMAGE_ASPECT_STENCIL_BIT) ? VK_IMAGE_ASPECT_DEPTH_BIT : m_aspect;
         region.imageSubresource.mipLevel = 0;
         region.imageSubresource.baseArrayLayer = 0;
         region.imageSubresource.layerCount = 1;
@@ -605,7 +649,25 @@ namespace Maze
 
         _outResult.setFormat(_outputFormat);
         _outResult.setSize(m_size);
-        memcpy(_outResult.getDataRW(), stagingAllocationInfo.pMappedData, dataSize);
+
+        if (isDepth24)
+        {
+            // Narrow the 4-byte-packed GPU data back down to 3 bytes/texel
+            // to match DEPTH_U24's engine-level layout (reverse of
+            // ExpandDepth24ToDepth24Stencil8Vulkan - drop the stencil byte)
+            U8 const* packed = (U8 const*)stagingAllocationInfo.pMappedData;
+            U8* dst = _outResult.getDataRW();
+            for (Size i = 0; i < texelsCount; ++i)
+            {
+                dst[i * 3 + 0] = packed[i * 4 + 0];
+                dst[i * 3 + 1] = packed[i * 4 + 1];
+                dst[i * 3 + 2] = packed[i * 4 + 2];
+            }
+        }
+        else
+        {
+            memcpy(_outResult.getDataRW(), stagingAllocationInfo.pMappedData, dataSize);
+        }
 
         vmaDestroyBuffer(allocator, stagingBuffer, stagingAllocation);
 

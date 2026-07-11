@@ -294,7 +294,13 @@ namespace Maze
         bool m_materialUniformDirty[8] = {}; // per frame-in-flight dirty flag, indexed by frame index (see RenderSystemVulkanConfig::framesInFlight, capped)
 
         // Texture bindings pending write into the descriptor set (binding -> view/layout/sampler)
-        struct PendingTextureBinding { VkImageView view = VK_NULL_HANDLE; VkImageLayout layout = VK_IMAGE_LAYOUT_UNDEFINED; VkSampler sampler = VK_NULL_HANDLE; bool dirty = false; };
+        // isCube records the SPIR-V OpTypeImage's Dim (reflected at shader-load
+        // time) so a default/fallback descriptor write (see
+        // createMaterialUniformBuffers()) can pick a view of the matching
+        // VkImageViewType - writing a 2D view into a samplerCube binding (or
+        // vice versa) is a VkImageViewType mismatch the validation layer
+        // flags on every draw that uses it.
+        struct PendingTextureBinding { VkImageView view = VK_NULL_HANDLE; VkImageLayout layout = VK_IMAGE_LAYOUT_UNDEFINED; VkSampler sampler = VK_NULL_HANDLE; bool dirty = false; bool isCube = false; };
         Vector<PendingTextureBinding> m_textureBindings; // indexed by set-1 binding - 1 (binding 0 is the UBO)
 
         S32 m_vertexInputLocations[(S32)VertexAttributeSemantic::MAX];

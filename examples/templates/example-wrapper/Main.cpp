@@ -99,7 +99,7 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
     engineConfig.projectName = Maze::GetExampleName();
 
     // Optional engine config (e.g. 'renderSystem:String = "DX11"')
-    Maze::Path engineConfigPath = Maze::FileHelper::GetBinaryDirectory() + "/engine.mzdata";
+    Maze::Path engineConfigPath = Maze::FileHelper::GetWorkingDirectory() + "/engine.mzdata";
     if (Maze::FileHelper::IsFileExists(engineConfigPath))
     {
         engineConfig.params.loadTextFile(engineConfigPath);
@@ -111,7 +111,7 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
             Maze::g_renderSystemType = Maze::ExampleRenderSystemType::DirectX11;
 #endif
 #if MAZE_RENDER_SYSTEM_VULKAN_ENABLED
-		Maze::ThreadHelper::SleepCurrentThread(1000); // Give some time for Vulkan to loads DLLs to avoid conflicts with OpenGL
+		Maze::ThreadHelper::SleepCurrentThread(1000); // Give some time for Vulkan to load nvoglv64.dll to avoid conflicts with OpenGL
         if (renderSystemName == "Vulkan")
         {
             Maze::g_renderSystemType = Maze::ExampleRenderSystemType::Vulkan;

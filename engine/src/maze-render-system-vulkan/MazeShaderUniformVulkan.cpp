@@ -29,6 +29,7 @@
 #include "maze-render-system-vulkan/MazeRenderSystemVulkan.hpp"
 #include "maze-render-system-vulkan/MazeTexture2DVulkan.hpp"
 #include "maze-render-system-vulkan/MazeTextureCubeVulkan.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-core/math/MazeMat3.hpp"
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeTMat.hpp"
@@ -97,6 +98,9 @@ namespace Maze
             if (getType() == ShaderUniformType::UniformTexture2D)
             {
                 Texture2D* texture = getTexture2DRaw();
+                if (!texture)
+                    texture = rs->getTextureManager()->ensureBuiltinTexture2D(BuiltinTexture2DType::White).get();
+
                 if (texture)
                 {
                     Texture2DVulkan* textureVulkan = texture->castRaw<Texture2DVulkan>();
@@ -108,6 +112,9 @@ namespace Maze
             if (getType() == ShaderUniformType::UniformTextureCube)
             {
                 TextureCube* texture = getTextureCubeRaw();
+                if (!texture)
+                    texture = rs->getTextureManager()->ensureBuiltinTextureCube(BuiltinTextureCubeType::White).get();
+
                 if (texture)
                 {
                     TextureCubeVulkan* textureVulkan = texture->castRaw<TextureCubeVulkan>();
@@ -115,6 +122,16 @@ namespace Maze
                     sampler = textureVulkan->ensureSampler();
                 }
             }
+
+            // Vulkan requires every descriptor a shader might sample from to
+            // hold a valid image/sampler at draw time (unlike GL/DX11, which
+            // tolerate an unset texture uniform as an undefined-but-harmless
+            // sample) - a still-null view here means even the white-texture
+            // fallback above wasn't available (e.g. queried before
+            // TextureManager finished its builtin-texture bootstrap), so skip
+            // the write rather than recording a VK_NULL_HANDLE descriptor
+            if (view == VK_NULL_HANDLE)
+                return;
 
             shader->setTextureBinding(m_uniformData.textureBinding, view, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, sampler);
             return;

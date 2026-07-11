@@ -129,6 +129,8 @@ namespace Maze
         // Most desktop Vulkan drivers don't support 24-bit RGB for optimal tiling - expand
         // to RGBA on upload, same as Texture2DVulkan/DX11's TextureCubeDX11
         bool expandRGB = (_internalPixelFormat == PixelFormat::RGB_U8);
+        // See the identical DEPTH_U24 comment in Texture2DVulkan::loadTextureImpl
+        bool expandDepth24 = (_internalPixelFormat == PixelFormat::DEPTH_U24);
 
         VkFormat format = GetPixelFormatVulkan(_internalPixelFormat);
         MAZE_ERROR_RETURN_VALUE_IF(
@@ -216,6 +218,15 @@ namespace Maze
                     ExpandRGBToRGBAVulkan(data, &expandedData[0], pixelsCount);
                     data = &expandedData[0];
                     dataSize = pixelsCount * 4;
+                }
+                else
+                if (expandDepth24)
+                {
+                    Size texelsCount = (Size)pixelSheet.getSize().x * (Size)pixelSheet.getSize().y;
+                    expandedData.resize(texelsCount * 4);
+                    ExpandDepth24ToDepth24Stencil8Vulkan(data, &expandedData[0], texelsCount);
+                    data = &expandedData[0];
+                    dataSize = texelsCount * 4;
                 }
 
                 VkBufferCreateInfo stagingBufferInfo;

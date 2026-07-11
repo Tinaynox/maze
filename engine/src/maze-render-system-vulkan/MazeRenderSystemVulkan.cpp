@@ -151,26 +151,7 @@ namespace Maze
                 vmaDestroyBuffer(m_allocator, m_uvStreamBuffers[i], m_uvStreamAllocations[i]);
 
         if (m_allocator != VK_NULL_HANDLE)
-        {
-            // Diagnostic: if anything is still allocated at this point, VMA
-            // asserts "Unfreed dedicated allocations found!" inside
-            // vmaDestroyAllocator below with no indication of *what* leaked -
-            // dump full stats first so the assert (if it fires) is
-            // immediately preceded by exactly which allocation(s) are still
-            // live (name/size/usage). Remove once the "Unfreed dedicated
-            // allocations" issue tracked in project memory
-            // (project_vulkan_render_system.md) is resolved - this is a
-            // temporary diagnostic, not permanent shutdown-path code.
-            char* statsString = nullptr;
-            vmaBuildStatsString(m_allocator, &statsString, VK_TRUE);
-            if (statsString)
-            {
-                Debug::Log("VMA allocator stats before destroy (look for any 'Allocations' entries still listed - those are the leak):\n%s", statsString);
-                vmaFreeStatsString(m_allocator, statsString);
-            }
-
             vmaDestroyAllocator(m_allocator);
-        }
 
         if (m_device != VK_NULL_HANDLE)
             vkDestroyDevice(m_device, nullptr);
@@ -222,17 +203,19 @@ namespace Maze
         // A generous shared descriptor pool - every shader/material allocates
         // its set-1 descriptor set from here, plus the one shared set-0
         // global set
-        VkDescriptorPoolSize poolSizes[2] = {};
+        VkDescriptorPoolSize poolSizes[3] = {};
         poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         poolSizes[0].descriptorCount = 4096u;
         poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         poolSizes[1].descriptorCount = 4096u;
+        poolSizes[2].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        poolSizes[2].descriptorCount = 256u;
 
         VkDescriptorPoolCreateInfo poolInfo = {};
         poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
         poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
         poolInfo.maxSets = 4096u;
-        poolInfo.poolSizeCount = 2u;
+        poolInfo.poolSizeCount = 3u;
         poolInfo.pPoolSizes = poolSizes;
         MAZE_VK_CALL(vkCreateDescriptorPool(m_device, &poolInfo, nullptr, &m_descriptorPool));
 
@@ -509,6 +492,7 @@ namespace Maze
         features13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
         features13.dynamicRendering = VK_TRUE;
         features13.synchronization2 = VK_TRUE;
+        features13.shaderDemoteToHelperInvocation = VK_TRUE;
 
         VkPhysicalDeviceExtendedDynamicStateFeaturesEXT extendedDynamicStateFeatures = {};
         extendedDynamicStateFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT;
@@ -778,6 +762,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void RenderSystemVulkan::interruptActiveRenderTarget()
+    {
+        if (m_stateMachine)
+            m_stateMachine->unbindRenderTarget();
+
+        if (m_currentRenderTarget)
+        {
+            m_currentRenderTarget->processRenderTargetWillReset();
+            m_currentRenderTarget = nullptr;
+        }
+    }
+
+    //////////////////////////////////////////
     void RenderSystemVulkan::clearCurrentRenderTarget(
         bool _colorBuffer,
         bool _depthBuffer,
@@ -999,6 +996,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void RenderSystemVulkan::addPendingImageTransition(
+        VkImage _image,
+        VkImageAspectFlags _aspect,
+        VkImageLayout _oldLayout,
+        VkImageLayout _newLayout)
+    {
+        VulkanPendingImageTransition transition;
+        transition.image = _image;
+        transition.aspect = _aspect;
+        transition.oldLayout = _oldLayout;
+        transition.newLayout = _newLayout;
+        m_pendingImageTransitions.push_back(transition);
+    }
+
+    //////////////////////////////////////////
     VkSemaphore RenderSystemVulkan::endFrame()
     {
         if (!m_frameOpen)
@@ -1008,6 +1020,18 @@ namespace Maze
 
         if (m_stateMachine)
             m_stateMachine->unbindRenderTarget();
+
+        // Any transitions deferred via addPendingImageTransition() (e.g. a
+        // swapchain image's present-layout transition queued from
+        // RenderWindowVulkan::endDraw()) are only legal to record now that
+        // unbindRenderTarget() has closed the dynamic-rendering scope above
+        for (VulkanPendingImageTransition const& transition : m_pendingImageTransitions)
+        {
+            TransitionImageLayoutVulkan(
+                frame.commandBuffer, transition.image, transition.aspect,
+                transition.oldLayout, transition.newLayout);
+        }
+        m_pendingImageTransitions.clear();
 
         MAZE_VK_CALL(vkEndCommandBuffer(frame.commandBuffer));
 

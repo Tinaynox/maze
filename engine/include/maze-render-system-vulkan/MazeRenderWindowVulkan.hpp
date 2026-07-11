@@ -148,6 +148,17 @@ namespace Maze
         U32 m_currentImageIndex = 0u;
         bool m_imageAcquired = false;
 
+        // Guards against queueing the present-layout transition more than
+        // once for the same acquired image - endDraw() can be called
+        // multiple times per frame for the same render target (2D and 3D
+        // render controller modules each call it on the same window when a
+        // scene draws both), but m_imageAcquired alone doesn't prevent a
+        // second queueing since it's only cleared in swapBuffers(). A
+        // duplicate queued transition would record a second barrier whose
+        // declared oldLayout (COLOR_ATTACHMENT_OPTIMAL) no longer matches
+        // the image's actual layout after the first transition already ran.
+        bool m_presentTransitionQueued = false;
+
         VkImage m_depthImage = VK_NULL_HANDLE;
         VmaAllocation m_depthImageAllocation = VK_NULL_HANDLE;
         VkImageView m_depthImageView = VK_NULL_HANDLE;

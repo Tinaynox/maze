@@ -407,21 +407,21 @@ namespace Maze
     //////////////////////////////////////////
     void RenderWindowVulkan::endDraw()
     {
-        // Transition the acquired swapchain image to present-ready while the
-        // frame's command buffer is still open for recording - relying on
-        // processRenderTargetWillReset() for this would only fire if a
-        // different render target subsequently becomes current, which isn't
-        // guaranteed to happen before swapBuffers()/endFrame() submits and
-        // closes the command buffer
-        if (m_imageAcquired)
+        // Queue the acquired swapchain image's present-layout transition -
+        // this render target's dynamic-rendering scope (vkCmdBeginRendering)
+        // is still open at this point (it only closes in
+        // RenderSystemVulkan::endFrame()'s unbindRenderTarget() call, which
+        // happens later, from swapBuffers()), and vkCmdPipelineBarrier is
+        // illegal to record while that scope is open. Deferring through
+        // addPendingImageTransition() ensures the transition is recorded
+        // after the scope actually closes but before the command buffer
+        // stops recording.
+        if (m_imageAcquired && !m_presentTransitionQueued)
         {
-            VkCommandBuffer cmd = getRenderSystemVulkanRaw()->getCurrentCommandBuffer();
-            if (cmd != VK_NULL_HANDLE)
-            {
-                TransitionImageLayoutVulkan(
-                    cmd, m_swapChainImages[m_currentImageIndex], VK_IMAGE_ASPECT_COLOR_BIT,
-                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
-            }
+            getRenderSystemVulkanRaw()->addPendingImageTransition(
+                m_swapChainImages[m_currentImageIndex], VK_IMAGE_ASPECT_COLOR_BIT,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+            m_presentTransitionQueued = true;
         }
 
         RenderWindow::endDraw();
@@ -503,6 +503,7 @@ namespace Maze
 
         rs->addFrameWaitSemaphore(acquireSemaphore, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
         m_imageAcquired = true;
+        m_presentTransitionQueued = false;
 
         return true;
     }
@@ -511,6 +512,13 @@ namespace Maze
     void RenderWindowVulkan::processRenderTargetSet()
     {
         StateMachineVulkan* stateMachine = getRenderSystemVulkanRaw()->getStateMachine();
+
+        // A previously-bound render target's dynamic-rendering scope may
+        // still be open on this command buffer (bindRenderTarget() below
+        // would close it, but only after the transition call right below
+        // this comment has already tried to record a barrier - which is
+        // illegal while that scope is still open)
+        stateMachine->unbindRenderTarget();
 
         VkImageView colorView = m_swapChainImageViews[m_currentImageIndex];
 

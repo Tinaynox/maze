@@ -175,6 +175,14 @@ namespace Maze
     void RenderBufferVulkan::processRenderTargetSet()
     {
         StateMachineVulkan* stateMachine = getRenderSystemVulkanRaw()->getStateMachine();
+
+        // Close any previously-bound render target's dynamic-rendering scope
+        // before recording the attachment layout transitions below -
+        // bindRenderTarget() further down would close it too, but only after
+        // those transitions already tried (illegally) to record a barrier
+        // while the scope was still open
+        stateMachine->unbindRenderTarget();
+
         VkCommandBuffer cmd = getRenderSystemVulkanRaw()->getCurrentCommandBuffer();
 
         VkImageView colorViews[StateMachineVulkan::c_colorAttachmentsMax];
@@ -264,6 +272,15 @@ namespace Maze
     {
         MAZE_ERROR_RETURN_IF(!_srcBuffer, "Source buffer is null!");
 
+        // blit() runs outside the normal setCurrentRenderTarget() flow, so
+        // whichever target was last bound (likely _srcBuffer, having just
+        // finished rendering into it) may still have its dynamic-rendering
+        // scope open - none of the barriers/vkCmdResolveImage/vkCmdCopyImage
+        // calls below are legal while that's the case. This also forgets the
+        // current render target so a later setCurrentRenderTarget() to the
+        // same target properly reopens a scope instead of no-op'ing.
+        getRenderSystemVulkanRaw()->interruptActiveRenderTarget();
+
         VkCommandBuffer cmd = getRenderSystemVulkanRaw()->getCurrentCommandBuffer();
         MAZE_ERROR_RETURN_IF(cmd == VK_NULL_HANDLE, "No active command buffer!");
 
@@ -324,9 +341,7 @@ namespace Maze
                 blitTexture(dstTexture, srcTexture, getSize());
         }
 
-        // Depth: vkCmdResolveImage on a depth-aspect image is used for the
-        // MSAA case (see RenderSystemVulkan::resolveDepthMSAA - unlike DX11,
-        // Vulkan supports this directly), a plain copy otherwise
+        // Depth
         TexturePtr const& dstDepthTexture = getDepthTexture();
         TexturePtr const& srcDepthTexture = _srcBuffer->getDepthTexture();
         if (dstDepthTexture && srcDepthTexture)
@@ -344,11 +359,24 @@ namespace Maze
 
                 if (srcMultisampled && !dstMultisampled)
                 {
-                    VkImageResolve region = {};
-                    region.srcSubresource = { VK_IMAGE_ASPECT_DEPTH_BIT, 0u, 0u, 1u };
-                    region.dstSubresource = { VK_IMAGE_ASPECT_DEPTH_BIT, 0u, 0u, 1u };
-                    region.extent = { getSize().x, getSize().y, 1u };
-                    vkCmdResolveImage(cmd, src, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1u, &region);
+                    // Unlike color, vkCmdResolveImage requires
+                    // VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT on both images and
+                    // is not valid for depth-aspect resolves (VK_KHR_depth_stencil_resolve
+                    // only extends *render-pass-integrated* resolve via
+                    // VkRenderingAttachmentInfo::resolveMode/resolveImageView,
+                    // which must be set when the source's rendering scope
+                    // begins - blit() runs after that scope already closed, so
+                    // it can't be retrofitted here). Also, vkCmdCopyImage
+                    // requires matching sample counts, so a plain copy can't
+                    // substitute either. A correct fix needs either a
+                    // fullscreen-shader manual resolve (see DX11's
+                    // resolveDepthMSAA/c_depthResolveShaderSourceDX11 for the
+                    // reference implementation) or threading a resolve target
+                    // through StateMachineVulkan::bindRenderTarget() so the
+                    // original render pass performs the resolve on
+                    // vkCmdEndRendering. Neither is implemented yet - skip
+                    // rather than record an invalid/undefined command.
+                    MAZE_ERROR("RenderBufferVulkan::blit(): multisampled depth resolve is not implemented - skipping (see comment)");
                 }
                 else
                 if (srcMultisampled == dstMultisampled)

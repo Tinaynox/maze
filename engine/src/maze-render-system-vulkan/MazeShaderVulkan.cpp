@@ -32,6 +32,7 @@
 #include "maze-render-system-vulkan/MazeStateMachineVulkan.hpp"
 #include "maze-render-system-vulkan/MazeTexture2DVulkan.hpp"
 #include "maze-render-system-vulkan/MazeTextureCubeVulkan.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
@@ -554,6 +555,12 @@ namespace Maze
 
                 if ((S32)m_textureBindings.size() <= uniformData.textureBinding)
                     m_textureBindings.resize(uniformData.textureBinding + 1);
+
+                // Needed so a default/fallback descriptor write (see
+                // createMaterialUniformBuffers()) picks a matching
+                // VkImageViewType - writing a 2D fallback into a samplerCube
+                // binding trips a validation error on every draw
+                m_textureBindings[uniformData.textureBinding].isCube = (binding->image.dim == SpvDimCube);
             }
             // Set-0 storage-buffer instance streams (ModelMatrices/Colors/UV)
             // are bound once by RenderSystemVulkan/InstanceStreamsVulkan and
@@ -621,6 +628,45 @@ namespace Maze
         VkDevice device = rs->getDevice();
         U32 framesInFlight = rs->getFramesInFlight();
 
+        // Every set-1 combined-image-sampler binding must hold a valid
+        // descriptor by the time it's ever sampled, even if the owning
+        // material never explicitly assigns that texture uniform (unlike
+        // GL/DX11, Vulkan has no concept of an implicitly-safe "unbound"
+        // sampler) - write the engine's white texture into every texture
+        // binding right away so nothing is ever left holding a garbage/null
+        // descriptor; ShaderUniformVulkan::processSimpleUniformChanged()
+        // overwrites it later with the real assignment, if any
+        // getWhiteTexture()/getWhiteCubeTexture() are passive accessors that
+        // return null until something else has already lazily created the
+        // builtin - since a shader can compile before anything else has
+        // touched these builtins, use the create-if-missing ensure*() variant
+        // instead so the fallback is always actually available (a silent
+        // "continue" below when null would leave the descriptor holding
+        // whatever the pool's backing memory previously contained, e.g. a
+        // stale 2D view from an unrelated freed descriptor set - which is
+        // what a validation layer reporting a concrete-but-wrong
+        // VkImageViewType on an ostensibly-never-written binding indicates)
+        VkImageView defaultView2D = VK_NULL_HANDLE;
+        VkSampler defaultSampler2D = VK_NULL_HANDLE;
+        if (Texture2DPtr const& whiteTexture = rs->getTextureManager()->ensureBuiltinTexture2D(BuiltinTexture2DType::White))
+        {
+            Texture2DVulkan* whiteTextureVulkan = whiteTexture->castRaw<Texture2DVulkan>();
+            defaultView2D = whiteTextureVulkan->getImageView();
+            defaultSampler2D = whiteTextureVulkan->ensureSampler();
+        }
+
+        // A samplerCube binding needs a cube-view default - writing the 2D
+        // fallback above into it is a VkImageViewType mismatch the
+        // validation layer flags on every draw that uses it
+        VkImageView defaultViewCube = VK_NULL_HANDLE;
+        VkSampler defaultSamplerCube = VK_NULL_HANDLE;
+        if (TextureCubePtr const& whiteCubeTexture = rs->getTextureManager()->ensureBuiltinTextureCube(BuiltinTextureCubeType::White))
+        {
+            TextureCubeVulkan* whiteCubeTextureVulkan = whiteCubeTexture->castRaw<TextureCubeVulkan>();
+            defaultViewCube = whiteCubeTextureVulkan->getImageView();
+            defaultSamplerCube = whiteCubeTextureVulkan->ensureSampler();
+        }
+
         // Round up to 256 to keep alignment-friendly (min UBO alignment on
         // most desktop GPUs is <= 256, this avoids a device-query round-trip
         // at the cost of a little wasted memory)
@@ -663,6 +709,11 @@ namespace Maze
             bufInfo.offset = 0u;
             bufInfo.range = bufferSize;
 
+            Vector<VkWriteDescriptorSet> writes;
+            Vector<VkDescriptorImageInfo> imageInfos;
+            writes.reserve(m_textureBindings.size() + 1u);
+            imageInfos.reserve(m_textureBindings.size());
+
             VkWriteDescriptorSet write = {};
             write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
             write.dstSet = m_materialDescriptorSets[i];
@@ -670,7 +721,33 @@ namespace Maze
             write.descriptorCount = 1u;
             write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             write.pBufferInfo = &bufInfo;
-            vkUpdateDescriptorSets(device, 1u, &write, 0u, nullptr);
+            writes.push_back(write);
+
+            for (Size b = 0; b < m_textureBindings.size(); ++b)
+            {
+                bool isCube = m_textureBindings[b].isCube;
+                VkImageView view = isCube ? defaultViewCube : defaultView2D;
+                VkSampler sampler = isCube ? defaultSamplerCube : defaultSampler2D;
+                if (view == VK_NULL_HANDLE)
+                    continue;
+
+                VkDescriptorImageInfo imageInfo = {};
+                imageInfo.imageView = view;
+                imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                imageInfo.sampler = sampler;
+                imageInfos.push_back(imageInfo);
+
+                VkWriteDescriptorSet textureWrite = {};
+                textureWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                textureWrite.dstSet = m_materialDescriptorSets[i];
+                textureWrite.dstBinding = (U32)(b + 1u);
+                textureWrite.descriptorCount = 1u;
+                textureWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                textureWrite.pImageInfo = &imageInfos.back();
+                writes.push_back(textureWrite);
+            }
+
+            vkUpdateDescriptorSets(device, (U32)writes.size(), writes.data(), 0u, nullptr);
 
             m_materialUniformDirty[Math::Min(i, (U32)(sizeof(m_materialUniformDirty)/sizeof(m_materialUniformDirty[0])) - 1u)] = true;
         }

@@ -269,6 +269,18 @@ namespace Maze
         if (m_renderingActive)
             unbindRenderTarget();
 
+        // A zero-size render area is invalid for vkCmdBeginRendering/
+        // vkCmdSetViewport (seen from a render buffer used before its first
+        // setSize() call, or a bloom-chain mip whose size rounded down to
+        // zero) - skip opening a rendering scope rather than recording an
+        // invalid begin-rendering call; draws issued while no target is
+        // bound are naturally a no-op downstream
+        if (_renderTargetSize.x == 0u || _renderTargetSize.y == 0u)
+        {
+            m_renderingActive = false;
+            return;
+        }
+
         m_colorViewsCount = Math::Min(_colorViewsCount, c_colorAttachmentsMax);
         for (S32 i = 0; i < m_colorViewsCount; ++i)
             m_colorViews[i] = _colorViews[i];
@@ -357,8 +369,53 @@ namespace Maze
         if (it != m_pipelines.end())
             return it->second;
 
-        Vector<VkVertexInputBindingDescription> const& bindingDescs = m_currentVAO->getVertexInputBindingDescriptions();
-        Vector<VkVertexInputAttributeDescription> const& attributeDescs = m_currentVAO->getVertexInputAttributeDescriptions();
+        // The VAO's own attribute descriptions only cover semantics it has real
+        // data for - a shader may declare an input (e.g. a_color) that this
+        // particular mesh never populated. Missing locations the shader needs
+        // fall back to the shared zero-stride buffer (c_zeroBufferSlot), same
+        // as RenderSystemDX11::ensureInputLayout's per-(shader,VAO) merge -
+        // omitting them here left the pipeline's vertex input state missing a
+        // location the shader's SPIR-V declares, which is invalid.
+        Vector<VkVertexInputAttributeDescription> const& vaoAttributeDescs = m_currentVAO->getVertexInputAttributeDescriptions();
+        Vector<VkVertexInputBindingDescription> bindingDescs = m_currentVAO->getVertexInputBindingDescriptions();
+        Vector<VkVertexInputAttributeDescription> attributeDescs = vaoAttributeDescs;
+
+        bool zeroBufferBindingAdded = false;
+        for (S32 s = 0; s < (S32)VertexAttributeSemantic::MAX; ++s)
+        {
+            S32 shaderLocation = m_currentShader->getVertexInputLocation((VertexAttributeSemantic)s);
+            if (shaderLocation < 0)
+                continue;
+
+            bool coveredByVAO = false;
+            for (VkVertexInputAttributeDescription const& attr : vaoAttributeDescs)
+            {
+                if (attr.location == (U32)shaderLocation)
+                {
+                    coveredByVAO = true;
+                    break;
+                }
+            }
+            if (coveredByVAO)
+                continue;
+
+            if (!zeroBufferBindingAdded)
+            {
+                VkVertexInputBindingDescription zeroBinding = {};
+                zeroBinding.binding = (U32)VertexArrayObjectVulkan::c_zeroBufferSlot;
+                zeroBinding.stride = 0u;
+                zeroBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+                bindingDescs.push_back(zeroBinding);
+                zeroBufferBindingAdded = true;
+            }
+
+            VkVertexInputAttributeDescription fallbackAttr = {};
+            fallbackAttr.location = (U32)shaderLocation;
+            fallbackAttr.binding = (U32)VertexArrayObjectVulkan::c_zeroBufferSlot;
+            fallbackAttr.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+            fallbackAttr.offset = 0u;
+            attributeDescs.push_back(fallbackAttr);
+        }
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;

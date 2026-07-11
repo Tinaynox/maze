@@ -142,8 +142,10 @@ namespace Maze
             return false;
 
         processUniformWillBeChanged();
-        
-        m_value.set(_texture2D); 
+
+        m_value.set(_texture2D);
+
+        processSimpleUniformChanged();
 
         return true;
     }
@@ -174,7 +176,7 @@ namespace Maze
 
         m_value.set(_textureCube);
 
-        // processSimpleUniformChanged();
+        processSimpleUniformChanged();
 
         return true;
     }

@@ -177,7 +177,11 @@ namespace Maze
         // silently fall back to a non-sampled depth-only texture), Vulkan has no such
         // feature-level split - SAMPLED_BIT is always legal alongside
         // (DEPTH_STENCIL_)ATTACHMENT_BIT on a multisampled image
-        imageInfo.usage = VK_IMAGE_USAGE_SAMPLED_BIT | (isDepth ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT : VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+        // TRANSFER_SRC_BIT is required by vkCmdResolveImage/vkCmdCopyImage,
+        // which RenderBufferVulkan::blit() uses to downsample/copy this
+        // texture into a non-multisampled destination
+        imageInfo.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
+            (isDepth ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT : VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
         imageInfo.samples = m_sampleCount;
         imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 

@@ -219,7 +219,12 @@ namespace Maze
                             VertexArrayObjectVulkan* vao = command->vao->castRaw<VertexArrayObjectVulkan>();
 
                             S32 indicesCount = (S32)vao->getIndicesCount();
-                            if (indicesCount > 0)
+                            // No active dynamic-rendering scope (e.g. the
+                            // current render target's size was zero when
+                            // bound - see StateMachineVulkan::bindRenderTarget's
+                            // guard) means vkCmdDrawIndexed would be recorded
+                            // outside a render pass instance, which is invalid
+                            if (indicesCount > 0 && stateMachine->isRenderingActive())
                             {
 #if (MAZE_DEBUG)
                                 S32 renderSystemDrawCallsLimit = m_renderTarget->getRenderSystem()->getDrawCallsLimit();

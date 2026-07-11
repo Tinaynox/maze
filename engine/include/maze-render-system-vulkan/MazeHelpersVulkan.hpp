@@ -66,6 +66,18 @@ namespace Maze
         Size _pixelsCount);
 
     //////////////////////////////////////////
+    // Expands tightly packed 24-bit-depth-only texel data (PixelFormat::DEPTH_U24,
+    // 3 bytes/texel at the engine level) to the 32-bit VK_FORMAT_D24_UNORM_S8_UINT
+    // this format is actually backed by on Vulkan (no stencil-less D24 format is
+    // guaranteed supported - see GetPixelFormatVulkan/GetImageAspectFlagsVulkan) -
+    // copies the 3 depth bytes as-is into the low 3 bytes of each 4-byte texel and
+    // zero-fills the 4th (stencil) byte
+    MAZE_RENDER_SYSTEM_VULKAN_API void ExpandDepth24ToDepth24Stencil8Vulkan(
+        U8 const* _src,
+        U8* _dst,
+        Size _texelsCount);
+
+    //////////////////////////////////////////
     MAZE_RENDER_SYSTEM_VULKAN_API VkBlendFactor GetBlendFactorVulkan(BlendFactor _blendFactor);
 
     //////////////////////////////////////////

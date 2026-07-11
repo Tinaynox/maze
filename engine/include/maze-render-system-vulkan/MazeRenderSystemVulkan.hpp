@@ -75,6 +75,23 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // A layout transition deferred until the frame's dynamic-rendering scope
+    // is guaranteed closed - vkCmdPipelineBarrier is illegal between
+    // vkCmdBeginRendering/vkCmdEndRendering, but callers like
+    // RenderWindowVulkan::endDraw() need to queue the swapchain image's
+    // present-layout transition while it's still current/bound, before the
+    // rendering scope actually gets torn down in endFrame(). See
+    // RenderSystemVulkan::addPendingImageTransition/endFrame().
+    struct MAZE_RENDER_SYSTEM_VULKAN_API VulkanPendingImageTransition
+    {
+        VkImage image = VK_NULL_HANDLE;
+        VkImageAspectFlags aspect = 0u;
+        VkImageLayout oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        VkImageLayout newLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    };
+
+
+    //////////////////////////////////////////
     // Class RenderSystemVulkan
     //
     //////////////////////////////////////////
@@ -233,6 +250,18 @@ namespace Maze
         virtual bool setCurrentRenderTarget(RenderTarget* _renderTarget) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        // Closes any dynamic-rendering scope currently open on the frame's
+        // command buffer and forgets the current render target, so a
+        // subsequent setCurrentRenderTarget() call - even to the same target -
+        // fully re-runs processRenderTargetSet() and reopens a fresh scope.
+        // Used by standalone image-transfer operations (RenderBufferVulkan::blit())
+        // that need to record vkCmdPipelineBarrier/vkCmdResolveImage/vkCmdCopyImage
+        // outside of any render target's currently-bound rendering scope, since
+        // none of those calls are legal while a vkCmdBeginRendering/vkCmdEndRendering
+        // scope is open.
+        void interruptActiveRenderTarget();
+
+        //////////////////////////////////////////
         virtual void clearCurrentRenderTarget(
             bool _colorBuffer = true,
             bool _depthBuffer = true,
@@ -337,6 +366,21 @@ namespace Maze
         void addFrameWaitSemaphore(VkSemaphore _semaphore, VkPipelineStageFlags _waitStage);
 
         //////////////////////////////////////////
+        // Queues an image-layout transition to be recorded once the current
+        // frame's dynamic-rendering scope is closed (right before its command
+        // buffer stops recording in endFrame()) - vkCmdPipelineBarrier can't
+        // be called while a vkCmdBeginRendering/vkCmdEndRendering scope is
+        // still open, so callers that need to transition a still-bound
+        // render target's image (e.g. RenderWindowVulkan::endDraw() wanting
+        // the swapchain image in PRESENT_SRC_KHR) must defer through here
+        // instead of calling TransitionImageLayoutVulkan directly.
+        void addPendingImageTransition(
+            VkImage _image,
+            VkImageAspectFlags _aspect,
+            VkImageLayout _oldLayout,
+            VkImageLayout _newLayout);
+
+        //////////////////////////////////////////
         // Submits the currently open frame's command buffer (waiting on any
         // semaphores registered via addFrameWaitSemaphore since the frame was
         // opened) and advances the frame-in-flight index. Returns a semaphore
@@ -424,6 +468,7 @@ namespace Maze
         bool m_frameOpen = false;
         Vector<VkSemaphore> m_frameWaitSemaphores;
         Vector<VkPipelineStageFlags> m_frameWaitStages;
+        Vector<VulkanPendingImageTransition> m_pendingImageTransitions;
 
         // One-off transient command pool for beginSingleTimeCommands/endSingleTimeCommands
         VkCommandPool m_transientCommandPool = VK_NULL_HANDLE;
