@@ -24,7 +24,6 @@
 
 
 //////////////////////////////////////////
-#define VMA_IMPLEMENTATION
 #include "MazeRenderSystemVulkanHeader.hpp"
 #include "maze-render-system-vulkan/MazeRenderSystemVulkan.hpp"
 #include "maze-render-system-vulkan/MazeShaderSystemVulkan.hpp"
@@ -41,6 +40,26 @@
 #include "maze-render-system-vulkan/MazeRenderWindowVulkan.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+
+//////////////////////////////////////////
+// VMA is a single-header library: declarations are pulled in (guarded by
+// AMD_VULKAN_MEMORY_ALLOCATOR_H) via MazeRenderSystemVulkanHeader.hpp above,
+// same as every other translation unit in this module. The IMPLEMENTATION
+// section of vk_mem_alloc.h sits OUTSIDE that guard (gated only by
+// '#ifdef VMA_IMPLEMENTATION'), so re-including the header here with
+// VMA_IMPLEMENTATION defined compiles the function bodies into exactly this
+// one translation unit, as the library's own docs require.
+//
+// This must happen here, AFTER MazeRenderSystemVulkanHeader.hpp is included
+// above - this whole file compiles with a precompiled header (/Yu, see
+// maze_add_module's FORWARD_HEADER wiring in Macros.cmake) built from that
+// exact header with VMA_IMPLEMENTATION undefined, so a #define placed BEFORE
+// this file's own PCH-boundary include line has no effect (MSVC treats
+// everything up to and including that line as identical to the PCH and
+// substitutes the precompiled state verbatim, without re-lexing it) - it has
+// to be a second, later include instead.
+#define VMA_IMPLEMENTATION
+#include <vk_mem_alloc.h>
 
 
 //////////////////////////////////////////
