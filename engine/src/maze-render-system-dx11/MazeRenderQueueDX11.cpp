@@ -294,7 +294,7 @@ namespace Maze
                         RenderCommandSetShaderUniformVec2F* command = static_cast<RenderCommandSetShaderUniformVec2F*>(_command);
                         if (ShaderDX11* shader = stateMachine->getCurrentShader())
                         {
-                            ShaderUniformPtr const& uniform = shader->ensureUniform(command->name);
+                            ShaderUniformPtr const& uniform = shader->getUniform(command->name);
                             if (uniform)
                                 uniform->set(command->value);
                         }
@@ -307,7 +307,7 @@ namespace Maze
                         {
                             if (ShaderDX11* shader = stateMachine->getCurrentShader())
                             {
-                                ShaderUniformPtr const& uniform = shader->ensureUniform(command->name);
+                                ShaderUniformPtr const& uniform = shader->getUniform(command->name);
                                 if (uniform)
                                     uniform->set(texture);
                             }
@@ -319,7 +319,7 @@ namespace Maze
                         RenderCommandUploadShaderUniformVec2F* command = static_cast<RenderCommandUploadShaderUniformVec2F*>(_command);
                         if (ShaderDX11* shader = stateMachine->getCurrentShader())
                         {
-                            ShaderUniformPtr const& uniform = shader->ensureUniform(command->name);
+                            ShaderUniformPtr const& uniform = shader->getUniform(command->name);
                             if (uniform)
                                 uniform->upload(command->pointer, (Size)command->count);
                         }
@@ -330,7 +330,7 @@ namespace Maze
                         RenderCommandUploadShaderUniformVec3F* command = static_cast<RenderCommandUploadShaderUniformVec3F*>(_command);
                         if (ShaderDX11* shader = stateMachine->getCurrentShader())
                         {
-                            ShaderUniformPtr const& uniform = shader->ensureUniform(command->name);
+                            ShaderUniformPtr const& uniform = shader->getUniform(command->name);
                             if (uniform)
                                 uniform->upload(command->pointer, (Size)command->count);
                         }
@@ -341,7 +341,7 @@ namespace Maze
                         RenderCommandUploadShaderUniformVec4F* command = static_cast<RenderCommandUploadShaderUniformVec4F*>(_command);
                         if (ShaderDX11* shader = stateMachine->getCurrentShader())
                         {
-                            ShaderUniformPtr const& uniform = shader->ensureUniform(command->name);
+                            ShaderUniformPtr const& uniform = shader->getUniform(command->name);
                             if (uniform)
                                 uniform->upload(command->pointer, (Size)command->count);
                         }
@@ -352,7 +352,7 @@ namespace Maze
                         RenderCommandUploadShaderUniformMat3F* command = static_cast<RenderCommandUploadShaderUniformMat3F*>(_command);
                         if (ShaderDX11* shader = stateMachine->getCurrentShader())
                         {
-                            ShaderUniformPtr const& uniform = shader->ensureUniform(command->name);
+                            ShaderUniformPtr const& uniform = shader->getUniform(command->name);
                             if (uniform)
                                 uniform->upload(command->pointer, (Size)command->count);
                         }
@@ -363,7 +363,7 @@ namespace Maze
                         RenderCommandUploadShaderUniformMat4F* command = static_cast<RenderCommandUploadShaderUniformMat4F*>(_command);
                         if (ShaderDX11* shader = stateMachine->getCurrentShader())
                         {
-                            ShaderUniformPtr const& uniform = shader->ensureUniform(command->name);
+                            ShaderUniformPtr const& uniform = shader->getUniform(command->name);
                             if (uniform)
                                 uniform->upload(command->pointer, (Size)command->count);
                         }
@@ -374,7 +374,7 @@ namespace Maze
                         RenderCommandUploadShaderUniformTMat* command = static_cast<RenderCommandUploadShaderUniformTMat*>(_command);
                         if (ShaderDX11* shader = stateMachine->getCurrentShader())
                         {
-                            ShaderUniformPtr const& uniform = shader->ensureUniform(command->name);
+                            ShaderUniformPtr const& uniform = shader->getUniform(command->name);
                             if (uniform)
                                 uniform->upload(command->pointer, (Size)command->count);
                         }
@@ -517,7 +517,7 @@ namespace Maze
         }
 
         // Render target orientation (offscreen targets are rendered flipped)
-        ShaderUniformPtr const& flipYUniform = shader->ensureUniform(c_renderTargetFlipYUniformName);
+        ShaderUniformPtr const& flipYUniform = shader->getUniform(c_renderTargetFlipYUniformName);
         if (flipYUniform)
             flipYUniform->set(stateMachine->getFlipY() ? -1.0f : 1.0f);
     }

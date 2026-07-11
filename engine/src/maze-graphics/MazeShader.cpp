@@ -137,31 +137,28 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderUniformPtr const& Shader::ensureUniform(HashedCString _uniformName, ShaderUniformType _type)
+    ShaderUniformPtr const& Shader::getUniform(HashedCString _uniformName) const
     {
-        UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(_uniformName.hash);
-        if (it != m_uniformsCache.end())
-        {
-#if MAZE_DEBUG && 0
-            MAZE_ERROR_IF(it->second && it->second->getName().asHashedCString() != _uniformName, "Hash collision detected!");
-#endif
-            return it->second;
-        }
+        static ShaderUniformPtr const nullPointer;
 
-        return createUniformFromShader(_uniformName);
+        UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniforms.find(_uniformName.hash);
+        if (it != m_uniforms.end())
+            return it->second;
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////
     bool Shader::hasUniform(HashedCString _uniformName)
     {
-        UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(_uniformName.hash);
-        return (it != m_uniformsCache.end()) && it->second;
+        UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniforms.find(_uniformName.hash);
+        return (it != m_uniforms.end()) && it->second;
     }
 
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, ShaderUniformVariant const& _value, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -175,7 +172,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, S32 _value, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -189,7 +186,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, F32 _value, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -203,7 +200,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, bool _value, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -217,7 +214,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Texture2DPtr const& _texture2D, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -231,7 +228,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Vec2F const& _vector, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -245,7 +242,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Vec3F const& _vector, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -259,7 +256,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Vec4F const& _vector, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -274,7 +271,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Vec2S const& _vector, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -288,7 +285,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Vec3S const& _vector, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -302,7 +299,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Vec4S const& _vector, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -317,7 +314,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Vec2U const& _vector, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -331,7 +328,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Vec3U const& _vector, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -345,7 +342,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Vec4U const& _vector, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -359,7 +356,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Vec2B const& _vector, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -373,7 +370,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Vec3B const& _vector, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -387,7 +384,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Vec4B const& _vector, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -401,7 +398,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Mat3F const& _matrix, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -415,7 +412,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Mat4F const& _matrix, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -429,7 +426,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, TMat const& _matrix, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -443,7 +440,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(ShaderUniformVariant const& _variant, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_variant.getName());
+        const ShaderUniformPtr& uniform = getUniform(_variant.getName());
 
         if (!uniform)
         {
@@ -457,7 +454,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Mat3F* _matrices, Size _count, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
         
         if (!uniform)
         {
@@ -471,7 +468,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Mat4F* _matrices, Size _count, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -485,7 +482,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, TMat* _matrices, Size _count, bool _warningIfNotExists)
     {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+        const ShaderUniformPtr& uniform = getUniform(_uniformName);
 
         if (!uniform)
         {
@@ -660,21 +657,21 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::assignDefaultUniforms()
     {
-        m_clipDistance0Uniform = ensureUniform(MAZE_HCS("u_clipDistance0"));
-        m_clipDistanceEnableUniform = ensureUniform(MAZE_HCS("u_clipDistanceEnable"));
-        m_projectionMatrixUniform = ensureUniform(MAZE_HCS("u_projectionMatrix"));
-        m_projectionParamsUniform = ensureUniform(MAZE_HCS("u_projectionParams"));
-        m_viewMatrixUniform = ensureUniform(MAZE_HCS("u_viewMatrix"));
-        m_modelMatricesUniform = ensureUniform(MAZE_HCS("u_modelMatrices"));
-        m_modelMatricesTextureUniform = ensureUniform(MAZE_HCS("u_modelMatricesTexture"));
-        m_modelMatricesTextureSizeUniform = ensureUniform(MAZE_HCS("u_modelMatricesTextureSize"));
-        m_modelMatriciesOffsetUniform = ensureUniform(MAZE_HCS("u_modelMatriciesOffset"));
-        m_viewPositionUniform = ensureUniform(MAZE_HCS("u_viewPosition"));
-        m_timeUniform = ensureUniform(MAZE_HCS("u_time"));
-        m_mainLightColorUniform = ensureUniform(MAZE_HCS("u_mainLightColor"));
-        m_mainLightDirectionUniform = ensureUniform(MAZE_HCS("u_mainLightDirection"));
-        m_mainLightViewProjectionMatrixUniform = ensureUniform(MAZE_HCS("u_mainLightViewProjectionMatrix"));
-        m_mainLightShadowMapUniform = ensureUniform(MAZE_HCS("u_mainLightShadowMap"));
+        m_clipDistance0Uniform = getUniform(MAZE_HCS("u_clipDistance0"));
+        m_clipDistanceEnableUniform = getUniform(MAZE_HCS("u_clipDistanceEnable"));
+        m_projectionMatrixUniform = getUniform(MAZE_HCS("u_projectionMatrix"));
+        m_projectionParamsUniform = getUniform(MAZE_HCS("u_projectionParams"));
+        m_viewMatrixUniform = getUniform(MAZE_HCS("u_viewMatrix"));
+        m_modelMatricesUniform = getUniform(MAZE_HCS("u_modelMatrices"));
+        m_modelMatricesTextureUniform = getUniform(MAZE_HCS("u_modelMatricesTexture"));
+        m_modelMatricesTextureSizeUniform = getUniform(MAZE_HCS("u_modelMatricesTextureSize"));
+        m_modelMatriciesOffsetUniform = getUniform(MAZE_HCS("u_modelMatriciesOffset"));
+        m_viewPositionUniform = getUniform(MAZE_HCS("u_viewPosition"));
+        m_timeUniform = getUniform(MAZE_HCS("u_time"));
+        m_mainLightColorUniform = getUniform(MAZE_HCS("u_mainLightColor"));
+        m_mainLightDirectionUniform = getUniform(MAZE_HCS("u_mainLightDirection"));
+        m_mainLightViewProjectionMatrixUniform = getUniform(MAZE_HCS("u_mainLightViewProjectionMatrix"));
+        m_mainLightShadowMapUniform = getUniform(MAZE_HCS("u_mainLightShadowMap"));
     }
 
     //////////////////////////////////////////
@@ -728,7 +725,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::clearUniformsCache()
     {
-        m_uniformsCache.clear();
+        m_uniforms.clear();
     }
 
     //////////////////////////////////////////
@@ -855,7 +852,7 @@ namespace Maze
     {
         Vector<ShaderUniformVariant> uniforms;
 
-        for (auto const& uniformData : m_uniformsCache)
+        for (auto const& uniformData : m_uniforms)
         {
             if (uniformData.second && uniformData.second->getType() != ShaderUniformType::None)
                 uniforms.push_back(uniformData.second->getValue());
@@ -895,7 +892,7 @@ namespace Maze
     {
         bool result = false;
 
-        for (auto const& uniformData : m_uniformsCache)
+        for (auto const& uniformData : m_uniforms)
         {
             if (!uniformData.second)
                 continue;
@@ -925,7 +922,7 @@ namespace Maze
                 m_subscribedToGlobalUniforms = true;
 
                 auto const& shaderSystem = ShaderSystem::GetCurrentInstancePtr();
-                for (auto const& uniformData : m_uniformsCache)
+                for (auto const& uniformData : m_uniforms)
                 {
                     if (!uniformData.second)
                         continue;
@@ -962,9 +959,9 @@ namespace Maze
             GlobalShaderUniform* globalShaderUniform = GlobalShaderUniform::GetResourceFast(globalShaderUniformId);
             if (globalShaderUniform)
             {
-                UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(
+                UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniforms.find(
                     globalShaderUniform->getName().getHash());
-                if (it != m_uniformsCache.end())
+                if (it != m_uniforms.end())
                 {
                     if (!m_subscribedToGlobalUniforms)
                     {
@@ -987,8 +984,8 @@ namespace Maze
             auto it = m_uniformsPerGlobalUniform.find(globalShaderUniformId);
             if (it != m_uniformsPerGlobalUniform.end())
             {
-                auto uniformIt = m_uniformsCache.find(it->second);
-                if (uniformIt != m_uniformsCache.end())
+                auto uniformIt = m_uniforms.find(it->second);
+                if (uniformIt != m_uniforms.end())
                 {
                     GlobalShaderUniform* globalShaderUniform = GlobalShaderUniform::GetResourceFast(globalShaderUniformId);
                     if (globalShaderUniform)

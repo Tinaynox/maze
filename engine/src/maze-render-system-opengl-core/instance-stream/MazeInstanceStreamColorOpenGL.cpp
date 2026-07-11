@@ -129,7 +129,7 @@ namespace Maze
         {
             case InstanceStreamModeOpenGL::UniformArray:
             {
-                ShaderUniformPtr const& colorsStreamUniform = m_context->getCurrentShader()->ensureUniform(c_colorsStreamUniformName);
+                ShaderUniformPtr const& colorsStreamUniform = m_context->getCurrentShader()->getUniform(c_colorsStreamUniformName);
 
                 if (colorsStreamUniform)
                     colorsStreamUniform->upload(&m_data[m_dataOffset], _instancesCount);
@@ -138,12 +138,12 @@ namespace Maze
             }
             case InstanceStreamModeOpenGL::UniformTexture:
             {
-                ShaderUniformPtr const& colorsStreamTextureUniform = m_context->getCurrentShader()->ensureUniform(c_colorsStreamTextureUniformName);
+                ShaderUniformPtr const& colorsStreamTextureUniform = m_context->getCurrentShader()->getUniform(c_colorsStreamTextureUniformName);
 
                 if (colorsStreamTextureUniform)
                 {
-                    ShaderUniformPtr const& colorsStreamTextureSizeUniform = m_context->getCurrentShader()->ensureUniform(c_colorsStreamTextureSizeUniformName);
-                    ShaderUniformPtr const& colorsStreamOffsetUniform = m_context->getCurrentShader()->ensureUniform(c_colorsStreamOffsetUniformName);
+                    ShaderUniformPtr const& colorsStreamTextureSizeUniform = m_context->getCurrentShader()->getUniform(c_colorsStreamTextureSizeUniformName);
+                    ShaderUniformPtr const& colorsStreamOffsetUniform = m_context->getCurrentShader()->getUniform(c_colorsStreamOffsetUniformName);
 
                     Texture2DPtr const& bufferTexture = m_bufferInfo.buffer->getTexture();
 

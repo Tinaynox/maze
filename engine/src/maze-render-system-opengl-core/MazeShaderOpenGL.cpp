@@ -242,7 +242,7 @@ namespace Maze
                 return false;
         }
 
-        for (auto const& uniformData : _shader->m_uniformsCache)
+        for (auto const& uniformData : _shader->m_uniforms)
         {
             if (uniformData.second)
                 setUniform(uniformData.second->getName(), uniformData.second->getValue());
@@ -262,8 +262,8 @@ namespace Maze
     {
         static ShaderUniformPtr const nullPointer;
 
-        UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(_uniformName.hash);
-        if (it != m_uniformsCache.end())
+        UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniforms.find(_uniformName.hash);
+        if (it != m_uniforms.end())
             return it->second;
 
         if (!m_programId)
@@ -280,7 +280,7 @@ namespace Maze
         if (uniformLocation < 0)
         {
             // Mark with empty pointer
-            m_uniformsCache.emplace(
+            m_uniforms.emplace(
                 eastl::piecewise_construct,
                 eastl::forward_as_tuple(_uniformName.hash),
                 eastl::forward_as_tuple(nullptr));
@@ -291,7 +291,7 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!newUniform, nullPointer, "Shader Uniform creation error!");
         newUniform->setLocation(uniformLocation);
         newUniform->setName(_uniformName);
-        auto at = m_uniformsCache.emplace(
+        auto at = m_uniforms.emplace(
             eastl::piecewise_construct,
             eastl::forward_as_tuple(_uniformName.hash),
             eastl::forward_as_tuple(newUniform));
@@ -779,7 +779,7 @@ namespace Maze
     {
         S32 textureSlotIndex = 0;
 
-        for (auto& uniformCache : m_uniformsCache)
+        for (auto& uniformCache : m_uniforms)
         {
             ShaderUniformPtr const& uniform = uniformCache.second;
 
@@ -854,7 +854,7 @@ namespace Maze
         m_context = nullptr;
         m_programId = 0;
 
-        m_uniformsCache.clear();
+        m_uniforms.clear();
         resetDefaultUniforms();
     }
 
@@ -865,7 +865,7 @@ namespace Maze
 
         m_programId = 0;        
 
-        m_uniformsCache.clear();
+        m_uniforms.clear();
         resetDefaultUniforms();
     }
 
@@ -1020,11 +1020,11 @@ namespace Maze
                 }
 
                 *p = 0;
-                ensureUniform(HashedCString(name), arrayType);
+                createUniformFromShader(HashedCString(name), arrayType);
             }
             else
             {
-                ensureUniform(HashedCString(name), uniformType);
+                createUniformFromShader(HashedCString(name), uniformType);
             }
         }
     }

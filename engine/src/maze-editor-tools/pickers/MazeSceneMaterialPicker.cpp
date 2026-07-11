@@ -359,7 +359,7 @@ namespace Maze
                 
                 if (materialCopy->getUniform(MAZE_HCS("u_baseMap")))
                 {
-                    renderPass->getShader()->ensureUniform(MAZE_HCS("u_baseMapST"));
+                    renderPass->getShader()->getUniform(MAZE_HCS("u_baseMapST"));
 
                     TexturePtr const& texture = materialCopy->getUniform(MAZE_HCS("u_baseMap"))->getTexture();
 

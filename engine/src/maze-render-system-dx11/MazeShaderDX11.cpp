@@ -187,7 +187,7 @@ namespace Maze
                 return false;
         }
 
-        for (auto const& uniformData : _shader->m_uniformsCache)
+        for (auto const& uniformData : _shader->m_uniforms)
         {
             if (uniformData.second)
                 setUniform(uniformData.second->getName(), uniformData.second->getValue());
@@ -337,7 +337,7 @@ namespace Maze
 
         // Prefill uniforms cache
         for (auto const& uniformReflectionData : m_uniformsReflection)
-            ensureUniform(MAZE_HASHED_CSTRING(uniformReflectionData.second.name.c_str()));
+            createUniformFromShader(MAZE_HASHED_CSTRING(uniformReflectionData.second.name.c_str()));
 
         assignDefaultUniforms();
         processShaderLoaded();
@@ -710,15 +710,15 @@ namespace Maze
     {
         static ShaderUniformPtr const nullPointer;
 
-        UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(_uniformName.hash);
-        if (it != m_uniformsCache.end())
+        UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniforms.find(_uniformName.hash);
+        if (it != m_uniforms.end())
             return it->second;
 
         ShaderDX11UniformData const* uniformData = getUniformData(_uniformName);
         if (!uniformData)
         {
             // Mark with empty pointer
-            m_uniformsCache.emplace(_uniformName.hash, nullptr);
+            m_uniforms.emplace(_uniformName.hash, nullptr);
             return nullPointer;
         }
 
@@ -726,7 +726,7 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!newUniform, nullPointer, "Shader Uniform creation error!");
         newUniform->setName(_uniformName);
         newUniform->setUniformData(*uniformData);
-        auto at = m_uniformsCache.emplace(_uniformName.hash, newUniform);
+        auto at = m_uniforms.emplace(_uniformName.hash, newUniform);
         if (at.second)
             return at.first->second;
 
@@ -802,7 +802,7 @@ namespace Maze
     {
         StateMachineDX11* stateMachine = getRenderSystemDX11Raw()->getStateMachine();
 
-        for (auto& uniformCacheData : m_uniformsCache)
+        for (auto& uniformCacheData : m_uniforms)
         {
             ShaderUniformPtr const& uniform = uniformCacheData.second;
 

@@ -190,7 +190,7 @@ namespace Maze
         {
             ShaderUniformVariantPtr const& uniformVariant = uniforms[i];
             if (uniformVariant)
-                m_shaderUniforms[i] = m_shaderRef.getShader()->ensureUniform(uniformVariant->getName());
+                m_shaderUniforms[i] = m_shaderRef.getShader()->getUniform(uniformVariant->getName());
         }
 
         m_shaderUniformsDirty = false;

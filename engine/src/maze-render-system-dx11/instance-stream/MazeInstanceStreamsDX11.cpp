@@ -135,7 +135,7 @@ namespace Maze
         if (!shader)
             return;
 
-        ShaderUniformPtr const& colorsStreamUniform = shader->ensureUniform(c_colorsStreamUniformName);
+        ShaderUniformPtr const& colorsStreamUniform = shader->getUniform(c_colorsStreamUniformName);
         if (colorsStreamUniform)
             colorsStreamUniform->upload(&m_data[m_dataOffset], _instancesCount);
     }
@@ -183,7 +183,7 @@ namespace Maze
         if (!shader)
             return;
 
-        ShaderUniformPtr const& uvStreamUniform = shader->ensureUniform(c_uvStreamUniformNames[m_index]);
+        ShaderUniformPtr const& uvStreamUniform = shader->getUniform(c_uvStreamUniformNames[m_index]);
         if (uvStreamUniform)
             uvStreamUniform->upload(&m_data[m_dataOffset], _instancesCount);
     }

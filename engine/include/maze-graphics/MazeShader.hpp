@@ -95,7 +95,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ShaderUniformPtr const& ensureUniform(HashedCString _uniformName, ShaderUniformType _type = ShaderUniformType::None);
+        ShaderUniformPtr const& getUniform(HashedCString _uniformName) const;
 
         //////////////////////////////////////////
         bool hasUniform(HashedCString _uniformName);
@@ -276,7 +276,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline UnorderedMap<U32, ShaderUniformPtr> const& getUniforms() const { return m_uniformsCache; }
+        inline UnorderedMap<U32, ShaderUniformPtr> const& getUniforms() const { return m_uniforms; }
 
 
         //////////////////////////////////////////
@@ -359,7 +359,7 @@ namespace Maze
         bool m_subscribedToGlobalUniforms = false;
         Map<ResourceId, U32> m_uniformsPerGlobalUniform;
 
-        UnorderedMap<U32, ShaderUniformPtr> m_uniformsCache;
+        UnorderedMap<U32, ShaderUniformPtr> m_uniforms;
 
         StringKeyMap<String> m_localFeatures;
 

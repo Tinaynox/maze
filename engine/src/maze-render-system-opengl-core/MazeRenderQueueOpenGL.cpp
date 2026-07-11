@@ -329,7 +329,7 @@ namespace Maze
                     {
                         RenderCommandSetShaderUniformVec2F* command = static_cast<RenderCommandSetShaderUniformVec2F*>(_command);
                         ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
-                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        ShaderUniformPtr const& uniform = shaderOpenGL->getUniform(command->name);
                         if (uniform)
                             uniform->set(command->value);
                         break;
@@ -340,7 +340,7 @@ namespace Maze
                         if (Texture2D const* texture = Texture2D::GetResourceFast(command->texture2DId))
                         {
                             ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
-                            ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                            ShaderUniformPtr const& uniform = shaderOpenGL->getUniform(command->name);
                             if (uniform)
                                 uniform->set(texture);
                         }
@@ -350,7 +350,7 @@ namespace Maze
                     {
                         RenderCommandUploadShaderUniformVec2F* command = static_cast<RenderCommandUploadShaderUniformVec2F*>(_command);
                         ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
-                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        ShaderUniformPtr const& uniform = shaderOpenGL->getUniform(command->name);
                         if (uniform)
                             uniform->upload(command->pointer, (Size)command->count);
                         break;
@@ -359,7 +359,7 @@ namespace Maze
                     {
                         RenderCommandUploadShaderUniformVec3F* command = static_cast<RenderCommandUploadShaderUniformVec3F*>(_command);
                         ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
-                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        ShaderUniformPtr const& uniform = shaderOpenGL->getUniform(command->name);
                         if (uniform)
                             uniform->upload(command->pointer, (Size)command->count);
                         break;
@@ -368,7 +368,7 @@ namespace Maze
                     {
                         RenderCommandUploadShaderUniformVec4F* command = static_cast<RenderCommandUploadShaderUniformVec4F*>(_command);
                         ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
-                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        ShaderUniformPtr const& uniform = shaderOpenGL->getUniform(command->name);
                         if (uniform)
                             uniform->upload(command->pointer, (Size)command->count);
                         break;
@@ -377,7 +377,7 @@ namespace Maze
                     {
                         RenderCommandUploadShaderUniformMat3F* command = static_cast<RenderCommandUploadShaderUniformMat3F*>(_command);
                         ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
-                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        ShaderUniformPtr const& uniform = shaderOpenGL->getUniform(command->name);
                         if (uniform)
                             uniform->upload(command->pointer, (Size)command->count);
                         break;
@@ -386,7 +386,7 @@ namespace Maze
                     {
                         RenderCommandUploadShaderUniformMat4F* command = static_cast<RenderCommandUploadShaderUniformMat4F*>(_command);
                         ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
-                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        ShaderUniformPtr const& uniform = shaderOpenGL->getUniform(command->name);
                         if (uniform)
                             uniform->upload(command->pointer, (Size)command->count);
                         break;
@@ -395,7 +395,7 @@ namespace Maze
                     {
                         RenderCommandUploadShaderUniformTMat* command = static_cast<RenderCommandUploadShaderUniformTMat*>(_command);
                         ShaderOpenGL* shaderOpenGL = m_context->getCurrentShader()->castRaw<ShaderOpenGL>();
-                        ShaderUniformPtr const& uniform = shaderOpenGL->ensureUniform(command->name);
+                        ShaderUniformPtr const& uniform = shaderOpenGL->getUniform(command->name);
                         if (uniform)
                             uniform->upload(command->pointer, (Size)command->count);
                         break;
