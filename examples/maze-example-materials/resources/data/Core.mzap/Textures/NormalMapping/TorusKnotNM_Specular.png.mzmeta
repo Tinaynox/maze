@@ -1,0 +1,10 @@
+assetUnits
+{
+  texture2d
+  {
+    minFilter:String = LinearMipmapLinear
+    magFilter:String = Linear
+    wrapS:String = ClampToEdge
+    wrapT:String = ClampToEdge
+  }
+}
