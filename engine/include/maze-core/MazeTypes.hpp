@@ -348,6 +348,14 @@ namespace Maze
     } // namespace Hash
     //////////////////////////////////////////
 
+    
+    //////////////////////////////////////////
+    inline std::ostream& operator<<(std::ostream& _o, String const& _v)
+    {
+        _o << _v.c_str();
+        return _o;
+    }
+
 } // namespace Maze
 //////////////////////////////////////////
 
