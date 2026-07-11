@@ -1,0 +1,202 @@
+R"(
+    #version 450
+
+    //////////////////////////////////////////
+    // MazeCommonShaderHeader.mzglslvk
+    //
+    // Prepended verbatim (by ShaderVulkan::loadVulkanShader, see
+    // MazeShaderVulkan.cpp) to the front of EVERY compiled stage - vertex
+    // AND fragment - of EVERY built-in and asset '.mzglslvk' shader. This
+    // comment block is the authoritative documentation of the Vulkan
+    // backend's descriptor/SSBO/push-constant convention; the C++ side that
+    // actually consumes whatever this file (and every shader that follows
+    // it) declares is ShaderVulkan::reflectVulkanShader() /
+    // createDescriptorSetLayoutsAndPipelineLayout() in MazeShaderVulkan.cpp,
+    // and RenderSystemVulkan's global descriptor set setup in
+    // MazeRenderSystemVulkan.cpp - see also the banner comment above
+    // c_vulkanGlobalDescriptorSet/c_vulkanMaterialDescriptorSet in
+    // MazeShaderVulkan.hpp.
+    //
+    // ---------------------------------------------------------------------
+    // Descriptor set 0 - engine-global, ONE shared VkDescriptorSet bound
+    // once per frame for every draw call regardless of which shader/material
+    // is active:
+    //
+    //   binding 0 - GlobalUniforms UBO (std140, declared below in this file)
+    //               stage access: VERTEX | FRAGMENT
+    //   binding 1 - ModelMatricesBuffer SSBO (std430): mat4 u_modelMatrices[]
+    //               stage access: VERTEX ONLY
+    //   binding 2 - ColorsStreamBuffer  SSBO (std430): vec4 u_colorsStream[]
+    //               stage access: VERTEX ONLY
+    //   binding 3 - UVStreamsBuffer     SSBO (std430): struct{vec4 uv0; vec4 uv1;} u_uvStreams[]
+    //               (both UV instance-stream channels packed together, one
+    //               struct per instance, in this single buffer/binding)
+    //               stage access: VERTEX ONLY
+    //
+    // Bindings 1-3 are populated directly by RenderSystemVulkan's instance
+    // stream buffers (see RenderSystemVulkan::createInstanceStreamBuffers/
+    // allocateInstanceStreamSlots), NOT through the named-uniform reflection
+    // path ShaderVulkan::reflectVulkanShader() uses for UBOs - that generic
+    // walk only looks at SPV_REFLECT_DESCRIPTOR_TYPE_UNIFORM_BUFFER blocks,
+    // so it skips straight past these SSBOs.
+    //
+    // IMPORTANT: because the global set layout only grants
+    // VK_SHADER_STAGE_VERTEX_BIT access to bindings 1-3 (and the push
+    // constant below is likewise VERTEX-only), the SSBO declarations, the
+    // push constant, and the GetModelMatrix/GetColorStream/GetUV0Stream/
+    // GetUV1Stream accessor functions all live in the separate file
+    // 'MazeInstanceStream.mzglslvk' instead of this common header - that
+    // file is '#include'd only from the '#type vertex' section of each
+    // shader (mirroring the desktop-GL '.mzglsl' family's
+    // MazeVertex.mzglsl -> MazeInstanceStream.mzglsl chain), so its text
+    // never reaches a fragment-stage compile. Simply having those
+    // declarations physically present in a fragment module - even unused,
+    // even with optimization disabled in debug builds where dead-code
+    // stripping may not run - would violate the pipeline layout's per-stage
+    // access flags.
+    //
+    // ---------------------------------------------------------------------
+    // Descriptor set 1 - per-shader material data, one VkDescriptorSetLayout
+    // per ShaderVulkan instance (see
+    // ShaderVulkan::createDescriptorSetLayoutsAndPipelineLayout):
+    //
+    //   binding 0    - MaterialUniforms UBO (std140) - every other named
+    //                  uniform this particular shader declares (u_color,
+    //                  u_baseMapST, etc), stage access VERTEX | FRAGMENT
+    //   binding 1..N - sampler2D / samplerCube textures, in ascending
+    //                  binding order (must be contiguous starting at 1 -
+    //                  ShaderVulkan builds one VkDescriptorSetLayoutBinding
+    //                  per index with descriptorCount=1, so gaps or a
+    //                  single binding covering an actual GLSL array of
+    //                  samplers with descriptorCount>1 will NOT round-trip
+    //                  correctly through the current C++ - see
+    //                  MazeFontShader.mzglslvk for the one built-in shader
+    //                  that runs into this)
+    //
+    // IMPORTANT: because ShaderVulkan reflects the vertex and fragment
+    // SPIR-V modules SEPARATELY but they share the SAME physical
+    // MaterialUniforms VkBuffer/VkDescriptorSet (binding 0's stageFlags are
+    // VERTEX | FRAGMENT), every '.mzglslvk' shader that uses material
+    // uniforms in BOTH stages must declare an IDENTICAL 'MaterialUniforms'
+    // block (same members, same order) in both its vertex and fragment
+    // sections, even if a given stage never references every member.
+    // Two independently-laid-out blocks with different members would
+    // compute different (colliding) std140 byte offsets for the same
+    // physical buffer and silently corrupt each other's data. (Most
+    // built-in shaders only use material uniforms from the fragment stage,
+    // so this only matters for MazeOutlineShader among the built-ins.)
+    // Texture bindings must likewise use consistent binding numbers if
+    // sampled from more than one stage (none of the built-ins do).
+    //
+    // ---------------------------------------------------------------------
+    // Push constant (VERTEX stage only, 4 bytes): { int u_instanceOffset }
+    // - the instance-stream batch offset for the current draw, written
+    // directly by RenderQueueVulkan via vkCmdPushConstants, not through the
+    // uniform system. Declared in MazeInstanceStream.mzglslvk (see above).
+    //
+    // gl_InstanceIndex is used as the direct equivalent of GL's
+    // gl_InstanceID throughout this shader family - Vulkan defines
+    // gl_InstanceIndex = firstInstance + <driver instance counter>, and this
+    // backend always records draws with firstInstance=0, so the two are
+    // numerically identical here.
+    // ---------------------------------------------------------------------
+
+
+    //////////////////////////////////////////
+    // Texture sampling helpers - kept for source parity with the GL
+    // '.mzglsl'/DX11 '.mzhlsl' MAZE_GET_TEXEL2D/MAZE_GET_TEXELCUBE call
+    // sites. Vulkan combined-image-samplers are plain 'uniform sampler2D'/
+    // 'uniform samplerCube' declared with an explicit
+    // 'layout(set = 1, binding = N)' at each call site (no macro can
+    // auto-number the binding across declarations), so there is no
+    // MAZE_TEXTURE2D/MAZE_TEXTURECUBE declaration macro here, only the
+    // sampling call macros.
+    #define MAZE_GET_TEXEL2D(_texture, _uv) texture(_texture, _uv)
+    #define MAZE_GET_TEXELCUBE(_texture, _uvw) texture(_texture, _uvw)
+
+
+    //////////////////////////////////////////
+    // Global uniforms (set 0, binding 0). Anonymous block instance so
+    // members are referenced directly (u_projectionMatrix, not
+    // someName.u_projectionMatrix) matching the flat-uniform style of the
+    // GL/DX11 shaders this is ported from - and matching the exact names
+    // Shader::assignDefaultUniforms()/RenderQueueVulkan look up by
+    // MAZE_HCS(...), see maze-graphics/MazeShader.cpp.
+    layout(std140, set = 0, binding = 0) uniform GlobalUniforms
+    {
+        vec4  u_clipDistance0;
+        // NOTE: SPIR-V forbids OpTypeBool inside a Block-decorated struct
+        // (uniform/storage blocks must be host-shareable numeric types), so
+        // unlike GL's 'bvec4' this is declared as ivec4 (0/1 per component) -
+        // this exactly matches DX11's 'bool4', which HLSL itself packs as
+        // four 32-bit ints in a cbuffer, so the byte layout is identical
+        // across all three backends. See MAZE_CLIP_DISTANCE_FRAGMENT below,
+        // which compares against 0 instead of using it as a GLSL bool.
+        ivec4 u_clipDistanceEnable;
+        mat4  u_projectionMatrix;
+        vec4  u_projectionParams;
+        vec3  u_viewMatrix[4];
+        vec3  u_viewPosition;
+        vec4  u_mainLightColor;
+        vec3  u_mainLightDirection;
+        float u_time;
+
+        // Offscreen render targets are rendered flipped so their memory
+        // layout matches OpenGL render buffers (set to -1.0 by the render
+        // queue) - mirrors DX11's identically-named global, see
+        // MazeCommonShaderHeader.mzhlsl / MazeRenderQueueDX11.cpp. Consumed
+        // by MazeFinalizePositionCS() below.
+        float u_renderTargetFlipY;
+    };
+
+
+    //////////////////////////////////////////
+    mat4 GetViewMatrix()
+    {
+        return mat4(
+            vec4(u_viewMatrix[0], 0.0),
+            vec4(u_viewMatrix[1], 0.0),
+            vec4(u_viewMatrix[2], 0.0),
+            vec4(u_viewMatrix[3], 1.0));
+    }
+
+
+    //////////////////////////////////////////
+    #define MAZE_LHCS (1)
+
+
+    //////////////////////////////////////////
+    // Clip-distance helpers. Unlike GL (which picks between real
+    // gl_ClipDistance hardware clipping and a manual discard fallback at
+    // shader-compile time, based on a runtime extension check done in
+    // ShaderOpenGL.cpp) this backend always uses the manual-discard style
+    // unconditionally, since it does not (yet) enable/require the Vulkan
+    // 'shaderClipDistance' optional device feature. This is a deliberate,
+    // conservative choice: it costs one extra varying + one branch instead
+    // of true hardware clipping, but doesn't need a redeclared
+    // 'out gl_PerVertex { ...; float gl_ClipDistance[1]; }' interface block
+    // or a device-feature check that nothing in this pass could actually
+    // verify (no Vulkan SDK/device available while writing this port). If
+    // 'shaderClipDistance' is enabled later, these two macros are the only
+    // place that needs to change.
+    #define MAZE_CLIP_DISTANCE_VERTEX(_pos) v_clipDistance0 = dot(_pos, u_clipDistance0)
+    #define MAZE_CLIP_DISTANCE_FRAGMENT if (u_clipDistanceEnable[0] != 0 && v_clipDistance0 < 0.0) discard
+
+
+    //////////////////////////////////////////
+    // Clip-space finalization - Vulkan's NDC depth range is [0,1] (like
+    // D3D, unlike GL's [-1,1]), and Vulkan's NDC Y axis points down (also
+    // like D3D, opposite of GL's up) - both adaptations mirror DX11's
+    // MazeFinalizePositionCS exactly (see MazeCommonShaderHeader.mzhlsl),
+    // since DX11 and Vulkan share the same clip-space convention here. Every
+    // vertex shader must route its final positionCS through this function
+    // (after the existing '#if (MAZE_LHCS) positionCS.z = -positionCS.z
+    // #endif' handedness flip that's ported unchanged from GL) before
+    // writing gl_Position.
+    vec4 MazeFinalizePositionCS(vec4 _positionCS)
+    {
+        _positionCS.y *= (u_renderTargetFlipY < 0.0) ? -1.0 : 1.0;
+        _positionCS.z = (_positionCS.z + _positionCS.w) * 0.5;
+        return _positionCS;
+    }
+)"

@@ -1,0 +1,89 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+    #include "MazeInstanceStream.mzglslvk"
+
+    //////////////////////////////////////////
+    // NOTE: u_uv0/u_uv1 are used only by the vertex stage and u_color only
+    // by the fragment stage, but both must be declared here identically to
+    // the fragment section's MaterialUniforms block (same members, same
+    // order) since they share one physical set-1/binding-0 buffer - see the
+    // banner comment in MazeCommonShaderHeader.mzglslvk.
+    layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+    {
+        vec2 u_uv0;
+        vec2 u_uv1;
+        vec4 u_color;
+    };
+
+    //////////////////////////////////////////
+    layout(location = 0) in vec3 a_position;
+    layout(location = 1) in vec2 a_texCoords0;
+    layout(location = 2) in vec4 a_color;
+
+    //////////////////////////////////////////
+    layout(location = 0) out vec3 v_positionOS;
+    layout(location = 1) out vec3 v_positionWS;
+    layout(location = 2) out vec3 v_positionVS;
+    layout(location = 3) out vec2 v_uv0;
+    layout(location = 4) out vec4 v_color;
+    layout(location = 5) out float v_clipDistance0;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        int instanceId = gl_InstanceIndex;
+
+        mat4 modelMatrix = GetModelMatrix(instanceId);
+        mat4 viewMatrix = GetViewMatrix();
+
+        vec4 positionOS = vec4(a_position, 1.0);
+        vec4 positionWS = modelMatrix * positionOS;
+        MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+        vec4 positionVS = viewMatrix * positionWS;
+        vec4 positionCS = u_projectionMatrix * positionVS;
+
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+
+        v_positionOS = positionOS.xyz;
+        v_positionWS = positionWS.xyz;
+        v_positionVS = positionVS.xyz;
+
+        v_uv0.x = mix(u_uv0.x, u_uv1.x, a_texCoords0.x);
+        v_uv0.y = mix(u_uv0.y, u_uv1.y, a_texCoords0.y);
+        v_color = a_color;
+
+        gl_Position = MazeFinalizePositionCS(positionCS);
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+    //////////////////////////////////////////
+    layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+    {
+        vec2 u_uv0;
+        vec2 u_uv1;
+        vec4 u_color;
+    };
+    layout(set = 1, binding = 1) uniform sampler2D u_baseMap;
+
+    //////////////////////////////////////////
+    layout(location = 3) in vec2 v_uv0;
+    layout(location = 4) in vec4 v_color;
+    layout(location = 5) in float v_clipDistance0;
+
+    //////////////////////////////////////////
+    layout(location = 0) out vec4 out_color;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        MAZE_CLIP_DISTANCE_FRAGMENT;
+
+        out_color = v_color * texture(u_baseMap, v_uv0) * u_color;
+    }
+)"

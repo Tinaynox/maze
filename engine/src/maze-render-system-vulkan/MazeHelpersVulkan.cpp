@@ -702,6 +702,37 @@ namespace Maze
         return _seed ^ (_value + 0x9e3779b97f4a7c15ULL + (_seed << 6) + (_seed >> 2));
     }
 
+    //////////////////////////////////////////
+    VertexAttributeSemantic GetVertexAttributeSemanticByShaderNameVulkan(String const& _name)
+    {
+        // Fixed 'a_'-prefixed naming convention every built-in/asset .mzglslvk
+        // vertex shader is expected to follow (see MazeShaderVulkan.cpp
+        // reflectVulkanShader()) - also note VertexArrayObjectVulkan bakes
+        // VkVertexInputAttributeDescription.location == (U32)semantic
+        // directly (binding N == semantic N, see its class banner comment),
+        // so every shader's 'layout(location = N)' for these inputs must use
+        // the same VertexAttributeSemantic enum ordinal N, not a
+        // declaration-order location - this table is the name side of that
+        // same fixed mapping.
+        if (_name == "a_position") return VertexAttributeSemantic::Position;
+        if (_name == "a_normal") return VertexAttributeSemantic::Normal;
+        if (_name == "a_tangent") return VertexAttributeSemantic::Tangent;
+        if (_name == "a_bitangent") return VertexAttributeSemantic::Bitangent;
+        if (_name == "a_color") return VertexAttributeSemantic::Color;
+        if (_name == "a_texCoords0") return VertexAttributeSemantic::TexCoords0;
+        if (_name == "a_texCoords1") return VertexAttributeSemantic::TexCoords1;
+        if (_name == "a_texCoords2") return VertexAttributeSemantic::TexCoords2;
+        if (_name == "a_texCoords3") return VertexAttributeSemantic::TexCoords3;
+        if (_name == "a_texCoords4") return VertexAttributeSemantic::TexCoords4;
+        if (_name == "a_texCoords5") return VertexAttributeSemantic::TexCoords5;
+        if (_name == "a_texCoords6") return VertexAttributeSemantic::TexCoords6;
+        if (_name == "a_texCoords7") return VertexAttributeSemantic::TexCoords7;
+        if (_name == "a_blendWeights") return VertexAttributeSemantic::BlendWeights;
+        if (_name == "a_blendIndices") return VertexAttributeSemantic::BlendIndices;
+
+        return VertexAttributeSemantic::MAX;
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

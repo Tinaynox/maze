@@ -425,8 +425,11 @@ namespace Maze
             ? shaderc_glsl_vertex_shader
             : shaderc_glsl_fragment_shader;
 
+        // Pass raw pointer+size rather than _source directly - Maze's String
+        // is not std::string, so it doesn't implicitly convert to the
+        // std::string-taking overload
         shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(
-            _source, kind, getName().c_str(), options);
+            _source.c_str(), _source.size(), kind, getName().c_str(), options);
 
         if (result.GetCompilationStatus() != shaderc_compilation_status_success)
         {
@@ -474,7 +477,7 @@ namespace Maze
                 // match by name against the engine's semantic naming
                 // convention (a_position, a_normal, a_tangent, a_color,
                 // a_texCoords0, a_texCoords1, a_blendWeights, a_blendIndices...)
-                VertexAttributeSemantic semantic = VertexAttributeSemantic::None;
+                VertexAttributeSemantic semantic = VertexAttributeSemantic::MAX;
                 String name = input->name;
                 if (name.size() > 0 && name[0] == 'a' && name.size() > 1 && name[1] == '_')
                 {
@@ -485,7 +488,7 @@ namespace Maze
                     semantic = GetVertexAttributeSemanticByShaderNameVulkan(name);
                 }
 
-                if (semantic != VertexAttributeSemantic::None)
+                if (semantic != VertexAttributeSemantic::MAX)
                     m_vertexInputLocations[(S32)semantic] = (S32)input->location;
             }
         }
@@ -667,7 +670,7 @@ namespace Maze
             write.pBufferInfo = &bufInfo;
             vkUpdateDescriptorSets(device, 1u, &write, 0u, nullptr);
 
-            m_materialUniformDirty[Math::Min(i, (U32)MAZE_ARRAY_SIZE(m_materialUniformDirty) - 1u)] = true;
+            m_materialUniformDirty[Math::Min(i, (U32)(sizeof(m_materialUniformDirty)/sizeof(m_materialUniformDirty[0])) - 1u)] = true;
         }
 
         return true;
@@ -836,7 +839,7 @@ namespace Maze
             return;
 
         memcpy(&m_materialUniformShadow[_uniformData.offset], _bytes, bytesCount);
-        for (Size i = 0; i < MAZE_ARRAY_SIZE(m_materialUniformDirty); ++i)
+        for (Size i = 0; i < (sizeof(m_materialUniformDirty)/sizeof(m_materialUniformDirty[0])); ++i)
             m_materialUniformDirty[i] = true;
     }
 
@@ -845,7 +848,7 @@ namespace Maze
     {
         RenderSystemVulkan* rs = getRenderSystemVulkanRaw();
         U32 frameIndex = rs->getCurrentFrameIndex();
-        U32 dirtyIndex = Math::Min(frameIndex, (U32)MAZE_ARRAY_SIZE(m_materialUniformDirty) - 1u);
+        U32 dirtyIndex = Math::Min(frameIndex, (U32)(sizeof(m_materialUniformDirty)/sizeof(m_materialUniformDirty[0])) - 1u);
 
         if (frameIndex < m_materialUniformMapped.size() && m_materialUniformDirty[dirtyIndex])
         {

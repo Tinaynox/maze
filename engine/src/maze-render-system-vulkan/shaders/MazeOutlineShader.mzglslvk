@@ -1,0 +1,76 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+    #include "MazeInstanceStream.mzglslvk"
+
+    //////////////////////////////////////////
+    // NOTE: u_outlineWidth is used only by the vertex stage and
+    // u_outlineColor only by the fragment stage, but both must be declared
+    // here identically to the fragment section's MaterialUniforms block
+    // (same members, same order) since they share one physical
+    // set-1/binding-0 buffer - see the banner comment in
+    // MazeCommonShaderHeader.mzglslvk.
+    layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+    {
+        float u_outlineWidth;
+        vec4 u_outlineColor;
+    };
+
+    //////////////////////////////////////////
+    layout(location = 0) in vec3 a_position;
+    layout(location = 1) in vec3 a_normal;
+
+    //////////////////////////////////////////
+    layout(location = 0) out float v_clipDistance0;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        int instanceId = gl_InstanceIndex;
+
+        mat4 modelMatrix = GetModelMatrix(instanceId);
+        mat4 viewMatrix = GetViewMatrix();
+
+        mat3 normalMatrix = mat3(modelMatrix);
+        vec3 normalWS = normalize(normalMatrix * a_normal);
+
+        vec4 positionWS = modelMatrix * vec4(a_position, 1.0);
+        positionWS.xyz += normalWS * u_outlineWidth;
+
+        MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+
+        vec4 positionVS = viewMatrix * positionWS;
+        vec4 positionCS = u_projectionMatrix * positionVS;
+
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+
+        gl_Position = MazeFinalizePositionCS(positionCS);
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+    //////////////////////////////////////////
+    layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+    {
+        float u_outlineWidth;
+        vec4 u_outlineColor;
+    };
+
+    //////////////////////////////////////////
+    layout(location = 0) in float v_clipDistance0;
+
+    //////////////////////////////////////////
+    layout(location = 0) out vec4 out_color;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        MAZE_CLIP_DISTANCE_FRAGMENT;
+
+        out_color = u_outlineColor;
+    }
+)"

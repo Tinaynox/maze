@@ -1,0 +1,136 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+    #define MAZE_COLOR_STREAM (1)
+    #define MAZE_UV0_STREAM (1)
+    #define MAZE_UV1_STREAM (1)
+
+    #include "MazeInstanceStream.mzglslvk"
+
+    //////////////////////////////////////////
+    layout(location = 0) in vec3 a_position;
+    layout(location = 1) in vec2 a_texCoords0;
+    layout(location = 2) in vec4 a_color;
+
+    //////////////////////////////////////////
+    layout(location = 0) out vec3 v_positionOS;
+    layout(location = 1) out vec3 v_positionWS;
+    layout(location = 2) out vec3 v_positionVS;
+    layout(location = 3) out vec2 v_uv0;
+    layout(location = 4) out float v_uv1;
+    layout(location = 5) out vec4 v_color;
+    layout(location = 6) out float v_clipDistance0;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        int instanceId = gl_InstanceIndex;
+
+        mat4 modelMatrix = GetModelMatrix(instanceId);
+        mat4 viewMatrix = GetViewMatrix();
+
+        vec4 positionOS = vec4(a_position, 1.0);
+        vec4 positionWS = modelMatrix * positionOS;
+        MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+        vec4 positionVS = viewMatrix * positionWS;
+        vec4 positionCS = u_projectionMatrix * positionVS;
+
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+
+        v_positionOS = positionOS.xyz;
+        v_positionWS = positionWS.xyz;
+        v_positionVS = positionVS.xyz;
+
+        v_uv0 = a_texCoords0;
+
+        v_color = a_color;
+
+    #if (MAZE_COLOR_STREAM)
+        v_color *= GetColorStream(instanceId);
+    #endif
+
+    #if (MAZE_UV0_STREAM)
+        vec4 uv0Stream = GetUV0Stream(instanceId);
+        v_uv0 = vec2(
+            mix(uv0Stream.x, uv0Stream.z, v_uv0.x),
+            mix(uv0Stream.y, uv0Stream.w, v_uv0.y));
+    #endif
+    #if (MAZE_UV1_STREAM)
+        vec4 uv1Stream = GetUV1Stream(instanceId);
+        v_uv1 = uv1Stream.x;
+    #endif
+
+        gl_Position = MazeFinalizePositionCS(positionCS);
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+    //////////////////////////////////////////
+    // NOTE (known C++-side gap, not fixable from shader source alone):
+    // GL/DX11 declare this as a single 'sampler2D u_baseMaps[8]'/
+    // 'Texture2D u_baseMaps[8]' array set from the engine side as one named
+    // uniform (see FontMaterial::... calling
+    // material->ensureUniform("u_baseMaps")->set(textures, count) in
+    // MazeFontMaterial.cpp). Two things about the current Vulkan C++ make a
+    // real GLSL array-of-8-samplers-at-one-binding unusable here:
+    //   1. ShaderVulkan::createDescriptorSetLayoutsAndPipelineLayout()
+    //      creates exactly one VkDescriptorSetLayoutBinding per texture
+    //      slot with descriptorCount hardcoded to 1 - it has no path for a
+    //      single binding needing descriptorCount=8.
+    //   2. ShaderUniformVulkan::processSimpleUniformChanged() only handles
+    //      a single Texture2D/TextureCube value per uniform - there is no
+    //      texture-array upload path wired up, so even a correctly-declared
+    //      array binding could not currently be populated from C++.
+    // To at least produce a valid, reflectable descriptor set layout under
+    // the existing (descriptorCount=1 per binding) convention, this port
+    // declares 8 independent sampler2D bindings instead of a GLSL array.
+    // Multi-page font materials will not render correctly under Vulkan
+    // until the two C++-side gaps above are addressed - this is a real,
+    // pre-existing limitation surfaced by the port, not a guess.
+    layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+    {
+        vec4 u_color;
+    };
+    layout(set = 1, binding = 1) uniform sampler2D u_baseMaps0;
+    layout(set = 1, binding = 2) uniform sampler2D u_baseMaps1;
+    layout(set = 1, binding = 3) uniform sampler2D u_baseMaps2;
+    layout(set = 1, binding = 4) uniform sampler2D u_baseMaps3;
+    layout(set = 1, binding = 5) uniform sampler2D u_baseMaps4;
+    layout(set = 1, binding = 6) uniform sampler2D u_baseMaps5;
+    layout(set = 1, binding = 7) uniform sampler2D u_baseMaps6;
+    layout(set = 1, binding = 8) uniform sampler2D u_baseMaps7;
+
+    //////////////////////////////////////////
+    layout(location = 3) in vec2 v_uv0;
+    layout(location = 4) in float v_uv1;
+    layout(location = 5) in vec4 v_color;
+    layout(location = 6) in float v_clipDistance0;
+
+    //////////////////////////////////////////
+    layout(location = 0) out vec4 out_color;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        MAZE_CLIP_DISTANCE_FRAGMENT;
+
+        vec4 color;
+        switch (int(v_uv1))
+        {
+            case 0: color = v_color * texture(u_baseMaps0, v_uv0) * u_color; break;
+            case 1: color = v_color * texture(u_baseMaps1, v_uv0) * u_color; break;
+            case 2: color = v_color * texture(u_baseMaps2, v_uv0) * u_color; break;
+            case 3: color = v_color * texture(u_baseMaps3, v_uv0) * u_color; break;
+            case 4: color = v_color * texture(u_baseMaps4, v_uv0) * u_color; break;
+            case 5: color = v_color * texture(u_baseMaps5, v_uv0) * u_color; break;
+            case 6: color = v_color * texture(u_baseMaps6, v_uv0) * u_color; break;
+            case 7: color = v_color * texture(u_baseMaps7, v_uv0) * u_color; break;
+            default: color = vec4(0.0, 0.0, 0.0, 0.0);
+        }
+        out_color = color;
+    }
+)"

@@ -38,6 +38,12 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    // GLSL std140 array elements are aligned to 16 bytes (same rule as HLSL
+    // constant buffers - see ShaderUniformDX11.cpp's identical c_registerSize)
+    static U32 const c_std140RegisterSize = 16u;
+
+
+    //////////////////////////////////////////
     // Class ShaderUniformVulkan
     //
     //////////////////////////////////////////
@@ -118,19 +124,37 @@ namespace Maze
         {
             case ShaderUniformType::UniformS32: { S32 v = getS32(); uploadBytes(&v, sizeof(v)); break; }
             case ShaderUniformType::UniformF32: { F32 v = getF32(); uploadBytes(&v, sizeof(v)); break; }
+            case ShaderUniformType::UniformF64: { F32 v = (F32)getF64(); uploadBytes(&v, sizeof(v)); break; }
+            case ShaderUniformType::UniformBool: { S32 v = getBool() ? 1 : 0; uploadBytes(&v, sizeof(v)); break; }
             case ShaderUniformType::UniformTexture2D:
             case ShaderUniformType::UniformTextureCube:
+            case ShaderUniformType::UniformTexture2DArray:
                 break;
-            case ShaderUniformType::UniformVec2S32: { Vec2S v = getVec2S32(); uploadBytes(&v, sizeof(v)); break; }
-            case ShaderUniformType::UniformVec3S32: { Vec3S v = getVec3S32(); uploadBytes(&v, sizeof(v)); break; }
-            case ShaderUniformType::UniformVec4S32: { Vec4S v = getVec4S32(); uploadBytes(&v, sizeof(v)); break; }
-            case ShaderUniformType::UniformVec2F32: { Vec2F v = getVec2F32(); uploadBytes(&v, sizeof(v)); break; }
-            case ShaderUniformType::UniformVec3F32: { Vec3F v = getVec3F32(); uploadBytes(&v, sizeof(v)); break; }
-            case ShaderUniformType::UniformVec4F32: { Vec4F v = getVec4F32(); uploadBytes(&v, sizeof(v)); break; }
-            case ShaderUniformType::UniformMat3F32: { Mat3F v = getMat3F32(); uploadBytes(&v, sizeof(v)); break; }
-            case ShaderUniformType::UniformMat4F32: { Mat4F v = getMat4F32(); uploadBytes(&v, sizeof(v)); break; }
-            case ShaderUniformType::UniformColorF128: { Vec4F v = getVec4F32(); uploadBytes(&v, sizeof(v)); break; }
+            case ShaderUniformType::UniformVec2F32: { Vec4F const& v = getVecF(); uploadBytes(&v, sizeof(F32) * 2); break; }
+            case ShaderUniformType::UniformVec3F32: { Vec4F const& v = getVecF(); uploadBytes(&v, sizeof(F32) * 3); break; }
+            case ShaderUniformType::UniformVec4F32:
+            case ShaderUniformType::UniformColorF128: { Vec4F const& v = getVecF(); uploadBytes(&v, sizeof(F32) * 4); break; }
+            case ShaderUniformType::UniformVec2S32: { Vec4S const& v = getVecS(); uploadBytes(&v, sizeof(S32) * 2); break; }
+            case ShaderUniformType::UniformVec3S32: { Vec4S const& v = getVecS(); uploadBytes(&v, sizeof(S32) * 3); break; }
+            case ShaderUniformType::UniformVec4S32: { Vec4S const& v = getVecS(); uploadBytes(&v, sizeof(S32) * 4); break; }
+            case ShaderUniformType::UniformVec2U32: { Vec4U const& v = getVecU(); uploadBytes(&v, sizeof(U32) * 2); break; }
+            case ShaderUniformType::UniformVec3U32: { Vec4U const& v = getVecU(); uploadBytes(&v, sizeof(U32) * 3); break; }
+            case ShaderUniformType::UniformVec4U32: { Vec4U const& v = getVecU(); uploadBytes(&v, sizeof(U32) * 4); break; }
+            case ShaderUniformType::UniformVec2B:
+            case ShaderUniformType::UniformVec3B:
+            case ShaderUniformType::UniformVec4B:
+            {
+                Vec4B const& v = getVecB();
+                S32 values[4] = { v.x ? 1 : 0, v.y ? 1 : 0, v.z ? 1 : 0, v.w ? 1 : 0 };
+                Size count = (getType() == ShaderUniformType::UniformVec2B) ? 2 : (getType() == ShaderUniformType::UniformVec3B) ? 3 : 4;
+                uploadBytes(values, (U32)(sizeof(S32) * count));
+                break;
+            }
+            case ShaderUniformType::UniformMat3F32: { Mat3F v = getMat3F32(); upload(&v, 1); break; }
+            case ShaderUniformType::UniformMat4F32: { Mat4F v = getMat4F32(); upload(&v, 1); break; }
+            case ShaderUniformType::UniformTMat: { TMat v = getTMat(); upload(&v, 1); break; }
             default:
+                MAZE_ERROR("Unsupported ShaderUniformType: %s!", getType().toCString());
                 break;
         }
     }
@@ -144,49 +168,100 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderUniformVulkan::upload(F32 const* _values, Size _count)
     {
-        getShaderVulkanRaw()->writeUniformData(m_uniformData, (U8 const*)_values, (U32)(_count * sizeof(F32)));
+        if (_count == 1)
+        {
+            uploadBytes(_values, sizeof(F32));
+            return;
+        }
+
+        Vector<U8> packed(_count * c_std140RegisterSize, 0u);
+        for (Size i = 0; i < _count; ++i)
+            memcpy(&packed[i * c_std140RegisterSize], &_values[i], sizeof(F32));
+        uploadBytes(packed.data(), (U32)packed.size());
     }
 
     //////////////////////////////////////////
     void ShaderUniformVulkan::upload(Vec2F const* _vectors, Size _count)
     {
-        getShaderVulkanRaw()->writeUniformData(m_uniformData, (U8 const*)_vectors, (U32)(_count * sizeof(Vec2F)));
+        if (_count == 1)
+        {
+            uploadBytes(_vectors, sizeof(Vec2F));
+            return;
+        }
+
+        Vector<U8> packed(_count * c_std140RegisterSize, 0u);
+        for (Size i = 0; i < _count; ++i)
+            memcpy(&packed[i * c_std140RegisterSize], &_vectors[i], sizeof(Vec2F));
+        uploadBytes(packed.data(), (U32)packed.size());
     }
 
     //////////////////////////////////////////
     void ShaderUniformVulkan::upload(Vec3F const* _vectors, Size _count)
     {
-        getShaderVulkanRaw()->writeUniformData(m_uniformData, (U8 const*)_vectors, (U32)(_count * sizeof(Vec3F)));
+        if (_count == 1)
+        {
+            uploadBytes(_vectors, sizeof(Vec3F));
+            return;
+        }
+
+        Vector<U8> packed(_count * c_std140RegisterSize, 0u);
+        for (Size i = 0; i < _count; ++i)
+            memcpy(&packed[i * c_std140RegisterSize], &_vectors[i], sizeof(Vec3F));
+        uploadBytes(packed.data(), (U32)packed.size());
     }
 
     //////////////////////////////////////////
     void ShaderUniformVulkan::upload(Vec4F const* _vectors, Size _count)
     {
-        getShaderVulkanRaw()->writeUniformData(m_uniformData, (U8 const*)_vectors, (U32)(_count * sizeof(Vec4F)));
+        // vec4 is already 16-byte aligned - no padding needed between elements
+        uploadBytes(_vectors, (U32)(_count * sizeof(Vec4F)));
     }
 
     //////////////////////////////////////////
     void ShaderUniformVulkan::upload(Mat3F const* _matrices, Size _count)
     {
-        getShaderVulkanRaw()->writeUniformData(m_uniformData, (U8 const*)_matrices, (U32)(_count * sizeof(Mat3F)));
+        // Each 3-component column is padded to a 16-byte register (mat3 in
+        // std140 is stored as 3 columns of vec4, same as HLSL float3x3)
+        Vector<U8> packed(_count * 3 * c_std140RegisterSize, 0u);
+        for (Size i = 0; i < _count; ++i)
+        {
+            F32 const* planeMatrix = _matrices[i].getPlaneMatrix();
+            for (Size c = 0; c < 3; ++c)
+                memcpy(&packed[(i * 3 + c) * c_std140RegisterSize], planeMatrix + c * 3, sizeof(F32) * 3);
+        }
+        uploadBytes(packed.data(), (U32)packed.size());
     }
 
     //////////////////////////////////////////
     void ShaderUniformVulkan::upload(Mat4F const* _matrices, Size _count)
     {
-        getShaderVulkanRaw()->writeUniformData(m_uniformData, (U8 const*)_matrices, (U32)(_count * sizeof(Mat4F)));
+        // mat4 is already 16-byte-aligned per column - no padding needed
+        uploadBytes(_matrices, (U32)(_count * sizeof(Mat4F)));
     }
 
     //////////////////////////////////////////
     void ShaderUniformVulkan::upload(TMat const* _matrices, Size _count)
     {
-        // TMat is a 3x4 affine transform (3 rows of float4, matching the
-        // GLSL/HLSL 'float3 u_modelMatrices[N*4]' packing convention used by
-        // GetModelMatrix()) - see MazeCommonShaderHeader.mzglslvk. This path
-        // is only used for the (non-instance-stream) per-uniform TMat
-        // upload; the bulk instance-stream write goes through
-        // InstanceStreamsVulkan directly, not through this ShaderUniform.
-        getShaderVulkanRaw()->writeUniformData(m_uniformData, (U8 const*)_matrices, (U32)(_count * sizeof(TMat)));
+        // TMat is a 3x4 affine transform (4 rows of 3 floats - see
+        // MazeTMat.hpp/getRow()); each row is padded to a 16-byte register to
+        // match the 'vec3 u_viewMatrix[4]' std140 array declaration in
+        // MazeCommonShaderHeader.mzglslvk (std140 arrays always pad each
+        // element to 16 bytes, same rule HLSL constant buffers use - see
+        // ShaderUniformDX11::upload(TMat const*, Size)). This path is only
+        // used for the (non-instance-stream) per-uniform TMat upload; the
+        // bulk instance-stream write goes through InstanceStreamsVulkan
+        // directly (as a full mat4, not this packing), not through this
+        // ShaderUniform.
+        Vector<U8> packed(_count * 4 * c_std140RegisterSize, 0u);
+        for (Size i = 0; i < _count; ++i)
+        {
+            for (Size r = 0; r < 4; ++r)
+            {
+                Vec3F row = _matrices[i].getRow(r);
+                memcpy(&packed[(i * 4 + r) * c_std140RegisterSize], &row, sizeof(F32) * 3);
+            }
+        }
+        uploadBytes(packed.data(), (U32)packed.size());
     }
 
 

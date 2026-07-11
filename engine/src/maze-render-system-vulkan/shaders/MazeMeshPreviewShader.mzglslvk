@@ -1,0 +1,185 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+    #include "MazeInstanceStream.mzglslvk"
+
+    //////////////////////////////////////////
+    // NOTE: u_baseMapST is used only by the vertex stage; the rest of this
+    // block's members are used only by the fragment stage - but the block
+    // must be declared identically in both stage sections since they share
+    // one physical set-1/binding-0 buffer, see the banner comment in
+    // MazeCommonShaderHeader.mzglslvk.
+    layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+    {
+        vec4 u_baseMapST;
+        vec4 u_color;
+        vec4 u_ambientLightColor;
+        float u_shininess;
+        vec4 u_specularColor;
+    };
+
+    //////////////////////////////////////////
+    layout(location = 0) in vec3 a_position;
+    layout(location = 1) in vec3 a_normal;
+    layout(location = 2) in vec3 a_tangent;
+    layout(location = 3) in vec3 a_bitangent;
+    layout(location = 4) in vec4 a_color;
+    layout(location = 5) in vec2 a_texCoords0;
+
+    //////////////////////////////////////////
+    layout(location = 0) out vec3 v_positionOS;
+    layout(location = 1) out vec3 v_positionWS;
+    layout(location = 2) out vec3 v_positionVS;
+    layout(location = 3) out vec3 v_normalOS;
+    layout(location = 4) out vec3 v_normalWS;
+    layout(location = 5) out vec3 v_tangentWS;
+    layout(location = 6) out vec3 v_bitangentWS;
+    layout(location = 7) out vec4 v_color;
+    layout(location = 8) out vec2 v_uv0;
+    layout(location = 9) out vec3 v_viewDirWS;
+    layout(location = 10) out float v_clipDistance0;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        int instanceId = gl_InstanceIndex;
+
+        mat4 modelMatrix = GetModelMatrix(instanceId);
+        mat4 viewMatrix = GetViewMatrix();
+
+        vec4 positionOS = vec4(a_position, 1.0);
+        vec4 positionWS = modelMatrix * positionOS;
+        MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+        vec4 positionVS = viewMatrix * positionWS;
+        vec4 positionCS = u_projectionMatrix * positionVS;
+
+        vec4 normalOS = vec4(a_normal, 1.0);
+        vec4 tangentOS = vec4(a_tangent, 1.0);
+        vec4 bitangentOS = vec4(a_bitangent, 1.0);
+
+        mat3 normalMatrix = mat3(modelMatrix);
+
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+
+        v_positionOS = positionOS.xyz;
+        v_positionWS = positionWS.xyz;
+        v_positionVS = positionVS.xyz;
+
+        vec3 normalWS = normalize(normalMatrix * normalOS.xyz).xyz;
+
+        v_normalOS = normalOS.xyz;
+        v_normalWS = normalWS.xyz;
+
+        v_color = a_color;
+
+        v_uv0 = u_baseMapST.xy * a_texCoords0 + u_baseMapST.zw;
+
+        v_viewDirWS = u_viewPosition - v_positionWS;
+
+        gl_Position = MazeFinalizePositionCS(positionCS);
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+    //////////////////////////////////////////
+    layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+    {
+        vec4 u_baseMapST;
+        vec4 u_color;
+        vec4 u_ambientLightColor;
+        float u_shininess;
+        vec4 u_specularColor;
+    };
+    layout(set = 1, binding = 1) uniform sampler2D u_baseMap;
+
+    //////////////////////////////////////////
+    layout(location = 0) in vec3 v_positionOS;
+    layout(location = 1) in vec3 v_positionWS;
+    layout(location = 2) in vec3 v_positionVS;
+    layout(location = 3) in vec3 v_normalOS;
+    layout(location = 4) in vec3 v_normalWS;
+    layout(location = 5) in vec3 v_tangentWS;
+    layout(location = 6) in vec3 v_bitangentWS;
+    layout(location = 7) in vec4 v_color;
+    layout(location = 8) in vec2 v_uv0;
+    layout(location = 9) in vec3 v_viewDirWS;
+    layout(location = 10) in float v_clipDistance0;
+
+    //////////////////////////////////////////
+    layout(location = 0) out vec4 out_color;
+
+    //////////////////////////////////////////
+    vec3 BlinnPhongLighting(
+        vec3 diffuseColor,
+        vec3 normalWS,
+        vec3 fragmentToViewDirection,
+        vec3 lightDirection,
+        vec3 lightColor)
+    {
+        // Light
+        vec3 fragmentToLightDirection = -lightDirection;
+        float lightAttenuation = 1.0;
+
+        // Lambertian (mesh-preview uses a wrapped/half-lambert term instead
+        // of Specular's plain clamp - this is the one line that differs
+        // from MazeSpecularShader.mzglslvk, ported unchanged from GL/DX11)
+        float NdotL = (dot(normalWS, fragmentToLightDirection) + 1.0) * 0.5;
+        float lambertian = clamp(NdotL, 0.0, 1.0);
+
+        // Light final
+        vec3 lightColorFinal = lightColor * lightAttenuation;
+
+        // Half vector
+        vec3 H = normalize(fragmentToLightDirection + fragmentToViewDirection);
+
+        // Shininess
+        float shininess = u_shininess;
+
+        // Specular
+        float NdotH = dot(normalWS, H);
+        float specular = pow(clamp(NdotH, 0.0, 1.0), max(pow(shininess, 3.0) * 512.0, 1.0));
+        vec3 specularColor = u_specularColor.rgb * clamp(specular, 0.0, 1.0);
+
+        return
+            diffuseColor * lambertian * lightColorFinal +
+            specularColor * lightColorFinal;
+    }
+
+    //////////////////////////////////////////
+    void main()
+    {
+        MAZE_CLIP_DISTANCE_FRAGMENT;
+
+        // View direction
+        vec3 fragmentToViewDirection = normalize(v_viewDirWS);
+
+        // Normal
+        vec3 normalWS = normalize(v_normalWS);
+
+        // Ambient light
+        vec3 ambientLightColor = u_ambientLightColor.rgb;
+
+        // Albedo
+        vec4 albedo = MAZE_GET_TEXEL2D(u_baseMap, v_uv0) * u_color;
+
+        // Diffuse color
+        vec3 diffuseColor = albedo.rgb;
+
+        // Linear color
+        vec3 linearColor = diffuseColor * ambientLightColor;
+
+        // Main light
+        linearColor += BlinnPhongLighting(diffuseColor, normalWS, fragmentToViewDirection, normalize(u_mainLightDirection), u_mainLightColor.rgb);
+
+        // Reset to LDR
+        linearColor.r = min(linearColor.r, 1.0);
+        linearColor.g = min(linearColor.g, 1.0);
+        linearColor.b = min(linearColor.b, 1.0);
+
+        out_color = vec4(linearColor, albedo.a);
+    }
+)"

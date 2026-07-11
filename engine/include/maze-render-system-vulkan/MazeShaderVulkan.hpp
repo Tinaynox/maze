@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-render-system-vulkan/MazeRenderSystemVulkanHeader.hpp"
 #include "maze-graphics/MazeShader.hpp"
+#include "maze-graphics/MazeVertex.hpp"
 #include "maze-core/containers/MazeFastVector.hpp"
 
 

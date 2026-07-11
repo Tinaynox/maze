@@ -1,0 +1,519 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#include "MazeRenderSystemVulkanHeader.hpp"
+#include "maze-render-system-vulkan/MazeRenderWindowVulkan.hpp"
+#include "maze-render-system-vulkan/MazeRenderSystemVulkan.hpp"
+#include "maze-render-system-vulkan/MazeStateMachineVulkan.hpp"
+#include "maze-render-system-vulkan/MazeRenderQueueVulkan.hpp"
+#include "maze-render-system-vulkan/MazeHelpersVulkan.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
+
+#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
+#   include "maze-core/system/win/MazeWindowWin.hpp"
+#endif
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    // Class RenderWindowVulkan
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(RenderWindowVulkan, RenderWindow);
+
+    //////////////////////////////////////////
+    RenderWindowVulkan::RenderWindowVulkan()
+    {
+    }
+
+    //////////////////////////////////////////
+    RenderWindowVulkan::~RenderWindowVulkan()
+    {
+        if (m_renderSystemVulkan && m_renderSystemVulkan->getDevice() != VK_NULL_HANDLE)
+            vkDeviceWaitIdle(m_renderSystemVulkan->getDevice());
+
+        destroyDepthBuffer();
+        destroySwapChain();
+        destroySurface();
+
+        destroySystemWindow();
+    }
+
+    //////////////////////////////////////////
+    RenderWindowVulkanPtr RenderWindowVulkan::Create(
+        RenderSystemVulkan* _renderSystem,
+        RenderWindowParams const& _params)
+    {
+        RenderWindowVulkanPtr window;
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(RenderWindowVulkan, window, init(_renderSystem, _params));
+        return window;
+    }
+
+    //////////////////////////////////////////
+    bool RenderWindowVulkan::init(
+        RenderSystemVulkan* _renderSystem,
+        RenderWindowParams const& _params)
+    {
+        m_renderSystemVulkan = _renderSystem;
+
+        if (!RenderWindow::init(_params))
+            return false;
+
+        if (!createSurface())
+            return false;
+
+        if (!createSwapChain(_params.antialiasingLevel))
+            return false;
+
+        if (!createDepthBuffer())
+            return false;
+
+        m_renderQueue = RenderQueueVulkan::Create(this);
+        if (!m_renderQueue)
+            return false;
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    RenderSystemVulkan* RenderWindowVulkan::getRenderSystemVulkanRaw() const
+    {
+        return m_renderSystemVulkan;
+    }
+
+    //////////////////////////////////////////
+    bool RenderWindowVulkan::createSurface()
+    {
+#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
+        MAZE_ERROR_RETURN_VALUE_IF(!m_window, false, "System window is null!");
+
+        WindowWin* windowWin = m_window->castRaw<WindowWin>();
+        HWND hwnd = windowWin->getHandle();
+        MAZE_ERROR_RETURN_VALUE_IF(!hwnd, false, "System window handle is null!");
+
+        VkWin32SurfaceCreateInfoKHR surfaceInfo = {};
+        surfaceInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+        surfaceInfo.hinstance = GetModuleHandle(nullptr);
+        surfaceInfo.hwnd = hwnd;
+
+        MAZE_VK_CALL(vkCreateWin32SurfaceKHR(m_renderSystemVulkan->getInstance(), &surfaceInfo, nullptr, &m_surface));
+        MAZE_ERROR_RETURN_VALUE_IF(m_surface == VK_NULL_HANDLE, false, "vkCreateWin32SurfaceKHR failed!");
+
+        VkBool32 presentSupported = VK_FALSE;
+        vkGetPhysicalDeviceSurfaceSupportKHR(
+            m_renderSystemVulkan->getPhysicalDevice(),
+            m_renderSystemVulkan->getPresentQueueFamilyIndex(),
+            m_surface, &presentSupported);
+        MAZE_ERROR_RETURN_VALUE_IF(!presentSupported, false, "Graphics queue family does not support presentation to this surface!");
+
+        return true;
+#else
+        MAZE_ERROR_RETURN_VALUE(false, "Vulkan render window is only implemented for Windows in this backend!");
+#endif
+    }
+
+    //////////////////////////////////////////
+    void RenderWindowVulkan::destroySurface()
+    {
+        if (m_surface != VK_NULL_HANDLE && m_renderSystemVulkan)
+        {
+            vkDestroySurfaceKHR(m_renderSystemVulkan->getInstance(), m_surface, nullptr);
+            m_surface = VK_NULL_HANDLE;
+        }
+    }
+
+    //////////////////////////////////////////
+    bool RenderWindowVulkan::createSwapChain(S32 _antialiasingLevel)
+    {
+        MAZE_ERROR_RETURN_VALUE_IF(m_surface == VK_NULL_HANDLE, false, "Surface is null!");
+
+        RenderSystemVulkan* rs = m_renderSystemVulkan;
+        VkPhysicalDevice physicalDevice = rs->getPhysicalDevice();
+
+        VkSurfaceCapabilitiesKHR capabilities;
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, m_surface, &capabilities);
+
+        U32 formatCount = 0u;
+        vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, m_surface, &formatCount, nullptr);
+        Vector<VkSurfaceFormatKHR> formats(formatCount);
+        vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, m_surface, &formatCount, formats.data());
+
+        VkSurfaceFormatKHR chosenFormat = formats[0];
+        for (VkSurfaceFormatKHR const& format : formats)
+        {
+            if (format.format == VK_FORMAT_B8G8R8A8_UNORM && format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+            {
+                chosenFormat = format;
+                break;
+            }
+        }
+        m_swapChainFormat = chosenFormat.format;
+
+        U32 presentModeCount = 0u;
+        vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, m_surface, &presentModeCount, nullptr);
+        Vector<VkPresentModeKHR> presentModes(presentModeCount);
+        vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, m_surface, &presentModeCount, presentModes.data());
+
+        VkPresentModeKHR chosenPresentMode = VK_PRESENT_MODE_FIFO_KHR; // always available, vsync'd
+        if (m_vsync <= 0)
+        {
+            for (VkPresentModeKHR mode : presentModes)
+            {
+                if (mode == VK_PRESENT_MODE_IMMEDIATE_KHR)
+                {
+                    chosenPresentMode = mode;
+                    break;
+                }
+            }
+        }
+
+        Vec2U clientSize = m_window->getClientSize();
+        m_swapChainExtent.x = Math::Clamp(clientSize.x, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+        m_swapChainExtent.y = Math::Clamp(clientSize.y, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+
+        U32 imageCount = capabilities.minImageCount + 1u;
+        if (capabilities.maxImageCount > 0u && imageCount > capabilities.maxImageCount)
+            imageCount = capabilities.maxImageCount;
+
+        // Vulkan swapchain images are always single-sample - MSAA is not yet
+        // wired up for window render targets in this backend (would need a
+        // separate multisampled color attachment resolved into the swapchain
+        // image before present, unlike DX11's legacy-blit-model MSAA
+        // backbuffer). Accepted but currently ignored - known gap.
+        m_antialiasingLevel = 1;
+        MAZE_WARNING_IF(_antialiasingLevel > 1, "RenderWindowVulkan: window MSAA is not implemented yet, ignoring antialiasingLevel=%d", _antialiasingLevel);
+
+        VkSwapchainCreateInfoKHR swapChainInfo = {};
+        swapChainInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+        swapChainInfo.surface = m_surface;
+        swapChainInfo.minImageCount = imageCount;
+        swapChainInfo.imageFormat = chosenFormat.format;
+        swapChainInfo.imageColorSpace = chosenFormat.colorSpace;
+        swapChainInfo.imageExtent = { m_swapChainExtent.x, m_swapChainExtent.y };
+        swapChainInfo.imageArrayLayers = 1u;
+        swapChainInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+        swapChainInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        swapChainInfo.preTransform = capabilities.currentTransform;
+        swapChainInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+        swapChainInfo.presentMode = chosenPresentMode;
+        swapChainInfo.clipped = VK_TRUE;
+        swapChainInfo.oldSwapchain = m_swapChain;
+
+        VkSwapchainKHR newSwapChain = VK_NULL_HANDLE;
+        MAZE_VK_CALL(vkCreateSwapchainKHR(rs->getDevice(), &swapChainInfo, nullptr, &newSwapChain));
+        MAZE_ERROR_RETURN_VALUE_IF(newSwapChain == VK_NULL_HANDLE, false, "vkCreateSwapchainKHR failed!");
+
+        destroySwapChain();
+        m_swapChain = newSwapChain;
+
+        U32 actualImageCount = 0u;
+        vkGetSwapchainImagesKHR(rs->getDevice(), m_swapChain, &actualImageCount, nullptr);
+        m_swapChainImages.resize(actualImageCount);
+        vkGetSwapchainImagesKHR(rs->getDevice(), m_swapChain, &actualImageCount, m_swapChainImages.data());
+
+        m_swapChainImageViews.resize(actualImageCount);
+        m_imageAvailableSemaphores.resize(actualImageCount);
+        for (U32 i = 0; i < actualImageCount; ++i)
+        {
+            VkImageViewCreateInfo viewInfo = {};
+            viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            viewInfo.image = m_swapChainImages[i];
+            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            viewInfo.format = m_swapChainFormat;
+            viewInfo.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0u, 1u, 0u, 1u };
+            MAZE_VK_CALL(vkCreateImageView(rs->getDevice(), &viewInfo, nullptr, &m_swapChainImageViews[i]));
+
+            VkSemaphoreCreateInfo semaphoreInfo = {};
+            semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+            MAZE_VK_CALL(vkCreateSemaphore(rs->getDevice(), &semaphoreInfo, nullptr, &m_imageAvailableSemaphores[i]));
+        }
+
+        Debug::Log("RenderWindowVulkan: Swap chain created (%ux%u, %u images).", m_swapChainExtent.x, m_swapChainExtent.y, actualImageCount);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool RenderWindowVulkan::createDepthBuffer()
+    {
+        RenderSystemVulkan* rs = m_renderSystemVulkan;
+
+        VkImageCreateInfo imageInfo = {};
+        imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        imageInfo.imageType = VK_IMAGE_TYPE_2D;
+        imageInfo.extent = { m_swapChainExtent.x, m_swapChainExtent.y, 1u };
+        imageInfo.mipLevels = 1u;
+        imageInfo.arrayLayers = 1u;
+        imageInfo.format = m_depthFormat;
+        imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+        imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+        imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+        imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        VmaAllocationCreateInfo allocInfo = {};
+        allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+
+        MAZE_VK_CALL(vmaCreateImage(rs->getAllocator(), &imageInfo, &allocInfo, &m_depthImage, &m_depthImageAllocation, nullptr));
+        MAZE_ERROR_RETURN_VALUE_IF(m_depthImage == VK_NULL_HANDLE, false, "Depth image creation failed!");
+
+        VkImageViewCreateInfo viewInfo = {};
+        viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        viewInfo.image = m_depthImage;
+        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        viewInfo.format = m_depthFormat;
+        viewInfo.subresourceRange = { (VkImageAspectFlags)(VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT), 0u, 1u, 0u, 1u };
+        MAZE_VK_CALL(vkCreateImageView(rs->getDevice(), &viewInfo, nullptr, &m_depthImageView));
+
+        VkCommandBuffer cmd = rs->beginSingleTimeCommands();
+        TransitionImageLayoutVulkan(
+            cmd, m_depthImage,
+            VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT,
+            VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+        rs->endSingleTimeCommands(cmd);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void RenderWindowVulkan::destroyDepthBuffer()
+    {
+        if (!m_renderSystemVulkan)
+            return;
+
+        VkDevice device = m_renderSystemVulkan->getDevice();
+        if (m_depthImageView != VK_NULL_HANDLE)
+        {
+            vkDestroyImageView(device, m_depthImageView, nullptr);
+            m_depthImageView = VK_NULL_HANDLE;
+        }
+        if (m_depthImage != VK_NULL_HANDLE)
+        {
+            vmaDestroyImage(m_renderSystemVulkan->getAllocator(), m_depthImage, m_depthImageAllocation);
+            m_depthImage = VK_NULL_HANDLE;
+        }
+    }
+
+    //////////////////////////////////////////
+    void RenderWindowVulkan::destroySwapChain()
+    {
+        if (!m_renderSystemVulkan)
+            return;
+
+        VkDevice device = m_renderSystemVulkan->getDevice();
+
+        for (VkSemaphore semaphore : m_imageAvailableSemaphores)
+            if (semaphore != VK_NULL_HANDLE)
+                vkDestroySemaphore(device, semaphore, nullptr);
+        m_imageAvailableSemaphores.clear();
+
+        for (VkImageView view : m_swapChainImageViews)
+            if (view != VK_NULL_HANDLE)
+                vkDestroyImageView(device, view, nullptr);
+        m_swapChainImageViews.clear();
+        m_swapChainImages.clear();
+
+        if (m_swapChain != VK_NULL_HANDLE)
+        {
+            vkDestroySwapchainKHR(device, m_swapChain, nullptr);
+            m_swapChain = VK_NULL_HANDLE;
+        }
+    }
+
+    //////////////////////////////////////////
+    void RenderWindowVulkan::notifyWindowSizeChanged(Window* _window)
+    {
+        RenderWindow::notifyWindowSizeChanged(_window);
+
+        if (!m_swapChain)
+            return;
+
+        Vec2U clientSize = m_window->getClientSize();
+        if (clientSize.x == 0u || clientSize.y == 0u)
+            return;
+
+        vkDeviceWaitIdle(m_renderSystemVulkan->getDevice());
+
+        destroyDepthBuffer();
+        createSwapChain(m_antialiasingLevel);
+        createDepthBuffer();
+    }
+
+    //////////////////////////////////////////
+    void RenderWindowVulkan::endDraw()
+    {
+        // Transition the acquired swapchain image to present-ready while the
+        // frame's command buffer is still open for recording - relying on
+        // processRenderTargetWillReset() for this would only fire if a
+        // different render target subsequently becomes current, which isn't
+        // guaranteed to happen before swapBuffers()/endFrame() submits and
+        // closes the command buffer
+        if (m_imageAcquired)
+        {
+            VkCommandBuffer cmd = getRenderSystemVulkanRaw()->getCurrentCommandBuffer();
+            if (cmd != VK_NULL_HANDLE)
+            {
+                TransitionImageLayoutVulkan(
+                    cmd, m_swapChainImages[m_currentImageIndex], VK_IMAGE_ASPECT_COLOR_BIT,
+                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+            }
+        }
+
+        RenderWindow::endDraw();
+    }
+
+    //////////////////////////////////////////
+    void RenderWindowVulkan::swapBuffers()
+    {
+        if (!m_swapChain || !m_imageAcquired)
+            return;
+
+        RenderSystemVulkan* rs = m_renderSystemVulkan;
+
+        VkSemaphore renderFinished = rs->endFrame();
+
+        VkPresentInfoKHR presentInfo = {};
+        presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+        presentInfo.waitSemaphoreCount = renderFinished != VK_NULL_HANDLE ? 1u : 0u;
+        presentInfo.pWaitSemaphores = &renderFinished;
+        presentInfo.swapchainCount = 1u;
+        presentInfo.pSwapchains = &m_swapChain;
+        presentInfo.pImageIndices = &m_currentImageIndex;
+
+        VkResult result = vkQueuePresentKHR(rs->getPresentQueue(), &presentInfo);
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+        {
+            vkDeviceWaitIdle(rs->getDevice());
+            destroyDepthBuffer();
+            createSwapChain(m_antialiasingLevel);
+            createDepthBuffer();
+        }
+        else
+        {
+            MAZE_ERROR_IF(result != VK_SUCCESS, "vkQueuePresentKHR failed! result=%d", (S32)result);
+        }
+
+        m_imageAcquired = false;
+    }
+
+    //////////////////////////////////////////
+    bool RenderWindowVulkan::processRenderTargetWillSet()
+    {
+        if (!m_swapChain)
+            return false;
+
+        RenderSystemVulkan* rs = m_renderSystemVulkan;
+
+        // A frame is already open by this point (RenderSystemVulkan::setCurrentRenderTarget
+        // calls ensureFrameOpen() before this) - acquire this window's next
+        // swapchain image and register the image-available semaphore as a
+        // wait dependency on the frame's eventual submission
+        static U32 s_semaphoreCycler = 0u;
+        VkSemaphore acquireSemaphore = m_imageAvailableSemaphores[s_semaphoreCycler % m_imageAvailableSemaphores.size()];
+        ++s_semaphoreCycler;
+
+        VkResult result = vkAcquireNextImageKHR(
+            rs->getDevice(), m_swapChain, UINT64_MAX,
+            acquireSemaphore, VK_NULL_HANDLE, &m_currentImageIndex);
+
+        if (result == VK_ERROR_OUT_OF_DATE_KHR)
+        {
+            vkDeviceWaitIdle(rs->getDevice());
+            destroyDepthBuffer();
+            createSwapChain(m_antialiasingLevel);
+            createDepthBuffer();
+            return false;
+        }
+
+        MAZE_ERROR_RETURN_VALUE_IF(result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR, false, "vkAcquireNextImageKHR failed! result=%d", (S32)result);
+
+        rs->addFrameWaitSemaphore(acquireSemaphore, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+        m_imageAcquired = true;
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void RenderWindowVulkan::processRenderTargetSet()
+    {
+        StateMachineVulkan* stateMachine = getRenderSystemVulkanRaw()->getStateMachine();
+
+        VkImageView colorView = m_swapChainImageViews[m_currentImageIndex];
+
+        VkCommandBuffer cmd = getRenderSystemVulkanRaw()->getCurrentCommandBuffer();
+        TransitionImageLayoutVulkan(
+            cmd, m_swapChainImages[m_currentImageIndex], VK_IMAGE_ASPECT_COLOR_BIT,
+            VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+        stateMachine->bindRenderTarget(
+            &colorView,
+            1,
+            m_depthImageView,
+            getRenderTargetSize(),
+            false,
+            m_swapChainFormat,
+            m_depthFormat);
+    }
+
+    //////////////////////////////////////////
+    void RenderWindowVulkan::processRenderTargetWillReset()
+    {
+        // The present-ready layout transition is handled deterministically in
+        // endDraw() instead of here (see its comment) - this override
+        // intentionally does nothing further
+    }
+
+    //////////////////////////////////////////
+    void RenderWindowVulkan::setVSync(S32 _vsync)
+    {
+        if (m_vsync == _vsync)
+            return;
+
+        m_vsync = _vsync;
+
+        if (m_swapChain)
+        {
+            vkDeviceWaitIdle(m_renderSystemVulkan->getDevice());
+            destroyDepthBuffer();
+            createSwapChain(m_antialiasingLevel);
+            createDepthBuffer();
+        }
+    }
+
+    //////////////////////////////////////////
+    bool RenderWindowVulkan::isReadyToRender() const
+    {
+        if (!m_swapChain)
+            return false;
+
+        return RenderWindow::isReadyToRender();
+    }
+
+
+} // namespace Maze
+//////////////////////////////////////////

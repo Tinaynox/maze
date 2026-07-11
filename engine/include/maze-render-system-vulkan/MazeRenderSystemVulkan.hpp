@@ -68,6 +68,9 @@ namespace Maze
         VkCommandPool commandPool = VK_NULL_HANDLE;
         VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
         VkFence inFlightFence = VK_NULL_HANDLE;
+        // Signaled when this frame's submitted work completes - windows wait
+        // on this before presenting
+        VkSemaphore renderFinishedSemaphore = VK_NULL_HANDLE;
     };
 
 
@@ -173,6 +176,38 @@ namespace Maze
         // #include the same MazeCommonShaderHeader.mzglslvk, but this guards
         // against a mismatch instead of silently truncating)
         void ensureGlobalUniformBufferSize(U32 _size);
+
+
+        //////////////////////////////////////////
+        // Shared instance-stream SSBOs (set-0 bindings 1/2/3 - see
+        // MazeShaderVulkan.hpp banner comment), one buffer per frame-in-flight,
+        // capacity shared across every render target drawn within a frame (see
+        // allocateInstanceStreamSlots). Written directly by
+        // InstanceStreamModelMatrixVulkan/ColorVulkan/UVVulkan
+        // (instance-stream/MazeInstanceStreamsVulkan.cpp), not through the
+        // named-uniform system.
+        static U32 const c_instanceStreamCapacity = 16384u * 2u;
+
+        //////////////////////////////////////////
+        void* getModelMatricesStreamMapped(U32 _frameIndex) const;
+
+        //////////////////////////////////////////
+        void* getColorsStreamMapped(U32 _frameIndex) const;
+
+        //////////////////////////////////////////
+        // UV streams are interleaved per instance (2 vec4 per instance slot:
+        // channel 0 then channel 1), matching MazeInstanceStream.mzglslvk's
+        // 'UVStreamsBuffer' struct-per-instance layout - NOT two concatenated
+        // per-channel regions
+        void* getUVStreamMapped(U32 _frameIndex) const;
+
+        //////////////////////////////////////////
+        // Allocates _count contiguous slots from the current frame's shared
+        // instance-stream cursor (reset to 0 every ensureFrameOpen()) and
+        // returns the starting offset - callers write their data at that
+        // offset in the mapped buffers above, and pass the same offset as the
+        // 'u_instanceOffset' push constant for the following draw call(s)
+        S32 allocateInstanceStreamSlots(S32 _count);
 
 
         //////////////////////////////////////////
@@ -282,14 +317,33 @@ namespace Maze
         VkCommandBuffer getCurrentCommandBuffer() const;
 
         //////////////////////////////////////////
-        // Called once per engine frame, before any render target is drawn to
-        void beginFrame();
+        // Opens a frame (waits the next frame-in-flight fence, resets its
+        // command pool, begins recording) if one isn't already open. A
+        // "frame" here spans however many render targets get drawn to
+        // between the last endFrame() and the next one - RenderTarget::beginDraw()
+        // calls this lazily so consecutive targets (e.g. a shadow buffer then
+        // the main window) share one command buffer/submission, and
+        // RenderWindowVulkan::swapBuffers() is what actually closes it (a
+        // present requires the work to already be submitted).
+        void ensureFrameOpen();
 
         //////////////////////////////////////////
-        // Called once per engine frame, after every render target has been
-        // drawn to (and, for windows, presented) - submits the frame's command
-        // buffer and advances the frame-in-flight index
-        void endFrame();
+        inline bool isFrameOpen() const { return m_frameOpen; }
+
+        //////////////////////////////////////////
+        // Adds a semaphore the next endFrame() submission should wait on
+        // before executing (e.g. a swapchain image-available semaphore) at
+        // the given pipeline stage
+        void addFrameWaitSemaphore(VkSemaphore _semaphore, VkPipelineStageFlags _waitStage);
+
+        //////////////////////////////////////////
+        // Submits the currently open frame's command buffer (waiting on any
+        // semaphores registered via addFrameWaitSemaphore since the frame was
+        // opened) and advances the frame-in-flight index. Returns a semaphore
+        // that is signaled once the submitted work completes, for callers
+        // (RenderWindowVulkan::swapBuffers) that need to wait on it before
+        // presenting.
+        VkSemaphore endFrame();
 
 
         //////////////////////////////////////////
@@ -336,6 +390,9 @@ namespace Maze
         //////////////////////////////////////////
         bool createFrameResources();
 
+        //////////////////////////////////////////
+        bool createInstanceStreamBuffers();
+
     protected:
         RenderSystemVulkanConfig m_config;
 
@@ -364,6 +421,9 @@ namespace Maze
 
         Vector<VulkanFrameResources> m_frameResources;
         U32 m_currentFrameIndex = 0u;
+        bool m_frameOpen = false;
+        Vector<VkSemaphore> m_frameWaitSemaphores;
+        Vector<VkPipelineStageFlags> m_frameWaitStages;
 
         // One-off transient command pool for beginSingleTimeCommands/endSingleTimeCommands
         VkCommandPool m_transientCommandPool = VK_NULL_HANDLE;
@@ -380,6 +440,18 @@ namespace Maze
         U32 m_globalUniformBufferSize = 0u;
         Vector<U8> m_globalUniformShadow;
         bool m_globalUniformDirty[8] = {}; // indexed by frame-in-flight index, capped
+
+        // Instance-stream SSBOs (set-0 bindings 1/2/3), one per frame-in-flight
+        Vector<VkBuffer> m_modelMatricesStreamBuffers;
+        Vector<VmaAllocation> m_modelMatricesStreamAllocations;
+        Vector<void*> m_modelMatricesStreamMapped;
+        Vector<VkBuffer> m_colorsStreamBuffers;
+        Vector<VmaAllocation> m_colorsStreamAllocations;
+        Vector<void*> m_colorsStreamMapped;
+        Vector<VkBuffer> m_uvStreamBuffers;
+        Vector<VmaAllocation> m_uvStreamAllocations;
+        Vector<void*> m_uvStreamMapped;
+        S32 m_instanceStreamCursor = 0;
     };
 
 

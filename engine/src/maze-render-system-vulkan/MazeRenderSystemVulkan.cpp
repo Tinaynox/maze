@@ -98,6 +98,8 @@ namespace Maze
         {
             if (frame.inFlightFence != VK_NULL_HANDLE)
                 vkDestroyFence(m_device, frame.inFlightFence, nullptr);
+            if (frame.renderFinishedSemaphore != VK_NULL_HANDLE)
+                vkDestroySemaphore(m_device, frame.renderFinishedSemaphore, nullptr);
             if (frame.commandPool != VK_NULL_HANDLE)
                 vkDestroyCommandPool(m_device, frame.commandPool, nullptr);
         }
@@ -118,6 +120,16 @@ namespace Maze
         for (Size i = 0; i < m_globalUniformBuffers.size(); ++i)
             if (m_globalUniformBuffers[i] != VK_NULL_HANDLE)
                 vmaDestroyBuffer(m_allocator, m_globalUniformBuffers[i], m_globalUniformAllocations[i]);
+
+        for (Size i = 0; i < m_modelMatricesStreamBuffers.size(); ++i)
+            if (m_modelMatricesStreamBuffers[i] != VK_NULL_HANDLE)
+                vmaDestroyBuffer(m_allocator, m_modelMatricesStreamBuffers[i], m_modelMatricesStreamAllocations[i]);
+        for (Size i = 0; i < m_colorsStreamBuffers.size(); ++i)
+            if (m_colorsStreamBuffers[i] != VK_NULL_HANDLE)
+                vmaDestroyBuffer(m_allocator, m_colorsStreamBuffers[i], m_colorsStreamAllocations[i]);
+        for (Size i = 0; i < m_uvStreamBuffers.size(); ++i)
+            if (m_uvStreamBuffers[i] != VK_NULL_HANDLE)
+                vmaDestroyBuffer(m_allocator, m_uvStreamBuffers[i], m_uvStreamAllocations[i]);
 
         if (m_allocator != VK_NULL_HANDLE)
             vmaDestroyAllocator(m_allocator);
@@ -268,6 +280,9 @@ namespace Maze
             m_globalUniformBufferSize = initialSize;
             m_globalUniformShadow.resize(initialSize, 0u);
         }
+
+        if (!createInstanceStreamBuffers())
+            return false;
 
         m_stateMachine = MakeUnique<StateMachineVulkan>(this);
 
@@ -522,6 +537,10 @@ namespace Maze
             fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
             fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
             MAZE_VK_CALL(vkCreateFence(m_device, &fenceInfo, nullptr, &frame.inFlightFence));
+
+            VkSemaphoreCreateInfo semaphoreInfo = {};
+            semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+            MAZE_VK_CALL(vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &frame.renderFinishedSemaphore));
         }
 
         VkCommandPoolCreateInfo transientPoolInfo = {};
@@ -531,6 +550,120 @@ namespace Maze
         MAZE_VK_CALL(vkCreateCommandPool(m_device, &transientPoolInfo, nullptr, &m_transientCommandPool));
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    static bool CreateInstanceStreamBufferSet(
+        RenderSystemVulkan* _rs,
+        U32 _byteSize,
+        U32 _framesInFlight,
+        Vector<VkBuffer>& _buffers,
+        Vector<VmaAllocation>& _allocations,
+        Vector<void*>& _mapped)
+    {
+        _buffers.resize(_framesInFlight, VK_NULL_HANDLE);
+        _allocations.resize(_framesInFlight, VK_NULL_HANDLE);
+        _mapped.resize(_framesInFlight, nullptr);
+
+        for (U32 i = 0; i < _framesInFlight; ++i)
+        {
+            VkBufferCreateInfo bufferInfo = {};
+            bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+            bufferInfo.size = _byteSize;
+            bufferInfo.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+            bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+            VmaAllocationCreateInfo allocInfo = {};
+            allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+            allocInfo.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT | VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
+
+            VmaAllocationInfo allocResultInfo = {};
+            MAZE_VK_CALL(vmaCreateBuffer(_rs->getAllocator(), &bufferInfo, &allocInfo, &_buffers[i], &_allocations[i], &allocResultInfo));
+            _mapped[i] = allocResultInfo.pMappedData;
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    static void WriteGlobalStorageBufferBinding(
+        VkDevice _device,
+        VkDescriptorSet _set,
+        U32 _binding,
+        VkBuffer _buffer,
+        U32 _size)
+    {
+        VkDescriptorBufferInfo bufInfo = {};
+        bufInfo.buffer = _buffer;
+        bufInfo.offset = 0u;
+        bufInfo.range = _size;
+
+        VkWriteDescriptorSet write = {};
+        write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        write.dstSet = _set;
+        write.dstBinding = _binding;
+        write.descriptorCount = 1u;
+        write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        write.pBufferInfo = &bufInfo;
+        vkUpdateDescriptorSets(_device, 1u, &write, 0u, nullptr);
+    }
+
+    //////////////////////////////////////////
+    bool RenderSystemVulkan::createInstanceStreamBuffers()
+    {
+        U32 framesInFlight = m_config.framesInFlight;
+
+        U32 modelMatricesSize = c_instanceStreamCapacity * (U32)(sizeof(F32) * 16u); // mat4 per instance
+        U32 colorsSize = c_instanceStreamCapacity * (U32)(sizeof(F32) * 4u); // vec4 per instance
+        U32 uvSize = c_instanceStreamCapacity * 2u * (U32)(sizeof(F32) * 4u); // 2 channels * vec4 per instance
+
+        if (!CreateInstanceStreamBufferSet(this, modelMatricesSize, framesInFlight, m_modelMatricesStreamBuffers, m_modelMatricesStreamAllocations, m_modelMatricesStreamMapped))
+            return false;
+        if (!CreateInstanceStreamBufferSet(this, colorsSize, framesInFlight, m_colorsStreamBuffers, m_colorsStreamAllocations, m_colorsStreamMapped))
+            return false;
+        if (!CreateInstanceStreamBufferSet(this, uvSize, framesInFlight, m_uvStreamBuffers, m_uvStreamAllocations, m_uvStreamMapped))
+            return false;
+
+        for (U32 i = 0; i < framesInFlight; ++i)
+        {
+            WriteGlobalStorageBufferBinding(m_device, m_globalDescriptorSets[i], 1u, m_modelMatricesStreamBuffers[i], modelMatricesSize);
+            WriteGlobalStorageBufferBinding(m_device, m_globalDescriptorSets[i], 2u, m_colorsStreamBuffers[i], colorsSize);
+            WriteGlobalStorageBufferBinding(m_device, m_globalDescriptorSets[i], 3u, m_uvStreamBuffers[i], uvSize);
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void* RenderSystemVulkan::getModelMatricesStreamMapped(U32 _frameIndex) const
+    {
+        return _frameIndex < m_modelMatricesStreamMapped.size() ? m_modelMatricesStreamMapped[_frameIndex] : nullptr;
+    }
+
+    //////////////////////////////////////////
+    void* RenderSystemVulkan::getColorsStreamMapped(U32 _frameIndex) const
+    {
+        return _frameIndex < m_colorsStreamMapped.size() ? m_colorsStreamMapped[_frameIndex] : nullptr;
+    }
+
+    //////////////////////////////////////////
+    void* RenderSystemVulkan::getUVStreamMapped(U32 _frameIndex) const
+    {
+        return _frameIndex < m_uvStreamMapped.size() ? m_uvStreamMapped[_frameIndex] : nullptr;
+    }
+
+    //////////////////////////////////////////
+    S32 RenderSystemVulkan::allocateInstanceStreamSlots(S32 _count)
+    {
+        if (m_instanceStreamCursor + _count > (S32)c_instanceStreamCapacity)
+        {
+            MAZE_ERROR("Vulkan instance-stream capacity (%u) exceeded in a single frame!", c_instanceStreamCapacity);
+            _count = Math::Max(0, (S32)c_instanceStreamCapacity - m_instanceStreamCursor);
+        }
+
+        S32 offset = m_instanceStreamCursor;
+        m_instanceStreamCursor += _count;
+        return offset;
     }
 
     //////////////////////////////////////////
@@ -590,6 +723,8 @@ namespace Maze
 
         if (_renderTarget)
         {
+            ensureFrameOpen();
+
             if (!_renderTarget->processRenderTargetWillSet())
                 return false;
         }
@@ -795,8 +930,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderSystemVulkan::beginFrame()
+    void RenderSystemVulkan::ensureFrameOpen()
     {
+        if (m_frameOpen)
+            return;
+
         VulkanFrameResources& frame = m_frameResources[m_currentFrameIndex];
 
         MAZE_VK_CALL(vkWaitForFences(m_device, 1u, &frame.inFlightFence, VK_TRUE, UINT64_MAX));
@@ -809,12 +947,25 @@ namespace Maze
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
         MAZE_VK_CALL(vkBeginCommandBuffer(frame.commandBuffer, &beginInfo));
 
+        m_frameOpen = true;
+        m_instanceStreamCursor = 0;
+
         flushGlobalUniforms();
     }
 
     //////////////////////////////////////////
-    void RenderSystemVulkan::endFrame()
+    void RenderSystemVulkan::addFrameWaitSemaphore(VkSemaphore _semaphore, VkPipelineStageFlags _waitStage)
     {
+        m_frameWaitSemaphores.push_back(_semaphore);
+        m_frameWaitStages.push_back(_waitStage);
+    }
+
+    //////////////////////////////////////////
+    VkSemaphore RenderSystemVulkan::endFrame()
+    {
+        if (!m_frameOpen)
+            return VK_NULL_HANDLE;
+
         VulkanFrameResources& frame = m_frameResources[m_currentFrameIndex];
 
         if (m_stateMachine)
@@ -822,19 +973,24 @@ namespace Maze
 
         MAZE_VK_CALL(vkEndCommandBuffer(frame.commandBuffer));
 
-        VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         VkSubmitInfo submitInfo = {};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submitInfo.commandBufferCount = 1u;
         submitInfo.pCommandBuffers = &frame.commandBuffer;
-        // Per-window image-available/render-finished semaphores are chained
-        // in by RenderWindowVulkan::swapBuffers, which calls vkQueueSubmit
-        // itself for the present-wait dependency instead of here, since a
-        // frame may touch zero, one, or several swapchains - see
-        // RenderWindowVulkan.cpp
+        submitInfo.waitSemaphoreCount = (U32)m_frameWaitSemaphores.size();
+        submitInfo.pWaitSemaphores = m_frameWaitSemaphores.empty() ? nullptr : m_frameWaitSemaphores.data();
+        submitInfo.pWaitDstStageMask = m_frameWaitStages.empty() ? nullptr : m_frameWaitStages.data();
+        submitInfo.signalSemaphoreCount = 1u;
+        submitInfo.pSignalSemaphores = &frame.renderFinishedSemaphore;
         MAZE_VK_CALL(vkQueueSubmit(m_graphicsQueue, 1u, &submitInfo, frame.inFlightFence));
 
+        m_frameWaitSemaphores.clear();
+        m_frameWaitStages.clear();
+        m_frameOpen = false;
+
+        VkSemaphore signaledSemaphore = frame.renderFinishedSemaphore;
         m_currentFrameIndex = (m_currentFrameIndex + 1u) % m_config.framesInFlight;
+        return signaledSemaphore;
     }
 
     //////////////////////////////////////////
@@ -930,7 +1086,7 @@ namespace Maze
 
         m_globalUniformBufferSize = newSize;
 
-        for (Size i = 0; i < MAZE_ARRAY_SIZE(m_globalUniformDirty); ++i)
+        for (Size i = 0; i < (sizeof(m_globalUniformDirty)/sizeof(m_globalUniformDirty[0])); ++i)
             m_globalUniformDirty[i] = true;
     }
 
@@ -951,7 +1107,7 @@ namespace Maze
             return;
 
         memcpy(&m_globalUniformShadow[_offset], _bytes, _bytesCount);
-        for (Size i = 0; i < MAZE_ARRAY_SIZE(m_globalUniformDirty); ++i)
+        for (Size i = 0; i < (sizeof(m_globalUniformDirty)/sizeof(m_globalUniformDirty[0])); ++i)
             m_globalUniformDirty[i] = true;
     }
 
@@ -959,7 +1115,7 @@ namespace Maze
     void RenderSystemVulkan::flushGlobalUniforms()
     {
         U32 frameIndex = m_currentFrameIndex;
-        U32 dirtyIndex = Math::Min(frameIndex, (U32)MAZE_ARRAY_SIZE(m_globalUniformDirty) - 1u);
+        U32 dirtyIndex = Math::Min(frameIndex, (U32)(sizeof(m_globalUniformDirty)/sizeof(m_globalUniformDirty[0])) - 1u);
 
         if (frameIndex >= m_globalUniformMapped.size() || !m_globalUniformDirty[dirtyIndex])
             return;
@@ -980,7 +1136,8 @@ namespace Maze
         VkCommandBuffer cmd = getCurrentCommandBuffer();
         MAZE_ERROR_RETURN_VALUE_IF(cmd == VK_NULL_HANDLE, false, "No active command buffer!");
 
-        Vec2U size = _dstTexture->getSizeU();
+        Vec2S const& sizeS = _dstTexture->getSize();
+        Vec2U size((U32)sizeS.x, (U32)sizeS.y);
 
         // Vulkan (VK_KHR_depth_stencil_resolve, core 1.2+) supports resolving
         // a depth-aspect multisampled image directly, unlike DX11's

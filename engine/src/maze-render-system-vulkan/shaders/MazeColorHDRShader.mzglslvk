@@ -1,0 +1,85 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+    #include "MazeInstanceStream.mzglslvk"
+
+    //////////////////////////////////////////
+    layout(location = 0) in vec3 a_position;
+    layout(location = 1) in vec2 a_texCoords0;
+    layout(location = 2) in vec4 a_color;
+
+    //////////////////////////////////////////
+    layout(location = 0) out vec3 v_positionOS;
+    layout(location = 1) out vec3 v_positionWS;
+    layout(location = 2) out vec3 v_positionVS;
+    layout(location = 3) out vec2 v_uv0;
+    layout(location = 4) out vec4 v_color;
+    layout(location = 5) out float v_clipDistance0;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        int instanceId = gl_InstanceIndex;
+
+        mat4 modelMatrix = GetModelMatrix(instanceId);
+        mat4 viewMatrix = GetViewMatrix();
+
+        vec4 positionOS = vec4(a_position, 1.0);
+        vec4 positionWS = modelMatrix * positionOS;
+        MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+        vec4 positionVS = viewMatrix * positionWS;
+        vec4 positionCS = u_projectionMatrix * positionVS;
+
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+
+        v_positionOS = positionOS.xyz;
+        v_positionWS = positionWS.xyz;
+        v_positionVS = positionVS.xyz;
+
+        v_uv0 = a_texCoords0;
+        v_color = a_color;
+
+    #if (MAZE_COLOR_STREAM)
+        v_color *= GetColorStream(instanceId);
+    #endif
+
+        gl_Position = MazeFinalizePositionCS(positionCS);
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+    //////////////////////////////////////////
+    layout(std140, set = 1, binding = 0) uniform MaterialUniforms
+    {
+        vec4 u_color;
+        float u_intensity;
+    };
+
+    //////////////////////////////////////////
+    layout(location = 3) in vec2 v_uv0;
+    layout(location = 4) in vec4 v_color;
+    layout(location = 5) in float v_clipDistance0;
+
+    //////////////////////////////////////////
+    layout(location = 0) out vec4 out_color;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        MAZE_CLIP_DISTANCE_FRAGMENT;
+
+        vec4 color = v_color * u_color;
+        float i = u_intensity + 1.0;
+
+        vec4 ldr = color;
+        vec4 hdr = vec4(color.rgb * i * i, color.a);
+
+        vec2 d = vec2(0.5, 0.5) - v_uv0;
+        float dist = dot(d, d) * 1.4144;
+        out_color = mix(ldr, hdr, dist);
+    }
+)"

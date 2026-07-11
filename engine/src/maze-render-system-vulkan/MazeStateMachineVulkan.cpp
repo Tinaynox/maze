@@ -343,7 +343,7 @@ namespace Maze
 
         PipelineKeyVulkan key;
         key.shader = m_currentShader;
-        key.vertexLayoutHash = m_currentVAO->getLayoutHash();
+        key.vertexLayoutHash = m_currentVAO->getVertexLayoutHash();
         key.topology = m_topology;
         key.blendEnabled = m_blendEnabled;
         key.blendSrcFactor = m_blendSrcFactor;
@@ -357,9 +357,8 @@ namespace Maze
         if (it != m_pipelines.end())
             return it->second;
 
-        Vector<VkVertexInputBindingDescription> bindingDescs;
-        Vector<VkVertexInputAttributeDescription> attributeDescs;
-        m_currentVAO->buildVertexInputState(m_currentShader, bindingDescs, attributeDescs);
+        Vector<VkVertexInputBindingDescription> const& bindingDescs = m_currentVAO->getVertexInputBindingDescriptions();
+        Vector<VkVertexInputAttributeDescription> const& attributeDescs = m_currentVAO->getVertexInputAttributeDescriptions();
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -580,7 +579,9 @@ namespace Maze
             cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_currentShader->getPipelineLayout(),
             0u, 2u, sets, 0u, nullptr);
 
-        m_currentVAO->bind(cmd, m_currentShader);
+        // VertexArrayObjectVulkan::bind() binds every populated attribute VBO,
+        // the shared zero buffer, and the index buffer (if any)
+        m_currentVAO->bind(cmd);
     }
 
 
