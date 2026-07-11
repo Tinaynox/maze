@@ -271,6 +271,7 @@ namespace Maze
         if (renderSystemName == "DX11")
         {
             RenderSystemDX11Config config;
+            config.debugLayer = getConfig().params.getBool(MAZE_HCS("dx11DebugLayer"), false);
             MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemDX11, config);
             renderSystemLoaded = true;
         }

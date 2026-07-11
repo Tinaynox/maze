@@ -148,12 +148,18 @@ namespace Maze
         textureDesc.SampleDesc.Count = (UINT)m_samples;
         textureDesc.SampleDesc.Quality = 0;
         textureDesc.Usage = D3D11_USAGE_DEFAULT;
-        textureDesc.BindFlags = isDepth ? D3D11_BIND_DEPTH_STENCIL : (D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET);
+        textureDesc.BindFlags = isDepth ? (D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE) : (D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET);
 
         HRESULT hr = device->CreateTexture2D(&textureDesc, nullptr, &m_texture);
+        if (FAILED(hr) && isDepth)
+        {
+            // Multisampled depth SRV requires feature level 10.1+ - fall back to a depth-only texture
+            textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+            hr = device->CreateTexture2D(&textureDesc, nullptr, &m_texture);
+        }
         MAZE_ERROR_RETURN_VALUE_IF(FAILED(hr), false, "CreateTexture2D (MS) failed! hr=0x%08x", (U32)hr);
 
-        if (!isDepth)
+        if (textureDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE)
         {
             D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
             memset(&srvDesc, 0, sizeof(srvDesc));

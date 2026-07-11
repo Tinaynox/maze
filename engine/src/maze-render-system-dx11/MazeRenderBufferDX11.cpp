@@ -276,6 +276,36 @@ namespace Maze
                 blitTexture(dstTexture, srcTexture, pixelFormat);
             }
         }
+
+        // Depth (ResolveSubresource doesn't support depth formats - see resolveDepthMSAA)
+        TexturePtr const& dstDepthTexture = getDepthTexture();
+        TexturePtr const& srcDepthTexture = _srcBuffer->getDepthTexture();
+        if (dstDepthTexture && srcDepthTexture)
+        {
+            bool srcMultisampled = (srcDepthTexture->getType() == TextureType::TwoDimensionalMultisample);
+            bool dstMultisampled = (dstDepthTexture->getType() == TextureType::TwoDimensionalMultisample);
+
+            if (srcMultisampled && !dstMultisampled)
+            {
+                getRenderSystemDX11Raw()->resolveDepthMSAA(
+                    dstDepthTexture->castRaw<Texture2DDX11>(),
+                    srcDepthTexture->castRaw<Texture2DMSDX11>());
+            }
+            else
+            if (srcMultisampled == dstMultisampled)
+            {
+                ID3D11Texture2D* dst = getTextureResource(dstDepthTexture);
+                ID3D11Texture2D* src = getTextureResource(srcDepthTexture);
+                if (dst && src)
+                {
+                    // CopySubresourceRegion is not allowed for multisampled resources
+                    if (srcMultisampled)
+                        deviceContext->CopyResource(dst, src);
+                    else
+                        deviceContext->CopySubresourceRegion(dst, 0, 0, 0, 0, src, 0, nullptr);
+                }
+            }
+        }
     }
 
 

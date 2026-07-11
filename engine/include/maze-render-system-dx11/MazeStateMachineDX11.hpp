@@ -171,6 +171,11 @@ namespace Maze
         // Resolves and binds all pending pipeline states. Call right before a draw
         void flushPipeline();
 
+        //////////////////////////////////////////
+        // Call after issuing raw device context calls that bypass the state machine -
+        // drops cached bindings and re-binds the cached render targets
+        void invalidateDeviceState();
+
 
         //////////////////////////////////////////
         inline RenderSystemDX11* getRenderSystem() const { return m_renderSystem; }

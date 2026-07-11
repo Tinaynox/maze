@@ -45,6 +45,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ShaderDX11);
     class VertexArrayObjectDX11;
     class ShaderDX11;
+    class Texture2DDX11;
+    class Texture2DMSDX11;
 
 
     //////////////////////////////////////////
@@ -192,6 +194,13 @@ namespace Maze
         // Small zero-filled buffer bound in place of vertex attributes the VAO doesn't provide
         ID3D11Buffer* getZeroVertexBuffer() const { return m_zeroVertexBuffer; }
 
+        //////////////////////////////////////////
+        // ResolveSubresource doesn't support depth formats - resolves sample 0
+        // via a fullscreen pass writing SV_Depth
+        bool resolveDepthMSAA(
+            Texture2DDX11* _dstTexture,
+            Texture2DMSDX11* _srcTexture);
+
     protected:
 
         //////////////////////////////////////////
@@ -217,6 +226,13 @@ namespace Maze
         UnorderedMap<U64, ID3D11InputLayout*> m_inputLayouts;
 
         ID3D11Buffer* m_zeroVertexBuffer = nullptr;
+
+        // Depth MSAA resolve pass objects (created lazily)
+        ID3D11VertexShader* m_depthResolveVS = nullptr;
+        ID3D11PixelShader* m_depthResolvePS = nullptr;
+        ID3D11DepthStencilState* m_depthResolveDepthState = nullptr;
+        ID3D11RasterizerState* m_depthResolveRasterizerState = nullptr;
+        bool m_depthResolveInitFailed = false;
 
         S32 m_windowMaxAntialiasingLevel = 0;
     };

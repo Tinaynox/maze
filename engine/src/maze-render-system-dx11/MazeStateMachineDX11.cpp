@@ -405,6 +405,35 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void StateMachineDX11::invalidateDeviceState()
+    {
+        m_blendStateDirty = true;
+        m_depthStencilStateDirty = true;
+        m_rasterizerStateDirty = true;
+        m_viewportDirty = true;
+        m_scissorDirty = true;
+
+        m_currentShader = nullptr;
+
+        for (S32 s = 0; s < c_shaderResourcesMax; ++s)
+        {
+            m_pixelShaderResources[s] = nullptr;
+            m_pixelSamplers[s] = nullptr;
+            m_vertexShaderResources[s] = nullptr;
+            m_vertexSamplers[s] = nullptr;
+        }
+
+        ID3D11ShaderResourceView* nullSRVs[c_shaderResourcesMax] = { nullptr };
+        getDeviceContext()->PSSetShaderResources(0, (UINT)c_shaderResourcesMax, nullSRVs);
+        getDeviceContext()->VSSetShaderResources(0, (UINT)c_shaderResourcesMax, nullSRVs);
+
+        getDeviceContext()->OMSetRenderTargets(
+            (UINT)m_renderTargetViewsCount,
+            m_renderTargetViewsCount > 0 ? m_renderTargetViews : nullptr,
+            m_depthStencilView);
+    }
+
+    //////////////////////////////////////////
     ID3D11BlendState* StateMachineDX11::ensureBlendState()
     {
         U32 key =

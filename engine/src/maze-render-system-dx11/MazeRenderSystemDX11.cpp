@@ -76,6 +76,11 @@ namespace Maze
 
         SafeReleaseDX11(m_zeroVertexBuffer);
 
+        SafeReleaseDX11(m_depthResolveVS);
+        SafeReleaseDX11(m_depthResolvePS);
+        SafeReleaseDX11(m_depthResolveDepthState);
+        SafeReleaseDX11(m_depthResolveRasterizerState);
+
         m_stateMachine.reset();
 
         if (m_deviceContext)
@@ -589,6 +594,134 @@ namespace Maze
 
         m_inputLayouts.emplace(key, inputLayout);
         return inputLayout;
+    }
+
+    //////////////////////////////////////////
+    static CString const c_depthResolveShaderSourceDX11 =
+        "Texture2DMS<float> u_srcDepth : register(t0);\n"
+        "\n"
+        "float4 mainVS(uint _id : SV_VertexID) : SV_Position\n"
+        "{\n"
+        "    float2 uv = float2((_id << 1) & 2, _id & 2);\n"
+        "    return float4(uv * float2(2.0, -2.0) + float2(-1.0, 1.0), 0.0, 1.0);\n"
+        "}\n"
+        "\n"
+        "float mainPS(float4 _pos : SV_Position) : SV_Depth\n"
+        "{\n"
+        "    return u_srcDepth.Load(int2(_pos.xy), 0);\n"
+        "}\n";
+
+    //////////////////////////////////////////
+    bool RenderSystemDX11::resolveDepthMSAA(
+        Texture2DDX11* _dstTexture,
+        Texture2DMSDX11* _srcTexture)
+    {
+        if (m_depthResolveInitFailed)
+            return false;
+
+        MAZE_ERROR_RETURN_VALUE_IF(!_dstTexture || !_srcTexture, false, "Depth resolve textures are null!");
+
+        ID3D11ShaderResourceView* srcSRV = _srcTexture->getShaderResourceView();
+        ID3D11DepthStencilView* dstDSV = _dstTexture->ensureDepthStencilView();
+        if (!srcSRV || !dstDSV)
+            return false;
+
+        // Lazy init of the resolve pass objects
+        if (!m_depthResolveVS)
+        {
+            auto compileStage =
+                [&](CString _entryPoint, CString _target) -> ID3DBlob*
+                {
+                    ID3DBlob* shaderCode = nullptr;
+                    ID3DBlob* errorMessages = nullptr;
+                    HRESULT hr = D3DCompile(
+                        c_depthResolveShaderSourceDX11,
+                        strlen(c_depthResolveShaderSourceDX11),
+                        "DepthResolve",
+                        nullptr,
+                        nullptr,
+                        _entryPoint,
+                        _target,
+                        D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_OPTIMIZATION_LEVEL3,
+                        0,
+                        &shaderCode,
+                        &errorMessages);
+
+                    MAZE_ERROR_IF(
+                        FAILED(hr),
+                        "Depth resolve shader compilation failed: %s",
+                        errorMessages ? (CString)errorMessages->GetBufferPointer() : "unknown error");
+                    SafeReleaseDX11(errorMessages);
+                    return SUCCEEDED(hr) ? shaderCode : nullptr;
+                };
+
+            // Reading multisampled depth requires feature level 10.1+
+            bool targets41 = (m_featureLevel < D3D_FEATURE_LEVEL_11_0);
+            ID3DBlob* vsCode = compileStage("mainVS", targets41 ? "vs_4_1" : "vs_5_0");
+            ID3DBlob* psCode = compileStage("mainPS", targets41 ? "ps_4_1" : "ps_5_0");
+
+            if (vsCode)
+                m_device->CreateVertexShader(vsCode->GetBufferPointer(), vsCode->GetBufferSize(), nullptr, &m_depthResolveVS);
+            if (psCode)
+                m_device->CreatePixelShader(psCode->GetBufferPointer(), psCode->GetBufferSize(), nullptr, &m_depthResolvePS);
+            SafeReleaseDX11(vsCode);
+            SafeReleaseDX11(psCode);
+
+            D3D11_DEPTH_STENCIL_DESC depthDesc;
+            memset(&depthDesc, 0, sizeof(depthDesc));
+            depthDesc.DepthEnable = TRUE;
+            depthDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+            depthDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+            depthDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+            depthDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+            depthDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+            depthDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+            depthDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+            depthDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+            depthDesc.BackFace = depthDesc.FrontFace;
+            m_device->CreateDepthStencilState(&depthDesc, &m_depthResolveDepthState);
+
+            D3D11_RASTERIZER_DESC rasterizerDesc;
+            memset(&rasterizerDesc, 0, sizeof(rasterizerDesc));
+            rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+            rasterizerDesc.CullMode = D3D11_CULL_NONE;
+            rasterizerDesc.DepthClipEnable = TRUE;
+            m_device->CreateRasterizerState(&rasterizerDesc, &m_depthResolveRasterizerState);
+
+            if (!m_depthResolveVS || !m_depthResolvePS || !m_depthResolveDepthState || !m_depthResolveRasterizerState)
+            {
+                m_depthResolveInitFailed = true;
+                return false;
+            }
+        }
+
+        // The destination might still be bound as a shader resource somewhere
+        m_stateMachine->unbindShaderResource(_dstTexture->getShaderResourceView());
+
+        Vec2S const& size = _dstTexture->getSize();
+        D3D11_VIEWPORT viewport;
+        viewport.TopLeftX = 0.0f;
+        viewport.TopLeftY = 0.0f;
+        viewport.Width = (F32)size.x;
+        viewport.Height = (F32)size.y;
+        viewport.MinDepth = 0.0f;
+        viewport.MaxDepth = 1.0f;
+
+        m_deviceContext->OMSetRenderTargets(0, nullptr, dstDSV);
+        m_deviceContext->OMSetDepthStencilState(m_depthResolveDepthState, 0);
+        m_deviceContext->RSSetState(m_depthResolveRasterizerState);
+        m_deviceContext->RSSetViewports(1, &viewport);
+        m_deviceContext->IASetInputLayout(nullptr);
+        m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        m_deviceContext->VSSetShader(m_depthResolveVS, nullptr, 0);
+        m_deviceContext->PSSetShader(m_depthResolvePS, nullptr, 0);
+        m_deviceContext->PSSetShaderResources(0, 1, &srcSRV);
+
+        m_deviceContext->Draw(3, 0);
+
+        m_stateMachine->invalidateDeviceState();
+
+        return true;
     }
 
 
