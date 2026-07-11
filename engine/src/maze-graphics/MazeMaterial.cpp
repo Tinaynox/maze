@@ -161,7 +161,10 @@ namespace Maze
 
         m_renderSystem = _material->m_renderSystem;
 
-        m_uniforms = _material->m_uniforms;
+        // Deep copy (uniform variants are mutable and must not be shared between materials)
+        m_uniforms.resize(_material->m_uniforms.size());
+        for (Size i = 0, in = _material->m_uniforms.size(); i < in; ++i)
+            m_uniforms[i] = MakeShared<ShaderUniformVariant>(*_material->m_uniforms[i].get());
 
         for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
         {
