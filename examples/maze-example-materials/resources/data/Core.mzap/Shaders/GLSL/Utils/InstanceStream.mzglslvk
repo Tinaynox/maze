@@ -1,7 +1,7 @@
 //////////////////////////////////////////
 // Vertex-stage-ONLY instance-stream interface (descriptor set 0, bindings
-// 1-3, plus the push constant). '#include' this file only from inside a
-// shader's '#type vertex' section - see the long banner comment in the
+// 1-3, plus the push constant). Include this file only from inside a
+// shader's vertex-stage section - see the long banner comment in the
 // engine's MazeCommonShaderHeader.mzglslvk (maze-render-system-vulkan) for
 // why this text must never reach a fragment-stage compile: the global
 // descriptor set layout only grants VK_SHADER_STAGE_VERTEX_BIT access to

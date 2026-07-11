@@ -63,7 +63,7 @@ namespace Maze
         if (_type == "fragment" || _type == "pixel")
             return (S32)ShaderVulkanStage::Fragment;
 
-        MAZE_ERROR("Unknown shader type!");
+        MAZE_ERROR("Unknown shader type - '%s'!", _type.c_str());
         return -1;
     }
 
@@ -282,12 +282,14 @@ namespace Maze
             if (m_materialSetLayout != VK_NULL_HANDLE)
                 vkDestroyDescriptorSetLayout(device, m_materialSetLayout, nullptr);
 
+            // These buffers were created with VMA_ALLOCATION_CREATE_MAPPED_BIT -
+            // VMA maps them once for their whole lifetime and unmaps
+            // automatically inside vmaDestroyBuffer; calling vmaUnmapMemory
+            // on them manually is invalid (they were never mapped through
+            // the explicit vmaMapMemory/vmaUnmapMemory ref-counted path) and
+            // trips VMA's "Unmapping allocation not previously mapped" assert.
             for (Size i = 0; i < m_materialUniformBuffers.size(); ++i)
-            {
-                if (m_materialUniformMapped[i])
-                    vmaUnmapMemory(rs->getAllocator(), m_materialUniformAllocations[i]);
                 vmaDestroyBuffer(rs->getAllocator(), m_materialUniformBuffers[i], m_materialUniformAllocations[i]);
-            }
             // Descriptor sets are freed wholesale with the pool at shutdown - not
             // individually freed here
         }

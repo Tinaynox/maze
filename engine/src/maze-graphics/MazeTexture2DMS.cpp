@@ -92,17 +92,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Path const& Texture2DMS::getAssetFileName() const
-    {
-        static Path nullValue;
-
-        if (!m_assetFile)
-            return nullValue;
-
-        return m_assetFile->getFileName();
-    }
-
-    //////////////////////////////////////////
     void Texture2DMS::reload()
     {
         loadEmpty(m_size, m_internalPixelFormat, m_samples);

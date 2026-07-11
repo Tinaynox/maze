@@ -2,7 +2,9 @@ R"(
     //////////////////////////////////////////
     #type vertex
 
-    #include "MazeInstanceStream.mzglslvk"
+)"
+#include "MazeInstanceStream.mzglslvk"
+R"(
 
     //////////////////////////////////////////
     // NOTE: u_outlineWidth is used only by the vertex stage and

@@ -46,7 +46,7 @@ R"(
     // push constant, and the GetModelMatrix/GetColorStream/GetUV0Stream/
     // GetUV1Stream accessor functions all live in the separate file
     // 'MazeInstanceStream.mzglslvk' instead of this common header - that
-    // file is '#include'd only from the '#type vertex' section of each
+    // file is included only from the vertex-stage section of each
     // shader (mirroring the desktop-GL '.mzglsl' family's
     // MazeVertex.mzglsl -> MazeInstanceStream.mzglsl chain), so its text
     // never reaches a fragment-stage compile. Simply having those

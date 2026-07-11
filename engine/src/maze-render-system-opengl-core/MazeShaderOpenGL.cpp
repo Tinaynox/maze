@@ -61,7 +61,7 @@ namespace Maze
         if (_type == "fragment" || _type == "pixel")
             return MAZE_GL_FRAGMENT_SHADER;
 
-        MAZE_ERROR("Unknown shader type!");
+        MAZE_ERROR("Unknown shader type - '%s'!", _type.c_str());
         return 0;
     }
 

@@ -63,7 +63,7 @@ namespace Maze
         if (_type == "fragment" || _type == "pixel")
             return (S32)ShaderDX11Stage::Pixel;
 
-        MAZE_ERROR("Unknown shader type!");
+        MAZE_ERROR("Unknown shader type - '%s'!", _type.c_str());
         return -1;
     }
 

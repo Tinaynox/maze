@@ -889,6 +889,20 @@ namespace Maze
 
         return nullPointer;
     }
+
+    //////////////////////////////////////////
+    String const& TextureManager::getTextureName(TextureCube const* _texture)
+    {
+        static String nullPointer;
+
+        for (auto const& textureData : m_texturesCubeLibrary)
+        {
+            if (textureData.second.texture.get() == _texture)
+                return textureData.first;
+        }
+
+        return nullPointer;
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

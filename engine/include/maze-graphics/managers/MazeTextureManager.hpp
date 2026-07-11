@@ -385,6 +385,9 @@ namespace Maze
         //////////////////////////////////////////
         String const& getTextureName(Texture2D const* _texture);
 
+        //////////////////////////////////////////
+        String const& getTextureName(TextureCube const* _texture);
+
     public:
 
         //////////////////////////////////////////

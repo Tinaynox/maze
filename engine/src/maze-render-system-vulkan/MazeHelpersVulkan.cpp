@@ -635,6 +635,19 @@ namespace Maze
                 return;
             }
 
+            // COLOR_ATTACHMENT_OPTIMAL -> PRESENT_SRC_KHR
+            // Hot path: RenderWindowVulkan::endDraw() does this every frame for
+            // every window, right before swapBuffers() presents.
+            if (_oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL &&
+                _newLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
+            {
+                _outSrcStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+                _outSrcAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+                _outDstStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+                _outDstAccess = 0;
+                return;
+            }
+
             // Fallback for any transition not curated above - correct but pessimal
             // (stalls the whole pipeline). Logged so an unexpected transition shows up
             // during development instead of silently costing performance.

@@ -123,6 +123,15 @@ namespace Maze
         void destroySwapChain();
 
         //////////////////////////////////////////
+        // Shared recreate-on-resize/out-of-date path used by
+        // notifyWindowSizeChanged(), swapBuffers() and processRenderTargetWillSet() -
+        // guards against recreating a swapchain for a zero-sized or
+        // already-torn-down window (e.g. mid-shutdown, where the surface may
+        // no longer be valid), which crashed the driver when done unconditionally.
+        // Returns false if recreation was skipped or failed.
+        bool recreateSwapChain();
+
+        //////////////////////////////////////////
         void destroySurface();
 
     protected:

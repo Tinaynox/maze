@@ -109,6 +109,8 @@ namespace Maze
         for (S32 i = 0; i < resourcesCount; ++i)
         {
             T* resource = s_resources[i];
+            if (!resource)
+                continue;
 
             if (!_cb(resource))
                 break;

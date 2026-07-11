@@ -2,7 +2,9 @@ R"(
     //////////////////////////////////////////
     #type vertex
 
-    #include "MazeInstanceStream.mzglslvk"
+)"
+#include "MazeInstanceStream.mzglslvk"
+R"(
 
     //////////////////////////////////////////
     // NOTE: u_baseMapST is used only by the vertex stage; the rest of this

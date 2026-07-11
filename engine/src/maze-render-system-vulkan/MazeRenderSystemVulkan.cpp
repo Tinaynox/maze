@@ -151,7 +151,26 @@ namespace Maze
                 vmaDestroyBuffer(m_allocator, m_uvStreamBuffers[i], m_uvStreamAllocations[i]);
 
         if (m_allocator != VK_NULL_HANDLE)
+        {
+            // Diagnostic: if anything is still allocated at this point, VMA
+            // asserts "Unfreed dedicated allocations found!" inside
+            // vmaDestroyAllocator below with no indication of *what* leaked -
+            // dump full stats first so the assert (if it fires) is
+            // immediately preceded by exactly which allocation(s) are still
+            // live (name/size/usage). Remove once the "Unfreed dedicated
+            // allocations" issue tracked in project memory
+            // (project_vulkan_render_system.md) is resolved - this is a
+            // temporary diagnostic, not permanent shutdown-path code.
+            char* statsString = nullptr;
+            vmaBuildStatsString(m_allocator, &statsString, VK_TRUE);
+            if (statsString)
+            {
+                Debug::Log("VMA allocator stats before destroy (look for any 'Allocations' entries still listed - those are the leak):\n%s", statsString);
+                vmaFreeStatsString(m_allocator, statsString);
+            }
+
             vmaDestroyAllocator(m_allocator);
+        }
 
         if (m_device != VK_NULL_HANDLE)
             vkDestroyDevice(m_device, nullptr);
@@ -1068,8 +1087,9 @@ namespace Maze
 
         for (U32 i = 0; i < m_globalUniformBuffers.size(); ++i)
         {
-            if (m_globalUniformMapped[i])
-                vmaUnmapMemory(m_allocator, m_globalUniformAllocations[i]);
+            // VMA_ALLOCATION_CREATE_MAPPED_BIT buffers unmap automatically
+            // inside vmaDestroyBuffer - no explicit vmaUnmapMemory needed or
+            // valid here, see the identical fix/comment in ShaderVulkan::unloadVulkanShader()
             vmaDestroyBuffer(m_allocator, m_globalUniformBuffers[i], m_globalUniformAllocations[i]);
 
             VkBufferCreateInfo bufferInfo = {};

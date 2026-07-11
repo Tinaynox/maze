@@ -2,7 +2,9 @@ R"(
     //////////////////////////////////////////
     #type vertex
 
-    #include "MazeInstanceStream.mzglslvk"
+)"
+#include "MazeInstanceStream.mzglslvk"
+R"(
 
     //////////////////////////////////////////
     layout(location = 0) in vec3 a_position;
@@ -45,7 +47,9 @@ R"(
     //////////////////////////////////////////
     #type fragment
 
-    #include "MazeHSV.mzglslvk"
+)"
+#include "MazeHSV.mzglslvk"
+R"(
 
     //////////////////////////////////////////
     layout(location = 3) in vec2 v_uv0;

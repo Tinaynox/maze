@@ -119,10 +119,8 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("TextureCube::loadFromAssetFile");
 
-        m_assetFile = _assetFile;
-
         DataBlock dataBlock;
-        ByteBufferPtr byteBuffer = m_assetFile->readAsByteBuffer();
+        ByteBufferPtr byteBuffer = _assetFile->readAsByteBuffer();
         dataBlock.loadFromByteBuffer(*byteBuffer.get());
 
         MAZE_ERROR_RETURN_IF(
@@ -132,7 +130,7 @@ namespace Maze
             !dataBlock.isParamExists(MAZE_HCS("bottom")) ||
             !dataBlock.isParamExists(MAZE_HCS("front")) ||
             !dataBlock.isParamExists(MAZE_HCS("back")),
-            "Invalid cubemap file '%s' syntax!", m_assetFile->getFileName().toUTF8().c_str());
+            "Invalid cubemap file '%s' syntax!", _assetFile->getFileName().toUTF8().c_str());
 
         loadTexture(
             dataBlock.getString(MAZE_HCS("right")),
@@ -148,17 +146,6 @@ namespace Maze
     {
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_assetFileName);
         loadFromAssetFile(assetFile);
-    }
-
-    //////////////////////////////////////////
-    Path const& TextureCube::getAssetFileName() const
-    {
-        static Path nullValue;
-
-        if (!m_assetFile)
-            return nullValue;
-
-        return m_assetFile->getFileName();
     }
 
     //////////////////////////////////////////
@@ -199,6 +186,73 @@ namespace Maze
         pixelSheets[5] = textureManager->loadPixelSheets2D(_backName);
 
         return loadTexture(pixelSheets, _internalPixelFormat);
+    }
+
+    //////////////////////////////////////////
+    void TextureCube::FromString(TextureCubePtr& _value, CString _data, Size _count)
+    {
+        MAZE_PROFILE_EVENT("TextureCube::FromString");
+
+        if (!_data || strcmp(_data, "") == 0)
+        {
+            _value.reset();
+            return;
+        }
+
+        if (_count == 0)
+            _count = strlen(_data);
+
+        RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        TextureManagerPtr const& textureManager = renderSystem->getTextureManager();
+
+        if (IsResourceIdString(_data))
+        {
+            TextureCube* resource = ResourceFromString(_data, _count);
+            _value = resource ? resource->getSharedPtr() : nullptr;
+        }
+        else
+        {
+            _value = textureManager->getOrLoadTextureCube(_data, true);
+        }
+    }
+
+    //////////////////////////////////////////
+    void TextureCube::ToString(TextureCube const* _value, String& _data)
+    {
+        MAZE_PROFILE_EVENT("TextureCube::ToString");
+
+        if (!_value)
+        {
+            _data.clear();
+            return;
+        }
+
+        RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        TextureManagerPtr const& textureManager = renderSystem->getTextureManager();
+
+        String const& textureName = textureManager->getTextureName(_value);
+        if (!textureName.empty())
+        {
+            _data = textureName;
+        }
+        else
+        {
+            ResourceToString(_value, _data);
+        }
+    }
+
+    //////////////////////////////////////////
+    String TextureCube::toString() const
+    {
+        String result;
+        TextureCube::ToString(this, result);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    void TextureCube::setString(CString _data, Size _count)
+    {
+        MAZE_TODO;
     }
 
 

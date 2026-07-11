@@ -85,12 +85,6 @@ namespace Maze
         virtual bool isValid() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        inline AssetFilePtr const& getAssetFile() const { return m_assetFile; }
-
-        //////////////////////////////////////////
-        Path const& getAssetFileName() const;
-
-        //////////////////////////////////////////
         virtual bool loadEmpty(
             Vec2U const& _size,
             PixelFormat::Enum _internalPixelFormat,
@@ -167,8 +161,6 @@ namespace Maze
         S32 m_samples = 0;
 
         PixelFormat::Enum m_internalPixelFormat = PixelFormat::None;
-
-        AssetFilePtr m_assetFile;
     };
 
 

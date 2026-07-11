@@ -55,6 +55,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API TextureCube
         : public Texture
+        , public IStringSerializable
         , public IndexedResource<TextureCube>
     {
     public:
@@ -90,9 +91,6 @@ namespace Maze
         //////////////////////////////////////////
         void loadFromAssetFile(String const& _assetFileName);
 
-
-        //////////////////////////////////////////
-        Path const& getAssetFileName() const;
 
 
         //////////////////////////////////////////
@@ -164,6 +162,22 @@ namespace Maze
         //////////////////////////////////////////
         virtual void reload() MAZE_ABSTRACT;
 
+    public:
+
+        //////////////////////////////////////////
+        static void FromString(TextureCubePtr& _value, CString _data, Size _count);
+
+        //////////////////////////////////////////
+        static void ToString(TextureCube const* _value, String& _data);
+
+    public:
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////
@@ -183,8 +197,6 @@ namespace Maze
         TextureWrap m_wrapR = TextureWrap::ClampToEdge;
 
         PixelFormat::Enum m_internalPixelFormat = PixelFormat::None;
-
-        AssetFilePtr m_assetFile;
     };
 
 

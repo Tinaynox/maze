@@ -152,11 +152,34 @@ namespace Maze
     {
         MAZE_ERROR_RETURN_VALUE_IF(m_surface == VK_NULL_HANDLE, false, "Surface is null!");
 
+        // The system window can already be gone by the time a deferred
+        // recreate (e.g. from a VK_ERROR_OUT_OF_DATE_KHR caught in
+        // swapBuffers()/processRenderTargetWillSet()) runs, particularly
+        // mid-shutdown - bail rather than dereferencing a null window
+        if (!m_window)
+            return false;
+
         RenderSystemVulkan* rs = m_renderSystemVulkan;
         VkPhysicalDevice physicalDevice = rs->getPhysicalDevice();
 
         VkSurfaceCapabilitiesKHR capabilities;
-        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, m_surface, &capabilities);
+        VkResult capabilitiesResult = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, m_surface, &capabilities);
+        // The surface can go invalid out from under us (e.g. mid-shutdown,
+        // while the window is being torn down and the render loop races one
+        // more frame against it) - bail instead of feeding vkCreateSwapchainKHR
+        // a garbage/uninitialized VkSurfaceCapabilitiesKHR, which crashed some
+        // drivers rather than failing gracefully. VK_ERROR_SURFACE_LOST_KHR
+        // specifically is an expected, anticipated outcome of that race, not
+        // a real bug - fail quietly instead of through the loud
+        // log+debug-break MAZE_ERROR path so it doesn't look like (or act
+        // like, via the debug break) a crash during normal shutdown.
+        if (capabilitiesResult == VK_ERROR_SURFACE_LOST_KHR)
+        {
+            Debug::Log("RenderWindowVulkan: surface lost (window closing?), skipping swap chain (re)creation.");
+            return false;
+        }
+        MAZE_ERROR_RETURN_VALUE_IF(capabilitiesResult != VK_SUCCESS, false,
+            "vkGetPhysicalDeviceSurfaceCapabilitiesKHR failed! result=%d", (S32)capabilitiesResult);
 
         U32 formatCount = 0u;
         vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, m_surface, &formatCount, nullptr);
@@ -193,6 +216,15 @@ namespace Maze
         }
 
         Vec2U clientSize = m_window->getClientSize();
+
+        // A minimized/zero-area window is a normal, expected state per the
+        // Vulkan spec (surfaceCapabilities.currentExtent can legally be
+        // 0x0) - skip creating a degenerate swapchain rather than feeding
+        // the driver a zero-sized extent, which some drivers don't handle
+        // gracefully
+        if (clientSize.x == 0u || clientSize.y == 0u)
+            return false;
+
         m_swapChainExtent.x = Math::Clamp(clientSize.x, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
         m_swapChainExtent.y = Math::Clamp(clientSize.y, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
@@ -346,6 +378,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool RenderWindowVulkan::recreateSwapChain()
+    {
+        if (!m_renderSystemVulkan || !m_window || m_surface == VK_NULL_HANDLE)
+            return false;
+
+        vkDeviceWaitIdle(m_renderSystemVulkan->getDevice());
+
+        destroyDepthBuffer();
+
+        if (!createSwapChain(m_antialiasingLevel))
+            return false; // skipped (zero-sized/minimized window) or failed - leave the depth buffer torn down until the next resize/frame retries
+
+        return createDepthBuffer();
+    }
+
+    //////////////////////////////////////////
     void RenderWindowVulkan::notifyWindowSizeChanged(Window* _window)
     {
         RenderWindow::notifyWindowSizeChanged(_window);
@@ -353,15 +401,7 @@ namespace Maze
         if (!m_swapChain)
             return;
 
-        Vec2U clientSize = m_window->getClientSize();
-        if (clientSize.x == 0u || clientSize.y == 0u)
-            return;
-
-        vkDeviceWaitIdle(m_renderSystemVulkan->getDevice());
-
-        destroyDepthBuffer();
-        createSwapChain(m_antialiasingLevel);
-        createDepthBuffer();
+        recreateSwapChain();
     }
 
     //////////////////////////////////////////
@@ -408,10 +448,14 @@ namespace Maze
         VkResult result = vkQueuePresentKHR(rs->getPresentQueue(), &presentInfo);
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
         {
-            vkDeviceWaitIdle(rs->getDevice());
-            destroyDepthBuffer();
-            createSwapChain(m_antialiasingLevel);
-            createDepthBuffer();
+            recreateSwapChain();
+        }
+        else
+        if (result == VK_ERROR_SURFACE_LOST_KHR)
+        {
+            // Expected mid-shutdown race (see createSwapChain's identical
+            // handling) - quiet, no debug-break
+            Debug::Log("RenderWindowVulkan: surface lost while presenting (window closing?).");
         }
         else
         {
@@ -443,10 +487,15 @@ namespace Maze
 
         if (result == VK_ERROR_OUT_OF_DATE_KHR)
         {
-            vkDeviceWaitIdle(rs->getDevice());
-            destroyDepthBuffer();
-            createSwapChain(m_antialiasingLevel);
-            createDepthBuffer();
+            recreateSwapChain();
+            return false;
+        }
+
+        if (result == VK_ERROR_SURFACE_LOST_KHR)
+        {
+            // Expected mid-shutdown race (see createSwapChain's identical
+            // handling) - quiet, no debug-break
+            Debug::Log("RenderWindowVulkan: surface lost while acquiring an image (window closing?).");
             return false;
         }
 
@@ -497,12 +546,7 @@ namespace Maze
         m_vsync = _vsync;
 
         if (m_swapChain)
-        {
-            vkDeviceWaitIdle(m_renderSystemVulkan->getDevice());
-            destroyDepthBuffer();
-            createSwapChain(m_antialiasingLevel);
-            createDepthBuffer();
-        }
+            recreateSwapChain();
     }
 
     //////////////////////////////////////////

@@ -663,7 +663,7 @@ namespace Maze
             case ShaderUniformType::UniformTextureCube:
             {
                 if (TextureCube* texture = IndexedResource<TextureCube>::GetResourceSafe(m_resourceId))
-                    data = texture->getAssetFileName();
+                    data = texture->toString();
                 return data;
             }
             case ShaderUniformType::UniformVec2S32:

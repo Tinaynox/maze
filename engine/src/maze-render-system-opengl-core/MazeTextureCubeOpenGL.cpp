@@ -31,6 +31,7 @@
 #include "maze-render-system-opengl-core/MazePixelFormatOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeTextureOpenGL.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 
 
 //////////////////////////////////////////
@@ -505,31 +506,9 @@ namespace Maze
         if (m_glTexture == 0)
             generateGLObjects();
 
-        if (m_assetFile)
-        {
-            Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloading from asset file..." << endl;
-            loadFromAssetFile(m_assetFile);
-            Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
-        }
-        else
-        if (    !m_pixelSheetsTEMP[0].empty()
-            &&  !m_pixelSheetsTEMP[1].empty()
-            &&  !m_pixelSheetsTEMP[2].empty()
-            &&  !m_pixelSheetsTEMP[3].empty()
-            &&  !m_pixelSheetsTEMP[4].empty()
-            &&  !m_pixelSheetsTEMP[5].empty())
-        {
-            Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloading from pixel sheet..." << endl;
-            loadTexture(m_pixelSheetsTEMP, m_internalPixelFormat);
-            Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
-        }
-        else
-        {
-            // #TODO: empty
-            // Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloading empty..." << endl;
-            // loadEmpty(m_size, m_internalPixelFormat);
-            // Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
-        }
+        TextureCubeLibraryData const* libraryData = m_renderSystem->getTextureManager()->getTextureCubeLibraryData(getName().asHashedCString());
+        if (libraryData && libraryData->callbacks.requestReload)
+            libraryData->callbacks.requestReload(true);
     }
 
     
