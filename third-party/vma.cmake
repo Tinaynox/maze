@@ -26,4 +26,13 @@
 ##########################################
 # VulkanMemoryAllocator (header-only, single header, MIT license)
 # Vendored from https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
-include_directories(${CMAKE_CURRENT_LIST_DIR}/vma)
+#
+# INTERFACE library (not a bare include_directories()) so the include path
+# propagates transitively to anything that links against maze-render-system-vulkan,
+# including targets defined in other CMakeLists.txt scopes (e.g. the example
+# projects) - include_directories() is directory-scoped and would not reach
+# those.
+if(NOT TARGET vma)
+    add_library(vma INTERFACE)
+    target_include_directories(vma INTERFACE ${CMAKE_CURRENT_LIST_DIR}/vma)
+endif()

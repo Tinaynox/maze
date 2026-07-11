@@ -38,4 +38,5 @@ target_link_libraries(
     PUBLIC maze-graphics
     PUBLIC Vulkan::Vulkan
     PUBLIC Vulkan::shaderc_combined
-    PUBLIC spirv-reflect)
+    PUBLIC spirv-reflect
+    PUBLIC vma)
