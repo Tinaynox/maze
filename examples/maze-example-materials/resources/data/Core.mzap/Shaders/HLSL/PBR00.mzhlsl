@@ -1,0 +1,255 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+
+
+//////////////////////////////////////////
+float4 u_baseMapST;
+
+
+//////////////////////////////////////////
+struct VSInput
+{
+    float3 a_position : POSITION;
+    float3 a_normal : NORMAL;
+    float3 a_tangent : TANGENT;
+    float3 a_bitangent : BINORMAL;
+    float4 a_color : COLOR;
+    float2 a_texCoords0 : TEXCOORD0;
+    uint instanceId : SV_InstanceID;
+};
+
+
+//////////////////////////////////////////
+struct VSOutput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_normalWS : NORMAL;
+    float3 v_tangentWS : TANGENT;
+    float3 v_bitangentWS : BINORMAL;
+    float3 v_viewDirWS : TEXCOORD6;
+    float3 v_positionWS : TEXCOORD9;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+// Main
+VSOutput main(VSInput In)
+{
+    VSOutput Out;
+
+    int instanceId = (int)In.instanceId;
+
+    float4x4 modelMatrix = GetModelMatrix(instanceId);
+    float4x4 viewMatrix = GetViewMatrix();
+
+    float4 positionOS = float4(In.a_position, 1.0);
+    float4 positionWS = mul(modelMatrix, positionOS);
+    Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
+    float4 positionVS = mul(viewMatrix, positionWS);
+    float4 positionCS = mul(u_projectionMatrix, positionVS);
+
+    float4 normalOS = float4(In.a_normal, 1.0);
+    float4 tangentOS = float4(In.a_tangent, 1.0);
+    float4 bitangentOS = float4(In.a_bitangent, 1.0);
+
+    float3x3 normalMatrix = (float3x3)modelMatrix;
+
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+
+    Out.v_positionWS = positionWS.xyz;
+
+    Out.v_normalWS = normalize(mul(normalMatrix, normalOS.xyz));
+    Out.v_tangentWS = normalize(mul(normalMatrix, tangentOS.xyz));
+    Out.v_bitangentWS = normalize(mul(normalMatrix, bitangentOS.xyz));
+
+    Out.v_color = In.a_color;
+
+    Out.v_uv0 = u_baseMapST.xy * In.a_texCoords0 + u_baseMapST.zw;
+
+    Out.v_viewDirWS = u_viewPosition - positionWS.xyz;
+
+    Out.positionCS = MazeFinalizePositionCS(positionCS);
+    return Out;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/Core.mzhlsl"
+#include "Utils/Math.mzhlsl"
+
+
+//////////////////////////////////////////
+MAZE_TEXTURE2D(u_baseMap)
+float4 u_color;
+float4 u_ambientLightColor;
+
+MAZE_TEXTURE2D(u_normalMap)
+float u_normalScale;
+
+MAZE_TEXTURE2D(u_metallicSmoothnessMap)
+float u_metallic;
+float u_smoothness;
+
+MAZE_TEXTURE2D(u_emissionMap)
+float4 u_emissionColor;
+
+MAZE_TEXTURECUBE(u_skyboxMap)
+float u_reflectionIntensity;
+
+
+//////////////////////////////////////////
+struct PSInput
+{
+    float4 positionCS : SV_Position;
+    float2 v_uv0 : TEXCOORD0;
+    float4 v_color : COLOR0;
+    float3 v_normalWS : NORMAL;
+    float3 v_tangentWS : TANGENT;
+    float3 v_bitangentWS : BINORMAL;
+    float3 v_viewDirWS : TEXCOORD6;
+    float3 v_positionWS : TEXCOORD9;
+    float v_clipDistance0 : SV_ClipDistance;
+};
+
+
+//////////////////////////////////////////
+#define PBR_PI 3.14159265359
+
+
+//////////////////////////////////////////
+// Trowbridge-Reitz GGX normal distribution
+float PBRDistributionGGX(float NdotH, float roughness)
+{
+    float a = roughness * roughness;
+    float a2 = a * a;
+    float NdotH2 = NdotH * NdotH;
+
+    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom = PBR_PI * denom * denom;
+
+    return a2 / max(denom, 0.0000001);
+}
+
+//////////////////////////////////////////
+// Smith's Schlick-GGX geometry (self-shadowing/masking) term
+float PBRGeometrySchlickGGX(float NdotX, float roughness)
+{
+    float r = roughness + 1.0;
+    float k = (r * r) / 8.0;
+
+    return NdotX / max(NdotX * (1.0 - k) + k, 0.0000001);
+}
+
+//////////////////////////////////////////
+float PBRGeometrySmith(float NdotV, float NdotL, float roughness)
+{
+    return PBRGeometrySchlickGGX(NdotV, roughness) * PBRGeometrySchlickGGX(NdotL, roughness);
+}
+
+//////////////////////////////////////////
+float3 PBRFresnelSchlick(float cosTheta, float3 F0)
+{
+    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}
+
+//////////////////////////////////////////
+float3 PBRFresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
+{
+    return F0 + (max(float3(1.0 - roughness, 1.0 - roughness, 1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}
+
+
+//////////////////////////////////////////
+// Main
+float4 main(PSInput In) : SV_Target
+{
+    // Geometry basis
+    float3 V = normalize(In.v_viewDirWS);
+    float3x3 tangentToWorld = MazeBuildTangentToWorld(normalize(In.v_tangentWS), normalize(In.v_bitangentWS), normalize(In.v_normalWS));
+
+    float3 normalTS = SampleNormalTS(u_normalMap, u_normalMapSampler, In.v_uv0, u_normalScale);
+    float3 N = normalize(TransformTangentToWorld(normalTS, tangentToWorld));
+
+    // Surface properties
+    float4 albedoTex = MAZE_GET_TEXEL2D(u_baseMap, In.v_uv0) * u_color;
+    float3 albedo = albedoTex.rgb;
+
+    float4 metallicSmoothness = MAZE_GET_TEXEL2D(u_metallicSmoothnessMap, In.v_uv0);
+    float metallic = clamp(metallicSmoothness.r * u_metallic, 0.0, 1.0);
+    float roughness = clamp(1.0 - metallicSmoothness.a * u_smoothness, 0.045, 1.0);
+
+    float3 F0 = lerp(float3(0.04, 0.04, 0.04), albedo, metallic);
+
+    float NdotV = max(dot(N, V), 0.0001);
+
+
+    //////////////////////////////////////////
+    // Direct lighting (main light, Cook-Torrance specular BRDF)
+    float3 L = normalize(-u_mainLightDirection);
+    float3 H = normalize(V + L);
+
+    float NdotL = max(dot(N, L), 0.0);
+    float NdotH = max(dot(N, H), 0.0);
+    float VdotH = max(dot(V, H), 0.0);
+
+    float NDF = PBRDistributionGGX(NdotH, roughness);
+    float G = PBRGeometrySmith(NdotV, NdotL, roughness);
+    float3 F = PBRFresnelSchlick(VdotH, F0);
+
+    float3 specularBRDF = (NDF * G * F) / max(4.0 * NdotV * NdotL, 0.0000001);
+
+    float3 kD = (float3(1.0, 1.0, 1.0) - F) * (1.0 - metallic);
+
+    float3 radiance = u_mainLightColor.rgb;
+    float3 directLighting = (kD * albedo / PBR_PI + specularBRDF) * radiance * NdotL;
+
+
+    //////////////////////////////////////////
+    // Image-based ambient lighting (skybox reflection + flat ambient irradiance)
+    float3 ambientLightColor = u_ambientLightColor.rgb;
+
+    float3 Fambient = PBRFresnelSchlickRoughness(NdotV, F0, roughness);
+    float3 kDambient = (float3(1.0, 1.0, 1.0) - Fambient) * (1.0 - metallic);
+    float3 diffuseIBL = ambientLightColor * albedo * kDambient;
+
+    float3 R = reflect(-V, N);
+    float3 prefilteredColor = MAZE_GET_TEXELCUBE(u_skyboxMap, R).rgb;
+    // No mip-based prefiltering is available, so fake the roughness blur
+    // by fading the sharp reflection towards the flat ambient color
+    prefilteredColor = lerp(prefilteredColor, ambientLightColor, roughness * roughness);
+    float3 specularIBL = prefilteredColor * Fambient * u_reflectionIntensity;
+
+    float3 ambientLighting = diffuseIBL + specularIBL;
+
+
+    //////////////////////////////////////////
+    float3 linearColor = ambientLighting + directLighting;
+
+    // Reset to LDR
+    linearColor.r = min(linearColor.r, 1.0);
+    linearColor.g = min(linearColor.g, 1.0);
+    linearColor.b = min(linearColor.b, 1.0);
+
+    // Emission map (left unclamped so HDR bloom can pick it up)
+    float3 emissionColor = u_emissionColor.rgb * MAZE_GET_TEXEL2D(u_emissionMap, In.v_uv0).rgb;
+    linearColor += emissionColor;
+
+    return float4(linearColor, albedoTex.a);
+}

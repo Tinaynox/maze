@@ -264,6 +264,9 @@ namespace Maze
             labelRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault3DOutlined());
         }
 
+        addMeshPreview("TorusKnotNM.fbx", "PBR00.mzmaterial", "PBR", torusKnotScale);
+        addMeshPreviewSpace();
+
         addMeshPreview("TorusKnotUV.fbx", "Dissolve00.mzmaterial", "Dissolve", torusKnotScale);
         addMeshPreviewSpace();
 
@@ -351,7 +354,7 @@ namespace Maze
         
         meshData.rotor = rotor;
         
-        F32 x = ((S32)m_meshData.size() - 18) * 2.0f + m_meshesOffset;
+        F32 x = ((S32)m_meshData.size() - 20) * 2.0f + m_meshesOffset;
         transform->setLocalPosition(x, 2.0f, 8.0f);
 
 
