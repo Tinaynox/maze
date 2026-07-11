@@ -18,6 +18,7 @@ At the moment it is my main pet project, developed for the purpose of learning a
 **Melted Kingdoms**
 
 [![Melted Kingdoms](/res/art/projects/mk/mk0.jpg)](https://store.steampowered.com/app/4005150/Melted_Kingdoms/)
+[![Melted Kingdoms](/res/art/projects/mk/mk1.jpg)](https://store.steampowered.com/app/4005150/Melted_Kingdoms/)
 
 [![Steam](/res/art/SteamIcon_32x32.png?raw=true "Steam")](https://store.steampowered.com/app/4005150/Melted_Kingdoms/) [![itch.io](/res/art/ItchIcon_32x32.png?raw=true "itch.io")](https://tinaynox.itch.io/melted-kingdoms)
 
