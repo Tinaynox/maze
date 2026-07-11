@@ -1,0 +1,113 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#pragma once
+#if (!defined(_MazeRenderSystemVulkanPlugin_hpp_))
+#define _MazeRenderSystemVulkanPlugin_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-render-system-vulkan/MazeRenderSystemVulkanHeader.hpp"
+#include "maze-core/system/MazePlugin.hpp"
+#include "maze-render-system-vulkan/MazeRenderSystemVulkan.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(RenderSystemVulkanPlugin);
+    MAZE_USING_SHARED_PTR(RenderSystemVulkan);
+
+
+#if (MAZE_STATIC)
+
+    //////////////////////////////////////////
+    void InstallRenderSystemVulkanPlugin(RenderSystemVulkanConfig const& _config = RenderSystemVulkanConfig());
+
+    //////////////////////////////////////////
+    void UninstallRenderSystemVulkanPlugin();
+
+#endif
+
+
+    //////////////////////////////////////////
+    // Class RenderSystemVulkanPlugin
+    //
+    //////////////////////////////////////////
+    class MAZE_RENDER_SYSTEM_VULKAN_API RenderSystemVulkanPlugin
+        : public Plugin
+        , public std::enable_shared_from_this<RenderSystemVulkanPlugin>
+    {
+    public:
+        //////////////////////////////////////////
+        static constexpr CString const c_libraryName = "maze-render-system-vulkan";
+
+    public:
+
+        //////////////////////////////////////////
+        virtual ~RenderSystemVulkanPlugin();
+
+        //////////////////////////////////////////
+        static RenderSystemVulkanPluginPtr Create(RenderSystemVulkanConfig const& _config = RenderSystemVulkanConfig());
+
+        //////////////////////////////////////////
+        virtual String const& getName() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void install() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void uninstall() MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        RenderSystemVulkanConfig const& getConfig() const { return m_config; }
+
+        //////////////////////////////////////////
+        void setConfig(RenderSystemVulkanConfig const& _config) { m_config = _config; }
+
+    protected:
+
+        //////////////////////////////////////////
+        RenderSystemVulkanPlugin();
+
+        //////////////////////////////////////////
+        bool init(RenderSystemVulkanConfig const& _config);
+
+    protected:
+        RenderSystemVulkanWPtr m_renderSystem;
+
+        RenderSystemVulkanConfig m_config;
+    };
+
+
+} // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _MazeRenderSystemVulkanPlugin_hpp_
+//////////////////////////////////////////

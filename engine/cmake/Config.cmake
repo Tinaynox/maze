@@ -344,6 +344,26 @@ if(MAZE_RENDER_SYSTEM_DX11_REQUESTED)
 
 endif()
 
+# Maze Render System Vulkan is not compiled by default.
+# Projects that want it (e.g. maze-example-materials, maze-example-render) set
+# MAZE_RENDER_SYSTEM_VULKAN_REQUESTED before including this config
+if(MAZE_RENDER_SYSTEM_VULKAN_REQUESTED)
+
+    if(MAZE_TARGET_PLATFORM_IS_WINDOWS AND (NOT IS_ARM_ARCH))
+
+        find_package(Vulkan COMPONENTS shaderc_combined)
+
+        if(Vulkan_FOUND AND TARGET Vulkan::shaderc_combined)
+            set(MAZE_RENDER_SYSTEM_VULKAN_ENABLED 1)
+            add_definitions("-DMAZE_RENDER_SYSTEM_VULKAN_ENABLED=1")
+        else()
+            message(WARNING "Vulkan SDK (with shaderc_combined component) is not found - maze-render-system-vulkan will not be compiled")
+        endif()
+
+    endif()
+
+endif()
+
 # Production mode
 if (MAZE_PRODUCTION)
     set(MAZE_PRODUCTION 1)

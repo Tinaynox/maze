@@ -1,0 +1,716 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#include "MazeRenderSystemVulkanHeader.hpp"
+#include "maze-render-system-vulkan/MazeTexture2DVulkan.hpp"
+#include "maze-render-system-vulkan/MazeRenderSystemVulkan.hpp"
+#include "maze-render-system-vulkan/MazeHelpersVulkan.hpp"
+#include "maze-graphics/MazePixelSheet2D.hpp"
+#include "maze-graphics/helpers/MazePixelSheet2DHelper.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    // Class Texture2DVulkan
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Texture2DVulkan, Texture2D);
+
+    //////////////////////////////////////////
+    Texture2DVulkan::Texture2DVulkan()
+    {
+    }
+
+    //////////////////////////////////////////
+    Texture2DVulkan::~Texture2DVulkan()
+    {
+        destroyTexture();
+    }
+
+    //////////////////////////////////////////
+    Texture2DVulkanPtr Texture2DVulkan::Create(RenderSystemVulkan* _renderSystem)
+    {
+        Texture2DVulkanPtr object;
+        MAZE_CREATE_AND_INIT_MANAGED_SHARED_PTR(Texture2DVulkan, object, init((RenderSystem*)_renderSystem));
+        return object;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DVulkan::init(RenderSystem* _renderSystem)
+    {
+        if (!Texture2D::init(_renderSystem))
+            return false;
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    RenderSystemVulkan* Texture2DVulkan::getRenderSystemVulkanRaw() const
+    {
+        return m_renderSystem->castRaw<RenderSystemVulkan>();
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DVulkan::isValid()
+    {
+        return (m_image != VK_NULL_HANDLE);
+    }
+
+    //////////////////////////////////////////
+    void Texture2DVulkan::destroyTexture()
+    {
+        RenderSystemVulkan* renderSystem = getRenderSystemVulkanRaw();
+        if (!renderSystem || (m_image == VK_NULL_HANDLE && m_imageView == VK_NULL_HANDLE))
+        {
+            m_image = VK_NULL_HANDLE;
+            m_imageAllocation = VK_NULL_HANDLE;
+            m_imageView = VK_NULL_HANDLE;
+            m_mipLevels = 1u;
+            m_hasMipmapsGenerationSupport = false;
+            m_currentLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+            return;
+        }
+
+        // Vulkan/VMA resources must not be destroyed while a submitted-but-not-yet-completed
+        // command buffer may still reference them (unlike D3D11's internally refcounted
+        // resources, which are safe to Release() immediately). There's no per-resource
+        // deferred-deletion queue in this backend yet (that belongs in RenderSystemVulkan/
+        // RenderQueueVulkan, out of scope here), so this conservatively waits for the whole
+        // device to go idle before tearing down. Correct, but a real deferred-deletion queue
+        // keyed off the frame-in-flight fences would avoid the stall this causes if textures
+        // are destroyed frequently mid-session.
+        MAZE_VK_CALL(vkDeviceWaitIdle(renderSystem->getDevice()));
+
+        if (m_imageView != VK_NULL_HANDLE)
+        {
+            vkDestroyImageView(renderSystem->getDevice(), m_imageView, nullptr);
+            m_imageView = VK_NULL_HANDLE;
+        }
+
+        if (m_image != VK_NULL_HANDLE)
+        {
+            vmaDestroyImage(renderSystem->getAllocator(), m_image, m_imageAllocation);
+            m_image = VK_NULL_HANDLE;
+            m_imageAllocation = VK_NULL_HANDLE;
+        }
+
+        m_mipLevels = 1u;
+        m_hasMipmapsGenerationSupport = false;
+        m_currentLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DVulkan::createImageView()
+    {
+        RenderSystemVulkan* renderSystem = getRenderSystemVulkanRaw();
+
+        VkImageViewCreateInfo viewInfo;
+        memset(&viewInfo, 0, sizeof(viewInfo));
+        viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        viewInfo.image = m_image;
+        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        viewInfo.format = m_format;
+        viewInfo.subresourceRange.aspectMask = m_aspect;
+        viewInfo.subresourceRange.baseMipLevel = 0;
+        viewInfo.subresourceRange.levelCount = m_mipLevels;
+        viewInfo.subresourceRange.baseArrayLayer = 0;
+        viewInfo.subresourceRange.layerCount = 1;
+
+        MAZE_VK_CALL(vkCreateImageView(renderSystem->getDevice(), &viewInfo, nullptr, &m_imageView));
+        return m_imageView != VK_NULL_HANDLE;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DVulkan::loadTextureImpl(
+        Vector<PixelSheet2D> const& _pixelSheets,
+        PixelFormat::Enum _internalPixelFormat)
+    {
+        MAZE_ERROR_RETURN_VALUE_IF(_pixelSheets.empty(), false, "PixelSheets are empty!");
+
+        if (_internalPixelFormat == PixelFormat::None)
+            _internalPixelFormat = _pixelSheets[0].getFormat();
+
+        // Most desktop Vulkan drivers don't support 24-bit RGB for optimal tiling - expand
+        // to RGBA on upload (mirrors DX11/ExpandRGBToRGBADX11 exactly)
+        bool expandRGB = (_internalPixelFormat == PixelFormat::RGB_U8);
+
+        VkFormat format = GetPixelFormatVulkan(_internalPixelFormat);
+        MAZE_ERROR_RETURN_VALUE_IF(
+            format == VK_FORMAT_UNDEFINED,
+            false,
+            "Unsupported texture pixel format: %d!",
+            (S32)_internalPixelFormat);
+
+        destroyTexture();
+
+        RenderSystemVulkan* renderSystem = getRenderSystemVulkanRaw();
+        VkDevice device = renderSystem->getDevice();
+        VmaAllocator allocator = renderSystem->getAllocator();
+
+        Vec2S size = _pixelSheets[0].getSize();
+        m_size = size;
+        m_invSize = Vec2F(1.0f / (F32)size.x, 1.0f / (F32)size.y);
+        m_internalPixelFormat = _internalPixelFormat;
+        m_format = format;
+        m_aspect = GetImageAspectFlagsVulkan(_internalPixelFormat);
+
+        bool isDepth = IsDepthPixelFormatVulkan(_internalPixelFormat);
+        bool isCompressed = PixelFormat::IsCompressed(_internalPixelFormat);
+
+        m_hasMipmapsGenerationSupport = !isDepth && !isCompressed;
+
+        if (_pixelSheets.size() > 1)
+            m_mipLevels = (U32)_pixelSheets.size();
+        else if (m_hasMipmapsGenerationSupport)
+        {
+            m_mipLevels = 1u;
+            for (S32 s = Math::Max(size.x, size.y); s > 1; s >>= 1)
+                ++m_mipLevels;
+        }
+        else
+            m_mipLevels = 1u;
+
+        VkImageCreateInfo imageInfo;
+        memset(&imageInfo, 0, sizeof(imageInfo));
+        imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        imageInfo.imageType = VK_IMAGE_TYPE_2D;
+        imageInfo.extent.width = (U32)size.x;
+        imageInfo.extent.height = (U32)size.y;
+        imageInfo.extent.depth = 1;
+        imageInfo.mipLevels = m_mipLevels;
+        imageInfo.arrayLayers = 1;
+        imageInfo.format = format;
+        imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+        imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        imageInfo.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+        if (isDepth)
+            imageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+        else if (m_hasMipmapsGenerationSupport)
+            imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+        imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        VmaAllocationCreateInfo allocInfo;
+        memset(&allocInfo, 0, sizeof(allocInfo));
+        allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+        allocInfo.flags = VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT;
+
+        MAZE_VK_CALL(vmaCreateImage(allocator, &imageInfo, &allocInfo, &m_image, &m_imageAllocation, nullptr));
+        MAZE_ERROR_RETURN_VALUE_IF(m_image == VK_NULL_HANDLE, false, "vmaCreateImage failed!");
+
+        // Staging-buffer upload of every provided mip level, one command buffer for the
+        // whole texture (initial UNDEFINED -> TRANSFER_DST_OPTIMAL, copy each mip, then
+        // either TRANSFER_DST_OPTIMAL -> SHADER_READ_ONLY_OPTIMAL directly, or leave in
+        // TRANSFER_DST_OPTIMAL if generateMipmaps() (blit-based) still needs to run)
+        VkCommandBuffer commandBuffer = renderSystem->beginSingleTimeCommands();
+
+        TransitionImageLayoutVulkan(
+            commandBuffer, m_image, m_aspect,
+            VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            m_mipLevels, 1u);
+        m_currentLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+        Vector<VkBuffer> stagingBuffers;
+        Vector<VmaAllocation> stagingAllocations;
+        stagingBuffers.reserve(_pixelSheets.size());
+        stagingAllocations.reserve(_pixelSheets.size());
+
+        for (Size mip = 0; mip < _pixelSheets.size() && mip < (Size)m_mipLevels; ++mip)
+        {
+            PixelSheet2D const& pixelSheet = _pixelSheets[mip];
+            if (pixelSheet.getTotalBytesCount() == 0)
+                continue;
+
+            U8 const* data = pixelSheet.getDataRO();
+            Size dataSize = pixelSheet.getTotalBytesCount();
+
+            Vector<U8> expandedData;
+            if (expandRGB)
+            {
+                Size pixelsCount = (Size)pixelSheet.getSize().x * (Size)pixelSheet.getSize().y;
+                expandedData.resize(pixelsCount * 4);
+                ExpandRGBToRGBAVulkan(data, &expandedData[0], pixelsCount);
+                data = &expandedData[0];
+                dataSize = pixelsCount * 4;
+            }
+
+            VkBufferCreateInfo stagingBufferInfo;
+            memset(&stagingBufferInfo, 0, sizeof(stagingBufferInfo));
+            stagingBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+            stagingBufferInfo.size = dataSize;
+            stagingBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+            stagingBufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+            VmaAllocationCreateInfo stagingAllocInfo;
+            memset(&stagingAllocInfo, 0, sizeof(stagingAllocInfo));
+            stagingAllocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+            stagingAllocInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
+
+            VkBuffer stagingBuffer = VK_NULL_HANDLE;
+            VmaAllocation stagingAllocation = VK_NULL_HANDLE;
+            VmaAllocationInfo stagingAllocationInfo;
+            MAZE_VK_CALL(vmaCreateBuffer(allocator, &stagingBufferInfo, &stagingAllocInfo, &stagingBuffer, &stagingAllocation, &stagingAllocationInfo));
+
+            memcpy(stagingAllocationInfo.pMappedData, data, dataSize);
+
+            stagingBuffers.push_back(stagingBuffer);
+            stagingAllocations.push_back(stagingAllocation);
+
+            VkBufferImageCopy region;
+            memset(&region, 0, sizeof(region));
+            region.bufferOffset = 0;
+            region.bufferRowLength = 0;
+            region.bufferImageHeight = 0;
+            region.imageSubresource.aspectMask = m_aspect;
+            region.imageSubresource.mipLevel = (U32)mip;
+            region.imageSubresource.baseArrayLayer = 0;
+            region.imageSubresource.layerCount = 1;
+            region.imageOffset = { 0, 0, 0 };
+            region.imageExtent.width = Math::Max(1, pixelSheet.getSize().x);
+            region.imageExtent.height = Math::Max(1, pixelSheet.getSize().y);
+            region.imageExtent.depth = 1;
+
+            vkCmdCopyBufferToImage(
+                commandBuffer,
+                stagingBuffer,
+                m_image,
+                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                1, &region);
+        }
+
+        bool needsGeneratedMips = m_hasMipmapsGenerationSupport && _pixelSheets.size() == 1 && m_mipLevels > 1u;
+        if (!needsGeneratedMips)
+        {
+            TransitionImageLayoutVulkan(
+                commandBuffer, m_image, m_aspect,
+                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                m_mipLevels, 1u);
+            m_currentLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        }
+
+        renderSystem->endSingleTimeCommands(commandBuffer);
+
+        for (Size i = 0; i < stagingBuffers.size(); ++i)
+            vmaDestroyBuffer(allocator, stagingBuffers[i], stagingAllocations[i]);
+
+        if (!createImageView())
+            return false;
+
+        // Only level 0 was uploaded but the full mip chain was allocated - generate the rest
+        if (needsGeneratedMips)
+            generateMipmaps();
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    VkSampler Texture2DVulkan::ensureSampler()
+    {
+        // D3D/Vulkan point and linear filters still mip-select even without explicit
+        // mipmap interpolation - clamp maxLod to 0 for non-mipmap filters so a texture
+        // with unused/stale upper mips (e.g. bloom downscale chain) doesn't get sampled
+        // from garbage data (see project memory project_dx11_render_system.md item 7,
+        // the same bug bit the DX11 backend)
+        bool usesMipmapFilter =
+            m_minFilter == TextureFilter::NearestMipmapNearest ||
+            m_minFilter == TextureFilter::LinearMipmapNearest ||
+            m_minFilter == TextureFilter::NearestMipmapLinear ||
+            m_minFilter == TextureFilter::LinearMipmapLinear;
+        F32 maxLod = usesMipmapFilter ? (F32)m_mipLevels : 0.0f;
+
+        return getRenderSystemVulkanRaw()->ensureSampler(
+            m_minFilter,
+            m_magFilter,
+            m_wrapS,
+            m_wrapT,
+            m_wrapT,
+            m_anisotropyLevel,
+            maxLod,
+            m_borderColor.toVec4F32());
+    }
+
+    //////////////////////////////////////////
+    void Texture2DVulkan::transitionTo(VkCommandBuffer _commandBuffer, VkImageLayout _newLayout)
+    {
+        if (m_currentLayout == _newLayout)
+            return;
+
+        TransitionImageLayoutVulkan(
+            _commandBuffer, m_image, m_aspect,
+            m_currentLayout, _newLayout,
+            m_mipLevels, 1u);
+        m_currentLayout = _newLayout;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DVulkan::setMagFilter(TextureFilter _value)
+    {
+        m_magFilter = _value;
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DVulkan::setMinFilter(TextureFilter _value)
+    {
+        m_minFilter = _value;
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DVulkan::setWrapS(TextureWrap _value)
+    {
+        m_wrapS = _value;
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DVulkan::setWrapT(TextureWrap _value)
+    {
+        m_wrapT = _value;
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DVulkan::setBorderColor(ColorU32 _value)
+    {
+        m_borderColor = _value;
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DVulkan::setAnisotropyLevel(F32 _value)
+    {
+        m_anisotropyLevel = _value;
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void Texture2DVulkan::copyImageFrom(
+        Texture2DPtr const& _texture,
+        U32 _x,
+        U32 _y)
+    {
+        MAZE_ERROR_RETURN_IF(!_texture, "Texture is null!");
+
+        Texture2DVulkan* srcTexture = _texture->castRaw<Texture2DVulkan>();
+        MAZE_ERROR_RETURN_IF(!srcTexture->m_image || !m_image, "Textures are not loaded!");
+
+        RenderSystemVulkan* renderSystem = getRenderSystemVulkanRaw();
+        VkCommandBuffer commandBuffer = renderSystem->beginSingleTimeCommands();
+
+        VkImageLayout srcOldLayout = srcTexture->m_currentLayout;
+        VkImageLayout dstOldLayout = m_currentLayout;
+
+        srcTexture->transitionTo(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+        transitionTo(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+        VkImageCopy region;
+        memset(&region, 0, sizeof(region));
+        region.srcSubresource.aspectMask = srcTexture->m_aspect;
+        region.srcSubresource.mipLevel = 0;
+        region.srcSubresource.baseArrayLayer = 0;
+        region.srcSubresource.layerCount = 1;
+        region.dstSubresource.aspectMask = m_aspect;
+        region.dstSubresource.mipLevel = 0;
+        region.dstSubresource.baseArrayLayer = 0;
+        region.dstSubresource.layerCount = 1;
+        region.dstOffset = { (S32)_x, (S32)_y, 0 };
+        region.extent.width = (U32)srcTexture->m_size.x;
+        region.extent.height = (U32)srcTexture->m_size.y;
+        region.extent.depth = 1;
+
+        vkCmdCopyImage(
+            commandBuffer,
+            srcTexture->m_image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+            m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            1, &region);
+
+        // Restore both textures to their pre-copy layout so callers observe no
+        // side effect on state they don't own
+        srcTexture->transitionTo(commandBuffer, srcOldLayout == VK_IMAGE_LAYOUT_UNDEFINED ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : srcOldLayout);
+        transitionTo(commandBuffer, dstOldLayout == VK_IMAGE_LAYOUT_UNDEFINED ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : dstOldLayout);
+
+        renderSystem->endSingleTimeCommands(commandBuffer);
+    }
+
+    //////////////////////////////////////////
+    void Texture2DVulkan::copyImageFrom(
+        U8 const* _pixels,
+        PixelFormat::Enum _pixelFormat,
+        U32 _width,
+        U32 _height,
+        U32 _x,
+        U32 _y)
+    {
+        MAZE_ERROR_RETURN_IF(!m_image, "Texture is not loaded!");
+        MAZE_ERROR_RETURN_IF(
+            _pixelFormat != m_internalPixelFormat,
+            "Pixel format mismatch! texture=%d data=%d",
+            (S32)m_internalPixelFormat,
+            (S32)_pixelFormat);
+
+        U8 const* data = _pixels;
+        Size dataSize = (Size)PixelFormat::GetBytesPerPixel(_pixelFormat) * _width * _height;
+
+        Vector<U8> expandedData;
+        if (_pixelFormat == PixelFormat::RGB_U8)
+        {
+            Size pixelsCount = (Size)_width * (Size)_height;
+            expandedData.resize(pixelsCount * 4);
+            ExpandRGBToRGBAVulkan(data, &expandedData[0], pixelsCount);
+            data = &expandedData[0];
+            dataSize = pixelsCount * 4;
+        }
+
+        RenderSystemVulkan* renderSystem = getRenderSystemVulkanRaw();
+        VmaAllocator allocator = renderSystem->getAllocator();
+
+        VkBufferCreateInfo stagingBufferInfo;
+        memset(&stagingBufferInfo, 0, sizeof(stagingBufferInfo));
+        stagingBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        stagingBufferInfo.size = dataSize;
+        stagingBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+        stagingBufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        VmaAllocationCreateInfo stagingAllocInfo;
+        memset(&stagingAllocInfo, 0, sizeof(stagingAllocInfo));
+        stagingAllocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+        stagingAllocInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
+
+        VkBuffer stagingBuffer = VK_NULL_HANDLE;
+        VmaAllocation stagingAllocation = VK_NULL_HANDLE;
+        VmaAllocationInfo stagingAllocationInfo;
+        MAZE_VK_CALL(vmaCreateBuffer(allocator, &stagingBufferInfo, &stagingAllocInfo, &stagingBuffer, &stagingAllocation, &stagingAllocationInfo));
+        memcpy(stagingAllocationInfo.pMappedData, data, dataSize);
+
+        VkCommandBuffer commandBuffer = renderSystem->beginSingleTimeCommands();
+
+        VkImageLayout oldLayout = m_currentLayout;
+        transitionTo(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+        VkBufferImageCopy region;
+        memset(&region, 0, sizeof(region));
+        region.imageSubresource.aspectMask = m_aspect;
+        region.imageSubresource.mipLevel = 0;
+        region.imageSubresource.baseArrayLayer = 0;
+        region.imageSubresource.layerCount = 1;
+        region.imageOffset = { (S32)_x, (S32)_y, 0 };
+        region.imageExtent.width = _width;
+        region.imageExtent.height = _height;
+        region.imageExtent.depth = 1;
+
+        vkCmdCopyBufferToImage(
+            commandBuffer,
+            stagingBuffer,
+            m_image,
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            1, &region);
+
+        transitionTo(commandBuffer, oldLayout == VK_IMAGE_LAYOUT_UNDEFINED ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : oldLayout);
+
+        renderSystem->endSingleTimeCommands(commandBuffer);
+
+        vmaDestroyBuffer(allocator, stagingBuffer, stagingAllocation);
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DVulkan::readAsPixelSheet(
+        PixelSheet2D& _outResult,
+        PixelFormat::Enum _outputFormat)
+    {
+        MAZE_ERROR_RETURN_VALUE_IF(!m_image, false, "Texture is not loaded!");
+
+        if (_outputFormat == PixelFormat::None)
+            _outputFormat = m_internalPixelFormat;
+
+        MAZE_ERROR_RETURN_VALUE_IF(
+            _outputFormat != m_internalPixelFormat,
+            false,
+            "Vulkan readAsPixelSheet format conversion is not supported! texture=%d requested=%d",
+            (S32)m_internalPixelFormat,
+            (S32)_outputFormat);
+
+        RenderSystemVulkan* renderSystem = getRenderSystemVulkanRaw();
+        VmaAllocator allocator = renderSystem->getAllocator();
+
+        Size dataSize = (Size)PixelFormat::GetBytesPerPixel(m_internalPixelFormat) * (Size)m_size.x * (Size)m_size.y;
+
+        VkBufferCreateInfo stagingBufferInfo;
+        memset(&stagingBufferInfo, 0, sizeof(stagingBufferInfo));
+        stagingBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        stagingBufferInfo.size = dataSize;
+        stagingBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+        stagingBufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        VmaAllocationCreateInfo stagingAllocInfo;
+        memset(&stagingAllocInfo, 0, sizeof(stagingAllocInfo));
+        stagingAllocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+        stagingAllocInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
+
+        VkBuffer stagingBuffer = VK_NULL_HANDLE;
+        VmaAllocation stagingAllocation = VK_NULL_HANDLE;
+        VmaAllocationInfo stagingAllocationInfo;
+        MAZE_VK_CALL(vmaCreateBuffer(allocator, &stagingBufferInfo, &stagingAllocInfo, &stagingBuffer, &stagingAllocation, &stagingAllocationInfo));
+
+        VkCommandBuffer commandBuffer = renderSystem->beginSingleTimeCommands();
+
+        VkImageLayout oldLayout = m_currentLayout;
+        transitionTo(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+
+        VkBufferImageCopy region;
+        memset(&region, 0, sizeof(region));
+        region.imageSubresource.aspectMask = m_aspect;
+        region.imageSubresource.mipLevel = 0;
+        region.imageSubresource.baseArrayLayer = 0;
+        region.imageSubresource.layerCount = 1;
+        region.imageExtent.width = (U32)m_size.x;
+        region.imageExtent.height = (U32)m_size.y;
+        region.imageExtent.depth = 1;
+
+        vkCmdCopyImageToBuffer(
+            commandBuffer,
+            m_image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+            stagingBuffer,
+            1, &region);
+
+        transitionTo(commandBuffer, oldLayout == VK_IMAGE_LAYOUT_UNDEFINED ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : oldLayout);
+
+        renderSystem->endSingleTimeCommands(commandBuffer);
+
+        _outResult.setFormat(_outputFormat);
+        _outResult.setSize(m_size);
+        memcpy(_outResult.getDataRW(), stagingAllocationInfo.pMappedData, dataSize);
+
+        vmaDestroyBuffer(allocator, stagingBuffer, stagingAllocation);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void Texture2DVulkan::saveToFileAsTGA(
+        String const& _fileName,
+        Vec2U _size,
+        bool _resetAlpha)
+    {
+        PixelSheet2D pixelSheet;
+        if (!readAsPixelSheet(pixelSheet))
+            return;
+
+        PixelSheet2DHelper::SaveTGA(pixelSheet, _fileName.c_str(), _resetAlpha);
+    }
+
+    //////////////////////////////////////////
+    void Texture2DVulkan::generateMipmaps()
+    {
+        if (!m_image)
+            return;
+
+        MAZE_ERROR_RETURN_IF(
+            !m_hasMipmapsGenerationSupport,
+            "Mipmaps generation is not supported for this texture format: %d!",
+            (S32)m_internalPixelFormat);
+
+        if (m_mipLevels <= 1u)
+            return;
+
+        RenderSystemVulkan* renderSystem = getRenderSystemVulkanRaw();
+
+        // Vulkan has no built-in mip generation (unlike D3D11's GenerateMips) - blit each
+        // mip level down from the previous one. Assumes the device supports linear
+        // blitting for m_format (VK_FORMAT_FEATURE_BLIT_SRC/DST_BIT on optimal tiling),
+        // which holds for every uncompressed 8/16/32-bit format this backend maps textures
+        // to; compressed formats never reach here since m_hasMipmapsGenerationSupport is
+        // false for them.
+        VkCommandBuffer commandBuffer = renderSystem->beginSingleTimeCommands();
+
+        TransitionImageLayoutVulkan(
+            commandBuffer, m_image, m_aspect,
+            m_currentLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            m_mipLevels, 1u);
+
+        S32 mipWidth = m_size.x;
+        S32 mipHeight = m_size.y;
+
+        for (U32 mip = 1; mip < m_mipLevels; ++mip)
+        {
+            // Source mip (mip-1) needs to be a blit source
+            TransitionImageLayoutVulkan(
+                commandBuffer, m_image, m_aspect,
+                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                1u, 1u, mip - 1u, 0u);
+
+            S32 nextWidth = Math::Max(mipWidth / 2, 1);
+            S32 nextHeight = Math::Max(mipHeight / 2, 1);
+
+            VkImageBlit blit;
+            memset(&blit, 0, sizeof(blit));
+            blit.srcOffsets[0] = { 0, 0, 0 };
+            blit.srcOffsets[1] = { mipWidth, mipHeight, 1 };
+            blit.srcSubresource.aspectMask = m_aspect;
+            blit.srcSubresource.mipLevel = mip - 1u;
+            blit.srcSubresource.baseArrayLayer = 0;
+            blit.srcSubresource.layerCount = 1;
+            blit.dstOffsets[0] = { 0, 0, 0 };
+            blit.dstOffsets[1] = { nextWidth, nextHeight, 1 };
+            blit.dstSubresource.aspectMask = m_aspect;
+            blit.dstSubresource.mipLevel = mip;
+            blit.dstSubresource.baseArrayLayer = 0;
+            blit.dstSubresource.layerCount = 1;
+
+            vkCmdBlitImage(
+                commandBuffer,
+                m_image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                1, &blit,
+                VK_FILTER_LINEAR);
+
+            // Source mip is done being read from - move it to its final sampled layout
+            TransitionImageLayoutVulkan(
+                commandBuffer, m_image, m_aspect,
+                VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1u, 1u, mip - 1u, 0u);
+
+            mipWidth = nextWidth;
+            mipHeight = nextHeight;
+        }
+
+        // Last mip level was only ever a blit destination - transition it too
+        TransitionImageLayoutVulkan(
+            commandBuffer, m_image, m_aspect,
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+            1u, 1u, m_mipLevels - 1u, 0u);
+
+        renderSystem->endSingleTimeCommands(commandBuffer);
+
+        m_currentLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    }
+
+
+} // namespace Maze
+//////////////////////////////////////////

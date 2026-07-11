@@ -70,6 +70,11 @@
 #   include "maze-render-system-dx11/MazeRenderSystemDX11.hpp"
 #endif
 
+#if MAZE_RENDER_SYSTEM_VULKAN_ENABLED
+#   include "maze-render-system-vulkan/MazeRenderSystemVulkanPlugin.hpp"
+#   include "maze-render-system-vulkan/MazeRenderSystemVulkan.hpp"
+#endif
+
 #if MAZE_SOUND_SYSTEM_OPENAL_ENABLED
 #   include "maze-sound-system-openal/MazeSoundSystemOpenALPlugin.hpp"
 #endif
@@ -279,11 +284,23 @@ namespace Maze
         MAZE_WARNING_IF(renderSystemName == "DX11", "DX11 render system is not compiled - falling back to OpenGL!");
 #endif
 
+#if MAZE_RENDER_SYSTEM_VULKAN_ENABLED
+        if (renderSystemName == "Vulkan")
+        {
+            RenderSystemVulkanConfig config;
+            config.validationLayer = getConfig().params.getBool(MAZE_HCS("vulkanValidationLayer"), false);
+            MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemVulkan, config);
+            renderSystemLoaded = true;
+        }
+#else
+        MAZE_WARNING_IF(renderSystemName == "Vulkan", "Vulkan render system is not compiled - falling back to OpenGL!");
+#endif
+
 #if MAZE_RENDER_SYSTEM_OPENGL_ENABLED
         if (!renderSystemLoaded)
         {
             MAZE_WARNING_IF(
-                renderSystemName != c_renderSystemOpenGL && renderSystemName != "DX11",
+                renderSystemName != c_renderSystemOpenGL && renderSystemName != "DX11" && renderSystemName != "Vulkan",
                 "Unknown render system '%s' - falling back to OpenGL!",
                 renderSystemName.c_str());
 

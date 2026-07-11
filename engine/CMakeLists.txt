@@ -162,6 +162,16 @@ endif()
 
 
 ##########################################
+# Maze Render System Vulkan
+#
+##########################################
+if(MAZE_RENDER_SYSTEM_VULKAN_ENABLED)
+    include("MazeRenderSystemVulkan.cmake")
+endif()
+
+
+
+##########################################
 # Maze Sound System OpenAL
 #
 ##########################################
