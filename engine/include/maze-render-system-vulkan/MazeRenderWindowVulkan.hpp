@@ -123,6 +123,20 @@ namespace Maze
         void destroySwapChain();
 
         //////////////////////////////////////////
+        // Vulkan swapchain images are always single-sample (unlike DX11's
+        // legacy-blit-model swap effect, which supports a multisampled
+        // backbuffer directly) - MSAA requires a separate multisampled
+        // color image rendered into instead, automatically resolved into
+        // the actual swapchain image at the end of each frame's rendering
+        // scope (see StateMachineVulkan::bindRenderTarget()'s
+        // _resolveColorViews parameter). Sized/recreated alongside the
+        // swapchain in createSwapChain()/destroySwapChain().
+        bool createMSAAColorBuffer();
+
+        //////////////////////////////////////////
+        void destroyMSAAColorBuffer();
+
+        //////////////////////////////////////////
         // Shared recreate-on-resize/out-of-date path used by
         // notifyWindowSizeChanged(), swapBuffers() and processRenderTargetWillSet() -
         // guards against recreating a swapchain for a zero-sized or
@@ -176,6 +190,13 @@ namespace Maze
         VmaAllocation m_depthImageAllocation = VK_NULL_HANDLE;
         VkImageView m_depthImageView = VK_NULL_HANDLE;
         VkFormat m_depthFormat = VK_FORMAT_D24_UNORM_S8_UINT;
+
+        // Only valid/created when m_antialiasingLevel > 1 - see
+        // createMSAAColorBuffer()'s banner comment
+        VkImage m_msaaColorImage = VK_NULL_HANDLE;
+        VmaAllocation m_msaaColorImageAllocation = VK_NULL_HANDLE;
+        VkImageView m_msaaColorImageView = VK_NULL_HANDLE;
+        VkSampleCountFlagBits m_msaaSampleCount = VK_SAMPLE_COUNT_1_BIT;
 
         S32 m_antialiasingLevel = 0;
         S32 m_vsync = 1;

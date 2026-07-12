@@ -264,7 +264,8 @@ namespace Maze
         bool _flipY,
         VkFormat _colorFormat,
         VkFormat _depthFormat,
-        VkSampleCountFlagBits _samples)
+        VkSampleCountFlagBits _samples,
+        VkImageView const* _resolveColorViews)
     {
         if (m_renderingActive)
             unbindRenderTarget();
@@ -303,6 +304,31 @@ namespace Maze
             colorAttachments[i].imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
             colorAttachments[i].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
             colorAttachments[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+
+            VkImageView resolveView = _resolveColorViews ? _resolveColorViews[i] : VK_NULL_HANDLE;
+            if (resolveView != VK_NULL_HANDLE)
+            {
+                // Native dynamic-rendering resolve - resolveImageView gets
+                // written regardless of what storeOp says about the source
+                // (multisampled) attachment, so storeOp is intentionally
+                // left as STORE (not DONT_CARE) here: a render target can be
+                // bound via multiple separate begin/end dynamic-rendering
+                // scopes within a single frame (e.g. the window's 3D pass
+                // followed by its own separate 2D/UI pass), and the LATER
+                // scope's loadOp=LOAD depends on the EARLIER scope having
+                // actually preserved this same multisampled image's
+                // content. DONT_CARE here let the driver discard it between
+                // scopes, so the second scope loaded undefined content and
+                // resolved that (garbage UI-pass-over-garbage) over the
+                // correct first pass on every single frame - confirmed via
+                // a live repro (every frame corrupted at any MSAA level)
+                // that a RenderDoc capture never reproduced, since desktop/
+                // non-tiled GPUs commonly treat DONT_CARE as a no-op for a
+                // single replayed frame, masking the bug there.
+                colorAttachments[i].resolveImageView = resolveView;
+                colorAttachments[i].resolveImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+                colorAttachments[i].resolveMode = VK_RESOLVE_MODE_AVERAGE_BIT;
+            }
         }
 
         VkRenderingAttachmentInfo depthAttachment = {};

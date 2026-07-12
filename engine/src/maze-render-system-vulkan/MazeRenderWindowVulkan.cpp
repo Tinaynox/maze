@@ -232,13 +232,15 @@ namespace Maze
         if (capabilities.maxImageCount > 0u && imageCount > capabilities.maxImageCount)
             imageCount = capabilities.maxImageCount;
 
-        // Vulkan swapchain images are always single-sample - MSAA is not yet
-        // wired up for window render targets in this backend (would need a
-        // separate multisampled color attachment resolved into the swapchain
-        // image before present, unlike DX11's legacy-blit-model MSAA
-        // backbuffer). Accepted but currently ignored - known gap.
-        m_antialiasingLevel = 1;
-        MAZE_WARNING_IF(_antialiasingLevel > 1, "RenderWindowVulkan: window MSAA is not implemented yet, ignoring antialiasingLevel=%d", _antialiasingLevel);
+        // Vulkan swapchain images are always single-sample (unlike DX11's
+        // legacy-blit-model swap effect, which supports a multisampled
+        // backbuffer directly) - MSAA renders into a separate multisampled
+        // color image instead, resolved into the swapchain image at the end
+        // of each frame's rendering scope (see createMSAAColorBuffer() and
+        // processRenderTargetSet()). Clamp to what the device actually
+        // supports for a window render target, same as
+        // RenderWindowDX11::createSwapChain().
+        m_antialiasingLevel = Math::Clamp(_antialiasingLevel, 1, rs->getWindowMaxAntialiasingLevelSupport());
 
         VkSwapchainCreateInfoKHR swapChainInfo = {};
         swapChainInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -287,7 +289,10 @@ namespace Maze
             MAZE_VK_CALL(vkCreateSemaphore(rs->getDevice(), &semaphoreInfo, nullptr, &m_renderFinishedSemaphores[i]));
         }
 
-        Debug::Log("RenderWindowVulkan: Swap chain created (%ux%u, %u images).", m_swapChainExtent.x, m_swapChainExtent.y, actualImageCount);
+        if (m_antialiasingLevel > 1)
+            MAZE_ERROR_RETURN_VALUE_IF(!createMSAAColorBuffer(), false, "MSAA color buffer creation failed!");
+
+        Debug::Log("RenderWindowVulkan: Swap chain created (%ux%u, %u images, AA=%d).", m_swapChainExtent.x, m_swapChainExtent.y, actualImageCount, m_antialiasingLevel);
 
         return true;
     }
@@ -307,7 +312,15 @@ namespace Maze
         imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
         imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-        imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+        // Must match the color attachment's sample count - Vulkan requires
+        // every attachment in a rendering scope to share the same sample
+        // count. m_msaaSampleCount is set (or reset to 1) by
+        // createMSAAColorBuffer()/destroyMSAAColorBuffer(), called before
+        // this from createSwapChain(). The depth buffer itself is never
+        // resolved (nothing needs to read it back after the window's own
+        // rendering scope ends) - it only needs to exist at the right
+        // sample count for per-sample depth testing during MSAA rendering.
+        imageInfo.samples = m_msaaSampleCount;
         imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
         VmaAllocationCreateInfo allocInfo = {};
@@ -354,10 +367,103 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool RenderWindowVulkan::createMSAAColorBuffer()
+    {
+        destroyMSAAColorBuffer();
+
+        RenderSystemVulkan* rs = m_renderSystemVulkan;
+
+        // Clamp the requested level to what the device supports for a color
+        // attachment (mirrors Texture2DMSVulkan::loadEmpty()'s identical
+        // clamping loop) - m_antialiasingLevel was already clamped against
+        // getWindowMaxAntialiasingLevelSupport() in createSwapChain(), so
+        // this should always find an exact match, but stays defensive.
+        VkPhysicalDeviceProperties deviceProperties;
+        vkGetPhysicalDeviceProperties(rs->getPhysicalDevice(), &deviceProperties);
+        VkSampleCountFlags supportedCounts = deviceProperties.limits.framebufferColorSampleCounts;
+        S32 samples = m_antialiasingLevel;
+        VkSampleCountFlagBits sampleBit = VK_SAMPLE_COUNT_1_BIT;
+        while (samples > 1)
+        {
+            sampleBit = (VkSampleCountFlagBits)samples;
+            if (supportedCounts & sampleBit)
+                break;
+            samples >>= 1;
+            sampleBit = VK_SAMPLE_COUNT_1_BIT;
+        }
+        m_msaaSampleCount = sampleBit;
+
+        if (m_msaaSampleCount == VK_SAMPLE_COUNT_1_BIT)
+            return true; // nothing supported above 1x - render directly to the swapchain image
+
+        VkImageCreateInfo imageInfo = {};
+        imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        imageInfo.imageType = VK_IMAGE_TYPE_2D;
+        imageInfo.extent = { m_swapChainExtent.x, m_swapChainExtent.y, 1u };
+        imageInfo.mipLevels = 1u;
+        imageInfo.arrayLayers = 1u;
+        imageInfo.format = m_swapChainFormat;
+        imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+        imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        imageInfo.samples = m_msaaSampleCount;
+        imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        VmaAllocationCreateInfo allocInfo = {};
+        allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+
+        MAZE_VK_CALL(vmaCreateImage(rs->getAllocator(), &imageInfo, &allocInfo, &m_msaaColorImage, &m_msaaColorImageAllocation, nullptr));
+        MAZE_ERROR_RETURN_VALUE_IF(m_msaaColorImage == VK_NULL_HANDLE, false, "MSAA color image creation failed!");
+
+        VkImageViewCreateInfo viewInfo = {};
+        viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        viewInfo.image = m_msaaColorImage;
+        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        viewInfo.format = m_swapChainFormat;
+        viewInfo.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0u, 1u, 0u, 1u };
+        MAZE_VK_CALL(vkCreateImageView(rs->getDevice(), &viewInfo, nullptr, &m_msaaColorImageView));
+
+        // Unlike the swapchain image (which cycles between
+        // COLOR_ATTACHMENT_OPTIMAL and PRESENT_SRC_KHR every frame), this
+        // image is never presented and never used for anything else - a
+        // single, permanent transition here is all it ever needs
+        VkCommandBuffer cmd = rs->beginSingleTimeCommands();
+        TransitionImageLayoutVulkan(
+            cmd, m_msaaColorImage, VK_IMAGE_ASPECT_COLOR_BIT,
+            VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+        rs->endSingleTimeCommands(cmd);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void RenderWindowVulkan::destroyMSAAColorBuffer()
+    {
+        m_msaaSampleCount = VK_SAMPLE_COUNT_1_BIT;
+
+        if (!m_renderSystemVulkan)
+            return;
+
+        VkDevice device = m_renderSystemVulkan->getDevice();
+        if (m_msaaColorImageView != VK_NULL_HANDLE)
+        {
+            vkDestroyImageView(device, m_msaaColorImageView, nullptr);
+            m_msaaColorImageView = VK_NULL_HANDLE;
+        }
+        if (m_msaaColorImage != VK_NULL_HANDLE)
+        {
+            vmaDestroyImage(m_renderSystemVulkan->getAllocator(), m_msaaColorImage, m_msaaColorImageAllocation);
+            m_msaaColorImage = VK_NULL_HANDLE;
+        }
+    }
+
+    //////////////////////////////////////////
     void RenderWindowVulkan::destroySwapChain()
     {
         if (!m_renderSystemVulkan)
             return;
+
+        destroyMSAAColorBuffer();
 
         VkDevice device = m_renderSystemVulkan->getDevice();
 
@@ -596,14 +702,39 @@ namespace Maze
             m_colorImageTransitionedFromUndefined = true;
         }
 
-        stateMachine->bindRenderTarget(
-            &colorView,
-            1,
-            m_depthImageView,
-            getRenderTargetSize(),
-            false,
-            m_swapChainFormat,
-            m_depthFormat);
+        // With MSAA active, the actual color attachment rendered into is the
+        // (permanently COLOR_ATTACHMENT_OPTIMAL, never presented) MSAA
+        // image, and the swapchain image becomes a resolve target instead -
+        // it still needs the same UNDEFINED->COLOR_ATTACHMENT_OPTIMAL
+        // transition above (a resolve write targets it exactly like a
+        // regular attachment write would, and expects a valid declared
+        // layout), it just no longer receives draws directly.
+        if (m_msaaSampleCount != VK_SAMPLE_COUNT_1_BIT)
+        {
+            VkImageView resolveView = colorView;
+            colorView = m_msaaColorImageView;
+            stateMachine->bindRenderTarget(
+                &colorView,
+                1,
+                m_depthImageView,
+                getRenderTargetSize(),
+                false,
+                m_swapChainFormat,
+                m_depthFormat,
+                m_msaaSampleCount,
+                &resolveView);
+        }
+        else
+        {
+            stateMachine->bindRenderTarget(
+                &colorView,
+                1,
+                m_depthImageView,
+                getRenderTargetSize(),
+                false,
+                m_swapChainFormat,
+                m_depthFormat);
+        }
     }
 
     //////////////////////////////////////////

@@ -172,6 +172,13 @@ namespace Maze
         //////////////////////////////////////////
         // Begins a vkCmdBeginRendering scope over the given color/depth attachments.
         // Ends any scope already open (on this or a different target) first.
+        // _resolveColorViews (optional, parallel array to _colorViews) - when
+        // _samples > 1 and a given slot is non-null, that color attachment
+        // gets an automatic end-of-scope resolve into the given view (native
+        // dynamic-rendering resolve, VK_RESOLVE_MODE_AVERAGE_BIT) instead of
+        // storing its own (multisampled) content - used for the window's
+        // MSAA color buffer, which must end up resolved into the (always
+        // single-sample) swapchain image before present.
         void bindRenderTarget(
             VkImageView const* _colorViews,
             S32 _colorViewsCount,
@@ -180,7 +187,8 @@ namespace Maze
             bool _flipY,
             VkFormat _colorFormat,
             VkFormat _depthFormat,
-            VkSampleCountFlagBits _samples = VK_SAMPLE_COUNT_1_BIT);
+            VkSampleCountFlagBits _samples = VK_SAMPLE_COUNT_1_BIT,
+            VkImageView const* _resolveColorViews = nullptr);
 
         //////////////////////////////////////////
         void unbindRenderTarget();
