@@ -71,10 +71,29 @@ namespace Maze
         // needed because a DIFFERENT shader overwrote the shared buffer in
         // between. See ShaderUniform::setAlwaysForceUpdate()'s banner
         // comment for the full rationale.
+        //
+        // Texture uniforms need the same treatment for a different reason:
+        // ShaderUniform::set(Texture2DPtr const&)'s skip-if-unchanged check
+        // compares Texture2D::getResourceId(), a stable per-object identity
+        // that does NOT change when a render-buffer texture is resized in
+        // place (Texture2DVulkan::loadEmpty() destroys and recreates the
+        // underlying VkImageView on the SAME Texture2D object). A material
+        // that re-sets the same texture reference every frame (e.g.
+        // Distortion00's u_depthMap, bound once to a render buffer's depth
+        // texture) would then skip processSimpleUniformChanged() forever
+        // after the first successful set() - permanently binding the
+        // pre-resize VkImageView, confirmed via
+        // "vkUpdateDescriptorSets(): ... invalid VkImageView" validation
+        // warnings recurring on every draw after a window resize. Forcing
+        // every texture uniform to always re-resolve its current view keeps
+        // this cheap: processSimpleUniformChanged() only refreshes a
+        // lightweight shadow struct here, not an actual descriptor write
+        // (that happens once per draw call regardless, in
+        // ShaderVulkan::acquireMaterialDescriptorSet()).
         inline void setUniformData(ShaderVulkanUniformData const& _data)
         {
             m_uniformData = _data;
-            setAlwaysForceUpdate(_data.isGlobal);
+            setAlwaysForceUpdate(_data.isGlobal || _data.isTexture);
         }
 
         //////////////////////////////////////////

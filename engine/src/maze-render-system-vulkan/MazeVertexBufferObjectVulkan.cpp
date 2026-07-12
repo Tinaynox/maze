@@ -102,11 +102,11 @@ namespace Maze
             return;
         }
 
-        // See Texture2DVulkan::destroyTexture for why this waits for the device to go
-        // idle rather than destroying an in-flight resource directly - same caveat applies
-        // (a mesh's VBO can still be referenced by an in-flight command buffer's
-        // vkCmdBindVertexBuffers/draw call when it's resized or destroyed).
-        MAZE_VK_CALL(vkDeviceWaitIdle(renderSystem->getDevice()));
+        // See Texture2DVulkan::destroyTexture / RenderSystemVulkan::waitDeviceIdleSafe()
+        // for why this must not be a bare vkDeviceWaitIdle() - same caveat applies
+        // (a mesh's VBO can still be referenced by an in-flight OR still-recording command
+        // buffer's vkCmdBindVertexBuffers/draw call when it's resized or destroyed).
+        renderSystem->waitDeviceIdleSafe();
 
         vmaDestroyBuffer(renderSystem->getAllocator(), m_buffer, m_allocation);
         m_buffer = VK_NULL_HANDLE;

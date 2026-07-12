@@ -101,7 +101,7 @@ namespace Maze
         m_shaderSystem.reset();
 
         if (m_device != VK_NULL_HANDLE)
-            vkDeviceWaitIdle(m_device);
+            waitDeviceIdleSafe();
 
         for (auto& samplerData : m_samplers)
             if (samplerData.second != VK_NULL_HANDLE)
@@ -1065,6 +1065,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void RenderSystemVulkan::waitDeviceIdleSafe()
+    {
+        if (m_frameOpen)
+            endFrame(VK_NULL_HANDLE);
+
+        MAZE_VK_CALL(vkDeviceWaitIdle(m_device));
+    }
+
+    //////////////////////////////////////////
     VkCommandBuffer RenderSystemVulkan::beginSingleTimeCommands()
     {
         VkCommandBufferAllocateInfo allocInfo = {};
@@ -1123,11 +1132,12 @@ namespace Maze
         // All existing pool instances (across every frame-in-flight slot)
         // were sized for the OLD m_globalUniformBufferSize, so they must be
         // torn down and lazily recreated at the new size by
-        // acquireGlobalDescriptorSet() - vkDeviceWaitIdle first guarantees
-        // none of them are still in-flight on the GPU when they're
+        // acquireGlobalDescriptorSet() - waitDeviceIdleSafe() first
+        // guarantees none of them are still in-flight on the GPU, or
+        // referenced by a still-recording command buffer, when they're
         // destroyed (mirrors ShaderVulkan::unloadVulkanShader()'s identical
         // rationale).
-        MAZE_VK_CALL(vkDeviceWaitIdle(m_device));
+        waitDeviceIdleSafe();
 
         for (Vector<GlobalUniformInstance>& framePool : m_globalInstancePool)
         {

@@ -94,9 +94,9 @@ namespace Maze
             return;
         }
 
-        // See Texture2DVulkan::destroyTexture for why this waits for the device to go
-        // idle rather than destroying in-flight resources directly - same caveat applies.
-        MAZE_VK_CALL(vkDeviceWaitIdle(renderSystem->getDevice()));
+        // See Texture2DVulkan::destroyTexture / RenderSystemVulkan::waitDeviceIdleSafe()
+        // for why this must not be a bare vkDeviceWaitIdle() - same caveat applies.
+        renderSystem->waitDeviceIdleSafe();
 
         if (m_imageView != VK_NULL_HANDLE)
         {

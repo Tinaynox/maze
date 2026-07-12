@@ -419,6 +419,24 @@ namespace Maze
         // m_imageAvailableSemaphores).
         void endFrame(VkSemaphore _signalSemaphore);
 
+        //////////////////////////////////////////
+        // Safe replacement for a bare vkDeviceWaitIdle() before destroying
+        // any GPU resource (image, view, buffer, descriptor set...) that a
+        // command buffer might reference. vkDeviceWaitIdle() alone only
+        // waits for previously SUBMITTED work - it does nothing for a
+        // command buffer that's still open on the CPU (mid-recording), so
+        // destroying something that buffer already referenced corrupts it;
+        // recording then keeps going (more commands appended against the
+        // now-dangling handle) until it's eventually submitted, which is a
+        // validation-error minefield and can end in VK_ERROR_DEVICE_LOST.
+        // Confirmed via a real repro: a mid-drag window resize recreating
+        // the swapchain while its frame was still recording. Every
+        // destroy-then-recreate GPU resource path in this backend
+        // (textures, buffers, VAOs, the swapchain, the global-uniforms
+        // pool...) can in principle be triggered mid-frame, so they should
+        // all go through this instead of calling vkDeviceWaitIdle() directly.
+        void waitDeviceIdleSafe();
+
 
         //////////////////////////////////////////
         // Synchronous one-off command buffer, used by texture/buffer classes

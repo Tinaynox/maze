@@ -100,14 +100,16 @@ namespace Maze
         }
 
         // Vulkan/VMA resources must not be destroyed while a submitted-but-not-yet-completed
-        // command buffer may still reference them (unlike D3D11's internally refcounted
-        // resources, which are safe to Release() immediately). There's no per-resource
-        // deferred-deletion queue in this backend yet (that belongs in RenderSystemVulkan/
-        // RenderQueueVulkan, out of scope here), so this conservatively waits for the whole
-        // device to go idle before tearing down. Correct, but a real deferred-deletion queue
-        // keyed off the frame-in-flight fences would avoid the stall this causes if textures
-        // are destroyed frequently mid-session.
-        MAZE_VK_CALL(vkDeviceWaitIdle(renderSystem->getDevice()));
+        // OR still-recording (e.g. a resize interrupting a frame mid-record - see
+        // RenderSystemVulkan::waitDeviceIdleSafe()'s banner comment) command buffer may still
+        // reference them (unlike D3D11's internally refcounted resources, which are safe to
+        // Release() immediately). There's no per-resource deferred-deletion queue in this
+        // backend yet (that belongs in RenderSystemVulkan/RenderQueueVulkan, out of scope
+        // here), so this conservatively waits for the whole device to go idle before tearing
+        // down. Correct, but a real deferred-deletion queue keyed off the frame-in-flight
+        // fences would avoid the stall this causes if textures are destroyed frequently
+        // mid-session.
+        renderSystem->waitDeviceIdleSafe();
 
         if (m_imageView != VK_NULL_HANDLE)
         {

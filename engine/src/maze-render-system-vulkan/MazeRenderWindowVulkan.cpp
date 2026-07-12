@@ -55,7 +55,7 @@ namespace Maze
     RenderWindowVulkan::~RenderWindowVulkan()
     {
         if (m_renderSystemVulkan && m_renderSystemVulkan->getDevice() != VK_NULL_HANDLE)
-            vkDeviceWaitIdle(m_renderSystemVulkan->getDevice());
+            m_renderSystemVulkan->waitDeviceIdleSafe();
 
         destroyDepthBuffer();
         destroySwapChain();
@@ -390,9 +390,26 @@ namespace Maze
         if (!m_renderSystemVulkan || !m_window || m_surface == VK_NULL_HANDLE)
             return false;
 
-        vkDeviceWaitIdle(m_renderSystemVulkan->getDevice());
+        // A resize can arrive mid-frame - on Windows, dragging the window
+        // border enters a modal sizing loop where the OS pumps WM_SIZE
+        // synchronously, which can interrupt whatever frame was already
+        // being recorded. waitDeviceIdleSafe() forces that frame closed
+        // first (submitted while its recorded commands still reference the
+        // still-valid old resources) before waiting on the device, so
+        // nothing recording or executing can reference what's about to be
+        // destroyed below. Confirmed via a VK_ERROR_DEVICE_LOST crash during
+        // a window resize-drag - see waitDeviceIdleSafe()'s banner comment.
+        m_renderSystemVulkan->waitDeviceIdleSafe();
 
         destroyDepthBuffer();
+
+        // The swapchain image (if any) acquired for the frame just
+        // force-closed above belongs to the swapchain being destroyed next -
+        // that tracking must not carry over into the next real frame's
+        // acquire/present cycle
+        m_imageAcquired = false;
+        m_presentTransitionQueued = false;
+        m_colorImageTransitionedFromUndefined = false;
 
         if (!createSwapChain(m_antialiasingLevel))
             return false; // skipped (zero-sized/minimized window) or failed - leave the depth buffer torn down until the next resize/frame retries
