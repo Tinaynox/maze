@@ -449,12 +449,23 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        // Depth MSAA resolve - unlike DX11 (which needs a fullscreen shader
-        // workaround since ResolveSubresource doesn't support depth formats),
-        // Vulkan 1.2+ VK_KHR_depth_stencil_resolve / vkCmdResolveImage on
-        // depth-aspect images is supported directly by hardware that exposes
-        // the relevant VkResolveModeFlagBits, so this just records a
-        // vkCmdResolveImage into the current command buffer.
+        // Depth MSAA resolve. vkCmdResolveImage (the standalone copy-style
+        // resolve command) is a COLOR-only operation - its valid-usage rules
+        // require VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT on both images, which
+        // no depth/stencil format has. VK_KHR_depth_stencil_resolve (core
+        // 1.2+) only extends resolve support for depth/stencil via the
+        // *render-pass-integrated* path (VkRenderingAttachmentInfo::
+        // resolveMode/resolveImageView, set when the source's own rendering
+        // scope begins - see StateMachineVulkan::bindRenderTarget()'s
+        // _resolveColorViews, its color-only equivalent). RenderBufferVulkan::
+        // blit() runs after that scope has already closed and against a
+        // destination buffer not known at bind time, so that path can't be
+        // retrofitted here - this instead mirrors RenderSystemDX11::
+        // resolveDepthMSAA()'s reference approach: draw a fullscreen triangle
+        // with a shader that reads one sample of the multisampled depth
+        // texture per pixel (texelFetch, sample index 0) and writes it as
+        // this draw's own depth output, into a normal (non-multisampled)
+        // depth attachment.
         bool resolveDepthMSAA(
             Texture2DVulkan* _dstTexture,
             Texture2DMSVulkan* _srcTexture);
@@ -523,6 +534,29 @@ namespace Maze
         VkCommandPool m_transientCommandPool = VK_NULL_HANDLE;
 
         S32 m_windowMaxAntialiasingLevel = 0;
+
+        // Depth-resolve fullscreen-pass state (lazily created on first
+        // resolveDepthMSAA() call, never torn down until shutdown) - a
+        // hand-rolled pipeline outside the normal ShaderVulkan/Material
+        // system, mirroring RenderSystemDX11::resolveDepthMSAA()'s
+        // equally hand-rolled D3D11 objects. See resolveDepthMSAA()'s
+        // banner comment for why this exists at all.
+        VkShaderModule m_depthResolveVertModule = VK_NULL_HANDLE;
+        VkShaderModule m_depthResolveFragModule = VK_NULL_HANDLE;
+        VkDescriptorSetLayout m_depthResolveDescriptorSetLayout = VK_NULL_HANDLE;
+        VkPipelineLayout m_depthResolvePipelineLayout = VK_NULL_HANDLE;
+        VkPipeline m_depthResolvePipeline = VK_NULL_HANDLE;
+        VkFormat m_depthResolvePipelineFormat = VK_FORMAT_UNDEFINED;
+        VkSampler m_depthResolveSampler = VK_NULL_HANDLE;
+        // One descriptor set per frame-in-flight slot, updated in place each
+        // call - avoids updating a set a still-in-flight command buffer from
+        // a previous frame might still reference (same hazard
+        // ShaderVulkan::acquireMaterialDescriptorSet() solves for material
+        // descriptor sets, just without needing a growable per-draw-call
+        // pool since this runs at most once or twice a frame, not once per
+        // draw call)
+        Vector<VkDescriptorSet> m_depthResolveDescriptorSets;
+        bool m_depthResolveInitFailed = false;
 
         // Set-0 "global" descriptor set layout - see
         // getGlobalDescriptorSetLayout() banner comment above

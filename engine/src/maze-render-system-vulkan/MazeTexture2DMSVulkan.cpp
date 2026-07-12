@@ -89,6 +89,7 @@ namespace Maze
             m_image = VK_NULL_HANDLE;
             m_imageAllocation = VK_NULL_HANDLE;
             m_imageView = VK_NULL_HANDLE;
+            m_sampledImageView = VK_NULL_HANDLE;
             m_currentLayout = VK_IMAGE_LAYOUT_UNDEFINED;
             return;
         }
@@ -101,6 +102,12 @@ namespace Maze
         {
             vkDestroyImageView(renderSystem->getDevice(), m_imageView, nullptr);
             m_imageView = VK_NULL_HANDLE;
+        }
+
+        if (m_sampledImageView != VK_NULL_HANDLE)
+        {
+            vkDestroyImageView(renderSystem->getDevice(), m_sampledImageView, nullptr);
+            m_sampledImageView = VK_NULL_HANDLE;
         }
 
         if (m_image != VK_NULL_HANDLE)
@@ -207,6 +214,16 @@ namespace Maze
 
         MAZE_VK_CALL(vkCreateImageView(device, &viewInfo, nullptr, &m_imageView));
         MAZE_ERROR_RETURN_VALUE_IF(m_imageView == VK_NULL_HANDLE, false, "vkCreateImageView (MS) failed!");
+
+        // See Texture2DVulkan::createImageView()'s identical banner comment -
+        // a combined depth+stencil aspect view is valid for attachment
+        // binding but not for a COMBINED_IMAGE_SAMPLER descriptor
+        if ((m_aspect & VK_IMAGE_ASPECT_DEPTH_BIT) && (m_aspect & VK_IMAGE_ASPECT_STENCIL_BIT))
+        {
+            VkImageViewCreateInfo sampledViewInfo = viewInfo;
+            sampledViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+            MAZE_VK_CALL(vkCreateImageView(device, &sampledViewInfo, nullptr, &m_sampledImageView));
+        }
 
         // Transition to its attachment-ready layout up front - RenderBufferVulkan will
         // transition it further (e.g. to SHADER_READ_ONLY_OPTIMAL) once it's actually

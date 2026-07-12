@@ -41,6 +41,8 @@
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 
+#include <shaderc/shaderc.hpp>
+
 //////////////////////////////////////////
 // VMA is a single-header library: declarations are pulled in (guarded by
 // AMD_VULKAN_MEMORY_ALLOCATOR_H) via MazeRenderSystemVulkanHeader.hpp above,
@@ -954,8 +956,15 @@ namespace Maze
         samplerInfo.compareEnable = VK_FALSE;
         samplerInfo.compareOp = VK_COMPARE_OP_NEVER;
         samplerInfo.minLod = 0.0f;
-        // GL non-mipmap min filters (Nearest/Linear) sample the base level only - clamp LOD to match
-        samplerInfo.maxLod = _maxLod > 0.0f ? _maxLod : VK_LOD_CLAMP_NONE;
+        // GL non-mipmap min filters (Nearest/Linear) sample the base level only - clamp LOD to match.
+        // _maxLod == 0.0f is the caller's "no mipmap sampling" signal (see
+        // Texture2DVulkan::ensureSampler()'s usesMipmapFilter check) - it must clamp maxLod to
+        // 0 here, NOT fall back to VK_LOD_CLAMP_NONE, or textures with an allocated-but-never-
+        // regenerated mip chain (e.g. RenderBuffer color attachments, which are always created
+        // with TextureFilter::Nearest) get sampled from stale/black upper mips whenever
+        // automatic derivative-based LOD selection picks anything above mip 0 (large on-screen
+        // derivatives - distant/edge-on geometry, background-sampling PostFX passes, etc).
+        samplerInfo.maxLod = _maxLod > 0.0f ? _maxLod : 0.0f;
         samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
         samplerInfo.unnormalizedCoordinates = VK_FALSE;
 
@@ -1260,32 +1269,293 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    // Fullscreen-triangle depth-resolve shader source - see resolveDepthMSAA()'s
+    // banner comment on the header declaration for why this hand-rolled pass
+    // exists instead of a native Vulkan resolve. No vertex buffer is used
+    // (positions are generated from gl_VertexIndex, the standard "3 vertices,
+    // no attributes" fullscreen-triangle trick); texelFetch reads exactly one
+    // sample (index 0) per destination pixel, ignoring the sampler's actual
+    // filter/wrap parameters entirely - texelFetch never applies them, so any
+    // valid VkSampler works here.
+    static CString const c_depthResolveVertSourceVulkan =
+        "#version 450\n"
+        "void main()\n"
+        "{\n"
+        "    vec2 uv = vec2((gl_VertexIndex << 1) & 2, gl_VertexIndex & 2);\n"
+        "    gl_Position = vec4(uv * 2.0 - 1.0, 0.0, 1.0);\n"
+        "}\n";
+
+    static CString const c_depthResolveFragSourceVulkan =
+        "#version 450\n"
+        "layout(set = 0, binding = 0) uniform sampler2DMS u_srcDepth;\n"
+        "void main()\n"
+        "{\n"
+        "    gl_FragDepth = texelFetch(u_srcDepth, ivec2(gl_FragCoord.xy), 0).r;\n"
+        "}\n";
+
+    //////////////////////////////////////////
     bool RenderSystemVulkan::resolveDepthMSAA(
         Texture2DVulkan* _dstTexture,
         Texture2DMSVulkan* _srcTexture)
     {
+        if (m_depthResolveInitFailed)
+            return false;
+
         MAZE_ERROR_RETURN_VALUE_IF(!_dstTexture || !_srcTexture, false, "Depth resolve textures are null!");
 
         VkCommandBuffer cmd = getCurrentCommandBuffer();
         MAZE_ERROR_RETURN_VALUE_IF(cmd == VK_NULL_HANDLE, false, "No active command buffer!");
 
+        // Lazy init of the objects that never depend on which pair of
+        // textures is being resolved this call (shaders, descriptor/pipeline
+        // layouts, sampler, per-frame-in-flight descriptor set pool)
+        if (m_depthResolveVertModule == VK_NULL_HANDLE)
+        {
+            auto compileStage =
+                [&](CString _source, shaderc_shader_kind _kind) -> VkShaderModule
+                {
+                    shaderc::Compiler compiler;
+                    shaderc::CompileOptions options;
+                    options.SetSourceLanguage(shaderc_source_language_glsl);
+                    options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
+                    options.SetTargetSpirv(shaderc_spirv_version_1_6);
+                    options.SetOptimizationLevel(shaderc_optimization_level_performance);
+
+                    shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(
+                        _source, strlen(_source), _kind, "DepthResolve", options);
+                    if (result.GetCompilationStatus() != shaderc_compilation_status_success)
+                    {
+                        Debug::LogError("Depth resolve shader compilation error: %s", result.GetErrorMessage().c_str());
+                        return VK_NULL_HANDLE;
+                    }
+
+                    Vector<U32> spirv(result.cbegin(), result.cend());
+                    VkShaderModuleCreateInfo moduleInfo = {};
+                    moduleInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+                    moduleInfo.codeSize = spirv.size() * sizeof(U32);
+                    moduleInfo.pCode = spirv.data();
+
+                    VkShaderModule module = VK_NULL_HANDLE;
+                    MAZE_VK_CALL(vkCreateShaderModule(m_device, &moduleInfo, nullptr, &module));
+                    return module;
+                };
+
+            m_depthResolveVertModule = compileStage(c_depthResolveVertSourceVulkan, shaderc_glsl_vertex_shader);
+            m_depthResolveFragModule = compileStage(c_depthResolveFragSourceVulkan, shaderc_glsl_fragment_shader);
+
+            VkDescriptorSetLayoutBinding samplerBinding = {};
+            samplerBinding.binding = 0u;
+            samplerBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            samplerBinding.descriptorCount = 1u;
+            samplerBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+            VkDescriptorSetLayoutCreateInfo setLayoutInfo = {};
+            setLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+            setLayoutInfo.bindingCount = 1u;
+            setLayoutInfo.pBindings = &samplerBinding;
+            MAZE_VK_CALL(vkCreateDescriptorSetLayout(m_device, &setLayoutInfo, nullptr, &m_depthResolveDescriptorSetLayout));
+
+            VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
+            pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+            pipelineLayoutInfo.setLayoutCount = 1u;
+            pipelineLayoutInfo.pSetLayouts = &m_depthResolveDescriptorSetLayout;
+            MAZE_VK_CALL(vkCreatePipelineLayout(m_device, &pipelineLayoutInfo, nullptr, &m_depthResolvePipelineLayout));
+
+            VkSamplerCreateInfo samplerInfo = {};
+            samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+            samplerInfo.magFilter = VK_FILTER_NEAREST;
+            samplerInfo.minFilter = VK_FILTER_NEAREST;
+            samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+            samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+            samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+            samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+            samplerInfo.maxLod = 1.0f;
+            MAZE_VK_CALL(vkCreateSampler(m_device, &samplerInfo, nullptr, &m_depthResolveSampler));
+
+            Vector<VkDescriptorSetLayout> setLayouts(getFramesInFlight(), m_depthResolveDescriptorSetLayout);
+            VkDescriptorSetAllocateInfo allocInfo = {};
+            allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+            allocInfo.descriptorPool = m_descriptorPool;
+            allocInfo.descriptorSetCount = (U32)setLayouts.size();
+            allocInfo.pSetLayouts = setLayouts.data();
+            m_depthResolveDescriptorSets.resize(setLayouts.size());
+            MAZE_VK_CALL(vkAllocateDescriptorSets(m_device, &allocInfo, m_depthResolveDescriptorSets.data()));
+
+            if (m_depthResolveVertModule == VK_NULL_HANDLE || m_depthResolveFragModule == VK_NULL_HANDLE ||
+                m_depthResolveDescriptorSetLayout == VK_NULL_HANDLE || m_depthResolvePipelineLayout == VK_NULL_HANDLE ||
+                m_depthResolveSampler == VK_NULL_HANDLE)
+            {
+                m_depthResolveInitFailed = true;
+                return false;
+            }
+        }
+
+        // The pipeline itself depends on the destination's depth format
+        // (VkPipelineRenderingCreateInfo::depthAttachmentFormat), which can
+        // differ between render buffers - rebuild only when it actually
+        // changes rather than on every call
+        VkFormat depthFormat = _dstTexture->getFormatVulkan();
+        if (m_depthResolvePipeline == VK_NULL_HANDLE || m_depthResolvePipelineFormat != depthFormat)
+        {
+            if (m_depthResolvePipeline != VK_NULL_HANDLE)
+            {
+                vkDestroyPipeline(m_device, m_depthResolvePipeline, nullptr);
+                m_depthResolvePipeline = VK_NULL_HANDLE;
+            }
+
+            VkPipelineShaderStageCreateInfo stages[2] = {};
+            stages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+            stages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
+            stages[0].module = m_depthResolveVertModule;
+            stages[0].pName = "main";
+            stages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+            stages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+            stages[1].module = m_depthResolveFragModule;
+            stages[1].pName = "main";
+
+            VkPipelineVertexInputStateCreateInfo vertexInput = {};
+            vertexInput.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+
+            VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
+            inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+            inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+            VkPipelineViewportStateCreateInfo viewportState = {};
+            viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+            viewportState.viewportCount = 1u;
+            viewportState.scissorCount = 1u;
+
+            VkPipelineRasterizationStateCreateInfo rasterizer = {};
+            rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+            rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+            rasterizer.cullMode = VK_CULL_MODE_NONE;
+            rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+            rasterizer.lineWidth = 1.0f;
+
+            VkPipelineMultisampleStateCreateInfo multisampling = {};
+            multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+            multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+            // Always passes and always writes - this pass's entire purpose is
+            // to unconditionally overwrite the destination with the resolved
+            // value, regardless of whatever depth was there before
+            VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+            depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+            depthStencil.depthTestEnable = VK_TRUE;
+            depthStencil.depthWriteEnable = VK_TRUE;
+            depthStencil.depthCompareOp = VK_COMPARE_OP_ALWAYS;
+
+            VkDynamicState dynamicStates[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+            VkPipelineDynamicStateCreateInfo dynamicStateInfo = {};
+            dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+            dynamicStateInfo.dynamicStateCount = 2u;
+            dynamicStateInfo.pDynamicStates = dynamicStates;
+
+            VkPipelineRenderingCreateInfo renderingCreateInfo = {};
+            renderingCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
+            renderingCreateInfo.depthAttachmentFormat = depthFormat;
+
+            VkGraphicsPipelineCreateInfo pipelineInfo = {};
+            pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+            pipelineInfo.pNext = &renderingCreateInfo;
+            pipelineInfo.stageCount = 2u;
+            pipelineInfo.pStages = stages;
+            pipelineInfo.pVertexInputState = &vertexInput;
+            pipelineInfo.pInputAssemblyState = &inputAssembly;
+            pipelineInfo.pViewportState = &viewportState;
+            pipelineInfo.pRasterizationState = &rasterizer;
+            pipelineInfo.pMultisampleState = &multisampling;
+            pipelineInfo.pDepthStencilState = &depthStencil;
+            pipelineInfo.pDynamicState = &dynamicStateInfo;
+            pipelineInfo.layout = m_depthResolvePipelineLayout;
+
+            MAZE_VK_CALL(vkCreateGraphicsPipelines(m_device, m_pipelineCache, 1u, &pipelineInfo, nullptr, &m_depthResolvePipeline));
+            if (m_depthResolvePipeline == VK_NULL_HANDLE)
+            {
+                m_depthResolveInitFailed = true;
+                return false;
+            }
+
+            m_depthResolvePipelineFormat = depthFormat;
+        }
+
+        // Transition source/destination via their own tracked layout (rather
+        // than blindly assuming a starting layout, unlike the raw
+        // TransitionImageLayoutVulkan calls elsewhere in
+        // RenderBufferVulkan::blit()) - correct regardless of whatever state
+        // blit()'s earlier color-attachment handling left them in
+        _srcTexture->transitionTo(cmd, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        _dstTexture->transitionTo(cmd, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
+        VkDescriptorSet descriptorSet = m_depthResolveDescriptorSets[m_currentFrameIndex];
+
+        VkDescriptorImageInfo imageInfo = {};
+        imageInfo.sampler = m_depthResolveSampler;
+        imageInfo.imageView = _srcTexture->getSampledImageView();
+        imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+        VkWriteDescriptorSet write = {};
+        write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        write.dstSet = descriptorSet;
+        write.dstBinding = 0u;
+        write.descriptorCount = 1u;
+        write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        write.pImageInfo = &imageInfo;
+        vkUpdateDescriptorSets(m_device, 1u, &write, 0u, nullptr);
+
         Vec2S const& sizeS = _dstTexture->getSize();
-        Vec2U size((U32)sizeS.x, (U32)sizeS.y);
+        VkExtent2D extent = { (U32)sizeS.x, (U32)sizeS.y };
 
-        // Vulkan (VK_KHR_depth_stencil_resolve, core 1.2+) supports resolving
-        // a depth-aspect multisampled image directly, unlike DX11's
-        // ResolveSubresource which doesn't support depth formats
-        VkImageResolve region = {};
-        region.srcSubresource = { VK_IMAGE_ASPECT_DEPTH_BIT, 0u, 0u, 1u };
-        region.dstSubresource = { VK_IMAGE_ASPECT_DEPTH_BIT, 0u, 0u, 1u };
-        region.extent = { size.x, size.y, 1u };
+        VkRenderingAttachmentInfo depthAttachment = {};
+        depthAttachment.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+        depthAttachment.imageView = _dstTexture->getAttachmentImageView();
+        depthAttachment.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 
-        vkCmdResolveImage(
-            cmd,
-            _srcTexture->getImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-            _dstTexture->getImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-            1u, &region);
+        VkRenderingInfo renderingInfo = {};
+        renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
+        renderingInfo.renderArea.extent = extent;
+        renderingInfo.layerCount = 1u;
+        renderingInfo.pDepthAttachment = &depthAttachment;
 
+        vkCmdBeginRendering(cmd, &renderingInfo);
+
+        VkViewport viewport = {};
+        viewport.width = (F32)extent.width;
+        viewport.height = (F32)extent.height;
+        viewport.maxDepth = 1.0f;
+        vkCmdSetViewport(cmd, 0u, 1u, &viewport);
+
+        VkRect2D scissor = { { 0, 0 }, extent };
+        vkCmdSetScissor(cmd, 0u, 1u, &scissor);
+
+        vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_depthResolvePipeline);
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_depthResolvePipelineLayout, 0u, 1u, &descriptorSet, 0u, nullptr);
+        vkCmdDraw(cmd, 3u, 1u, 0u, 0u);
+
+        vkCmdEndRendering(cmd);
+
+        // The source MSAA depth buffer almost always belongs to a render
+        // buffer that gets rendered into again next frame - restore it to
+        // its normal attachment-ready layout rather than leaving it in
+        // SHADER_READ_ONLY_OPTIMAL, or the next frame's vkCmdBeginRendering
+        // (which declares/expects DEPTH_STENCIL_ATTACHMENT_OPTIMAL) mismatches
+        // its actual tracked layout.
+        _srcTexture->transitionTo(cmd, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
+        // The destination, by contrast, exists to be sampled next (e.g. a
+        // PostFX/distortion material's u_depthMap) - see the identical
+        // banner comment on RenderBufferVulkan::blit()'s destination
+        // handling for why this must happen here (outside any open
+        // rendering scope) rather than wherever it actually gets bound as a
+        // texture uniform.
+        _dstTexture->transitionTo(cmd, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+        // This hand-rolled pass bypassed StateMachineVulkan entirely (its own
+        // pipeline/descriptor-set/dynamic-state binds, not tracked by the
+        // state machine's cached "current" values) - the next normal draw
+        // must not assume any of that state is still what it last set
         if (m_stateMachine)
             m_stateMachine->invalidateDeviceState();
 

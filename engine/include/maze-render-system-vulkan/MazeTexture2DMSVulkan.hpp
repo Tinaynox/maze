@@ -76,6 +76,14 @@ namespace Maze
         inline VkImageView getImageView() const { return m_imageView; }
 
         //////////////////////////////////////////
+        // See Texture2DVulkan::getSampledImageView()'s identical banner
+        // comment - a combined depth+stencil aspect view (m_imageView) is
+        // not legal for a COMBINED_IMAGE_SAMPLER descriptor, which sampling
+        // this texture (e.g. RenderSystemVulkan::resolveDepthMSAA()'s
+        // sampler2DMS binding) requires a single-aspect view for.
+        inline VkImageView getSampledImageView() const { return m_sampledImageView != VK_NULL_HANDLE ? m_sampledImageView : m_imageView; }
+
+        //////////////////////////////////////////
         inline VkFormat getFormatVulkan() const { return m_format; }
 
         //////////////////////////////////////////
@@ -124,6 +132,8 @@ namespace Maze
         VkImage m_image = VK_NULL_HANDLE;
         VmaAllocation m_imageAllocation = VK_NULL_HANDLE;
         VkImageView m_imageView = VK_NULL_HANDLE;
+        // Only created for combined depth+stencil formats (see getSampledImageView())
+        VkImageView m_sampledImageView = VK_NULL_HANDLE;
         VkFormat m_format = VK_FORMAT_UNDEFINED;
         VkImageAspectFlags m_aspect = VK_IMAGE_ASPECT_COLOR_BIT;
         VkImageLayout m_currentLayout = VK_IMAGE_LAYOUT_UNDEFINED;

@@ -137,6 +137,23 @@ namespace Maze
                 if (texture)
                 {
                     Texture2DVulkan* textureVulkan = texture->castRaw<Texture2DVulkan>();
+
+                    // NOTE: this is NOT the place to fix up a texture still
+                    // sitting in a render-target layout (e.g. a PostFX/
+                    // distortion buffer's u_baseMap/u_depthMap right out of
+                    // RenderBufferVulkan::blit()) - processSimpleUniformChanged()
+                    // runs while applying a draw's material uniforms, which
+                    // is routinely WHILE the enclosing render target's
+                    // dynamic-rendering scope is already open, and
+                    // vkCmdPipelineBarrier (what transitionTo() needs) is
+                    // illegal to record inside one
+                    // (VUID-vkCmdPipelineBarrier-None-09553/09554,
+                    // -dependencyFlags-07891, -oldLayout-01181 - confirmed
+                    // the hard way). Textures that need this must be left in
+                    // VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL by whatever
+                    // last wrote them, at a point guaranteed to be outside
+                    // any open scope - see blit()'s destination-texture
+                    // handling.
                     view = textureVulkan->getSampledImageView();
                     sampler = textureVulkan->ensureSampler();
                 }

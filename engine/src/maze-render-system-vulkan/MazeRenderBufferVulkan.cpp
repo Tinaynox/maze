@@ -347,7 +347,31 @@ namespace Maze
                     vkCmdCopyImage(cmd, src, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1u, &region);
                 }
 
-                TransitionImageLayoutVulkan(cmd, dst, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+                // blit()'s destination exists to be SAMPLED next (e.g. a
+                // PostFX/distortion material's u_baseMap), not rendered into -
+                // leave it ready for that. This must happen here rather than
+                // at the point it's actually bound as a texture uniform
+                // (ShaderUniformVulkan::processSimpleUniformChanged() runs
+                // while the sampling draw's own render target scope is
+                // typically already open, where an image layout transition
+                // is illegal to record - confirmed via
+                // VUID-vkCmdPipelineBarrier-None-09553 the hard way) -
+                // blit() is guaranteed to run outside any open scope
+                // (interruptActiveRenderTarget(), at the top of this
+                // function), making it the correct place instead.
+                TransitionImageLayoutVulkan(cmd, dst, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+                // The source almost always belongs to a render buffer that
+                // gets rendered into again next frame - restore it to its
+                // normal attachment-ready layout rather than leaving it in
+                // TRANSFER_SRC_OPTIMAL, or the next frame's
+                // vkCmdBeginRendering (which declares/expects
+                // COLOR_ATTACHMENT_OPTIMAL) mismatches its actual tracked
+                // layout - confirmed via "vkQueueSubmit(): ... expects
+                // VkImage ... to be in layout COLOR_ATTACHMENT_OPTIMAL --
+                // instead, current layout is TRANSFER_SRC_OPTIMAL"
+                // validation warnings.
+                TransitionImageLayoutVulkan(cmd, src, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
             };
 
         for (U32 i = 0; i < StateMachineVulkan::c_colorAttachmentsMax; ++i)
@@ -370,42 +394,47 @@ namespace Maze
             VkImage src = getImage(srcDepthTexture);
             if (dst != VK_NULL_HANDLE && src != VK_NULL_HANDLE)
             {
-                VkImageAspectFlags aspect = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-                TransitionImageLayoutVulkan(cmd, src, aspect, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-                TransitionImageLayoutVulkan(cmd, dst, aspect, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-
                 if (srcMultisampled && !dstMultisampled)
                 {
-                    // Unlike color, vkCmdResolveImage requires
-                    // VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT on both images and
-                    // is not valid for depth-aspect resolves (VK_KHR_depth_stencil_resolve
-                    // only extends *render-pass-integrated* resolve via
-                    // VkRenderingAttachmentInfo::resolveMode/resolveImageView,
-                    // which must be set when the source's rendering scope
-                    // begins - blit() runs after that scope already closed, so
-                    // it can't be retrofitted here). Also, vkCmdCopyImage
-                    // requires matching sample counts, so a plain copy can't
-                    // substitute either. A correct fix needs either a
-                    // fullscreen-shader manual resolve (see DX11's
-                    // resolveDepthMSAA/c_depthResolveShaderSourceDX11 for the
-                    // reference implementation) or threading a resolve target
-                    // through StateMachineVulkan::bindRenderTarget() so the
-                    // original render pass performs the resolve on
-                    // vkCmdEndRendering. Neither is implemented yet - skip
-                    // rather than record an invalid/undefined command.
-                    MAZE_WARNING("RenderBufferVulkan::blit(): multisampled depth resolve is not implemented - skipping (see comment)");
+                    // A fullscreen-shader manual resolve
+                    // (RenderSystemVulkan::resolveDepthMSAA(), see its
+                    // banner comment for why vkCmdResolveImage/
+                    // render-pass-integrated resolve can't be used here) -
+                    // it does its own layout transitions via each texture's
+                    // own tracked layout (Texture2DVulkan::transitionTo()),
+                    // so no raw TransitionImageLayoutVulkan calls are needed
+                    // (or correct - those don't update tracked layout, and
+                    // declaring oldLayout=UNDEFINED here would discard the
+                    // source's actual rendered depth content before this
+                    // pass can read it).
+                    getRenderSystemVulkanRaw()->resolveDepthMSAA(
+                        dstDepthTexture->castRaw<Texture2DVulkan>(),
+                        srcDepthTexture->castRaw<Texture2DMSVulkan>());
                 }
                 else
                 if (srcMultisampled == dstMultisampled)
                 {
+                    VkImageAspectFlags aspect = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+                    TransitionImageLayoutVulkan(cmd, src, aspect, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+                    TransitionImageLayoutVulkan(cmd, dst, aspect, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
                     VkImageCopy region = {};
                     region.srcSubresource = { VK_IMAGE_ASPECT_DEPTH_BIT, 0u, 0u, 1u };
                     region.dstSubresource = { VK_IMAGE_ASPECT_DEPTH_BIT, 0u, 0u, 1u };
                     region.extent = { getSize().x, getSize().y, 1u };
                     vkCmdCopyImage(cmd, src, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1u, &region);
-                }
 
-                TransitionImageLayoutVulkan(cmd, dst, aspect, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+                    // See the identical banner comment in the color
+                    // blitTexture lambda above - the destination exists to
+                    // be sampled (u_depthMap) next, not rendered into.
+                    TransitionImageLayoutVulkan(cmd, dst, aspect, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+                    // See the identical restoration in the color blitTexture
+                    // lambda above - the source belongs to a render buffer
+                    // reused as a depth attachment next frame, so it must
+                    // not be left in TRANSFER_SRC_OPTIMAL.
+                    TransitionImageLayoutVulkan(cmd, src, aspect, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+                }
             }
         }
     }
