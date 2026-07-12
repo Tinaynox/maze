@@ -56,7 +56,6 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
-#include "maze-core/helpers/MazeThreadHelper.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
@@ -122,12 +121,6 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
     bool restart = false;
     do
     {
-#if MAZE_RENDER_SYSTEM_VULKAN_ENABLED
-        if (Maze::g_renderSystemType == Maze::ExampleRenderSystemType::OpenGL)
-            Maze::ThreadHelper::SleepCurrentThread(2000); // Give some time for Vulkan to load nvoglv64.dll to avoid conflicts with OpenGL
-#endif
-        
-
         Maze::ExamplePtr example = Maze::Example::Create(engineConfig);
         if (!example)
             break;

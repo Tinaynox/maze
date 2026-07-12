@@ -161,6 +161,22 @@ target_link_libraries(${EXAMPLE_NAME} ${EXAMPLE_MAZE_LIBS})
 
 
 if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
+    if(MAZE_RENDER_SYSTEM_VULKAN_ENABLED AND MAZE_COMPILER_IS_MSVC)
+        # vulkan-1.dll (and shaderc_shared.dll) are linked into this exe's import
+        # table even in MAZE_STATIC builds where maze-render-system-vulkan is
+        # compiled directly in, so the OS loader would otherwise load them
+        # unconditionally at process start - regardless of which render system
+        # is actually selected at runtime (g_renderSystemType, checked only
+        # inside Example.cpp's loadPlugins()). On NVIDIA, loading vulkan-1.dll
+        # triggers an async background load of nvoglv64.dll, the same physical
+        # ICD DLL OpenGL's opengl32.dll needs - racing with OpenGL context
+        # creation whenever OpenGL is the selected backend instead of Vulkan.
+        # Delay-loading defers the actual DLL load to the first real call into
+        # it, which only happens once Vulkan is genuinely used.
+        target_link_libraries(${EXAMPLE_NAME} delayimp)
+        append_linker_flags(${EXAMPLE_NAME} "/DELAYLOAD:vulkan-1.dll /DELAYLOAD:shaderc_shared.dll")
+    endif()
+
     if(BUILD_SHARED_LIBS AND NOT MODULE_STATIC)
     
         STRING(REGEX REPLACE "/" "\\\\" COPY_SRC \"${MAZE_OUTPUT_DIR}/lib/${MAZE_ARCH_SUFFIX}/$<CONFIG>/*.dll\")
