@@ -1,1 +1,2 @@
 scale:F32 = 0.4
+generateTangents:Bool = true
