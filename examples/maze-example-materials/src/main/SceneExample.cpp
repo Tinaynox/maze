@@ -435,8 +435,13 @@ namespace Maze
     {
         ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();        
 
+        String renderSystemHint;
+        if (S32(ExampleRenderSystemType::MAX) > 1)
+            StringHelper::FormatString(renderSystemHint, "Switch Render System - Ctrl+Shift+R\n");
+
         m_hintText->setTextFormatted(
             "[CONTROLS]\n"
+            "%s"
             "Movement - WASD, Jump - Space, Camera - RMB (Hold)\n"
             "%s - R\n"
             "%s - P\n"
@@ -444,6 +449,7 @@ namespace Maze
             "[INFO]\n"
             "Mesh Movement: %s\n"
             "Post Processing: %s",
+            renderSystemHint.c_str(),
             m_meshMovementEnabled ? "Disable Mesh Movement" : "Enable Mesh Movement",
             exampleCommonSettings->getBloomEnabled() ? "Disable Post Processing" : "Enable Post Processing",
             m_meshMovementEnabled ? "ON" : "OFF",
