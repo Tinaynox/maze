@@ -411,9 +411,32 @@ namespace Maze
         // as RenderSystemDX11::ensureInputLayout's per-(shader,VAO) merge -
         // omitting them here left the pipeline's vertex input state missing a
         // location the shader's SPIR-V declares, which is invalid.
+        //
+        // The reverse mismatch also happens routinely: a mesh commonly
+        // carries attributes a given shader never reads (e.g. tangent/
+        // bitangent, generated for most meshes by CreateQuadSubMesh/
+        // GenerateTangentsAndBitangents, but unused by simple unlit/color
+        // shaders). Declaring those anyway is legal Vulkan but trips the
+        // validation layer's "Vertex attribute at location N not consumed by
+        // vertex shader" warning - so only keep a VAO attribute (and its
+        // binding) if the current shader actually declares an input there.
+        // A VAO attribute's location doubles as its VertexAttributeSemantic
+        // index (see VertexArrayObjectVulkan's class comment), so this is a
+        // direct getVertexInputLocation() lookup.
         Vector<VkVertexInputAttributeDescription> const& vaoAttributeDescs = m_currentVAO->getVertexInputAttributeDescriptions();
-        Vector<VkVertexInputBindingDescription> bindingDescs = m_currentVAO->getVertexInputBindingDescriptions();
-        Vector<VkVertexInputAttributeDescription> attributeDescs = vaoAttributeDescs;
+        Vector<VkVertexInputBindingDescription> const& vaoBindingDescs = m_currentVAO->getVertexInputBindingDescriptions();
+
+        Vector<VkVertexInputBindingDescription> bindingDescs;
+        Vector<VkVertexInputAttributeDescription> attributeDescs;
+        for (Size i = 0; i < vaoAttributeDescs.size(); ++i)
+        {
+            VkVertexInputAttributeDescription const& attr = vaoAttributeDescs[i];
+            if (m_currentShader->getVertexInputLocation((VertexAttributeSemantic)attr.location) < 0)
+                continue;
+
+            attributeDescs.push_back(attr);
+            bindingDescs.push_back(vaoBindingDescs[i]);
+        }
 
         bool zeroBufferBindingAdded = false;
         for (S32 s = 0; s < (S32)VertexAttributeSemantic::MAX; ++s)
