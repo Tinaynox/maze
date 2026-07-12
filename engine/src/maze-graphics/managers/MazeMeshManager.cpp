@@ -212,30 +212,36 @@ namespace Maze
         if (metaData.isParamExists(MAZE_HCS("mergeSubMeshes")))
             loaderProps.mergeSubMeshes = metaData.getBool(MAZE_HCS("mergeSubMeshes"));
 
-        Path tangentsFilePath = _assetFile->getFullPath() + ".mztangents";
-        AssetFilePtr tangentsAsset = AssetManager::GetInstancePtr()->getAssetFileByFullPath(tangentsFilePath);
-        if (tangentsAsset)
+        if (metaData.isParamExists(MAZE_HCS("generateTangents")))
+            loaderProps.generateTangents = metaData.getBool(MAZE_HCS("generateTangents"));
+
+        if (!loaderProps.generateTangents)
         {
-            ByteBufferPtr tangentsData = tangentsAsset->readAsByteBuffer();
-            if (tangentsData)
+            Path tangentsFilePath = _assetFile->getFullPath() + ".mztangents";
+            AssetFilePtr tangentsAsset = AssetManager::GetInstancePtr()->getAssetFileByFullPath(tangentsFilePath);
+            if (tangentsAsset)
             {
-#if MAZE_DEBUG
-                U32 meshContentHash = GraphicsUtilsHelper::CalculateMeshSourceContentHash(_assetFile);
-                if (!GraphicsUtilsHelper::IsMeshTangentsBufferUpToDate(*tangentsData, meshContentHash))
+                ByteBufferPtr tangentsData = tangentsAsset->readAsByteBuffer();
+                if (tangentsData)
                 {
-                    Debug::LogWarning(
-                        "Tangents file is outdated for mesh '%s', ignoring and recalculating...",
-                        _assetFile->getFileName().toUTF8().c_str());
+#if MAZE_DEBUG
+                    U32 meshContentHash = GraphicsUtilsHelper::CalculateMeshSourceContentHash(_assetFile);
+                    if (!GraphicsUtilsHelper::IsMeshTangentsBufferUpToDate(*tangentsData, meshContentHash))
+                    {
+                        Debug::LogWarning(
+                            "Tangents file is outdated for mesh '%s', ignoring and recalculating...",
+                            _assetFile->getFileName().toUTF8().c_str());
+                    }
+                    else
+#endif
+                    {
+                        loaderProps.tangentsData = tangentsData;
+                    }
                 }
                 else
-#endif
                 {
-                    loaderProps.tangentsData = tangentsData;
+
                 }
-            }
-            else
-            {
-                
             }
         }
 

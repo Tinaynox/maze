@@ -268,7 +268,7 @@ namespace Maze
             if (!colors.empty())
                 subMesh->setColors(&colors[0], colors.size());
 
-            if (!_props.tangentsData)
+            if (!_props.tangentsData || _props.generateTangents)
             {
 #if 0
                 if (!tangents.empty())
@@ -285,7 +285,9 @@ namespace Maze
 #endif
                 if (!normals.empty() && !uvs.empty())
                 {
-                    Debug::LogWarning("SubMesh is not containing tangents info. Calculating...");
+                    LogService::GetInstancePtr()->logFormatted(
+						_props.generateTangents ? c_logPriority_Default : c_logPriority_Warning,
+                        "SubMesh is not containing tangents info. Calculating...");
                     Timer timer;
 
                     // Generate tangents and bitangents
@@ -304,7 +306,9 @@ namespace Maze
                     }
 
                     F32 msTime = F32(timer.getMicroseconds()) / 1000.0f;
-                    Debug::LogWarning("Calculation is taken %.1fms", msTime);
+                    LogService::GetInstancePtr()->logFormatted(
+                        _props.generateTangents ? c_logPriority_Default : c_logPriority_Warning,
+                        "Calculation is taken %.1fms", msTime);
                 }
             }
 
@@ -412,7 +416,7 @@ namespace Maze
             }
 
             // Tangents
-            if (!_props.tangentsData)
+            if (!_props.tangentsData && !_props.generateTangents)
             {
                 bool hasTangents = geom.getTangents() != nullptr;
                 if (hasTangents)
@@ -546,7 +550,7 @@ namespace Maze
         }
 
         // Precalculated tangents
-        if (_props.tangentsData)
+        if (_props.tangentsData && !_props.generateTangents)
         {
             MAZE_ERROR_IF(
                 !GraphicsUtilsHelper::LoadMeshTangentsFromBuffer(_mesh, *_props.tangentsData.get()),
