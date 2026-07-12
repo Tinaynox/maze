@@ -289,8 +289,9 @@ namespace Maze
             // on them manually is invalid (they were never mapped through
             // the explicit vmaMapMemory/vmaUnmapMemory ref-counted path) and
             // trips VMA's "Unmapping allocation not previously mapped" assert.
-            for (Size i = 0; i < m_materialUniformBuffers.size(); ++i)
-                vmaDestroyBuffer(rs->getAllocator(), m_materialUniformBuffers[i], m_materialUniformAllocations[i]);
+            for (Vector<MaterialUniformInstance> const& framePool : m_materialInstancePool)
+                for (MaterialUniformInstance const& inst : framePool)
+                    vmaDestroyBuffer(rs->getAllocator(), inst.buffer, inst.allocation);
             // Descriptor sets are freed wholesale with the pool at shutdown - not
             // individually freed here
         }
@@ -299,10 +300,9 @@ namespace Maze
         m_fragmentModule = VK_NULL_HANDLE;
         m_pipelineLayout = VK_NULL_HANDLE;
         m_materialSetLayout = VK_NULL_HANDLE;
-        m_materialUniformBuffers.clear();
-        m_materialUniformAllocations.clear();
-        m_materialUniformMapped.clear();
-        m_materialDescriptorSets.clear();
+        m_materialInstancePool.clear();
+        m_materialInstancePoolUsed.clear();
+        m_materialInstancePoolGeneration.clear();
         m_materialUniformBufferSize = 0u;
         m_materialUniformShadow.clear();
         m_textureBindings.clear();
@@ -568,6 +568,60 @@ namespace Maze
             // writes them directly, see MazeInstanceStreamsVulkan.cpp
         }
 
+        // Collapse "<base>N" (N = '0'..'7') sibling texture bindings created
+        // by the loop above into a single logical UniformTexture2DArray
+        // uniform named "<base>" - see ShaderVulkanUniformData::
+        // isTextureArray's banner comment. This is how multi-page font
+        // materials (MazeFontShader.mzglslvk, which declares
+        // u_baseMaps0..u_baseMaps7 instead of a real GLSL sampler array -
+        // see that shader's own comment for why) get exposed to C++ code
+        // that sets a single "u_baseMaps" uniform via
+        // Material::ensureUniform("u_baseMaps")->set(textures, count) (see
+        // MazeFontMaterial.cpp), matching what GL/DX11 expose for the same
+        // name. Without this, that ensureUniform("u_baseMaps") lookup never
+        // resolves against this shader's reflection data at all (only
+        // "u_baseMaps0".."u_baseMaps7" exist), so the font's texture is
+        // never actually bound and the text renders fully transparent.
+        {
+            struct IndexedBinding { S32 index; S32 binding; };
+            UnorderedMap<String, Vector<IndexedBinding>> arrayCandidates;
+            for (auto const& kv : m_uniformsReflection)
+            {
+                ShaderVulkanUniformData const& data = kv.second;
+                if (!data.isTexture || data.isTextureArray)
+                    continue;
+
+                String const& name = data.name;
+                if (name.size() < 2)
+                    continue;
+
+                char last = name.back();
+                if (last < '0' || last > '7')
+                    continue;
+
+                arrayCandidates[name.substr(0, name.size() - 1)].push_back({ (S32)(last - '0'), data.textureBinding });
+            }
+
+            for (auto& candidate : arrayCandidates)
+            {
+                // A lone name that happens to end in a digit isn't an array -
+                // leave it as its own scalar uniform
+                if (candidate.second.size() < 2)
+                    continue;
+
+                U32 baseNameHash = MAZE_HASHED_CSTRING(candidate.first.c_str()).hash;
+                ShaderVulkanUniformData& arrayData = m_uniformsReflection[baseNameHash];
+                arrayData.name = candidate.first;
+                arrayData.isGlobal = false;
+                arrayData.isTexture = true;
+                arrayData.isTextureArray = true;
+                arrayData.textureBindingsArray.assign(8, -1);
+                for (IndexedBinding const& indexedBinding : candidate.second)
+                    if (indexedBinding.index >= 0 && indexedBinding.index < 8)
+                        arrayData.textureBindingsArray[indexedBinding.index] = indexedBinding.binding;
+            }
+        }
+
         spvReflectDestroyShaderModule(&module);
         return true;
     }
@@ -587,10 +641,20 @@ namespace Maze
         uboBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
         bindings.push_back(uboBinding);
 
-        for (Size i = 0; i < m_textureBindings.size(); ++i)
+        // m_textureBindings is indexed by the raw SPIR-V binding number
+        // (reflectVulkanShader()/setTextureBinding() both write
+        // m_textureBindings[spirvBinding] directly) - binding 0 is always the
+        // MaterialUniforms UBO, so index 0 here is structurally always an
+        // unused placeholder slot (nothing ever reflects a texture at
+        // binding 0) and must be skipped, not remapped to binding 0 (which
+        // would collide with the UBO) or offset by +1 (which shifted every
+        // real texture binding declared here, and every write in
+        // acquireMaterialDescriptorSet() below, one slot past where the
+        // shader's SPIR-V actually expects it)
+        for (Size i = 1; i < m_textureBindings.size(); ++i)
         {
             VkDescriptorSetLayoutBinding samplerBinding = {};
-            samplerBinding.binding = (U32)(i + 1u);
+            samplerBinding.binding = (U32)i;
             samplerBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             samplerBinding.descriptorCount = 1u;
             samplerBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -625,47 +689,7 @@ namespace Maze
     bool ShaderVulkan::createMaterialUniformBuffers()
     {
         RenderSystemVulkan* rs = getRenderSystemVulkanRaw();
-        VkDevice device = rs->getDevice();
         U32 framesInFlight = rs->getFramesInFlight();
-
-        // Every set-1 combined-image-sampler binding must hold a valid
-        // descriptor by the time it's ever sampled, even if the owning
-        // material never explicitly assigns that texture uniform (unlike
-        // GL/DX11, Vulkan has no concept of an implicitly-safe "unbound"
-        // sampler) - write the engine's white texture into every texture
-        // binding right away so nothing is ever left holding a garbage/null
-        // descriptor; ShaderUniformVulkan::processSimpleUniformChanged()
-        // overwrites it later with the real assignment, if any
-        // getWhiteTexture()/getWhiteCubeTexture() are passive accessors that
-        // return null until something else has already lazily created the
-        // builtin - since a shader can compile before anything else has
-        // touched these builtins, use the create-if-missing ensure*() variant
-        // instead so the fallback is always actually available (a silent
-        // "continue" below when null would leave the descriptor holding
-        // whatever the pool's backing memory previously contained, e.g. a
-        // stale 2D view from an unrelated freed descriptor set - which is
-        // what a validation layer reporting a concrete-but-wrong
-        // VkImageViewType on an ostensibly-never-written binding indicates)
-        VkImageView defaultView2D = VK_NULL_HANDLE;
-        VkSampler defaultSampler2D = VK_NULL_HANDLE;
-        if (Texture2DPtr const& whiteTexture = rs->getTextureManager()->ensureBuiltinTexture2D(BuiltinTexture2DType::White))
-        {
-            Texture2DVulkan* whiteTextureVulkan = whiteTexture->castRaw<Texture2DVulkan>();
-            defaultView2D = whiteTextureVulkan->getImageView();
-            defaultSampler2D = whiteTextureVulkan->ensureSampler();
-        }
-
-        // A samplerCube binding needs a cube-view default - writing the 2D
-        // fallback above into it is a VkImageViewType mismatch the
-        // validation layer flags on every draw that uses it
-        VkImageView defaultViewCube = VK_NULL_HANDLE;
-        VkSampler defaultSamplerCube = VK_NULL_HANDLE;
-        if (TextureCubePtr const& whiteCubeTexture = rs->getTextureManager()->ensureBuiltinTextureCube(BuiltinTextureCubeType::White))
-        {
-            TextureCubeVulkan* whiteCubeTextureVulkan = whiteCubeTexture->castRaw<TextureCubeVulkan>();
-            defaultViewCube = whiteCubeTextureVulkan->getImageView();
-            defaultSamplerCube = whiteCubeTextureVulkan->ensureSampler();
-        }
 
         // Round up to 256 to keep alignment-friendly (min UBO alignment on
         // most desktop GPUs is <= 256, this avoids a device-query round-trip
@@ -674,83 +698,13 @@ namespace Maze
         m_materialUniformBufferSize = bufferSize;
         m_materialUniformShadow.resize(bufferSize, 0u);
 
-        m_materialUniformBuffers.resize(framesInFlight, VK_NULL_HANDLE);
-        m_materialUniformAllocations.resize(framesInFlight, VK_NULL_HANDLE);
-        m_materialUniformMapped.resize(framesInFlight, nullptr);
-        m_materialDescriptorSets.resize(framesInFlight, VK_NULL_HANDLE);
-
-        for (U32 i = 0; i < framesInFlight; ++i)
-        {
-            VkBufferCreateInfo bufferInfo = {};
-            bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-            bufferInfo.size = bufferSize;
-            bufferInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-            bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-            VmaAllocationCreateInfo allocInfo = {};
-            allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
-            allocInfo.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT | VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
-
-            VmaAllocationInfo allocResultInfo = {};
-            MAZE_VK_CALL(vmaCreateBuffer(
-                rs->getAllocator(), &bufferInfo, &allocInfo,
-                &m_materialUniformBuffers[i], &m_materialUniformAllocations[i], &allocResultInfo));
-            m_materialUniformMapped[i] = allocResultInfo.pMappedData;
-
-            VkDescriptorSetAllocateInfo dsAllocInfo = {};
-            dsAllocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-            dsAllocInfo.descriptorPool = rs->getDescriptorPool();
-            dsAllocInfo.descriptorSetCount = 1u;
-            dsAllocInfo.pSetLayouts = &m_materialSetLayout;
-            MAZE_VK_CALL(vkAllocateDescriptorSets(device, &dsAllocInfo, &m_materialDescriptorSets[i]));
-
-            VkDescriptorBufferInfo bufInfo = {};
-            bufInfo.buffer = m_materialUniformBuffers[i];
-            bufInfo.offset = 0u;
-            bufInfo.range = bufferSize;
-
-            Vector<VkWriteDescriptorSet> writes;
-            Vector<VkDescriptorImageInfo> imageInfos;
-            writes.reserve(m_textureBindings.size() + 1u);
-            imageInfos.reserve(m_textureBindings.size());
-
-            VkWriteDescriptorSet write = {};
-            write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-            write.dstSet = m_materialDescriptorSets[i];
-            write.dstBinding = 0u;
-            write.descriptorCount = 1u;
-            write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            write.pBufferInfo = &bufInfo;
-            writes.push_back(write);
-
-            for (Size b = 0; b < m_textureBindings.size(); ++b)
-            {
-                bool isCube = m_textureBindings[b].isCube;
-                VkImageView view = isCube ? defaultViewCube : defaultView2D;
-                VkSampler sampler = isCube ? defaultSamplerCube : defaultSampler2D;
-                if (view == VK_NULL_HANDLE)
-                    continue;
-
-                VkDescriptorImageInfo imageInfo = {};
-                imageInfo.imageView = view;
-                imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                imageInfo.sampler = sampler;
-                imageInfos.push_back(imageInfo);
-
-                VkWriteDescriptorSet textureWrite = {};
-                textureWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                textureWrite.dstSet = m_materialDescriptorSets[i];
-                textureWrite.dstBinding = (U32)(b + 1u);
-                textureWrite.descriptorCount = 1u;
-                textureWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                textureWrite.pImageInfo = &imageInfos.back();
-                writes.push_back(textureWrite);
-            }
-
-            vkUpdateDescriptorSets(device, (U32)writes.size(), writes.data(), 0u, nullptr);
-
-            m_materialUniformDirty[Math::Min(i, (U32)(sizeof(m_materialUniformDirty)/sizeof(m_materialUniformDirty[0])) - 1u)] = true;
-        }
+        // Actual UBO/descriptor-set instances are created lazily, on demand,
+        // by acquireMaterialDescriptorSet() - just set up the per-frame-in-flight
+        // pool bookkeeping here
+        m_materialInstancePool.clear();
+        m_materialInstancePool.resize(framesInFlight);
+        m_materialInstancePoolUsed.assign(framesInFlight, 0u);
+        m_materialInstancePoolGeneration.assign(framesInFlight, ~0ull);
 
         return true;
     }
@@ -914,55 +868,146 @@ namespace Maze
         if (bytesCount == 0u)
             return;
 
-        if (memcmp(&m_materialUniformShadow[_uniformData.offset], _bytes, bytesCount) == 0)
-            return;
-
         memcpy(&m_materialUniformShadow[_uniformData.offset], _bytes, bytesCount);
-        for (Size i = 0; i < (sizeof(m_materialUniformDirty)/sizeof(m_materialUniformDirty[0])); ++i)
-            m_materialUniformDirty[i] = true;
     }
 
     //////////////////////////////////////////
-    void ShaderVulkan::flushMaterialUniforms()
+    VkDescriptorSet ShaderVulkan::acquireMaterialDescriptorSet()
     {
         RenderSystemVulkan* rs = getRenderSystemVulkanRaw();
-        U32 frameIndex = rs->getCurrentFrameIndex();
-        U32 dirtyIndex = Math::Min(frameIndex, (U32)(sizeof(m_materialUniformDirty)/sizeof(m_materialUniformDirty[0])) - 1u);
-
-        if (frameIndex < m_materialUniformMapped.size() && m_materialUniformDirty[dirtyIndex])
-        {
-            if (m_materialUniformMapped[frameIndex] && !m_materialUniformShadow.empty())
-                memcpy(m_materialUniformMapped[frameIndex], m_materialUniformShadow.data(), m_materialUniformShadow.size());
-
-            m_materialUniformDirty[dirtyIndex] = false;
-        }
-
-        if (frameIndex >= m_textureBindings.size())
-        {
-            // no-op, textureBindings indexed separately below
-        }
-
         VkDevice device = rs->getDevice();
+        U32 frameIndex = rs->getCurrentFrameIndex();
+        if (frameIndex >= m_materialInstancePool.size())
+            return VK_NULL_HANDLE;
+
+        // A new frame reaching this frame-in-flight index means
+        // ensureFrameOpen() has already waited that slot's fence - every
+        // pool instance handed out last time this index was used is
+        // guaranteed to have finished executing on the GPU, so it's safe to
+        // start recycling from the beginning of this frame-in-flight's pool
+        U64 currentGeneration = rs->getFrameGeneration();
+        if (m_materialInstancePoolGeneration[frameIndex] != currentGeneration)
+        {
+            m_materialInstancePoolUsed[frameIndex] = 0u;
+            m_materialInstancePoolGeneration[frameIndex] = currentGeneration;
+        }
+
+        Vector<MaterialUniformInstance>& framePool = m_materialInstancePool[frameIndex];
+        U32 slot = m_materialInstancePoolUsed[frameIndex]++;
+
+        if (slot >= (U32)framePool.size())
+        {
+            MaterialUniformInstance inst;
+
+            VkBufferCreateInfo bufferInfo = {};
+            bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+            bufferInfo.size = m_materialUniformBufferSize;
+            bufferInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+            bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+            VmaAllocationCreateInfo allocInfo = {};
+            allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+            allocInfo.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT | VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
+
+            VmaAllocationInfo allocResultInfo = {};
+            MAZE_VK_CALL(vmaCreateBuffer(
+                rs->getAllocator(), &bufferInfo, &allocInfo,
+                &inst.buffer, &inst.allocation, &allocResultInfo));
+            inst.mapped = allocResultInfo.pMappedData;
+
+            VkDescriptorSetAllocateInfo dsAllocInfo = {};
+            dsAllocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+            dsAllocInfo.descriptorPool = rs->getDescriptorPool();
+            dsAllocInfo.descriptorSetCount = 1u;
+            dsAllocInfo.pSetLayouts = &m_materialSetLayout;
+            MAZE_VK_CALL(vkAllocateDescriptorSets(device, &dsAllocInfo, &inst.descriptorSet));
+
+            // The UBO's VkBuffer identity never changes after creation (only
+            // its contents, via the memcpy below), so this binding-0 write
+            // never needs repeating for this instance
+            VkDescriptorBufferInfo bufInfo = {};
+            bufInfo.buffer = inst.buffer;
+            bufInfo.offset = 0u;
+            bufInfo.range = m_materialUniformBufferSize;
+
+            VkWriteDescriptorSet write = {};
+            write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            write.dstSet = inst.descriptorSet;
+            write.dstBinding = 0u;
+            write.descriptorCount = 1u;
+            write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            write.pBufferInfo = &bufInfo;
+            vkUpdateDescriptorSets(device, 1u, &write, 0u, nullptr);
+
+            framePool.push_back(inst);
+        }
+
+        MaterialUniformInstance& inst = framePool[slot];
+
+        if (inst.mapped && !m_materialUniformShadow.empty())
+            memcpy(inst.mapped, m_materialUniformShadow.data(), m_materialUniformShadow.size());
+
+        // Every set-1 combined-image-sampler binding must hold a valid
+        // descriptor by the time it's ever sampled, even if the owning
+        // material never explicitly assigns that texture uniform (unlike
+        // GL/DX11, Vulkan has no concept of an implicitly-safe "unbound"
+        // sampler) - fall back to the engine's white texture (matching
+        // aspect: 2D or cube) for any binding never assigned a real one.
+        // getWhiteTexture()/getWhiteCubeTexture() are passive accessors that
+        // return null until something else has already lazily created the
+        // builtin, so use the create-if-missing ensure*() variant instead.
         Vector<VkWriteDescriptorSet> writes;
         Vector<VkDescriptorImageInfo> imageInfos;
         imageInfos.reserve(m_textureBindings.size());
 
-        for (Size b = 0; b < m_textureBindings.size(); ++b)
+        // m_textureBindings is indexed by raw SPIR-V binding number (see
+        // createDescriptorSetLayoutsAndPipelineLayout()'s comment) - index 0
+        // is always the unused UBO-slot placeholder
+        for (Size b = 1; b < m_textureBindings.size(); ++b)
         {
             PendingTextureBinding& binding = m_textureBindings[b];
-            if (!binding.dirty || binding.view == VK_NULL_HANDLE)
+
+            VkImageView view = binding.view;
+            VkImageLayout layout = binding.layout;
+            VkSampler sampler = binding.sampler;
+
+            if (view == VK_NULL_HANDLE)
+            {
+                if (binding.isCube)
+                {
+                    if (TextureCubePtr const& whiteCube = rs->getTextureManager()->ensureBuiltinTextureCube(BuiltinTextureCubeType::White))
+                    {
+                        TextureCubeVulkan* whiteCubeVulkan = whiteCube->castRaw<TextureCubeVulkan>();
+                        view = whiteCubeVulkan->getImageView();
+                        sampler = whiteCubeVulkan->ensureSampler();
+                        layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                    }
+                }
+                else
+                {
+                    if (Texture2DPtr const& white2D = rs->getTextureManager()->ensureBuiltinTexture2D(BuiltinTexture2DType::White))
+                    {
+                        Texture2DVulkan* white2DVulkan = white2D->castRaw<Texture2DVulkan>();
+                        view = white2DVulkan->getImageView();
+                        sampler = white2DVulkan->ensureSampler();
+                        layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                    }
+                }
+            }
+
+            if (view == VK_NULL_HANDLE)
                 continue;
 
             VkDescriptorImageInfo imageInfo = {};
-            imageInfo.imageView = binding.view;
-            imageInfo.imageLayout = binding.layout;
-            imageInfo.sampler = binding.sampler;
+            imageInfo.imageView = view;
+            imageInfo.imageLayout = layout;
+            imageInfo.sampler = sampler;
             imageInfos.push_back(imageInfo);
 
             VkWriteDescriptorSet write = {};
             write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-            write.dstSet = m_materialDescriptorSets[frameIndex];
-            write.dstBinding = (U32)(b + 1u);
+            write.dstSet = inst.descriptorSet;
+            write.dstBinding = (U32)b;
             write.descriptorCount = 1u;
             write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             write.pImageInfo = &imageInfos.back();
@@ -972,24 +1017,7 @@ namespace Maze
         if (!writes.empty())
             vkUpdateDescriptorSets(device, (U32)writes.size(), writes.data(), 0u, nullptr);
 
-        // Only clear dirty flags once every frame-in-flight's descriptor set
-        // has observed this write (texture bindings are rare/infrequent
-        // relative to per-frame UBO writes, so re-writing on every frame
-        // until all frame-in-flight sets are updated is acceptable - clear
-        // after the last frame index)
-        if (frameIndex == m_materialDescriptorSets.size() - 1u)
-        {
-            for (PendingTextureBinding& binding : m_textureBindings)
-                binding.dirty = false;
-        }
-    }
-
-    //////////////////////////////////////////
-    VkDescriptorSet ShaderVulkan::getMaterialDescriptorSet(U32 _frameIndex) const
-    {
-        if (_frameIndex >= m_materialDescriptorSets.size())
-            return VK_NULL_HANDLE;
-        return m_materialDescriptorSets[_frameIndex];
+        return inst.descriptorSet;
     }
 
     //////////////////////////////////////////
@@ -1002,13 +1030,9 @@ namespace Maze
             m_textureBindings.resize(_binding + 1);
 
         PendingTextureBinding& binding = m_textureBindings[_binding];
-        if (binding.view == _view && binding.layout == _layout && binding.sampler == _sampler)
-            return;
-
         binding.view = _view;
         binding.layout = _layout;
         binding.sampler = _sampler;
-        binding.dirty = true;
     }
 
 

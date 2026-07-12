@@ -123,6 +123,13 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
     bool restart = false;
     do
     {
+        if (restart)
+        {
+#if MAZE_RENDER_SYSTEM_VULKAN_ENABLED
+            Maze::ThreadHelper::SleepCurrentThread(1000); // Give some time for Vulkan to load nvoglv64.dll to avoid conflicts with OpenGL
+#endif
+        }
+
         Maze::ExamplePtr example = Maze::Example::Create(engineConfig);
         if (!example)
             break;

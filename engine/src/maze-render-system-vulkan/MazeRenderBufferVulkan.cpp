@@ -197,30 +197,42 @@ namespace Maze
                 continue;
 
             VkImageView view = VK_NULL_HANDLE;
-            VkImage image = VK_NULL_HANDLE;
             if (colorTexture->getType() == TextureType::TwoDimensional)
             {
                 Texture2DVulkan* tex = colorTexture->castRaw<Texture2DVulkan>();
-                view = tex->getImageView();
-                image = tex->getImage();
+                // getImageView() spans the whole mip chain - not legal as a
+                // vkCmdBeginRendering attachment once this texture has more
+                // than one mip level (see getAttachmentImageView()'s banner
+                // comment)
+                view = tex->getAttachmentImageView();
                 colorFormat = tex->getFormatVulkan();
+
+                // Must go through transitionTo() (not a raw
+                // TransitionImageLayoutVulkan(..., VK_IMAGE_LAYOUT_UNDEFINED, ...)
+                // call) so tex->m_currentLayout stays accurate - a stale
+                // tracked layout here was the root cause of
+                // generateMipmaps() (see its banner comment) recording an
+                // oldLayout that no longer matched the image's real GPU-side
+                // layout once mipmap generation was fixed to run in the same
+                // command buffer right after this render, producing
+                // VUID-VkImageMemoryBarrier-oldLayout-01197 errors
+                if (cmd != VK_NULL_HANDLE)
+                    tex->transitionTo(cmd, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
             }
             else
             if (colorTexture->getType() == TextureType::TwoDimensionalMultisample)
             {
                 Texture2DMSVulkan* tex = colorTexture->castRaw<Texture2DMSVulkan>();
                 view = tex->getImageView();
-                image = tex->getImage();
                 colorFormat = tex->getFormatVulkan();
                 samples = tex->getSampleCountVulkan();
+
+                if (cmd != VK_NULL_HANDLE)
+                    tex->transitionTo(cmd, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
             }
 
             if (view != VK_NULL_HANDLE)
-            {
-                if (cmd != VK_NULL_HANDLE && image != VK_NULL_HANDLE)
-                    TransitionImageLayoutVulkan(cmd, image, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
                 colorViews[colorViewsCount++] = view;
-            }
         }
 
         VkImageView depthView = VK_NULL_HANDLE;
@@ -228,26 +240,31 @@ namespace Maze
         TexturePtr const& depthTexture = getDepthTexture();
         if (depthTexture)
         {
-            VkImage depthImage = VK_NULL_HANDLE;
             if (depthTexture->getType() == TextureType::TwoDimensional)
             {
                 Texture2DVulkan* tex = depthTexture->castRaw<Texture2DVulkan>();
-                depthView = tex->getImageView();
-                depthImage = tex->getImage();
+                // Depth render targets are practically always single-mip,
+                // but getAttachmentImageView() falls back to getImageView()
+                // in that case anyway - see its banner comment
+                depthView = tex->getAttachmentImageView();
                 depthFormat = tex->getFormatVulkan();
+
+                // See the identical transitionTo() rationale in the color
+                // attachment loop above
+                if (cmd != VK_NULL_HANDLE)
+                    tex->transitionTo(cmd, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
             }
             else
             if (depthTexture->getType() == TextureType::TwoDimensionalMultisample)
             {
                 Texture2DMSVulkan* tex = depthTexture->castRaw<Texture2DMSVulkan>();
                 depthView = tex->getImageView();
-                depthImage = tex->getImage();
                 depthFormat = tex->getFormatVulkan();
                 samples = tex->getSampleCountVulkan();
-            }
 
-            if (cmd != VK_NULL_HANDLE && depthImage != VK_NULL_HANDLE)
-                TransitionImageLayoutVulkan(cmd, depthImage, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+                if (cmd != VK_NULL_HANDLE)
+                    tex->transitionTo(cmd, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+            }
         }
 
         // Offscreen targets are rendered flipped so their memory layout matches OpenGL render buffers
@@ -376,7 +393,7 @@ namespace Maze
                     // original render pass performs the resolve on
                     // vkCmdEndRendering. Neither is implemented yet - skip
                     // rather than record an invalid/undefined command.
-                    MAZE_ERROR("RenderBufferVulkan::blit(): multisampled depth resolve is not implemented - skipping (see comment)");
+                    MAZE_WARNING("RenderBufferVulkan::blit(): multisampled depth resolve is not implemented - skipping (see comment)");
                 }
                 else
                 if (srcMultisampled == dstMultisampled)

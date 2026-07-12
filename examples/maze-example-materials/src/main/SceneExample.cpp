@@ -244,7 +244,7 @@ namespace Maze
 
         addMeshPreview("TorusKnotUV.fbx", "ASCII00.mzmaterial", "ASCII Art", torusKnotScale);
         addMeshPreviewSpace();
-
+        
         addMeshPreview("TorusKnotUV.fbx", "BlinnPhongHDR00.mzmaterial", "Emission (HDR)", torusKnotScale);
         addMeshPreviewSpace();
 
@@ -263,13 +263,14 @@ namespace Maze
             labelRenderer->getTransform()->setLocalScaleX(0.7f);
             labelRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault3DOutlined());
         }
-
+        
         addMeshPreview("TorusKnotNM.fbx", "PBR00.mzmaterial", "PBR", torusKnotScale);
         addMeshPreviewSpace();
-
+        
         addMeshPreview("TorusKnotUV.fbx", "Dissolve00.mzmaterial", "Dissolve", torusKnotScale);
         addMeshPreviewSpace();
 
+        
         {
             EntityPtr objectEntity = addMeshPreview("TorusKnotUV.fbx", "Distortion00.mzmaterial", "Distortion", torusKnotScale);
             addMeshPreviewSpace();
@@ -281,7 +282,8 @@ namespace Maze
             meshRenderer->getMaterial()->setUniform(
                 MAZE_HCS("u_depthMap"), depthTexture);
         }
-
+        
+        
         addMeshPreview("TorusKnotUV.fbx", "Snow.mzmaterial", "Snow", torusKnotScale);
         addMeshPreviewSpace();
 
@@ -488,7 +490,7 @@ namespace Maze
                     case KeyCode::P:
                     {
                         ExampleCommonSettings* exampleCommonSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleCommonSettings>();
-
+                        Debug::Log("Set PostProcess: %s", StringHelper::BoolToString(!exampleCommonSettings->getBloomEnabled()).c_str());
                         exampleCommonSettings->setBloomEnabled(
                             !exampleCommonSettings->getBloomEnabled());
                         break;

@@ -73,6 +73,23 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // When true, every set() call below unconditionally bypasses the
+        // "skip if value looks unchanged" optimization. Intended for
+        // backends where this ShaderUniform instance's underlying storage
+        // is SHARED with other, independent ShaderUniform instances (e.g.
+        // Vulkan's GlobalUniforms UBO, one physical buffer written by every
+        // shader's own uniform objects) - in that case each instance's
+        // "last value I wrote" cache can look unchanged even though a
+        // DIFFERENT instance overwrote the shared storage in between,
+        // silently leaving stale data behind. ShaderUniformVulkan::
+        // setUniformData() sets this automatically for every uniform
+        // reflected as global; other backends never set it.
+        inline void setAlwaysForceUpdate(bool _value) { m_alwaysForceUpdate = _value; }
+
+        //////////////////////////////////////////
+        inline bool getAlwaysForceUpdate() const { return m_alwaysForceUpdate; }
+
+        //////////////////////////////////////////
         inline HashedString const& getName() const { return m_value.getName(); }
 
         //////////////////////////////////////////
@@ -220,7 +237,7 @@ namespace Maze
         
         //////////////////////////////////////////
         bool set(Vec3F const& _vector);
-        
+
         //////////////////////////////////////////
         bool set(Vec4F const& _vector);
 
@@ -327,6 +344,9 @@ namespace Maze
         Shader* m_shaderRaw;
 
         ShaderUniformVariant m_value;
+
+        // See setAlwaysForceUpdate()'s banner comment above
+        bool m_alwaysForceUpdate = false;
     };
 
 } // namespace Maze

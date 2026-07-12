@@ -184,18 +184,28 @@ R"(
 
 
     //////////////////////////////////////////
-    // Clip-space finalization - Vulkan's NDC depth range is [0,1] (like
-    // D3D, unlike GL's [-1,1]), and Vulkan's NDC Y axis points down (also
-    // like D3D, opposite of GL's up) - both adaptations mirror DX11's
-    // MazeFinalizePositionCS exactly (see MazeCommonShaderHeader.mzhlsl),
-    // since DX11 and Vulkan share the same clip-space convention here. Every
-    // vertex shader must route its final positionCS through this function
-    // (after the existing '#if (MAZE_LHCS) positionCS.z = -positionCS.z
-    // #endif' handedness flip that's ported unchanged from GL) before
-    // writing gl_Position.
+    // Clip-space finalization - Vulkan's NDC depth range is [0,1], like D3D
+    // (unlike GL's [-1,1]), so that part of DX11's MazeFinalizePositionCS
+    // carries over unchanged. The Y axis does NOT: D3D's NDC is Y-up, same
+    // as GL (D3D only differs from GL in depth range and in the top-down
+    // screen/viewport mapping, which needs no clip-space change) - but
+    // Vulkan's NDC is Y-down by spec, unconditionally, for every render
+    // target including the main swapchain. So unlike DX11 (which only
+    // flips Y for offscreen targets, to compensate for a texture-sampling
+    // convention mismatch), Vulkan needs an UNCONDITIONAL Y flip here to
+    // even match GL's orientation at all, with the existing
+    // u_renderTargetFlipY flip layered on top of that for the same
+    // offscreen-texture-sampling reason DX11 has it. When both flips are
+    // active (offscreen target) they cancel out, restoring GL's original
+    // winding - see StateMachineVulkan::flushPipeline's front-face
+    // selection, which must stay paired with the logic here. Every vertex
+    // shader must route its final positionCS through this function (after
+    // the existing '#if (MAZE_LHCS) positionCS.z = -positionCS.z #endif'
+    // handedness flip that's ported unchanged from GL) before writing
+    // gl_Position.
     vec4 MazeFinalizePositionCS(vec4 _positionCS)
     {
-        _positionCS.y *= (u_renderTargetFlipY < 0.0) ? -1.0 : 1.0;
+        _positionCS.y *= (u_renderTargetFlipY < 0.0) ? 1.0 : -1.0;
         _positionCS.z = (_positionCS.z + _positionCS.w) * 0.5;
         return _positionCS;
     }

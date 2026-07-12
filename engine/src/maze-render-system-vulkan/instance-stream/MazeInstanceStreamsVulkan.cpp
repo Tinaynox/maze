@@ -28,6 +28,7 @@
 #include "maze-render-system-vulkan/instance-stream/MazeInstanceStreamsVulkan.hpp"
 #include "maze-render-system-vulkan/MazeRenderSystemVulkan.hpp"
 #include "maze-graphics/config/MazeGraphicsConfig.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 
 
 //////////////////////////////////////////

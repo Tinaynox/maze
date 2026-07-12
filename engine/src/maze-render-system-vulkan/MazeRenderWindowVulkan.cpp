@@ -270,6 +270,7 @@ namespace Maze
 
         m_swapChainImageViews.resize(actualImageCount);
         m_imageAvailableSemaphores.resize(actualImageCount);
+        m_renderFinishedSemaphores.resize(actualImageCount);
         for (U32 i = 0; i < actualImageCount; ++i)
         {
             VkImageViewCreateInfo viewInfo = {};
@@ -283,6 +284,7 @@ namespace Maze
             VkSemaphoreCreateInfo semaphoreInfo = {};
             semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
             MAZE_VK_CALL(vkCreateSemaphore(rs->getDevice(), &semaphoreInfo, nullptr, &m_imageAvailableSemaphores[i]));
+            MAZE_VK_CALL(vkCreateSemaphore(rs->getDevice(), &semaphoreInfo, nullptr, &m_renderFinishedSemaphores[i]));
         }
 
         Debug::Log("RenderWindowVulkan: Swap chain created (%ux%u, %u images).", m_swapChainExtent.x, m_swapChainExtent.y, actualImageCount);
@@ -364,6 +366,11 @@ namespace Maze
                 vkDestroySemaphore(device, semaphore, nullptr);
         m_imageAvailableSemaphores.clear();
 
+        for (VkSemaphore semaphore : m_renderFinishedSemaphores)
+            if (semaphore != VK_NULL_HANDLE)
+                vkDestroySemaphore(device, semaphore, nullptr);
+        m_renderFinishedSemaphores.clear();
+
         for (VkImageView view : m_swapChainImageViews)
             if (view != VK_NULL_HANDLE)
                 vkDestroyImageView(device, view, nullptr);
@@ -435,11 +442,15 @@ namespace Maze
 
         RenderSystemVulkan* rs = m_renderSystemVulkan;
 
-        VkSemaphore renderFinished = rs->endFrame();
+        // Indexed by the acquired swapchain image, not the frame-in-flight
+        // slot - see m_renderFinishedSemaphores' banner comment and
+        // RenderSystemVulkan::endFrame()'s
+        VkSemaphore renderFinished = m_renderFinishedSemaphores[m_currentImageIndex];
+        rs->endFrame(renderFinished);
 
         VkPresentInfoKHR presentInfo = {};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-        presentInfo.waitSemaphoreCount = renderFinished != VK_NULL_HANDLE ? 1u : 0u;
+        presentInfo.waitSemaphoreCount = 1u;
         presentInfo.pWaitSemaphores = &renderFinished;
         presentInfo.swapchainCount = 1u;
         presentInfo.pSwapchains = &m_swapChain;
@@ -470,6 +481,25 @@ namespace Maze
     {
         if (!m_swapChain)
             return false;
+
+        // setCurrentRenderTarget() can (and does, every real frame) target
+        // this same window more than once - e.g. RenderControllerModule3D's
+        // pass followed later by RenderControllerModule2D's pass, both
+        // targeting the window (see endDraw()'s identical "can be called
+        // multiple times per frame" banner comment). Without this guard,
+        // each extra call re-acquired a NEW swapchain image via
+        // vkAcquireNextImageKHR and overwrote m_currentImageIndex, silently
+        // orphaning whichever image the earlier pass's draws had just been
+        // recorded into - it was never presented, since only the LAST
+        // acquired image's index makes it to swapBuffers()'s
+        // vkQueuePresentKHR. That produced a frozen/stale backdrop (the
+        // orphaned image's ground/skybox draws never shown) with only the
+        // later pass's draws (2D/UI) visibly layering onto whatever stale
+        // content the newly-(re)acquired image already had. m_imageAcquired
+        // is reset once per real frame, in swapBuffers(), so it's the
+        // correct signal for "already acquired this frame, reuse it."
+        if (m_imageAcquired)
+            return true;
 
         RenderSystemVulkan* rs = m_renderSystemVulkan;
 
@@ -504,6 +534,7 @@ namespace Maze
         rs->addFrameWaitSemaphore(acquireSemaphore, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
         m_imageAcquired = true;
         m_presentTransitionQueued = false;
+        m_colorImageTransitionedFromUndefined = false;
 
         return true;
     }
@@ -522,10 +553,31 @@ namespace Maze
 
         VkImageView colorView = m_swapChainImageViews[m_currentImageIndex];
 
-        VkCommandBuffer cmd = getRenderSystemVulkanRaw()->getCurrentCommandBuffer();
-        TransitionImageLayoutVulkan(
-            cmd, m_swapChainImages[m_currentImageIndex], VK_IMAGE_ASPECT_COLOR_BIT,
-            VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+        // setCurrentRenderTarget() targets this same window more than once
+        // per real frame (e.g. RenderControllerModule3D's pass followed
+        // later by RenderControllerModule2D's pass - see
+        // processRenderTargetWillSet()'s identical "multiple times per
+        // frame" banner comment), and processRenderTargetSet() runs again on
+        // every one of those rebinds. Declaring oldLayout=UNDEFINED here
+        // tells Vulkan the image's previous contents don't need to be
+        // preserved - correct for the FIRST bind of a freshly-acquired
+        // image (which really is undefined at that point), but wrong for
+        // every later rebind within the same frame, where the image already
+        // holds this frame's earlier-pass draws (in
+        // COLOR_ATTACHMENT_OPTIMAL) that must survive into the next pass's
+        // loadOp=LOAD. Without this guard, a later pass (e.g. 2D/UI text)
+        // would layer its draws on top of a declared-undefined image,
+        // confirmed via RenderDoc showing the swapchain image as fully
+        // UNDEFINED_IMG by the time of the text draw despite valid earlier
+        // draws with C=Store in the same frame.
+        if (!m_colorImageTransitionedFromUndefined)
+        {
+            VkCommandBuffer cmd = getRenderSystemVulkanRaw()->getCurrentCommandBuffer();
+            TransitionImageLayoutVulkan(
+                cmd, m_swapChainImages[m_currentImageIndex], VK_IMAGE_ASPECT_COLOR_BIT,
+                VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+            m_colorImageTransitionedFromUndefined = true;
+        }
 
         stateMachine->bindRenderTarget(
             &colorView,

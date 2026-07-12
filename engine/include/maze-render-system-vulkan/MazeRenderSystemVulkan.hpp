@@ -68,9 +68,6 @@ namespace Maze
         VkCommandPool commandPool = VK_NULL_HANDLE;
         VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
         VkFence inFlightFence = VK_NULL_HANDLE;
-        // Signaled when this frame's submitted work completes - windows wait
-        // on this before presenting
-        VkSemaphore renderFinishedSemaphore = VK_NULL_HANDLE;
     };
 
 
@@ -159,6 +156,14 @@ namespace Maze
         //////////////////////////////////////////
         inline U32 getCurrentFrameIndex() const { return m_currentFrameIndex; }
 
+        //////////////////////////////////////////
+        // Increments every time ensureFrameOpen() actually opens a new frame
+        // (not on redundant calls within an already-open frame) - used by
+        // ShaderVulkan's per-draw material-descriptor-set pool to detect
+        // "this is the first acquire of a new frame for this frame-in-flight
+        // slot" without needing an explicit per-shader "frame began" callback
+        inline U64 getFrameGeneration() const { return m_frameGeneration; }
+
 
         //////////////////////////////////////////
         // Set-0 "global" descriptor set layout/set/UBO, shared by every
@@ -168,19 +173,33 @@ namespace Maze
         inline VkDescriptorSetLayout getGlobalDescriptorSetLayout() const { return m_globalSetLayout; }
 
         //////////////////////////////////////////
-        inline VkDescriptorSet getGlobalDescriptorSet(U32 _frameIndex) const { return m_globalDescriptorSets[_frameIndex]; }
-
-        //////////////////////////////////////////
         // Writes into the shared GlobalUniforms UBO shadow (binding 0 of the
         // global set) - used by ShaderVulkan for uniforms reflected as
         // isGlobal (set 0), so every shader's "u_viewMatrix"-style uniform
-        // uploads land in the one shared buffer instead of a per-shader copy
+        // uploads land in the one shared shadow buffer instead of a
+        // per-shader copy. Actually pushed to the GPU per draw call by
+        // acquireGlobalDescriptorSet(), not here.
         void writeGlobalUniformData(U32 _offset, U8 const* _bytes, U32 _bytesCount);
 
         //////////////////////////////////////////
-        // Uploads the dirty GlobalUniforms UBO into the current frame's mapped
-        // buffer - called once per frame, before any draw
-        void flushGlobalUniforms();
+        // Returns a descriptor set snapshotting the CURRENT GlobalUniforms
+        // shadow contents, drawn from a per-draw-call instance pool - mirrors
+        // ShaderVulkan::acquireMaterialDescriptorSet()'s rationale exactly,
+        // and fixes the same class of bug that fix addressed. A single
+        // shared-per-frame global UBO (the original design) is wrong the
+        // moment more than one camera/render-target draws within the same
+        // frame: descriptor CONTENTS only resolve at GPU execution time,
+        // after the whole frame has finished recording, so every draw would
+        // observe whichever camera's projection/view/lighting uniforms were
+        // written *last* during recording - not the camera it was actually
+        // recorded for. This was the confirmed root cause of 3D scene draws
+        // reading a 2D canvas's orthographic projection matrix, discovered
+        // via RenderDoc (raw u_projectionMatrix buffer dump showed a
+        // 640x400 screen-space ortho matrix instead of the 3D camera's
+        // perspective one). Bindings 1-3 (the instance-stream SSBOs) are
+        // stable per-frame-in-flight buffers, so each pool instance only
+        // needs to write them once, at creation.
+        VkDescriptorSet acquireGlobalDescriptorSet();
 
         //////////////////////////////////////////
         inline U32 getGlobalUniformBufferSize() const { return m_globalUniformBufferSize; }
@@ -383,11 +402,22 @@ namespace Maze
         //////////////////////////////////////////
         // Submits the currently open frame's command buffer (waiting on any
         // semaphores registered via addFrameWaitSemaphore since the frame was
-        // opened) and advances the frame-in-flight index. Returns a semaphore
-        // that is signaled once the submitted work completes, for callers
-        // (RenderWindowVulkan::swapBuffers) that need to wait on it before
-        // presenting.
-        VkSemaphore endFrame();
+        // opened) and advances the frame-in-flight index.
+        //
+        // _signalSemaphore is signaled once the submitted work completes, and
+        // must be supplied by the caller rather than owned per-frame-in-flight
+        // here: a frame-in-flight-indexed semaphore (the original design) can
+        // get re-signaled by a new vkQueueSubmit before the swapchain's
+        // presentation engine has finished consuming its *previous* signal,
+        // whenever framesInFlight doesn't line up 1:1 with how long a
+        // presented image actually stays in use - producing
+        // VUID-vkQueueSubmit-pSignalSemaphores-00067 and a visibly corrupted/
+        // black frame every time it happens. The correct semaphore lifetime
+        // is tied to the swapchain IMAGE, not the frame-in-flight slot, so
+        // RenderWindowVulkan::swapBuffers() supplies one indexed by
+        // m_currentImageIndex (sized to swapchain image count, alongside
+        // m_imageAvailableSemaphores).
+        void endFrame(VkSemaphore _signalSemaphore);
 
 
         //////////////////////////////////////////
@@ -466,6 +496,7 @@ namespace Maze
         Vector<VulkanFrameResources> m_frameResources;
         U32 m_currentFrameIndex = 0u;
         bool m_frameOpen = false;
+        U64 m_frameGeneration = 0u;
         Vector<VkSemaphore> m_frameWaitSemaphores;
         Vector<VkPipelineStageFlags> m_frameWaitStages;
         Vector<VulkanPendingImageTransition> m_pendingImageTransitions;
@@ -475,16 +506,24 @@ namespace Maze
 
         S32 m_windowMaxAntialiasingLevel = 0;
 
-        // Set-0 "global" descriptor set layout/sets/UBO - see
+        // Set-0 "global" descriptor set layout - see
         // getGlobalDescriptorSetLayout() banner comment above
         VkDescriptorSetLayout m_globalSetLayout = VK_NULL_HANDLE;
-        Vector<VkDescriptorSet> m_globalDescriptorSets;
-        Vector<VkBuffer> m_globalUniformBuffers;
-        Vector<VmaAllocation> m_globalUniformAllocations;
-        Vector<void*> m_globalUniformMapped;
         U32 m_globalUniformBufferSize = 0u;
         Vector<U8> m_globalUniformShadow;
-        bool m_globalUniformDirty[8] = {}; // indexed by frame-in-flight index, capped
+
+        // Per-draw-call instance pool for the global descriptor set - see
+        // acquireGlobalDescriptorSet() banner comment
+        struct GlobalUniformInstance
+        {
+            VkBuffer buffer = VK_NULL_HANDLE;
+            VmaAllocation allocation = VK_NULL_HANDLE;
+            void* mapped = nullptr;
+            VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
+        };
+        Vector<Vector<GlobalUniformInstance>> m_globalInstancePool;
+        Vector<U32> m_globalInstancePoolUsed;
+        Vector<U64> m_globalInstancePoolGeneration;
 
         // Instance-stream SSBOs (set-0 bindings 1/2/3), one per frame-in-flight
         Vector<VkBuffer> m_modelMatricesStreamBuffers;
@@ -496,6 +535,9 @@ namespace Maze
         Vector<VkBuffer> m_uvStreamBuffers;
         Vector<VmaAllocation> m_uvStreamAllocations;
         Vector<void*> m_uvStreamMapped;
+        U32 m_modelMatricesStreamSize = 0u;
+        U32 m_colorsStreamSize = 0u;
+        U32 m_uvStreamSize = 0u;
         S32 m_instanceStreamCursor = 0;
     };
 

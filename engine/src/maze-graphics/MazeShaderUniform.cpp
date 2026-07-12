@@ -72,7 +72,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(S32 _value)
     {
-        if (getS32() == _value &&
+        if (!m_alwaysForceUpdate &&
+            getS32() == _value &&
             getType() == ShaderUniformType::UniformS32)
             return false;
         
@@ -88,7 +89,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(F32 _value)
     {
-        if (getF32() == _value &&
+        if (!m_alwaysForceUpdate &&
+            getF32() == _value &&
             getType() == ShaderUniformType::UniformF32)
             return false;
         
@@ -104,7 +106,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(F64 _value)
     {
-        if (getF64() == _value &&
+        if (!m_alwaysForceUpdate &&
+            getF64() == _value &&
             getType() == ShaderUniformType::UniformF64)
             return false;
         
@@ -120,7 +123,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(bool _value)
     {
-        if (getBool() == _value &&
+        if (!m_alwaysForceUpdate &&
+            getBool() == _value &&
             getType() == ShaderUniformType::UniformBool)
             return false;
 
@@ -137,7 +141,8 @@ namespace Maze
     bool ShaderUniform::set(Texture2DPtr const& _texture2D)
     {
         ResourceId newResourceId = _texture2D ? _texture2D->getResourceId() : c_invalidResourceId;
-        if (getTextureResourceId() == newResourceId &&
+        if (!m_alwaysForceUpdate &&
+            getTextureResourceId() == newResourceId &&
             getType() == ShaderUniformType::UniformTexture2D)
             return false;
 
@@ -153,7 +158,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Texture2D const** _textures, U32 _count)
     {
-        if (getPtr() == _textures &&
+        if (!m_alwaysForceUpdate &&
+            getPtr() == _textures &&
             getType() == ShaderUniformType::UniformTexture2DArray)
             return false;
 
@@ -168,7 +174,8 @@ namespace Maze
     bool ShaderUniform::set(TextureCubePtr const& _textureCube)
     {
         ResourceId newResourceId = _textureCube ? _textureCube->getResourceId() : c_invalidResourceId;
-        if (getTextureResourceId() == newResourceId &&
+        if (!m_alwaysForceUpdate &&
+            getTextureResourceId() == newResourceId &&
             getType() == ShaderUniformType::UniformTextureCube)
             return false;
 
@@ -184,7 +191,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Vec2F const& _vector)
     {
-        if (getVec2F32() == _vector &&
+        if (!m_alwaysForceUpdate &&
+            getVec2F32() == _vector &&
             getType() == ShaderUniformType::UniformVec2F32)
             return false;
         
@@ -200,7 +208,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Vec3F const& _vector)
     {
-        if (getVec3F32() == _vector &&
+        if (!m_alwaysForceUpdate &&
+            getVec3F32() == _vector &&
             getType() == ShaderUniformType::UniformVec3F32)
             return false;
         
@@ -216,7 +225,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Vec4F const& _vector)
     {
-        if (getVec4F32() == _vector &&
+        if (!m_alwaysForceUpdate &&
+            getVec4F32() == _vector &&
             getType() == ShaderUniformType::UniformVec4F32)
             return false;
         
@@ -233,7 +243,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Vec2S const& _vector)
     {
-        if (getVec2S32() == _vector &&
+        if (!m_alwaysForceUpdate &&
+            getVec2S32() == _vector &&
             getType() == ShaderUniformType::UniformVec2S32)
             return false;
         
@@ -249,7 +260,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Vec3S const& _vector)
     {
-        if (getVec3S32() == _vector &&
+        if (!m_alwaysForceUpdate &&
+            getVec3S32() == _vector &&
             getType() == ShaderUniformType::UniformVec3S32)
             return false;
         
@@ -265,7 +277,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Vec4S const& _vector)
     {
-        if (getVec4S32() == _vector &&
+        if (!m_alwaysForceUpdate &&
+            getVec4S32() == _vector &&
             getType() == ShaderUniformType::UniformVec4S32)
             return false;
         
@@ -282,7 +295,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Vec2U const& _vector)
     {
-        if (getVec2U32() == _vector &&
+        if (!m_alwaysForceUpdate &&
+            getVec2U32() == _vector &&
             getType() == ShaderUniformType::UniformVec2U32)
             return false;
         
@@ -298,7 +312,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Vec3U const& _vector)
     {
-        if (getVec3U32() == _vector &&
+        if (!m_alwaysForceUpdate &&
+            getVec3U32() == _vector &&
             getType() == ShaderUniformType::UniformVec3U32)
             return false;
         
@@ -314,7 +329,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Vec4U const& _vector)
     {
-        if (getVec4U32() == _vector &&
+        if (!m_alwaysForceUpdate &&
+            getVec4U32() == _vector &&
             getType() == ShaderUniformType::UniformVec4U32)
             return false;
         
@@ -331,7 +347,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Vec2B const& _vector)
     {
-        if (getVec2B() == _vector &&
+        if (!m_alwaysForceUpdate &&
+            getVec2B() == _vector &&
             getType() == ShaderUniformType::UniformVec2B)
             return false;
 
@@ -347,7 +364,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Vec3B const& _vector)
     {
-        if (getVec3B() == _vector &&
+        if (!m_alwaysForceUpdate &&
+            getVec3B() == _vector &&
             getType() == ShaderUniformType::UniformVec3B)
             return false;
 
@@ -363,7 +381,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Vec4B const& _vector)
     {
-        if (getVec4B() == _vector &&
+        if (!m_alwaysForceUpdate &&
+            getVec4B() == _vector &&
             getType() == ShaderUniformType::UniformVec4B)
             return false;
 
@@ -380,7 +399,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Mat3F const& _matrix)
     {
-        if (getMat3F32() == _matrix &&
+        if (!m_alwaysForceUpdate &&
+            getMat3F32() == _matrix &&
             getType() == ShaderUniformType::UniformMat3F32)
         {
             return false;
@@ -398,7 +418,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::setAffineMat(Mat3F const& _matrix)
     {
-        if (getMat3F32().compareAffine(_matrix) &&
+        if (!m_alwaysForceUpdate &&
+            getMat3F32().compareAffine(_matrix) &&
             getType() == ShaderUniformType::UniformMat3F32)
         {
             return false;
@@ -416,7 +437,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(Mat4F const& _matrix)
     {
-        if (getMat4F32() == _matrix &&
+        if (!m_alwaysForceUpdate &&
+            getMat4F32() == _matrix &&
             getType() == ShaderUniformType::UniformMat4F32)
             return false;
         
@@ -432,7 +454,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(TMat const& _matrix)
     {
-        if (getTMat() == _matrix &&
+        if (!m_alwaysForceUpdate &&
+            getTMat() == _matrix &&
             getType() == ShaderUniformType::UniformTMat)
             return false;
 
@@ -448,7 +471,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(ColorF128 const& _value)
     {
-        if (   getVec4F32() == (Vec4F)_value
+        if (   !m_alwaysForceUpdate
+            && getVec4F32() == (Vec4F)_value
             && getType() == ShaderUniformType::UniformColorF128)
             return false;
 

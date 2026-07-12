@@ -172,7 +172,7 @@ namespace Maze
 
         U32 currentFrameTimeMS = updateManager->getMilliseconds();
 
-        updateManager->processUpdate();    
+        updateManager->processUpdate();
 
         eventFrame();
 

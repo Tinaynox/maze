@@ -77,6 +77,33 @@ namespace Maze
         inline VkImageView getImageView() const { return m_imageView; }
 
         //////////////////////////////////////////
+        // A combined-depth-stencil-aspect view (m_imageView, used for
+        // framebuffer attachment binding) is not a legal VkImageView for a
+        // COMBINED_IMAGE_SAMPLER descriptor - sampling requires a single
+        // aspect. Returns a DEPTH_BIT-only view for depth+stencil-backed
+        // textures (see m_sampledImageView/createImageView()), or just
+        // m_imageView for every other format where the two coincide.
+        inline VkImageView getSampledImageView() const { return m_sampledImageView != VK_NULL_HANDLE ? m_sampledImageView : m_imageView; }
+
+        //////////////////////////////////////////
+        // m_imageView spans the whole mip chain (levelCount = m_mipLevels),
+        // which is correct for sampling but NOT legal as a
+        // vkCmdBeginRendering color/depth attachment when m_mipLevels > 1:
+        // Vulkan requires every mip level covered by an attachment's image
+        // view to be in the layout declared for that attachment, so a
+        // full-chain view used as an attachment forces mips that are still
+        // VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL (e.g. from an earlier
+        // generateMipmaps() call) to also satisfy
+        // VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, which they don't -
+        // exactly the "expects COLOR_ATTACHMENT_OPTIMAL...instead
+        // SHADER_READ_ONLY_OPTIMAL" validation errors this was root-caused
+        // from. Render targets always render into mip 0, so a dedicated
+        // single-mip view (m_attachmentImageView, only created when
+        // m_mipLevels > 1 - see createImageView()) fixes this; falls back to
+        // m_imageView when there's only one mip anyway.
+        inline VkImageView getAttachmentImageView() const { return m_attachmentImageView != VK_NULL_HANDLE ? m_attachmentImageView : m_imageView; }
+
+        //////////////////////////////////////////
         inline VkFormat getFormatVulkan() const { return m_format; }
 
         //////////////////////////////////////////
@@ -171,6 +198,10 @@ namespace Maze
         VkImage m_image = VK_NULL_HANDLE;
         VmaAllocation m_imageAllocation = VK_NULL_HANDLE;
         VkImageView m_imageView = VK_NULL_HANDLE;
+        // Only created for combined depth+stencil formats (see getSampledImageView())
+        VkImageView m_sampledImageView = VK_NULL_HANDLE;
+        // Only created when m_mipLevels > 1 (see getAttachmentImageView())
+        VkImageView m_attachmentImageView = VK_NULL_HANDLE;
         VkFormat m_format = VK_FORMAT_UNDEFINED;
         VkImageAspectFlags m_aspect = VK_IMAGE_ASPECT_COLOR_BIT;
         VkImageLayout m_currentLayout = VK_IMAGE_LAYOUT_UNDEFINED;

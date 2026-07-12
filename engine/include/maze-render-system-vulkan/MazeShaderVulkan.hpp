@@ -96,8 +96,21 @@ namespace Maze
         bool isTexture = false;
         S32 textureBinding = -1;
 
+        // True for a logical UniformTexture2DArray uniform assembled from
+        // several individually-named sibling bindings (e.g. "u_baseMaps0"..
+        // "u_baseMaps7") rather than one real GLSL array-of-samplers
+        // binding - see reflectVulkanShader()'s array-collapsing pass for
+        // why: the current descriptor-set-layout builder only supports
+        // descriptorCount=1 per binding, so multi-page font materials (the
+        // only current user of this) are ported as N separate bindings
+        // instead. textureBindingsArray[i] is the raw SPIR-V binding number
+        // for array element i, or -1 if that element wasn't declared by the
+        // shader.
+        bool isTextureArray = false;
+        Vector<S32> textureBindingsArray;
+
         //////////////////////////////////////////
-        inline bool isUsed() const { return isTexture ? (textureBinding >= 0) : (size > 0u); }
+        inline bool isUsed() const { return isTexture ? (textureBinding >= 0 || isTextureArray) : (size > 0u); }
     };
 
 
@@ -194,21 +207,31 @@ namespace Maze
             U32 _bytesCount);
 
         //////////////////////////////////////////
-        // Uploads the dirty material UBO (mapped memory for the current
-        // frame-in-flight index) and (re)writes the descriptor set if a bound
-        // texture changed since the last flush
-        void flushMaterialUniforms();
+        // Hands out a material descriptor set holding a fresh snapshot of the
+        // current UBO shadow + texture bindings, valid for exactly one draw
+        // call. A Shader object is shared across every Material that
+        // references the same shader file/name (Material only deep-copies
+        // its own ShaderUniformVariant *values*, not the GPU-side Shader) -
+        // so a single mutable per-shader descriptor set (the original design)
+        // breaks the moment two materials sharing this shader both draw
+        // within the same frame: Vulkan resolves a bound descriptor set's
+        // contents at GPU *execution* time, not at command-buffer *recording*
+        // time, so updating it for material B after material A's draw was
+        // already recorded would make material A's draw retroactively render
+        // with material B's data - and separately, updating a descriptor set
+        // already bound to a still-recording/in-flight command buffer is an
+        // outright validation violation without
+        // VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT (not used here).
+        // Pulls the next slot from a per-frame-in-flight pool (see
+        // m_materialInstancePool), growing it on demand and implicitly
+        // recycling slots once their frame-in-flight fence has been waited
+        // on again (see RenderSystemVulkan::getFrameGeneration()).
+        VkDescriptorSet acquireMaterialDescriptorSet();
 
         //////////////////////////////////////////
-        // Per-frame-in-flight material descriptor set (allocated once,
-        // updated in place - never freed individually, the pool is reset
-        // wholesale on shutdown)
-        VkDescriptorSet getMaterialDescriptorSet(U32 _frameIndex) const;
-
-        //////////////////////////////////////////
-        // Binds a texture + sampler at the given set-1 binding index for every
-        // frame-in-flight's descriptor set (deferred: actually written on the
-        // next flushMaterialUniforms())
+        // Updates the shadow texture-binding state (view/sampler at the
+        // given set-1 binding index) - the actual descriptor write happens
+        // lazily, per draw call, inside acquireMaterialDescriptorSet()
         void setTextureBinding(S32 _binding, VkImageView _view, VkImageLayout _layout, VkSampler _sampler);
 
     protected:
@@ -281,27 +304,38 @@ namespace Maze
         VkDescriptorSetLayout m_materialSetLayout = VK_NULL_HANDLE;
         VkPipelineLayout m_pipelineLayout = VK_NULL_HANDLE;
 
-        // One descriptor set per frame-in-flight, allocated from
-        // RenderSystemVulkan::getDescriptorPool()
-        Vector<VkDescriptorSet> m_materialDescriptorSets;
-
-        // Material UBO - one VkBuffer per frame-in-flight, persistently mapped
-        Vector<VkBuffer> m_materialUniformBuffers;
-        Vector<VmaAllocation> m_materialUniformAllocations;
-        Vector<void*> m_materialUniformMapped;
+        // Material UBO shadow - the "current" value every acquireMaterialDescriptorSet()
+        // call snapshots into whichever instance it hands out
         U32 m_materialUniformBufferSize = 0u;
         Vector<U8> m_materialUniformShadow;
-        bool m_materialUniformDirty[8] = {}; // per frame-in-flight dirty flag, indexed by frame index (see RenderSystemVulkanConfig::framesInFlight, capped)
 
-        // Texture bindings pending write into the descriptor set (binding -> view/layout/sampler)
-        // isCube records the SPIR-V OpTypeImage's Dim (reflected at shader-load
-        // time) so a default/fallback descriptor write (see
-        // createMaterialUniformBuffers()) can pick a view of the matching
-        // VkImageViewType - writing a 2D view into a samplerCube binding (or
-        // vice versa) is a VkImageViewType mismatch the validation layer
-        // flags on every draw that uses it.
-        struct PendingTextureBinding { VkImageView view = VK_NULL_HANDLE; VkImageLayout layout = VK_IMAGE_LAYOUT_UNDEFINED; VkSampler sampler = VK_NULL_HANDLE; bool dirty = false; bool isCube = false; };
-        Vector<PendingTextureBinding> m_textureBindings; // indexed by set-1 binding - 1 (binding 0 is the UBO)
+        // Texture bindings shadow (binding -> current view/layout/sampler).
+        // isCube records the SPIR-V OpTypeImage's Dim (reflected at
+        // shader-load time) so acquireMaterialDescriptorSet()'s fallback for
+        // an unset binding picks a view of the matching VkImageViewType -
+        // writing a 2D view into a samplerCube binding (or vice versa) is a
+        // VkImageViewType mismatch the validation layer flags on every draw.
+        struct PendingTextureBinding { VkImageView view = VK_NULL_HANDLE; VkImageLayout layout = VK_IMAGE_LAYOUT_UNDEFINED; VkSampler sampler = VK_NULL_HANDLE; bool isCube = false; };
+        Vector<PendingTextureBinding> m_textureBindings; // indexed by the raw SPIR-V binding number (binding 0 is always the UBO, so index 0 is unused)
+
+        // One UBO + descriptor set per (frame-in-flight, pool slot) - see
+        // acquireMaterialDescriptorSet()'s banner comment for why a single
+        // shared instance per shader is unsafe. The pool grows on demand and
+        // stabilizes once it reaches this shader's peak per-frame draw count;
+        // slots are recycled (safely, since acquireMaterialDescriptorSet()'s
+        // generation check only resets the "used" cursor after
+        // ensureFrameOpen() has waited that frame-in-flight slot's fence)
+        // rather than ever freed individually.
+        struct MaterialUniformInstance
+        {
+            VkBuffer buffer = VK_NULL_HANDLE;
+            VmaAllocation allocation = VK_NULL_HANDLE;
+            void* mapped = nullptr;
+            VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
+        };
+        Vector<Vector<MaterialUniformInstance>> m_materialInstancePool; // [frameIndex][poolSlot]
+        Vector<U32> m_materialInstancePoolUsed;                         // [frameIndex] - pool slots handed out so far this frame
+        Vector<U64> m_materialInstancePoolGeneration;                   // [frameIndex] - RenderSystemVulkan::getFrameGeneration() last seen for this frame index
 
         S32 m_vertexInputLocations[(S32)VertexAttributeSemantic::MAX];
 

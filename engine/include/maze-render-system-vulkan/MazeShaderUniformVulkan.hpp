@@ -64,7 +64,18 @@ namespace Maze
         using ShaderUniform::setName;
 
         //////////////////////////////////////////
-        inline void setUniformData(ShaderVulkanUniformData const& _data) { m_uniformData = _data; }
+        // isGlobal fields live in the shared GlobalUniforms UBO (one
+        // physical buffer written by every shader's own ShaderUniform
+        // instance) - setAlwaysForceUpdate(true) ensures this instance's
+        // own "value looks unchanged" cache can never mask a write that's
+        // needed because a DIFFERENT shader overwrote the shared buffer in
+        // between. See ShaderUniform::setAlwaysForceUpdate()'s banner
+        // comment for the full rationale.
+        inline void setUniformData(ShaderVulkanUniformData const& _data)
+        {
+            m_uniformData = _data;
+            setAlwaysForceUpdate(_data.isGlobal);
+        }
 
         //////////////////////////////////////////
         inline ShaderVulkanUniformData const& getUniformData() const { return m_uniformData; }

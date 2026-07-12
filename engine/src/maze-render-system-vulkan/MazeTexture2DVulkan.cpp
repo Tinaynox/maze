@@ -91,6 +91,8 @@ namespace Maze
             m_image = VK_NULL_HANDLE;
             m_imageAllocation = VK_NULL_HANDLE;
             m_imageView = VK_NULL_HANDLE;
+            m_sampledImageView = VK_NULL_HANDLE;
+            m_attachmentImageView = VK_NULL_HANDLE;
             m_mipLevels = 1u;
             m_hasMipmapsGenerationSupport = false;
             m_currentLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -111,6 +113,18 @@ namespace Maze
         {
             vkDestroyImageView(renderSystem->getDevice(), m_imageView, nullptr);
             m_imageView = VK_NULL_HANDLE;
+        }
+
+        if (m_sampledImageView != VK_NULL_HANDLE)
+        {
+            vkDestroyImageView(renderSystem->getDevice(), m_sampledImageView, nullptr);
+            m_sampledImageView = VK_NULL_HANDLE;
+        }
+
+        if (m_attachmentImageView != VK_NULL_HANDLE)
+        {
+            vkDestroyImageView(renderSystem->getDevice(), m_attachmentImageView, nullptr);
+            m_attachmentImageView = VK_NULL_HANDLE;
         }
 
         if (m_image != VK_NULL_HANDLE)
@@ -143,7 +157,34 @@ namespace Maze
         viewInfo.subresourceRange.layerCount = 1;
 
         MAZE_VK_CALL(vkCreateImageView(renderSystem->getDevice(), &viewInfo, nullptr, &m_imageView));
-        return m_imageView != VK_NULL_HANDLE;
+        if (m_imageView == VK_NULL_HANDLE)
+            return false;
+
+        // A combined depth+stencil aspect view is valid for framebuffer
+        // attachment binding but not for a COMBINED_IMAGE_SAMPLER descriptor -
+        // sampling requires a single aspect (see getSampledImageView()).
+        // Create a DEPTH_BIT-only view alongside the main one for exactly
+        // this case (DEPTH_U24 backed by VK_FORMAT_D24_UNORM_S8_UINT,
+        // DEPTH_STENCIL_F32_U8 backed by D32_SFLOAT_S8_UINT).
+        if ((m_aspect & VK_IMAGE_ASPECT_DEPTH_BIT) && (m_aspect & VK_IMAGE_ASPECT_STENCIL_BIT))
+        {
+            VkImageViewCreateInfo sampledViewInfo = viewInfo;
+            sampledViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+            MAZE_VK_CALL(vkCreateImageView(renderSystem->getDevice(), &sampledViewInfo, nullptr, &m_sampledImageView));
+        }
+
+        // See getAttachmentImageView()'s banner comment - m_imageView's
+        // levelCount = m_mipLevels is wrong for attachment binding once this
+        // texture has more than one mip, since every level covered by an
+        // attachment's image view must share the attachment's layout
+        if (m_mipLevels > 1u)
+        {
+            VkImageViewCreateInfo attachmentViewInfo = viewInfo;
+            attachmentViewInfo.subresourceRange.levelCount = 1u;
+            MAZE_VK_CALL(vkCreateImageView(renderSystem->getDevice(), &attachmentViewInfo, nullptr, &m_attachmentImageView));
+        }
+
+        return true;
     }
 
     //////////////////////////////////////////
@@ -709,7 +750,42 @@ namespace Maze
         // which holds for every uncompressed 8/16/32-bit format this backend maps textures
         // to; compressed formats never reach here since m_hasMipmapsGenerationSupport is
         // false for them.
-        VkCommandBuffer commandBuffer = renderSystem->beginSingleTimeCommands();
+        //
+        // If a frame is currently open (this is being called mid-frame, e.g.
+        // from RenderBuffer::endDraw() right after rendering into a
+        // render-to-texture's mip 0 - see MazeRenderBuffer.cpp), record into
+        // THAT frame's own command buffer instead of a separate synchronous
+        // beginSingleTimeCommands() one. The latter submits and blocks on
+        // vkQueueWaitIdle() immediately, executing on the GPU before the
+        // current frame's main command buffer (which contains the actual
+        // render-into-mip-0 draws) has even been submitted, since that
+        // submission is deferred to endFrame() - so mipmap generation ended
+        // up reading stale (previous-frame or garbage) mip-0 content, and
+        // m_currentLayout's CPU-side bookkeeping went out of sync with the
+        // GPU's real per-submission execution order. That's what produced
+        // the "expects COLOR_ATTACHMENT_OPTIMAL/SHADER_READ_ONLY_OPTIMAL...
+        // instead..." validation errors on every render-to-texture-then-
+        // sample-with-mips resource (e.g. a SkyboxReflection-style
+        // material's render target). Recording into the same frame's command
+        // buffer guarantees GPU execution order matches CPU recording order:
+        // render into mip 0, generate mips 1..N from it, then any later draw
+        // in the same frame that samples the texture - all in one submission.
+        bool useFrameCommandBuffer = renderSystem->isFrameOpen();
+        VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
+        if (useFrameCommandBuffer)
+        {
+            // Blits/barriers are illegal while a dynamic-rendering scope is
+            // open on this command buffer (e.g. immediately after rendering
+            // into this very texture as a color attachment) - mirrors
+            // RenderBufferVulkan::blit()'s identical rationale/pattern
+            renderSystem->interruptActiveRenderTarget();
+            commandBuffer = renderSystem->getCurrentCommandBuffer();
+        }
+        if (commandBuffer == VK_NULL_HANDLE)
+        {
+            useFrameCommandBuffer = false;
+            commandBuffer = renderSystem->beginSingleTimeCommands();
+        }
 
         TransitionImageLayoutVulkan(
             commandBuffer, m_image, m_aspect,
@@ -768,7 +844,8 @@ namespace Maze
             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
             1u, 1u, m_mipLevels - 1u, 0u);
 
-        renderSystem->endSingleTimeCommands(commandBuffer);
+        if (!useFrameCommandBuffer)
+            renderSystem->endSingleTimeCommands(commandBuffer);
 
         m_currentLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     }

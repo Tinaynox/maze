@@ -145,6 +145,12 @@ namespace Maze
         Vector<VkImage> m_swapChainImages;
         Vector<VkImageView> m_swapChainImageViews;
         Vector<VkSemaphore> m_imageAvailableSemaphores; // one per swapchain image
+        // Signaled when the frame that rendered into m_swapChainImages[i]
+        // completes - indexed by swapchain image (not frame-in-flight slot),
+        // since its lifetime must track how long the presentation engine
+        // actually keeps using that specific image, not CPU frame pacing -
+        // see RenderSystemVulkan::endFrame()'s banner comment
+        Vector<VkSemaphore> m_renderFinishedSemaphores; // one per swapchain image
         U32 m_currentImageIndex = 0u;
         bool m_imageAcquired = false;
 
@@ -158,6 +164,13 @@ namespace Maze
         // declared oldLayout (COLOR_ATTACHMENT_OPTIMAL) no longer matches
         // the image's actual layout after the first transition already ran.
         bool m_presentTransitionQueued = false;
+
+        // Guards against re-declaring the acquired image's old layout as
+        // VK_IMAGE_LAYOUT_UNDEFINED more than once per acquired image - see
+        // processRenderTargetSet()'s banner comment. Same "called multiple
+        // times per frame" hazard as m_presentTransitionQueued above, at the
+        // opposite end of the frame.
+        bool m_colorImageTransitionedFromUndefined = false;
 
         VkImage m_depthImage = VK_NULL_HANDLE;
         VmaAllocation m_depthImageAllocation = VK_NULL_HANDLE;

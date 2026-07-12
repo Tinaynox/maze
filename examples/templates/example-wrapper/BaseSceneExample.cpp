@@ -318,7 +318,6 @@ namespace Maze
         m_distortionCamera3D->setSortOrder(m_camera3D->getSortOrder() + 100);
         m_distortionCamera3D->setRenderTarget(m_distortionRenderBuffer);
 
-
         m_bloomController = LevelBloomController::Create(m_renderBuffer);
 
         updateRenderTarget();

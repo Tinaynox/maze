@@ -336,6 +336,41 @@ namespace Maze
 
         vkCmdEndRendering(getCommandBuffer());
         m_renderingActive = false;
+
+        // Dynamic rendering does NOT auto-insert a memory dependency between
+        // separate vkCmdBeginRendering/vkCmdEndRendering scopes the way a
+        // traditional VkRenderPass's subpass dependencies would - and
+        // bindRenderTarget() always uses loadOp=LOAD with the SAME
+        // imageLayout (COLOR_ATTACHMENT_OPTIMAL/DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+        // on re-entry, so no actual layout transition (and thus no barrier)
+        // happens between consecutive scopes touching the same attachment
+        // within one command buffer - e.g. a window rendered to multiple
+        // times per frame (3D pass, then 2D pass, each its own begin/end
+        // cycle). Without an explicit barrier here, the next scope's Load
+        // isn't guaranteed to observe this scope's Store, which is exactly
+        // what produced a fully UNDEFINED-looking swapchain image at
+        // present time despite real draws with C=Store earlier in the same
+        // frame (confirmed via RenderDoc). A general (non-image-specific)
+        // memory barrier is the simplest correct fix: it flushes/makes
+        // visible any color+depth attachment writes from the scope that
+        // just ended before anything after this point (a new rendering
+        // scope, a blit, a barrier, etc.) can rely on seeing them.
+        VkMemoryBarrier memoryBarrier = {};
+        memoryBarrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+        memoryBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+        memoryBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT |
+            VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT |
+            VK_ACCESS_TRANSFER_READ_BIT | VK_ACCESS_TRANSFER_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT;
+
+        vkCmdPipelineBarrier(
+            getCommandBuffer(),
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT |
+                VK_PIPELINE_STAGE_TRANSFER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+            0u,
+            1u, &memoryBarrier,
+            0u, nullptr,
+            0u, nullptr);
     }
 
     //////////////////////////////////////////
@@ -557,20 +592,23 @@ namespace Maze
         {
             VkViewport viewport = {};
             viewport.x = (F32)m_viewportRect.position.x;
-            // Vulkan's viewport Y grows downward like D3D - flip when the
-            // engine's rect convention is bottom-left-origin (matches how
-            // DX11/GL both handle m_flipY for offscreen render targets)
+            // Maze viewport rects are bottom-up (OpenGL convention). The
+            // vertex shader (MazeFinalizePositionCS) already handles
+            // Vulkan's Y-down NDC by negating clip.y, so the viewport here
+            // must NOT also flip the rasterization direction via a negative
+            // height (that would be an extra, unwanted second flip - exactly
+            // mirrors StateMachineDX11::flushPipeline, which never negates
+            // Height either). Only the coordinate-system *origin* needs
+            // correcting here: for a normal (non-offscreen) target,
+            // position.y is measured from the bottom, so convert to
+            // Vulkan's top-down origin; offscreen (flipY) targets keep the
+            // GL-matching bottom-up origin as-is.
             if (m_flipY)
-            {
                 viewport.y = (F32)m_viewportRect.position.y;
-                viewport.height = (F32)m_viewportRect.size.y;
-            }
             else
-            {
-                viewport.y = (F32)(m_viewportRect.position.y + m_viewportRect.size.y);
-                viewport.height = -(F32)m_viewportRect.size.y;
-            }
+                viewport.y = (F32)((S32)m_renderTargetSize.y - m_viewportRect.position.y - m_viewportRect.size.y);
             viewport.width = (F32)m_viewportRect.size.x;
+            viewport.height = (F32)m_viewportRect.size.y;
             viewport.minDepth = 0.0f;
             viewport.maxDepth = 1.0f;
             vkCmdSetViewport(cmd, 0u, 1u, &viewport);
@@ -582,7 +620,13 @@ namespace Maze
             VkRect2D scissor = {};
             if (m_scissorTestEnabled)
             {
-                scissor.offset = { m_scissorRect.position.x, m_scissorRect.position.y };
+                // Same bottom-up-to-top-down origin correction as the
+                // viewport above (mirrors StateMachineDX11::flushPipeline's
+                // identical scissor-rect handling)
+                S32 top = m_flipY
+                    ? m_scissorRect.position.y
+                    : (S32)m_renderTargetSize.y - m_scissorRect.position.y - m_scissorRect.size.y;
+                scissor.offset = { m_scissorRect.position.x, top };
                 scissor.extent = { (U32)m_scissorRect.size.x, (U32)m_scissorRect.size.y };
             }
             else
@@ -598,9 +642,25 @@ namespace Maze
         {
             VkCullModeFlags cullMode = m_cullEnabled ? GetCullModeVulkan(m_cullMode) : VK_CULL_MODE_NONE;
             vkCmdSetCullMode(cmd, cullMode);
-            // Maze uses CW front-facing winding (glFrontFace(GL_CW)); flipped
-            // to CCW when the render target is Y-flipped, matching the DX11
-            // rasterizer-state convention (see project memory item 3)
+            // Winding (CW/CCW) is defined identically across GL/D3D/Vulkan as
+            // "how a human viewing the rendered image would perceive the
+            // vertex order" - each API's internal area-sign formula is
+            // defined so that this visual meaning matches regardless of that
+            // API's own framebuffer coordinate convention (Vulkan's formula
+            // has the opposite sign from the naive shoelace formula
+            // specifically to compensate for its top-left-origin, Y-down
+            // framebuffer space). Maze authors meshes assuming GL's CW
+            // convention. For a non-flipped (onscreen) target,
+            // MazeFinalizePositionCS() (see its banner comment in
+            // MazeCommonShaderHeader.mzglslvk) makes the displayed image
+            // visually match GL exactly, so winding also visually matches
+            // GL - front face stays CW, unchanged. For a flipped (offscreen)
+            // target, the base correction and the u_renderTargetFlipY
+            // correction cancel, leaving Vulkan's native (uncorrected)
+            // vertical mirror in place relative to GL's equivalent render -
+            // a single-axis mirror reverses visual winding, so front face
+            // must flip to CCW there. This must stay paired with the sign
+            // logic in MazeFinalizePositionCS().
             vkCmdSetFrontFace(cmd, m_flipY ? VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE);
 
             vkCmdSetDepthTestEnable(cmd, m_depthTestEnabled ? VK_TRUE : VK_FALSE);
@@ -623,14 +683,20 @@ namespace Maze
             m_dynamicStateDirty = false;
         }
 
-        // Descriptor sets: set 0 (global) is shared/constant for the frame,
-        // set 1 (material) belongs to the current shader
-        U32 frameIndex = m_renderSystem->getCurrentFrameIndex();
-        m_currentShader->flushMaterialUniforms();
+        // Descriptor sets: both set 0 (global: view/projection/lighting/...)
+        // and set 1 (material) are fresh per-draw-call snapshots - a single
+        // shared-per-frame global set is wrong the moment more than one
+        // camera/render-target draws within the same frame, since
+        // descriptor CONTENTS only resolve at GPU execution time (after the
+        // whole frame finishes recording), so every draw would observe
+        // whichever camera wrote its global uniforms *last* during
+        // recording, not the camera it was actually recorded for. See
+        // RenderSystemVulkan::acquireGlobalDescriptorSet() and
+        // ShaderVulkan::acquireMaterialDescriptorSet()'s banner comments.
         VkDescriptorSet sets[2] =
         {
-            m_renderSystem->getGlobalDescriptorSet(frameIndex),
-            m_currentShader->getMaterialDescriptorSet(frameIndex)
+            m_renderSystem->acquireGlobalDescriptorSet(),
+            m_currentShader->acquireMaterialDescriptorSet()
         };
         vkCmdBindDescriptorSets(
             cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_currentShader->getPipelineLayout(),

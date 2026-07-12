@@ -48,6 +48,7 @@
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeGlobalShaderUniform.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 
@@ -252,6 +253,11 @@ namespace Maze
 
                         U8 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
 
+                        // These are GlobalUniforms UBO fields on the Vulkan
+                        // backend - see ShaderUniform::setAlwaysForceUpdate()'s
+                        // banner comment for why they're safe from the
+                        // shared-buffer cache hazard without anything special
+                        // needed here.
                         if (shader->getMainLightColorUniform())
                             shader->getMainLightColorUniform()->set(_params.mainLightColor);
 
@@ -374,7 +380,6 @@ namespace Maze
             cameras.begin(),
             cameras.end(),
             [](Camera3D* _cameraA, Camera3D* _cameraB) { return _cameraA->getSortOrder() < _cameraB->getSortOrder(); });
-
 
         for (Camera3D* camera : cameras)
         {

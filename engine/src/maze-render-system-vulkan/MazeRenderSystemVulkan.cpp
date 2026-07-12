@@ -117,8 +117,6 @@ namespace Maze
         {
             if (frame.inFlightFence != VK_NULL_HANDLE)
                 vkDestroyFence(m_device, frame.inFlightFence, nullptr);
-            if (frame.renderFinishedSemaphore != VK_NULL_HANDLE)
-                vkDestroySemaphore(m_device, frame.renderFinishedSemaphore, nullptr);
             if (frame.commandPool != VK_NULL_HANDLE)
                 vkDestroyCommandPool(m_device, frame.commandPool, nullptr);
         }
@@ -136,9 +134,11 @@ namespace Maze
         if (m_globalSetLayout != VK_NULL_HANDLE)
             vkDestroyDescriptorSetLayout(m_device, m_globalSetLayout, nullptr);
 
-        for (Size i = 0; i < m_globalUniformBuffers.size(); ++i)
-            if (m_globalUniformBuffers[i] != VK_NULL_HANDLE)
-                vmaDestroyBuffer(m_allocator, m_globalUniformBuffers[i], m_globalUniformAllocations[i]);
+        for (Vector<GlobalUniformInstance>& framePool : m_globalInstancePool)
+            for (GlobalUniformInstance& inst : framePool)
+                if (inst.buffer != VK_NULL_HANDLE)
+                    vmaDestroyBuffer(m_allocator, inst.buffer, inst.allocation);
+        m_globalInstancePool.clear();
 
         for (Size i = 0; i < m_modelMatricesStreamBuffers.size(); ++i)
             if (m_modelMatricesStreamBuffers[i] != VK_NULL_HANDLE)
@@ -200,21 +200,26 @@ namespace Maze
         pipelineCacheInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
         MAZE_VK_CALL(vkCreatePipelineCache(m_device, &pipelineCacheInfo, nullptr, &m_pipelineCache));
 
-        // A generous shared descriptor pool - every shader/material allocates
-        // its set-1 descriptor set from here, plus the one shared set-0
-        // global set
+        // A generous shared descriptor pool. Every ShaderVulkan grows its own
+        // pool of set-1 material descriptor set *instances* from here - one
+        // per (frame-in-flight, concurrent draw within that frame) rather
+        // than one long-lived set per shader (see
+        // ShaderVulkan::acquireMaterialDescriptorSet()'s banner comment for
+        // why a single shared-per-shader set isn't safe) - so this needs to
+        // cover many more sets than a naive per-shader count would suggest,
+        // plus the one shared set-0 global set
         VkDescriptorPoolSize poolSizes[3] = {};
         poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        poolSizes[0].descriptorCount = 4096u;
+        poolSizes[0].descriptorCount = 32768u;
         poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        poolSizes[1].descriptorCount = 4096u;
+        poolSizes[1].descriptorCount = 65536u;
         poolSizes[2].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
         poolSizes[2].descriptorCount = 256u;
 
         VkDescriptorPoolCreateInfo poolInfo = {};
         poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
         poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-        poolInfo.maxSets = 4096u;
+        poolInfo.maxSets = 32768u;
         poolInfo.poolSizeCount = 3u;
         poolInfo.pPoolSizes = poolSizes;
         MAZE_VK_CALL(vkCreateDescriptorPool(m_device, &poolInfo, nullptr, &m_descriptorPool));
@@ -246,60 +251,16 @@ namespace Maze
         if (!createFrameResources())
             return false;
 
-        // Global uniform buffers (one per frame-in-flight) + descriptor sets.
-        // Instance-stream SSBO bindings (1-3) are written in by
-        // InstanceStreamsVulkan once it's constructed (RenderQueueVulkan owns
-        // the instance streams, created lazily on first use) - until then the
-        // global descriptor set simply has those bindings unwritten, which is
-        // fine since nothing references them before the first draw.
+        // Global uniform buffers/descriptor sets are created lazily, per
+        // draw call, by acquireGlobalDescriptorSet() (see its banner
+        // comment) - just size the shadow buffer and pool bookkeeping here.
         {
-            m_globalUniformBuffers.resize(m_config.framesInFlight, VK_NULL_HANDLE);
-            m_globalUniformAllocations.resize(m_config.framesInFlight, VK_NULL_HANDLE);
-            m_globalUniformMapped.resize(m_config.framesInFlight, nullptr);
-            m_globalDescriptorSets.resize(m_config.framesInFlight, VK_NULL_HANDLE);
+            m_globalInstancePool.resize(m_config.framesInFlight);
+            m_globalInstancePoolUsed.resize(m_config.framesInFlight, 0u);
+            m_globalInstancePoolGeneration.resize(m_config.framesInFlight, ~0ull);
 
-            U32 initialSize = 256u;
-            for (U32 i = 0; i < m_config.framesInFlight; ++i)
-            {
-                VkBufferCreateInfo bufferInfo = {};
-                bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-                bufferInfo.size = initialSize;
-                bufferInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-                bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-                VmaAllocationCreateInfo allocInfo = {};
-                allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
-                allocInfo.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT | VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
-
-                VmaAllocationInfo allocResultInfo = {};
-                MAZE_VK_CALL(vmaCreateBuffer(
-                    m_allocator, &bufferInfo, &allocInfo,
-                    &m_globalUniformBuffers[i], &m_globalUniformAllocations[i], &allocResultInfo));
-                m_globalUniformMapped[i] = allocResultInfo.pMappedData;
-
-                VkDescriptorSetAllocateInfo dsAllocInfo = {};
-                dsAllocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-                dsAllocInfo.descriptorPool = m_descriptorPool;
-                dsAllocInfo.descriptorSetCount = 1u;
-                dsAllocInfo.pSetLayouts = &m_globalSetLayout;
-                MAZE_VK_CALL(vkAllocateDescriptorSets(m_device, &dsAllocInfo, &m_globalDescriptorSets[i]));
-
-                VkDescriptorBufferInfo bufInfo = {};
-                bufInfo.buffer = m_globalUniformBuffers[i];
-                bufInfo.offset = 0u;
-                bufInfo.range = initialSize;
-
-                VkWriteDescriptorSet write = {};
-                write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                write.dstSet = m_globalDescriptorSets[i];
-                write.dstBinding = 0u;
-                write.descriptorCount = 1u;
-                write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                write.pBufferInfo = &bufInfo;
-                vkUpdateDescriptorSets(m_device, 1u, &write, 0u, nullptr);
-            }
-            m_globalUniformBufferSize = initialSize;
-            m_globalUniformShadow.resize(initialSize, 0u);
+            m_globalUniformBufferSize = 256u;
+            m_globalUniformShadow.resize(m_globalUniformBufferSize, 0u);
         }
 
         if (!createInstanceStreamBuffers())
@@ -559,10 +520,6 @@ namespace Maze
             fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
             fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
             MAZE_VK_CALL(vkCreateFence(m_device, &fenceInfo, nullptr, &frame.inFlightFence));
-
-            VkSemaphoreCreateInfo semaphoreInfo = {};
-            semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-            MAZE_VK_CALL(vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &frame.renderFinishedSemaphore));
         }
 
         VkCommandPoolCreateInfo transientPoolInfo = {};
@@ -635,23 +592,22 @@ namespace Maze
     {
         U32 framesInFlight = m_config.framesInFlight;
 
-        U32 modelMatricesSize = c_instanceStreamCapacity * (U32)(sizeof(F32) * 16u); // mat4 per instance
-        U32 colorsSize = c_instanceStreamCapacity * (U32)(sizeof(F32) * 4u); // vec4 per instance
-        U32 uvSize = c_instanceStreamCapacity * 2u * (U32)(sizeof(F32) * 4u); // 2 channels * vec4 per instance
+        m_modelMatricesStreamSize = c_instanceStreamCapacity * (U32)(sizeof(F32) * 16u); // mat4 per instance
+        m_colorsStreamSize = c_instanceStreamCapacity * (U32)(sizeof(F32) * 4u); // vec4 per instance
+        m_uvStreamSize = c_instanceStreamCapacity * 2u * (U32)(sizeof(F32) * 4u); // 2 channels * vec4 per instance
 
-        if (!CreateInstanceStreamBufferSet(this, modelMatricesSize, framesInFlight, m_modelMatricesStreamBuffers, m_modelMatricesStreamAllocations, m_modelMatricesStreamMapped))
+        if (!CreateInstanceStreamBufferSet(this, m_modelMatricesStreamSize, framesInFlight, m_modelMatricesStreamBuffers, m_modelMatricesStreamAllocations, m_modelMatricesStreamMapped))
             return false;
-        if (!CreateInstanceStreamBufferSet(this, colorsSize, framesInFlight, m_colorsStreamBuffers, m_colorsStreamAllocations, m_colorsStreamMapped))
+        if (!CreateInstanceStreamBufferSet(this, m_colorsStreamSize, framesInFlight, m_colorsStreamBuffers, m_colorsStreamAllocations, m_colorsStreamMapped))
             return false;
-        if (!CreateInstanceStreamBufferSet(this, uvSize, framesInFlight, m_uvStreamBuffers, m_uvStreamAllocations, m_uvStreamMapped))
+        if (!CreateInstanceStreamBufferSet(this, m_uvStreamSize, framesInFlight, m_uvStreamBuffers, m_uvStreamAllocations, m_uvStreamMapped))
             return false;
 
-        for (U32 i = 0; i < framesInFlight; ++i)
-        {
-            WriteGlobalStorageBufferBinding(m_device, m_globalDescriptorSets[i], 1u, m_modelMatricesStreamBuffers[i], modelMatricesSize);
-            WriteGlobalStorageBufferBinding(m_device, m_globalDescriptorSets[i], 2u, m_colorsStreamBuffers[i], colorsSize);
-            WriteGlobalStorageBufferBinding(m_device, m_globalDescriptorSets[i], 3u, m_uvStreamBuffers[i], uvSize);
-        }
+        // Bindings 1-3 are written per pool-slot by acquireGlobalDescriptorSet()
+        // now that the global set is per-draw-pooled rather than one shared
+        // set per frame-in-flight - these buffers are stable/never recreated,
+        // so writing the bindings once per pool slot (at its creation) is
+        // sufficient, no need to do it here too.
 
         return true;
     }
@@ -735,7 +691,62 @@ namespace Maze
     bool RenderSystemVulkan::setCurrentRenderTarget(RenderTarget* _renderTarget)
     {
         if (m_currentRenderTarget == _renderTarget)
+        {
+            // Same C++ target object as last time - but that does NOT mean
+            // "no work needed". RenderWindowVulkan needs a fresh
+            // vkAcquireNextImageKHR once per real presented frame (tracked
+            // via its own m_imageAcquired flag, reset in swapBuffers()),
+            // even when the window is the only render target and therefore
+            // never gets displaced as m_currentRenderTarget between logical
+            // frames. Skipping this call entirely here (the original
+            // behavior) meant the window's image only ever got acquired
+            // ONCE, on the very first frame; every subsequent frame's
+            // swapBuffers() then silently no-op'd (m_imageAcquired stayed
+            // false forever after), which also meant vkQueuePresentKHR -
+            // the call that normally paces the app to VSYNC - stopped being
+            // invoked, so the engine's main loop spun unthrottled (500Hz+),
+            // continuously re-queuing draws into a Vulkan frame that never
+            // got closed, until instance-stream capacity was exhausted.
+            // Each RenderTarget subclass is responsible for detecting
+            // "already fresh this frame, no-op" vs "need to actually do
+            // work" via its own state (m_imageAcquired for windows;
+            // RenderBufferVulkan::processRenderTargetWillSet() is already a
+            // harmless no-op, safe to call repeatedly). ensureFrameOpen()
+            // must run first, exactly like the "different target" path
+            // below does - otherwise a window that successfully
+            // re-acquires here (m_imageAcquired becomes true) can end up
+            // with no open frame to submit into, so endFrame() later
+            // no-ops (its own "if (!m_frameOpen) return;" guard) and the
+            // render-finished semaphore never gets signaled, while
+            // swapBuffers() still unconditionally calls vkQueuePresentKHR
+            // to wait on it - producing exactly the "waiting on semaphore
+            // that has no way to be signaled" validation errors this was
+            // root-caused from.
+            if (_renderTarget)
+            {
+                ensureFrameOpen();
+
+                if (!_renderTarget->processRenderTargetWillSet())
+                    return false;
+
+                // Must also run every time, not just on a "different
+                // target" switch: the window's C++ object identity stays
+                // constant across frames, but processRenderTargetWillSet()
+                // just acquired a swapchain image whose INDEX can differ
+                // frame to frame (round-robin over 2-3 images). Each actual
+                // image needs its own UNDEFINED/PRESENT_SRC_KHR ->
+                // COLOR_ATTACHMENT_OPTIMAL transition and
+                // stateMachine->bindRenderTarget() call (both live in
+                // processRenderTargetSet()) - skipping this here left
+                // newly-(re)acquired images never transitioned, producing
+                // "expects COLOR_ATTACHMENT_OPTIMAL...instead
+                // PRESENT_SRC_KHR/UNDEFINED" validation errors and the
+                // alternating correct-frame/black-frame flicker this was
+                // root-caused from.
+                _renderTarget->processRenderTargetSet();
+            }
             return true;
+        }
 
         if (m_currentRenderTarget)
         {
@@ -970,6 +981,8 @@ namespace Maze
         if (m_frameOpen)
             return;
 
+        ++m_frameGeneration;
+
         VulkanFrameResources& frame = m_frameResources[m_currentFrameIndex];
 
         MAZE_VK_CALL(vkWaitForFences(m_device, 1u, &frame.inFlightFence, VK_TRUE, UINT64_MAX));
@@ -984,8 +997,6 @@ namespace Maze
 
         m_frameOpen = true;
         m_instanceStreamCursor = 0;
-
-        flushGlobalUniforms();
     }
 
     //////////////////////////////////////////
@@ -1011,10 +1022,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    VkSemaphore RenderSystemVulkan::endFrame()
+    void RenderSystemVulkan::endFrame(VkSemaphore _signalSemaphore)
     {
         if (!m_frameOpen)
-            return VK_NULL_HANDLE;
+            return;
 
         VulkanFrameResources& frame = m_frameResources[m_currentFrameIndex];
 
@@ -1042,17 +1053,15 @@ namespace Maze
         submitInfo.waitSemaphoreCount = (U32)m_frameWaitSemaphores.size();
         submitInfo.pWaitSemaphores = m_frameWaitSemaphores.empty() ? nullptr : m_frameWaitSemaphores.data();
         submitInfo.pWaitDstStageMask = m_frameWaitStages.empty() ? nullptr : m_frameWaitStages.data();
-        submitInfo.signalSemaphoreCount = 1u;
-        submitInfo.pSignalSemaphores = &frame.renderFinishedSemaphore;
+        submitInfo.signalSemaphoreCount = _signalSemaphore != VK_NULL_HANDLE ? 1u : 0u;
+        submitInfo.pSignalSemaphores = _signalSemaphore != VK_NULL_HANDLE ? &_signalSemaphore : nullptr;
         MAZE_VK_CALL(vkQueueSubmit(m_graphicsQueue, 1u, &submitInfo, frame.inFlightFence));
 
         m_frameWaitSemaphores.clear();
         m_frameWaitStages.clear();
         m_frameOpen = false;
 
-        VkSemaphore signaledSemaphore = frame.renderFinishedSemaphore;
         m_currentFrameIndex = (m_currentFrameIndex + 1u) % m_config.framesInFlight;
-        return signaledSemaphore;
     }
 
     //////////////////////////////////////////
@@ -1103,54 +1112,41 @@ namespace Maze
 
         U32 newSize = (_size + 255u) & ~255u;
 
-        // Recreate the buffers at the new size, preserving already-written
-        // shadow bytes (this is expected to only ever grow once, the first
-        // time each built-in shader's GlobalUniforms block is reflected,
-        // since every shader #includes the same shared header)
-        m_globalUniformShadow.resize(newSize, 0u);
+        // Preserve already-written shadow bytes (this is expected to only
+        // ever grow once, the first time each built-in shader's
+        // GlobalUniforms block is reflected, since every shader #includes
+        // the same shared header - but a shader can be (re)loaded/
+        // recompiled at any time, e.g. SystemFontManager::createSystemFont()'s
+        // addLocalFeature()+recompile(), so this isn't guaranteed to happen
+        // only before the first frame opens).
+        //
+        // All existing pool instances (across every frame-in-flight slot)
+        // were sized for the OLD m_globalUniformBufferSize, so they must be
+        // torn down and lazily recreated at the new size by
+        // acquireGlobalDescriptorSet() - vkDeviceWaitIdle first guarantees
+        // none of them are still in-flight on the GPU when they're
+        // destroyed (mirrors ShaderVulkan::unloadVulkanShader()'s identical
+        // rationale).
+        MAZE_VK_CALL(vkDeviceWaitIdle(m_device));
 
-        for (U32 i = 0; i < m_globalUniformBuffers.size(); ++i)
+        for (Vector<GlobalUniformInstance>& framePool : m_globalInstancePool)
         {
-            // VMA_ALLOCATION_CREATE_MAPPED_BIT buffers unmap automatically
-            // inside vmaDestroyBuffer - no explicit vmaUnmapMemory needed or
-            // valid here, see the identical fix/comment in ShaderVulkan::unloadVulkanShader()
-            vmaDestroyBuffer(m_allocator, m_globalUniformBuffers[i], m_globalUniformAllocations[i]);
-
-            VkBufferCreateInfo bufferInfo = {};
-            bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-            bufferInfo.size = newSize;
-            bufferInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-            bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-            VmaAllocationCreateInfo allocInfo = {};
-            allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
-            allocInfo.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT | VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
-
-            VmaAllocationInfo allocResultInfo = {};
-            MAZE_VK_CALL(vmaCreateBuffer(
-                m_allocator, &bufferInfo, &allocInfo,
-                &m_globalUniformBuffers[i], &m_globalUniformAllocations[i], &allocResultInfo));
-            m_globalUniformMapped[i] = allocResultInfo.pMappedData;
-
-            VkDescriptorBufferInfo bufInfo = {};
-            bufInfo.buffer = m_globalUniformBuffers[i];
-            bufInfo.offset = 0u;
-            bufInfo.range = newSize;
-
-            VkWriteDescriptorSet write = {};
-            write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-            write.dstSet = m_globalDescriptorSets[i];
-            write.dstBinding = 0u;
-            write.descriptorCount = 1u;
-            write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            write.pBufferInfo = &bufInfo;
-            vkUpdateDescriptorSets(m_device, 1u, &write, 0u, nullptr);
+            for (GlobalUniformInstance& inst : framePool)
+            {
+                if (inst.descriptorSet != VK_NULL_HANDLE)
+                    vkFreeDescriptorSets(m_device, m_descriptorPool, 1u, &inst.descriptorSet);
+                if (inst.buffer != VK_NULL_HANDLE)
+                    vmaDestroyBuffer(m_allocator, inst.buffer, inst.allocation);
+            }
+            framePool.clear();
         }
+        for (U32& used : m_globalInstancePoolUsed)
+            used = 0u;
+        for (U64& generation : m_globalInstancePoolGeneration)
+            generation = ~0ull;
 
+        m_globalUniformShadow.resize(newSize, 0u);
         m_globalUniformBufferSize = newSize;
-
-        for (Size i = 0; i < (sizeof(m_globalUniformDirty)/sizeof(m_globalUniformDirty[0])); ++i)
-            m_globalUniformDirty[i] = true;
     }
 
     //////////////////////////////////////////
@@ -1166,27 +1162,91 @@ namespace Maze
         if (_bytesCount == 0u)
             return;
 
-        if (memcmp(&m_globalUniformShadow[_offset], _bytes, _bytesCount) == 0)
-            return;
-
         memcpy(&m_globalUniformShadow[_offset], _bytes, _bytesCount);
-        for (Size i = 0; i < (sizeof(m_globalUniformDirty)/sizeof(m_globalUniformDirty[0])); ++i)
-            m_globalUniformDirty[i] = true;
     }
 
     //////////////////////////////////////////
-    void RenderSystemVulkan::flushGlobalUniforms()
+    VkDescriptorSet RenderSystemVulkan::acquireGlobalDescriptorSet()
     {
         U32 frameIndex = m_currentFrameIndex;
-        U32 dirtyIndex = Math::Min(frameIndex, (U32)(sizeof(m_globalUniformDirty)/sizeof(m_globalUniformDirty[0])) - 1u);
+        if (frameIndex >= m_globalInstancePool.size())
+            return VK_NULL_HANDLE;
 
-        if (frameIndex >= m_globalUniformMapped.size() || !m_globalUniformDirty[dirtyIndex])
-            return;
+        // Mirrors ShaderVulkan::acquireMaterialDescriptorSet()'s frame-
+        // generation reset exactly - see getFrameGeneration()'s banner comment
+        if (m_globalInstancePoolGeneration[frameIndex] != m_frameGeneration)
+        {
+            m_globalInstancePoolUsed[frameIndex] = 0u;
+            m_globalInstancePoolGeneration[frameIndex] = m_frameGeneration;
+        }
 
-        if (m_globalUniformMapped[frameIndex] && !m_globalUniformShadow.empty())
-            memcpy(m_globalUniformMapped[frameIndex], m_globalUniformShadow.data(), m_globalUniformShadow.size());
+        Vector<GlobalUniformInstance>& framePool = m_globalInstancePool[frameIndex];
+        U32 slot = m_globalInstancePoolUsed[frameIndex]++;
 
-        m_globalUniformDirty[dirtyIndex] = false;
+        if (slot >= (U32)framePool.size())
+        {
+            GlobalUniformInstance inst;
+
+            VkBufferCreateInfo bufferInfo = {};
+            bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+            bufferInfo.size = m_globalUniformBufferSize;
+            bufferInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+            bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+            VmaAllocationCreateInfo allocInfo = {};
+            allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+            allocInfo.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT | VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
+
+            VmaAllocationInfo allocResultInfo = {};
+            MAZE_VK_CALL(vmaCreateBuffer(
+                m_allocator, &bufferInfo, &allocInfo,
+                &inst.buffer, &inst.allocation, &allocResultInfo));
+            inst.mapped = allocResultInfo.pMappedData;
+
+            VkDescriptorSetAllocateInfo dsAllocInfo = {};
+            dsAllocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+            dsAllocInfo.descriptorPool = m_descriptorPool;
+            dsAllocInfo.descriptorSetCount = 1u;
+            dsAllocInfo.pSetLayouts = &m_globalSetLayout;
+            MAZE_VK_CALL(vkAllocateDescriptorSets(m_device, &dsAllocInfo, &inst.descriptorSet));
+
+            // The UBO's VkBuffer identity never changes after creation (only
+            // its contents, via the memcpy below), so this binding-0 write
+            // never needs repeating for this instance - mirrors
+            // ShaderVulkan::acquireMaterialDescriptorSet()'s identical comment
+            VkDescriptorBufferInfo bufInfo = {};
+            bufInfo.buffer = inst.buffer;
+            bufInfo.offset = 0u;
+            bufInfo.range = m_globalUniformBufferSize;
+
+            VkWriteDescriptorSet write = {};
+            write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            write.dstSet = inst.descriptorSet;
+            write.dstBinding = 0u;
+            write.descriptorCount = 1u;
+            write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            write.pBufferInfo = &bufInfo;
+            vkUpdateDescriptorSets(m_device, 1u, &write, 0u, nullptr);
+
+            // Bindings 1-3 (instance-stream SSBOs) are stable per-frame-in-
+            // flight buffers (fixed capacity, never recreated after init) -
+            // safe to write once here rather than on every acquire
+            if (frameIndex < m_modelMatricesStreamBuffers.size())
+                WriteGlobalStorageBufferBinding(m_device, inst.descriptorSet, 1u, m_modelMatricesStreamBuffers[frameIndex], m_modelMatricesStreamSize);
+            if (frameIndex < m_colorsStreamBuffers.size())
+                WriteGlobalStorageBufferBinding(m_device, inst.descriptorSet, 2u, m_colorsStreamBuffers[frameIndex], m_colorsStreamSize);
+            if (frameIndex < m_uvStreamBuffers.size())
+                WriteGlobalStorageBufferBinding(m_device, inst.descriptorSet, 3u, m_uvStreamBuffers[frameIndex], m_uvStreamSize);
+
+            framePool.push_back(inst);
+        }
+
+        GlobalUniformInstance& inst = framePool[slot];
+
+        if (inst.mapped && !m_globalUniformShadow.empty())
+            memcpy(inst.mapped, m_globalUniformShadow.data(), m_globalUniformShadow.size());
+
+        return inst.descriptorSet;
     }
 
     //////////////////////////////////////////

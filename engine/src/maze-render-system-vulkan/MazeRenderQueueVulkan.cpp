@@ -515,6 +515,12 @@ namespace Maze
 
 
         // View matrix
+        //
+        // All the global (GlobalUniforms UBO) uniform set() calls below are
+        // safe from the "shader A's cache masks shader B's overwrite of the
+        // shared buffer" hazard - see ShaderUniform::setAlwaysForceUpdate()'s
+        // banner comment - since ShaderUniformVulkan::setUniformData() sets
+        // that flag automatically for every uniform reflected as global.
         if (shader->getViewMatrixUniform())
         {
             shader->getViewMatrixUniform()->set(m_renderTarget->getViewMatrix());

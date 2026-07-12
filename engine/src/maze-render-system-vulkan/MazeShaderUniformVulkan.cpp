@@ -92,6 +92,39 @@ namespace Maze
             ShaderVulkan* shader = getShaderVulkanRaw();
             RenderSystemVulkan* rs = shader->getRenderSystemVulkanRaw();
 
+            if (m_uniformData.isTextureArray)
+            {
+                // Mirrors ShaderDX11's UniformTexture2DArray handling
+                // (MazeShaderDX11.cpp) - iterate the textures the material
+                // provided and write one descriptor per sibling binding (see
+                // ShaderVulkanUniformData::isTextureArray's banner comment
+                // for why this shader exposes N separate bindings instead of
+                // one real array-of-samplers binding)
+                Texture2D* const* textures = (Texture2D* const*)getPtr();
+                U32 count = Math::Min(getCount(), (U32)m_uniformData.textureBindingsArray.size());
+                for (U32 i = 0; i < count; ++i)
+                {
+                    S32 binding = m_uniformData.textureBindingsArray[i];
+                    if (binding < 0)
+                        continue;
+
+                    Texture2D* texture = textures ? textures[i] : nullptr;
+                    if (!texture)
+                        texture = rs->getTextureManager()->ensureBuiltinTexture2D(BuiltinTexture2DType::White).get();
+
+                    if (!texture)
+                        continue;
+
+                    Texture2DVulkan* textureVulkan = texture->castRaw<Texture2DVulkan>();
+                    shader->setTextureBinding(
+                        binding,
+                        textureVulkan->getSampledImageView(),
+                        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                        textureVulkan->ensureSampler());
+                }
+                return;
+            }
+
             VkImageView view = VK_NULL_HANDLE;
             VkSampler sampler = VK_NULL_HANDLE;
 
@@ -104,7 +137,7 @@ namespace Maze
                 if (texture)
                 {
                     Texture2DVulkan* textureVulkan = texture->castRaw<Texture2DVulkan>();
-                    view = textureVulkan->getImageView();
+                    view = textureVulkan->getSampledImageView();
                     sampler = textureVulkan->ensureSampler();
                 }
             }
