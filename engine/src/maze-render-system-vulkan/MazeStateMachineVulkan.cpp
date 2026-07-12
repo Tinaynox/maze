@@ -312,6 +312,22 @@ namespace Maze
         depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
         depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 
+        // Dynamic rendering has separate pDepthAttachment/pStencilAttachment
+        // fields even for a combined depth-stencil image - leaving
+        // pStencilAttachment null (as this did before) means the scope has
+        // NO stencil attachment bound at all, so every stencil write is
+        // silently discarded and every read comes back 0, regardless of how
+        // correctly the pipeline's stencil state is configured (confirmed
+        // via RenderDoc: stencil stayed 0x00 everywhere a mask pass had
+        // supposedly just written 1 into it, breaking the stencil-outline
+        // technique). Only some depth formats actually carry a stencil
+        // aspect (DEPTH_U32/DEPTH_F32 -> VK_FORMAT_D32_SFLOAT do not) -
+        // reuse the same attachment info for both depth and stencil, which
+        // is the standard pattern for a combined-format image.
+        bool depthFormatHasStencil =
+            m_depthFormat == VK_FORMAT_D24_UNORM_S8_UINT ||
+            m_depthFormat == VK_FORMAT_D32_SFLOAT_S8_UINT;
+
         VkRenderingInfo renderingInfo = {};
         renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
         renderingInfo.renderArea.offset = { 0, 0 };
@@ -320,6 +336,7 @@ namespace Maze
         renderingInfo.colorAttachmentCount = (U32)m_colorViewsCount;
         renderingInfo.pColorAttachments = colorAttachments;
         renderingInfo.pDepthAttachment = (m_depthView != VK_NULL_HANDLE) ? &depthAttachment : nullptr;
+        renderingInfo.pStencilAttachment = (m_depthView != VK_NULL_HANDLE && depthFormatHasStencil) ? &depthAttachment : nullptr;
 
         vkCmdBeginRendering(getCommandBuffer(), &renderingInfo);
         m_renderingActive = true;
@@ -570,6 +587,17 @@ namespace Maze
         renderingCreateInfo.colorAttachmentCount = m_colorViewsCount > 0 ? 1u : 0u;
         renderingCreateInfo.pColorAttachmentFormats = colorFormats;
         renderingCreateInfo.depthAttachmentFormat = m_depthFormat;
+        // Must mirror bindRenderTarget()'s pStencilAttachment condition - a
+        // pipeline drawn with a real stencil attachment bound (dynamic
+        // rendering) but created with stencilAttachmentFormat left at its
+        // VK_FORMAT_UNDEFINED default is a validation error
+        // (VUID-vkCmdDrawIndexed-pStencilAttachment-08965), and the declared
+        // format must match the attachment's actual format
+        // (VUID-vkCmdDrawIndexed-dynamicRenderingUnusedAttachments-08917).
+        bool depthFormatHasStencil =
+            m_depthFormat == VK_FORMAT_D24_UNORM_S8_UINT ||
+            m_depthFormat == VK_FORMAT_D32_SFLOAT_S8_UINT;
+        renderingCreateInfo.stencilAttachmentFormat = depthFormatHasStencil ? m_depthFormat : VK_FORMAT_UNDEFINED;
 
         VkGraphicsPipelineCreateInfo pipelineInfo = {};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
