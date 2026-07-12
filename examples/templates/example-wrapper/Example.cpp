@@ -259,11 +259,6 @@ namespace Maze
 
         SettingsManager::GetInstancePtr()->registerSettings<ExampleCommonSettings>();
 
-#if MAZE_RENDER_SYSTEM_VULKAN_ENABLED
-        ExampleCommonSettings* exampleCommonSettings = m_settingsManager->getSettingsRaw<ExampleCommonSettings>();
-        exampleCommonSettings->setBloomEnabled(false);
-#endif
-
         processReadyToCreateWindowAndGoToSplash();
 
         return true;

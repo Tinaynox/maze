@@ -111,7 +111,6 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
             Maze::g_renderSystemType = Maze::ExampleRenderSystemType::DirectX11;
 #endif
 #if MAZE_RENDER_SYSTEM_VULKAN_ENABLED
-		Maze::ThreadHelper::SleepCurrentThread(1000); // Give some time for Vulkan to load nvoglv64.dll to avoid conflicts with OpenGL
         if (renderSystemName == "Vulkan")
         {
             Maze::g_renderSystemType = Maze::ExampleRenderSystemType::Vulkan;
@@ -123,12 +122,11 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
     bool restart = false;
     do
     {
-        if (restart)
-        {
 #if MAZE_RENDER_SYSTEM_VULKAN_ENABLED
-            Maze::ThreadHelper::SleepCurrentThread(1000); // Give some time for Vulkan to load nvoglv64.dll to avoid conflicts with OpenGL
+        if (Maze::g_renderSystemType == Maze::ExampleRenderSystemType::OpenGL)
+            Maze::ThreadHelper::SleepCurrentThread(2000); // Give some time for Vulkan to load nvoglv64.dll to avoid conflicts with OpenGL
 #endif
-        }
+        
 
         Maze::ExamplePtr example = Maze::Example::Create(engineConfig);
         if (!example)

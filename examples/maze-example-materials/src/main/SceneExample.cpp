@@ -244,7 +244,7 @@ namespace Maze
 
         addMeshPreview("TorusKnotUV.fbx", "ASCII00.mzmaterial", "ASCII Art", torusKnotScale);
         addMeshPreviewSpace();
-        
+
         addMeshPreview("TorusKnotUV.fbx", "BlinnPhongHDR00.mzmaterial", "Emission (HDR)", torusKnotScale);
         addMeshPreviewSpace();
 
@@ -270,7 +270,6 @@ namespace Maze
         addMeshPreview("TorusKnotUV.fbx", "Dissolve00.mzmaterial", "Dissolve", torusKnotScale);
         addMeshPreviewSpace();
 
-        
         {
             EntityPtr objectEntity = addMeshPreview("TorusKnotUV.fbx", "Distortion00.mzmaterial", "Distortion", torusKnotScale);
             addMeshPreviewSpace();
@@ -282,7 +281,6 @@ namespace Maze
             meshRenderer->getMaterial()->setUniform(
                 MAZE_HCS("u_depthMap"), depthTexture);
         }
-        
         
         addMeshPreview("TorusKnotUV.fbx", "Snow.mzmaterial", "Snow", torusKnotScale);
         addMeshPreviewSpace();
