@@ -29,12 +29,12 @@ layout(std140, set = 1, binding = 0) uniform MaterialUniforms
 };
 
 //////////////////////////////////////////
-layout(location = 0) in vec3 a_position;
-layout(location = 1) in vec3 a_normal;
-layout(location = 2) in vec3 a_tangent;
-layout(location = 3) in vec3 a_bitangent;
-layout(location = 4) in vec4 a_color;
-layout(location = 5) in vec2 a_texCoords0;
+layout(location = 0) in vec3 a_position;    // VertexAttributeSemantic::Position
+layout(location = 1) in vec3 a_normal;      // VertexAttributeSemantic::Normal
+layout(location = 2) in vec3 a_tangent;     // VertexAttributeSemantic::Tangent
+layout(location = 3) in vec3 a_bitangent;   // VertexAttributeSemantic::Bitangent
+layout(location = 4) in vec4 a_color;       // VertexAttributeSemantic::Color
+layout(location = 5) in vec2 a_texCoords0;  // VertexAttributeSemantic::TexCoords0
 
 //////////////////////////////////////////
 layout(location = 0) out vec3 v_positionOS;
