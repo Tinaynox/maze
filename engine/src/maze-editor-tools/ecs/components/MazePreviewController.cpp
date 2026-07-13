@@ -424,16 +424,19 @@ namespace Maze
     //////////////////////////////////////////
     void PreviewController::setSceneVisibleSettings(bool _camera, bool _canvas)
     {
-        if (_camera || _canvas)
+        if (m_bodyBackground)
         {
-            m_bodyBackground->setSprite(m_bodySprite);
-            m_bodyBackground->setColor(ColorU32::c_white);
-        }
-        else
-        {
-            m_bodyBackground->setSprite(
-                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02));
-            m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
+            if (_camera || _canvas)
+            {
+                m_bodyBackground->setSprite(m_bodySprite);
+                m_bodyBackground->setColor(ColorU32::c_white);
+            }
+            else
+            {
+                m_bodyBackground->setSprite(
+                    UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02));
+                m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
+            }
         }
 
         if (SceneDebugPreviewPtr scene = m_scene.lock())
