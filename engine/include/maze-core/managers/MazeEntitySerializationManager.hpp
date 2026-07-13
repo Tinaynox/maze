@@ -132,7 +132,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        bool saveEntitiesToDataBlock(Set<Entity*> const&, DataBlock& _dataBlock) const;
+        bool saveEntitiesToDataBlock(FlatHashSet<Entity*> const&, DataBlock& _dataBlock) const;
 
         //////////////////////////////////////////
         bool savePrefabToDataBlock(EntityPtr const& _entity, DataBlock& _dataBlock) const;
@@ -181,7 +181,7 @@ namespace Maze
 
         //////////////////////////////////////////
         void collectEntitiesComponentsMap(
-            Set<Entity*> const& _entities,
+            FlatHashSet<Entity*> const& _entities,
             Vector<EntitySerializationData>& _entityComponents,
             Vector<PrefabSerializationData>& _prefabs) const;
 

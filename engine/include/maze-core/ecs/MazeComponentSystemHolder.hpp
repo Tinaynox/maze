@@ -79,8 +79,8 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        using AddSystemFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, Set<HashedString> const&, ComponentSystemOrder const&, U8, Vector<ComponentId> const&);
-        using AddSystemGlobalFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, Set<HashedString> const&, ComponentSystemOrder const&);
+        using AddSystemFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, VectorSet<HashedString> const&, ComponentSystemOrder const&, U8, Vector<ComponentId> const&);
+        using AddSystemGlobalFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, VectorSet<HashedString> const&, ComponentSystemOrder const&);
 
         //////////////////////////////////////////
         // Lazy provider - component ids must not be calculated during static initialization
@@ -92,7 +92,7 @@ namespace Maze
         inline ComponentSystemHolder(
             HashedCString _name,
             void(*_func)(TEventType&, Entity*, TComponents* ...),
-            Set<HashedString> _tags = Set<HashedString>(),
+            VectorSet<HashedString> _tags = VectorSet<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder(),
             U8 _sampleFlags = 0,
             ComponentIdsFunc _forbiddenComponentsFunc = nullptr)
@@ -123,7 +123,7 @@ namespace Maze
         inline ComponentSystemHolder(
             HashedCString _name,
             void(*_func)(TEventType&),
-            Set<HashedString> _tags = Set<HashedString>(),
+            VectorSet<HashedString> _tags = VectorSet<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
             : m_name(_name)
             , m_func((ComponentSystemEventHandler::Func)_func)
@@ -154,15 +154,15 @@ namespace Maze
         //////////////////////////////////////////
         inline void attach(EcsWorld* _world)
         {
-            Set<HashedString> tags;
+            VectorSet<HashedString> tags;
             for (StdString const& tag : m_tags)
                 tags.insert(HashedString(tag.c_str(), tag.size()));
 
-            Set<HashedString> orderAfter;
+            VectorSet<HashedString> orderAfter;
             for (StdString const& order : m_orderAfter)
                 orderAfter.insert(HashedString(order.c_str(), order.size()));
 
-            Set<HashedString> orderBefore;
+            VectorSet<HashedString> orderBefore;
             for (StdString const& order : m_orderBefore)
                 orderBefore.insert(HashedString(order.c_str(), order.size()));
 

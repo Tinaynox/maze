@@ -140,7 +140,7 @@ namespace Maze
         MetaClass* getComponentMetaClass(ComponentId _uid);
 
         //////////////////////////////////////////
-        Map<ComponentId, ComponentCreationData> const& getSceneObjectCreationData() const { return m_sceneObjectCreationData; }
+        VectorMap<ComponentId, ComponentCreationData> const& getSceneObjectCreationData() const { return m_sceneObjectCreationData; }
 
     protected:
 
@@ -152,7 +152,7 @@ namespace Maze
 
 
     protected:
-        Map<ComponentId, ComponentCreationData> m_sceneObjectCreationData;
+        VectorMap<ComponentId, ComponentCreationData> m_sceneObjectCreationData;
     };
 
 

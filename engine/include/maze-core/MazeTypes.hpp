@@ -45,8 +45,11 @@
 #include <EASTL/tuple.h>
 #include <EASTL/map.h>
 #include <EASTL/unordered_map.h>
+#include <EASTL/vector_map.h>
+#include <EASTL/vector_set.h>
 #include <EASTL/set.h>
 #include <EASTL/deque.h>
+#include <flat_hash_map/flat_hash_map.hpp>
 #include <EASTL/stack.h>
 #include <EASTL/queue.h>
 #include <EASTL/functional.h>
@@ -244,6 +247,48 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // VectorMap
+    //
+    //////////////////////////////////////////
+    template <
+        class _Kty,
+        class _Ty,
+        class _Pr = eastl::less<_Kty>>
+    using VectorMap = eastl::vector_map<_Kty, _Ty, _Pr>;
+
+    //////////////////////////////////////////
+    template <typename>
+    struct IsVectorMap : eastl::false_type {};
+    template <
+        class _Kty,
+        class _Ty,
+        class _Pr>
+        struct IsVectorMap<Maze::VectorMap<_Kty, _Ty, _Pr>> : eastl::true_type {};
+
+
+    //////////////////////////////////////////
+    // FlatHashMap
+    //
+    //////////////////////////////////////////
+    template <
+        class _Kty,
+        class _Ty,
+        class _Hasher = eastl::hash<_Kty>,
+        class _Keyeq = eastl::equal_to<_Kty>>
+    using FlatHashMap = ska::flat_hash_map<_Kty, _Ty, _Hasher, _Keyeq>;
+
+    //////////////////////////////////////////
+    template <typename>
+    struct IsFlatHashMap : eastl::false_type {};
+    template <
+        class _Kty,
+        class _Ty,
+        class _Hasher,
+        class _Keyeq>
+        struct IsFlatHashMap<Maze::FlatHashMap<_Kty, _Ty, _Hasher, _Keyeq>> : eastl::true_type {};
+
+
+    //////////////////////////////////////////
     // Set
     //
     //////////////////////////////////////////
@@ -277,6 +322,44 @@ namespace Maze
         class _Kty,
         class _Pr>
         struct IsMultiSet<Maze::MultiSet<_Kty, _Pr>> : eastl::true_type {};
+
+
+    //////////////////////////////////////////
+    // VectorSet
+    //
+    //////////////////////////////////////////
+    template <
+        class _Kty,
+        class _Pr = eastl::less<_Kty>>
+    using VectorSet = eastl::vector_set<_Kty, _Pr>;
+
+    //////////////////////////////////////////
+    template <typename>
+    struct IsVectorSet : eastl::false_type {};
+    template <
+        class _Kty,
+        class _Pr>
+        struct IsVectorSet<Maze::VectorSet<_Kty, _Pr>> : eastl::true_type {};
+
+
+    //////////////////////////////////////////
+    // FlatHashSet
+    //
+    //////////////////////////////////////////
+    template <
+        class _Kty,
+        class _Hasher = eastl::hash<_Kty>,
+        class _Keyeq = eastl::equal_to<_Kty>>
+    using FlatHashSet = ska::flat_hash_set<_Kty, _Hasher, _Keyeq>;
+
+    //////////////////////////////////////////
+    template <typename>
+    struct IsFlatHashSet : eastl::false_type {};
+    template <
+        class _Kty,
+        class _Hasher,
+        class _Keyeq>
+        struct IsFlatHashSet<Maze::FlatHashSet<_Kty, _Hasher, _Keyeq>> : eastl::true_type {};
 
 
     //////////////////////////////////////////

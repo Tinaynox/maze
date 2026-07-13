@@ -290,7 +290,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_PLUGIN_CSHARP_API bool ParseMonoEntitySystemAttributes(
             MonoMethod* _method,
-            Set<HashedString>& _outTags,
+            VectorSet<HashedString>& _outTags,
             ComponentSystemOrder& _outOrder,
             U8& _outFlags)
         {
@@ -325,7 +325,7 @@ namespace Maze
 
                         auto parseStringListMonoClassField = [&](MonoClassField* _field)
                         {
-                            Set<HashedString> result;
+                            VectorSet<HashedString> result;
 
                             MonoArray* array;
                             mono_field_get_value(attrObj, _field, &array);

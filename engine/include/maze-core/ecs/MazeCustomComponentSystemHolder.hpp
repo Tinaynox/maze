@@ -48,18 +48,18 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        static Set<CustomComponentSystemHolder*>& GetSystemHolders()
+        static VectorSet<CustomComponentSystemHolder*>& GetSystemHolders()
         {
             //////////////////////////////////////////
-            static Set<CustomComponentSystemHolder*> s_systemHolders;
+            static VectorSet<CustomComponentSystemHolder*> s_systemHolders;
             return s_systemHolders;
         }
 
         //////////////////////////////////////////
-        static Set<EcsWorld*>& GetCurrentWorlds()
+        static VectorSet<EcsWorld*>& GetCurrentWorlds()
         {
             //////////////////////////////////////////
-            static Set<EcsWorld*> s_worlds;
+            static VectorSet<EcsWorld*> s_worlds;
             return s_worlds;
         }
 
@@ -90,7 +90,7 @@ namespace Maze
             ClassUID _eventUID,
             std::function<IEntitiesSamplePtr(EcsWorld*)> const& _createSampleFunc,
             ComponentSystemEventHandler::Func _func,
-            Set<HashedString> _tags = Set<HashedString>(),
+            VectorSet<HashedString> _tags = VectorSet<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
             : m_name(_name)
             , m_eventUID(_eventUID)
@@ -111,7 +111,7 @@ namespace Maze
             ClassUID _eventUID,
             ComponentSystemEventHandler::GlobalCtxFunc _globalCtxFunc,
             void* _ctx,
-            Set<HashedString> _tags = Set<HashedString>(),
+            VectorSet<HashedString> _tags = VectorSet<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
             : m_name(_name)
             , m_eventUID(_eventUID)
@@ -181,10 +181,10 @@ namespace Maze
         ComponentSystemEventHandler::Func m_func = nullptr;
         ComponentSystemEventHandler::GlobalCtxFunc m_globalCtxFunc = nullptr;
         void* m_ctx = nullptr;
-        Set<HashedString> m_tags;
+        VectorSet<HashedString> m_tags;
         ComponentSystemOrder m_order;
 
-        Map<EcsWorld*, WeakPtr<ComponentSystemEventHandler>> m_systems;
+        VectorMap<EcsWorld*, WeakPtr<ComponentSystemEventHandler>> m_systems;
     };
 
     

@@ -325,7 +325,7 @@ namespace Maze
         virtual void processEntity(Entity* _entity) MAZE_OVERRIDE
         {
             EntityId eid = _entity->getId();
-            typename UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entity->getId());
+            typename FlatHashMap<EntityId, Size>::iterator it = m_entityIndices.find(_entity->getId());
 
             bool intersects;
             bool includeInactive = m_flags & (U8)EntitiesSampleFlags::IncludeInactive;
@@ -342,10 +342,7 @@ namespace Maze
 
                 Size index = m_entitiesData.size();
                 m_entitiesData.push_back(entityData);
-                m_entityIndices.emplace(
-                    eastl::piecewise_construct,
-                    eastl::forward_as_tuple(eid),
-                    eastl::forward_as_tuple(index));
+                m_entityIndices.emplace(eid, index);
                 _entity->_addSampleRef(this);
                 invokeEntityAdded(entityData, typename Indices::Indexes());
             }
@@ -444,7 +441,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void processEvent(EntityId _entityId, Event* _event, EcsEventParams _params, ProcessEventFunc _func)
         {
-            UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entityId);
+            FlatHashMap<EntityId, Size>::iterator it = m_entityIndices.find(_entityId);
 
             if (it != m_entityIndices.end())
             {
@@ -569,7 +566,7 @@ namespace Maze
 
     protected:
         FastVector<EntityData> m_entitiesData;
-        UnorderedMap<EntityId, Size> m_entityIndices;
+        FlatHashMap<EntityId, Size> m_entityIndices;
     };
 
 
@@ -671,7 +668,7 @@ namespace Maze
         virtual void processEntity(Entity* _entity) MAZE_OVERRIDE
         {
             EntityId eid = _entity->getId();
-            typename UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entity->getId());
+            typename FlatHashMap<EntityId, Size>::iterator it = m_entityIndices.find(_entity->getId());
 
             bool intersects;
             bool includeInactive = m_flags & (U8)EntitiesSampleFlags::IncludeInactive;
@@ -688,10 +685,7 @@ namespace Maze
 
                 Size index = m_entitiesData.size();
                 m_entitiesData.push_back(entityData);
-                m_entityIndices.emplace(
-                    eastl::piecewise_construct,
-                    eastl::forward_as_tuple(eid),
-                    eastl::forward_as_tuple(index));
+                m_entityIndices.emplace(eid, index);
                 _entity->_addSampleRef(this);
                 invokeEntityAdded(entityData);
             }
@@ -775,7 +769,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void processEvent(EntityId _entityId, Event* _event, EcsEventParams _params, ProcessEventFunc _func)
         {
-            UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entityId);
+            FlatHashMap<EntityId, Size>::iterator it = m_entityIndices.find(_entityId);
 
             if (it != m_entityIndices.end())
             {
@@ -840,7 +834,7 @@ namespace Maze
 
     protected:
         FastVector<EntityData> m_entitiesData;
-        UnorderedMap<EntityId, Size> m_entityIndices;
+        FlatHashMap<EntityId, Size> m_entityIndices;
     };
 
 } // namespace Maze

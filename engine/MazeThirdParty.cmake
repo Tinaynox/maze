@@ -41,6 +41,9 @@ include("${MAZE_DIR}/third-party/vecmath.cmake")
 # EASTL
 include("${MAZE_DIR}/third-party/EASTL.cmake")
 
+# flat_hash_map
+include("${MAZE_DIR}/third-party/flat_hash_map.cmake")
+
 # optick
 if (MAZE_USE_OPTICK)
     if(MAZE_TARGET_PLATFORM_IS_WINDOWS)

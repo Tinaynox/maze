@@ -42,7 +42,7 @@ namespace Maze
     //////////////////////////////////////////
     using ComponentId = ClassUID;
     using EntityId = IdWithGeneration<S32, 8>;
-    using EntityIds = Set<EntityId>;
+    using EntityIds = VectorSet<EntityId>;
 
     using EcsWorldId = IdWithGeneration<S8, 4>;
 

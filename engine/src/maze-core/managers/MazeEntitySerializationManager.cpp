@@ -696,7 +696,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool EntitySerializationManager::saveEntitiesToDataBlock(Set<Entity*> const& _entities, DataBlock& _dataBlock) const
+    bool EntitySerializationManager::saveEntitiesToDataBlock(FlatHashSet<Entity*> const& _entities, DataBlock& _dataBlock) const
     {
         if (_entities.empty())
             return false;
@@ -1569,7 +1569,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void EntitySerializationManager::collectEntitiesComponentsMap(
-        Set<Entity*> const& _entities,
+        FlatHashSet<Entity*> const& _entities,
         Vector<EntitySerializationData>& _entityComponents,
         Vector<PrefabSerializationData>& _prefabs
     ) const

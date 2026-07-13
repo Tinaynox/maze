@@ -136,7 +136,7 @@ namespace Maze
         static EcsWorldPtr Create(
             HashedString const& _name,
             bool _attachSystems = true,
-            Set<HashedString> const& _tags = Set<HashedString>());
+            VectorSet<HashedString> const& _tags = VectorSet<HashedString>());
 
         //////////////////////////////////////////
         static EcsWorld* GetDefaultWorldRaw();
@@ -183,7 +183,7 @@ namespace Maze
         inline HashedString const& getName() const { return m_name; }
 
         //////////////////////////////////////////
-        inline Set<HashedString> const& getTags() const { return m_tags; }
+        inline VectorSet<HashedString> const& getTags() const { return m_tags; }
 
 
         //////////////////////////////////////////
@@ -280,7 +280,7 @@ namespace Maze
         inline ComponentSystemEventHandlerPtr addSystemEventHandler(
             HashedCString _name,
             void (*_func)(TEventType&, Entity*, TComponents* ...),
-            Set<HashedString> const& _tags = Set<HashedString>(),
+            VectorSet<HashedString> const& _tags = VectorSet<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder(),
             U8 _sampleFlags = 0,
             Vector<ComponentId> const& _forbiddenComponentIds = Vector<ComponentId>())
@@ -302,7 +302,7 @@ namespace Maze
         inline ComponentSystemEventHandlerPtr addSystemEventHandlerGlobal(
             HashedCString _name,
             void(*_func)(TEventType&),
-            Set<HashedString> const& _tags = Set<HashedString>(),
+            VectorSet<HashedString> const& _tags = VectorSet<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
             ComponentSystemEventHandlerPtr system = ComponentSystemEventHandler::Create(
@@ -469,7 +469,7 @@ namespace Maze
         bool init(
             HashedString const& _name,
             bool _attachSystems,
-            Set<HashedString> const& _tags);
+            VectorSet<HashedString> const& _tags);
 
                 
         //////////////////////////////////////////
@@ -522,7 +522,7 @@ namespace Maze
 
     protected:
         HashedString m_name;
-        Set<HashedString> m_tags;
+        VectorSet<HashedString> m_tags;
 
         FastVector<EntityData> m_entities;
         Stack<S32> m_freeEntityIndices;
@@ -531,7 +531,7 @@ namespace Maze
         U32 m_samplesVersion = 0u;
 
         Vector<EcsArchetypePtr> m_archetypes;
-        UnorderedMap<U64, Vector<ArchetypeId>> m_archetypesByHash;
+        FlatHashMap<U64, Vector<ArchetypeId>> m_archetypesByHash;
         Vector<ComponentId> m_archetypeIdsScratch;
 
         UnorderedMap<ClassUID, Vector<ComponentSystemEventHandlerPtr>> m_eventHandlers;

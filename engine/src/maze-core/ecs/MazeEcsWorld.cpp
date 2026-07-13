@@ -289,7 +289,7 @@ namespace Maze
     EcsWorldPtr EcsWorld::Create(
         HashedString const& _name,
         bool _attachSystems,
-        Set<HashedString> const& _tags)
+        VectorSet<HashedString> const& _tags)
     {
         EcsWorldPtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(EcsWorld, object, init(_name, _attachSystems, _tags));
@@ -306,7 +306,7 @@ namespace Maze
     bool EcsWorld::init(
         HashedString const& _name,
         bool _attachSystems,
-        Set<HashedString> const& _tags)
+        VectorSet<HashedString> const& _tags)
     {
         m_name = _name;
         m_tags = _tags;

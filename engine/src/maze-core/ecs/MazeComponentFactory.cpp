@@ -92,7 +92,7 @@ namespace Maze
     //////////////////////////////////////////
     ComponentPtr ComponentFactory::createComponent(ComponentId _id)
     {
-        Map<ComponentId, ComponentCreationData>::const_iterator it = m_sceneObjectCreationData.find(_id);
+        VectorMap<ComponentId, ComponentCreationData>::const_iterator it = m_sceneObjectCreationData.find(_id);
 
         MAZE_ERROR_RETURN_VALUE_IF(it == m_sceneObjectCreationData.end(), ComponentPtr(), "Undefined component index: %u", _id);
 
@@ -102,7 +102,7 @@ namespace Maze
     //////////////////////////////////////////
     ComponentPtr ComponentFactory::createDynamicComponent(ComponentId _id, HashedCString _dynamicComponentName)
     {
-        Map<ComponentId, ComponentCreationData>::const_iterator it = m_sceneObjectCreationData.find(_id);
+        VectorMap<ComponentId, ComponentCreationData>::const_iterator it = m_sceneObjectCreationData.find(_id);
 
         MAZE_ERROR_RETURN_VALUE_IF(it == m_sceneObjectCreationData.end(), ComponentPtr(), "Undefined component index: %u", _id);
         MAZE_ERROR_RETURN_VALUE_IF(!it->second.createDynamicComponentFunc, ComponentPtr(), "Component is not dynamic: %u", _id);

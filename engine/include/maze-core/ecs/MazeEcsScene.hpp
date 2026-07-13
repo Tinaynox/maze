@@ -154,7 +154,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Set<Entity*> const& getEntities() const { return m_entities; }
+        FlatHashSet<Entity*> const& getEntities() const { return m_entities; }
 
 
         //////////////////////////////////////////
@@ -258,7 +258,7 @@ namespace Maze
     protected:
         S32 m_flags = 0;
 
-        Set<Entity*> m_entities;
+        FlatHashSet<Entity*> m_entities;
 
         EcsWorld* m_world = nullptr;
 

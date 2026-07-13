@@ -138,7 +138,7 @@ namespace Maze
     {
         while (m_entities.size() > 1)
         {
-            Set<Entity*>::iterator it = m_entities.begin();
+            FlatHashSet<Entity*>::iterator it = m_entities.begin();
             if ((*it) == _value.get())
                 ++it;
 

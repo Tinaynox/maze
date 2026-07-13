@@ -61,32 +61,32 @@ namespace Maze
     {
         //////////////////////////////////////////
         ComponentSystemOrder(
-            Set<HashedString> const& _after = Set<HashedString>(),
-            Set<HashedString> const& _before = Set<HashedString>())
+            VectorSet<HashedString> const& _after = VectorSet<HashedString>(),
+            VectorSet<HashedString> const& _before = VectorSet<HashedString>())
             : after(_after)
             , before(_before)
         {}
 
         //////////////////////////////////////////
         ComponentSystemOrder(
-            Set<HashedString>&& _after,
-            Set<HashedString>&& _before)
+            VectorSet<HashedString>&& _after,
+            VectorSet<HashedString>&& _before)
             : after(eastl::move(_after))
             , before(eastl::move(_before))
         {}
 
-        Set<HashedString> after;
-        Set<HashedString> before;
+        VectorSet<HashedString> after;
+        VectorSet<HashedString> before;
     };
 
 
     //////////////////////////////////////////
-    #define MAZE_ECS_ORDER_AFTER(...) Set<HashedString>{__VA_ARGS__}
-    #define MAZE_ECS_ORDER_BEFORE(...) Set<HashedString>{__VA_ARGS__}
+    #define MAZE_ECS_ORDER_AFTER(...) VectorSet<HashedString>{__VA_ARGS__}
+    #define MAZE_ECS_ORDER_BEFORE(...) VectorSet<HashedString>{__VA_ARGS__}
     #define MAZE_ECS_ORDER(DAfter, DBefore) ComponentSystemOrder(DAfter, DBefore)
 
     //////////////////////////////////////////
-    #define MAZE_ECS_TAGS(...) Set<HashedString>{__VA_ARGS__}
+    #define MAZE_ECS_TAGS(...) VectorSet<HashedString>{__VA_ARGS__}
 
 
     //////////////////////////////////////////
@@ -109,7 +109,7 @@ namespace Maze
             ClassUID _eventUID,
             IEntitiesSamplePtr _sample,
             Func _func,
-            Set<HashedString> const& _tags = Set<HashedString>(),
+            VectorSet<HashedString> const& _tags = VectorSet<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
             MAZE_DEBUG_ASSERT(_sample);
@@ -123,7 +123,7 @@ namespace Maze
             HashedCString _name,
             ClassUID _eventUID,
             GlobalFunc _func,
-            Set<HashedString> const& _tags = Set<HashedString>(),
+            VectorSet<HashedString> const& _tags = VectorSet<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
             return MAZE_CREATE_SHARED_PTR_WITH_ARGS(
@@ -137,7 +137,7 @@ namespace Maze
             ClassUID _eventUID,
             GlobalCtxFunc _func,
             void* _ctx,
-            Set<HashedString> const& _tags = Set<HashedString>(),
+            VectorSet<HashedString> const& _tags = VectorSet<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
             MAZE_DEBUG_ASSERT(_ctx);
@@ -190,10 +190,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Set<HashedString> const& getTags() const { return m_tags; }
+        inline VectorSet<HashedString> const& getTags() const { return m_tags; }
 
         //////////////////////////////////////////
-        inline void setTags(Set<HashedString> const& _tags) { m_tags = _tags; }
+        inline void setTags(VectorSet<HashedString> const& _tags) { m_tags = _tags; }
 
 
         //////////////////////////////////////////
@@ -212,7 +212,7 @@ namespace Maze
             ClassUID _eventUID,
             IEntitiesSamplePtr _sample = nullptr,
             Func _func = nullptr,
-            Set<HashedString> const& _tags = Set<HashedString>(),
+            VectorSet<HashedString> const& _tags = VectorSet<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder(),
             void* _ctx = nullptr)
             : m_world(_world)
@@ -234,7 +234,7 @@ namespace Maze
         Func m_func = nullptr;
         void* m_ctx = nullptr;
 
-        Set<HashedString> m_tags;
+        VectorSet<HashedString> m_tags;
         ComponentSystemOrder m_order;
     };
 

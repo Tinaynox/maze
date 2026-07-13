@@ -106,19 +106,19 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Map<Entity*, Entity*>& getEntities()
+        inline VectorMap<Entity*, Entity*>& getEntities()
         {
             return m_storage->entities;
         }
 
         //////////////////////////////////////////
-        inline Map<Entity*, Entity*> const& getEntities() const
+        inline VectorMap<Entity*, Entity*> const& getEntities() const
         {
             return m_storage->entities;
         }
 
         //////////////////////////////////////////
-        inline Map<Component*, Component*>& getComponents()
+        inline VectorMap<Component*, Component*>& getComponents()
         {
             return m_storage->components;
         }
@@ -165,8 +165,8 @@ namespace Maze
         // containers live in a single shared heap block
         struct Storage
         {
-            Map<Entity*, Entity*> entities;
-            Map<Component*, Component*> components;
+            VectorMap<Entity*, Entity*> entities;
+            VectorMap<Component*, Component*> components;
             Vector<ComponentPropertyData> componentProperties;
             Vector<EntityPropertyData> entityProperties;
         };

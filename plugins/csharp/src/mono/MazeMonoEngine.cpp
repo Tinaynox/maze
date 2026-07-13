@@ -183,7 +183,7 @@ namespace Maze
             if (!sig || mono_signature_get_param_count(sig) != 1)
                 continue;
 
-            Set<HashedString> systemTags;
+            VectorSet<HashedString> systemTags;
             ComponentSystemOrder systemOrder;
             U8 systemFlags = 0u;
             if (!MonoHelper::ParseMonoEntitySystemAttributes(method, systemTags, systemOrder, systemFlags))
@@ -223,7 +223,7 @@ namespace Maze
 
             if (systemFlags & U8(MonoEntitySystemFlags::EnableInEditor))
             {
-                Set<HashedString> systemEditorTags = systemTags;
+                VectorSet<HashedString> systemEditorTags = systemTags;
                 systemEditorTags.insert(MAZE_HS("editor"));
 
                 g_monoEngineData->ecsData.staticEntitySystems.emplace_back(
@@ -309,17 +309,17 @@ namespace Maze
                     
 
                     // Process entity systems
-                    Set<HashedString> systemTags;
+                    VectorSet<HashedString> systemTags;
                     ComponentSystemOrder systemOrder;
                     U8 systemFlags = 0u;
 
 
                     auto addRequiredSystem =
-                        [&](std::function<void(Set<HashedString> const&)> const& _addSystem)
+                        [&](std::function<void(VectorSet<HashedString> const&)> const& _addSystem)
                         {
                             if (systemFlags & U8(MonoEntitySystemFlags::EnableInEditor))
                             {
-                                Set<HashedString> systemEditorTags = systemTags;
+                                VectorSet<HashedString> systemEditorTags = systemTags;
                                 systemEditorTags.insert(MAZE_HS("editor"));
                                 _addSystem(systemEditorTags);
                             }
@@ -337,7 +337,7 @@ namespace Maze
                         MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnCreateMethod(), systemTags, systemOrder, systemFlags);
 
                         addRequiredSystem(
-                            [&](Set<HashedString> const& _systemTags)
+                            [&](VectorSet<HashedString> const& _systemTags)
                             {
                                 g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                                     MakeShared<CustomComponentSystemHolder>(
@@ -360,7 +360,7 @@ namespace Maze
                         MonoHelper::ParseMonoEntitySystemAttributes(scriptClass->getOnUpdateMethod(), systemTags, systemOrder, systemFlags);
 
                         addRequiredSystem(
-                            [&](Set<HashedString> const& _systemTags)
+                            [&](VectorSet<HashedString> const& _systemTags)
                             {
                                 g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                                     MakeShared<CustomComponentSystemHolder>(
@@ -386,7 +386,7 @@ namespace Maze
                         }
 
                         addRequiredSystem(
-                            [&](Set<HashedString> const& _systemTags)
+                            [&](VectorSet<HashedString> const& _systemTags)
                             {
                                 g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                                     MakeShared<CustomComponentSystemHolder>(
@@ -410,7 +410,7 @@ namespace Maze
                         MonoHelper::ParseMonoEntitySystemAttributes(onMonoEventMethodData.second, systemTags, systemOrder, systemFlags);
 
                         addRequiredSystem(
-                            [&](Set<HashedString> const& _systemTags)
+                            [&](VectorSet<HashedString> const& _systemTags)
                             {
                                 g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                                     MakeShared<CustomComponentSystemHolder>(
@@ -432,7 +432,7 @@ namespace Maze
                         MonoHelper::ParseMonoEntitySystemAttributes(onNativeEventMethodData.second, systemTags, systemOrder, systemFlags);
 
                         addRequiredSystem(
-                            [&](Set<HashedString> const& _systemTags)
+                            [&](VectorSet<HashedString> const& _systemTags)
                         {
                             g_monoEngineData->ecsData.monoBehaviourSystems.emplace_back(
                                 MakeShared<CustomComponentSystemHolder>(

@@ -576,7 +576,7 @@ namespace Maze
     inline bool ComponentIsEditorMode(Component* _component)
     {
         static Size const c_editorHash = MAZE_HCS("editor").hash;
-        Set<HashedString> const& tags = _component->getEntityRaw()->getEcsWorld()->getTags();
+        VectorSet<HashedString> const& tags = _component->getEntityRaw()->getEcsWorld()->getTags();
         for (HashedString const& tag : tags)
             if (tag.getHash() == c_editorHash)
                 return true;
