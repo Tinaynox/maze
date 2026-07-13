@@ -112,9 +112,12 @@ namespace Maze
             {
                 clearInspector();
 
-                m_previewInspector = TInspector::Create(
-                    m_layout->getTransform(),
-                    m_scene.lock());
+                if (m_layout)
+                {
+                    m_previewInspector = TInspector::Create(
+                        m_layout->getTransform(),
+                        m_scene.lock());
+                }
 
                 if (m_previewInspector)
                 {
