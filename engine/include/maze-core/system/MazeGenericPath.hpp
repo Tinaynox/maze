@@ -50,6 +50,30 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        // _text may be narrower than CharType (eg a plain ASCII literal on a
+        // platform where StringType is wide), and EASTL's basic_string ctors
+        // (unlike std::basic_string's generic iterator-range ctor) don't
+        // implicitly widen a plain char* range, so convert each char explicitly.
+        static inline StringType ToStringType(CString _text)
+        {
+            StringType result;
+            for (CString c = _text; *c; ++c)
+                result.push_back(static_cast<CharType>(*c));
+            return result;
+        }
+
+        //////////////////////////////////////////
+        static inline StringType ToStringType(CString _begin, CString _end)
+        {
+            StringType result;
+            for (CString c = _begin; c != _end && *c; ++c)
+                result.push_back(static_cast<CharType>(*c));
+            return result;
+        }
+
+    public:
+
+        //////////////////////////////////////////
         inline GenericPath() = default;
 
         //////////////////////////////////////////

@@ -48,18 +48,8 @@ namespace Maze
             string.erase(string.find_last_not_of('/') + 1);
             static CString searchPath = "/./";
             static CString replacePath = "/";
-            // Path::StringType may be a narrow or wide string depending on platform, and EASTL's
-            // basic_string ctors (unlike std::basic_string's generic iterator-range ctor) don't
-            // implicitly widen a plain char* range, so convert each ASCII char explicitly.
-            auto toStringType = [](CString _text) -> Path::StringType
-            {
-                Path::StringType result;
-                for (CString c = _text; *c; ++c)
-                    result.push_back(static_cast<Path::StringType::value_type>(*c));
-                return result;
-            };
-            static Path::StringType const search = toStringType(searchPath);
-            static Path::StringType const replace = toStringType(replacePath);
+            static Path::StringType const search = Path::ToStringType(searchPath);
+            static Path::StringType const replace = Path::ToStringType(replacePath);
             StringHelper::ReplaceSubstring(string, search, replace);
             _path = string;
         }
