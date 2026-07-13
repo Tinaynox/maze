@@ -117,9 +117,13 @@ namespace Maze
         template <typename TEvent, typename ...TArgs>
         inline void broadcastEvent(TArgs... _args)
         {
-            Map<ClassUID, Vector<SharedPtr<Event>>>& allEvents = m_events.current();
+            // Construct before looking up the vector: TEvent's constructor could
+            // reentrantly call broadcastEvent<OtherEvent> on the same buffer,
+            // which would otherwise invalidate the 'events' reference below
+            SharedPtr<Event> newEvent = MAZE_CREATE_SHARED_PTR_WITH_ARGS(TEvent, _args...);
+            VectorMap<ClassUID, Vector<SharedPtr<Event>>>& allEvents = m_events.current();
             Vector<SharedPtr<Event>>& events = allEvents[ClassInfo<TEvent>::UID()];
-            events.emplace_back(MAZE_CREATE_SHARED_PTR_WITH_ARGS(TEvent, _args...));
+            events.emplace_back(eastl::move(newEvent));
         }
 
         //////////////////////////////////////////
@@ -143,7 +147,7 @@ namespace Maze
         template <typename TEvent>
         inline MultiDelegate<ClassUID, Event*>& getEventCallbacks()
         {
-            return m_eventCallbacks[ClassInfo<TEvent>::UID()];
+            return ensureEventCallbacks(ClassInfo<TEvent>::UID());
         }
 
         //////////////////////////////////////////
@@ -186,11 +190,24 @@ namespace Maze
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        // Callbacks are heap-allocated and referenced through a SharedPtr so that
+        // a reference returned by this function stays valid even if a callback
+        // invoked during dispatch reentrantly subscribes/broadcasts another event
+        // type, which would insert a new key into m_eventCallbacks
+        inline MultiDelegate<ClassUID, Event*>& ensureEventCallbacks(ClassUID _uid)
+        {
+            SharedPtr<MultiDelegate<ClassUID, Event*>>& cb = m_eventCallbacks[_uid];
+            if (!cb)
+                cb = MakeShared<MultiDelegate<ClassUID, Event*>>();
+            return *cb;
+        }
+
     private:
 
         static EventManager* s_instance;
-        SwitchableContainer<Map<ClassUID, Vector<SharedPtr<Event>>>> m_events;
-        Map<ClassUID, MultiDelegate<ClassUID, Event*>> m_eventCallbacks;
+        SwitchableContainer<VectorMap<ClassUID, Vector<SharedPtr<Event>>>> m_events;
+        VectorMap<ClassUID, SharedPtr<MultiDelegate<ClassUID, Event*>>> m_eventCallbacks;
     };
 
 

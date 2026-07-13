@@ -81,7 +81,7 @@ namespace Maze
         {
             if (eventsMap.second.size() > 0u)
             {
-                MultiDelegate<ClassUID, Event*>& eventCallbacks = m_eventCallbacks[eventsMap.first];
+                MultiDelegate<ClassUID, Event*>& eventCallbacks = ensureEventCallbacks(eventsMap.first);
                 for (auto& event : eventsMap.second)
                     eventCallbacks(eventsMap.first, event.get());
             }
