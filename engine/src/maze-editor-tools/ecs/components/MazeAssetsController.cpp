@@ -342,7 +342,7 @@ namespace Maze
         Vector<AssetFilePtr> assetDirectories = assetDirectory->getChildrenAssets<AssetDirectory>();
         assetDirectories.push_back(assetDirectory);
 
-        std::sort(
+        eastl::sort(
             assetDirectories.begin(),
             assetDirectories.end(),
             [](AssetFilePtr const& _a, AssetFilePtr const& _b) -> bool
@@ -548,7 +548,7 @@ namespace Maze
 
         Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesInFolder(m_selectedAssetFolder, false);
 
-        std::sort(
+        eastl::sort(
             assetFiles.begin(),
             assetFiles.end(),
             [](AssetFilePtr const& _a, AssetFilePtr const& _b) -> bool

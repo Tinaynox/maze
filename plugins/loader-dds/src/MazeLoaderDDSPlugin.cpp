@@ -45,13 +45,13 @@ namespace Maze
     void InstallLoaderDDSPlugin()
     {
         s_plugin = LoaderDDSPlugin::Create();
-        PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        PluginManager::GetInstancePtr()->installPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
     void UninstallLoaderDDSPlugin()
     {
-        Maze::PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        Maze::PluginManager::GetInstancePtr()->uninstallPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();
     }
 
@@ -61,14 +61,14 @@ namespace Maze
     extern "C" MAZE_PLUGIN_LOADER_DDS_API void StartPlugin()
     {
         s_plugin = LoaderDDSPlugin::Create();
-        Maze::PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        Maze::PluginManager::GetInstancePtr()->installPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
     extern "C" MAZE_PLUGIN_LOADER_DDS_API void StopPlugin()
     {
         if (PluginManager::GetInstancePtr())
-            PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+            PluginManager::GetInstancePtr()->uninstallPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();
     }
 

@@ -452,8 +452,8 @@ namespace Maze
         //////////////////////////////////////////
         void swap(ManagedSharedPtr<T>& _other)
         {
-            std::swap(m_ptr, _other.m_ptr);
-            std::swap(m_refCountBlock, _other.m_refCountBlock);
+            eastl::swap(m_ptr, _other.m_ptr);
+            eastl::swap(m_refCountBlock, _other.m_refCountBlock);
         }
 
     private:

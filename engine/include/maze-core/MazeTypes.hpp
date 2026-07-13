@@ -50,6 +50,9 @@
 #include <EASTL/stack.h>
 #include <EASTL/queue.h>
 #include <EASTL/functional.h>
+#include <EASTL/unique_ptr.h>
+#include <EASTL/shared_ptr.h>
+#include <EASTL/sort.h>
 #include <string>
 #include <sstream>
 #include <memory>
@@ -321,13 +324,49 @@ namespace Maze
         struct IsQueue<Maze::Queue<_Ty>> : std::true_type {};
 
 
+    //////////////////////////////////////////
+    // UniquePtr
+    //
+    //////////////////////////////////////////
+    template <
+        class _Ty,
+        class _Dx = eastl::default_delete<_Ty>>
+    using UniquePtr = eastl::unique_ptr<_Ty, _Dx>;
+
+    //////////////////////////////////////////
+    template <class _Ty, typename ...Args>
+    inline UniquePtr<_Ty> MakeUnique(Args&& ..._args) { return UniquePtr<_Ty>(new _Ty(std::forward<Args>(_args)...)); }
+
+
+    //////////////////////////////////////////
+    // SharedPtr / WeakPtr
+    //
+    //////////////////////////////////////////
+    template <class _Ty>
+    using SharedPtr = eastl::shared_ptr<_Ty>;
+
+    //////////////////////////////////////////
+    template <typename>
+    struct IsSharedPtr : std::false_type {};
+    template <class _Ty>
+    struct IsSharedPtr<Maze::SharedPtr<_Ty>> : std::true_type {};
+
+    //////////////////////////////////////////
+    template <class _Ty>
+    using WeakPtr = eastl::weak_ptr<_Ty>;
+
+    //////////////////////////////////////////
+    template <typename>
+    struct IsWeakPtr : std::false_type {};
+    template <class _Ty>
+    struct IsWeakPtr<Maze::WeakPtr<_Ty>> : std::true_type {};
+
 
     //////////////////////////////////////////
     template <class T, class... Args>
-    std::shared_ptr<T> MakeShared(Args&&... args)
+    SharedPtr<T> MakeShared(Args&&... args)
     {
-        using Alloc = StdMemoryAllocator<T, NedMemoryAllocator>;
-        return std::allocate_shared<T>(Alloc{}, std::forward<Args>(args)...);
+        return eastl::allocate_shared<T>(GetDefaultEastlNedAllocator(), std::forward<Args>(args)...);
     }
 
 

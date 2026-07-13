@@ -107,7 +107,7 @@ namespace Maze
                 m_inspector = TInspector::Create(m_layout->getTransform());
             }
 
-            return std::static_pointer_cast<TInspector>(m_inspector);
+            return eastl::static_pointer_cast<TInspector>(m_inspector);
         }
 
         //////////////////////////////////////////
@@ -131,7 +131,7 @@ namespace Maze
         template <typename TInspector>
         static InspectorPtr ProcessSetupInspector(InspectorController* _controller)
         {
-            return std::static_pointer_cast<Inspector>(_controller->setupEditor<TInspector>());
+            return eastl::static_pointer_cast<Inspector>(_controller->setupEditor<TInspector>());
         }
 
         //////////////////////////////////////////

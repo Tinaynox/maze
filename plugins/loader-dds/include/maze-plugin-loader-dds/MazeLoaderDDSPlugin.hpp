@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_LOADER_DDS_API LoaderDDSPlugin
         : public Plugin
-        , public std::enable_shared_from_this<LoaderDDSPlugin>
+        , public eastl::enable_shared_from_this<LoaderDDSPlugin>
     {
     public:
         //////////////////////////////////////////

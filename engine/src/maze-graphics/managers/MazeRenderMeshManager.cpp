@@ -380,7 +380,7 @@ namespace Maze
         for (auto const& value : m_renderMeshesLibrary)
             result.emplace_back(value.second.renderMesh);
 
-        std::sort(
+        eastl::sort(
             result.begin(),
             result.end(),
             [](RenderMeshPtr const& _a, RenderMeshPtr const& _b)

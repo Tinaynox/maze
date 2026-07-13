@@ -175,11 +175,11 @@ namespace Maze
     {
         if (isTopmost())
         {
-            std::swap(m_shared, _value.m_shared);
-            std::swap(m_dataBuffer, _value.m_dataBuffer);
-            std::swap(m_nameIdAndFlags, _value.m_nameIdAndFlags);
-            std::swap(m_paramsCount, _value.m_paramsCount);
-            std::swap(m_dataBlocksCount, _value.m_dataBlocksCount);
+            eastl::swap(m_shared, _value.m_shared);
+            eastl::swap(m_dataBuffer, _value.m_dataBuffer);
+            eastl::swap(m_nameIdAndFlags, _value.m_nameIdAndFlags);
+            eastl::swap(m_paramsCount, _value.m_paramsCount);
+            eastl::swap(m_dataBlocksCount, _value.m_dataBlocksCount);
         }
         else
         {
@@ -1062,11 +1062,11 @@ namespace Maze
     {
         if (isTopmost() && _value.isTopmost())
         {
-            std::swap(m_shared, _value.m_shared);
-            std::swap(m_dataBuffer, _value.m_dataBuffer);
-            std::swap(m_nameIdAndFlags, _value.m_nameIdAndFlags);
-            std::swap(m_paramsCount, _value.m_paramsCount);
-            std::swap(m_dataBlocksCount, _value.m_dataBlocksCount);
+            eastl::swap(m_shared, _value.m_shared);
+            eastl::swap(m_dataBuffer, _value.m_dataBuffer);
+            eastl::swap(m_nameIdAndFlags, _value.m_nameIdAndFlags);
+            eastl::swap(m_paramsCount, _value.m_paramsCount);
+            eastl::swap(m_dataBlocksCount, _value.m_dataBlocksCount);
         }
         else
         {

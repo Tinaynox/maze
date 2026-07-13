@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_LOADER_JPG_API LoaderJPGPlugin
         : public Plugin
-        , public std::enable_shared_from_this<LoaderJPGPlugin>
+        , public eastl::enable_shared_from_this<LoaderJPGPlugin>
     {
     public:
         //////////////////////////////////////////

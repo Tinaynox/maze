@@ -175,7 +175,7 @@ namespace Maze
         }
 
         // Sort indices by sqr distance to camera
-        std::sort(
+        eastl::sort(
             indices.begin(),
             indices.end(),
             [&](S32 _a, S32 _b)

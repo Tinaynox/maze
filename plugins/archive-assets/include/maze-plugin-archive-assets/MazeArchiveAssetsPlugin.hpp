@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_ARCHIVE_ASSETS_API ArchiveAssetsPlugin
         : public Plugin
-        , public std::enable_shared_from_this<ArchiveAssetsPlugin>
+        , public eastl::enable_shared_from_this<ArchiveAssetsPlugin>
     {
     public:
         //////////////////////////////////////////

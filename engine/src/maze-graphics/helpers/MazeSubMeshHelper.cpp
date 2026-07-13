@@ -198,14 +198,14 @@ namespace Maze
                 case RenderDrawTopology::Lines:
                 {
                     for (S32 i = 0, in = (S32)_indices.size(); i < in; i += 2)
-                        std::swap(_indices[i], _indices[i + 1]);
+                        eastl::swap(_indices[i], _indices[i + 1]);
 
                     break;
                 }
                 case RenderDrawTopology::Triangles:
                 {
                     for (S32 i = 0, in = (S32)_indices.size(); i < in; i += 3)
-                        std::swap(_indices[i], _indices[i + 2]);
+                        eastl::swap(_indices[i], _indices[i + 2]);
 
                     break;
                 }

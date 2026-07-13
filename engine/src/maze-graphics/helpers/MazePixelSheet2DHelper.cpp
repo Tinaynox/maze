@@ -237,7 +237,7 @@ namespace Maze
             if (dx == 0)
             {
                 if (_y1 < _y0)
-                    std::swap(_y0, _y1);
+                    eastl::swap(_y0, _y1);
 
                 for (y = _y0; y <= _y1; ++y)
                     _pixelSheet.setPixelSafe(_x0, y, color);
@@ -249,7 +249,7 @@ namespace Maze
             if (dy == 0)
             {
                 if (_x1 < _x0)
-                    std::swap(_x0, _x1);
+                    eastl::swap(_x0, _x1);
 
                 for (x = _x0; x <= _x1; ++x)
                     _pixelSheet.setPixelSafe(x, _y0, color);
@@ -461,22 +461,22 @@ namespace Maze
             if (_y1 >= _y0 && _y1 >= _y2)
             {
                 // Swap 1 & 2
-                std::swap(_x1, _x2);
-                std::swap(_y1, _y2);
+                eastl::swap(_x1, _x2);
+                eastl::swap(_y1, _y2);
             }
             else
             // _y0 is top
             {
                 // Swap 1 & 2
-                std::swap(_x0, _x2);
-                std::swap(_y0, _y2);
+                eastl::swap(_x0, _x2);
+                eastl::swap(_y0, _y2);
             }
 
             if (_y1 <= _y0)
             {
                 // Swap 0 & 1
-                std::swap(_x0, _x1);
-                std::swap(_y0, _y1);
+                eastl::swap(_x0, _x1);
+                eastl::swap(_y0, _y1);
             }
 
             auto fillBottomFlatTriangle =

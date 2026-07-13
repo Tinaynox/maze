@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeStdTypes.hpp"
+#include "maze-core/MazeTypes.hpp"
 #include "maze-core/system/MazeMutex.hpp"
 #include "maze-core/memory/MazeMemoryAllocatorBase.hpp"
 

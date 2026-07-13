@@ -46,13 +46,13 @@ namespace Maze
     void InstallLoaderOGGPlugin()
     {
         s_plugin = LoaderOGGPlugin::Create();
-        PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        PluginManager::GetInstancePtr()->installPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
     void UninstallLoaderOGGPlugin()
     {
-        Maze::PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        Maze::PluginManager::GetInstancePtr()->uninstallPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();
     }
 
@@ -62,14 +62,14 @@ namespace Maze
     extern "C" MAZE_PLUGIN_LOADER_OGG_API void StartPlugin()
     {
         s_plugin = LoaderOGGPlugin::Create();
-        Maze::PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        Maze::PluginManager::GetInstancePtr()->installPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
     extern "C" MAZE_PLUGIN_LOADER_OGG_API void StopPlugin()
     {
         if (PluginManager::GetInstancePtr())
-            PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+            PluginManager::GetInstancePtr()->uninstallPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();
     }
 

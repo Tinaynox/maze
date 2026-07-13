@@ -143,7 +143,62 @@ namespace Maze
         NedMemoryAllocator();
     };
 
-    
+
+    //////////////////////////////////////////
+    // Class EastlNedAllocator
+    //
+    // EASTL's allocator concept (see EASTL/allocator.h) is untyped and
+    // byte-counted - just allocate(n)/deallocate(p, n) - unlike std::allocator's
+    // per-type, element-counted interface. This makes it a direct match for
+    // NedMemoryAllocator::AllocateBytes/DeallocateBytes, so a single instance
+    // (no template parameter) can back every eastl::shared_ptr control block.
+    //////////////////////////////////////////
+    class EastlNedAllocator
+    {
+    public:
+
+        //////////////////////////////////////////
+        inline explicit EastlNedAllocator(CString _name = nullptr) { (void)_name; }
+
+        //////////////////////////////////////////
+        inline void* allocate(Size _n, int = 0)
+        {
+            return NedMemoryAllocator::AllocateBytes(_n);
+        }
+
+        //////////////////////////////////////////
+        inline void* allocate(Size _n, Size _alignment, Size, int = 0)
+        {
+            return NedMemoryAllocator::AllocateBytesAligned(_alignment, _n);
+        }
+
+        //////////////////////////////////////////
+        inline void deallocate(void* _p, Size)
+        {
+            NedMemoryAllocator::DeallocateBytes(_p);
+        }
+
+        //////////////////////////////////////////
+        inline CString get_name() const { return "Maze EastlNedAllocator"; }
+
+        //////////////////////////////////////////
+        inline void set_name(CString) { }
+    };
+
+    //////////////////////////////////////////
+    inline bool operator==(EastlNedAllocator const&, EastlNedAllocator const&) { return true; }
+
+    //////////////////////////////////////////
+    inline bool operator!=(EastlNedAllocator const&, EastlNedAllocator const&) { return false; }
+
+    //////////////////////////////////////////
+    inline EastlNedAllocator& GetDefaultEastlNedAllocator()
+    {
+        static EastlNedAllocator s_allocator;
+        return s_allocator;
+    }
+
+
 } // namespace Maze
 //////////////////////////////////////////
     

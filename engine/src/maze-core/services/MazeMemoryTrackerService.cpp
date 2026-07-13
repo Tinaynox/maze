@@ -160,7 +160,7 @@ namespace Maze
                 allocationByType.push_back(std::make_pair(allocType, allocBytes));
         }
 
-        std::sort(
+        eastl::sort(
             allocationByType.begin(),
             allocationByType.end(),
             [](StdPair<StdString, Size> const& _p0, StdPair<StdString, Size> const& _p1) -> bool

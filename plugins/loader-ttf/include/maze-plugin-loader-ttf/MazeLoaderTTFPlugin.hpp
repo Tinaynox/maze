@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_LOADER_TTF_API LoaderTTFPlugin
         : public Plugin
-        , public std::enable_shared_from_this<LoaderTTFPlugin>
+        , public eastl::enable_shared_from_this<LoaderTTFPlugin>
     {
     public:
         //////////////////////////////////////////

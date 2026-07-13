@@ -353,7 +353,7 @@ namespace Maze
         for (auto const& value : m_spritesLibrary)
             result.emplace_back(value.second.sprite);
 
-        std::sort(
+        eastl::sort(
             result.begin(),
             result.end(),
             [](SpritePtr const& _a, SpritePtr const& _b)

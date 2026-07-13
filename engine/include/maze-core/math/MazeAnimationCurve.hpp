@@ -440,7 +440,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void sortKeyframes()
         {
-            std::sort(m_keyframes.begin(), m_keyframes.end());
+            eastl::sort(m_keyframes.begin(), m_keyframes.end());
         }
 
         //////////////////////////////////////////

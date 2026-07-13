@@ -376,7 +376,7 @@ namespace Maze
         //////////////////////////////////////////
         void swap(Delegate& _other) noexcept
         {
-            ::std::swap(*this, _other);
+            eastl::swap(*this, _other);
         }
 
         //////////////////////////////////////////

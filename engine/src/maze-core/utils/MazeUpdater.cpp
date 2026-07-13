@@ -141,7 +141,7 @@ namespace Maze
     //////////////////////////////////////////
     void Updater::sortUpdatables()
     {
-        std::sort(
+        eastl::sort(
             m_updatables.begin(),
             m_updatables.end(),
             [](Updatable* _updatable0, Updatable* _updatable1)

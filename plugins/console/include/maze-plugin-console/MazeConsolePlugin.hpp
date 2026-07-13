@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_CONSOLE_API ConsolePlugin
         : public Plugin
-        , public std::enable_shared_from_this<ConsolePlugin>
+        , public eastl::enable_shared_from_this<ConsolePlugin>
     {
     public:
         //////////////////////////////////////////

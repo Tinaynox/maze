@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_PROFILER_VIEW_API ProfilerViewPlugin
         : public Plugin
-        , public std::enable_shared_from_this<ProfilerViewPlugin>
+        , public eastl::enable_shared_from_this<ProfilerViewPlugin>
     {
     public:
         //////////////////////////////////////////

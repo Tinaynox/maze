@@ -552,7 +552,7 @@ namespace Maze
             {
                 m_sortedCanvases.emplace_back(_canvas);
             });
-        std::sort(
+        eastl::sort(
             m_sortedCanvases.begin(),
             m_sortedCanvases.end(),
             [](Canvas* _canvas0, Canvas* _canvas1) -> bool

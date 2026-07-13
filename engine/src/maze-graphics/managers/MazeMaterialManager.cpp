@@ -724,7 +724,7 @@ namespace Maze
         for (auto const& value : m_materialsLibrary)
             result.emplace_back(value.second->material);
 
-        std::sort(
+        eastl::sort(
             result.begin(),
             result.end(),
             [](MaterialPtr const& _a, MaterialPtr const& _b)

@@ -220,7 +220,7 @@ namespace Maze
             Vector<ComponentId> const& _forbiddenComponentIds = Vector<ComponentId>())
         {
             Vector<ComponentId> forbiddenComponentIds = _forbiddenComponentIds;
-            std::sort(forbiddenComponentIds.begin(), forbiddenComponentIds.end());
+            eastl::sort(forbiddenComponentIds.begin(), forbiddenComponentIds.end());
 
             for (Size i = 0, in = m_samples.size(); i < in; ++i)
             {
@@ -368,7 +368,7 @@ namespace Maze
         template <typename TEvent, typename ...TArgs>
         inline void broadcastEvent(TArgs... _args)
         {
-            UniquePtr<TEvent> evt = std::make_unique<TEvent>(_args...);
+            UniquePtr<TEvent> evt = MakeUnique<TEvent>(_args...);
             MAZE_DEBUG_ERROR_BP_IF(
                 evt->getClassUID() != ClassInfo<TEvent>::UID(),
                 "Event %s has wrong metadata!",
@@ -413,7 +413,7 @@ namespace Maze
         template <typename TEvent, typename ...TArgs>
         inline void sendEvent(EntityId _entityId, TArgs&&... _args)
         {
-            sendEvent(_entityId, std::make_unique<TEvent>(std::forward<TArgs>(_args)...));
+            sendEvent(_entityId, MakeUnique<TEvent>(std::forward<TArgs>(_args)...));
         }
 
 

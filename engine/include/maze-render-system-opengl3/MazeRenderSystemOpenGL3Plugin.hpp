@@ -60,7 +60,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_RENDER_SYSTEM_OPENGL3_API RenderSystemOpenGL3Plugin
         : public Plugin
-        , public std::enable_shared_from_this<RenderSystemOpenGL3Plugin>
+        , public eastl::enable_shared_from_this<RenderSystemOpenGL3Plugin>
     {
     public:
         //////////////////////////////////////////

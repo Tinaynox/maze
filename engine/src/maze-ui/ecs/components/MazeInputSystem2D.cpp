@@ -447,7 +447,7 @@ namespace Maze
                     layouts.emplace_back(Layout2DSortData{ _layout, sortKey });
                 });
 
-            std::sort(
+            eastl::sort(
                 layouts.begin(),
                 layouts.end(),
                 [](Layout2DSortData const& _layoutData0, Layout2DSortData const& _layoutData1)
@@ -593,7 +593,7 @@ namespace Maze
             {
                 m_sortedCanvases.emplace_back(_canvas);
             });
-        std::sort(
+        eastl::sort(
             m_sortedCanvases.begin(),
             m_sortedCanvases.end(),
             [](Canvas* _canvas0, Canvas* _canvas1) -> bool

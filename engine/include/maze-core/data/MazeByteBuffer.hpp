@@ -162,7 +162,7 @@ namespace Maze
         {
             MAZE_DEBUG_BP_IF(_i >= (U32)m_size);
             MAZE_DEBUG_BP_IF(_j >= (U32)m_size);
-            std::swap(m_data[_i], m_data[_j]);
+            eastl::swap(m_data[_i], m_data[_j]);
         }
 
         //////////////////////////////////////////
@@ -205,9 +205,9 @@ namespace Maze
         //////////////////////////////////////////
         inline ByteBuffer& operator=(ByteBuffer&& _v) noexcept
         {
-            std::swap(m_data, _v.m_data);
-            std::swap(m_size, _v.m_size);
-            std::swap(m_capacity, _v.m_capacity);
+            eastl::swap(m_data, _v.m_data);
+            eastl::swap(m_size, _v.m_size);
+            eastl::swap(m_capacity, _v.m_capacity);
 
             return *this;
         }

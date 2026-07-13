@@ -537,9 +537,9 @@ namespace Maze
         MAZE_DEBUG_BP_RETURN_VALUE_IF(_index0 >= m_children.size(), false);
         MAZE_DEBUG_BP_RETURN_VALUE_IF(_index1 >= m_children.size(), false);
 
-        std::swap(m_children[_index0], m_children[_index1]);
-        std::swap(m_children[_index0]->m_z, m_children[_index1]->m_z);
-        std::swap(m_children[_index0]->m_orderOfArrival, m_children[_index1]->m_orderOfArrival);
+        eastl::swap(m_children[_index0], m_children[_index1]);
+        eastl::swap(m_children[_index0]->m_z, m_children[_index1]->m_z);
+        eastl::swap(m_children[_index0]->m_orderOfArrival, m_children[_index1]->m_orderOfArrival);
 
         return true;
     }

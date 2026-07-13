@@ -297,7 +297,7 @@ namespace Maze
                     S32 maxCount = bursts[i].maxCount;
 
                     if (minCount > maxCount)
-                        std::swap(minCount, maxCount);
+                        eastl::swap(minCount, maxCount);
 
                     count += Random::RangeRandom(minCount, maxCount + 1);
                     ++m_currentBurstIndex;

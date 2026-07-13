@@ -125,7 +125,7 @@ namespace Maze
             if (results.empty())
                 return nullptr;
 
-            std::sort(
+            eastl::sort(
                 results.begin(),
                 results.end(),
                 [](GamepadPtr const& _gamepad0, GamepadPtr const& _gamepad1)

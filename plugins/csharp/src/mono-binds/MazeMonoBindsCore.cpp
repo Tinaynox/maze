@@ -272,7 +272,7 @@ namespace Maze
                 }),
             files.end());
 
-        std::sort(
+        eastl::sort(
             files.begin(), files.end(),
             [](AssetFilePtr const& _a, AssetFilePtr const& _b)
             {
@@ -958,7 +958,7 @@ namespace Maze
 
         // Canonicalize so the same component set shares one sample
         // regardless of the order it was listed in
-        std::sort(requiredComponentIds.begin(), requiredComponentIds.end());
+        eastl::sort(requiredComponentIds.begin(), requiredComponentIds.end());
 
         EntitiesSamplePtr sample = world->requestCommonSample(
             EntityAspect(requiredComponentIds, forbiddenComponentIds),

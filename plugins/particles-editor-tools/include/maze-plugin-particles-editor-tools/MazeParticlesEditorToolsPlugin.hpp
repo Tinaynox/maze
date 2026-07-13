@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_PARTICLES_EDITOR_TOOLS_API ParticlesEditorToolsPlugin
         : public Plugin
-        , public std::enable_shared_from_this<ParticlesEditorToolsPlugin>
+        , public eastl::enable_shared_from_this<ParticlesEditorToolsPlugin>
     {
     public:
         //////////////////////////////////////////

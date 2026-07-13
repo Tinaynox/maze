@@ -172,7 +172,7 @@ namespace Maze
         if (!page)
         {
             Debug::Log("TrueTypeFontFreetype: Creating TTFPage...");
-            page = std::make_shared<TTFPage>();
+            page = Maze::MakeShared<TTFPage>();
             eventTexturesChanged();
             Debug::Log("TrueTypeFontFreetype: TTFPage created.");
         }
@@ -188,7 +188,7 @@ namespace Maze
         if (!page)
         {
             Debug::Log("TrueTypeFontFreetype: Creating outline TTFPage...");
-            page = std::make_shared<TTFPage>();
+            page = Maze::MakeShared<TTFPage>();
             eventTexturesChanged();
             Debug::Log("TrueTypeFontFreetype: outline TTFPage created.");
         }

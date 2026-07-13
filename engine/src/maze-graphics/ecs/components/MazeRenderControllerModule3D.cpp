@@ -227,7 +227,7 @@ namespace Maze
                 {
                     MAZE_PROFILE_EVENT("3D Sort Render Queue");
                     // Sort render queue
-                    std::sort(
+                    eastl::sort(
                         renderDataSorted.begin(),
                         renderDataSorted.end(),
                         [](RenderUnit const* _a, RenderUnit const* _b)
@@ -376,7 +376,7 @@ namespace Maze
             {
                 cameras.push_back(_camera3D);
             });
-        std::sort(
+        eastl::sort(
             cameras.begin(),
             cameras.end(),
             [](Camera3D* _cameraA, Camera3D* _cameraB) { return _cameraA->getSortOrder() < _cameraB->getSortOrder(); });

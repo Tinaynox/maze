@@ -124,7 +124,7 @@ namespace Maze
                 }
             }
 
-            return std::static_pointer_cast<TInspector>(m_previewInspector);
+            return eastl::static_pointer_cast<TInspector>(m_previewInspector);
         }
 
         //////////////////////////////////////////
@@ -151,7 +151,7 @@ namespace Maze
         template <typename TInspector>
         static PreviewInspectorPtr ProcessSetupInspector(PreviewController* _controller)
         {
-            return std::static_pointer_cast<PreviewInspector>(_controller->setupInspector<TInspector>());
+            return eastl::static_pointer_cast<PreviewInspector>(_controller->setupInspector<TInspector>());
         }
 
         //////////////////////////////////////////

@@ -111,7 +111,7 @@ namespace Maze
     void ExtensionsOpenGL::printGLExtensions()
     {
         Vector<String> sortedExtensions(m_extensions.begin(), m_extensions.end());
-        std::sort(sortedExtensions.begin(), sortedExtensions.end());
+        eastl::sort(sortedExtensions.begin(), sortedExtensions.end());
 
         MAZE_LOG("GL_EXTENSIONS: ");
         for (String const& glExtension : sortedExtensions)

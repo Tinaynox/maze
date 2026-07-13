@@ -105,7 +105,7 @@ namespace Maze
             if (it == m_settings.end())
                 return nullPointer;
 
-            return std::static_pointer_cast<TSettings>(it->second);
+            return eastl::static_pointer_cast<TSettings>(it->second);
         }
 
         //////////////////////////////////////////

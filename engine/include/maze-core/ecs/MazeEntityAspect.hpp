@@ -78,7 +78,7 @@ namespace Maze
             EntityAspect aspect;
             ExpandComponentIds<TComponents...>(aspect.m_requiredComponentIds);
             aspect.m_forbiddenComponentIds = _forbiddenComponentIds;
-            std::sort(aspect.m_forbiddenComponentIds.begin(), aspect.m_forbiddenComponentIds.end());
+            eastl::sort(aspect.m_forbiddenComponentIds.begin(), aspect.m_forbiddenComponentIds.end());
             aspect.updateComponentsMasks();
             return aspect;
         }

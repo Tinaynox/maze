@@ -52,7 +52,7 @@ namespace Maze
                     modes.push_back(mode);
             }
 
-            std::sort(modes.begin(), modes.end());
+            eastl::sort(modes.begin(), modes.end());
 
             return modes;
         }

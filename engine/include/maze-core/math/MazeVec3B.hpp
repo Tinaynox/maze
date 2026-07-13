@@ -167,9 +167,9 @@ namespace Maze
         //////////////////////////////////////////
         inline void swap(Vec3B& _other)
         {
-            std::swap(x, _other.x);
-            std::swap(y, _other.y);
-            std::swap(z, _other.z);
+            eastl::swap(x, _other.x);
+            eastl::swap(y, _other.y);
+            eastl::swap(z, _other.z);
         }
 
         //////////////////////////////////////////

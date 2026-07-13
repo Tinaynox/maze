@@ -216,7 +216,7 @@ namespace Maze
             matches.push_back(&itemData);
         }
 
-        std::sort(
+        eastl::sort(
             matches.begin(),
             matches.end(),
             [](ItemData const* _a, ItemData const* _b) { return _a->text < _b->text; });

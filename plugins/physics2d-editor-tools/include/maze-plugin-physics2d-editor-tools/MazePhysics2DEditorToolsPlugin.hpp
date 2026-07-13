@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_PHYSICS2D_EDITOR_TOOLS_API Physics2DEditorToolsPlugin
         : public Plugin
-        , public std::enable_shared_from_this<Physics2DEditorToolsPlugin>
+        , public eastl::enable_shared_from_this<Physics2DEditorToolsPlugin>
     {
     public:
         //////////////////////////////////////////

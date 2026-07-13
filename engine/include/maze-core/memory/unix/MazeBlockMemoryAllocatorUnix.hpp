@@ -119,7 +119,7 @@ namespace Maze
         {}
 
         ////////////////////////////////////
-        inline static SharedPtr<BlockMemoryAllocatorUnix> Create() { return std::make_shared<BlockMemoryAllocatorUnix>(); }
+        inline static SharedPtr<BlockMemoryAllocatorUnix> Create() { return Maze::MakeShared<BlockMemoryAllocatorUnix>(); }
 
         ////////////////////////////////////
         void* allocBlock()

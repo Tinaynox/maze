@@ -60,7 +60,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_RENDER_SYSTEM_VULKAN_API RenderSystemVulkanPlugin
         : public Plugin
-        , public std::enable_shared_from_this<RenderSystemVulkanPlugin>
+        , public eastl::enable_shared_from_this<RenderSystemVulkanPlugin>
     {
     public:
         //////////////////////////////////////////

@@ -528,7 +528,7 @@ namespace Maze
         for (auto const& value : m_textures2DLibrary)
             result.emplace_back(value.second.texture);
 
-        std::sort(
+        eastl::sort(
             result.begin(),
             result.end(),
             [](Texture2DPtr const& _a, Texture2DPtr const& _b)

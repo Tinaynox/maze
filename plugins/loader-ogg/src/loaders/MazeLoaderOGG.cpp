@@ -71,7 +71,7 @@ namespace Maze
         
         stb_vorbis_get_samples_short_interleaved(vorbis, info.channels, (S16*)data->getDataRW(), (S32)lengthSamples);
 
-        _soundData = std::make_shared<SoundData>(
+        _soundData = Maze::MakeShared<SoundData>(
             data,
             info.channels,
             info.sample_rate,

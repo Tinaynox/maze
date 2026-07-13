@@ -46,7 +46,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API EditorAction
-        : public std::enable_shared_from_this<EditorAction>
+        : public eastl::enable_shared_from_this<EditorAction>
     {
     public:
 
@@ -88,7 +88,7 @@ namespace Maze
         SharedPtr<TEditorAction> castSafe()
         {
             if (getClassUID() == ClassInfo<TEditorAction>::UID())
-                return std::static_pointer_cast<TEditorAction>(shared_from_this());
+                return eastl::static_pointer_cast<TEditorAction>(shared_from_this());
 
             return nullptr;
         }

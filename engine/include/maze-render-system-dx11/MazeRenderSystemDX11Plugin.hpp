@@ -60,7 +60,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_RENDER_SYSTEM_DX11_API RenderSystemDX11Plugin
         : public Plugin
-        , public std::enable_shared_from_this<RenderSystemDX11Plugin>
+        , public eastl::enable_shared_from_this<RenderSystemDX11Plugin>
     {
     public:
         //////////////////////////////////////////

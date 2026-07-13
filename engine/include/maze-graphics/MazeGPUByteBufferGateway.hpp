@@ -33,6 +33,7 @@
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazeGPUByteBufferUtils.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
+#include "maze-core/MazeTypes.hpp"
 
 
 //////////////////////////////////////////

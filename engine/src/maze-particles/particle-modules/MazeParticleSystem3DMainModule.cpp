@@ -83,7 +83,7 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DMainModule::EmissionModule::sortBursts()
     {
-        std::sort(bursts.begin(), bursts.end());
+        eastl::sort(bursts.begin(), bursts.end());
     }
 
     //////////////////////////////////////////

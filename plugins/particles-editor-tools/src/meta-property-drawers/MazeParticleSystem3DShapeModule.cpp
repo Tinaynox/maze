@@ -172,12 +172,12 @@ namespace Maze
                 {
                     if (metaProperty->getValueClassUID() == ClassInfo<ParticleSystem3DZoneData>::UID())
                     {
-                        m_zoneMetaPropertyDrawer = std::static_pointer_cast<MetaPropertyDrawerParticleSystem3DZoneData>(property);
+                        m_zoneMetaPropertyDrawer = eastl::static_pointer_cast<MetaPropertyDrawerParticleSystem3DZoneData>(property);
                     }
                     else
                     if (strcmp(metaProperty->getName(), "type") == 0)
                     {
-                        m_typePropertyDrawer = std::static_pointer_cast<MetaPropertyDrawerEnumClass>(property);
+                        m_typePropertyDrawer = eastl::static_pointer_cast<MetaPropertyDrawerEnumClass>(property);
                     }
 
                     property->buildUI(verticalLayout2->getTransform(), _label);

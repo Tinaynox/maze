@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_CSHARP_API CSharpPlugin
         : public Plugin
-        , public std::enable_shared_from_this<CSharpPlugin>
+        , public eastl::enable_shared_from_this<CSharpPlugin>
     {
     public:
         //////////////////////////////////////////

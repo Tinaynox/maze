@@ -202,14 +202,14 @@ namespace Maze
             }
             
             // Sort entities
-            std::sort(_entityComponents.begin(), _entityComponents.end(),
+            eastl::sort(_entityComponents.begin(), _entityComponents.end(),
                 [](EntitySerializationData const& _first, EntitySerializationData const& _second)
                 {
                     return _first.entity->getSerializationId() < _second.entity->getSerializationId();
                 });
 
             // Sort prefabs
-            std::sort(_prefabs.begin(), _prefabs.end(),
+            eastl::sort(_prefabs.begin(), _prefabs.end(),
                 [](PrefabSerializationData const& _first, PrefabSerializationData const& _second)
                 {
                     return _first.prefabInstance->getEntityRaw()->getSerializationId() < _second.prefabInstance->getEntityRaw()->getSerializationId();

@@ -198,9 +198,9 @@ namespace Maze
     template <class TValue>
     inline void Vec3<TValue>::swap(Vec3& _other)
     {
-        std::swap(x, _other.x);
-        std::swap(y, _other.y);
-        std::swap(z, _other.z);
+        eastl::swap(x, _other.x);
+        eastl::swap(y, _other.y);
+        eastl::swap(z, _other.z);
     }
 
     //////////////////////////////////////////

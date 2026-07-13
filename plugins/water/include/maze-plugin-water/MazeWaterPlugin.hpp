@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_WATER_API WaterPlugin
         : public Plugin
-        , public std::enable_shared_from_this<WaterPlugin>
+        , public eastl::enable_shared_from_this<WaterPlugin>
     {
     public:
         //////////////////////////////////////////

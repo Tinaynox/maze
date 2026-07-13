@@ -49,7 +49,7 @@ namespace Maze
 
         StdVector<MemoryAllocatorBase*> memoryAllocators = s_memoryAllocators;
 
-        std::sort(
+        eastl::sort(
             memoryAllocators.begin(),
             memoryAllocators.end(),
             [](MemoryAllocatorBase* allocator0, MemoryAllocatorBase* allocator1)

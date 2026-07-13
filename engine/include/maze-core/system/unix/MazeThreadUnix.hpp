@@ -58,7 +58,7 @@ namespace Maze
         ThreadUnix(Delegate<S32> const& _entryPoint)
             : ThreadUnix()
         {
-            m_entryPoint = std::make_shared<TaskDelegate0>(_entryPoint);
+            m_entryPoint = Maze::MakeShared<TaskDelegate0>(_entryPoint);
         }
         
         //////////////////////////////////////////
@@ -66,7 +66,7 @@ namespace Maze
         ThreadUnix(Delegate<S32> const& _entryPoint, TArg0 _arg0)
             : ThreadUnix()
         {
-            m_entryPoint = std::make_shared<TaskDelegate1>(_entryPoint, _arg0);
+            m_entryPoint = Maze::MakeShared<TaskDelegate1>(_entryPoint, _arg0);
         }
         
         //////////////////////////////////////////
@@ -74,7 +74,7 @@ namespace Maze
         ThreadUnix(Delegate<S32> const& _entryPoint, TArg0 _arg0, TArg1 _arg1)
             : ThreadUnix()
         {
-            m_entryPoint = std::make_shared<TaskDelegate2>(_entryPoint, _arg0, _arg1);
+            m_entryPoint = Maze::MakeShared<TaskDelegate2>(_entryPoint, _arg0, _arg1);
         }
         
         

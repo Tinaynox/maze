@@ -196,7 +196,7 @@ namespace Maze
     {
         _n /= 4;
         for (S32 i = 0; i < _n; i++, _a += 4)
-            std::swap(_a[0], _a[1]);
+            eastl::swap(_a[0], _a[1]);
     }
 
     //////////////////////////////////////////
@@ -210,8 +210,8 @@ namespace Maze
     // contains an error in the last line: data[6]=data[5] is a bug!
     static void FlipDXT1BlockFull(U8* data)
     {
-        std::swap(data[4], data[7]);
-        std::swap(data[5], data[6]);
+        eastl::swap(data[4], data[7]);
+        eastl::swap(data[5], data[6]);
     }
 
     //////////////////////////////////////////
@@ -223,9 +223,9 @@ namespace Maze
         // [8-15] a DXT1 block.
 
         // We can flip the alpha bits at the byte level (2 bytes per line).
-        std::swap(block[0], block[6]);
-        std::swap(block[1], block[7]);
-        std::swap(block[3], block[5]);
+        eastl::swap(block[0], block[6]);
+        eastl::swap(block[1], block[7]);
+        eastl::swap(block[3], block[5]);
 
         // And flip the DXT1 block using the above function.
         FlipDXT1BlockFull(block + 8);

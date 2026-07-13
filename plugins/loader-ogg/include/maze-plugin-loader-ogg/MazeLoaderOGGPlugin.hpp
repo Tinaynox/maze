@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_LOADER_OGG_API LoaderOGGPlugin
         : public Plugin
-        , public std::enable_shared_from_this<LoaderOGGPlugin>
+        , public eastl::enable_shared_from_this<LoaderOGGPlugin>
     {
     public:
         //////////////////////////////////////////

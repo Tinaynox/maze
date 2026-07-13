@@ -48,7 +48,7 @@ namespace Maze
         : m_requiredComponentIds(_requiredComponentIds)
         , m_forbiddenComponentIds(_forbiddenComponentIds)
     {
-        std::sort(m_forbiddenComponentIds.begin(), m_forbiddenComponentIds.end());
+        eastl::sort(m_forbiddenComponentIds.begin(), m_forbiddenComponentIds.end());
         updateComponentsMasks();
     }
 

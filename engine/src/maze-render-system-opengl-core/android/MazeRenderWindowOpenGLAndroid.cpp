@@ -73,7 +73,7 @@ namespace Maze
     WindowPtr RenderWindowOpenGLAndroid::fetchSystemWindow(WindowParamsPtr const& _params)
     {
         WindowManagerAndroid* windowManager = static_cast<WindowManagerAndroid*>(WindowManager::GetInstancePtr());
-        return std::static_pointer_cast<Window>(windowManager->getWindow());
+        return eastl::static_pointer_cast<Window>(windowManager->getWindow());
     }
 
     ///////////////////////////////////////

@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_CSHARP_EDITOR_TOOLS_API CSharpEditorToolsPlugin
         : public Plugin
-        , public std::enable_shared_from_this<CSharpEditorToolsPlugin>
+        , public eastl::enable_shared_from_this<CSharpEditorToolsPlugin>
     {
     public:
         //////////////////////////////////////////

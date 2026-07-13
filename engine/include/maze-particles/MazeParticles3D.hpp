@@ -151,16 +151,16 @@ namespace Maze
         //////////////////////////////////////////
         inline void swapData(S32 _index0, S32 _index1)
         {
-            std::swap(m_seeds[_index0], m_seeds[_index1]);
-            std::swap(m_positions[_index0], m_positions[_index1]);
-            std::swap(m_directions[_index0], m_directions[_index1]);
-            std::swap(m_rotations[_index0], m_rotations[_index1]);
-            std::swap(m_lifes[_index0], m_lifes[_index1]);
-            std::swap(m_sizes[_index0], m_sizes[_index1]);
-            std::swap(m_colorsInitial[_index0], m_colorsInitial[_index1]);
-            std::swap(m_colorsCurrent[_index0], m_colorsCurrent[_index1]);
-            std::swap(m_movements[_index0], m_movements[_index1]);
-            std::swap(m_animationFrames[_index0], m_animationFrames[_index1]);
+            eastl::swap(m_seeds[_index0], m_seeds[_index1]);
+            eastl::swap(m_positions[_index0], m_positions[_index1]);
+            eastl::swap(m_directions[_index0], m_directions[_index1]);
+            eastl::swap(m_rotations[_index0], m_rotations[_index1]);
+            eastl::swap(m_lifes[_index0], m_lifes[_index1]);
+            eastl::swap(m_sizes[_index0], m_sizes[_index1]);
+            eastl::swap(m_colorsInitial[_index0], m_colorsInitial[_index1]);
+            eastl::swap(m_colorsCurrent[_index0], m_colorsCurrent[_index1]);
+            eastl::swap(m_movements[_index0], m_movements[_index1]);
+            eastl::swap(m_animationFrames[_index0], m_animationFrames[_index1]);
         }
 
         //////////////////////////////////////////

@@ -63,7 +63,7 @@ namespace Maze
         ThreadWin(Delegate<S32> const& _entryPoint)
             : ThreadWin()
         {
-            m_entryPoint = std::make_unique<TaskDelegate0>(_entryPoint);
+            m_entryPoint = MakeUnique<TaskDelegate0>(_entryPoint);
         }
 
         //////////////////////////////////////////
@@ -71,7 +71,7 @@ namespace Maze
         ThreadWin(Delegate<S32> const& _entryPoint, TArg0 _arg0)
             : ThreadWin()
         {
-            m_entryPoint = MakeShared<TaskDelegate1>(_entryPoint, _arg0);
+            m_entryPoint = MakeUnique<TaskDelegate1>(_entryPoint, _arg0);
         }
 
         //////////////////////////////////////////
@@ -79,7 +79,7 @@ namespace Maze
         ThreadWin(Delegate<S32> const& _entryPoint, TArg0 _arg0, TArg1 _arg1)
             : ThreadWin()
         {
-            m_entryPoint = MakeShared<TaskDelegate2>(_entryPoint, _arg0, _arg1);
+            m_entryPoint = MakeUnique<TaskDelegate2>(_entryPoint, _arg0, _arg1);
         }
 
 

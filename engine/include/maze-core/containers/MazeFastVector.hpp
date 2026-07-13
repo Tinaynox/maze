@@ -107,9 +107,9 @@ namespace Maze
             , m_size(0)
             , m_capacity(0)
         {
-            std::swap(m_data, _value.m_data);
-            std::swap(m_size, _value.m_size);
-            std::swap(m_capacity, _value.m_capacity);
+            eastl::swap(m_data, _value.m_data);
+            eastl::swap(m_size, _value.m_size);
+            eastl::swap(m_capacity, _value.m_capacity);
         }
         
         //////////////////////////////////////////
@@ -181,9 +181,9 @@ namespace Maze
         //////////////////////////////////////////
         inline void swap(FastVector<T>& _other)
         {
-            std::swap(this->m_data, _other.m_data);
-            std::swap(this->m_size, _other.m_size);
-            std::swap(this->m_capacity, _other.m_capacity);
+            eastl::swap(this->m_data, _other.m_data);
+            eastl::swap(this->m_size, _other.m_size);
+            eastl::swap(this->m_capacity, _other.m_capacity);
         }
         
         //////////////////////////////////////////

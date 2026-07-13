@@ -60,7 +60,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_SOUND_SYSTEM_OPENAL_API SoundSystemOpenALPlugin
         : public Plugin
-        , public std::enable_shared_from_this<SoundSystemOpenALPlugin>
+        , public eastl::enable_shared_from_this<SoundSystemOpenALPlugin>
     {
     public:
         //////////////////////////////////////////

@@ -271,7 +271,7 @@ namespace Maze
         for (auto const& value : m_fontMaterialsLibrary)
             result.emplace_back(value.second.fontMaterial);
 
-        std::sort(
+        eastl::sort(
             result.begin(),
             result.end(),
             [](FontMaterialPtr const& _a, FontMaterialPtr const& _b)

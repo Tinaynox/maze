@@ -59,7 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_LOADER_FBX_API LoaderFBXPlugin
         : public Plugin
-        , public std::enable_shared_from_this<LoaderFBXPlugin>
+        , public eastl::enable_shared_from_this<LoaderFBXPlugin>
     {
     public:
         //////////////////////////////////////////

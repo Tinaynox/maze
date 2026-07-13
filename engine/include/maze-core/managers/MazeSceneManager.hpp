@@ -140,7 +140,7 @@ namespace Maze
             {
                 Debug::log << "Creating Scene '" << ClassInfo<TScene>::Name() << "'..." << endl;
 
-                EcsScenePtr scene = std::static_pointer_cast<EcsScene>(TScene::Create(_args...));
+                EcsScenePtr scene = eastl::static_pointer_cast<EcsScene>(TScene::Create(_args...));
                 MAZE_RETURN_VALUE_IF(!scene, nullPointer);
 
                 MAZE_DEBUG_BP_IF(scene->getClassUID() != ClassInfo<TScene>::UID());

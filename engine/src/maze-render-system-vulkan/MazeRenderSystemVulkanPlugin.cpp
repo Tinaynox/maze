@@ -45,13 +45,13 @@ namespace Maze
     void InstallRenderSystemVulkanPlugin(RenderSystemVulkanConfig const& _config)
     {
         s_plugin = Maze::RenderSystemVulkanPlugin::Create(_config);
-        Maze::PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        Maze::PluginManager::GetInstancePtr()->installPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
     void UninstallRenderSystemVulkanPlugin()
     {
-        Maze::PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        Maze::PluginManager::GetInstancePtr()->uninstallPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();
     }
 
@@ -61,13 +61,13 @@ namespace Maze
     extern "C" MAZE_RENDER_SYSTEM_VULKAN_API void StartPlugin()
     {
         s_plugin = Maze::RenderSystemVulkanPlugin::Create();
-        Maze::PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        Maze::PluginManager::GetInstancePtr()->installPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
     extern "C" MAZE_RENDER_SYSTEM_VULKAN_API void StopPlugin()
     {
-        Maze::PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        Maze::PluginManager::GetInstancePtr()->uninstallPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();
     }
 

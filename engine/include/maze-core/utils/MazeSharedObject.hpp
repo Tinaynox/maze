@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
+#include "maze-core/MazeTypes.hpp"
 
 
 //////////////////////////////////////////
@@ -44,7 +45,7 @@ namespace Maze
     //////////////////////////////////////////
     template <typename T>
     class SharedObject
-        : public std::enable_shared_from_this<T>
+        : public eastl::enable_shared_from_this<T>
     {
     public:
         
@@ -74,7 +75,7 @@ namespace Maze
         inline SharedPtr<U> cast()
         { 
             MAZE_DEBUG_BP_IF(!getSharedPtr());
-            return std::static_pointer_cast<U>(getSharedPtr()); 
+            return eastl::static_pointer_cast<U>(getSharedPtr());
         }
 
         //////////////////////////////////////////

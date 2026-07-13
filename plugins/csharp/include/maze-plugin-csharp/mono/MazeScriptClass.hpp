@@ -53,7 +53,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_PLUGIN_CSHARP_API ScriptClass
-        : public std::enable_shared_from_this<ScriptClass>
+        : public eastl::enable_shared_from_this<ScriptClass>
         , public MultiDelegateCallbackReceiver
     {
     public:

@@ -272,7 +272,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderController::sortRenderTargets()
     {
-        std::sort(
+        eastl::sort(
             m_renderTargets.begin(),
             m_renderTargets.end(),
             [](RenderTarget* _renderTarget0, RenderTarget* _renderTarget1) -> bool

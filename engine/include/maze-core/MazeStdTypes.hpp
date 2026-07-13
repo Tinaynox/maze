@@ -136,37 +136,8 @@ namespace Maze
         class _Ty,
         class _Container = std::deque<_Ty> >
     using StdQueue = std::queue<_Ty, _Container>;
-    
-    //////////////////////////////////////////
-    template <    
-        class _Ty,
-        class _Dx = std::default_delete<_Ty>>
-    using UniquePtr = std::unique_ptr<_Ty, _Dx>;
 
-    //////////////////////////////////////////
-    template <class _Ty, typename ...Args>
-    inline UniquePtr<_Ty> MakeUnique(Args&& ..._args) { return UniquePtr<_Ty>(new _Ty(std::forward<Args>(_args)...)); }
-    
-    //////////////////////////////////////////
-    template <class _Ty>
-    using SharedPtr = std::shared_ptr<_Ty>;
 
-    //////////////////////////////////////////
-    template <typename>
-    struct IsSharedPtr : std::false_type {};
-    template <class _Ty>
-    struct IsSharedPtr<Maze::SharedPtr<_Ty>> : std::true_type {};
-    
-    //////////////////////////////////////////
-    template <class _Ty>
-    using WeakPtr = std::weak_ptr<_Ty>;
-
-    //////////////////////////////////////////
-    template <typename>
-    struct IsWeakPtr : std::false_type {};
-    template <class _Ty>
-    struct IsWeakPtr<Maze::WeakPtr<_Ty>> : std::true_type {};
-    
     //////////////////////////////////////////
     using FileStream = std::fstream;
     

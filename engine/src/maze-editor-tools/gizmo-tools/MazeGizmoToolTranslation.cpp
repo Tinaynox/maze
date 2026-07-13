@@ -222,7 +222,7 @@ namespace Maze
             Axis(1, (pos + sortUp).squaredDistance(cameraWorldPosition), drawY, checkY),
             Axis(2, (pos + sortForward).squaredDistance(cameraWorldPosition), drawZ, checkZ)
         };
-        std::sort(
+        eastl::sort(
             drawFuncs.begin(),
             drawFuncs.end(),
             [](Axis const& _a, Axis const& _b)

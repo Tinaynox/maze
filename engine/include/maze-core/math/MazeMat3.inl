@@ -238,9 +238,9 @@ namespace Maze
     template <class TValue>
     inline void Mat3<TValue>::swap(Mat3<TValue>& _m)
     {
-        std::swap(m[0][0], _m[0][0]); std::swap(m[0][1], _m[0][1]); std::swap(m[0][2], _m[0][2]);
-        std::swap(m[1][0], _m[1][0]); std::swap(m[1][1], _m[1][1]); std::swap(m[1][2], _m[1][2]);
-        std::swap(m[2][0], _m[2][0]); std::swap(m[2][1], _m[2][1]); std::swap(m[2][2], _m[2][2]);
+        eastl::swap(m[0][0], _m[0][0]); eastl::swap(m[0][1], _m[0][1]); eastl::swap(m[0][2], _m[0][2]);
+        eastl::swap(m[1][0], _m[1][0]); eastl::swap(m[1][1], _m[1][1]); eastl::swap(m[1][2], _m[1][2]);
+        eastl::swap(m[2][0], _m[2][0]); eastl::swap(m[2][1], _m[2][1]); eastl::swap(m[2][2], _m[2][2]);
     }
 
     //////////////////////////////////////////

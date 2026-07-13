@@ -495,13 +495,13 @@ namespace Maze
         //////////////////////////////////////////
         inline void sortKeyframesRGB()
         {
-            std::sort(m_keyframesRGB.begin(), m_keyframesRGB.end());
+            eastl::sort(m_keyframesRGB.begin(), m_keyframesRGB.end());
         }
 
         //////////////////////////////////////////
         inline void sortKeyframesAlpha()
         {
-            std::sort(m_keyframesAlpha.begin(), m_keyframesAlpha.end());
+            eastl::sort(m_keyframesAlpha.begin(), m_keyframesAlpha.end());
         }
 
         //////////////////////////////////////////

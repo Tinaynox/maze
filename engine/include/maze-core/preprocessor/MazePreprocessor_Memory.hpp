@@ -85,15 +85,15 @@
                                                             }
 
 //////////////////////////////////////////
-#define MAZE_CREATE_SHARED_PTR_EX(__DClass, __deleter)                          Maze::SharedPtr<__DClass>(MAZE_NEW(__DClass), __deleter, Maze::GetDefaultStdMemoryAllocator<__DClass>())
+#define MAZE_CREATE_SHARED_PTR_EX(__DClass, __deleter)                          Maze::SharedPtr<__DClass>(MAZE_NEW(__DClass), __deleter, Maze::GetDefaultEastlNedAllocator())
 #define MAZE_CREATE_SHARED_PTR(__DClass)                                        MAZE_CREATE_SHARED_PTR_EX(__DClass, Maze::DefaultDelete<__DClass>())
-#define MAZE_CREATE_SHARED_PTR_WITH_ARGS_EX(__DClass, __deleter, ...)           Maze::SharedPtr<__DClass>(MAZE_NEW_WITH_ARGS(__DClass, __VA_ARGS__), __deleter, Maze::GetDefaultStdMemoryAllocator<__DClass>())
+#define MAZE_CREATE_SHARED_PTR_WITH_ARGS_EX(__DClass, __deleter, ...)           Maze::SharedPtr<__DClass>(MAZE_NEW_WITH_ARGS(__DClass, __VA_ARGS__), __deleter, Maze::GetDefaultEastlNedAllocator())
 #define MAZE_CREATE_SHARED_PTR_WITH_ARGS(__DClass, ...)                         MAZE_CREATE_SHARED_PTR_WITH_ARGS_EX(__DClass, Maze::DefaultDelete<__DClass>(), __VA_ARGS__)
 
 
 //////////////////////////////////////////
 #define MAZE_CREATE_AND_INIT_SHARED_PTR_EX(__DClass, __object, __deleter, __init)       __object = MAZE_CREATE_SHARED_PTR_EX(__DClass, __deleter);    \
-                                                                                        if (!std::static_pointer_cast<__DClass>(__object)->__init)    \
+                                                                                        if (!eastl::static_pointer_cast<__DClass>(__object)->__init)  \
                                                                                             __object.reset();
 #define MAZE_CREATE_AND_INIT_SHARED_PTR(__DClass, __object, __init)                     MAZE_CREATE_AND_INIT_SHARED_PTR_EX(__DClass, __object, Maze::DefaultDelete<__DClass>(), __init)
 

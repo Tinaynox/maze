@@ -353,7 +353,7 @@ namespace Maze
                         Math::IsPointOnSegment(currentPosition, nextPosition, prevPosition) ||
                         Math::IsPointOnSegment(nextPosition, prevPosition, currentPosition))
                     {
-                        std::swap(currentPosition, fourthPosition);
+                        eastl::swap(currentPosition, fourthPosition);
                     }
 
 

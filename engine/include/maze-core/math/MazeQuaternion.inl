@@ -154,10 +154,10 @@ namespace Maze
     //////////////////////////////////////////
     inline void Quaternion::swap(Quaternion& _q)
     {
-        std::swap(w, _q.w);
-        std::swap(x, _q.x);
-        std::swap(y, _q.y);
-        std::swap(z, _q.z);
+        eastl::swap(w, _q.w);
+        eastl::swap(x, _q.x);
+        eastl::swap(y, _q.y);
+        eastl::swap(z, _q.z);
     }
 
     //////////////////////////////////////////

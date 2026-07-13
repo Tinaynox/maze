@@ -52,13 +52,13 @@ namespace Maze
     void InstallPhysics2DEditorToolsPlugin()
     {
         s_plugin = Physics2DEditorToolsPlugin::Create();
-        PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        PluginManager::GetInstancePtr()->installPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
     void UninstallPhysics2DEditorToolsPlugin()
     {
-        Maze::PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        Maze::PluginManager::GetInstancePtr()->uninstallPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();
     }
 
@@ -68,14 +68,14 @@ namespace Maze
     extern "C" MAZE_PLUGIN_PHYSICS2D_EDITOR_TOOLS_API void StartPlugin()
     {
         s_plugin = Physics2DEditorToolsPlugin::Create();
-        Maze::PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        Maze::PluginManager::GetInstancePtr()->installPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
     extern "C" MAZE_PLUGIN_PHYSICS2D_EDITOR_TOOLS_API void StopPlugin()
     {
         if (PluginManager::GetInstancePtr())
-            PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+            PluginManager::GetInstancePtr()->uninstallPlugin(eastl::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();
     }
 

@@ -61,7 +61,7 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!nativeWindow, false, "ANativeWindow is not exists!");
 
 
-        m_window = std::static_pointer_cast<WindowAndroid>(Window::Create());
+        m_window = eastl::static_pointer_cast<WindowAndroid>(Window::Create());
         MAZE_ERROR_RETURN_VALUE_IF(!m_window, false, "Window cannot be created!");
 
 

@@ -294,7 +294,7 @@ namespace Maze
                 void* pixelData0 = &m_data[offset0 + x];
                 void* pixelData1 = &m_data[offset1 + x];
 
-                std::swap(*((U8*)pixelData0), *((U8*)pixelData1));
+                eastl::swap(*((U8*)pixelData0), *((U8*)pixelData1));
             }
         }
     }
