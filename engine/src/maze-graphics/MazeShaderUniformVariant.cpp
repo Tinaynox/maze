@@ -56,7 +56,8 @@ namespace Maze
         , m_type(_type)
         , m_name(_name)
     {
-        
+        m_ptr = nullptr;
+        m_count = 0u;
     }
 
     //////////////////////////////////////////
