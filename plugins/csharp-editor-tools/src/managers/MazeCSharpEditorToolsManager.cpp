@@ -222,7 +222,7 @@ namespace Maze
         {
             Size genericSubTypeIndex = _field->getTypeName().getString().find('<');
             if (genericSubTypeIndex == String::npos)
-                return false;
+                return nullptr;
 
             HashedString genericBaseType = HashedString(_field->getTypeName().getString().substr(0, genericSubTypeIndex));
             auto it = m_monoFieldDrawerCallbacksPerGenericClass.find(genericBaseType);
