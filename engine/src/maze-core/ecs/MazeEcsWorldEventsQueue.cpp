@@ -195,7 +195,6 @@ namespace Maze
         _entity->setId(entityId);
 
         _entity->setAdding(true);
-        _entity->setEcsWorld(m_world);
 
 #if (MAZE_DEBUG)
         MAZE_BP_IF(eastl::find(
@@ -210,6 +209,12 @@ namespace Maze
             eastl::forward_as_tuple(_entity->getId()),
             eastl::forward_as_tuple(_entity));
         m_eventTypes.push(EcsWorldEventType::AddingEntity);
+
+        // setEcsWorld triggers tryAwake, and awakened components may mutate the
+        // entity (ensureComponent etc.), queueing ComponentsChanged/ActiveChanged
+        // events - so the AddingEntity event must be queued before this call,
+        // otherwise those events are processed for an entity that is not added yet
+        _entity->setEcsWorld(m_world);
 
         processEntityComponentsChanged(entityId);
 
@@ -405,13 +410,19 @@ namespace Maze
         EntityPtr const& entity = m_world->getEntity(entityId);
         if (!entity)
             return;
-        
+
+        // Entity ids are reused, so a stale event may resolve to an entity that
+        // is still in the adding queue - its AddingEntity event will process the
+        // actual state, and touching it now would assign the archetype too early
+        if (entity->getAdding())
+            return;
+
         entity->setComponentsChanged(false);
 
         if (!m_world->eventEntityChanged.empty())
             m_world->eventEntityChanged(entity);
 
-        m_world->processEntityForSamples(entity.get());        
+        m_world->processEntityForSamples(entity.get());
     }
 
     //////////////////////////////////////////
@@ -427,6 +438,10 @@ namespace Maze
             return;
         
         MAZE_DEBUG_ERROR_IF(entity->getEcsWorld() != m_world, "Entity from different world");
+
+        // See invokeComponentsChangedEvent - never process entities that are not added yet
+        if (entity->getAdding())
+            return;
 
         entity->setActiveChanged(false);
 
