@@ -7,12 +7,15 @@ R"(
 		sampler2D shadowMap,
 		vec2 shadowMapTexelSize)
 	{
+		// u_mainLightViewProjectionMatrix now bakes in the same Z convention as the
+		// shadow caster pass (see MazeMat4.inl), so projCoords.z compares directly
+		// against the shadow map depth. Beyond the light's far plane (z >= 1) - no shadow
 		vec3 projCoords = positionMLS.xyz / positionMLS.w;
 		projCoords = projCoords * 0.5 + 0.5;
-		if (projCoords.z <= 0.0)
+		if (projCoords.z >= 1.0)
 			return 0.0;
-    
-		float currentDepth = 1.0 - projCoords.z;
+
+		float currentDepth = projCoords.z;
     
 		vec3 fragmentToLightDirection = -mainLightDirection;
 		float NdotL = dot(normalWS, fragmentToLightDirection);
