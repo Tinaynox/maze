@@ -578,7 +578,6 @@ namespace Maze
         header.reserve(4096);
 
         header += "#define MAZE_HLSL (1)\n";
-        header += "#define MAZE_LHCS (1)\n";
         header += "#define MAZE_MODEL_MATRICES_VIA_ARRAY (1)\n";
         header += "#define MAZE_MODEL_MATRICES_VIA_TEXTURE (0)\n";
         header += "#define MAZE_INSTANCE_STREAM_VIA_ARRAY (1)\n";

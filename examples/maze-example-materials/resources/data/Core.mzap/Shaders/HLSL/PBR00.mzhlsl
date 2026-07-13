@@ -7,10 +7,8 @@
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 
-
 //////////////////////////////////////////
 float4 u_baseMapST;
-
 
 //////////////////////////////////////////
 struct VSInput
@@ -23,7 +21,6 @@ struct VSInput
     float2 a_texCoords0 : TEXCOORD0;
     uint instanceId : SV_InstanceID;
 };
-
 
 //////////////////////////////////////////
 struct VSOutput
@@ -38,7 +35,6 @@ struct VSOutput
     float3 v_positionWS : TEXCOORD9;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // Main
@@ -63,10 +59,6 @@ VSOutput main(VSInput In)
 
     float3x3 normalMatrix = (float3x3)modelMatrix;
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     Out.v_positionWS = positionWS.xyz;
 
     Out.v_normalWS = normalize(mul(normalMatrix, normalOS.xyz));
@@ -83,7 +75,6 @@ VSOutput main(VSInput In)
     return Out;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -93,7 +84,6 @@ VSOutput main(VSInput In)
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 #include "Utils/Math.mzhlsl"
-
 
 //////////////////////////////////////////
 MAZE_TEXTURE2D(u_baseMap)
@@ -113,7 +103,6 @@ float4 u_emissionColor;
 MAZE_TEXTURECUBE(u_skyboxMap)
 float u_reflectionIntensity;
 
-
 //////////////////////////////////////////
 struct PSInput
 {
@@ -128,10 +117,8 @@ struct PSInput
     float v_clipDistance0 : SV_ClipDistance;
 };
 
-
 //////////////////////////////////////////
 #define PBR_PI 3.14159265359
-
 
 //////////////////////////////////////////
 // Trowbridge-Reitz GGX normal distribution
@@ -175,7 +162,6 @@ float3 PBRFresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
     return F0 + (max(float3(1.0 - roughness, 1.0 - roughness, 1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
-
 //////////////////////////////////////////
 // Main
 float4 main(PSInput In) : SV_Target
@@ -199,7 +185,6 @@ float4 main(PSInput In) : SV_Target
 
     float NdotV = max(dot(N, V), 0.0001);
 
-
     //////////////////////////////////////////
     // Direct lighting (main light, Cook-Torrance specular BRDF)
     float3 L = normalize(-u_mainLightDirection);
@@ -220,7 +205,6 @@ float4 main(PSInput In) : SV_Target
     float3 radiance = u_mainLightColor.rgb;
     float3 directLighting = (kD * albedo / PBR_PI + specularBRDF) * radiance * NdotL;
 
-
     //////////////////////////////////////////
     // Image-based ambient lighting (skybox reflection + flat ambient irradiance)
     float3 ambientLightColor = u_ambientLightColor.rgb;
@@ -237,7 +221,6 @@ float4 main(PSInput In) : SV_Target
     float3 specularIBL = prefilteredColor * Fambient * u_reflectionIntensity;
 
     float3 ambientLighting = diffuseIBL + specularIBL;
-
 
     //////////////////////////////////////////
     float3 linearColor = ambientLighting + directLighting;

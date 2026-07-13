@@ -8,14 +8,12 @@
 #include "Utils/Core.mzhlsl"
 #include "Utils/Math.mzhlsl"
 
-
 // HOLOGRAM
 float u_hologramDistortionSpeed;
 float u_hologramDistortionYFactor;
 float u_hologramDistortionValue;
 float u_hologramDistortionStep;
 float u_hologramDistortionGradientSpeed;
-
 
 //////////////////////////////////////////
 struct VSInput
@@ -28,7 +26,6 @@ struct VSInput
     float2 a_texCoords0 : TEXCOORD0;
     uint instanceId : SV_InstanceID;
 };
-
 
 //////////////////////////////////////////
 struct VSOutput
@@ -48,7 +45,6 @@ struct VSOutput
     float4 v_positionCS : TEXCOORD11;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // Main
@@ -80,10 +76,6 @@ VSOutput main(VSInput In)
 
     float3x3 normalMatrix = (float3x3)modelMatrix;
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     Out.v_positionOS = positionOS.xyz;
     Out.v_positionWS = positionWS.xyz;
     Out.v_positionVS = positionVS.xyz;
@@ -113,7 +105,6 @@ VSOutput main(VSInput In)
     return Out;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -123,7 +114,6 @@ VSOutput main(VSInput In)
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 #include "Utils/Math.mzhlsl"
-
 
 //////////////////////////////////////////
 MAZE_TEXTURE2D(u_baseMap)
@@ -138,7 +128,6 @@ float u_normalScale;
 // HOLOGRAM
 float u_hologramLines1;
 float u_hologramLines2;
-
 
 //////////////////////////////////////////
 struct PSInput
@@ -158,7 +147,6 @@ struct PSInput
     float4 v_positionCS : TEXCOORD11;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // Main
@@ -180,9 +168,7 @@ float4 main(PSInput In) : SV_Target
     float fresnel = clamp(1.0 - NdotV, 0.0, 1.0);
     fresnel = pow(fresnel, u_fresnelPower);
 
-
     float2 screenUV = (In.v_positionCS.xy / In.v_positionCS.w) * 0.5 + 0.5;
-
 
     // Noise
     float noise = MazeRandom(screenUV * u_time);

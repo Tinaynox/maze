@@ -35,10 +35,6 @@ void main()
     vec4 normalOS = vec4(a_normal, 1.0);
     mat3 normalMatrix = mat3(modelMatrix);
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     v_positionWS = positionWS.xyz;
     // NOTE: v_positionCS is the pre-MazeFinalizePositionCS clip position (no
     // Y-flip/Z-remap), exactly matching the value used for screen-space UV

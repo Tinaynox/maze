@@ -7,7 +7,6 @@
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 
-
 //////////////////////////////////////////
 struct VSInput
 {
@@ -17,7 +16,6 @@ struct VSInput
     float2 a_texCoords0 : TEXCOORD0;
     uint instanceId : SV_InstanceID;
 };
-
 
 //////////////////////////////////////////
 struct VSOutput
@@ -30,7 +28,6 @@ struct VSOutput
     float3 v_positionVS : TEXCOORD10;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // Main
@@ -49,10 +46,6 @@ VSOutput main(VSInput In)
     float4 positionVS = mul(viewMatrix, positionWS);
     float4 positionCS = mul(u_projectionMatrix, positionVS);
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     Out.v_positionOS = positionOS.xyz;
     Out.v_positionWS = positionWS.xyz;
     Out.v_positionVS = positionVS.xyz;
@@ -63,7 +56,6 @@ VSOutput main(VSInput In)
     return Out;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -73,14 +65,12 @@ VSOutput main(VSInput In)
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 
-
 //////////////////////////////////////////
 MAZE_TEXTURE2D(u_baseMap)
 MAZE_TEXTURE2D(u_bloomMap)
 MAZE_TEXTURE2D(u_distortionMap)
 float u_invAspectRatio;
 float u_distortionMult;
-
 
 //////////////////////////////////////////
 struct PSInput
@@ -94,10 +84,8 @@ struct PSInput
     float v_clipDistance0 : SV_ClipDistance;
 };
 
-
 //////////////////////////////////////////
 #define DISTORTION_BORDER_OFFSET 0.1
-
 
 //////////////////////////////////////////
 // Main
@@ -117,7 +105,6 @@ float4 main(PSInput In) : SV_Target
     uv = distortedUV;
     uv.x = clamp(uv.x, 0.0, 1.0);
     uv.y = clamp(uv.y, 0.0, 1.0);
-
 
     // Albedo
     float4 albedo = MAZE_GET_TEXEL2D(u_baseMap, uv);

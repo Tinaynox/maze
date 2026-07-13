@@ -7,7 +7,6 @@
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 
-
 //////////////////////////////////////////
 struct VSInput
 {
@@ -17,7 +16,6 @@ struct VSInput
     float2 a_texCoords0 : TEXCOORD0;
     uint instanceId : SV_InstanceID;
 };
-
 
 //////////////////////////////////////////
 struct VSOutput
@@ -31,7 +29,6 @@ struct VSOutput
     float3 v_positionWS : TEXCOORD9;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // Main
@@ -50,10 +47,6 @@ VSOutput main(VSInput In)
     float4 positionVS = mul(viewMatrix, positionWS);
     float4 positionCS = mul(u_projectionMatrix, positionVS);
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     float3x3 normalMatrix = (float3x3)modelMatrix;
     float3 normalWS = normalize(mul(normalMatrix, In.a_normal));
 
@@ -69,7 +62,6 @@ VSOutput main(VSInput In)
     return Out;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -80,7 +72,6 @@ VSOutput main(VSInput In)
 #include "Utils/Core.mzhlsl"
 #include "Utils/Math.mzhlsl"
 #include "Utils/Color.mzhlsl"
-
 
 //////////////////////////////////////////
 float4 u_color;
@@ -106,7 +97,6 @@ float u_maxAlpha;
 float u_specularPower;
 float u_specularIntensity;
 
-
 //////////////////////////////////////////
 struct PSInput
 {
@@ -119,7 +109,6 @@ struct PSInput
     float3 v_positionWS : TEXCOORD9;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // Main

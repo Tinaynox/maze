@@ -29,10 +29,6 @@ R"(
         vec4 positionVS = viewMatrix * positionWS;
         vec4 positionCS = u_projectionMatrix * positionVS;
 
-    #if (MAZE_LHCS)
-        positionCS.z = -positionCS.z;
-    #endif
-
         v_positionOS = positionOS.xyz;
         v_positionWS = positionWS.xyz;
         v_positionVS = positionVS.xyz;

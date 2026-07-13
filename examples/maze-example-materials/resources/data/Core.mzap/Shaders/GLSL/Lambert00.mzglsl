@@ -8,10 +8,8 @@
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Vertex.mzglsl"
 
-
 //////////////////////////////////////////
 uniform vec4 u_baseMapST;
-
 
 //////////////////////////////////////////
 IN vec3 a_position;
@@ -20,7 +18,6 @@ IN vec3 a_tangent;
 IN vec3 a_bitangent;
 IN vec4 a_color;
 IN vec2 a_texCoords0;
-
 
 //////////////////////////////////////////
 OUT vec3 v_positionOS;
@@ -32,10 +29,8 @@ OUT vec4 v_color;
 OUT vec2 v_uv0;
 OUT vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -59,17 +54,11 @@ void main()
     
     mat3 normalMatrix = mat3(modelMatrix);
     
-        
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-    
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
     v_positionVS = positionVS.xyz;
     
     vec3 normalWS = normalize(normalMatrix * normalOS.xyz).xyz;
-    
     
     v_normalOS = normalOS.xyz;
     v_normalWS = normalWS.xyz;
@@ -83,7 +72,6 @@ void main()
     gl_Position = positionCS;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -95,12 +83,10 @@ void main()
 #include "Utils/Fragment.mzglsl"
 #include "Utils/Core.mzglsl"
 
-
 //////////////////////////////////////////
 uniform sampler2D u_baseMap;
 uniform vec4 u_color;
 uniform vec4 u_ambientLightColor;
-
 
 //////////////////////////////////////////
 IN vec3 v_positionOS;
@@ -112,10 +98,8 @@ IN vec4 v_color;
 IN vec2 v_uv0;
 IN vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
-
 
 //////////////////////////////////////////
 // Lambert
@@ -134,14 +118,12 @@ vec3 LambertLighting(
     float NdotL = dot(normalWS, fragmentToLightDirection);
     float lambertian = clamp(NdotL, 0.0, 1.0);
     
-    
     // Light final
     vec3 lightColorFinal = lightColor * lightAttenuation;
     
     return 
         diffuseColor * lambertian * lightColorFinal;
 }
-
 
 //////////////////////////////////////////
 // Main
@@ -174,7 +156,6 @@ void main()
     linearColor.r = min(linearColor.r, 1.0);
     linearColor.g = min(linearColor.g, 1.0);
     linearColor.b = min(linearColor.b, 1.0);
-    
         
     out_color = vec4(linearColor, albedo.a);
 }

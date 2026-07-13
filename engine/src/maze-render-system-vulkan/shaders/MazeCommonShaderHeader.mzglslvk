@@ -101,7 +101,6 @@ R"(
     // numerically identical here.
     // ---------------------------------------------------------------------
 
-
     //////////////////////////////////////////
     // Texture sampling helpers - kept for source parity with the GL
     // '.mzglsl'/DX11 '.mzhlsl' MAZE_GET_TEXEL2D/MAZE_GET_TEXELCUBE call
@@ -113,7 +112,6 @@ R"(
     // sampling call macros.
     #define MAZE_GET_TEXEL2D(_texture, _uv) texture(_texture, _uv)
     #define MAZE_GET_TEXELCUBE(_texture, _uvw) texture(_texture, _uvw)
-
 
     //////////////////////////////////////////
     // Global uniforms (set 0, binding 0). Anonymous block instance so
@@ -149,7 +147,6 @@ R"(
         float u_renderTargetFlipY;
     };
 
-
     //////////////////////////////////////////
     mat4 GetViewMatrix()
     {
@@ -159,11 +156,6 @@ R"(
             vec4(u_viewMatrix[2], 0.0),
             vec4(u_viewMatrix[3], 1.0));
     }
-
-
-    //////////////////////////////////////////
-    #define MAZE_LHCS (1)
-
 
     //////////////////////////////////////////
     // Clip-distance helpers. Unlike GL (which picks between real
@@ -182,7 +174,6 @@ R"(
     #define MAZE_CLIP_DISTANCE_VERTEX(_pos) v_clipDistance0 = dot(_pos, u_clipDistance0)
     #define MAZE_CLIP_DISTANCE_FRAGMENT if (u_clipDistanceEnable[0] != 0 && v_clipDistance0 < 0.0) discard
 
-
     //////////////////////////////////////////
     // Clip-space finalization - Vulkan's NDC depth range is [0,1], like D3D
     // (unlike GL's [-1,1]), so that part of DX11's MazeFinalizePositionCS
@@ -198,11 +189,10 @@ R"(
     // offscreen-texture-sampling reason DX11 has it. When both flips are
     // active (offscreen target) they cancel out, restoring GL's original
     // winding - see StateMachineVulkan::flushPipeline's front-face
-    // selection, which must stay paired with the logic here. Every vertex
-    // shader must route its final positionCS through this function (after
-    // the existing '#if (MAZE_LHCS) positionCS.z = -positionCS.z #endif'
-    // handedness flip that's ported unchanged from GL) before writing
-    // gl_Position.
+    // selection, which must stay paired with the logic here. The near=+1/
+    // far=-1 clip-space Z convention is baked into the projection matrix
+    // itself (see MazeMat4.inl), so every vertex shader just routes its
+    // projected positionCS through this function before writing gl_Position.
     vec4 MazeFinalizePositionCS(vec4 _positionCS)
     {
         _positionCS.y *= (u_renderTargetFlipY < 0.0) ? 1.0 : -1.0;

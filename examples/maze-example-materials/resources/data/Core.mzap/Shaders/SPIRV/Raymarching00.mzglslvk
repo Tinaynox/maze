@@ -34,10 +34,6 @@ void main()
     vec4 positionVS = viewMatrix * positionWS;
     vec4 positionCS = u_projectionMatrix * positionVS;
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     // Camera position in object space, used as the raymarch origin in the fragment shader
     mat4 invModelMatrix = inverse(modelMatrix);
     v_cameraPosOS = (invModelMatrix * vec4(u_viewPosition, 1.0)).xyz;

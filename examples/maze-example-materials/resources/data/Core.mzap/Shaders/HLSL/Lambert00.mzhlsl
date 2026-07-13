@@ -7,10 +7,8 @@
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 
-
 //////////////////////////////////////////
 float4 u_baseMapST;
-
 
 //////////////////////////////////////////
 struct VSInput
@@ -23,7 +21,6 @@ struct VSInput
     float2 a_texCoords0 : TEXCOORD0;
     uint instanceId : SV_InstanceID;
 };
-
 
 //////////////////////////////////////////
 struct VSOutput
@@ -39,7 +36,6 @@ struct VSOutput
     float3 v_positionVS : TEXCOORD10;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // Main
@@ -62,10 +58,6 @@ VSOutput main(VSInput In)
 
     float3x3 normalMatrix = (float3x3)modelMatrix;
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     Out.v_positionOS = positionOS.xyz;
     Out.v_positionWS = positionWS.xyz;
     Out.v_positionVS = positionVS.xyz;
@@ -85,7 +77,6 @@ VSOutput main(VSInput In)
     return Out;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -95,12 +86,10 @@ VSOutput main(VSInput In)
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 
-
 //////////////////////////////////////////
 MAZE_TEXTURE2D(u_baseMap)
 float4 u_color;
 float4 u_ambientLightColor;
-
 
 //////////////////////////////////////////
 struct PSInput
@@ -116,7 +105,6 @@ struct PSInput
     float3 v_positionVS : TEXCOORD10;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // Lambert
@@ -135,14 +123,12 @@ float3 LambertLighting(
     float NdotL = dot(_normalWS, fragmentToLightDirection);
     float lambertian = clamp(NdotL, 0.0, 1.0);
 
-
     // Light final
     float3 lightColorFinal = _lightColor * lightAttenuation;
 
     return
         _diffuseColor * lambertian * lightColorFinal;
 }
-
 
 //////////////////////////////////////////
 // Main
@@ -173,7 +159,6 @@ float4 main(PSInput In) : SV_Target
     linearColor.r = min(linearColor.r, 1.0);
     linearColor.g = min(linearColor.g, 1.0);
     linearColor.b = min(linearColor.b, 1.0);
-
 
     return float4(linearColor, albedo.a);
 }

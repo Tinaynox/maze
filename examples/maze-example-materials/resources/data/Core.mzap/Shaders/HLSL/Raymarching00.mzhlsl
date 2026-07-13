@@ -8,7 +8,6 @@
 #include "Utils/Core.mzhlsl"
 #include "Utils/Math.mzhlsl"
 
-
 //////////////////////////////////////////
 struct VSInput
 {
@@ -18,7 +17,6 @@ struct VSInput
     float2 a_texCoords0 : TEXCOORD0;
     uint instanceId : SV_InstanceID;
 };
-
 
 //////////////////////////////////////////
 struct VSOutput
@@ -36,7 +34,6 @@ struct VSOutput
     float v_clipDistance0 : SV_ClipDistance;
 };
 
-
 //////////////////////////////////////////
 // Main
 VSOutput main(VSInput In)
@@ -53,10 +50,6 @@ VSOutput main(VSInput In)
     Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
     float4 positionVS = mul(viewMatrix, positionWS);
     float4 positionCS = mul(u_projectionMatrix, positionVS);
-
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
 
     // Camera position in object space, used as the raymarch origin in the fragment shader
     float4x4 invModelMatrix = MazeInverseAffine(modelMatrix);
@@ -76,7 +69,6 @@ VSOutput main(VSInput In)
     return Out;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -87,7 +79,6 @@ VSOutput main(VSInput In)
 #include "Utils/Core.mzhlsl"
 #include "Utils/Math.mzhlsl"
 #include "Utils/Color.mzhlsl"
-
 
 //////////////////////////////////////////
 float4 u_color;
@@ -128,7 +119,6 @@ float u_metaballSmoothness;
 // lobes/crossings. Too low here is what causes flat, badly-shaded creases
 float u_knotSmoothness;
 
-
 //////////////////////////////////////////
 struct PSInput
 {
@@ -143,7 +133,6 @@ struct PSInput
     float3 v_positionWS : TEXCOORD9;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // (2, 3) torus knot - same family of curve as the TorusKnotUV.fbx preview mesh,
@@ -164,7 +153,6 @@ static const int METABALL_COUNT = 3;
 // Newton from one evenly-spaced guess per lobe and smoothly blending the
 // results fixes this.
 static const int KNOT_SEEDS = 6;
-
 
 //////////////////////////////////////////
 float3 TorusKnotCurve(float _t)

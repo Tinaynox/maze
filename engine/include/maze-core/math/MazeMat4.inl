@@ -347,11 +347,12 @@ namespace Maze
         TValue z0 = -(_farZ + _nearZ) * invFD;
         TValue z1 = (2.0f * _farZ * _nearZ) * invFD;
 
+        // Z row negated: bakes in the near=+1/far=-1 clip-space convention (formerly a per-vertex shader flip)
         return Mat4(
             s0, 0, 0, 0,
             0, s1, 0, 0,
-            0, 0, z0, 1,
-            0, 0, z1, 0);
+            0, 0, -z0, 1,
+            0, 0, -z1, 0);
     }
 
     //////////////////////////////////////////
@@ -380,11 +381,12 @@ namespace Maze
         F32 o1 = -(_top + _bottom) * invHeight;
         F32 o2 = (_farZ + _nearZ) * invDepth;
 
+        // Z row negated: bakes in the near=+1/far=-1 clip-space convention (formerly a per-vertex shader flip)
         return Mat4F(
             s0, 0, 0, 0,
             0, s1, 0, 0,
-            0, 0, s2, 0,
-            o0, o1, o2, 1);
+            0, 0, -s2, 0,
+            o0, o1, -o2, 1);
     }
 
     //////////////////////////////////////////
@@ -407,10 +409,11 @@ namespace Maze
         F32 tx = (left + right) / (left - right);
         F32 ty = (bottom + top) / (bottom - top);
 
+        // Z row negated: bakes in the near=+1/far=-1 clip-space convention (formerly a per-vertex shader flip)
         return Mat4(
             s0, 0, 0, 0,
             0, s1, 0, 0,
-            0,  0, -1.0f, 0.0f,
+            0,  0, 1.0f, 0.0f,
             tx, ty, 0, 1);
     }
 

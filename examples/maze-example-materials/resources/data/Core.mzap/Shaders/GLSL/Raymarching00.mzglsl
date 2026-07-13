@@ -8,13 +8,11 @@
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Vertex.mzglsl"
 
-
 //////////////////////////////////////////
 IN vec3 a_position;
 IN vec3 a_normal;
 IN vec4 a_color;
 IN vec2 a_texCoords0;
-
 
 //////////////////////////////////////////
 OUT vec3 v_positionOS;
@@ -24,10 +22,8 @@ OUT vec2 v_uv0;
 OUT vec3 v_cameraPosOS;
 OUT mat3 v_normalMatrix;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -44,10 +40,6 @@ void main()
     vec4 positionVS = viewMatrix * positionWS;
     vec4 positionCS = u_projectionMatrix * positionVS;
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     // Camera position in object space, used as the raymarch origin in the fragment shader
     mat4 invModelMatrix = MAZE_INVERSE(modelMatrix);
     v_cameraPosOS = (invModelMatrix * vec4(u_viewPosition, 1.0)).xyz;
@@ -61,7 +53,6 @@ void main()
     gl_Position = positionCS;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -74,7 +65,6 @@ void main()
 #include "Utils/Core.mzglsl"
 #include "Utils/Math.mzglsl"
 #include "Utils/Color.mzglsl"
-
 
 //////////////////////////////////////////
 uniform vec4 u_color;
@@ -115,7 +105,6 @@ uniform float u_metaballSmoothness;
 // lobes/crossings. Too low here is what causes flat, badly-shaded creases
 uniform float u_knotSmoothness;
 
-
 //////////////////////////////////////////
 IN vec3 v_positionOS;
 IN vec3 v_positionWS;
@@ -124,10 +113,8 @@ IN vec2 v_uv0;
 IN vec3 v_cameraPosOS;
 IN mat3 v_normalMatrix;
 
-
 //////////////////////////////////////////
 MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
-
 
 //////////////////////////////////////////
 // (2, 3) torus knot - same family of curve as the TorusKnotUV.fbx preview mesh,
@@ -150,7 +137,6 @@ const int METABALL_COUNT = 3;
 // Newton from one evenly-spaced guess per lobe and smoothly blending the
 // results fixes this.
 const int KNOT_SEEDS = 6;
-
 
 //////////////////////////////////////////
 vec3 TorusKnotCurve(float t)

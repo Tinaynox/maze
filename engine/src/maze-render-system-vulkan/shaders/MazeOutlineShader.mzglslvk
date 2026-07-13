@@ -45,10 +45,6 @@ R"(
         vec4 positionVS = viewMatrix * positionWS;
         vec4 positionCS = u_projectionMatrix * positionVS;
 
-    #if (MAZE_LHCS)
-        positionCS.z = -positionCS.z;
-    #endif
-
         gl_Position = MazeFinalizePositionCS(positionCS);
     }
 

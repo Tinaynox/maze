@@ -8,10 +8,8 @@
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Vertex.mzglsl"
 
-
 //////////////////////////////////////////
 uniform vec4 u_baseMapST;
-
 
 //////////////////////////////////////////
 IN vec3 a_position;
@@ -20,7 +18,6 @@ IN vec3 a_tangent;
 IN vec3 a_bitangent;
 IN vec4 a_color;
 IN vec2 a_texCoords0;
-
 
 //////////////////////////////////////////
 OUT vec3 v_positionOS;
@@ -37,10 +34,8 @@ OUT vec2 v_uv0;
 OUT vec3 v_viewDirWS;
 OUT vec3 v_transformX;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -65,11 +60,6 @@ void main()
     vec4 bitangentOS = vec4(a_bitangent, 1.0);
     
     mat3 normalMatrix = mat3(modelMatrix);
-    
-        
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
     
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
@@ -99,7 +89,6 @@ void main()
     gl_Position = positionCS;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -110,7 +99,6 @@ void main()
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Fragment.mzglsl"
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 uniform sampler2D u_baseMap;
@@ -134,7 +122,6 @@ uniform float u_normalScale;
 // LAMBERT_THRESHOLD
 uniform float u_lambertThreshold;
 
-
 //////////////////////////////////////////
 IN vec3 v_positionOS;
 IN vec3 v_positionWS;
@@ -150,10 +137,8 @@ IN vec2 v_uv0;
 IN vec3 v_viewDirWS;
 IN vec3 v_transformX;
 
-
 //////////////////////////////////////////
 MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
-
 
 //////////////////////////////////////////
 // BlinnPhong
@@ -204,7 +189,6 @@ vec3 BlinnPhongLighting(
         specularColor * lightColorFinal;
 }
 
-
 //////////////////////////////////////////
 // Main
 void main()
@@ -220,14 +204,12 @@ void main()
     mat3 tangentToWorld = mat3(normalize(v_tangentWS), normalize(v_bitangentWS), normalize(v_normalWS));
     vec3 normalWS = normalize(TransformTangentToWorld(normalTS, tangentToWorld));
     
-    
 #else
     vec3 normalWS = normalize(v_normalWS);
 #endif
     
     // Ambient light
     vec3 ambientLightColor = u_ambientLightColor.rgb;
-    
     
     // Rainbow factor
     float NdotX = dot(normalWS, v_transformX);
@@ -260,7 +242,6 @@ void main()
     // Lambertian
     float NdotL = dot(normalWS, fragmentToLightDirection);
     float lambertian = clamp(NdotL, 0.0, 1.0);
-    
         
     out_color = vec4(linearColor, albedo.a);
 }

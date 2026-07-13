@@ -8,13 +8,11 @@
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Vertex.mzglsl"
 
-
 //////////////////////////////////////////
 IN vec3 a_position;
 IN vec3 a_normal;
 IN vec4 a_color;
 IN vec2 a_texCoords0;
-
 
 //////////////////////////////////////////
 OUT vec3 v_positionOS;
@@ -23,10 +21,8 @@ OUT vec3 v_positionVS;
 OUT vec4 v_color;
 OUT vec3 v_cubeCoords;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -43,10 +39,6 @@ void main()
     MAZE_CLIP_DISTANCE_VERTEX(positionWS);
     vec4 positionVS = viewMatrix * positionWS;
     vec4 positionCS = u_projectionMatrix * positionVS;
-        
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
     
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
@@ -56,7 +48,6 @@ void main()
 
     gl_Position = positionCS;
 }
-
 
 //////////////////////////////////////////
 // Fragment Shader
@@ -68,11 +59,9 @@ void main()
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Fragment.mzglsl"
 
-
 //////////////////////////////////////////
 uniform samplerCube u_baseMap;
 uniform vec4 u_color;
-
 
 //////////////////////////////////////////
 IN vec3 v_positionOS;
@@ -83,14 +72,11 @@ IN vec3 v_normalWS;
 IN vec4 v_color;
 IN vec3 v_cubeCoords;
 
-
 //////////////////////////////////////////
 MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
 
-
 //////////////////////////////////////////
 uniform sampler2D u_modelMatricesTexture;
-
 
 //////////////////////////////////////////
 // Main

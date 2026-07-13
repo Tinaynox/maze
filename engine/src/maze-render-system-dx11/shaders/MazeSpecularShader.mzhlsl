@@ -52,10 +52,6 @@ R"(
 
         float3x3 normalMatrix = (float3x3)modelMatrix;
 
-    #if (MAZE_LHCS)
-        positionCS.z = -positionCS.z;
-    #endif
-
         Out.v_positionOS = positionOS.xyz;
         Out.v_positionWS = positionWS.xyz;
         Out.v_positionVS = positionVS.xyz;

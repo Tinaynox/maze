@@ -59,10 +59,6 @@ void main()
 
     mat3 normalMatrix = mat3(modelMatrix);
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     v_positionWS = positionWS.xyz;
 
     v_normalWS = normalize(normalMatrix * normalOS.xyz).xyz;
@@ -183,7 +179,6 @@ void main()
 
     float NdotV = max(dot(N, V), 0.0001);
 
-
     //////////////////////////////////////////
     // Direct lighting (main light, Cook-Torrance specular BRDF)
     vec3 L = normalize(-u_mainLightDirection);
@@ -204,7 +199,6 @@ void main()
     vec3 radiance = u_mainLightColor.rgb;
     vec3 directLighting = (kD * albedo / PBR_PI + specularBRDF) * radiance * NdotL;
 
-
     //////////////////////////////////////////
     // Image-based ambient lighting (skybox reflection + flat ambient irradiance)
     vec3 ambientLightColor = u_ambientLightColor.rgb;
@@ -221,7 +215,6 @@ void main()
     vec3 specularIBL = prefilteredColor * Fambient * u_reflectionIntensity;
 
     vec3 ambientLighting = diffuseIBL + specularIBL;
-
 
     //////////////////////////////////////////
     vec3 linearColor = ambientLighting + directLighting;

@@ -8,7 +8,6 @@
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Vertex.mzglsl"
 
-
 //////////////////////////////////////////
 IN vec3 a_position;
 IN vec3 a_normal;
@@ -16,7 +15,6 @@ IN vec3 a_tangent;
 IN vec3 a_bitangent;
 IN vec4 a_color;
 IN vec2 a_texCoords0;
-
 
 //////////////////////////////////////////
 OUT vec3 v_positionOS;
@@ -30,10 +28,8 @@ OUT vec4 v_color;
 OUT vec2 v_uv0;
 OUT vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -56,10 +52,6 @@ void main()
     vec4 bitangentOS = vec4(a_bitangent, 1.0);
     
     mat3 normalMatrix = mat3(modelMatrix);
-        
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
     
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
@@ -86,7 +78,6 @@ void main()
     gl_Position = positionCS;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -96,7 +87,6 @@ void main()
 //////////////////////////////////////////
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Fragment.mzglsl"
-
 
 //////////////////////////////////////////
 uniform sampler2D u_baseMap;
@@ -120,19 +110,15 @@ IN vec4 v_color;
 IN vec2 v_uv0;
 IN vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
-
 
 //////////////////////////////////////////
 uniform sampler2D u_modelMatricesTexture;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
 #include "Utils/Math.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -158,7 +144,6 @@ void main()
 
     // Linear color
     vec3 linearColor = u_color.rgb * fresnel * fresnel;
-    
     
     out_color = vec4(linearColor * u_progress, u_color.a);
 }

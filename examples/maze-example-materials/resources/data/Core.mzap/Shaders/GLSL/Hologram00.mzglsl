@@ -8,14 +8,12 @@
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Vertex.mzglsl"
 
-
 // HOLOGRAM
 uniform float u_hologramDistortionSpeed;
 uniform float u_hologramDistortionYFactor;
 uniform float u_hologramDistortionValue;
 uniform float u_hologramDistortionStep;
 uniform float u_hologramDistortionGradientSpeed;
-
 
 //////////////////////////////////////////
 IN vec3 a_position;
@@ -24,7 +22,6 @@ IN vec3 a_tangent;
 IN vec3 a_bitangent;
 IN vec4 a_color;
 IN vec2 a_texCoords0;
-
 
 //////////////////////////////////////////
 OUT vec3 v_positionOS;
@@ -40,11 +37,9 @@ OUT vec2 v_uv0;
 OUT vec3 v_viewDirWS;
 OUT float v_distortionPower;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
 #include "Utils/Math.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -74,10 +69,6 @@ void main()
     vec4 bitangentOS = vec4(a_bitangent, 1.0);
     
     mat3 normalMatrix = mat3(modelMatrix);
-        
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
     
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
@@ -105,7 +96,6 @@ void main()
     gl_Position = positionCS;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -115,7 +105,6 @@ void main()
 //////////////////////////////////////////
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Fragment.mzglsl"
-
 
 //////////////////////////////////////////
 uniform sampler2D u_baseMap;
@@ -145,19 +134,15 @@ IN vec2 v_uv0;
 IN vec3 v_viewDirWS;
 IN float v_distortionPower;
 
-
 //////////////////////////////////////////
 MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
-
 
 //////////////////////////////////////////
 uniform sampler2D u_modelMatricesTexture;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
 #include "Utils/Math.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -181,9 +166,7 @@ void main()
     float fresnel = clamp(1.0 - NdotV, 0.0, 1.0);
     fresnel = pow(fresnel, u_fresnelPower);
 
-
     vec2 screenUV = (v_positionCS.xy / v_positionCS.w) * 0.5 + 0.5;
-    
     
     // Noise
     float noise = MazeRandom(screenUV * u_time);

@@ -39,10 +39,6 @@ void main()
     vec4 normalOS = vec4(a_normal, 1.0);
     mat3 normalMatrix = mat3(modelMatrix);
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
     v_positionVS = positionVS.xyz;

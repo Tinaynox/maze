@@ -7,11 +7,9 @@
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 
-
 //////////////////////////////////////////
 float2 u_baseMapTexelSize;
 float u_bloomSpread;
-
 
 //////////////////////////////////////////
 struct VSInput
@@ -22,7 +20,6 @@ struct VSInput
     float2 a_texCoords0 : TEXCOORD0;
     uint instanceId : SV_InstanceID;
 };
-
 
 //////////////////////////////////////////
 struct VSOutput
@@ -40,7 +37,6 @@ struct VSOutput
     float v_clipDistance0 : SV_ClipDistance;
 };
 
-
 //////////////////////////////////////////
 // Main
 VSOutput main(VSInput In)
@@ -57,10 +53,6 @@ VSOutput main(VSInput In)
     Out.v_clipDistance0 = dot(positionWS, u_clipDistance0);
     float4 positionVS = mul(viewMatrix, positionWS);
     float4 positionCS = mul(u_projectionMatrix, positionVS);
-
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
 
     Out.v_positionOS = positionOS.xyz;
     Out.v_positionWS = positionWS.xyz;
@@ -82,7 +74,6 @@ VSOutput main(VSInput In)
     return Out;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -92,13 +83,11 @@ VSOutput main(VSInput In)
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 
-
 //////////////////////////////////////////
 MAZE_TEXTURE2D(u_baseMap)
 float4 u_color;
 float u_bloomThreshold;
 MAZE_TEXTURE2D(u_prevBloomMap)
-
 
 //////////////////////////////////////////
 struct PSInput
@@ -115,7 +104,6 @@ struct PSInput
     float3 v_positionVS : TEXCOORD10;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // Main

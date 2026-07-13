@@ -7,14 +7,12 @@
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 
-
 //////////////////////////////////////////
 #if defined(FLAT_NORMAL) && (FLAT_NORMAL)
 #define NORMAL_INTERPOL nointerpolation
 #else
 #define NORMAL_INTERPOL
 #endif
-
 
 //////////////////////////////////////////
 struct VSInput
@@ -27,7 +25,6 @@ struct VSInput
     float2 a_texCoords0 : TEXCOORD0;
     uint instanceId : SV_InstanceID;
 };
-
 
 //////////////////////////////////////////
 struct VSOutput
@@ -45,7 +42,6 @@ struct VSOutput
     float3 v_positionVS : TEXCOORD10;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // Main
@@ -69,10 +65,6 @@ VSOutput main(VSInput In)
     float4 bitangentOS = float4(In.a_bitangent, 1.0);
 
     float3x3 normalMatrix = (float3x3)modelMatrix;
-
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
 
     Out.v_positionOS = positionOS.xyz;
     Out.v_positionWS = positionWS.xyz;
@@ -102,7 +94,6 @@ VSOutput main(VSInput In)
     return Out;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -112,14 +103,12 @@ VSOutput main(VSInput In)
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 
-
 //////////////////////////////////////////
 #if defined(FLAT_NORMAL) && (FLAT_NORMAL)
 #define NORMAL_INTERPOL nointerpolation
 #else
 #define NORMAL_INTERPOL
 #endif
-
 
 //////////////////////////////////////////
 MAZE_TEXTURE2D(u_baseMap)
@@ -149,7 +138,6 @@ float u_lambertThreshold;
 
 MAZE_TEXTURECUBE(u_skyboxMap)
 
-
 //////////////////////////////////////////
 struct PSInput
 {
@@ -166,7 +154,6 @@ struct PSInput
     float3 v_positionVS : TEXCOORD10;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // BlinnPhong
@@ -220,7 +207,6 @@ float3 BlinnPhongLighting(
         specularColor * lightColorFinal;
 }
 
-
 //////////////////////////////////////////
 // Main
 float4 main(PSInput In) : SV_Target
@@ -240,7 +226,6 @@ float4 main(PSInput In) : SV_Target
     // Reflected direction
     float3 reflectedDirection = reflect(-fragmentToViewDirection, In.v_normalWS);
 
-
     // Environment color
     float reflectionMask = 1.0;
     float3 reflectionColor = MAZE_GET_TEXELCUBE(u_skyboxMap, reflectedDirection).rgb * u_reflectionColor.rgb;
@@ -256,7 +241,6 @@ float4 main(PSInput In) : SV_Target
 
     // Linear color
     float3 linearColor = diffuseColor * ambientLightColor;
-
 
     // Main light
     float3 mainLightColor = u_mainLightColor.rgb;

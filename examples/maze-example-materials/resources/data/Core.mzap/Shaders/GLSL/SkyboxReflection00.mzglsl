@@ -8,14 +8,12 @@
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Vertex.mzglsl"
 
-
 //////////////////////////////////////////
 #if defined(FLAT_NORMAL) && (FLAT_NORMAL)
 #define NORMAL_INTERPOL flat
 #else
 #define NORMAL_INTERPOL smooth
 #endif
-
 
 //////////////////////////////////////////
 IN vec3 a_position;
@@ -24,7 +22,6 @@ IN vec3 a_tangent;
 IN vec3 a_bitangent;
 IN vec4 a_color;
 IN vec2 a_texCoords0;
-
 
 //////////////////////////////////////////
 OUT vec3 v_positionOS;
@@ -38,10 +35,8 @@ OUT vec4 v_color;
 OUT vec2 v_uv0;
 OUT vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -64,12 +59,6 @@ void main()
     vec4 bitangentOS = vec4(a_bitangent, 1.0);
     
     mat3 normalMatrix = mat3(modelMatrix);
-    
-    
-        
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
     
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
@@ -96,7 +85,6 @@ void main()
     gl_Position = positionCS;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -108,14 +96,12 @@ void main()
 #include "Utils/Fragment.mzglsl"
 #include "Utils/Core.mzglsl"
 
-
 //////////////////////////////////////////
 #if defined(FLAT_NORMAL) && (FLAT_NORMAL)
 #define NORMAL_INTERPOL flat
 #else
 #define NORMAL_INTERPOL smooth
 #endif
-
 
 //////////////////////////////////////////
 uniform sampler2D u_baseMap;
@@ -145,8 +131,6 @@ uniform float u_lambertThreshold;
 
 uniform samplerCube u_skyboxMap;
 
-
-
 //////////////////////////////////////////
 IN vec3 v_positionOS;
 IN vec3 v_positionWS;
@@ -159,10 +143,8 @@ IN vec4 v_color;
 IN vec2 v_uv0;
 IN vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
-
 
 //////////////////////////////////////////
 // BlinnPhong
@@ -215,8 +197,6 @@ vec3 BlinnPhongLighting(
         specularColor * lightColorFinal;
 }
 
-
-
 //////////////////////////////////////////
 // Main
 void main()
@@ -238,7 +218,6 @@ void main()
     // Reflected direction
     vec3 reflectedDirection = reflect(-fragmentToViewDirection, v_normalWS);
     
-    
     // Environment color
     float reflectionMask = 1.0;
     vec3 reflectionColor = texture(u_skyboxMap, reflectedDirection).rgb * u_reflectionColor.rgb;
@@ -254,7 +233,6 @@ void main()
         
     // Linear color
     vec3 linearColor = diffuseColor * ambientLightColor;
-    
         
     // Main light
     vec3 mainLightColor = u_mainLightColor.rgb;

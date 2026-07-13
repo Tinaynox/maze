@@ -8,10 +8,8 @@
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Vertex.mzglsl"
 
-
 //////////////////////////////////////////
 uniform vec4 u_baseMapST;
-
 
 //////////////////////////////////////////
 IN vec3 a_position;
@@ -20,7 +18,6 @@ IN vec3 a_tangent;
 IN vec3 a_bitangent;
 IN vec4 a_color;
 IN vec2 a_texCoords0;
-
 
 //////////////////////////////////////////
 OUT vec3 v_positionWS;
@@ -31,10 +28,8 @@ OUT vec4 v_color;
 OUT vec2 v_uv0;
 OUT vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -57,10 +52,6 @@ void main()
 
     mat3 normalMatrix = mat3(modelMatrix);
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     v_positionWS = positionWS.xyz;
 
     v_normalWS = normalize(normalMatrix * normalOS.xyz).xyz;
@@ -76,7 +67,6 @@ void main()
     gl_Position = positionCS;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -88,7 +78,6 @@ void main()
 #include "Utils/Fragment.mzglsl"
 #include "Utils/Core.mzglsl"
 #include "Utils/Math.mzglsl"
-
 
 //////////////////////////////////////////
 uniform sampler2D u_baseMap;
@@ -108,7 +97,6 @@ uniform vec4 u_emissionColor;
 uniform samplerCube u_skyboxMap;
 uniform float u_reflectionIntensity;
 
-
 //////////////////////////////////////////
 IN vec3 v_positionWS;
 IN vec3 v_normalWS;
@@ -118,14 +106,11 @@ IN vec4 v_color;
 IN vec2 v_uv0;
 IN vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
 
-
 //////////////////////////////////////////
 #define PBR_PI 3.14159265359
-
 
 //////////////////////////////////////////
 // Trowbridge-Reitz GGX normal distribution
@@ -169,7 +154,6 @@ vec3 PBRFresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
-
 //////////////////////////////////////////
 // Main
 void main()
@@ -195,7 +179,6 @@ void main()
 
     float NdotV = max(dot(N, V), 0.0001);
 
-
     //////////////////////////////////////////
     // Direct lighting (main light, Cook-Torrance specular BRDF)
     vec3 L = normalize(-u_mainLightDirection);
@@ -216,7 +199,6 @@ void main()
     vec3 radiance = u_mainLightColor.rgb;
     vec3 directLighting = (kD * albedo / PBR_PI + specularBRDF) * radiance * NdotL;
 
-
     //////////////////////////////////////////
     // Image-based ambient lighting (skybox reflection + flat ambient irradiance)
     vec3 ambientLightColor = u_ambientLightColor.rgb;
@@ -233,7 +215,6 @@ void main()
     vec3 specularIBL = prefilteredColor * Fambient * u_reflectionIntensity;
 
     vec3 ambientLighting = diffuseIBL + specularIBL;
-
 
     //////////////////////////////////////////
     vec3 linearColor = ambientLighting + directLighting;

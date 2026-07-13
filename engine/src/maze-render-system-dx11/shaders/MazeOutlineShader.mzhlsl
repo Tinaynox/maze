@@ -41,10 +41,6 @@ R"(
         float4 positionVS = mul(viewMatrix, positionWS);
         float4 positionCS = mul(u_projectionMatrix, positionVS);
 
-    #if (MAZE_LHCS)
-        positionCS.z = -positionCS.z;
-    #endif
-
         Out.positionCS = MazeFinalizePositionCS(positionCS);
         return Out;
     }

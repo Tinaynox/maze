@@ -8,8 +8,6 @@
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Vertex.mzglsl"
 
-
-
 //////////////////////////////////////////
 IN vec3 a_position;
 IN vec3 a_normal;
@@ -17,7 +15,6 @@ IN vec3 a_tangent;
 IN vec3 a_bitangent;
 IN vec4 a_color;
 IN vec2 a_texCoords0;
-
 
 //////////////////////////////////////////
 OUT vec3 v_positionOS;
@@ -33,10 +30,8 @@ OUT vec4 v_color;
 OUT vec2 v_uv0;
 OUT vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -60,11 +55,6 @@ void main()
     
     mat3 normalMatrix = mat3(modelMatrix);
     
-        
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-    
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
     v_positionVS = positionVS.xyz;
@@ -83,7 +73,6 @@ void main()
     gl_Position = positionCS;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -94,7 +83,6 @@ void main()
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Fragment.mzglsl"
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 uniform vec4 u_color;
@@ -112,7 +100,6 @@ uniform vec4 u_checkerColor1;
 uniform vec4 u_checkerColor0b;
 uniform vec4 u_checkerColor1b;
 
-
 //////////////////////////////////////////
 IN vec3 v_positionOS;
 IN vec3 v_positionWS;
@@ -127,10 +114,8 @@ IN vec4 v_color;
 IN vec2 v_uv0;
 IN vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
-
 
 //////////////////////////////////////////
 // BlinnPhong
@@ -172,7 +157,6 @@ vec3 BlinnPhongLighting(
         diffuseColor * lambertian * lightColorFinal +
         specularColor * lightColorFinal;
 }
-
 
 //////////////////////////////////////////
 float Checkerboard3d(vec3 positionWS)
@@ -220,7 +204,6 @@ void main()
     linearColor.r = min(linearColor.r, 1.0);
     linearColor.g = min(linearColor.g, 1.0);
     linearColor.b = min(linearColor.b, 1.0);
-    
         
     out_color = vec4(linearColor, 1.0);
 }

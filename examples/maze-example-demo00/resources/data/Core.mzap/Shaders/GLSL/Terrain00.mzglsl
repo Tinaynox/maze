@@ -8,12 +8,10 @@
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Vertex.mzglsl"
 
-
 //////////////////////////////////////////
 uniform vec4 u_baseMap0ST;
 uniform vec4 u_baseMap1ST;
 uniform vec4 u_baseMap2ST;
-
 
 //////////////////////////////////////////
 IN vec3 a_position;
@@ -22,7 +20,6 @@ IN vec3 a_tangent;
 IN vec3 a_bitangent;
 IN vec4 a_color;
 IN vec2 a_texCoords0;
-
 
 //////////////////////////////////////////
 OUT vec3 v_positionOS;
@@ -38,10 +35,8 @@ OUT vec2 v_uv1;
 OUT vec2 v_uv2;
 OUT vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -64,12 +59,6 @@ void main()
     vec4 bitangentOS = vec4(a_bitangent, 1.0);
     
     mat3 normalMatrix = mat3(modelMatrix);
-    
-    
-        
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
     
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
@@ -99,7 +88,6 @@ void main()
     gl_Position = positionCS;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -110,7 +98,6 @@ void main()
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Fragment.mzglsl"
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 uniform sampler2D u_baseMap0;
@@ -143,7 +130,6 @@ uniform float u_backLightBend;
 // LAMBERT_THRESHOLD
 uniform float u_lambertThreshold;
 
-
 //////////////////////////////////////////
 IN vec3 v_positionOS;
 IN vec3 v_positionWS;
@@ -158,10 +144,8 @@ IN vec2 v_uv1;
 IN vec2 v_uv2;
 IN vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
-
 
 //////////////////////////////////////////
 // BlinnPhong
@@ -211,7 +195,6 @@ vec3 BlinnPhongLighting(
         diffuseColor * lambertian * lightColorFinal +
         specularColor * lightColorFinal;
 }
-
 
 //////////////////////////////////////////
 // Main

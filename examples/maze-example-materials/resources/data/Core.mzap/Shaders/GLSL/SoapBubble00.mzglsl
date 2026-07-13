@@ -8,13 +8,11 @@
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Vertex.mzglsl"
 
-
 //////////////////////////////////////////
 IN vec3 a_position;
 IN vec3 a_normal;
 IN vec4 a_color;
 IN vec2 a_texCoords0;
-
 
 //////////////////////////////////////////
 OUT vec3 v_positionOS;
@@ -24,10 +22,8 @@ OUT vec4 v_color;
 OUT vec2 v_uv0;
 OUT vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -44,10 +40,6 @@ void main()
     vec4 positionVS = viewMatrix * positionWS;
     vec4 positionCS = u_projectionMatrix * positionVS;
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     mat3 normalMatrix = mat3(modelMatrix);
     vec3 normalWS = normalize(normalMatrix * a_normal);
 
@@ -62,7 +54,6 @@ void main()
     gl_Position = positionCS;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -75,7 +66,6 @@ void main()
 #include "Utils/Core.mzglsl"
 #include "Utils/Math.mzglsl"
 #include "Utils/Color.mzglsl"
-
 
 //////////////////////////////////////////
 uniform vec4 u_color;
@@ -101,7 +91,6 @@ uniform float u_maxAlpha;
 uniform float u_specularPower;
 uniform float u_specularIntensity;
 
-
 //////////////////////////////////////////
 IN vec3 v_positionOS;
 IN vec3 v_positionWS;
@@ -110,10 +99,8 @@ IN vec4 v_color;
 IN vec2 v_uv0;
 IN vec3 v_viewDirWS;
 
-
 //////////////////////////////////////////
 MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
-
 
 //////////////////////////////////////////
 // Main

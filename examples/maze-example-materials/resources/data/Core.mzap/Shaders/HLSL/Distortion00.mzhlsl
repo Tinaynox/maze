@@ -7,7 +7,6 @@
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 
-
 //////////////////////////////////////////
 struct VSInput
 {
@@ -17,7 +16,6 @@ struct VSInput
     float2 a_texCoords0 : TEXCOORD0;
     uint instanceId : SV_InstanceID;
 };
-
 
 //////////////////////////////////////////
 struct VSOutput
@@ -34,7 +32,6 @@ struct VSOutput
     float4 v_positionCS : TEXCOORD11;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // Main
@@ -57,10 +54,6 @@ VSOutput main(VSInput In)
 
     float3x3 normalMatrix = (float3x3)modelMatrix;
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     Out.v_positionOS = positionOS.xyz;
     Out.v_positionWS = positionWS.xyz;
     Out.v_positionVS = positionVS.xyz;
@@ -80,7 +73,6 @@ VSOutput main(VSInput In)
     return Out;
 }
 
-
 //////////////////////////////////////////
 // Fragment Shader
 //
@@ -90,13 +82,11 @@ VSOutput main(VSInput In)
 //////////////////////////////////////////
 #include "Utils/Core.mzhlsl"
 
-
 //////////////////////////////////////////
 float4 u_color;
 float u_refractionIndex;
 float u_refractionFactor;
 MAZE_TEXTURE2D(u_depthMap)
-
 
 //////////////////////////////////////////
 struct PSInput
@@ -113,7 +103,6 @@ struct PSInput
     float4 v_positionCS : TEXCOORD11;
     float v_clipDistance0 : SV_ClipDistance;
 };
-
 
 //////////////////////////////////////////
 // Main

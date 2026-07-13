@@ -12,22 +12,18 @@
     #include "Utils/Skinning.mzglsl"
 #endif
 
-
 //////////////////////////////////////////
 IN vec3 a_position;
 IN vec4 a_blendWeights;
 IN vec4 a_blendIndices;
-
 
 //////////////////////////////////////////
 OUT vec3 v_positionOS;
 OUT vec3 v_positionWS;
 OUT vec3 v_positionVS;
 
-
 //////////////////////////////////////////
 #include "Utils/Core.mzglsl"
-
 
 //////////////////////////////////////////
 // Main
@@ -75,17 +71,12 @@ void main()
     vec4 positionVS = viewMatrix * positionWS;
     vec4 positionCS = u_projectionMatrix * positionVS;
     
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-    
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
     v_positionVS = positionVS.xyz;
 
     gl_Position = positionCS;
 }
-
 
 //////////////////////////////////////////
 // Fragment Shader
@@ -96,7 +87,6 @@ void main()
 //////////////////////////////////////////
 #include "Utils/PrecisionHigh.mzglsl"
 #include "Utils/Fragment.mzglsl"
-
 
 //////////////////////////////////////////
 // Main

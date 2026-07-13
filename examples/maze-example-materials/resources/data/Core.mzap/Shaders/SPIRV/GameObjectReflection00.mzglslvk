@@ -51,10 +51,6 @@ void main()
 
     mat3 normalMatrix = mat3(modelMatrix);
 
-#if (MAZE_LHCS)
-    positionCS.z = -positionCS.z;
-#endif
-
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
     v_positionVS = positionVS.xyz;
@@ -237,7 +233,6 @@ vec3 BackLighting(
 #if defined(SPECULAR_MAP) && (SPECULAR_MAP)
     specularColor *= MAZE_GET_TEXEL2D(u_specularMap, v_uv0).rgb;
 #endif
-
 
     return
         diffuseColor * lambertian * lightColorFinal +
