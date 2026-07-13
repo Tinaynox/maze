@@ -792,7 +792,7 @@ namespace Maze
             textureExtensions.push_back(MAZE_HS("mztexture"));
 
             Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
-                Set<String>(textureExtensions.begin(), textureExtensions.end()));
+                VectorSet<String>(textureExtensions.begin(), textureExtensions.end()));
             for (AssetFilePtr const& assetFile : assetFiles)
             {
                 getOrLoadTexture2D(assetFile);
@@ -800,7 +800,7 @@ namespace Maze
         }
 
         {
-            Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(Set<Path>{ "mzcubemap" });
+            Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(VectorSet<Path>{ "mzcubemap" });
             for (AssetFilePtr const& assetFile : assetFiles)
             {
                 getOrLoadTextureCube(assetFile);

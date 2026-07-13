@@ -139,10 +139,10 @@ namespace Maze
         Vector<AssetFilePtr> getAssetFilesWithExtension(Path const& _extension, std::function<bool(AssetFilePtr const&)> _pred);
 
         //////////////////////////////////////////
-        Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<Path> const& _extensions);
+        Vector<AssetFilePtr> getAssetFilesWithExtensions(VectorSet<Path> const& _extensions);
 
         //////////////////////////////////////////
-        Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<Path> const& _extensions, std::function<bool(AssetFilePtr const&)> _pred);
+        Vector<AssetFilePtr> getAssetFilesWithExtensions(VectorSet<Path> const& _extensions, std::function<bool(AssetFilePtr const&)> _pred);
 
         //////////////////////////////////////////
         inline Vector<AssetFilePtr> getAssetFilesWithExtension(CString const& _extension)
@@ -157,18 +157,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<CString> const& _extensions)
+        inline Vector<AssetFilePtr> getAssetFilesWithExtensions(VectorSet<CString> const& _extensions)
         {
-            Set<Path> extensions;
+            VectorSet<Path> extensions;
             for (CString const& ext : _extensions)
                 extensions.insert(ext);
             return getAssetFilesWithExtensions(extensions);
         }
 
         //////////////////////////////////////////
-        inline Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<CString> const& _extensions, std::function<bool(AssetFilePtr const&)> _pred)
+        inline Vector<AssetFilePtr> getAssetFilesWithExtensions(VectorSet<CString> const& _extensions, std::function<bool(AssetFilePtr const&)> _pred)
         {
-            Set<Path> extensions;
+            VectorSet<Path> extensions;
             for (CString const& ext : _extensions)
                 extensions.insert(ext);
             return getAssetFilesWithExtensions(extensions, _pred);
@@ -187,18 +187,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<String> const& _extensions)
+        inline Vector<AssetFilePtr> getAssetFilesWithExtensions(VectorSet<String> const& _extensions)
         {
-            Set<Path> extensions;
+            VectorSet<Path> extensions;
             for (String const& ext : _extensions)
                 extensions.insert(ext);
             return getAssetFilesWithExtensions(extensions);
         }
 
         //////////////////////////////////////////
-        inline Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<String> const& _extensions, std::function<bool(AssetFilePtr const&)> _pred)
+        inline Vector<AssetFilePtr> getAssetFilesWithExtensions(VectorSet<String> const& _extensions, std::function<bool(AssetFilePtr const&)> _pred)
         {
-            Set<Path> extensions;
+            VectorSet<Path> extensions;
             for (String const& ext : _extensions)
                 extensions.insert(ext);
             return getAssetFilesWithExtensions(extensions, _pred);
@@ -261,7 +261,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Set<Path> const& getAssetDirectoryPathes() const { return m_assetDirectoryPathes; }
+        inline VectorSet<Path> const& getAssetDirectoryPathes() const { return m_assetDirectoryPathes; }
 
 
         //////////////////////////////////////////
@@ -311,7 +311,7 @@ namespace Maze
         void removeAssetsDirectory(Path const& _path, bool _recursive = true);
     
         //////////////////////////////////////////
-        Set<Path> collectRootAssetDirectoryPathes();
+        VectorSet<Path> collectRootAssetDirectoryPathes();
 
 
         //////////////////////////////////////////
@@ -323,12 +323,21 @@ namespace Maze
     protected:
         AssetUnitManagerPtr m_assetUnitManager;
 
-        Set<Path> m_assetDirectoryPathes;
+        VectorSet<Path> m_assetDirectoryPathes;
 
+        // Kept as UnorderedMap deliberately: getAssetFile/getAssetFileByFileName/
+        // getAssetFileByFullPath return AssetFilePtr const& into these maps, and
+        // are called from ~70 files across the whole engine/editor/plugins - too
+        // wide a surface to verify no caller holds the reference across a later
+        // add/remove/move. Converting would require auditing all of them or
+        // changing the getters to return by value first (see conversation).
         UnorderedMap<AssetFileId, AssetFilePtr> m_assetFilesById;
         UnorderedMap<Path, AssetFilePtr> m_assetFilesByFileName;
         UnorderedMap<Path, AssetFilePtr> m_assetFilesByFullPath;
-        Map<AssetFilePtr, UnixTime> m_assetFilesUpdateTimeUTC;
+
+        // Apparently unused - only ever written to (processAddFile/processRemoveFile),
+        // never read anywhere in the codebase
+        FlatHashMap<AssetFilePtr, UnixTime> m_assetFilesUpdateTimeUTC;
 
         StringKeyMap<FileChildrenProcessor> m_fileChildrenProcessors;
 

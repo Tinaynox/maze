@@ -387,7 +387,7 @@ namespace Maze
 
         Vector<HashedString> extensions = getSoundLoaderExtensions();
         Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
-            Set<String>(extensions.begin(), extensions.end()),
+            VectorSet<String>(extensions.begin(), extensions.end()),
             [&](AssetFilePtr const& _assetFile)
             {
                 return _assetFile->hasAnyOfTags(_tags);

@@ -144,7 +144,7 @@ namespace Maze
         Vector<AssetFilePtr> addedFiles;
         Vector<AssetFilePtr> removedFiles;
 
-        Set<Path> rootAssetDirectories = AssetManager::collectRootAssetDirectoryPathes();
+        VectorSet<Path> rootAssetDirectories = AssetManager::collectRootAssetDirectoryPathes();
         for (Path const& fullPath : rootAssetDirectories)
         {
             const AssetFilePtr& rootAsset = getAssetFileByFullPath(fullPath);
@@ -497,14 +497,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtensions(Set<Path> const& _extensions)
+    Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtensions(VectorSet<Path> const& _extensions)
     {
         return getAssetFilesWithExtensions(_extensions, [](AssetFilePtr const& _assetFile) { return true; });
     }
 
     //////////////////////////////////////////
     Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtensions(
-        Set<Path> const& _extensions,
+        VectorSet<Path> const& _extensions,
         std::function<bool(AssetFilePtr const&)> _pred)
     {
         Vector<AssetFilePtr> result;
@@ -625,9 +625,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Set<Path> AssetManager::collectRootAssetDirectoryPathes()
+    VectorSet<Path> AssetManager::collectRootAssetDirectoryPathes()
     {
-        Set<Path> result = m_assetDirectoryPathes;
+        VectorSet<Path> result = m_assetDirectoryPathes;
 
         // Remove sub directories
         for (auto it = result.begin(),

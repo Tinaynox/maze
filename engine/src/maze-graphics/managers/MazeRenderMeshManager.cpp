@@ -399,7 +399,7 @@ namespace Maze
         Vector<HashedString> loaderExtensions = MeshManager::GetInstancePtr()->getMeshLoaderExtensions();
 
         Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
-            Set<String>(loaderExtensions.begin(), loaderExtensions.end()));
+            VectorSet<String>(loaderExtensions.begin(), loaderExtensions.end()));
         for (AssetFilePtr const& assetFile : assetFiles)
         {
             if (m_renderMeshesLibrary.find(assetFile->getFileName()) != m_renderMeshesLibrary.end())
