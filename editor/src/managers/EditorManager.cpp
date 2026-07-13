@@ -376,6 +376,10 @@ namespace Maze
         SystemCursorManager::GetInstancePtr()->showSystemCursor();
 
 
+        // Reset selection
+        SelectionManager::GetInstancePtr()->unselectObjects();
+
+
         if (m_playtestModeEnabled)
             m_editorWorkspaceManager->destroyScenes();
         else

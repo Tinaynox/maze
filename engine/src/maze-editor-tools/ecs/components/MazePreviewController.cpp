@@ -407,8 +407,11 @@ namespace Maze
     //////////////////////////////////////////
     void PreviewController::clearInspector()
     {
-        m_layout->getTransform()->destroyAllChildren();
-        m_layout->alignChildren();
+        if (m_layout)
+        {
+            m_layout->getTransform()->destroyAllChildren();
+            m_layout->alignChildren();
+        }
         m_previewInspector.reset();
 
         if (SceneDebugPreviewPtr scene = m_scene.lock())
