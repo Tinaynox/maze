@@ -40,7 +40,7 @@
 #include "maze-graphics/MazeRenderQueue.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/assets/MazeAssetUnitMaterial.hpp"
 
@@ -68,8 +68,8 @@ namespace Maze
         if (m_renderSystemRaw)
         {
             m_renderSystemRaw->eventSystemInited.unsubscribe(this);
-            if (m_renderSystemRaw->getShaderSystem())
-                m_renderSystemRaw->getShaderSystem()->eventSystemInited.unsubscribe(this);
+            if (m_renderSystemRaw->getShaderManager())
+                m_renderSystemRaw->getShaderManager()->eventSystemInited.unsubscribe(this);
         }
     }
 
@@ -158,13 +158,13 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialManager::notifyRenderSystemInited()
     {
-        m_renderSystemRaw->getShaderSystem()->eventSystemInited.subscribe(this, &MaterialManager::notifyShaderSystemInited);
-        if (m_renderSystemRaw->getShaderSystem()->getSystemInited())
-            notifyShaderSystemInited();
+        m_renderSystemRaw->getShaderManager()->eventSystemInited.subscribe(this, &MaterialManager::notifyShaderManagerInited);
+        if (m_renderSystemRaw->getShaderManager()->getSystemInited())
+            notifyShaderManagerInited();
     }
 
     //////////////////////////////////////////
-    void MaterialManager::notifyShaderSystemInited()
+    void MaterialManager::notifyShaderManagerInited()
     {
         // createBuiltinMaterials();
     }
@@ -317,7 +317,7 @@ namespace Maze
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Error));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::Error));
                 renderPass->setDepthWriteEnabled(true);
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setRenderQueueIndex((U8)RenderQueueIndex::Opaque);
@@ -327,7 +327,7 @@ namespace Maze
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::UV));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::UV));
                 renderPass->setDepthWriteEnabled(true);
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
@@ -338,7 +338,7 @@ namespace Maze
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Normal));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::Normal));
                 renderPass->setDepthWriteEnabled(true);
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
@@ -349,7 +349,7 @@ namespace Maze
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Color));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::Color));
                 renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
                 renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
                 renderPass->setDepthWriteEnabled(false);
@@ -363,7 +363,7 @@ namespace Maze
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::ColorTexture));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::ColorTexture));
                 renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
                 renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
                 renderPass->setDepthWriteEnabled(false);
@@ -379,7 +379,7 @@ namespace Maze
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::ColorTextureCustomUV));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::ColorTextureCustomUV));
                 renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
                 renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
                 renderPass->setDepthWriteEnabled(false);
@@ -419,7 +419,7 @@ namespace Maze
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
 
-                ShaderPtr shader = m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::ColorHDR)->createCopy();
+                ShaderPtr shader = m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::ColorHDR)->createCopy();
                 shader->addLocalFeature("MAZE_COLOR_STREAM", "(1)");
                 shader->recompile();
 
@@ -470,21 +470,21 @@ namespace Maze
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::HSVRect));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::HSVRect));
                 break;
             }
             case BuiltinMaterialType::HSVBand:
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::HSVBand));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::HSVBand));
                 break;
             }
             case BuiltinMaterialType::ColorPickerChannel:
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::ColorPickerChannel));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::ColorPickerChannel));
                 renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
                 renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
                 renderPass->setDepthWriteEnabled(false);
@@ -497,7 +497,7 @@ namespace Maze
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::DebugGrid));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::DebugGrid));
                 renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
                 renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
                 renderPass->setDepthWriteEnabled(false);
@@ -512,7 +512,7 @@ namespace Maze
                 material = Material::Create(m_renderSystemRaw);
                 
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::DebugAxis));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::DebugAxis));
                 renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
                 renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
                 renderPass->setDepthWriteEnabled(false);
@@ -526,7 +526,7 @@ namespace Maze
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Skybox));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::Skybox));
                 renderPass->setBlendSrcFactor(BlendFactor::One);
                 renderPass->setBlendDestFactor(BlendFactor::Zero);
                 renderPass->setDepthWriteEnabled(false);
@@ -541,7 +541,7 @@ namespace Maze
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr defaultRenderPass = material->createRenderPass();
-                defaultRenderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Specular));
+                defaultRenderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::Specular));
                 defaultRenderPass->setBlendSrcFactor(BlendFactor::One);
                 defaultRenderPass->setBlendDestFactor(BlendFactor::Zero);
                 defaultRenderPass->setDepthWriteEnabled(true);
@@ -556,7 +556,7 @@ namespace Maze
                 material->setUniform(MAZE_HCS("u_specularColor"), ColorF128(0.3f, 0.3f, 0.3f, 1.0f));
 
                 RenderPassPtr shadowRenderPass = material->createRenderPass(RenderPassType::Shadow);
-                shadowRenderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::ShadowCaster));
+                shadowRenderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::ShadowCaster));
                 shadowRenderPass->setBlendSrcFactor(BlendFactor::One);
                 shadowRenderPass->setBlendDestFactor(BlendFactor::Zero);
                 shadowRenderPass->setDepthWriteEnabled(true);
@@ -580,7 +580,7 @@ namespace Maze
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::MeshPreview));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::MeshPreview));
                 renderPass->setBlendSrcFactor(BlendFactor::One);
                 renderPass->setBlendDestFactor(BlendFactor::Zero);
                 renderPass->setDepthWriteEnabled(true);
@@ -600,7 +600,7 @@ namespace Maze
             {
                 material = Material::Create(m_renderSystemRaw);
                 RenderPassPtr renderPass = material->createRenderPass();
-                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Font));
+                renderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::Font));
                 renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
                 renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
                 renderPass->setDepthWriteEnabled(false);
@@ -618,7 +618,7 @@ namespace Maze
                 // Pass 0: re-draws the mesh's silhouette into the stencil buffer without affecting
                 // the color buffer (blend keeps the destination color: result = dst * One + src * Zero)
                 RenderPassPtr maskRenderPass = material->createRenderPass();
-                maskRenderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Color));
+                maskRenderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::Color));
                 maskRenderPass->setBlendSrcFactor(BlendFactor::Zero);
                 maskRenderPass->setBlendDestFactor(BlendFactor::One);
                 maskRenderPass->setDepthWriteEnabled(false);
@@ -638,7 +638,7 @@ namespace Maze
                 // Pass 1: draws a normal-extruded shell, visible only where the stencil mask
                 // from pass 0 hasn't already marked the mesh's own silhouette
                 RenderPassPtr outlineRenderPass = material->createRenderPass();
-                outlineRenderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Outline));
+                outlineRenderPass->setShader(m_renderSystemRaw->getShaderManager()->ensureBuiltinShader(BuiltinShaderType::Outline));
                 outlineRenderPass->setBlendSrcFactor(BlendFactor::One);
                 outlineRenderPass->setBlendDestFactor(BlendFactor::Zero);
                 outlineRenderPass->setDepthWriteEnabled(false);

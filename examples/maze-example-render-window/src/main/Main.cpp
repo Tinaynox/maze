@@ -63,7 +63,7 @@
 #include "maze-core/services/MazeLogService.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeRenderWindow.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include <memory>
@@ -270,9 +270,9 @@ void OnInit()
     AssetManager::GetInstancePtr()->addAssetsDirectoryPath(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory());
 
     RenderSystemPtr const& renderSystem = g_main->graphicsManager->getDefaultRenderSystem();
-    ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
+    ShaderManagerPtr const& shaderManager = renderSystem->getShaderManager();
 
-    shaderSystem->findAssetShadersAndAddToLibrary();
+    shaderManager->findAssetShadersAndAddToLibrary();
 
     g_main->scene = g_main->sceneManager->loadScene<SceneExample>();
 }

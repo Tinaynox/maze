@@ -58,7 +58,7 @@
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"

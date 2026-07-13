@@ -56,7 +56,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Shader);
     MAZE_USING_MANAGED_SHARED_PTR(ShaderUniform);
     MAZE_USING_MANAGED_SHARED_PTR(RenderWindow);
-    MAZE_USING_SHARED_PTR(ShaderSystem);
+    MAZE_USING_SHARED_PTR(ShaderManager);
     MAZE_USING_SHARED_PTR(TextureManager);
     MAZE_USING_SHARED_PTR(MaterialManager);
     MAZE_USING_SHARED_PTR(SpriteManager);
@@ -200,7 +200,7 @@ namespace Maze
             bool _stencilBuffer = true) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        inline ShaderSystemPtr const& getShaderSystem() const { return m_shaderSystem; }
+        inline ShaderManagerPtr const& getShaderManager() const { return m_shaderManager; }
 
         //////////////////////////////////////////
         inline TextureManagerPtr const& getTextureManager() const { return m_textureManager; }
@@ -265,7 +265,7 @@ namespace Maze
 
         RenderTarget* m_currentRenderTarget;
 
-        ShaderSystemPtr m_shaderSystem;
+        ShaderManagerPtr m_shaderManager;
 
         TextureManagerPtr m_textureManager;
         SpriteManagerPtr m_spriteManager;

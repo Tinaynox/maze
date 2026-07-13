@@ -33,7 +33,7 @@
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 
 
 //////////////////////////////////////////
@@ -123,7 +123,7 @@ namespace Maze
     void RenderSystem::createBuiltinAssets()
     {
         m_textureManager->createBuiltinTextures();
-        m_shaderSystem->createBuiltinShaders();
+        m_shaderManager->createBuiltinShaders();
         m_materialManager->createBuiltinMaterials();
         m_renderMeshManager->createBuiltinRenderMeshes();
         m_systemFontManager->createBuiltinSystemFonts();

@@ -48,7 +48,7 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
@@ -164,7 +164,7 @@ namespace Maze
     void SceneCanvasTest::create2D()
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
+        ShaderManagerPtr const& shaderManager = renderSystem->getShaderManager();
         SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
         RenderMeshManagerPtr const& renderMeshManager = renderSystem->getRenderMeshManager();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();

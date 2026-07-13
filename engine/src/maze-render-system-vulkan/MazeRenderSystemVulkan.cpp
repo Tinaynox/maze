@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazeRenderSystemVulkanHeader.hpp"
 #include "maze-render-system-vulkan/MazeRenderSystemVulkan.hpp"
-#include "maze-render-system-vulkan/MazeShaderSystemVulkan.hpp"
+#include "maze-render-system-vulkan/MazeShaderManagerVulkan.hpp"
 #include "maze-render-system-vulkan/MazeShaderVulkan.hpp"
 #include "maze-render-system-vulkan/MazeShaderUniformVulkan.hpp"
 #include "maze-render-system-vulkan/MazeTexture2DVulkan.hpp"
@@ -100,7 +100,7 @@ namespace Maze
         m_materialManager.reset();
         m_textureManager.reset();
         m_renderMeshManager.reset();
-        m_shaderSystem.reset();
+        m_shaderManager.reset();
 
         if (m_device != VK_NULL_HANDLE)
             waitDeviceIdleSafe();
@@ -291,8 +291,8 @@ namespace Maze
             endSingleTimeCommands(cmd);
         }
 
-        ShaderSystemVulkan::Initialize(m_shaderSystem, getSharedPtr());
-        if (!m_shaderSystem)
+        ShaderManagerVulkan::Initialize(m_shaderManager, getSharedPtr());
+        if (!m_shaderManager)
             return false;
 
         processSystemInited();

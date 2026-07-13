@@ -30,7 +30,7 @@
 #include "maze-render-system-opengl3/MazeContextOpenGL3.hpp"
 #include "maze-render-system-opengl3/MazeFunctionsOpenGL3.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
-#include "maze-render-system-opengl-core/MazeShaderSystemOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeShaderManagerOpenGL.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
@@ -232,7 +232,7 @@ namespace Maze
             Debug::log << "GL_DEPTH_RANGE: " << depthRange[0] << ", " << depthRange[1] << endl;
         }
 
-        ShaderSystemOpenGL::Initialize(m_shaderSystem, getSharedPtr());
+        ShaderManagerOpenGL::Initialize(m_shaderManager, getSharedPtr());
 
         processSystemInited();
 

@@ -25,37 +25,37 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeShaderSystemVulkan_hpp_))
-#define _MazeShaderSystemVulkan_hpp_
+#if (!defined(_MazeShaderManagerVulkan_hpp_))
+#define _MazeShaderManagerVulkan_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-render-system-vulkan/MazeRenderSystemVulkanHeader.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ShaderSystemVulkan);
+    MAZE_USING_SHARED_PTR(ShaderManagerVulkan);
     class RenderSystemVulkan;
 
 
     //////////////////////////////////////////
-    // Class ShaderSystemVulkan
+    // Class ShaderManagerVulkan
     //
     //////////////////////////////////////////
-    class MAZE_RENDER_SYSTEM_VULKAN_API ShaderSystemVulkan
-        : public ShaderSystem
+    class MAZE_RENDER_SYSTEM_VULKAN_API ShaderManagerVulkan
+        : public ShaderManager
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~ShaderSystemVulkan();
+        virtual ~ShaderManagerVulkan();
 
         //////////////////////////////////////////
-        static void Initialize(ShaderSystemPtr& _object, RenderSystemPtr const& _renderSystem);
+        static void Initialize(ShaderManagerPtr& _object, RenderSystemPtr const& _renderSystem);
 
 
         //////////////////////////////////////////
@@ -77,7 +77,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        ShaderSystemVulkan();
+        ShaderManagerVulkan();
 
         //////////////////////////////////////////
         virtual bool init(RenderSystemPtr const& _renderSystem) MAZE_OVERRIDE;
@@ -88,5 +88,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeShaderSystemVulkan_hpp_
+#endif // _MazeShaderManagerVulkan_hpp_
 //////////////////////////////////////////

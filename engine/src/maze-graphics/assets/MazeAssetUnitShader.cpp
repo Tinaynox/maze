@@ -27,7 +27,7 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/assets/MazeAssetUnitShader.hpp"
 #include "maze-graphics/MazeShader.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 
@@ -128,7 +128,7 @@ namespace Maze
         m_shader = Shader::Create();
         m_shader->setName(HashedString(m_data.getString(MAZE_HCS("name"), assetFile->getFileName().toUTF8())));
 
-        if (ShaderSystem::GetCurrentInstancePtr())
+        if (ShaderManager::GetCurrentInstancePtr())
         {
             ShaderLibraryDataCallbacks callbacks;
 
@@ -168,7 +168,7 @@ namespace Maze
             DataBlock info;
             info.setU32(MAZE_HCS("auid"), getAssetUnitId());
 
-            ShaderSystem::GetCurrentInstancePtr()->addShaderToLibrary(
+            ShaderManager::GetCurrentInstancePtr()->addShaderToLibrary(
                 m_shader,
                 callbacks,
                 info);

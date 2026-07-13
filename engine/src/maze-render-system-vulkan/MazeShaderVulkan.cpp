@@ -27,7 +27,7 @@
 #include "MazeRenderSystemVulkanHeader.hpp"
 #include "maze-render-system-vulkan/MazeShaderVulkan.hpp"
 #include "maze-render-system-vulkan/MazeShaderUniformVulkan.hpp"
-#include "maze-render-system-vulkan/MazeShaderSystemVulkan.hpp"
+#include "maze-render-system-vulkan/MazeShaderManagerVulkan.hpp"
 #include "maze-render-system-vulkan/MazeRenderSystemVulkan.hpp"
 #include "maze-render-system-vulkan/MazeStateMachineVulkan.hpp"
 #include "maze-render-system-vulkan/MazeTexture2DVulkan.hpp"
@@ -713,7 +713,7 @@ namespace Maze
     String ShaderVulkan::buildLocalShaderFeatures()
     {
         String result;
-        result += m_renderSystemRaw->getShaderSystem()->ensureGlobalFeaturesString() + '\n';
+        result += m_renderSystemRaw->getShaderManager()->ensureGlobalFeaturesString() + '\n';
 
         for (auto const& localFeatureData : m_localFeatures)
             result += (String)"#define " + localFeatureData.first + " " + localFeatureData.second + '\n';

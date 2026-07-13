@@ -47,7 +47,7 @@
 #include "maze-core/math/MazePlane.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"

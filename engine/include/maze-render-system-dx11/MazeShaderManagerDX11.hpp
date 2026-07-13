@@ -25,37 +25,37 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeShaderSystemDX11_hpp_))
-#define _MazeShaderSystemDX11_hpp_
+#if (!defined(_MazeShaderManagerDX11_hpp_))
+#define _MazeShaderManagerDX11_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-render-system-dx11/MazeRenderSystemDX11Header.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ShaderSystemDX11);
+    MAZE_USING_SHARED_PTR(ShaderManagerDX11);
     class RenderSystemDX11;
 
 
     //////////////////////////////////////////
-    // Class ShaderSystemDX11
+    // Class ShaderManagerDX11
     //
     //////////////////////////////////////////
-    class MAZE_RENDER_SYSTEM_DX11_API ShaderSystemDX11
-        : public ShaderSystem
+    class MAZE_RENDER_SYSTEM_DX11_API ShaderManagerDX11
+        : public ShaderManager
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~ShaderSystemDX11();
+        virtual ~ShaderManagerDX11();
 
         //////////////////////////////////////////
-        static void Initialize(ShaderSystemPtr& _object, RenderSystemPtr const& _renderSystem);
+        static void Initialize(ShaderManagerPtr& _object, RenderSystemPtr const& _renderSystem);
 
 
         //////////////////////////////////////////
@@ -77,7 +77,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        ShaderSystemDX11();
+        ShaderManagerDX11();
 
         //////////////////////////////////////////
         virtual bool init(RenderSystemPtr const& _renderSystem) MAZE_OVERRIDE;
@@ -88,5 +88,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeShaderSystemDX11_hpp_
+#endif // _MazeShaderManagerDX11_hpp_
 //////////////////////////////////////////

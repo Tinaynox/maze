@@ -25,39 +25,39 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeShaderSystemOpenGL_hpp_))
-#define _MazeShaderSystemOpenGL_hpp_
+#if (!defined(_MazeShaderManagerOpenGL_hpp_))
+#define _MazeShaderManagerOpenGL_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGLCoreHeader.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ShaderSystemOpenGL);
+    MAZE_USING_SHARED_PTR(ShaderManagerOpenGL);
     MAZE_USING_SHARED_PTR(RenderSystemOpenGL);
     MAZE_USING_SHARED_PTR(ContextOpenGL);
 
 
     //////////////////////////////////////////
-    // Class ShaderSystemOpenGL
+    // Class ShaderManagerOpenGL
     //
     //////////////////////////////////////////
-    class MAZE_RENDER_SYSTEM_OPENGL_CORE_API ShaderSystemOpenGL
-        : public ShaderSystem
+    class MAZE_RENDER_SYSTEM_OPENGL_CORE_API ShaderManagerOpenGL
+        : public ShaderManager
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~ShaderSystemOpenGL();
+        virtual ~ShaderManagerOpenGL();
 
         //////////////////////////////////////////
-        static void Initialize(ShaderSystemPtr& _object, RenderSystemPtr const& _renderSystem);
+        static void Initialize(ShaderManagerPtr& _object, RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
         virtual ShaderPtr createShader() MAZE_OVERRIDE;
@@ -77,7 +77,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        ShaderSystemOpenGL();
+        ShaderManagerOpenGL();
 
         //////////////////////////////////////////
         virtual bool init(RenderSystemPtr const& _renderSystem) MAZE_OVERRIDE;
@@ -101,5 +101,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeShaderSystemOpenGL_hpp_
+#endif // _MazeShaderManagerOpenGL_hpp_
 //////////////////////////////////////////

@@ -31,7 +31,7 @@
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-core/math//MazeMathAlgebra.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 
 
 //////////////////////////////////////////

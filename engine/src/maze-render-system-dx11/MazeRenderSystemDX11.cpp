@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazeRenderSystemDX11Header.hpp"
 #include "maze-render-system-dx11/MazeRenderSystemDX11.hpp"
-#include "maze-render-system-dx11/MazeShaderSystemDX11.hpp"
+#include "maze-render-system-dx11/MazeShaderManagerDX11.hpp"
 #include "maze-render-system-dx11/MazeShaderDX11.hpp"
 #include "maze-render-system-dx11/MazeShaderUniformDX11.hpp"
 #include "maze-render-system-dx11/MazeTexture2DDX11.hpp"
@@ -71,7 +71,7 @@ namespace Maze
         m_materialManager.reset();
         m_textureManager.reset();
         m_renderMeshManager.reset();
-        m_shaderSystem.reset();
+        m_shaderManager.reset();
 
         for (auto& samplerData : m_samplerStates)
             SafeReleaseDX11(samplerData.second);
@@ -146,8 +146,8 @@ namespace Maze
             MAZE_ERROR_RETURN_VALUE_IF(FAILED(hr), false, "Zero vertex buffer creation failed! hr=0x%08x", (U32)hr);
         }
 
-        ShaderSystemDX11::Initialize(m_shaderSystem, getSharedPtr());
-        if (!m_shaderSystem)
+        ShaderManagerDX11::Initialize(m_shaderManager, getSharedPtr());
+        if (!m_shaderManager)
             return false;
 
         processSystemInited();

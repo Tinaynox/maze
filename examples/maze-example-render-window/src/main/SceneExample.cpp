@@ -47,7 +47,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
@@ -125,7 +125,7 @@ bool SceneExample::init()
     inputManager->eventMouse.subscribe(this, &SceneExample::notifyMouse);
 
     Maze::RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-    Maze::ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
+    Maze::ShaderManagerPtr const& shaderManager = renderSystem->getShaderManager();
 
 
     Maze::SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();

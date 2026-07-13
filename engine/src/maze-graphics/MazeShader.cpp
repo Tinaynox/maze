@@ -36,7 +36,7 @@
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/events/MazeGraphicsEvents.hpp"
 #include "maze-graphics/assets/MazeAssetUnitShader.hpp"
 #include "maze-graphics/MazeGlobalShaderUniform.hpp"
@@ -93,9 +93,9 @@ namespace Maze
     //////////////////////////////////////////
     ShaderPtr Shader::Create(RenderSystemPtr const& _renderSystem)
     {
-        ShaderSystemPtr const& shaderSystem = _renderSystem ? _renderSystem->getShaderSystem() : ShaderSystem::GetCurrentInstancePtr();
-        if (shaderSystem)
-            return shaderSystem->createShader();
+        ShaderManagerPtr const& shaderManager = _renderSystem ? _renderSystem->getShaderManager() : ShaderManager::GetCurrentInstancePtr();
+        if (shaderManager)
+            return shaderManager->createShader();
         
         return nullptr;
     }
@@ -103,8 +103,8 @@ namespace Maze
     //////////////////////////////////////////
     ShaderPtr Shader::CreateFromFile(RenderSystemPtr const& _renderSystem, AssetFilePtr const& _shaderFile)
     {
-        ShaderSystemPtr const& shaderSystem = _renderSystem->getShaderSystem();
-        return shaderSystem->createShader(_shaderFile);
+        ShaderManagerPtr const& shaderManager = _renderSystem->getShaderManager();
+        return shaderManager->createShader(_shaderFile);
     }
 
     //////////////////////////////////////////
@@ -747,7 +747,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::reload()
     {
-        ShaderLibraryData const* libraryData = m_renderSystemRaw->getShaderSystem()->getShaderLibraryData(
+        ShaderLibraryData const* libraryData = m_renderSystemRaw->getShaderManager()->getShaderLibraryData(
             HashedCString(getName().c_str()));
         if (libraryData && libraryData->callbacks.requestReload)
             libraryData->callbacks.requestReload(true);
@@ -837,7 +837,7 @@ namespace Maze
         if (_count == 0)
             _count = strlen(_shaderName);
 
-        _value = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getShaderSystem()->getOrLoadShader(_shaderName);
+        _value = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getShaderManager()->getOrLoadShader(_shaderName);
         if (!_value)
         {
             if (_shaderName && strcmp(_shaderName, "") != 0)
@@ -921,7 +921,7 @@ namespace Maze
                 EventManager::GetInstancePtr()->subscribeEvent<GlobalShaderUniformChangedEvent>(this, &Shader::notifyEvent);
                 m_subscribedToGlobalUniforms = true;
 
-                auto const& shaderSystem = ShaderSystem::GetCurrentInstancePtr();
+                auto const& shaderManager = ShaderManager::GetCurrentInstancePtr();
                 for (auto const& uniformData : m_uniforms)
                 {
                     if (!uniformData.second)
@@ -929,7 +929,7 @@ namespace Maze
 
                     if (StringHelper::IsStartsWith(uniformData.second->getName().c_str(), "u_global_"))
                     {
-                        GlobalShaderUniformPtr const& shaderUniform = shaderSystem->getGlobalShaderUniform(
+                        GlobalShaderUniformPtr const& shaderUniform = shaderManager->getGlobalShaderUniform(
                             uniformData.second->getName());
 
                         if (shaderUniform)
@@ -1015,7 +1015,7 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderAssetRef::setString(CString _data, Size _count)
     {
-        ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->getOrLoadShader(_data);
+        ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderManager()->getOrLoadShader(_data);
 
         MAZE_ERROR_IF(!shader && _count > 0, "Failed to load RenderPass shader - %s", _data);
 
@@ -1056,7 +1056,7 @@ namespace Maze
                 case DataBlockParamType::ParamString:
                 {
                     String const& name = _dataBlock.getString(paramIndex);
-                    ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->getOrLoadShader(name);
+                    ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderManager()->getOrLoadShader(name);
 
                     MAZE_ERROR_IF(!shader && !name.empty(), "Failed to load RenderPass shader - %s", name.c_str());
 
@@ -1100,11 +1100,11 @@ namespace Maze
         }
 
         // Built-in asset (name)
-        if (ShaderSystem::GetCurrentInstancePtr())
+        if (ShaderManager::GetCurrentInstancePtr())
         {
             for (S32 i = 1; i < BuiltinShaderType::MAX; ++i)
             {
-                if (ShaderSystem::GetCurrentInstancePtr()->getBuiltinShader((BuiltinShaderType)i) == m_shader)
+                if (ShaderManager::GetCurrentInstancePtr()->getBuiltinShader((BuiltinShaderType)i) == m_shader)
                 {
                     ValueToDataBlock(m_shader->getName().c_str(), _dataBlock);
                     return;

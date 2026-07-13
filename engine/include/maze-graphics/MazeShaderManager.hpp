@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeShaderSystem_hpp_))
-#define _MazeShaderSystem_hpp_
+#if (!defined(_MazeShaderManager_hpp_))
+#define _MazeShaderManager_hpp_
 
 
 //////////////////////////////////////////
@@ -46,7 +46,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ShaderSystem);
+    MAZE_USING_SHARED_PTR(ShaderManager);
     MAZE_USING_SHARED_PTR(Shader);
     MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
     MAZE_USING_MANAGED_SHARED_PTR(GlobalShaderUniform);
@@ -113,20 +113,20 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class ShaderSystem
+    // Class ShaderManager
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API ShaderSystem
-        : public SharedObject<ShaderSystem>
+    class MAZE_GRAPHICS_API ShaderManager
+        : public SharedObject<ShaderManager>
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~ShaderSystem();
+        virtual ~ShaderManager();
 
 
         //////////////////////////////////////////
-        static ShaderSystemPtr const& GetCurrentInstancePtr();
+        static ShaderManagerPtr const& GetCurrentInstancePtr();
 
 
         //////////////////////////////////////////
@@ -248,7 +248,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        ShaderSystem();
+        ShaderManager();
 
         //////////////////////////////////////////
         virtual bool init(RenderSystemPtr const& _renderSystem);    
@@ -288,5 +288,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeShaderSystem_hpp_
+#endif // _MazeShaderManager_hpp_
 //////////////////////////////////////////

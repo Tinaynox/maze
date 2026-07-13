@@ -45,7 +45,7 @@
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
@@ -209,7 +209,7 @@ namespace Maze
                 [drawerWeak](MenuListTree2DPtr const& _listTree)
                 {
                     RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-                    StringKeyMap<ShaderLibraryData> const& shadersLibrary = renderSystem->getShaderSystem()->getShadersLibrary();
+                    StringKeyMap<ShaderLibraryData> const& shadersLibrary = renderSystem->getShaderManager()->getShadersLibrary();
 
                     for (auto const& shaderData : shadersLibrary)
                     {

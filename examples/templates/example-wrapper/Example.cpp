@@ -48,7 +48,7 @@
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
@@ -490,7 +490,7 @@ namespace Maze
                         if (_data.isAltDown())
                         {
                             Debug::Log("Reload shaders");
-                            RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->reloadShaders();
+                            RenderSystem::GetCurrentInstancePtr()->getShaderManager()->reloadShaders();
                         }
 
                         break;
@@ -546,11 +546,11 @@ namespace Maze
     void Example::notifyCoreGameResourcesLoaded()
     {
         RenderSystemPtr const& renderSystem = m_graphicsManager->getDefaultRenderSystem();
-        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
+        ShaderManagerPtr const& shaderManager = renderSystem->getShaderManager();
 
         if (IsLoadAllAssets())
         {
-            shaderSystem->findAssetShadersAndAddToLibrary();
+            shaderManager->findAssetShadersAndAddToLibrary();
             renderSystem->getTextureManager()->loadAllAssetTextures();
             renderSystem->getMaterialManager()->loadAllAssetMaterials();
         }

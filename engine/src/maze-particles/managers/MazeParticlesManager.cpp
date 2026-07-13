@@ -32,7 +32,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeShader.hpp"
@@ -140,7 +140,7 @@ namespace Maze
         shader->addLocalFeature("MAZE_UV0_STREAM", "(1)");
         shader->recompile();
         renderPass->setShader(shader);
-        RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->addShaderToLibrary(shader);
+        RenderSystem::GetCurrentInstancePtr()->getShaderManager()->addShaderToLibrary(shader);
 
         m_defaultParticleMaterial->setUniform(MAZE_HCS("u_baseMap"), m_defaultParticleTexture);
         renderSystem->getMaterialManager()->addMaterialToLibrary(m_defaultParticleMaterial);

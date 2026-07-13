@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazeRenderSystemOpenGLCoreHeader.hpp"
 #include "maze-render-system-opengl-core/MazeHeaderOpenGL.hpp"
-#include "maze-render-system-opengl-core/MazeShaderSystemOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeShaderManagerOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeFunctionsOpenGL.hpp"
@@ -38,17 +38,17 @@ namespace Maze
 {
 
     //////////////////////////////////////////
-    // Class ShaderSystemOpenGL
+    // Class ShaderManagerOpenGL
     //
     //////////////////////////////////////////
-    ShaderSystemOpenGL::ShaderSystemOpenGL()
+    ShaderManagerOpenGL::ShaderManagerOpenGL()
         : m_glslVersion(0)
     {
 
     }
 
     //////////////////////////////////////////
-    ShaderSystemOpenGL::~ShaderSystemOpenGL()
+    ShaderManagerOpenGL::~ShaderManagerOpenGL()
     {
         if (m_contextOpenGL)
         {
@@ -59,15 +59,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderSystemOpenGL::Initialize(ShaderSystemPtr& _object, RenderSystemPtr const& _renderSystem)
+    void ShaderManagerOpenGL::Initialize(ShaderManagerPtr& _object, RenderSystemPtr const& _renderSystem)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ShaderSystemOpenGL, _object, init(_renderSystem));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ShaderManagerOpenGL, _object, init(_renderSystem));
     }
 
     //////////////////////////////////////////
-    bool ShaderSystemOpenGL::init(RenderSystemPtr const& _renderSystem)
+    bool ShaderManagerOpenGL::init(RenderSystemPtr const& _renderSystem)
     {
-        if (!ShaderSystem::init(_renderSystem))
+        if (!ShaderManager::init(_renderSystem))
             return false;
 
         CString shadingLanguageVersion = (CString)mzglGetString(MAZE_GL_SHADING_LANGUAGE_VERSION);
@@ -109,20 +109,20 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!context, false, "Context is null");
 
         m_contextOpenGL = context->getSharedPtr();
-        m_contextOpenGL->eventGLContextWillBeDestroyed.subscribe(this, &ShaderSystemOpenGL::notifyGLContextWillBeDestroyed);
-        m_contextOpenGL->eventGLContextSetup.subscribe(this, &ShaderSystemOpenGL::notifyGLContextSetup);
+        m_contextOpenGL->eventGLContextWillBeDestroyed.subscribe(this, &ShaderManagerOpenGL::notifyGLContextWillBeDestroyed);
+        m_contextOpenGL->eventGLContextSetup.subscribe(this, &ShaderManagerOpenGL::notifyGLContextSetup);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void ShaderSystemOpenGL::notifyGLContextWillBeDestroyed(ContextOpenGL* _contextOpenGL)
+    void ShaderManagerOpenGL::notifyGLContextWillBeDestroyed(ContextOpenGL* _contextOpenGL)
     {
         m_systemInited = false;
     }
 
     //////////////////////////////////////////
-    void ShaderSystemOpenGL::notifyGLContextSetup(ContextOpenGL* _contextOpenGL)
+    void ShaderManagerOpenGL::notifyGLContextSetup(ContextOpenGL* _contextOpenGL)
     {
         // createBuiltinShaders();
 
@@ -130,7 +130,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderPtr const& ShaderSystemOpenGL::createBuiltinShader(BuiltinShaderType _shaderType)
+    ShaderPtr const& ShaderManagerOpenGL::createBuiltinShader(BuiltinShaderType _shaderType)
     {
         ShaderPtr& shader = m_builtinShaders[(Size)_shaderType];
         CString shaderSource = nullptr;
@@ -228,13 +228,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    RenderSystemOpenGL* ShaderSystemOpenGL::getRenderSystemOpenGL()
+    RenderSystemOpenGL* ShaderManagerOpenGL::getRenderSystemOpenGL()
     {
         return m_renderSystemRaw->castRaw<RenderSystemOpenGL>();
     }
     
     //////////////////////////////////////////
-    ShaderPtr ShaderSystemOpenGL::createShader()
+    ShaderPtr ShaderManagerOpenGL::createShader()
     {
         return ShaderOpenGL::Create(
             getRenderSystem(),
@@ -242,7 +242,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderPtr ShaderSystemOpenGL::createShader(AssetFilePtr const& _shaderFile)
+    ShaderPtr ShaderManagerOpenGL::createShader(AssetFilePtr const& _shaderFile)
     {
         return ShaderOpenGL::CreateFromFile(
             getRenderSystem(),
@@ -251,13 +251,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderSystemOpenGL::reloadShaders()
+    void ShaderManagerOpenGL::reloadShaders()
     {
         // Dev-time shader reload (see Alt+S) - drop cached #include contents
         // so edited shared header files are picked up
         ShaderOpenGL::ClearShaderIncludeFilesCache();
 
-        ShaderSystem::reloadShaders();
+        ShaderManager::reloadShaders();
     }
 
 

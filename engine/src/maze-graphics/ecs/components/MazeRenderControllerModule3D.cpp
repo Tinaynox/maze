@@ -46,7 +46,7 @@
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/MazeGlobalShaderUniform.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
@@ -455,12 +455,12 @@ namespace Maze
 
             if (defaultParams.drawFlag)
             {
-                ShaderSystemPtr const& shaderSystem = _renderTarget->getRenderSystem()->getShaderSystem();
-                if (shaderSystem)
+                ShaderManagerPtr const& shaderManager = _renderTarget->getRenderSystem()->getShaderManager();
+                if (shaderManager)
                 {
-                    shaderSystem->getLightsCountUniform()->setValue(dynLightsCount);
-                    shaderSystem->getLightsPosRadiusUniform()->setValue(defaultParams.lightsPosRadius, dynLightsCount);
-                    shaderSystem->getLightsColorUniform()->setValue(defaultParams.lightsColor, dynLightsCount);
+                    shaderManager->getLightsCountUniform()->setValue(dynLightsCount);
+                    shaderManager->getLightsPosRadiusUniform()->setValue(defaultParams.lightsPosRadius, dynLightsCount);
+                    shaderManager->getLightsColorUniform()->setValue(defaultParams.lightsColor, dynLightsCount);
                 }
             }
 

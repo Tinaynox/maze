@@ -29,7 +29,7 @@
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
@@ -142,7 +142,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderPass::setShader(Path const& _shaderResourceName)
     {
-        ShaderPtr const& shader = m_renderSystem->getShaderSystem()->getOrLoadShader(_shaderResourceName);
+        ShaderPtr const& shader = m_renderSystem->getShaderManager()->getOrLoadShader(_shaderResourceName);
 
         MAZE_ERROR_IF(!shader && !_shaderResourceName.empty(), "Failed to load RenderPass shader - %s", _shaderResourceName.toUTF8().c_str());
 

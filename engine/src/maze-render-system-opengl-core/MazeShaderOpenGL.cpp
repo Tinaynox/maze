@@ -31,7 +31,7 @@
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeFunctionsOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderUniformOpenGL.hpp"
-#include "maze-render-system-opengl-core/MazeShaderSystemOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeShaderManagerOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderUniformOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeExtensionsOpenGL.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -342,7 +342,7 @@ namespace Maze
         m_fragmentShaderSource = _fragmentShaderSource;
 
         RenderSystemOpenGL* renderSystem = getRenderSystemOpenGLRaw();
-        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
+        ShaderManagerPtr const& shaderManager = renderSystem->getShaderManager();
 
         Debug::Log("Shader %s loading...", getName().c_str());
         Timer timer;
@@ -359,7 +359,7 @@ namespace Maze
 
 
 
-        String version = StringHelper::ToString(shaderSystem->castRaw<ShaderSystemOpenGL>()->getGLSLVersion());
+        String version = StringHelper::ToString(shaderManager->castRaw<ShaderManagerOpenGL>()->getGLSLVersion());
 
         String shaderVersion = "#version " + version;
         
@@ -394,7 +394,7 @@ namespace Maze
         shaderVersion += StringHelper::ToString(MAZE_DYNAMIC_LIGHTS_MAX);
 
         String shaderFeatures = 
-            m_renderSystemRaw->getShaderSystem()->ensureGlobalFeaturesString() + '\n' +
+            m_renderSystemRaw->getShaderManager()->ensureGlobalFeaturesString() + '\n' +
             buildLocalShaderFeatures();
 
 
@@ -609,8 +609,8 @@ namespace Maze
         if (!renderSystem)
             return false;
 
-        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
-        if (!shaderSystem) 
+        ShaderManagerPtr const& shaderManager = renderSystem->getShaderManager();
+        if (!shaderManager) 
             return false;
 
         ContextOpenGL* currentContext = renderSystem->ensureCurrentContext();
@@ -874,7 +874,7 @@ namespace Maze
     {
         if (m_programId == 0)
         {
-            ShaderLibraryData const* libraryData = m_renderSystemRaw->getShaderSystem()->getShaderLibraryData(
+            ShaderLibraryData const* libraryData = m_renderSystemRaw->getShaderManager()->getShaderLibraryData(
                 HashedCString(getName().c_str()));
             if (libraryData && libraryData->callbacks.requestReload)
             {

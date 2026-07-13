@@ -50,7 +50,7 @@
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeGlobalShaderUniform.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/MazeMeshSkeletonAnimator.hpp"
 #include "maze-graphics/MazeMeshSkeletonAnimation.hpp"
 #include "maze-graphics/helpers/MazePixelSheet2DHelper.hpp"
@@ -1007,7 +1007,7 @@ namespace Maze
 
         Char* cstr = mono_string_to_utf8(_name);
 
-        GlobalShaderUniformPtr const& uniform = ShaderSystem::GetCurrentInstancePtr()->ensureGlobalShaderUniform(
+        GlobalShaderUniformPtr const& uniform = ShaderManager::GetCurrentInstancePtr()->ensureGlobalShaderUniform(
             HashedCString(cstr));
         if (uniform)
             result = uniform->getResourceId();

@@ -49,7 +49,7 @@
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"

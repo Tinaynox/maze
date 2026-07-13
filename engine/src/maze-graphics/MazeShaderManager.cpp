@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -47,22 +47,22 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class ShaderSystem
+    // Class ShaderManager
     //
     //////////////////////////////////////////
-    ShaderSystem::ShaderSystem()
+    ShaderManager::ShaderManager()
         : m_systemInited(false)
         , m_renderSystemRaw(nullptr)
     {
     }
 
     //////////////////////////////////////////
-    ShaderSystem::~ShaderSystem()
+    ShaderManager::~ShaderManager()
     {
     }
 
     //////////////////////////////////////////
-    bool ShaderSystem::init(RenderSystemPtr const& _renderSystem)
+    bool ShaderManager::init(RenderSystemPtr const& _renderSystem)
     {
         m_renderSystem = _renderSystem;
         m_renderSystemRaw = _renderSystem.get();
@@ -102,10 +102,10 @@ namespace Maze
                 {
                     if (_assetFile->getExtension() == Path("mzshader"))
                     {
-                        if (!ShaderSystem::GetCurrentInstancePtr())
+                        if (!ShaderManager::GetCurrentInstancePtr())
                             return;
 
-                        StringKeyMap<ShaderLibraryData>& shadersLibrary = ShaderSystem::GetCurrentInstancePtr()->m_shadersLibrary;
+                        StringKeyMap<ShaderLibraryData>& shadersLibrary = ShaderManager::GetCurrentInstancePtr()->m_shadersLibrary;
                         String prevMaterialName = FileHelper::GetFileNameInPath(_prevPath).toUTF8();
                         StringKeyMap<ShaderLibraryData>::iterator it = shadersLibrary.find(prevMaterialName);
                         if (it != shadersLibrary.end())
@@ -128,19 +128,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderSystemPtr const& ShaderSystem::GetCurrentInstancePtr()
+    ShaderManagerPtr const& ShaderManager::GetCurrentInstancePtr()
     {
-        static ShaderSystemPtr nullPointer;
+        static ShaderManagerPtr nullPointer;
 
         RenderSystem* renderSystem = RenderSystem::GetCurrentInstancePtr();
         if (!renderSystem)
             return nullPointer;
 
-        return renderSystem->getShaderSystem();
+        return renderSystem->getShaderManager();
     }
 
     //////////////////////////////////////////
-    ShaderLibraryData* ShaderSystem::addShaderToLibrary(
+    ShaderLibraryData* ShaderManager::addShaderToLibrary(
         ShaderPtr const& _shader,
         ShaderLibraryDataCallbacks const& _callbacks,
         DataBlock const& _info)
@@ -169,7 +169,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ShaderSystem::removeShaderFromLibrary(ShaderPtr const& _shader)
+    bool ShaderManager::removeShaderFromLibrary(ShaderPtr const& _shader)
     {
         String const& name = _shader->getName();
         StringKeyMap<ShaderLibraryData>::iterator it = m_shadersLibrary.find(name);
@@ -181,7 +181,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderSystem::addGlobalFeature(CString _name, CString _value)
+    void ShaderManager::addGlobalFeature(CString _name, CString _value)
     {
         MAZE_ERROR_RETURN_IF(!_name, "Name is null!");
 
@@ -190,7 +190,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderSystem::removeGlobalFeature(CString _name)
+    void ShaderManager::removeGlobalFeature(CString _name)
     {
         auto it = m_globalFeatures.find(_name);
         if (it != m_globalFeatures.end())
@@ -201,14 +201,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String const& ShaderSystem::ensureGlobalFeaturesString()
+    String const& ShaderManager::ensureGlobalFeaturesString()
     {
         updateGlobalShaderFeaturesString();
         return m_globalFeaturesString;
     }
 
     //////////////////////////////////////////
-    ShaderLibraryData const* ShaderSystem::getShaderLibraryData(HashedCString _shaderName)
+    ShaderLibraryData const* ShaderManager::getShaderLibraryData(HashedCString _shaderName)
     {
         StringKeyMap<ShaderLibraryData>::const_iterator it = m_shadersLibrary.find(_shaderName);
         if (it != m_shadersLibrary.end())
@@ -217,7 +217,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderPtr const& ShaderSystem::getShaderFromLibrary(HashedCString _shaderName)
+    ShaderPtr const& ShaderManager::getShaderFromLibrary(HashedCString _shaderName)
     {
         static ShaderPtr nullShader;
         ShaderLibraryData const* shaderLibraryData = getShaderLibraryData(_shaderName);
@@ -228,7 +228,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderPtr const& ShaderSystem::getOrLoadShader(
+    ShaderPtr const& ShaderManager::getOrLoadShader(
         HashedCString _shaderName,
         bool _syncLoad)
     {
@@ -282,9 +282,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderSystem::findAssetShadersAndAddToLibrary()
+    void ShaderManager::findAssetShadersAndAddToLibrary()
     {
-        MAZE_PROFILE_EVENT("ShaderSystem::findAssetShadersAndAddToLibrary");
+        MAZE_PROFILE_EVENT("ShaderManager::findAssetShadersAndAddToLibrary");
 
         AssetManager* assetManager = AssetManager::GetInstancePtr();
 
@@ -294,7 +294,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderSystem::addAssetFileShadersToLibrary(Vector<AssetFilePtr> const& _files)
+    void ShaderManager::addAssetFileShadersToLibrary(Vector<AssetFilePtr> const& _files)
     {
         for (AssetFilePtr const& file : _files)
         {
@@ -306,7 +306,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderPtr const& ShaderSystem::ensureBuiltinShader(BuiltinShaderType _shaderType)
+    ShaderPtr const& ShaderManager::ensureBuiltinShader(BuiltinShaderType _shaderType)
     {
         ShaderPtr const& shader = getBuiltinShader(_shaderType);
         if (shader)
@@ -321,16 +321,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderSystem::createBuiltinShaders()
+    void ShaderManager::createBuiltinShaders()
     {
-        MAZE_PROFILE_EVENT("ShaderSystem::createBuiltinShaders");
+        MAZE_PROFILE_EVENT("ShaderManager::createBuiltinShaders");
 
         for (BuiltinShaderType t = BuiltinShaderType(1); t < BuiltinShaderType::MAX; ++t)
             ensureBuiltinShader(t);
     }
 
     //////////////////////////////////////////
-    void ShaderSystem::removeAssetFileShadersFromLibrary(Vector<AssetFilePtr> const& _files)
+    void ShaderManager::removeAssetFileShadersFromLibrary(Vector<AssetFilePtr> const& _files)
     {
         for (AssetFilePtr const& file : _files)
         {
@@ -359,9 +359,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderSystem::processSystemInited()
+    void ShaderManager::processSystemInited()
     {
-        MAZE_ERROR_RETURN_IF(m_systemInited, "ShaderSystem: Double initialization detected!");
+        MAZE_ERROR_RETURN_IF(m_systemInited, "ShaderManager: Double initialization detected!");
 
         m_systemInited = true;
 
@@ -369,7 +369,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderSystem::reloadShaders()
+    void ShaderManager::reloadShaders()
     {
         for (auto const& shaderData : m_shadersLibrary)
         {
@@ -378,7 +378,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String ShaderSystem::buildGlobalShaderFeatures()
+    String ShaderManager::buildGlobalShaderFeatures()
     {
         String result;
 
@@ -389,7 +389,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderSystem::updateGlobalShaderFeaturesString()
+    void ShaderManager::updateGlobalShaderFeaturesString()
     {
         if (!m_globalFeaturesStringDirty)
             return;
@@ -399,7 +399,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    GlobalShaderUniformPtr const& ShaderSystem::ensureGlobalShaderUniform(HashedCString _name)
+    GlobalShaderUniformPtr const& ShaderManager::ensureGlobalShaderUniform(HashedCString _name)
     {
         auto it = m_globalShaderUniforms.find(_name);
         if (it != m_globalShaderUniforms.end())
@@ -416,7 +416,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    GlobalShaderUniformPtr const& ShaderSystem::getGlobalShaderUniform(HashedCString _name) const
+    GlobalShaderUniformPtr const& ShaderManager::getGlobalShaderUniform(HashedCString _name) const
     {
         static GlobalShaderUniformPtr const nullPointer;
 

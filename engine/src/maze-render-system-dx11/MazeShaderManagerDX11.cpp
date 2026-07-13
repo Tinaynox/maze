@@ -24,10 +24,10 @@
 
 
 //////////////////////////////////////////
-#include "MazeRenderSystemVulkanHeader.hpp"
-#include "maze-render-system-vulkan/MazeShaderSystemVulkan.hpp"
-#include "maze-render-system-vulkan/MazeRenderSystemVulkan.hpp"
-#include "maze-render-system-vulkan/MazeShaderVulkan.hpp"
+#include "MazeRenderSystemDX11Header.hpp"
+#include "maze-render-system-dx11/MazeShaderManagerDX11.hpp"
+#include "maze-render-system-dx11/MazeRenderSystemDX11.hpp"
+#include "maze-render-system-dx11/MazeShaderDX11.hpp"
 
 
 //////////////////////////////////////////
@@ -35,30 +35,30 @@ namespace Maze
 {
 
     //////////////////////////////////////////
-    // Class ShaderSystemVulkan
+    // Class ShaderManagerDX11
     //
     //////////////////////////////////////////
-    ShaderSystemVulkan::ShaderSystemVulkan()
+    ShaderManagerDX11::ShaderManagerDX11()
     {
 
     }
 
     //////////////////////////////////////////
-    ShaderSystemVulkan::~ShaderSystemVulkan()
+    ShaderManagerDX11::~ShaderManagerDX11()
     {
 
     }
 
     //////////////////////////////////////////
-    void ShaderSystemVulkan::Initialize(ShaderSystemPtr& _object, RenderSystemPtr const& _renderSystem)
+    void ShaderManagerDX11::Initialize(ShaderManagerPtr& _object, RenderSystemPtr const& _renderSystem)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ShaderSystemVulkan, _object, init(_renderSystem));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ShaderManagerDX11, _object, init(_renderSystem));
     }
 
     //////////////////////////////////////////
-    bool ShaderSystemVulkan::init(RenderSystemPtr const& _renderSystem)
+    bool ShaderManagerDX11::init(RenderSystemPtr const& _renderSystem)
     {
-        if (!ShaderSystem::init(_renderSystem))
+        if (!ShaderManager::init(_renderSystem))
             return false;
 
         processSystemInited();
@@ -67,13 +67,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    RenderSystemVulkan* ShaderSystemVulkan::getRenderSystemVulkan()
+    RenderSystemDX11* ShaderManagerDX11::getRenderSystemDX11()
     {
-        return m_renderSystemRaw->castRaw<RenderSystemVulkan>();
+        return m_renderSystemRaw->castRaw<RenderSystemDX11>();
     }
 
     //////////////////////////////////////////
-    ShaderPtr const& ShaderSystemVulkan::createBuiltinShader(BuiltinShaderType _shaderType)
+    ShaderPtr const& ShaderManagerDX11::createBuiltinShader(BuiltinShaderType _shaderType)
     {
         ShaderPtr& shader = m_builtinShaders[(Size)_shaderType];
         CString shaderSource = nullptr;
@@ -82,75 +82,75 @@ namespace Maze
         {
             case BuiltinShaderType::Error:
                 shaderSource =
-#include "shaders/MazeErrorShader.mzglslvk"
+#include "shaders/MazeErrorShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::UV:
                 shaderSource =
-#include "shaders/MazeUVShader.mzglslvk"
+#include "shaders/MazeUVShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::Normal:
                 shaderSource =
-#include "shaders/MazeNormalShader.mzglslvk"
+#include "shaders/MazeNormalShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::Color:
                 shaderSource =
-#include "shaders/MazeColorShader.mzglslvk"
+#include "shaders/MazeColorShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::ColorTexture:
                 shaderSource =
-#include "shaders/MazeColorTextureShader.mzglslvk"
+#include "shaders/MazeColorTextureShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::ColorTextureCustomUV:
                 shaderSource =
-#include "shaders/MazeColorTextureCustomUVShader.mzglslvk"
+#include "shaders/MazeColorTextureCustomUVShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::ColorHDR:
                 shaderSource =
-#include "shaders/MazeColorHDRShader.mzglslvk"
+#include "shaders/MazeColorHDRShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::HSVRect:
                 shaderSource =
-#include "shaders/MazeHSVRectShader.mzglslvk"
+#include "shaders/MazeHSVRectShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::HSVBand:
                 shaderSource =
-#include "shaders/MazeHSVBandShader.mzglslvk"
+#include "shaders/MazeHSVBandShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::ColorPickerChannel:
                 shaderSource =
-#include "shaders/MazeColorPickerChannelShader.mzglslvk"
+#include "shaders/MazeColorPickerChannelShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::DebugGrid:
                 shaderSource =
-#include "shaders/MazeDebugGridShader.mzglslvk"
+#include "shaders/MazeDebugGridShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::DebugAxis:
                 shaderSource =
-#include "shaders/MazeDebugAxisShader.mzglslvk"
+#include "shaders/MazeDebugAxisShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::Skybox:
                 shaderSource =
-#include "shaders/MazeSkyboxShader.mzglslvk"
+#include "shaders/MazeSkyboxShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::Specular:
                 shaderSource =
-#include "shaders/MazeSpecularShader.mzglslvk"
+#include "shaders/MazeSpecularShader.mzhlsl"
                 ; break;
             case BuiltinShaderType::MeshPreview:
                 shaderSource =
-#include "shaders/MazeMeshPreviewShader.mzglslvk"
+#include "shaders/MazeMeshPreviewShader.mzhlsl"
                     ; break;
             case BuiltinShaderType::Font:
                 shaderSource =
-#include "shaders/MazeFontShader.mzglslvk"
+#include "shaders/MazeFontShader.mzhlsl"
                     ; break;
             case BuiltinShaderType::ShadowCaster:
                 shaderSource =
-#include "shaders/MazeShadowCasterShader.mzglslvk"
+#include "shaders/MazeShadowCasterShader.mzhlsl"
                     ; break;
             case BuiltinShaderType::Outline:
                 shaderSource =
-#include "shaders/MazeOutlineShader.mzglslvk"
+#include "shaders/MazeOutlineShader.mzhlsl"
                     ; break;
             default:
             {
@@ -161,7 +161,7 @@ namespace Maze
 
         MAZE_ERROR_RETURN_VALUE_IF(!shaderSource, shader, "ShaderSource is null! ShaderType: %s", _shaderType.toCString());
 
-        shader = ShaderVulkan::CreateFromSource(
+        shader = ShaderDX11::CreateFromSource(
             m_renderSystem.lock(),
             shaderSource,
             _shaderType.toCString());
@@ -170,25 +170,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderPtr ShaderSystemVulkan::createShader()
+    ShaderPtr ShaderManagerDX11::createShader()
     {
-        return ShaderVulkan::Create(getRenderSystem());
+        return ShaderDX11::Create(getRenderSystem());
     }
 
     //////////////////////////////////////////
-    ShaderPtr ShaderSystemVulkan::createShader(AssetFilePtr const& _shaderFile)
+    ShaderPtr ShaderManagerDX11::createShader(AssetFilePtr const& _shaderFile)
     {
-        return ShaderVulkan::CreateFromFile(getRenderSystem(), _shaderFile);
+        return ShaderDX11::CreateFromFile(getRenderSystem(), _shaderFile);
     }
 
     //////////////////////////////////////////
-    void ShaderSystemVulkan::reloadShaders()
+    void ShaderManagerDX11::reloadShaders()
     {
         // Dev-time shader reload - drop cached #include contents
         // so edited shared header files are picked up
-        ShaderVulkan::ClearShaderIncludeFilesCache();
+        ShaderDX11::ClearShaderIncludeFilesCache();
 
-        ShaderSystem::reloadShaders();
+        ShaderManager::reloadShaders();
     }
 
 

@@ -47,7 +47,7 @@
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"

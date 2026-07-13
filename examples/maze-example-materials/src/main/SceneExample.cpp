@@ -59,7 +59,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeOutlineRenderer.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"

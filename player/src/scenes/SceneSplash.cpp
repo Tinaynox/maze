@@ -59,7 +59,7 @@
 #include "maze-graphics/managers/MazeMeshManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
@@ -239,7 +239,7 @@ namespace Maze
             }
             case 3:
             {
-                RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->createBuiltinShaders();
+                RenderSystem::GetCurrentInstancePtr()->getShaderManager()->createBuiltinShaders();
                 setCurrentProgress(0.35f);
                 break;
             }

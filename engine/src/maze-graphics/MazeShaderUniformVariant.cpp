@@ -30,7 +30,7 @@
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeAssetUnitManager.hpp"
 #include "maze-graphics/assets/MazeAssetUnitTexture2D.hpp"

@@ -240,7 +240,7 @@ namespace Maze
         void notifyRenderSystemInited();
 
         //////////////////////////////////////////
-        void notifyShaderSystemInited();
+        void notifyShaderManagerInited();
 
 
     protected:

@@ -27,7 +27,7 @@
 #include "MazeRenderSystemDX11Header.hpp"
 #include "maze-render-system-dx11/MazeShaderDX11.hpp"
 #include "maze-render-system-dx11/MazeShaderUniformDX11.hpp"
-#include "maze-render-system-dx11/MazeShaderSystemDX11.hpp"
+#include "maze-render-system-dx11/MazeShaderManagerDX11.hpp"
 #include "maze-render-system-dx11/MazeRenderSystemDX11.hpp"
 #include "maze-render-system-dx11/MazeStateMachineDX11.hpp"
 #include "maze-render-system-dx11/MazeTexture2DDX11.hpp"
@@ -591,7 +591,7 @@ namespace Maze
             header += "#define MAZE_PIXEL_SHADER (1)\n";
 
         // Features
-        header += m_renderSystemRaw->getShaderSystem()->ensureGlobalFeaturesString() + '\n';
+        header += m_renderSystemRaw->getShaderManager()->ensureGlobalFeaturesString() + '\n';
         header += buildLocalShaderFeatures();
 
         header += c_commonShaderHeaderDX11;

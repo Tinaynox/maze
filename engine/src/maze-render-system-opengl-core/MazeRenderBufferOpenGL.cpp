@@ -30,7 +30,7 @@
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeFunctionsOpenGL.hpp"
-#include "maze-render-system-opengl-core/MazeShaderSystemOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeShaderManagerOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeTexture2DOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeTexture2DMSOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
@@ -39,7 +39,7 @@
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/MazeVertex.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 
 
 //////////////////////////////////////////
@@ -290,7 +290,7 @@ namespace Maze
 
         MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemOpenGLRaw());
 
-        if (m_renderSystem->getShaderSystem()->cast<ShaderSystemOpenGL>()->getGLSLVersion() > 120)
+        if (m_renderSystem->getShaderManager()->cast<ShaderManagerOpenGL>()->getGLSLVersion() > 120)
         {
             MAZE_GL_CALL(mzglDrawBuffers(buffersCount, buffers));
         }

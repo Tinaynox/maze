@@ -58,7 +58,7 @@
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeRenderWindow.hpp"
-#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeShaderManager.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "Player.hpp"
