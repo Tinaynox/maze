@@ -271,7 +271,11 @@ namespace Maze
             m_rasterizerStateDirty = true;
         }
 
-        // Unbind the new render targets from shader resource slots first
+        // Unbind the new render target resources (color and depth) from all shader resource
+        // slots first. Otherwise OMSetRenderTargets resolves the read-write hazard by silently
+        // nulling the SRV on the device, desyncing it from the cache
+        ID3D11Resource* targetResources[c_renderTargetsMax + 1];
+        S32 targetResourcesCount = 0;
         for (S32 i = 0; i < m_renderTargetViewsCount; ++i)
         {
             if (!m_renderTargetViews[i])
@@ -280,21 +284,50 @@ namespace Maze
             ID3D11Resource* resource = nullptr;
             m_renderTargetViews[i]->GetResource(&resource);
             if (resource)
-            {
-                for (S32 s = 0; s < c_shaderResourcesMax; ++s)
+                targetResources[targetResourcesCount++] = resource;
+        }
+        if (m_depthStencilView)
+        {
+            ID3D11Resource* resource = nullptr;
+            m_depthStencilView->GetResource(&resource);
+            if (resource)
+                targetResources[targetResourcesCount++] = resource;
+        }
+
+        if (targetResourcesCount > 0)
+        {
+            auto matchesTargetResource =
+                [&](ID3D11ShaderResourceView* _srv) -> bool
                 {
-                    if (m_pixelShaderResources[s])
+                    ID3D11Resource* srvResource = nullptr;
+                    _srv->GetResource(&srvResource);
+                    if (!srvResource)
+                        return false;
+
+                    bool matches = false;
+                    for (S32 r = 0; r < targetResourcesCount; ++r)
                     {
-                        ID3D11Resource* srvResource = nullptr;
-                        m_pixelShaderResources[s]->GetResource(&srvResource);
-                        if (srvResource == resource)
-                            bindPixelShaderResource(s, nullptr, -1, nullptr);
-                        if (srvResource)
-                            srvResource->Release();
+                        if (targetResources[r] == srvResource)
+                        {
+                            matches = true;
+                            break;
+                        }
                     }
-                }
-                resource->Release();
+                    srvResource->Release();
+                    return matches;
+                };
+
+            for (S32 s = 0; s < c_shaderResourcesMax; ++s)
+            {
+                if (m_pixelShaderResources[s] && matchesTargetResource(m_pixelShaderResources[s]))
+                    bindPixelShaderResource(s, nullptr, -1, nullptr);
+
+                if (m_vertexShaderResources[s] && matchesTargetResource(m_vertexShaderResources[s]))
+                    bindVertexShaderResource(s, nullptr, -1, nullptr);
             }
+
+            for (S32 r = 0; r < targetResourcesCount; ++r)
+                targetResources[r]->Release();
         }
 
         getDeviceContext()->OMSetRenderTargets(

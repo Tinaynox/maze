@@ -46,6 +46,13 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    // Byte offsets into the default attribute buffer (stride 0) holding
+    // the GL default vertex attribute value (0, 0, 0, 1) per component type
+    static UINT const c_defaultAttributeFloatOffsetDX11 = 16u;
+    static UINT const c_defaultAttributeIntOffsetDX11 = 32u;
+
+
+    //////////////////////////////////////////
     // Class RenderSystemDX11
     //
     //////////////////////////////////////////
@@ -112,10 +119,18 @@ namespace Maze
 
         m_stateMachine = MakeUnique<StateMachineDX11>(this);
 
-        // Zero-filled buffer for vertex attributes missing from a VAO
+        // Default-value buffer for vertex attributes missing from a VAO.
+        // Provides the GL default attribute value (0, 0, 0, 1) so behavior matches the GL backend
         {
             U8 zeroData[64];
             memset(zeroData, 0, sizeof(zeroData));
+
+            F32 const floatDefault[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+            memcpy(zeroData + c_defaultAttributeFloatOffsetDX11, floatDefault, sizeof(floatDefault));
+
+            // The same bit pattern serves both UINT and SINT attributes
+            U32 const intDefault[4] = { 0u, 0u, 0u, 1u };
+            memcpy(zeroData + c_defaultAttributeIntOffsetDX11, intDefault, sizeof(intDefault));
 
             D3D11_BUFFER_DESC bufferDesc;
             memset(&bufferDesc, 0, sizeof(bufferDesc));
@@ -155,34 +170,48 @@ namespace Maze
             D3D_FEATURE_LEVEL_10_0
         };
 
-        HRESULT hr = D3D11CreateDevice(
-            nullptr,
-            D3D_DRIVER_TYPE_HARDWARE,
-            nullptr,
-            deviceFlags,
-            featureLevels,
-            (UINT)(sizeof(featureLevels) / sizeof(featureLevels[0])),
-            D3D11_SDK_VERSION,
-            &m_device,
-            &m_featureLevel,
-            &m_deviceContext);
+        // Explicit adapter selection (D3D11CreateDevice requires D3D_DRIVER_TYPE_UNKNOWN then)
+        IDXGIAdapter* requestedAdapter = nullptr;
+        if (m_config.adapterIndex >= 0)
+        {
+            IDXGIFactory* factory = nullptr;
+            if (SUCCEEDED(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory)))
+            {
+                if (FAILED(factory->EnumAdapters((UINT)m_config.adapterIndex, &requestedAdapter)))
+                {
+                    MAZE_WARNING("DX11 adapter #%d is not available - falling back to the default adapter", m_config.adapterIndex);
+                    requestedAdapter = nullptr;
+                }
+                factory->Release();
+            }
+        }
+
+        auto createDeviceWithFlags =
+            [&](UINT _deviceFlags) -> HRESULT
+            {
+                return D3D11CreateDevice(
+                    requestedAdapter,
+                    requestedAdapter ? D3D_DRIVER_TYPE_UNKNOWN : D3D_DRIVER_TYPE_HARDWARE,
+                    nullptr,
+                    _deviceFlags,
+                    featureLevels,
+                    (UINT)(sizeof(featureLevels) / sizeof(featureLevels[0])),
+                    D3D11_SDK_VERSION,
+                    &m_device,
+                    &m_featureLevel,
+                    &m_deviceContext);
+            };
+
+        HRESULT hr = createDeviceWithFlags(deviceFlags);
 
         if (FAILED(hr) && (deviceFlags & D3D11_CREATE_DEVICE_DEBUG))
         {
             MAZE_WARNING("D3D11 debug layer is not available - creating device without it");
             deviceFlags &= ~D3D11_CREATE_DEVICE_DEBUG;
-            hr = D3D11CreateDevice(
-                nullptr,
-                D3D_DRIVER_TYPE_HARDWARE,
-                nullptr,
-                deviceFlags,
-                featureLevels,
-                (UINT)(sizeof(featureLevels) / sizeof(featureLevels[0])),
-                D3D11_SDK_VERSION,
-                &m_device,
-                &m_featureLevel,
-                &m_deviceContext);
+            hr = createDeviceWithFlags(deviceFlags);
         }
+
+        SafeReleaseDX11(requestedAdapter);
 
         MAZE_ERROR_RETURN_VALUE_IF(FAILED(hr), false, "D3D11CreateDevice failed! hr=0x%08x", (U32)hr);
 
@@ -456,17 +485,19 @@ namespace Maze
     {
         U32 anisotropy = (U32)Math::Clamp((S32)_anisotropyLevel, 0, D3D11_MAX_MAXANISOTROPY);
 
+        // Enum values start at None = 0, so TextureFilter needs 3 bits (max 6)
+        // and TextureWrap needs 3 bits too (ClampToBorder = 4)
         U64 key =
             ((U64)_minFilter & 0x7) |
             (((U64)_magFilter & 0x7) << 3) |
-            (((U64)_wrapS & 0x3) << 6) |
-            (((U64)_wrapT & 0x3) << 8) |
-            (((U64)_wrapR & 0x3) << 10) |
-            (((U64)anisotropy & 0xFF) << 12) |
-            ((U64)((U32)(_borderColor.x * 255.0f) & 0xFF) << 20) |
-            ((U64)((U32)(_borderColor.y * 255.0f) & 0xFF) << 28) |
-            ((U64)((U32)(_borderColor.z * 255.0f) & 0xFF) << 36) |
-            ((U64)((U32)(_borderColor.w * 255.0f) & 0xFF) << 44);
+            (((U64)_wrapS & 0x7) << 6) |
+            (((U64)_wrapT & 0x7) << 9) |
+            (((U64)_wrapR & 0x7) << 12) |
+            (((U64)anisotropy & 0xFF) << 15) |
+            ((U64)((U32)(_borderColor.x * 255.0f) & 0xFF) << 23) |
+            ((U64)((U32)(_borderColor.y * 255.0f) & 0xFF) << 31) |
+            ((U64)((U32)(_borderColor.z * 255.0f) & 0xFF) << 39) |
+            ((U64)((U32)(_borderColor.w * 255.0f) & 0xFF) << 47);
 
         auto it = m_samplerStates.find(key);
         if (it != m_samplerStates.end())
@@ -565,14 +596,23 @@ namespace Maze
             }
             else
             {
-                // The VAO has no data for this attribute - read zeroes from the dummy buffer (stride 0)
+                // The VAO has no data for this attribute - read the default
+                // attribute value (0, 0, 0, 1) from the dummy buffer (stride 0)
                 element.InputSlot = (UINT)VertexArrayObjectDX11::c_zeroBufferSlot;
-                element.AlignedByteOffset = 0;
                 switch (param.componentType)
                 {
-                    case D3D_REGISTER_COMPONENT_UINT32: element.Format = DXGI_FORMAT_R32G32B32A32_UINT; break;
-                    case D3D_REGISTER_COMPONENT_SINT32: element.Format = DXGI_FORMAT_R32G32B32A32_SINT; break;
-                    default: element.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; break;
+                    case D3D_REGISTER_COMPONENT_UINT32:
+                        element.Format = DXGI_FORMAT_R32G32B32A32_UINT;
+                        element.AlignedByteOffset = c_defaultAttributeIntOffsetDX11;
+                        break;
+                    case D3D_REGISTER_COMPONENT_SINT32:
+                        element.Format = DXGI_FORMAT_R32G32B32A32_SINT;
+                        element.AlignedByteOffset = c_defaultAttributeIntOffsetDX11;
+                        break;
+                    default:
+                        element.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+                        element.AlignedByteOffset = c_defaultAttributeFloatOffsetDX11;
+                        break;
                 }
             }
 

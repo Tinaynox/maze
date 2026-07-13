@@ -127,6 +127,7 @@ namespace Maze
         m_hasMipmapsGenerationSupport = !isCompressed;
 
         UINT mipLevels = (UINT)_pixelSheets[0].size();
+        UINT allocatedMipLevels = mipLevels;
 
         D3D11_TEXTURE2D_DESC textureDesc;
         memset(&textureDesc, 0, sizeof(textureDesc));
@@ -144,6 +145,15 @@ namespace Maze
         {
             textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
             textureDesc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
+
+            if (mipLevels == 1u)
+            {
+                // Allocate the full mip chain so mipmaps can be generated later
+                textureDesc.MipLevels = 0;
+                allocatedMipLevels = 1u;
+                for (S32 s = Math::Max(size.x, size.y); s > 1; s >>= 1)
+                    ++allocatedMipLevels;
+            }
         }
 
         HRESULT hr = device->CreateTexture2D(&textureDesc, nullptr, &m_texture);
@@ -180,7 +190,7 @@ namespace Maze
                     rowPitch = blocksPerRow * blockSize;
                 }
 
-                UINT subresource = D3D11CalcSubresource((UINT)mip, (UINT)face, mipLevels);
+                UINT subresource = D3D11CalcSubresource((UINT)mip, (UINT)face, allocatedMipLevels);
                 deviceContext->UpdateSubresource(
                     m_texture,
                     subresource,
@@ -200,6 +210,10 @@ namespace Maze
 
         hr = device->CreateShaderResourceView(m_texture, &srvDesc, &m_shaderResourceView);
         MAZE_ERROR_RETURN_VALUE_IF(FAILED(hr), false, "CreateShaderResourceView (Cube) failed! hr=0x%08x", (U32)hr);
+
+        // The full mip chain was allocated but only level 0 was uploaded - fill the rest
+        if (m_hasMipmapsGenerationSupport && mipLevels == 1u && allocatedMipLevels > 1u)
+            deviceContext->GenerateMips(m_shaderResourceView);
 
         return true;
     }

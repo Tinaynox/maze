@@ -34,11 +34,6 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // HLSL constant buffer array elements are aligned to 16 bytes
-    static U32 const c_registerSize = 16u;
-
-
-    //////////////////////////////////////////
     // Class ShaderUniformDX11
     //
     //////////////////////////////////////////
@@ -243,11 +238,7 @@ namespace Maze
         }
 
         // Array elements are padded to 16 bytes
-        Vector<U8> packed(_count * c_registerSize, 0u);
-        for (Size i = 0; i < _count; ++i)
-            memcpy(&packed[i * c_registerSize], &_values[i], sizeof(F32));
-
-        getShaderDX11Raw()->writeUniformData(m_uniformData, &packed[0], (U32)packed.size());
+        getShaderDX11Raw()->writeUniformDataArray(m_uniformData, (U8 const*)_values, sizeof(F32), (U32)_count);
     }
 
     //////////////////////////////////////////
@@ -259,11 +250,7 @@ namespace Maze
             return;
         }
 
-        Vector<U8> packed(_count * c_registerSize, 0u);
-        for (Size i = 0; i < _count; ++i)
-            memcpy(&packed[i * c_registerSize], &_vectors[i], sizeof(Vec2F));
-
-        getShaderDX11Raw()->writeUniformData(m_uniformData, &packed[0], (U32)packed.size());
+        getShaderDX11Raw()->writeUniformDataArray(m_uniformData, (U8 const*)_vectors, sizeof(Vec2F), (U32)_count);
     }
 
     //////////////////////////////////////////
@@ -275,11 +262,7 @@ namespace Maze
             return;
         }
 
-        Vector<U8> packed(_count * c_registerSize, 0u);
-        for (Size i = 0; i < _count; ++i)
-            memcpy(&packed[i * c_registerSize], &_vectors[i], sizeof(Vec3F));
-
-        getShaderDX11Raw()->writeUniformData(m_uniformData, &packed[0], (U32)packed.size());
+        getShaderDX11Raw()->writeUniformDataArray(m_uniformData, (U8 const*)_vectors, sizeof(Vec3F), (U32)_count);
     }
 
     //////////////////////////////////////////
@@ -291,16 +274,9 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderUniformDX11::upload(Mat3F const* _matrices, Size _count)
     {
-        // Each 3-component column is padded to a 16-byte register
-        Vector<U8> packed(_count * 3 * c_registerSize, 0u);
-        for (Size i = 0; i < _count; ++i)
-        {
-            F32 const* planeMatrix = _matrices[i].getPlaneMatrix();
-            for (Size c = 0; c < 3; ++c)
-                memcpy(&packed[(i * 3 + c) * c_registerSize], planeMatrix + c * 3, sizeof(F32) * 3);
-        }
-
-        getShaderDX11Raw()->writeUniformData(m_uniformData, &packed[0], (U32)packed.size());
+        // Mat3F is 9 contiguous floats - uploaded as float3[3 * n],
+        // each 3-component column padded to a 16-byte register
+        getShaderDX11Raw()->writeUniformDataArray(m_uniformData, (U8 const*)_matrices, sizeof(F32) * 3, (U32)(_count * 3));
     }
 
     //////////////////////////////////////////
@@ -312,16 +288,9 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderUniformDX11::upload(TMat const* _matrices, Size _count)
     {
-        // TMat is uploaded as float3[4 * n]: each Vec3F row padded to a 16-byte register
-        Vector<U8> packed(_count * 4 * c_registerSize, 0u);
-        for (Size i = 0; i < _count; ++i)
-        {
-            F32 const* planeMatrix = _matrices[i].getPlaneMatrix();
-            for (Size r = 0; r < 4; ++r)
-                memcpy(&packed[(i * 4 + r) * c_registerSize], planeMatrix + r * 3, sizeof(F32) * 3);
-        }
-
-        getShaderDX11Raw()->writeUniformData(m_uniformData, &packed[0], (U32)packed.size());
+        // TMat is 12 contiguous floats - uploaded as float3[4 * n],
+        // each Vec3F row padded to a 16-byte register
+        getShaderDX11Raw()->writeUniformDataArray(m_uniformData, (U8 const*)_matrices, sizeof(F32) * 3, (U32)(_count * 4));
     }
 
 

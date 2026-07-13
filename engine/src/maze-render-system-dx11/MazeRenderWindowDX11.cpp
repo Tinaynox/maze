@@ -243,7 +243,26 @@ namespace Maze
         if (!m_swapChain)
             return;
 
-        m_swapChain->Present(m_vsync > 0 ? (UINT)m_vsync : 0, 0);
+        HRESULT hr = m_swapChain->Present(m_vsync > 0 ? (UINT)m_vsync : 0, 0);
+        if (FAILED(hr) && !m_presentFailureReported)
+        {
+            m_presentFailureReported = true;
+
+            if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
+            {
+                HRESULT reason = getRenderSystemDX11Raw()->getDevice()->GetDeviceRemovedReason();
+                MAZE_ERROR("DX11 device lost! Present hr=0x%08x, GetDeviceRemovedReason=0x%08x", (U32)hr, (U32)reason);
+            }
+            else
+            {
+                MAZE_ERROR("Present failed! hr=0x%08x", (U32)hr);
+            }
+        }
+        else
+        if (SUCCEEDED(hr))
+        {
+            m_presentFailureReported = false;
+        }
     }
 
     //////////////////////////////////////////

@@ -191,7 +191,8 @@ namespace Maze
             VertexArrayObjectDX11* _vao);
 
         //////////////////////////////////////////
-        // Small zero-filled buffer bound in place of vertex attributes the VAO doesn't provide
+        // Small buffer bound in place of vertex attributes the VAO doesn't provide.
+        // Holds the GL default attribute value (0, 0, 0, 1) per component type
         ID3D11Buffer* getZeroVertexBuffer() const { return m_zeroVertexBuffer; }
 
         //////////////////////////////////////////

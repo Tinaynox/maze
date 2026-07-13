@@ -230,12 +230,6 @@ namespace Maze
                         F32 sizeX = Math::Round(m_renderTarget->getRenderTargetWidth() * command->scissorRect.size.x);
                         F32 sizeY = Math::Round(m_renderTarget->getRenderTargetHeight() * command->scissorRect.size.y);
 
-                        F32 fractX = Math::Fract(posX);
-                        F32 fractY = Math::Fract(posY);
-
-                        sizeX += fractX;
-                        sizeY += fractY;
-
                         Rect2S scissorRect;
                         if (!m_scissorRects.empty())
                         {

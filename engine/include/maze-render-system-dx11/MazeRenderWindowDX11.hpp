@@ -126,6 +126,9 @@ namespace Maze
 
         S32 m_antialiasingLevel = 0;
         S32 m_vsync = 1;
+
+        // Log Present failures only once per failure streak
+        bool m_presentFailureReported = false;
     };
 
 

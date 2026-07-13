@@ -380,7 +380,7 @@ namespace Maze
     {
         MAZE_ERROR_RETURN_IF(!m_texture, "Texture is not loaded!");
         MAZE_ERROR_RETURN_IF(
-            _pixelFormat != m_internalPixelFormat && !(_pixelFormat == PixelFormat::RGB_U8 && m_internalPixelFormat == PixelFormat::RGB_U8),
+            _pixelFormat != m_internalPixelFormat,
             "Pixel format mismatch! texture=%d data=%d",
             (S32)m_internalPixelFormat,
             (S32)_pixelFormat);
@@ -460,14 +460,29 @@ namespace Maze
         _outResult.setFormat(_outputFormat);
         _outResult.setSize(m_size);
 
+        // 24-bit RGB textures are stored as RGBA in the GPU resource (see loadTextureImpl)
+        bool contractRGBA = (m_internalPixelFormat == PixelFormat::RGB_U8);
+
         U32 bytesPerRow = (U32)_outResult.getBytesPerRow();
         U8* dstData = _outResult.getDataRW();
         for (S32 r = 0; r < m_size.y; ++r)
         {
-            memcpy(
-                dstData + (Size)r * bytesPerRow,
-                (U8 const*)mapped.pData + (Size)r * mapped.RowPitch,
-                bytesPerRow);
+            U8 const* srcRow = (U8 const*)mapped.pData + (Size)r * mapped.RowPitch;
+            U8* dstRow = dstData + (Size)r * bytesPerRow;
+
+            if (contractRGBA)
+            {
+                for (S32 x = 0; x < m_size.x; ++x)
+                {
+                    dstRow[x * 3 + 0] = srcRow[x * 4 + 0];
+                    dstRow[x * 3 + 1] = srcRow[x * 4 + 1];
+                    dstRow[x * 3 + 2] = srcRow[x * 4 + 2];
+                }
+            }
+            else
+            {
+                memcpy(dstRow, srcRow, bytesPerRow);
+            }
         }
 
         deviceContext->Unmap(stagingTexture, 0);
@@ -485,6 +500,25 @@ namespace Maze
         PixelSheet2D pixelSheet;
         if (!readAsPixelSheet(pixelSheet))
             return;
+
+        if (_size != Vec2U::c_zero && Vec2S((S32)_size.x, (S32)_size.y) != pixelSheet.getSize())
+        {
+            Vec2S cropSize(
+                Math::Min((S32)_size.x, pixelSheet.getSize().x),
+                Math::Min((S32)_size.y, pixelSheet.getSize().y));
+
+            PixelSheet2D croppedSheet(cropSize, pixelSheet.getFormat());
+            for (S32 r = 0; r < cropSize.y; ++r)
+            {
+                memcpy(
+                    croppedSheet.getDataRW() + (Size)r * croppedSheet.getBytesPerRow(),
+                    pixelSheet.getDataRO() + (Size)r * pixelSheet.getBytesPerRow(),
+                    croppedSheet.getBytesPerRow());
+            }
+
+            PixelSheet2DHelper::SaveTGA(croppedSheet, _fileName.c_str(), _resetAlpha);
+            return;
+        }
 
         PixelSheet2DHelper::SaveTGA(pixelSheet, _fileName.c_str(), _resetAlpha);
     }

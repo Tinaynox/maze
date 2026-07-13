@@ -207,7 +207,7 @@ namespace Maze
             deviceContext->IASetVertexBuffers((UINT)i, 1, &buffer, &stride, &offset);
         }
 
-        // Zero buffer feeds attributes the VAO doesn't provide (stride 0 - constant data)
+        // Default-value buffer feeds attributes the VAO doesn't provide (stride 0 - constant data)
         {
             ID3D11Buffer* zeroBuffer = renderSystem->getZeroVertexBuffer();
             UINT stride = 0;

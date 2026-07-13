@@ -76,6 +76,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool VertexBufferObjectDX11::isDynamicDX11() const
+    {
+        return m_accessType >= GPUByteBufferAccessType::DynamicDefault;
+    }
+
+    //////////////////////////////////////////
     bool VertexBufferObjectDX11::ensureBuffer(Size _bytes)
     {
         if (m_buffer && m_sizeBytes >= _bytes)
@@ -90,8 +96,16 @@ namespace Maze
         D3D11_BUFFER_DESC bufferDesc;
         memset(&bufferDesc, 0, sizeof(bufferDesc));
         bufferDesc.ByteWidth = (UINT)_bytes;
-        bufferDesc.Usage = D3D11_USAGE_DEFAULT;
         bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        if (isDynamicDX11())
+        {
+            bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+            bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        }
+        else
+        {
+            bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        }
 
         HRESULT hr = getRenderSystemDX11Raw()->getDevice()->CreateBuffer(&bufferDesc, nullptr, &m_buffer);
         MAZE_ERROR_RETURN_VALUE_IF(FAILED(hr), false, "Vertex buffer creation failed! hr=0x%08x", (U32)hr);
@@ -117,6 +131,19 @@ namespace Maze
         if (!m_buffer || _bytes == 0u)
             return;
 
+        ID3D11DeviceContext* deviceContext = getRenderSystemDX11Raw()->getDeviceContext();
+
+        if (isDynamicDX11())
+        {
+            D3D11_MAPPED_SUBRESOURCE mapped;
+            HRESULT hr = deviceContext->Map(m_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+            MAZE_ERROR_RETURN_IF(FAILED(hr), "Vertex buffer map failed! hr=0x%08x", (U32)hr);
+
+            memcpy(mapped.pData, _data, _bytes);
+            deviceContext->Unmap(m_buffer, 0);
+            return;
+        }
+
         D3D11_BOX box;
         box.left = 0;
         box.right = (UINT)_bytes;
@@ -125,7 +152,7 @@ namespace Maze
         box.front = 0;
         box.back = 1;
 
-        getRenderSystemDX11Raw()->getDeviceContext()->UpdateSubresource(
+        deviceContext->UpdateSubresource(
             m_buffer,
             0,
             &box,

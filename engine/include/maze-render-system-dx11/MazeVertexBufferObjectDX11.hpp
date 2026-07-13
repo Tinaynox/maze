@@ -94,6 +94,10 @@ namespace Maze
             bool _singleMapping);
 
         //////////////////////////////////////////
+        // Dynamic access types map to D3D11_USAGE_DYNAMIC + Map(WRITE_DISCARD)
+        bool isDynamicDX11() const;
+
+        //////////////////////////////////////////
         bool ensureBuffer(Size _bytes);
 
     protected:

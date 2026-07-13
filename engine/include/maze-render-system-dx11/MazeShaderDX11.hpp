@@ -204,6 +204,15 @@ namespace Maze
             U32 _bytesCount);
 
         //////////////////////////////////////////
+        // Writes tightly packed array elements into the constant buffer shadow copies,
+        // padding each element to a 16-byte register (no temporary allocations)
+        void writeUniformDataArray(
+            ShaderDX11UniformData const& _uniformData,
+            U8 const* _bytes,
+            U32 _elementSize,
+            U32 _elementsCount);
+
+        //////////////////////////////////////////
         // Uploads dirty constant buffers and binds them
         void flushConstantBuffers();
 

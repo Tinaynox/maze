@@ -620,9 +620,18 @@ namespace Maze
     //////////////////////////////////////////
     String ShaderDX11::makeInternalShaderPreprocessing(String _shader)
     {
+        // Guards against circular includes
+        S32 includesLeft = 256;
+
         Size index = 0;
         do
         {
+            if (--includesLeft < 0)
+            {
+                MAZE_ERROR("Shader %s: too many #include expansions - circular include?", getName().c_str());
+                break;
+            }
+
             index = _shader.find("#include");
             if (index != String::npos)
             {
@@ -762,6 +771,58 @@ namespace Maze
 
             memcpy(&constantBuffer.shadow[binding.offset], _bytes, bytesCount);
             constantBuffer.dirty = true;
+        }
+    }
+
+    //////////////////////////////////////////
+    void ShaderDX11::writeUniformDataArray(
+        ShaderDX11UniformData const& _uniformData,
+        U8 const* _bytes,
+        U32 _elementSize,
+        U32 _elementsCount)
+    {
+        U32 const registerSize = 16u;
+
+        for (Size stage = 0; stage < (Size)ShaderDX11Stage::MAX; ++stage)
+        {
+            ShaderDX11UniformData::StageBinding const& binding = _uniformData.stageBindings[stage];
+            if (binding.constantBufferIndex < 0)
+                continue;
+
+            if (binding.constantBufferIndex >= (S32)m_constantBuffers[stage].size())
+                continue;
+
+            ShaderDX11ConstantBuffer& constantBuffer = m_constantBuffers[stage][binding.constantBufferIndex];
+
+            // HLSL reports an array size as (n-1) * 16 + elementSize
+            if (binding.size < _elementSize)
+                continue;
+            U32 elementsCount = Math::Min(
+                _elementsCount,
+                (binding.size - _elementSize) / registerSize + 1u);
+
+            U32 shadowSize = (U32)constantBuffer.shadow.size();
+            if (binding.offset + _elementSize > shadowSize)
+                continue;
+            elementsCount = Math::Min(
+                elementsCount,
+                (shadowSize - binding.offset - _elementSize) / registerSize + 1u);
+
+            U8* dst = &constantBuffer.shadow[binding.offset];
+            bool changed = false;
+            for (U32 i = 0; i < elementsCount; ++i)
+            {
+                U8 const* srcElement = _bytes + (Size)i * _elementSize;
+                U8* dstElement = dst + (Size)i * registerSize;
+                if (memcmp(dstElement, srcElement, _elementSize) != 0)
+                {
+                    memcpy(dstElement, srcElement, _elementSize);
+                    changed = true;
+                }
+            }
+
+            if (changed)
+                constantBuffer.dirty = true;
         }
     }
 
