@@ -44,6 +44,7 @@ namespace Maze
                blendSrcFactor == _other.blendSrcFactor &&
                blendDestFactor == _other.blendDestFactor &&
                blendOperation == _other.blendOperation &&
+               alphaToCoverageEnabled == _other.alphaToCoverageEnabled &&
                colorFormat == _other.colorFormat &&
                depthFormat == _other.depthFormat &&
                samples == _other.samples;
@@ -59,6 +60,7 @@ namespace Maze
         h = CombineHashVulkan(h, (U64)_key.blendSrcFactor);
         h = CombineHashVulkan(h, (U64)_key.blendDestFactor);
         h = CombineHashVulkan(h, (U64)_key.blendOperation);
+        h = CombineHashVulkan(h, (U64)_key.alphaToCoverageEnabled);
         h = CombineHashVulkan(h, (U64)_key.colorFormat);
         h = CombineHashVulkan(h, (U64)_key.depthFormat);
         h = CombineHashVulkan(h, (U64)_key.samples);
@@ -123,6 +125,15 @@ namespace Maze
         if (m_blendOperation == _value)
             return;
         m_blendOperation = _value;
+        m_pipelineDirty = true;
+    }
+
+    //////////////////////////////////////////
+    void StateMachineVulkan::setAlphaToCoverageEnabled(bool _value)
+    {
+        if (m_alphaToCoverageEnabled == _value)
+            return;
+        m_alphaToCoverageEnabled = _value;
         m_pipelineDirty = true;
     }
 
@@ -439,6 +450,7 @@ namespace Maze
         key.blendSrcFactor = m_blendSrcFactor;
         key.blendDestFactor = m_blendDestFactor;
         key.blendOperation = m_blendOperation;
+        key.alphaToCoverageEnabled = m_alphaToCoverageEnabled;
         key.colorFormat = m_colorFormat;
         key.depthFormat = m_depthFormat;
         key.samples = m_samples;
@@ -551,6 +563,7 @@ namespace Maze
         multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
         multisampling.rasterizationSamples = m_samples;
         multisampling.sampleShadingEnable = VK_FALSE;
+        multisampling.alphaToCoverageEnable = m_alphaToCoverageEnabled ? VK_TRUE : VK_FALSE;
 
         VkPipelineColorBlendAttachmentState blendAttachment = {};
         blendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;

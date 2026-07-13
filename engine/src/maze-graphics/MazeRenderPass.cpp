@@ -54,6 +54,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(CompareFunction, depthTestCompareFunction, CompareFunction::Disabled, getDepthTestCompareFunction, setDepthTestCompareFunction),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, depthWriteEnabled, true, getDepthWriteEnabled, setDepthWriteEnabled),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(CullMode, cullMode, CullMode::Off, getCullMode, setCullMode),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, alphaToCoverageEnabled, false, getAlphaToCoverageEnabled, setAlphaToCoverageEnabled),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(CompareFunction, stencilTestCompareFunction, CompareFunction::Disabled, getStencilTestCompareFunction, setStencilTestCompareFunction),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(U8, stencilReferenceValue, 0, getStencilReferenceValue, setStencilReferenceValue),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(U8, stencilReadMask, 0xFF, getStencilReadMask, setStencilReadMask),
@@ -112,6 +113,7 @@ namespace Maze
         m_depthTestCompareFunction = _renderPass.m_depthTestCompareFunction;
         m_depthWriteEnabled = _renderPass.m_depthWriteEnabled;
         m_cullMode = _renderPass.m_cullMode;
+        m_alphaToCoverageEnabled = _renderPass.m_alphaToCoverageEnabled;
         m_stencilTestCompareFunction = _renderPass.m_stencilTestCompareFunction;
         m_stencilReferenceValue = _renderPass.m_stencilReferenceValue;
         m_stencilReadMask = _renderPass.m_stencilReadMask;
@@ -256,6 +258,7 @@ namespace Maze
         crc32 = Hash::CalculateCRC32((Char const*)&m_depthTestCompareFunction, sizeof(m_depthTestCompareFunction), crc32);
         crc32 = Hash::CalculateCRC32((Char const*)&m_depthWriteEnabled, sizeof(m_depthWriteEnabled), crc32);
         crc32 = Hash::CalculateCRC32((Char const*)&m_cullMode, sizeof(m_cullMode), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_alphaToCoverageEnabled, sizeof(m_alphaToCoverageEnabled), crc32);
         crc32 = Hash::CalculateCRC32((Char const*)&m_stencilTestCompareFunction, sizeof(m_stencilTestCompareFunction), crc32);
         crc32 = Hash::CalculateCRC32((Char const*)&m_stencilReferenceValue, sizeof(m_stencilReferenceValue), crc32);
         crc32 = Hash::CalculateCRC32((Char const*)&m_stencilReadMask, sizeof(m_stencilReadMask), crc32);

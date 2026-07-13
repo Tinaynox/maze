@@ -376,6 +376,12 @@ namespace Maze
         inline CullMode getCullMode() const { return m_stateMachine->getCullMode(); }
 
         //////////////////////////////////////////
+        void setAlphaToCoverageEnabled(bool _alphaToCoverageEnabled);
+
+        //////////////////////////////////////////
+        inline bool getAlphaToCoverageEnabled() const { return m_stateMachine->getAlphaToCoverageEnabled(); }
+
+        //////////////////////////////////////////
         void setStencilTestEnabled(bool _stencilTestEnabled);
 
         //////////////////////////////////////////

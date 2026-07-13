@@ -76,6 +76,9 @@ namespace Maze
         void setBlendFactors(BlendFactor _srcFactor, BlendFactor _destFactor);
 
         //////////////////////////////////////////
+        void setAlphaToCoverageEnabled(bool _value);
+
+        //////////////////////////////////////////
         void setDepthTestEnabled(bool _value);
 
         //////////////////////////////////////////
@@ -204,6 +207,7 @@ namespace Maze
         bool m_blendEnabled = false;
         BlendFactor m_blendSrcFactor = BlendFactor::One;
         BlendFactor m_blendDestFactor = BlendFactor::Zero;
+        bool m_alphaToCoverageEnabled = false;
 
         // Depth
         bool m_depthTestEnabled = false;

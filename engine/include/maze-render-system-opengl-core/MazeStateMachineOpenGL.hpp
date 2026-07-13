@@ -151,6 +151,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void setAlphaToCoverageEnabled(bool _alphaToCoverageEnabled);
+
+        //////////////////////////////////////////
+        inline bool getAlphaToCoverageEnabled() const { return m_alphaToCoverageEnabled; }
+
+
+        //////////////////////////////////////////
         void setStencilTestEnabled(bool _stencilTestEnabled);
 
         //////////////////////////////////////////
@@ -384,6 +391,9 @@ namespace Maze
         // CullMode
         bool m_cullEnabled;
         CullMode m_cullMode;
+
+        // AlphaToCoverage
+        bool m_alphaToCoverageEnabled;
 
         // StencilTest
         bool m_stencilTestEnabled;

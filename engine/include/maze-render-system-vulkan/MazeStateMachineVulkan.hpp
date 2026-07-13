@@ -68,6 +68,7 @@ namespace Maze
         BlendFactor blendSrcFactor = BlendFactor::One;
         BlendFactor blendDestFactor = BlendFactor::Zero;
         BlendOperation blendOperation = BlendOperation::Add;
+        bool alphaToCoverageEnabled = false;
         VkFormat colorFormat = VK_FORMAT_UNDEFINED;
         VkFormat depthFormat = VK_FORMAT_UNDEFINED;
         VkSampleCountFlagBits samples = VK_SAMPLE_COUNT_1_BIT;
@@ -115,6 +116,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void setBlendOperation(BlendOperation _value);
+
+        //////////////////////////////////////////
+        void setAlphaToCoverageEnabled(bool _value);
 
         //////////////////////////////////////////
         void setDepthTestEnabled(bool _value);
@@ -237,6 +241,7 @@ namespace Maze
         BlendFactor m_blendSrcFactor = BlendFactor::One;
         BlendFactor m_blendDestFactor = BlendFactor::Zero;
         BlendOperation m_blendOperation = BlendOperation::Add;
+        bool m_alphaToCoverageEnabled = false;
 
         // Depth
         bool m_depthTestEnabled = false;

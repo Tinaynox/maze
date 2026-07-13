@@ -75,6 +75,7 @@ namespace Maze
         , m_depthWriteEnabled(false)
         , m_cullEnabled(false)
         , m_cullMode(CullMode::None)
+        , m_alphaToCoverageEnabled(false)
         , m_stencilTestEnabled(false)
         , m_stencilTestCompareFunction(CompareFunction::None)
         , m_stencilReferenceValue(0)
@@ -277,6 +278,25 @@ namespace Maze
             {
                 MZGLenum cullModeGL = GetOpenGLCullMode(m_cullMode);
                 MAZE_GL_CALL(mzglCullFace(cullModeGL));
+            }
+        }
+
+        if (m_alphaToCoverageEnabled)
+        {
+            if (mzglEnable)
+            {
+                MAZE_GL_CALL(mzglEnable(MAZE_GL_SAMPLE_ALPHA_TO_COVERAGE));
+            }
+            else
+            {
+                m_alphaToCoverageEnabled = false;
+            }
+        }
+        else
+        {
+            if (mzglDisable)
+            {
+                MAZE_GL_CALL(mzglDisable(MAZE_GL_SAMPLE_ALPHA_TO_COVERAGE));
             }
         }
 
@@ -712,6 +732,30 @@ namespace Maze
         MZGLenum cullModeGL = GetOpenGLCullMode(_cullMode);
 
         MAZE_GL_CALL(mzglCullFace(cullModeGL));
+    }
+
+    //////////////////////////////////////////
+    void StateMachineOpenGL::setAlphaToCoverageEnabled(bool _alphaToCoverageEnabled)
+    {
+        if (m_alphaToCoverageEnabled == _alphaToCoverageEnabled)
+            return;
+
+        m_alphaToCoverageEnabled = _alphaToCoverageEnabled;
+
+#if (MAZE_DEBUG_GL)
+        m_context->_validateIsCurrentGLContext();
+#endif
+
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+
+        if (_alphaToCoverageEnabled)
+        {
+            MAZE_GL_CALL(mzglEnable(MAZE_GL_SAMPLE_ALPHA_TO_COVERAGE));
+        }
+        else
+        {
+            MAZE_GL_CALL(mzglDisable(MAZE_GL_SAMPLE_ALPHA_TO_COVERAGE));
+        }
     }
 
     //////////////////////////////////////////

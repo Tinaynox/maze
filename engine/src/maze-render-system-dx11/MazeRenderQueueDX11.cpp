@@ -436,6 +436,9 @@ namespace Maze
             stateMachine->setCullMode(cullMode);
         }
 
+        // Alpha To Coverage
+        stateMachine->setAlphaToCoverageEnabled(_renderPass->getAlphaToCoverageEnabled());
+
         // Stencil Test
         CompareFunction stencilTestCompareFunction = _renderPass->getStencilTestCompareFunction();
         bool stencilTestEnabled = (stencilTestCompareFunction != CompareFunction::Disabled);

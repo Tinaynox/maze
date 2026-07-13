@@ -463,6 +463,9 @@ namespace Maze
             m_context->setCullMode(cullMode);
         }
 
+        // Alpha To Coverage
+        m_context->setAlphaToCoverageEnabled(_renderPass->getAlphaToCoverageEnabled());
+
         // Stencil Test
         CompareFunction stencilTestCompareFunction = _renderPass->getStencilTestCompareFunction();
         bool stencilTestEnabled = (stencilTestCompareFunction != CompareFunction::Disabled);

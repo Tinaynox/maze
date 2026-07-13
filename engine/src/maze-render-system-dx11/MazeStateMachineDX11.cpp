@@ -97,6 +97,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void StateMachineDX11::setAlphaToCoverageEnabled(bool _value)
+    {
+        if (m_alphaToCoverageEnabled == _value)
+            return;
+
+        m_alphaToCoverageEnabled = _value;
+        m_blendStateDirty = true;
+    }
+
+    //////////////////////////////////////////
     void StateMachineDX11::setDepthTestEnabled(bool _value)
     {
         if (m_depthTestEnabled == _value)
@@ -472,7 +482,8 @@ namespace Maze
         U32 key =
             (m_blendEnabled ? 1u : 0u) |
             ((U32)m_blendSrcFactor << 1) |
-            ((U32)m_blendDestFactor << 9);
+            ((U32)m_blendDestFactor << 9) |
+            ((m_alphaToCoverageEnabled ? 1u : 0u) << 17);
 
         auto it = m_blendStates.find(key);
         if (it != m_blendStates.end())
@@ -480,7 +491,7 @@ namespace Maze
 
         D3D11_BLEND_DESC desc;
         memset(&desc, 0, sizeof(desc));
-        desc.AlphaToCoverageEnable = FALSE;
+        desc.AlphaToCoverageEnable = m_alphaToCoverageEnabled ? TRUE : FALSE;
         desc.IndependentBlendEnable = FALSE;
         desc.RenderTarget[0].BlendEnable = m_blendEnabled ? TRUE : FALSE;
         desc.RenderTarget[0].SrcBlend = GetBlendFactorDX11(m_blendSrcFactor);

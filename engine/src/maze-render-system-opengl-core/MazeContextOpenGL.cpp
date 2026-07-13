@@ -492,6 +492,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ContextOpenGL::setAlphaToCoverageEnabled(bool _alphaToCoverageEnabled)
+    {
+        m_stateMachine->setAlphaToCoverageEnabled(_alphaToCoverageEnabled);
+    }
+
+    //////////////////////////////////////////
     void ContextOpenGL::setStencilTestEnabled(bool _stencilTestEnabled)
     {
         m_stateMachine->setStencilTestEnabled(_stencilTestEnabled);

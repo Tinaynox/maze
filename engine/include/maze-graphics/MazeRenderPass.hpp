@@ -189,6 +189,12 @@ namespace Maze
         MAZE_FORCEINLINE CullMode getCullMode() const { return m_cullMode; }
 
         //////////////////////////////////////////
+        MAZE_FORCEINLINE void setAlphaToCoverageEnabled(bool _value) { m_alphaToCoverageEnabled = _value; }
+
+        //////////////////////////////////////////
+        MAZE_FORCEINLINE bool getAlphaToCoverageEnabled() const { return m_alphaToCoverageEnabled; }
+
+        //////////////////////////////////////////
         MAZE_FORCEINLINE void setStencilTestCompareFunction(CompareFunction _value) { m_stencilTestCompareFunction = _value; }
 
         //////////////////////////////////////////
@@ -307,6 +313,8 @@ namespace Maze
         bool m_depthWriteEnabled = true;
 
         CullMode m_cullMode = CullMode::Off;
+
+        bool m_alphaToCoverageEnabled = false;
 
         CompareFunction m_stencilTestCompareFunction = CompareFunction::Disabled;
         U8 m_stencilReferenceValue = 0;
