@@ -97,9 +97,9 @@ namespace Maze
     void PrepareEntitiesToSerialize(
         Vector<EntitySerializationData>& _entityComponents,
         Vector<PrefabSerializationData>& _prefabs,
-        Map<void*, EcsSerializationId>& _outPointerIndices,
-        Map<EntityId, EcsSerializationId>& _outEntityIndices,
-        Map<AssetUnitId, EntityPtr>& _outIdentityPrefabs,
+        FlatHashMap<void*, EcsSerializationId>& _outPointerIndices,
+        FlatHashMap<EntityId, EcsSerializationId>& _outEntityIndices,
+        VectorMap<AssetUnitId, EntityPtr>& _outIdentityPrefabs,
         EcsWorldPtr& _outIdentityPrefabsWorld)
     {
         // Sort entities
@@ -108,7 +108,7 @@ namespace Maze
             Vector<Component*> unassginedComponents;
             Vector<PrefabInstance*> unassginedPrefabInstances;
 
-            Set<EcsSerializationId> usedIds;
+            FlatHashSet<EcsSerializationId> usedIds;
 
             EcsSerializationId maxSerializationId = 0;
             for (EntitySerializationData const& entityData : _entityComponents)
@@ -573,9 +573,9 @@ namespace Maze
     //////////////////////////////////////////
     void EntitySerializationManager::replaceDataBlockEcsIds(
         DataBlock& _dataBlock,
-        Map<EntityId, EcsSerializationId> const& _entityIndices,
+        FlatHashMap<EntityId, EcsSerializationId> const& _entityIndices,
         Vector<EntitySerializationData> const& _entityComponents,
-        Map<void*, EcsSerializationId>& _pointerIndices,
+        FlatHashMap<void*, EcsSerializationId>& _pointerIndices,
         EcsWorld* _ecsWorld) const
     {
         for (DataBlock* subBlock : _dataBlock)
@@ -634,8 +634,8 @@ namespace Maze
     //////////////////////////////////////////
     void EntitySerializationManager::restoreDataBlockEcsIds(
         DataBlock& _dataBlock,
-        Map<EcsSerializationId, EntityPtr>& _outEntities,
-        Map<EcsSerializationId, ComponentPtr>& _outComponents) const
+        FlatHashMap<EcsSerializationId, EntityPtr>& _outEntities,
+        FlatHashMap<EcsSerializationId, ComponentPtr>& _outComponents) const
     {
         for (DataBlock* subBlock : _dataBlock)
         {
@@ -1248,7 +1248,7 @@ namespace Maze
                         if (componentIndex == c_invalidSerializationId)
                             componentIndex = --autoIndexCounter;
                         else
-                            maxSerializationId = Math::Max(maxSerializationId, entityIndex);
+                            maxSerializationId = Math::Max(maxSerializationId, componentIndex);
 
                         CString componentClassName = componentBlock->getCString(MAZE_HCS("_t"));
                         HashedCString componentDynamicClassName = componentBlock->getHashedCString(MAZE_HCS("_ct"));
@@ -1335,7 +1335,7 @@ namespace Maze
                                 if (componentIndex == c_invalidSerializationId)
                                     componentIndex = --autoIndexCounter;
                                 else
-                                    maxSerializationId = Math::Max(maxSerializationId, entityIndex);
+                                    maxSerializationId = Math::Max(maxSerializationId, componentIndex);
 
                                 CString componentClassName = prefabChildBlock->getCString(MAZE_HCS("_t"));
                                 HashedCString componentDynamicClassName = prefabChildBlock->getHashedCString(MAZE_HCS("_ct"));
@@ -1376,44 +1376,43 @@ namespace Maze
 
 
         // Fix auto indices
-        for (Map<EcsSerializationId, EntityPtr>::iterator it = _context.outEntities.begin(), end = _context.outEntities.end(); it != end;)
+        // Snapshot the auto-indexed entries before mutating the map: erasing and
+        // re-inserting while holding an iterator into the same map relies on
+        // insert-never-invalidates-other-iterators, which only node-based maps
+        // guarantee (not the case for vector- or open-addressing-backed ones).
         {
-            if (it->first < 0)
+            Vector<EntityPtr> autoEntities;
+            for (auto const& entityData : _context.outEntities)
+                if (entityData.first < 0)
+                    autoEntities.push_back(entityData.second);
+
+            for (EntityPtr const& entity : autoEntities)
             {
-                it->second->setSerializationId(it->second->getSerializationId() - it->first);
-                it = _context.outEntities.erase(it);
-                _context.outEntities.emplace(
-                    eastl::piecewise_construct,
-                    eastl::forward_as_tuple(it->second->getSerializationId()),
-                    eastl::forward_as_tuple(it->second));
-                end = _context.outEntities.end();
+                EcsSerializationId oldId = entity->getSerializationId();
+                _context.outEntities.erase(oldId);
+                entity->setSerializationId(maxSerializationId - oldId);
+                _context.outEntities.emplace(entity->getSerializationId(), entity);
             }
-            else
-                ++it;
         }
 
-        for (Map<EcsSerializationId, ComponentPtr>::iterator it = _context.outComponents.begin(), end = _context.outComponents.end(); it != end;)
         {
-            if (it->first < 0)
+            Vector<ComponentPtr> autoComponents;
+            for (auto const& componentData : _context.outComponents)
+                if (componentData.first < 0)
+                    autoComponents.push_back(componentData.second);
+
+            for (ComponentPtr const& component : autoComponents)
             {
-                it->second->setSerializationId(it->second->getSerializationId() - it->first);
-                it = _context.outComponents.erase(it);
-                _context.outComponents.emplace(
-                    eastl::piecewise_construct,
-                    eastl::forward_as_tuple(it->second->getSerializationId()),
-                    eastl::forward_as_tuple(it->second));
-                end = _context.outComponents.end();
+                EcsSerializationId oldId = component->getSerializationId();
+                _context.outComponents.erase(oldId);
+                component->setSerializationId(maxSerializationId - oldId);
+                _context.outComponents.emplace(component->getSerializationId(), component);
             }
-            else
-                ++it;
         }
 
         for (auto const& entityData : _context.outEntities)
         {
-            _context.entitiesPerEntityId.emplace(
-                eastl::piecewise_construct,
-                eastl::forward_as_tuple(entityData.second->getId()),
-                eastl::forward_as_tuple(entityData.second));
+            _context.entitiesPerEntityId.emplace(entityData.second->getId(), entityData.second);
         }
 
         restoreDataBlockEcsIds(_dataBlock, _context.outEntities, _context.outComponents);
@@ -1428,7 +1427,7 @@ namespace Maze
                 if (subBlock->getName() == MAZE_HCS("entity") || subBlock->getName() == MAZE_HCS("prefabInstance"))
                 {
                     EcsSerializationId entityIndex = subBlock->getS32(MAZE_HCS("_sid"));
-                    EntityPtr const& entity = _context.outEntities[entityIndex];
+                    EntityPtr entity = _context.outEntities[entityIndex];
                     if (entity == nullptr)
                     {
                         MAZE_ERROR("Entity is nullptr!");
@@ -1470,7 +1469,7 @@ namespace Maze
                         {
                             EcsSerializationId componentIndex = componentBlock->getS32(MAZE_HCS("_sid"));
 
-                            ComponentPtr const& component = _context.outComponents[componentIndex];
+                            ComponentPtr component = _context.outComponents[componentIndex];
                             if (!component)
                                 continue;
 

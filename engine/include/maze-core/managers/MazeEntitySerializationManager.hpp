@@ -69,9 +69,9 @@ namespace Maze
         EcsWorld* ecsWorld = nullptr;
         Vector<EntitySerializationData> entityComponents;
         Vector<PrefabSerializationData> prefabs;
-        Map<void*, EcsSerializationId> pointerIndices;
-        Map<EntityId, EcsSerializationId> entityIndices;
-        Map<AssetUnitId, EntityPtr> identityPrefabs;
+        FlatHashMap<void*, EcsSerializationId> pointerIndices;
+        FlatHashMap<EntityId, EcsSerializationId> entityIndices;
+        VectorMap<AssetUnitId, EntityPtr> identityPrefabs;
     };
 
     //////////////////////////////////////////
@@ -80,9 +80,9 @@ namespace Maze
         //////////////////////////////////////////
         EcsWorld* world = nullptr;
         EcsScene* scene = nullptr;
-        UnorderedMap<EntityId, EntityPtr> entitiesPerEntityId;
-        Map<EcsSerializationId, EntityPtr> outEntities;
-        Map<EcsSerializationId, ComponentPtr> outComponents;
+        FlatHashMap<EntityId, EntityPtr> entitiesPerEntityId;
+        FlatHashMap<EcsSerializationId, EntityPtr> outEntities;
+        FlatHashMap<EcsSerializationId, ComponentPtr> outComponents;
     };
 
 
@@ -226,16 +226,16 @@ namespace Maze
         //////////////////////////////////////////
         void replaceDataBlockEcsIds(
             DataBlock& _dataBlock,
-            Map<EntityId, S32> const& _entityIndices,
+            FlatHashMap<EntityId, S32> const& _entityIndices,
             Vector<EntitySerializationData> const& _entityComponents,
-            Map<void*, S32>& _pointerIndices,
+            FlatHashMap<void*, S32>& _pointerIndices,
             EcsWorld* _ecsWorld) const;
 
         //////////////////////////////////////////
         void restoreDataBlockEcsIds(
             DataBlock& _dataBlock,
-            Map<S32, EntityPtr>& _outEntities,
-            Map<S32, ComponentPtr>& _outComponents) const;
+            FlatHashMap<S32, EntityPtr>& _outEntities,
+            FlatHashMap<S32, ComponentPtr>& _outComponents) const;
 
         //////////////////////////////////////////
         void loadComponentFromDataBlockDefault(
@@ -258,8 +258,8 @@ namespace Maze
     protected:
         static EntitySerializationManager* s_instance;
 
-        Set<ClassUID> m_componentsToIgnore;
-        Map<ClassUID, ComponentSerializationFunctions> m_componentCustomSerializationByClassUID;
+        VectorSet<ClassUID> m_componentsToIgnore;
+        VectorMap<ClassUID, ComponentSerializationFunctions> m_componentCustomSerializationByClassUID;
     };
 
 

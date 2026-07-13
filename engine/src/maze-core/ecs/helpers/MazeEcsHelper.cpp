@@ -343,7 +343,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API S32 BuildPrefabSidChain(
             Entity* _entity,
-            Map<EntityId, EcsSerializationId> const& _entityIndices,
+            FlatHashMap<EntityId, EcsSerializationId> const& _entityIndices,
             EcsSerializationId (&_outChain)[c_maxPrefabRefDepth])
         {
             // The entity itself is a prefab instance root serialized in this document
@@ -412,7 +412,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Entity* ResolvePrefabSidChainTarget(
             DataBlock const& _block,
-            Map<EcsSerializationId, EntityPtr> const& _outEntities)
+            FlatHashMap<EcsSerializationId, EntityPtr> const& _outEntities)
         {
             DataBlock::SharedStringId prefabSidNameId = _block.getSharedStringId(MAZE_HCS("prefabSid"));
 
@@ -456,7 +456,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API ComponentPtr const& ResolvePrefabComponentRef(
             DataBlock const& _block,
-            Map<EcsSerializationId, EntityPtr> const& _outEntities)
+            FlatHashMap<EcsSerializationId, EntityPtr> const& _outEntities)
         {
             static ComponentPtr const nullPointer;
 
