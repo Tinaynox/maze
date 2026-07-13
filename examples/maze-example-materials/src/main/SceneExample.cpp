@@ -447,11 +447,13 @@ namespace Maze
             "%s - P\n"
             "\n"
             "[INFO]\n"
+            "Render System: %s\n"
             "Mesh Movement: %s\n"
             "Post Processing: %s",
             renderSystemHint.c_str(),
             m_meshMovementEnabled ? "Disable Mesh Movement" : "Enable Mesh Movement",
             exampleCommonSettings->getBloomEnabled() ? "Disable Post Processing" : "Enable Post Processing",
+            RenderSystem::GetCurrentInstancePtr()->getName().c_str(),
             m_meshMovementEnabled ? "ON" : "OFF",
             exampleCommonSettings->getBloomEnabled() ? "ON" : "OFF"
         );
@@ -488,7 +490,8 @@ namespace Maze
                 {
                     case KeyCode::R:
                     {
-                        setMeshMovementEnabled(!m_meshMovementEnabled);
+                        if (!_data.isModifierDown())
+                            setMeshMovementEnabled(!m_meshMovementEnabled);
                         break;
                     }
                     case KeyCode::P:
