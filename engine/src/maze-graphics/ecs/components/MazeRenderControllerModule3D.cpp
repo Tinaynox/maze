@@ -370,7 +370,7 @@ namespace Maze
         MAZE_PROFILE_EVENT("RenderControllerModule3D::draw");
 
         // Collect cameras
-        Vector<Camera3D*> cameras;
+        FixedVector<Camera3D*, 8> cameras;
         m_cameras3DSample->query(
             [&](Entity* _entity, Camera3D* _camera3D)
             {

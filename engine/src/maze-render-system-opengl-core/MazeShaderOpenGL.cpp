@@ -808,7 +808,7 @@ namespace Maze
             {
                 Maze::ContextOpenGLScopeBind contextOpenGLScopedLock(m_context);
 
-                FastVector<MZGLint> indices;
+                FixedVector<MZGLint, 16> indices;
                 indices.resize(uniform->getCount());
                 
                 for (U32 i = 0; i < uniform->getCount(); ++i)

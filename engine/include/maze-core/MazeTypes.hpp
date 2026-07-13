@@ -40,6 +40,7 @@
 #include <EASTL/string_view.h>
 #include <EASTL/array.h>
 #include <EASTL/vector.h>
+#include <EASTL/fixed_vector.h>
 #include <EASTL/list.h>
 #include <EASTL/utility.h>
 #include <EASTL/tuple.h>
@@ -151,6 +152,36 @@ namespace Maze
     struct IsVector : eastl::false_type {};
     template <class _Ty>
     struct IsVector<Maze::Vector<_Ty>> : eastl::true_type {};
+
+
+    //////////////////////////////////////////
+    // FixedVector
+    //
+    // Vector with inline (stack/on-object) storage for up to _NodeCount elements.
+    // Falls back to heap allocation only if that capacity is exceeded (unless
+    // _EnableOverflow is false, in which case exceeding it is undefined behavior).
+    //////////////////////////////////////////
+    template <
+        class _Ty,
+        size_t _NodeCount,
+        bool _EnableOverflow = true>
+    using FixedVector = eastl::fixed_vector<_Ty, _NodeCount, _EnableOverflow>;
+
+    //////////////////////////////////////////
+    template <class _Ty>
+    struct IsFixedVector : eastl::false_type {};
+    template <
+        class _Ty,
+        size_t _NodeCount,
+        bool _EnableOverflow>
+    struct IsFixedVector<Maze::FixedVector<_Ty, _NodeCount, _EnableOverflow>> : eastl::true_type {};
+
+    //////////////////////////////////////////
+    template <
+        class _Ty,
+        size_t _NodeCount,
+        bool _EnableOverflow>
+    struct IsVector<Maze::FixedVector<_Ty, _NodeCount, _EnableOverflow>> : eastl::true_type {};
 
 
     //////////////////////////////////////////

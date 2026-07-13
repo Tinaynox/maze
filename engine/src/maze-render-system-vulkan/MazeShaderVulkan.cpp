@@ -956,8 +956,8 @@ namespace Maze
         // getWhiteTexture()/getWhiteCubeTexture() are passive accessors that
         // return null until something else has already lazily created the
         // builtin, so use the create-if-missing ensure*() variant instead.
-        Vector<VkWriteDescriptorSet> writes;
-        Vector<VkDescriptorImageInfo> imageInfos;
+        FixedVector<VkWriteDescriptorSet, 16> writes;
+        FixedVector<VkDescriptorImageInfo, 16> imageInfos;
         imageInfos.reserve(m_textureBindings.size());
 
         // m_textureBindings is indexed by raw SPIR-V binding number (see

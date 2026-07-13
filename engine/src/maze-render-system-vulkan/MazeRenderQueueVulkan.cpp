@@ -140,7 +140,7 @@ namespace Maze
                         VkCommandBuffer cmd = renderSystem->getCurrentCommandBuffer();
                         if (cmd != VK_NULL_HANDLE && stateMachine->isRenderingActive())
                         {
-                            Vector<VkClearAttachment> clears;
+                            FixedVector<VkClearAttachment, 2> clears;
                             if (command->colorBuffer)
                             {
                                 ColorU32 const& clearColor = m_renderTarget->getClearColor();

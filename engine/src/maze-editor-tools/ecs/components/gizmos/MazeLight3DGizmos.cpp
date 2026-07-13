@@ -125,7 +125,7 @@ namespace Maze
 
                 MAZE_CONSTEXPR F32 const angleDelta = Math::DegreesToRadians(30.0f);
                 Size pointsCount = (Size)Math::Ceil((Math::c_twoPi / angleDelta) - angleDelta * 0.5f);
-                Vector<Vec3F> circlePoints;
+                FixedVector<Vec3F, 12> circlePoints;
                 for (F32 i = 0; i < Math::c_twoPi - angleDelta * 0.5f; i += angleDelta)
                 {
                     F32 c = Math::Cos(i);

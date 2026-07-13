@@ -235,7 +235,7 @@ namespace Maze
             std::function<bool()> checkFunc;
         };
 
-        Vector<Axis> drawFuncs =
+        FixedVector<Axis, 4> drawFuncs =
         {
             Axis(0, (pos + right * scale).squaredDistance(cameraWorldPosition), drawX, checkX),
             Axis(1, (pos + up * scale).squaredDistance(cameraWorldPosition), drawY, checkY),

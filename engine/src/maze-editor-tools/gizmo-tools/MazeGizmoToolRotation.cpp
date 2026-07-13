@@ -189,7 +189,7 @@ namespace Maze
         Vec3F sortUp      = worldSpace ? Vec3F::c_unitY : up;
         Vec3F sortForward = worldSpace ? Vec3F::c_unitZ : forward;
 
-        Vector<Axis> drawFuncs =
+        FixedVector<Axis, 3> drawFuncs =
         {
             Axis(0, (pos + sortRight).squaredDistance(cameraWorldPosition), drawX, checkX),
             Axis(1, (pos + sortUp).squaredDistance(cameraWorldPosition), drawY, checkY),
