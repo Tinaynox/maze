@@ -32,6 +32,11 @@
 #include "maze-graphics/helpers/MazeSubMeshHelper.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
+#include "maze-core/helpers/MazeStringHelper.hpp"
+#include "maze-core/helpers/MazeLogHelper.hpp"
+#include "maze-core/data/MazeSpan.hpp"
+#include "maze-core/MazeTypes.hpp"
+#include <cstring>
 
 
 //////////////////////////////////////////
@@ -48,420 +53,323 @@ namespace Maze
         return LoadOBJ(fileData, _mesh, _props);
     }
 
-    //////////////////////////////////////////
-    static String GetFirstToken(String const& _line)
-    {
-        if (!_line.empty())
-        {
-            Size tokenStart = _line.find_first_not_of(" \t");
-            Size tokenEnd = _line.find_first_of(" \t", tokenStart);
 
-            if (    tokenStart != String::npos
-                &&  tokenEnd != String::npos)
+    //////////////////////////////////////////
+    // OBJ vertex is uniquely identified by its (position, uv, normal) index triple -
+    // this is the key used to deduplicate/share vertices across faces when building
+    // the indexed submesh. -1 means "component not present in the source face token".
+    //////////////////////////////////////////
+    struct ObjVertexKey
+    {
+        S32 posIndex = -1;
+        S32 uvIndex = -1;
+        S32 normalIndex = -1;
+
+        inline bool operator==(ObjVertexKey const& _other) const
+        {
+            return    posIndex == _other.posIndex
+                   && uvIndex == _other.uvIndex
+                   && normalIndex == _other.normalIndex;
+        }
+    };
+
+    //////////////////////////////////////////
+    struct ObjVertexKeyHash
+    {
+        inline Size operator()(ObjVertexKey const& _key) const
+        {
+            U32 h = (U32)_key.posIndex;
+            h = h * 486187739u + (U32)_key.uvIndex;
+            h = h * 486187739u + (U32)_key.normalIndex;
+            return (Size)h;
+        }
+    };
+
+
+    //////////////////////////////////////////
+    // Advances '_it' past the next whitespace-delimited token in [_it, _end).
+    // Returns false (leaving '_it' at '_end') when no more tokens remain.
+    //////////////////////////////////////////
+    static inline bool NextToken(Char const*& _it, Char const* _end, ConstSpan<Char>& _outToken)
+    {
+        while (_it != _end && (*_it == ' ' || *_it == '\t'))
+            ++_it;
+
+        if (_it == _end)
+            return false;
+
+        Char const* start = _it;
+        while (_it != _end && *_it != ' ' && *_it != '\t')
+            ++_it;
+
+        _outToken.set(start, (Size)(_it - start));
+        return true;
+    }
+
+    //////////////////////////////////////////
+    static inline ConstSpan<Char> GetFirstTokenSpan(Char const* _begin, Char const* _end)
+    {
+        Char const* it = _begin;
+        ConstSpan<Char> token;
+        NextToken(it, _end, token);
+        return token;
+    }
+
+    //////////////////////////////////////////
+    static inline ConstSpan<Char> GetTailSpan(Char const* _begin, Char const* _end)
+    {
+        Char const* it = _begin;
+        ConstSpan<Char> firstToken;
+        if (!NextToken(it, _end, firstToken))
+            return ConstSpan<Char>(_begin, 0);
+
+        while (it != _end && (*it == ' ' || *it == '\t'))
+            ++it;
+
+        Char const* tailEnd = _end;
+        while (tailEnd > it && (*(tailEnd - 1) == ' ' || *(tailEnd - 1) == '\t'))
+            --tailEnd;
+
+        return ConstSpan<Char>(it, (Size)(tailEnd - it));
+    }
+
+    //////////////////////////////////////////
+    static inline bool TokenEquals(ConstSpan<Char> _token, CString _keyword)
+    {
+        Size len = strlen(_keyword);
+        return _token.size() == len && memcmp(_token.ptr(), _keyword, len) == 0;
+    }
+
+    //////////////////////////////////////////
+    // OBJ indices are 1-based; negative indices are relative to the element count
+    // seen so far (-1 = most recently defined element). 0/absent resolves to -1.
+    //////////////////////////////////////////
+    static inline S32 ResolveOBJIndex(S32 _raw, Size _poolSize)
+    {
+        if (_raw > 0)
+            return _raw - 1;
+        if (_raw < 0)
+            return (S32)_poolSize + _raw;
+        return -1;
+    }
+
+    //////////////////////////////////////////
+    // Parses a single face-vertex reference token ("v", "v/vt", "v//vn" or "v/vt/vn").
+    // Returns false if the (mandatory) position reference is missing or out of range.
+    // Out-of-range optional uv/normal references are dropped (treated as absent)
+    // rather than failing the whole face.
+    //////////////////////////////////////////
+    static bool ParseFaceVertexToken(
+        ConstSpan<Char> _token,
+        Size _positionsCount,
+        Size _uvsCount,
+        Size _normalsCount,
+        ObjVertexKey& _outKey)
+    {
+        Char const* begin = _token.ptr();
+        Char const* end = begin + _token.size();
+
+        Char const* firstSlash = (Char const*)memchr(begin, '/', _token.size());
+        Char const* posEnd = firstSlash ? firstSlash : end;
+
+        if (posEnd == begin)
+            return false;
+
+        S32 rawPos = 0;
+        StringHelper::ParseInteger<S32>(begin, posEnd, rawPos);
+        S32 posIndex = ResolveOBJIndex(rawPos, _positionsCount);
+        if (posIndex < 0 || (Size)posIndex >= _positionsCount)
+            return false;
+
+        S32 uvIndex = -1;
+        S32 normalIndex = -1;
+
+        if (firstSlash)
+        {
+            Char const* uvBegin = firstSlash + 1;
+            Char const* secondSlash = (uvBegin < end) ? (Char const*)memchr(uvBegin, '/', end - uvBegin) : nullptr;
+            Char const* uvEnd = secondSlash ? secondSlash : end;
+
+            if (uvEnd > uvBegin)
             {
-                return _line.substr(
-                    tokenStart,
-                    tokenEnd - tokenStart);
+                S32 rawUV = 0;
+                StringHelper::ParseInteger<S32>(uvBegin, uvEnd, rawUV);
+                S32 idx = ResolveOBJIndex(rawUV, _uvsCount);
+                if (idx >= 0 && (Size)idx < _uvsCount)
+                    uvIndex = idx;
+            }
+
+            if (secondSlash && (secondSlash + 1) < end)
+            {
+                Char const* normBegin = secondSlash + 1;
+                S32 rawNorm = 0;
+                StringHelper::ParseInteger<S32>(normBegin, end, rawNorm);
+                S32 idx = ResolveOBJIndex(rawNorm, _normalsCount);
+                if (idx >= 0 && (Size)idx < _normalsCount)
+                    normalIndex = idx;
+            }
+        }
+
+        _outKey.posIndex = posIndex;
+        _outKey.uvIndex = uvIndex;
+        _outKey.normalIndex = normalIndex;
+        return true;
+    }
+
+    //////////////////////////////////////////
+    // Triangulates a simple (possibly concave, possibly non-planar) polygon given as an
+    // ordered list of corner positions, via 2D ear-clipping projected onto the polygon's
+    // dominant plane (found with Newell's method, so it works regardless of the polygon's
+    // orientation in space). Emits corner-index triples (indices into '_positions') into
+    // '_outTriangleCornerIndices'. The scratch vectors are caller-owned so repeated calls
+    // (one per face in a file) don't reallocate.
+    //////////////////////////////////////////
+    static void TriangulatePolygon(
+        Vector<Vec3F> const& _positions,
+        Vector<S32>& _outTriangleCornerIndices,
+        Vector<S32>& _scratchNext,
+        Vector<S32>& _scratchPrev,
+        Vector<Vec2F>& _scratch2D)
+    {
+        _outTriangleCornerIndices.clear();
+
+        S32 n = (S32)_positions.size();
+        if (n < 3)
+            return;
+
+        if (n == 3)
+        {
+            _outTriangleCornerIndices.push_back(0);
+            _outTriangleCornerIndices.push_back(1);
+            _outTriangleCornerIndices.push_back(2);
+            return;
+        }
+
+        // Newell's method - robust polygon normal even for near-degenerate/non-planar input
+        Vec3F normal = Vec3F::c_zero;
+        for (S32 i = 0; i < n; ++i)
+        {
+            Vec3F const& curr = _positions[i];
+            Vec3F const& next = _positions[(i + 1) % n];
+            normal.x += (curr.y - next.y) * (curr.z + next.z);
+            normal.y += (curr.z - next.z) * (curr.x + next.x);
+            normal.z += (curr.x - next.x) * (curr.y + next.y);
+        }
+
+        // Project onto the two axes orthogonal to the dominant normal component
+        F32 ax = Math::Abs(normal.x);
+        F32 ay = Math::Abs(normal.y);
+        F32 az = Math::Abs(normal.z);
+
+        Size u, v;
+        if (ax >= ay && ax >= az) { u = 1; v = 2; }
+        else if (ay >= ax && ay >= az) { u = 2; v = 0; }
+        else { u = 0; v = 1; }
+
+        _scratch2D.resize(n);
+        for (S32 i = 0; i < n; ++i)
+            _scratch2D[i].set(_positions[i][u], _positions[i][v]);
+
+        F32 signedArea2 = 0.0f;
+        for (S32 i = 0; i < n; ++i)
+        {
+            Vec2F const& p0 = _scratch2D[i];
+            Vec2F const& p1 = _scratch2D[(i + 1) % n];
+            signedArea2 += p0.x * p1.y - p1.x * p0.y;
+        }
+        bool ccw = signedArea2 >= 0.0f;
+
+        _scratchNext.resize(n);
+        _scratchPrev.resize(n);
+        for (S32 i = 0; i < n; ++i)
+        {
+            _scratchNext[i] = (i + 1) % n;
+            _scratchPrev[i] = (i - 1 + n) % n;
+        }
+
+        S32 remaining = n;
+        S32 current = 0;
+        S32 noProgress = 0;
+
+        while (remaining > 3)
+        {
+            S32 prev = _scratchPrev[current];
+            S32 next = _scratchNext[current];
+
+            Vec2F const& pPrev = _scratch2D[prev];
+            Vec2F const& pCurr = _scratch2D[current];
+            Vec2F const& pNext = _scratch2D[next];
+
+            // Reflex vertices can never be ears
+            F32 cross = (pCurr.x - pPrev.x) * (pNext.y - pCurr.y) - (pCurr.y - pPrev.y) * (pNext.x - pCurr.x);
+            bool isEar = ccw ? (cross >= 0.0f) : (cross <= 0.0f);
+
+            // No other remaining vertex may lie inside the candidate ear triangle
+            if (isEar)
+            {
+                S32 probe = _scratchNext[next];
+                while (probe != prev)
+                {
+                    if (probe != current && Math::IsPointInTriangle(_scratch2D[probe], pPrev, pCurr, pNext))
+                    {
+                        isEar = false;
+                        break;
+                    }
+                    probe = _scratchNext[probe];
+                }
+            }
+
+            if (isEar)
+            {
+                _outTriangleCornerIndices.push_back(prev);
+                _outTriangleCornerIndices.push_back(current);
+                _outTriangleCornerIndices.push_back(next);
+
+                _scratchNext[prev] = next;
+                _scratchPrev[next] = prev;
+                --remaining;
+                noProgress = 0;
+                current = next;
             }
             else
-            if (tokenStart != String::npos)
             {
-                return _line.substr(tokenStart);
-            }
-        }
+                current = next;
+                ++noProgress;
 
-        return String();
-    }
-
-    //////////////////////////////////////////
-    inline static String GetTail(String const& _line)
-    {
-        Size tokenStart = _line.find_first_not_of(" \t");
-        Size spaceStart = _line.find_first_of(" \t", tokenStart);
-        Size tailStart = _line.find_first_not_of(" \t", spaceStart);
-        Size tailEnd = _line.find_last_not_of(" \t");
-
-        if (   tailStart != String::npos
-            && tailEnd != String::npos)
-        {
-            return _line.substr(
-                tailStart,
-                tailEnd - tailStart + 1);
-        }
-        else
-        if (tailStart != std::string::npos)
-        {
-            return _line.substr(tailStart);
-        }
-        return String();
-    }
-
-    //////////////////////////////////////////
-    template <class T>
-    inline const T& GetElement(
-        Vector<T> const& _elements,
-        String& _index)
-    {
-        S32 idx = StringHelper::StringToS32(_index);
-        if (idx < 0)
-            idx = S32(_elements.size()) + idx;
-        else
-            idx--;
-        return _elements[idx];
-    }
-
-    //////////////////////////////////////////
-    void MAZE_GRAPHICS_API GenVerticesFromRawOBJ(
-        Vector<Vec3F>& _outPositions,
-        Vector<Vec2F>& _outUVs,
-        Vector<Vec3F>& _outNormals,
-        Vector<Vec3F> const& _positions,
-        Vector<Vec2F> const& _uvs,
-        Vector<Vec3F> const& _normals,
-        String _line)
-    {
-        Vector<String> sface;
-        Vector<String> svert;
-
-        String tail = GetTail(_line);
-
-        // #TODO: Rework to ConstSpan<Char>
-        StringHelper::SplitWords(tail, sface, ' ');
-
-        bool noNormal = false;
-
-        // For every given vertex do this
-        for (S32 i = 0; i < S32(sface.size()); ++i)
-        {
-            // See What type the vertex is.
-            S32 vertexType;
-
-            // #TODO: Rework to ConstSpan<Char>
-            StringHelper::SplitWords(sface[i], svert, '/');
-
-            // Check for just position - v1
-            if (svert.size() == 1)
-            {
-                // Only position
-                vertexType = 1;
-            }
-
-            // Check for position & texture - v1/vt1
-            if (svert.size() == 2)
-            {
-                // Position & Texture
-                vertexType = 2;
-            }
-
-            // Check for Position, Texture and Normal - v1/vt1/vn1
-            // or if Position and Normal - v1//vn1
-            if (svert.size() == 3)
-            {
-                if (svert[1] != "")
+                if (noProgress >= remaining)
                 {
-                    // Position, Texture, and Normal
-                    vertexType = 4;
-                }
-                else
-                {
-                    // Position & Normal
-                    vertexType = 3;
-                }
-            }
+                    // Degenerate/self-intersecting polygon - fall back to a plain fan so we
+                    // still emit valid (if imperfect) geometry instead of hanging or dropping it.
+                    Debug::LogWarning("LoaderOBJ: degenerate polygon during triangulation, falling back to fan triangulation");
 
-            // Calculate and store the vertex
-            switch (vertexType)
-            {
-                // P
-                case 1:
-                {
-                    Vec3F finalPosition = GetElement(_positions, svert[0]);
-                    if (eastl::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
+                    S32 a = current;
+                    S32 b = _scratchNext[a];
+                    S32 c = _scratchNext[b];
+                    while (c != a)
                     {
-                        Vec2F finalUV = Vec2F::c_zero;
-                        noNormal = true;
-                        _outPositions.push_back(finalPosition);
-                        _outUVs.push_back(finalUV);
-                        _outNormals.push_back(Vec3F::c_zero);
+                        _outTriangleCornerIndices.push_back(a);
+                        _outTriangleCornerIndices.push_back(b);
+                        _outTriangleCornerIndices.push_back(c);
+                        b = c;
+                        c = _scratchNext[c];
                     }
-
-                    break;
-                }
-                // P/T
-                case 2:
-                {
-                    Vec3F finalPosition = GetElement(_positions, svert[0]);
-                    if (eastl::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
-                    {
-                        Vec2F finalUV = SubMeshHelper::NormalizeUV(GetElement(_uvs, svert[1]));
-                        noNormal = true;
-                        _outPositions.push_back(finalPosition);
-                        _outUVs.push_back(finalUV);
-                        _outNormals.push_back(Vec3F::c_zero);
-                    }
-
-                    break;
-                }
-                // P//N
-                case 3: 
-                {
-                    Vec3F finalPosition = GetElement(_positions, svert[0]);
-                    if (eastl::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
-                    {
-                        Vec2F finalUV = Vec2F::c_zero;
-                        Vec3F finalNormal = GetElement(_normals, svert[2]);
-
-                        _outPositions.push_back(finalPosition);
-                        _outUVs.push_back(finalUV);
-                        _outNormals.push_back(finalNormal);
-                    }
-
-                    break;
-                }
-                // P/T/N
-                case 4:
-                {
-                    Vec3F finalPosition = GetElement(_positions, svert[0]);
-                    if (eastl::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
-                    {
-                        Vec2F finalUV = SubMeshHelper::NormalizeUV(GetElement(_uvs, svert[1]));
-                        Vec3F finalNormal = GetElement(_normals, svert[2]);
-
-                        _outPositions.push_back(finalPosition);
-                        _outUVs.push_back(finalUV);
-                        _outNormals.push_back(finalNormal);
-                    }
-
-                    break;
-                }
-                default:
-                {
+                    remaining = 0;
                     break;
                 }
             }
         }
 
-        if (noNormal)
+        if (remaining == 3)
         {
-            Vec3F a = _outPositions[0] - _outPositions[1];
-            Vec3F b = _outPositions[2] - _outPositions[1];
-
-            Vec3F normal = a.crossProduct(b);
-
-            for (S32 i = 0; i < S32(_outPositions.size()); ++i)
-            {
-                _outNormals[i] = normal;
-            }
+            S32 a = current;
+            S32 b = _scratchNext[a];
+            S32 c = _scratchNext[b];
+            _outTriangleCornerIndices.push_back(a);
+            _outTriangleCornerIndices.push_back(b);
+            _outTriangleCornerIndices.push_back(c);
         }
     }
 
-    //////////////////////////////////////////
-    void ProcessVertexTriangluation(
-        Vector<U16>& _outIndices,
-        Vector<Vec3F> const& _positions,
-        Vector<Vec2F> const& _uvs,
-        Vector<Vec3F> const& _normals)
-    {
-        // If there are 2 or less verts,
-        // no triangle can be created,
-        // so exit
-        if (_positions.size() < 3)
-        {
-            return;
-        }
-        // If it is a triangle no need to calculate it
-        if (_positions.size() == 3)
-        {
-            _outIndices.push_back((U16)0);
-            _outIndices.push_back((U16)1);
-            _outIndices.push_back((U16)2);
-            return;
-        }
-
-        // Create a list of vertices
-        Vector<Vec3F> positions = _positions;
-        Vector<Vec2F> uvs = _uvs;
-        Vector<Vec3F> normals = _normals;
-
-        while (true)
-        {
-            // For every vertex
-            for (S32 i = 0; i < S32(positions.size()); ++i)
-            {
-                Vec3F prevPosition;
-                Vec2F prevUV;
-                Vec3F prevNormal;
-
-                if (i == 0)
-                {
-                    prevPosition = positions[positions.size() - 1];
-                }
-                else
-                {
-                    prevPosition = positions[i - 1];
-                }
-
-                
-                Vec3F currentPosition = positions[i];
-
-                // nextPosition = the next vertex in the list
-                Vec3F nextPosition;
-                if (i == positions.size() - 1)
-                {
-                    nextPosition = positions[0];
-                }
-                else
-                {
-                    nextPosition = positions[i + 1];
-                }
-
-                // Check to see if there are only 3 verts left
-                // if so this is the last triangle
-                if (positions.size() == 3)
-                {
-                    for (S32 j = 0; j < S32(_positions.size()); ++j)
-                    {
-                        if (_positions[j] == currentPosition)
-                            _outIndices.push_back((U16)j);
-
-                        if (_positions[j] == prevPosition)
-                            _outIndices.push_back((U16)j);
-
-                        if (_positions[j] == nextPosition)
-                            _outIndices.push_back((U16)j);
-                    }
-
-                    positions.clear();
-                    break;
-                }
-                if (positions.size() == 4)
-                {
-                    Vec3F fourthPosition;
-                    for (S32 j = 0; j < S32(positions.size()); ++j)
-                    {
-                        if (   positions[j] != currentPosition
-                            && positions[j] != prevPosition
-                            && positions[j] != nextPosition)
-                        {
-                            fourthPosition = positions[j];
-                            break;
-                        }
-                    }
-
-                    // Degenerate triangle 
-                    if (Math::IsPointOnSegment(prevPosition, currentPosition, nextPosition) ||
-                        Math::IsPointOnSegment(currentPosition, nextPosition, prevPosition) ||
-                        Math::IsPointOnSegment(nextPosition, prevPosition, currentPosition))
-                    {
-                        eastl::swap(currentPosition, fourthPosition);
-                    }
-
-
-                    // Cur-Prev-Next
-                    for (S32 j = 0; j < S32(_positions.size()); ++j)
-                    {
-                        if (_positions[j] == currentPosition)
-                            _outIndices.push_back((U16)j);
-
-                        if (_positions[j] == prevPosition)
-                            _outIndices.push_back((U16)j);
-
-                        if (_positions[j] == nextPosition)
-                            _outIndices.push_back((U16)j);
-                    }
-
-                    // Included triangle 
-                    if (Math::IsPointOnSegment(prevPosition, currentPosition, fourthPosition) ||
-                        Math::IsPointOnSegment(currentPosition, nextPosition, fourthPosition) ||
-                        Math::IsPointOnSegment(nextPosition, prevPosition, fourthPosition))
-                    {
-                        positions.clear();
-                        break;
-                    }
-
-                    // Prev-Next-Temp
-                    for (S32 j = 0; j < S32(_positions.size()); ++j)
-                    {
-                        if (_positions[j] == prevPosition)
-                            _outIndices.push_back((U16)j);
-
-                        if (_positions[j] == nextPosition)
-                            _outIndices.push_back((U16)j);
-
-                        if (_positions[j] == fourthPosition)
-                            _outIndices.push_back((U16)j);
-                    }
-
-                    positions.clear();
-                    break;
-                }
-
-                // If Vertex is not an interior vertex
-                F32 angle = Vec3F::GetAngleBetween(
-                    prevPosition - currentPosition,
-                    nextPosition - currentPosition);
-
-                if (angle <= 0 && angle >= Math::c_pi)
-                    continue;
-
-                // If any vertices are within this triangle
-                bool inTriangle = false;
-                for (S32 j = 0; j < S32(positions.size()); ++j)
-                {
-                    if (Math::IsPointInTriangle(
-                            positions[j], 
-                            prevPosition,
-                            currentPosition,
-                            nextPosition)
-                        && positions[j] != prevPosition
-                        && positions[j] != currentPosition
-                        && positions[j] != nextPosition)
-                    {
-                        inTriangle = true;
-                        break;
-                    }
-                }
-
-                if (inTriangle)
-                    continue;
-
-                // Create a triangle from currentPosition, prevPosition, nextPosition
-                for (S32 j = 0; j < S32(_positions.size()); ++j)
-                {
-                    if (_positions[j] == currentPosition)
-                        _outIndices.push_back((U16)j);
-
-                    if (_positions[j] == prevPosition)
-                        _outIndices.push_back((U16)j);
-
-                    if (_positions[j] == nextPosition)
-                        _outIndices.push_back((U16)j);
-                }
-
-                // Delete currentPosition from the list
-                for (S32 j = 0; j < S32(positions.size()); ++j)
-                {
-                    if (positions[j] == currentPosition)
-                    {
-                        positions.erase(positions.begin() + j);
-                        break;
-                    }
-                }
-
-                // Reset i to the start
-                // -1 since loop will add 1 to it
-                i = -1;
-            }
-
-            // If no triangles were created
-            if (_outIndices.size() == 0)
-                break;
-
-            // If no more vertices
-            if (positions.size() == 0)
-                break;
-        }
-    }
 
     //////////////////////////////////////////
     MAZE_GRAPHICS_API bool LoadOBJ(
@@ -473,14 +381,33 @@ namespace Maze
 
         _mesh.clear();
 
+        if (_fileData.getSize() == 0)
+            return true;
+
+        // Global OBJ attribute pools - face indices refer to these across the whole file,
+        // regardless of submesh (o/g/usemtl) boundaries.
         Vector<Vec3F> positions;
         Vector<Vec2F> uvs;
         Vector<Vec3F> normals;
 
-        Vector<U16> indices;
-        Vector<Vec3F> finalPositions;
-        Vector<Vec2F> finalUVs;
-        Vector<Vec3F> finalNormals;
+        // Current submesh being accumulated (deduplicated/indexed)
+        Vector<Vec3F> outPositions;
+        Vector<Vec2F> outUVs;
+        Vector<Vec3F> outNormals;
+        Vector<Vec3F> outNormalAccum;
+        Vector<bool> outHasExplicitNormal;
+        Vector<U16> outIndices;
+        FlatHashMap<ObjVertexKey, U32, ObjVertexKeyHash> vertexCache;
+        bool indexOverflowWarned = false;
+
+        // Per-face scratch, reused across every "f" line in the file to avoid
+        // reallocating on every face (this is the hottest part of the parser)
+        Vector<ObjVertexKey> faceKeys;
+        Vector<Vec3F> facePositions;
+        Vector<S32> faceTriangles;
+        Vector<S32> eclNext;
+        Vector<S32> eclPrev;
+        Vector<Vec2F> ecl2D;
 
         bool listening = false;
         String meshName;
@@ -488,36 +415,49 @@ namespace Maze
         auto processCreateSubMesh =
             [&]()
             {
-                // Create Mesh
+                // Finalize normals for vertices that had no explicit "vn" - average the
+                // accumulated (area-weighted) face normals of every triangle touching them
+                for (Size i = 0, in = outNormals.size(); i < in; ++i)
+                {
+                    if (outHasExplicitNormal[i])
+                        continue;
+
+                    if (outNormalAccum[i].squaredLength() > 1e-12f)
+                    {
+                        outNormalAccum[i].normalize();
+                        outNormals[i] = outNormalAccum[i];
+                    }
+                }
+
                 SubMeshPtr subMesh = SubMesh::Create();
                 subMesh->setName(meshName);
 
                 // Flip X for LHCS
                 SubMeshHelper::FlipX(
                     subMesh->getRenderDrawTopology(),
-                    indices,
-                    &finalPositions,
-                    &finalNormals,
+                    outIndices,
+                    &outPositions,
+                    &outNormals,
                     nullptr);
-                
-                for (Vec3F& position : finalPositions)
+
+                for (Vec3F& position : outPositions)
                     position *= _props.scale;
 
-                subMesh->setIndices(&indices[0], indices.size());
-                subMesh->setPositions(&finalPositions[0], finalPositions.size());
-                subMesh->setNormals(&finalNormals[0], finalNormals.size());
-                subMesh->setTexCoords(0, &finalUVs[0], finalUVs.size());
+                subMesh->setIndices(&outIndices[0], outIndices.size());
+                subMesh->setPositions(&outPositions[0], outPositions.size());
+                subMesh->setNormals(&outNormals[0], outNormals.size());
+                subMesh->setTexCoords(0, &outUVs[0], outUVs.size());
 
                 // Generate tangents and bitangents
                 Vector<Vec3F> tangents;
                 Vector<Vec3F> bitangents;
                 if (SubMeshHelper::GenerateTangentsAndBitangents(
-                    &indices[0],
-                    indices.size(),
-                    &finalPositions[0],
-                    &finalUVs[0],
-                    &finalNormals[0],
-                    finalPositions.size(),
+                    &outIndices[0],
+                    outIndices.size(),
+                    &outPositions[0],
+                    &outUVs[0],
+                    &outNormals[0],
+                    outPositions.size(),
                     tangents,
                     bitangents))
                 {
@@ -528,241 +468,233 @@ namespace Maze
                 _mesh.addSubMesh(subMesh);
 
                 // Cleanup
-                finalPositions.clear();
-                finalUVs.clear();
-                finalNormals.clear();
-                indices.clear();
+                outPositions.clear();
+                outUVs.clear();
+                outNormals.clear();
+                outNormalAccum.clear();
+                outHasExplicitNormal.clear();
+                outIndices.clear();
+                vertexCache.clear();
+                indexOverflowWarned = false;
             };
 
         auto processOBJLine =
-            [&](String& _line)
+            [&](Char const* _begin, Char const* _end)
             {
-                String firstToken = GetFirstToken(_line);
-                String tail = GetTail(_line);
+                if (_begin == _end)
+                    return;
 
-                if (   firstToken == "o" 
-                    || firstToken == "g"
-                    || _line[0] == 'g')
+                ConstSpan<Char> firstToken = GetFirstTokenSpan(_begin, _end);
+                if (firstToken.empty())
+                    return;
+
+                if (TokenEquals(firstToken, "o") || TokenEquals(firstToken, "g"))
                 {
-                    if (!listening)
-                    {
-                        listening = true;
+                    ConstSpan<Char> tail = GetTailSpan(_begin, _end);
 
-                        if (   firstToken == "o" 
-                            || firstToken == "g")
-                        {
-                            meshName = tail;
-                        }
-                        else
-                        {
-                            meshName = "unnamed";
-                        }
-                    }
-                    else
-                    {
-                        if (!indices.empty() && !finalPositions.empty())
-                        {
-                            // Create Mesh
-                            if (!_props.mergeSubMeshes)
-                                processCreateSubMesh();
+                    if (listening && !outIndices.empty() && !outPositions.empty() && !_props.mergeSubMeshes)
+                        processCreateSubMesh();
 
-                            meshName = tail;
-                        }
-                        else
-                        {
-                            if (   firstToken == "o" 
-                                || firstToken == "g")
-                            {
-                                meshName = tail;
-                            }
-                            else
-                            {
-                                meshName = "unnamed";
-                            }
-                        }
-                    }
+                    listening = true;
+                    meshName = tail.empty() ? String("unnamed") : String(tail.ptr(), tail.size());
                 }
-
+                else
                 // Vertex Position
-                if (firstToken == "v")
+                if (TokenEquals(firstToken, "v"))
                 {
-                    Vector<String> words;
-                    // #TODO: Rework to ConstSpan<Char>
-                    StringHelper::SplitWords(tail, words, ' ');
+                    ConstSpan<Char> tail = GetTailSpan(_begin, _end);
+                    Char const* it = tail.ptr();
+                    Char const* tailEnd = it + tail.size();
 
-                    Vec3F vertexPosition;
-                    if (words.size() >= 3)
+                    Vec3F position = Vec3F::c_zero;
+                    ConstSpan<Char> tok;
+                    S32 comp = 0;
+                    while (comp < 3 && NextToken(it, tailEnd, tok))
                     {
-                        vertexPosition.x = StringHelper::StringToF32Safe(words[0]);
-                        vertexPosition.y = StringHelper::StringToF32Safe(words[1]);
-                        vertexPosition.z = StringHelper::StringToF32Safe(words[2]);
-
-                        positions.push_back(vertexPosition);
+                        F32 value = 0.0f;
+                        StringHelper::ParseF32(tok.ptr(), tok.size(), value);
+                        position[(Size)comp] = value;
+                        ++comp;
                     }
+
+                    if (comp == 3)
+                        positions.push_back(position);
                 }
                 else
                 // Vertex UV
-                if (firstToken == "vt")
+                if (TokenEquals(firstToken, "vt"))
                 {
-                    Vector<String> words;
-                    // #TODO: Rework to ConstSpan<Char>
-                    StringHelper::SplitWords(tail, words, ' ');
+                    ConstSpan<Char> tail = GetTailSpan(_begin, _end);
+                    Char const* it = tail.ptr();
+                    Char const* tailEnd = it + tail.size();
 
-                    Vec2F uv;
-                    if (words.size() >= 2)
+                    Vec2F uv = Vec2F::c_zero;
+                    ConstSpan<Char> tok;
+                    S32 comp = 0;
+                    while (comp < 2 && NextToken(it, tailEnd, tok))
                     {
-                        uv.x = StringHelper::StringToF32Safe(words[0]);
-                        uv.y = StringHelper::StringToF32Safe(words[1]);
-
-                        uvs.push_back(uv);
+                        F32 value = 0.0f;
+                        StringHelper::ParseF32(tok.ptr(), tok.size(), value);
+                        uv[(Size)comp] = value;
+                        ++comp;
                     }
+
+                    if (comp == 2)
+                        uvs.push_back(uv);
                 }
                 else
                 // Vertex Normal
-                if (firstToken == "vn")
+                if (TokenEquals(firstToken, "vn"))
                 {
-                    Vector<String> words;
-                    // #TODO: Rework to ConstSpan<Char>
-                    StringHelper::SplitWords(tail, words, ' ');
+                    ConstSpan<Char> tail = GetTailSpan(_begin, _end);
+                    Char const* it = tail.ptr();
+                    Char const* tailEnd = it + tail.size();
 
-                    Vec3F vertexNormal;
-                    if (words.size() >= 3)
+                    Vec3F normal = Vec3F::c_zero;
+                    ConstSpan<Char> tok;
+                    S32 comp = 0;
+                    while (comp < 3 && NextToken(it, tailEnd, tok))
                     {
-                        vertexNormal.x = StringHelper::StringToF32Safe(words[0]);
-                        vertexNormal.y = StringHelper::StringToF32Safe(words[1]);
-                        vertexNormal.z = StringHelper::StringToF32Safe(words[2]);
-
-                        normals.push_back(vertexNormal);
+                        F32 value = 0.0f;
+                        StringHelper::ParseF32(tok.ptr(), tok.size(), value);
+                        normal[(Size)comp] = value;
+                        ++comp;
                     }
+
+                    if (comp == 3)
+                        normals.push_back(normal);
                 }
                 else
                 // Face
-                if (firstToken == "f")
+                if (TokenEquals(firstToken, "f"))
                 {
-                    Vector<Vec3F> tempPositions;
-                    Vector<Vec2F> tempUVs;
-                    Vector<Vec3F> tempNormals;
-                    GenVerticesFromRawOBJ(
-                        tempPositions,
-                        tempUVs,
-                        tempNormals,
-                        positions,
-                        uvs,
-                        normals,
-                        _line);
+                    ConstSpan<Char> tail = GetTailSpan(_begin, _end);
+                    Char const* it = tail.ptr();
+                    Char const* tailEnd = it + tail.size();
 
-                    for (Vec3F const& tempPosition : tempPositions)
-                        finalPositions.push_back(tempPosition);
+                    faceKeys.clear();
+                    facePositions.clear();
 
-                    for (Vec2F const& tempUV : tempUVs)
-                        finalUVs.push_back(tempUV);
-
-                    for (Vec3F const& tempNormal : tempNormals)
-                        finalNormals.push_back(tempNormal);
-
-                    Vector<U16> tempIndices;
-                    ProcessVertexTriangluation(
-                        tempIndices,
-                        tempPositions,
-                        tempUVs,
-                        tempNormals);
-
-                    for (S32 i = 0; i < S32(tempIndices.size()); i++)
+                    ConstSpan<Char> tok;
+                    bool faceValid = true;
+                    while (NextToken(it, tailEnd, tok))
                     {
-                        U16 indnum = (U16)((finalPositions.size()) - tempPositions.size()) + tempIndices[i];
-                        indices.push_back(indnum);
-                    }
-                }
-                else
-                // Material Name
-                if (firstToken == "usemtl")
-                {
-                    if (!indices.empty() && !finalPositions.empty())
-                    {
-                        // Create Mesh
-                        if (!_props.mergeSubMeshes)
-                            processCreateSubMesh();
-                        /*
-                        // Create Mesh
-                        SubMeshPtr subMesh = SubMesh::Create();
-                        subMesh->setName(meshName);
-
-                        subMesh->setIndices(&indices[0], indices.size());
-                        subMesh->setPositions(&finalPositions[0], finalPositions.size());
-                        subMesh->setNormals(&finalNormals[0], finalNormals.size());
-                        subMesh->setTexCoords(0, &finalUVs[0], finalUVs.size());
-
-                        // Generate tangents and bitangents
-                        Vector<Vec3F> tangents;
-                        Vector<Vec3F> bitangents;
-                        if (SubMeshHelper::GenerateTangentsAndBitangents(
-                            &indices[0],
-                            indices.size(),
-                            &finalPositions[0],
-                            &finalUVs[0],
-                            &finalNormals[0],
-                            finalPositions.size(),
-                            tangents,
-                            bitangents))
+                        ObjVertexKey key;
+                        if (!ParseFaceVertexToken(tok, positions.size(), uvs.size(), normals.size(), key))
                         {
-                            subMesh->setTangents(&tangents[0], tangents.size());
-                            subMesh->setBitangents(&bitangents[0], bitangents.size());
-                        }
-
-                        _mesh->addSubMesh(subMesh);
-
-                        S32 i = 2;
-                        while (1) 
-                        {
-                            subMesh->setName(meshName + "_" + StringHelper::ToString(i));
-
-                            for (Size subMeshIndex = 0; subMeshIndex < _mesh->getSubMeshesCount(); ++subMeshIndex)
-                            {
-                                SubMeshPtr const& subMesh2 = _mesh->getSubMesh(subMeshIndex);
-                                if (subMesh2->getName() == subMesh->getName())
-                                    continue;
-                            }
+                            faceValid = false;
                             break;
                         }
 
-                        // Cleanup
-                        finalPositions.clear();
-                        finalUVs.clear();
-                        finalNormals.clear();
-                        indices.clear();
-                        */
+                        faceKeys.push_back(key);
+                        facePositions.push_back(positions[key.posIndex]);
+                    }
+
+                    if (!faceValid)
+                    {
+                        Debug::LogWarning("LoaderOBJ: skipping face with invalid/out-of-range vertex reference");
+                        return;
+                    }
+
+                    if (facePositions.size() < 3)
+                        return;
+
+                    TriangulatePolygon(facePositions, faceTriangles, eclNext, eclPrev, ecl2D);
+
+                    for (Size t = 0, tn = faceTriangles.size(); t < tn; t += 3)
+                    {
+                        S32 cornerIdx[3] = { faceTriangles[t], faceTriangles[t + 1], faceTriangles[t + 2] };
+                        U32 slot[3];
+                        bool overflow = false;
+
+                        for (S32 c = 0; c < 3; ++c)
+                        {
+                            ObjVertexKey const& key = faceKeys[cornerIdx[c]];
+
+                            auto cacheIt = vertexCache.find(key);
+                            if (cacheIt != vertexCache.end())
+                            {
+                                slot[c] = cacheIt->second;
+                                continue;
+                            }
+
+                            if (outPositions.size() >= 65535)
+                            {
+                                if (!indexOverflowWarned)
+                                {
+                                    Debug::LogWarning(
+                                        "LoaderOBJ: submesh exceeds 65535 unique vertices, truncating "
+                                        "(split the mesh or add usemtl/g boundaries to keep submeshes smaller)");
+                                    indexOverflowWarned = true;
+                                }
+                                overflow = true;
+                                break;
+                            }
+
+                            slot[c] = (U32)outPositions.size();
+                            vertexCache.emplace(key, slot[c]);
+
+                            outPositions.push_back(positions[key.posIndex]);
+                            outUVs.push_back(key.uvIndex >= 0 ? SubMeshHelper::NormalizeUV(uvs[key.uvIndex]) : Vec2F::c_zero);
+
+                            bool hasNormal = key.normalIndex >= 0;
+                            outNormals.push_back(hasNormal ? normals[key.normalIndex] : Vec3F::c_zero);
+                            outNormalAccum.push_back(Vec3F::c_zero);
+                            outHasExplicitNormal.push_back(hasNormal);
+                        }
+
+                        if (overflow)
+                            break;
+
+                        outIndices.push_back((U16)slot[0]);
+                        outIndices.push_back((U16)slot[1]);
+                        outIndices.push_back((U16)slot[2]);
+
+                        if (!outHasExplicitNormal[slot[0]] || !outHasExplicitNormal[slot[1]] || !outHasExplicitNormal[slot[2]])
+                        {
+                            Vec3F faceNormal = Math::GenTriangleNormal(
+                                outPositions[slot[0]], outPositions[slot[1]], outPositions[slot[2]]);
+
+                            if (!outHasExplicitNormal[slot[0]]) outNormalAccum[slot[0]] += faceNormal;
+                            if (!outHasExplicitNormal[slot[1]]) outNormalAccum[slot[1]] += faceNormal;
+                            if (!outHasExplicitNormal[slot[2]]) outNormalAccum[slot[2]] += faceNormal;
+                        }
                     }
                 }
                 else
-                // Material Name
-                if (firstToken == "mtllib")
+                // Material Name - splits the submesh, but material assignment itself isn't
+                // wired up yet (mtllib is skipped below too)
+                if (TokenEquals(firstToken, "usemtl"))
+                {
+                    if (!outIndices.empty() && !outPositions.empty() && !_props.mergeSubMeshes)
+                        processCreateSubMesh();
+                }
+                else
+                // Material Library
+                if (TokenEquals(firstToken, "mtllib"))
                 {
                     // Skip materials
                 }
             };
 
-        String line;
-        Size i = 0;
-        while (i < _fileData.getSize())
+        Char const* fileBegin = (Char const*)_fileData.getDataRO();
+        Char const* fileEnd = fileBegin + _fileData.getSize();
+        Char const* cursor = fileBegin;
+
+        while (cursor < fileEnd)
         {
-            Char c = _fileData.getByte(i);
+            Char const* lineEnd = (Char const*)memchr(cursor, '\n', fileEnd - cursor);
+            Char const* nextCursor = lineEnd ? (lineEnd + 1) : fileEnd;
+            Char const* trimmedEnd = lineEnd ? lineEnd : fileEnd;
 
-            if (c == '\n')
-            {
-                processOBJLine(line);
-                line.clear();
-            }
-            else
-            if (c != '\r')
-            {
-                line += c;
-            }
+            if (trimmedEnd > cursor && *(trimmedEnd - 1) == '\r')
+                --trimmedEnd;
 
-            ++i;
+            processOBJLine(cursor, trimmedEnd);
+            cursor = nextCursor;
         }
-        processOBJLine(line);
 
-        if (!indices.empty() && !finalPositions.empty())
+        if (!outIndices.empty() && !outPositions.empty())
         {
             // Create Mesh
             processCreateSubMesh();
