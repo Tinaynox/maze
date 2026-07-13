@@ -120,7 +120,7 @@ namespace Maze
                 EntityId _id,
                 EntityPtr&& _entity)
                 : id(_id)
-                , entity(std::move(_entity))
+                , entity(eastl::move(_entity))
             {}
 
             EntityId id;
@@ -373,7 +373,7 @@ namespace Maze
                 evt->getClassUID() != ClassInfo<TEvent>::UID(),
                 "Event %s has wrong metadata!",
                 ClassInfo<TEvent>::Name());
-            broadcastEvent(std::move(evt));
+            broadcastEvent(eastl::move(evt));
         }
 
 
@@ -413,7 +413,7 @@ namespace Maze
         template <typename TEvent, typename ...TArgs>
         inline void sendEvent(EntityId _entityId, TArgs&&... _args)
         {
-            sendEvent(_entityId, MakeUnique<TEvent>(std::forward<TArgs>(_args)...));
+            sendEvent(_entityId, MakeUnique<TEvent>(eastl::forward<TArgs>(_args)...));
         }
 
 

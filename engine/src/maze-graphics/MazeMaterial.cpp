@@ -581,7 +581,7 @@ namespace Maze
     //////////////////////////////////////////
     void Material::removeUniform(HashedCString _uniformName)
     {
-        auto it = std::find_if(
+        auto it = eastl::find_if(
             m_uniforms.begin(),
             m_uniforms.end(),
             [_uniformName](ShaderUniformVariantPtr const& _variant) { return (_variant->getName() == _uniformName); });
@@ -772,7 +772,7 @@ namespace Maze
     //////////////////////////////////////////
     bool Material::hasUniform(HashedCString _uniformName) const
     {
-        auto it = std::find_if(
+        auto it = eastl::find_if(
             m_uniforms.begin(),
             m_uniforms.end(),
             [_uniformName](ShaderUniformVariantPtr const& _variant) { return (_variant->getName() == _uniformName); });

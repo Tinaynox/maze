@@ -340,7 +340,7 @@ namespace Maze
 
             Shader* shader = assetUnitShader->getShader().get();
 
-            StringKeyMap<ShaderLibraryData>::iterator it = std::find_if(
+            StringKeyMap<ShaderLibraryData>::iterator it = eastl::find_if(
                 m_shadersLibrary.begin(),
                 m_shadersLibrary.end(),
                 [file, shader](Pair<String, ShaderLibraryData> const& _a) -> bool

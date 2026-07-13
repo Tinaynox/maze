@@ -343,7 +343,7 @@ namespace Maze
                                 mono_free(cStr);
                             }
 
-                            return std::move(result);
+                            return eastl::move(result);
                         };
 
                         _outTags = parseStringListMonoClassField(tagsField);

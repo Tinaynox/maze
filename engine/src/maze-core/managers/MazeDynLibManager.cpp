@@ -109,7 +109,7 @@ namespace Maze
     void DynLibManager::unloadLibrary(DynLib* _lib)
     {
         UnorderedMap<Path, DynLibPtr>::iterator it =
-            std::find_if(
+            eastl::find_if(
                 m_loadedLibs.begin(),
                 m_loadedLibs.end(),
                 [_lib](Pair<Path, DynLibPtr> const& _value) -> bool

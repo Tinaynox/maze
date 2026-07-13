@@ -65,8 +65,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline Ray(Ray&& _plane) noexcept
-            : m_point(std::move(_plane.m_point))
-            , m_direction(std::move(_plane.m_direction))
+            : m_point(eastl::move(_plane.m_point))
+            , m_direction(eastl::move(_plane.m_direction))
         {
         }
 
@@ -105,8 +105,8 @@ namespace Maze
         //////////////////////////////////////////
         inline Ray& operator=(Ray&& _plane) noexcept
         {
-            m_point = std::move(_plane.m_point);
-            m_direction = std::move(_plane.m_direction);
+            m_point = eastl::move(_plane.m_point);
+            m_direction = eastl::move(_plane.m_direction);
             return *this;
         }
 

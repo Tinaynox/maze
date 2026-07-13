@@ -174,15 +174,15 @@ namespace Maze
                     m_systems[_world] = (_world->*m_addSystemFunc)(
                         m_name,
                         m_func,
-                        std::move(tags),
-                        std::move(order),
+                        eastl::move(tags),
+                        eastl::move(order),
                         m_sampleFlags,
                         m_forbiddenComponentsFunc ? m_forbiddenComponentsFunc() : Vector<ComponentId>());
                     break;
                 }
                 case Type::Global:
                 {
-                    m_systems[_world] = (_world->*m_addSystemGlobalFunc)(m_name, m_func, std::move(tags), std::move(order));
+                    m_systems[_world] = (_world->*m_addSystemGlobalFunc)(m_name, m_func, eastl::move(tags), eastl::move(order));
                     break;
                 }
                 default:

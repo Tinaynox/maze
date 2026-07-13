@@ -75,7 +75,7 @@ namespace Maze
     //////////////////////////////////////////
     void Updater::addUpdatable(Updatable* _updatable)
     {
-        MAZE_DEBUG_BP_IF(std::find(m_updatables.begin(), m_updatables.end(), _updatable) != m_updatables.end());
+        MAZE_DEBUG_BP_IF(eastl::find(m_updatables.begin(), m_updatables.end(), _updatable) != m_updatables.end());
         MAZE_DEBUG_BP_IF(_updatable->m_updater);
 
         m_updatables.push_back(_updatable);
@@ -86,7 +86,7 @@ namespace Maze
     //////////////////////////////////////////
     void Updater::removeUpdatable(Updatable* _updatable)
     {
-        Vector<Updatable*>::iterator it = std::find(m_updatables.begin(), m_updatables.end(), _updatable);
+        Vector<Updatable*>::iterator it = eastl::find(m_updatables.begin(), m_updatables.end(), _updatable);
         if (it == m_updatables.end())
             return;
 
@@ -99,7 +99,7 @@ namespace Maze
     //////////////////////////////////////////
     void Updater::ensureUpdatable(Updatable* _updatable)
     {
-        Vector<Updatable*>::iterator it = std::find(m_updatables.begin(), m_updatables.end(), _updatable);
+        Vector<Updatable*>::iterator it = eastl::find(m_updatables.begin(), m_updatables.end(), _updatable);
         if (it != m_updatables.end())
             return;
 

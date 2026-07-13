@@ -62,13 +62,13 @@ namespace Maze
         inline PathUnix(PathUnix const& _value) : ParentClass(_value) {}
 
         //////////////////////////////////////////
-        inline PathUnix(PathUnix&& _value) : ParentClass(std::move(_value)) {}
+        inline PathUnix(PathUnix&& _value) : ParentClass(eastl::move(_value)) {}
 
         //////////////////////////////////////////
         inline PathUnix(String const& _path) : ParentClass(_path) {}
 
         //////////////////////////////////////////
-        inline PathUnix(String&& _path) : ParentClass(std::move(_path)) {}
+        inline PathUnix(String&& _path) : ParentClass(eastl::move(_path)) {}
 
         //////////////////////////////////////////
         inline PathUnix(ParentClass::CharType const* _path) : ParentClass(_path) {}
@@ -81,7 +81,7 @@ namespace Maze
         inline PathUnix& operator=(PathUnix const& _value) { return ParentClass::operator=(_value); }
 
         //////////////////////////////////////////
-        inline PathUnix& operator=(PathUnix&& _value) { return ParentClass::operator=(std::move(_value)); }
+        inline PathUnix& operator=(PathUnix&& _value) { return ParentClass::operator=(eastl::move(_value)); }
 
 
         //////////////////////////////////////////

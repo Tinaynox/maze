@@ -71,8 +71,8 @@ namespace Maze
         ComponentSystemOrder(
             Set<HashedString>&& _after,
             Set<HashedString>&& _before)
-            : after(std::move(_after))
-            , before(std::move(_before))
+            : after(eastl::move(_after))
+            , before(eastl::move(_before))
         {}
 
         Set<HashedString> after;

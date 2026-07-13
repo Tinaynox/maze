@@ -68,8 +68,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline Rotation2D(Rotation2D&& _rotation) noexcept
-            : m_s(std::move(_rotation.m_s))
-            , m_c(std::move(_rotation.m_c))
+            : m_s(eastl::move(_rotation.m_s))
+            , m_c(eastl::move(_rotation.m_c))
         {
             MAZE_DEBUG_BP_IF(fabs(m_s) > 1);
             MAZE_DEBUG_BP_IF(fabs(m_c) > 1);
@@ -163,8 +163,8 @@ namespace Maze
         //////////////////////////////////////////
         inline Rotation2D& operator=(Rotation2D&& _rotation2D) noexcept
         {
-            m_s = std::move(_rotation2D.m_s);
-            m_c = std::move(_rotation2D.m_c);
+            m_s = eastl::move(_rotation2D.m_s);
+            m_c = eastl::move(_rotation2D.m_c);
 
             MAZE_DEBUG_BP_IF(fabs(m_s) > 1);
             MAZE_DEBUG_BP_IF(fabs(m_c) > 1);

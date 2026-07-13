@@ -48,7 +48,7 @@ namespace Maze
             {
                 WindowVideoMode mode(win32Mode.dmPelsWidth, win32Mode.dmPelsHeight, win32Mode.dmBitsPerPel);
 
-                if (std::find(modes.begin(), modes.end(), mode) == modes.end())
+                if (eastl::find(modes.begin(), modes.end(), mode) == modes.end())
                     modes.push_back(mode);
             }
 

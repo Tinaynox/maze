@@ -599,15 +599,15 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsManagedSharedPtr : std::false_type {};
+    struct IsManagedSharedPtr : eastl::false_type {};
     template <class _Ty>
-    struct IsManagedSharedPtr<Maze::ManagedSharedPtr<_Ty>> : std::true_type {};
+    struct IsManagedSharedPtr<Maze::ManagedSharedPtr<_Ty>> : eastl::true_type {};
 
     //////////////////////////////////////////
     template <typename>
-    struct IsManagedWeakPtr : std::false_type {};
+    struct IsManagedWeakPtr : eastl::false_type {};
     template <class _Ty>
-    struct IsManagedWeakPtr<Maze::ManagedWeakPtr<_Ty>> : std::true_type {};
+    struct IsManagedWeakPtr<Maze::ManagedWeakPtr<_Ty>> : eastl::true_type {};
     
 } // namespace Maze
 //////////////////////////////////////////

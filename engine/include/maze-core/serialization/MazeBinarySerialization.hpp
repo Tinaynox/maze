@@ -388,23 +388,23 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <typename T, typename = int>
-    struct HasGetValueSerializationSize : std::false_type { };
+    struct HasGetValueSerializationSize : eastl::false_type { };
     template <typename T>
-    struct HasGetValueSerializationSize <T, decltype(Maze::GetValueSerializationSize(std::declval<T>(), std::declval<U32&>()), 0)> : std::true_type { };
+    struct HasGetValueSerializationSize <T, decltype(Maze::GetValueSerializationSize(std::declval<T>(), std::declval<U32&>()), 0)> : eastl::true_type { };
 
 
     //////////////////////////////////////////
     template <typename T, typename = int>
-    struct HasSerializeValue : std::false_type { };
+    struct HasSerializeValue : eastl::false_type { };
     template <typename T>
-    struct HasSerializeValue <T, decltype(Maze::SerializeValue(std::declval<T>(), std::declval<U8*>()), 0)> : std::true_type { };
+    struct HasSerializeValue <T, decltype(Maze::SerializeValue(std::declval<T>(), std::declval<U8*>()), 0)> : eastl::true_type { };
 
 
     //////////////////////////////////////////
     template <typename T, typename = int>
-    struct HasDeserializeValue : std::false_type { };
+    struct HasDeserializeValue : eastl::false_type { };
     template <typename T>
-    struct HasDeserializeValue <T, decltype(Maze::DeserializeValue(std::declval<T&>(), std::declval<U8 const*>()), 0)> : std::true_type { };
+    struct HasDeserializeValue <T, decltype(Maze::DeserializeValue(std::declval<T&>(), std::declval<U8 const*>()), 0)> : eastl::true_type { };
 
 
     //////////////////////////////////////////

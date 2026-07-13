@@ -114,7 +114,7 @@ namespace Maze
         if (!_action)
             return;
 
-        Vector<EditorActionPtr>::iterator it = std::find(m_history.begin(), m_history.end(), _action);
+        Vector<EditorActionPtr>::iterator it = eastl::find(m_history.begin(), m_history.end(), _action);
         MAZE_DEBUG_BP_RETURN_IF(it != m_history.end());
 
         m_history.erase(m_history.begin() + (m_currentHistoryIndex + 1), m_history.end());

@@ -48,7 +48,7 @@ namespace Maze
     {
         static ComponentSystemEventHandlerPtr nullPointer;
 
-        auto it = std::find_if(
+        auto it = eastl::find_if(
             _eventHandlers.begin(),
             _eventHandlers.end(),
             [&_name](ComponentSystemEventHandlerPtr const& _system) {
@@ -103,7 +103,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_CORE_API void SendEvent(EcsWorld* _ecsWorld, EntityId _id, EventUPtr&& _event)
     {
-        _ecsWorld->sendEvent(_id, std::forward<EventUPtr>(_event));
+        _ecsWorld->sendEvent(_id, eastl::forward<EventUPtr>(_event));
     }
 
     //////////////////////////////////////////
@@ -153,7 +153,7 @@ namespace Maze
 
                 for (ComponentSystemEventHandlerPtr s : shouldBeAfterNewSystem)
                 {
-                    auto it = std::find(_eventHandlers.begin(), _eventHandlers.end(), s);
+                    auto it = eastl::find(_eventHandlers.begin(), _eventHandlers.end(), s);
                     MAZE_DEBUG_ASSERT(it != _eventHandlers.end());
                     _eventHandlers.erase(it);
 
@@ -166,7 +166,7 @@ namespace Maze
 
                 for (ComponentSystemEventHandlerPtr s : shouldBeBeforeNewSystem)
                 {
-                    auto it = std::find(_eventHandlers.begin(), _eventHandlers.end(), s);
+                    auto it = eastl::find(_eventHandlers.begin(), _eventHandlers.end(), s);
                     MAZE_DEBUG_ASSERT(it != _eventHandlers.end());
                     _eventHandlers.erase(it);
 
@@ -561,7 +561,7 @@ namespace Maze
         if (eventUID == ClassInfo<EntityAddedToSampleEvent>::UID())
         {
             m_entityAddedToSampleEventHandlers.erase(
-                std::find_if(
+                eastl::find_if(
                     m_entityAddedToSampleEventHandlers.begin(),
                     m_entityAddedToSampleEventHandlers.end(),
                     [systemRaw = _system.get()](auto const& _val)
@@ -573,7 +573,7 @@ namespace Maze
         if (eventUID == ClassInfo<EntityRemovedFromSampleEvent>::UID())
         {
             m_entityRemovedFromSampleEventHandlers.erase(
-                std::find_if(
+                eastl::find_if(
                     m_entityRemovedFromSampleEventHandlers.begin(),
                     m_entityRemovedFromSampleEventHandlers.end(),
                     [systemRaw = _system.get()](auto const& _val)
@@ -906,7 +906,7 @@ namespace Maze
         if (m_state != EcsWorldState::Active && m_state != EcsWorldState::PreparingToDestroy)
             return;
 
-        m_eventHolders.current()->addBroadcastEvent(std::forward<EventUPtr>(_event));
+        m_eventHolders.current()->addBroadcastEvent(eastl::forward<EventUPtr>(_event));
     }
 
 
@@ -916,7 +916,7 @@ namespace Maze
         if (m_state != EcsWorldState::Active && m_state != EcsWorldState::PreparingToDestroy)
             return;
 
-        m_eventHolders.current()->addUnicastEvent(_entityId, std::forward<EventUPtr>(_event));
+        m_eventHolders.current()->addUnicastEvent(_entityId, eastl::forward<EventUPtr>(_event));
     }
 
     //////////////////////////////////////////

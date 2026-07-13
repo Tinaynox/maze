@@ -240,7 +240,7 @@ namespace Maze
         MAZE_PROFILE_EVENT("PluginManager::uninstallPlugin");
 
         Vector<PluginPtr>::iterator it = 
-            std::find_if(
+            eastl::find_if(
                 m_plugins.begin(),
                 m_plugins.end(),
                 [_plugin](PluginPtr const& _value) -> bool

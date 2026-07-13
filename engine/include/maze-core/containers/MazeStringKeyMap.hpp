@@ -216,19 +216,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline TValue* insert(String const& _key, TValue&& _value) { return insert(HashedString(_key.c_str()), std::move(_value)); }
+        inline TValue* insert(String const& _key, TValue&& _value) { return insert(HashedString(_key.c_str()), eastl::move(_value)); }
 
         //////////////////////////////////////////
         inline TValue* insert(String const& _key, TValue const& _value) { return insert(HashedString(_key.c_str()), _value); }
 
         //////////////////////////////////////////
-        inline TValue* insert(CString _key, TValue&& _value) { return insert(HashedString(_key), std::move(_value)); }
+        inline TValue* insert(CString _key, TValue&& _value) { return insert(HashedString(_key), eastl::move(_value)); }
 
         //////////////////////////////////////////
         inline TValue* insert(CString _key, TValue const& _value) { return insert(HashedString(_key), _value); }
 
         //////////////////////////////////////////
-        inline TValue* insert(HashedCString _key, TValue&& _value) { return insert(HashedString(_key), std::move(_value)); }
+        inline TValue* insert(HashedCString _key, TValue&& _value) { return insert(HashedString(_key), eastl::move(_value)); }
 
         //////////////////////////////////////////
         inline TValue* insert(HashedCString _key, TValue const& _value) { return insert(HashedString(_key), _value); }
@@ -240,12 +240,12 @@ namespace Maze
         {
             Pair<String, TValue> valueData(
                 _key.getString(),
-                std::forward<TValue>(_value));
+                eastl::forward<TValue>(_value));
 
             auto at = m_map.emplace(
                 eastl::piecewise_construct,
                 eastl::forward_as_tuple(_key.asHashedCString()),
-                eastl::forward_as_tuple(std::move(valueData)));
+                eastl::forward_as_tuple(eastl::move(valueData)));
 
             if (at.second)
             {
@@ -264,11 +264,11 @@ namespace Maze
             auto it = m_map.find(_key);
             if (it == m_map.end())
             {
-                return emplace(_key, std::move(_value));
+                return emplace(_key, eastl::move(_value));
             }
             else
             {
-                it->second.second = std::move(_value);
+                it->second.second = eastl::move(_value);
                 return &it->second.second;
             }
         }

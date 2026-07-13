@@ -104,7 +104,7 @@ namespace Maze
             entity->_removeSampleRef(this);
         }
 
-        Vector<Entity*> entities = std::move(m_entities);
+        Vector<Entity*> entities = eastl::move(m_entities);
         m_entities.clear();
 
         for (Entity* entity : entities)
@@ -114,7 +114,7 @@ namespace Maze
     //////////////////////////////////////////
     void EntitiesSample::processEntity(Entity* _entity)
     {
-        Vector<Entity*>::iterator it = std::find(
+        Vector<Entity*>::iterator it = eastl::find(
             m_entities.begin(),
             m_entities.end(),
             _entity);

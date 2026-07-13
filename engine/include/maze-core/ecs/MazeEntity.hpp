@@ -443,7 +443,7 @@ namespace Maze
         {
             if (getEcsWorld())
             {
-                SendEvent(getEcsWorld(), getId(), std::move(eastl::static_pointer_cast<Event>(MakeShared<TEvent>(_args...))));
+                SendEvent(getEcsWorld(), getId(), eastl::move(eastl::static_pointer_cast<Event>(MakeShared<TEvent>(_args...))));
             }
         }
 

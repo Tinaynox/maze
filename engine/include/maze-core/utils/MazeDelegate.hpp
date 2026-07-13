@@ -185,7 +185,7 @@ namespace Maze
             {
                 using FunctorType = typename ::std::decay<T>::type;
 
-                new (m_functorStore.get()) FunctorType(::std::forward<T>(_functor));
+                new (m_functorStore.get()) FunctorType(::eastl::forward<T>(_functor));
 
                 m_functorObject = m_functorStore.get();
                 m_object = GetObjectAddress<FunctorType>(m_functorObject);
@@ -259,7 +259,7 @@ namespace Maze
                 m_functorStoreClearFunction(m_functorStore.get());
             }
 
-            new (m_functorStore.get()) FunctorType(::std::forward<T>(_functor));
+            new (m_functorStore.get()) FunctorType(::eastl::forward<T>(_functor));
 
             m_functorObject = m_functorStore.get();
             m_object = GetObjectAddress<FunctorType>(m_functorObject);
@@ -314,7 +314,7 @@ namespace Maze
         template <typename TFunctor>
         static Delegate From(TFunctor&& _f)
         {
-            return ::std::forward<TFunctor>(_f);
+            return ::eastl::forward<TFunctor>(_f);
         }
 
         //////////////////////////////////////////
@@ -423,7 +423,7 @@ namespace Maze
             MAZE_ERROR_RETURN_VALUE_IF(!m_stubFunction, TReturnType(), "Function is null!");
 #endif
 
-            return m_stubFunction(m_functorObject, ::std::forward<TArgs>(_args)...);
+            return m_stubFunction(m_functorObject, ::eastl::forward<TArgs>(_args)...);
         }
 
         //////////////////////////////////////////
@@ -503,28 +503,28 @@ namespace Maze
         //////////////////////////////////////////
         template <typename>
         struct IsMemberPair 
-            : std::false_type
+            : eastl::false_type
         {
         };
 
         //////////////////////////////////////////
         template <class C>
         struct IsMemberPair<::std::pair<C* const, TReturnType(C::* const)(TArgs...)>> 
-            : std::true_type
+            : eastl::true_type
         {
         };
 
         //////////////////////////////////////////
         template <typename>
         struct IsConstMemberPair 
-            : std::false_type
+            : eastl::false_type
         {
         };
 
         //////////////////////////////////////////
         template <class C>
         struct IsConstMemberPair<::std::pair<C const* const,
-            TReturnType(C::* const)(TArgs...) const>> : std::true_type
+            TReturnType(C::* const)(TArgs...) const>> : eastl::true_type
         {
         };
 
@@ -532,21 +532,21 @@ namespace Maze
         template <TReturnType(*function)(TArgs...)>
         static TReturnType StubFunctionGlobal(void* const, TArgs&&... _args)
         {
-            return function(::std::forward<TArgs>(_args)...);
+            return function(::eastl::forward<TArgs>(_args)...);
         }
 
         //////////////////////////////////////////
         template <class C, TReturnType(C::*method)(TArgs...)>
         static TReturnType StubFunctionMethod(void* const _object, TArgs&&... _args)
         {
-            return (static_cast<C*>(_object)->*method)(::std::forward<TArgs>(_args)...);
+            return (static_cast<C*>(_object)->*method)(::eastl::forward<TArgs>(_args)...);
         }
 
         //////////////////////////////////////////
         template <class C, TReturnType(C::*method)(TArgs...) const>
         static TReturnType StubFunctionMethodConst(void* const _object, TArgs&&... _args)
         {
-            return (static_cast<C const*>(_object)->*method)(::std::forward<TArgs>(_args)...);
+            return (static_cast<C const*>(_object)->*method)(::eastl::forward<TArgs>(_args)...);
         }
 
 
@@ -563,7 +563,7 @@ namespace Maze
         static typename ::std::enable_if<!(IsMemberPair<T>::value || IsConstMemberPair<T>::value), TReturnType>::type
             StubFunctionFunctor(void* const _functorObject, TArgs&&... _args)
         {
-            return (*static_cast<T*>(_functorObject))(::std::forward<TArgs>(_args)...);
+            return (*static_cast<T*>(_functorObject))(::eastl::forward<TArgs>(_args)...);
         }
 
 
@@ -587,7 +587,7 @@ namespace Maze
 #endif
 
             return (static_cast<T*>(_functorObject)->first->*
-                    static_cast<T*>(_functorObject)->second)(::std::forward<TArgs>(_args)...);
+                    static_cast<T*>(_functorObject)->second)(::eastl::forward<TArgs>(_args)...);
         }
 
     
@@ -638,14 +638,14 @@ namespace Maze
     template <class TFunctor, class TReturnType, class ...TArgs>
     inline Delegate<TReturnType, TArgs...> CreateDelegate(TFunctor&& _f)
     {
-        return Delegate<TReturnType, TArgs...>::From(::std::forward<TFunctor>(_f));
+        return Delegate<TReturnType, TArgs...>::From(::eastl::forward<TFunctor>(_f));
     }
 
     //////////////////////////////////////////
     template <class TFunctor, class ...TArgs>
     inline Delegate<void, TArgs...> CreateDelegate(TFunctor&& _f)
     {
-        return Delegate<void, TArgs...>::From(::std::forward<TFunctor>(_f));
+        return Delegate<void, TArgs...>::From(::eastl::forward<TFunctor>(_f));
     }
 
     //////////////////////////////////////////

@@ -351,7 +351,7 @@ namespace Maze
                 TTFPagePtr const& page = it->second;
                 if (page->texture)
                 {
-                    if (std::find(_result.begin(), _result.end(), page->texture) == _result.end())
+                    if (eastl::find(_result.begin(), _result.end(), page->texture) == _result.end())
                         _result.push_back(page->texture);
                 }
             }
@@ -371,7 +371,7 @@ namespace Maze
                     TTFPagePtr const& page = it->second;
                     if (page->texture)
                     {
-                        if (std::find(_result.begin(), _result.end(), page->texture) == _result.end())
+                        if (eastl::find(_result.begin(), _result.end(), page->texture) == _result.end())
                             _result.push_back(page->texture);
                     }
                 }

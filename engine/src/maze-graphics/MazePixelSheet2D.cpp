@@ -75,11 +75,11 @@ namespace Maze
 
     //////////////////////////////////////////
     PixelSheet2D::PixelSheet2D(PixelSheet2D&& _other) noexcept
-        : m_size(std::move(_other.m_size))
-        , m_data(std::move(_other.m_data))
-        , m_format(std::move(_other.m_format))
-        , m_bytesPerPixel(std::move(_other.m_bytesPerPixel))
-        , m_bytesPerRow(std::move(_other.m_bytesPerRow))
+        : m_size(eastl::move(_other.m_size))
+        , m_data(eastl::move(_other.m_data))
+        , m_format(eastl::move(_other.m_format))
+        , m_bytesPerPixel(eastl::move(_other.m_bytesPerPixel))
+        , m_bytesPerRow(eastl::move(_other.m_bytesPerRow))
     {
     }
 
@@ -103,11 +103,11 @@ namespace Maze
     //////////////////////////////////////////
     PixelSheet2D& PixelSheet2D::operator==(PixelSheet2D&& _copy) noexcept
     {
-        m_size = std::move(_copy.m_size);
-        m_data = std::move(_copy.m_data);
-        m_format = std::move(_copy.m_format);
-        m_bytesPerPixel = std::move(_copy.m_bytesPerPixel);
-        m_bytesPerRow = std::move(_copy.m_bytesPerRow);
+        m_size = eastl::move(_copy.m_size);
+        m_data = eastl::move(_copy.m_data);
+        m_format = eastl::move(_copy.m_format);
+        m_bytesPerPixel = eastl::move(_copy.m_bytesPerPixel);
+        m_bytesPerRow = eastl::move(_copy.m_bytesPerRow);
 
         return *this;
     }

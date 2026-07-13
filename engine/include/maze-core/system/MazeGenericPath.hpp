@@ -65,7 +65,7 @@ namespace Maze
 
         //////////////////////////////////////////
         inline GenericPath(TString&& _path)
-            : m_path(std::move(_path))
+            : m_path(eastl::move(_path))
         {}
 
         //////////////////////////////////////////
@@ -94,7 +94,7 @@ namespace Maze
         //////////////////////////////////////////
         inline TPath& operator=(TPath&& _value)
         {
-            setPath(std::move(_value.m_path));
+            setPath(eastl::move(_value.m_path));
             return *(TPath*)this;
         }
 
@@ -195,7 +195,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void setPath(TString&& _path)
         {
-            m_path = std::move(_path);
+            m_path = eastl::move(_path);
             m_hashDirty = true;
         }
 

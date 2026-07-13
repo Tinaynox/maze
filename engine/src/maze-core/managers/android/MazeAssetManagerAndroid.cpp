@@ -84,7 +84,7 @@ namespace Maze
                                   (std::istreambuf_iterator<S8>()));
         ifs.close();
         
-        return std::move(unpackedAssetsHash);
+        return eastl::move(unpackedAssetsHash);
     }
 
     //////////////////////////////////////////

@@ -106,7 +106,7 @@ namespace Maze
         for (Size i = 0; i < keyCount; ++i)
             times[i] = (F32)ofbx::fbxTimeToSeconds(_curve->getKeyTime()[i]);
 
-        return MeshSkeletonAnimationCurve(std::move(times), std::move(values));
+        return MeshSkeletonAnimationCurve(eastl::move(times), eastl::move(values));
     }
 
     //////////////////////////////////////////
@@ -150,10 +150,10 @@ namespace Maze
         }
 
         curve.setValues(
-            std::move(times),
-            std::move(values));
+            eastl::move(times),
+            eastl::move(values));
 
-        return std::move(curve);
+        return eastl::move(curve);
     }
 
     //////////////////////////////////////////
@@ -665,10 +665,10 @@ namespace Maze
                                     ConvertRotationToMeshSkeletonRotationCurve(rotation);
                             }
                             
-                            meshSkeletonAnimationBones.emplace_back(std::move(meshSkeletonAnimationBone));
+                            meshSkeletonAnimationBones.emplace_back(eastl::move(meshSkeletonAnimationBone));
                         }
 
-                        meshSkeletonAnimation->setBoneAnimations(std::move(meshSkeletonAnimationBones));
+                        meshSkeletonAnimation->setBoneAnimations(eastl::move(meshSkeletonAnimationBones));
                     }
                 }
             }

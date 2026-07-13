@@ -56,8 +56,8 @@ namespace Maze
     //////////////////////////////////////////
     template <class TValue>
     inline MAZE_CONSTEXPR Rect2<TValue>::Rect2(Rect2&& _rect)
-        : position(std::move(_rect.position))
-        , size(std::move(_rect.size))
+        : position(eastl::move(_rect.position))
+        , size(eastl::move(_rect.size))
     {
     
     }
@@ -99,8 +99,8 @@ namespace Maze
     template <class TValue>
     inline Rect2<TValue>& Rect2<TValue>::operator=(Rect2&& _rect)
     {
-        position = std::move(_rect.position);
-        size = std::move(_rect.size);
+        position = eastl::move(_rect.position);
+        size = eastl::move(_rect.size);
             
         return *this;
     }

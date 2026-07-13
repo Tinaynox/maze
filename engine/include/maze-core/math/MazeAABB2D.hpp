@@ -94,8 +94,8 @@ namespace Maze
         
         //////////////////////////////////////////
         inline AABB2D(AABB2D&& _aabb) noexcept
-            : m_min(std::move(_aabb.m_min))
-            , m_max(std::move(_aabb.m_max)) 
+            : m_min(eastl::move(_aabb.m_min))
+            , m_max(eastl::move(_aabb.m_max)) 
         {
             
         }
@@ -242,8 +242,8 @@ namespace Maze
         //////////////////////////////////////////
         inline AABB2D& operator=(AABB2D&& _aabb) noexcept
         {
-            m_min = std::move(_aabb.m_min);
-            m_max = std::move(_aabb.m_max);
+            m_min = eastl::move(_aabb.m_min);
+            m_max = eastl::move(_aabb.m_max);
             
             return *this;
         }

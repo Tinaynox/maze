@@ -214,9 +214,9 @@ namespace Maze
             {
                 MAZE_ERROR_IF(d == _f, "Trying to add same delegate twice!");
             }
-            m_delegatesList.emplace_back(std::forward<TFunctor>(_f));
+            m_delegatesList.emplace_back(eastl::forward<TFunctor>(_f));
 #else
-            m_delegatesList.emplace_back(std::forward<TFunctor>(_f));
+            m_delegatesList.emplace_back(eastl::forward<TFunctor>(_f));
 #endif
 
             if MAZE_CONSTEXPR17 (_updateDelegatesList)
@@ -404,7 +404,7 @@ namespace Maze
                 }
                 else
                 {
-                    delegate(::std::forward<TArgs>(_args)...);
+                    delegate(::eastl::forward<TArgs>(_args)...);
                     ++i;
                 }
             }

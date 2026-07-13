@@ -856,7 +856,7 @@ namespace Maze
             return;
 
         Vector<ColorSliderTag2DPtr>::iterator it =
-            std::find_if(
+            eastl::find_if(
                 m_alphaTags.begin(),
                 m_alphaTags.end(),
                 [_button](ColorSliderTag2DPtr const& _tag)
@@ -877,7 +877,7 @@ namespace Maze
         }
 
         it =
-            std::find_if(
+            eastl::find_if(
                 m_colorTags.begin(),
                 m_colorTags.end(),
                 [_button](ColorSliderTag2DPtr const& _tag)

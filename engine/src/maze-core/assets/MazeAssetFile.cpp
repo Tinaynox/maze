@@ -252,7 +252,7 @@ namespace Maze
     {
         DataBlock dataBlock;
         readToDataBlock(dataBlock);
-        return std::move(dataBlock);
+        return eastl::move(dataBlock);
     }
 
     //////////////////////////////////////////

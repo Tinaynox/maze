@@ -59,10 +59,10 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename T, typename = int>
-    struct HasMetaClass : std::false_type { };
+    struct HasMetaClass : eastl::false_type { };
 
     template <typename T>
-    struct HasMetaClass <T, decltype(&T::GetMetaClass, 0)> : std::true_type { };
+    struct HasMetaClass <T, decltype(&T::GetMetaClass, 0)> : eastl::true_type { };
 
     //////////////////////////////////////////
     template <typename TValue>
@@ -424,7 +424,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void collectSuperMetaClasses(Vector<MetaClass*>& _result)
         {
-            if (std::find(_result.begin(), _result.end(), this) == _result.end())
+            if (eastl::find(_result.begin(), _result.end(), this) == _result.end())
                 _result.push_back(this);
 
             for (auto superMetaClassData : getSuperMetaClassesData())
@@ -532,10 +532,10 @@ namespace Maze
         // GenericMetaClass<TClass>, this expression is evaluated with this class' (friend)
         // access, so it correctly succeeds for friended protected/private constructors.
         template <typename T, typename = void>
-        struct IsInstantiable : ::std::false_type {};
+        struct IsInstantiable : ::eastl::false_type {};
 
         template <typename T>
-        struct IsInstantiable<T, decltype(void(new T()))> : ::std::true_type {};
+        struct IsInstantiable<T, decltype(void(new T()))> : ::eastl::true_type {};
 
         //////////////////////////////////////////
         template <typename T>

@@ -114,7 +114,7 @@ namespace Maze
                     return Path();
             }
 
-            Path path = std::move(result);
+            Path path = eastl::move(result);
             NormalizeFilePath(path);
         
             return path;
@@ -146,7 +146,7 @@ namespace Maze
                 }
             }
 
-            Path path = std::move(result);
+            Path path = eastl::move(result);
             NormalizeFilePath(path);
             return path;
         }
@@ -521,7 +521,7 @@ namespace Maze
                 }
             }
 
-            Path path = std::move(buffer);
+            Path path = eastl::move(buffer);
             NormalizeFilePath(path);
         
             return path;

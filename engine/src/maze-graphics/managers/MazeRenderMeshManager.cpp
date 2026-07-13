@@ -304,7 +304,7 @@ namespace Maze
         }
 
         Vector<HashedString> loaderExtensions = MeshManager::GetInstancePtr()->getMeshLoaderExtensions();
-        if (std::find(loaderExtensions.begin(), loaderExtensions.end(), HashedString(_assetFile->getExtension())) == loaderExtensions.end())
+        if (eastl::find(loaderExtensions.begin(), loaderExtensions.end(), HashedString(_assetFile->getExtension())) == loaderExtensions.end())
             return nullPointer;
 
         RenderMeshPtr renderMesh = RenderMesh::Create(_assetFile);

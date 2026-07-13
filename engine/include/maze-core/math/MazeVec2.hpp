@@ -407,9 +407,9 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsVec2 : std::false_type {};
+    struct IsVec2 : eastl::false_type {};
     template <class TValue>
-    struct IsVec2<Maze::Vec2<TValue>> : std::true_type {};
+    struct IsVec2<Maze::Vec2<TValue>> : eastl::true_type {};
 
 
     //////////////////////////////////////////

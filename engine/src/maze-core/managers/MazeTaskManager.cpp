@@ -104,7 +104,7 @@ namespace Maze
             if (it->framesDelay <= 0)
             {
                 MAZE_MUTEX_SCOPED_LOCK(m_mainThreadTasksMutex);
-                m_mainThreadTasks.current().emplace_back(std::move(it->task));
+                m_mainThreadTasks.current().emplace_back(eastl::move(it->task));
                 it = m_delayedMainThreadTasks.erase(it);
             }
             else
@@ -148,7 +148,7 @@ namespace Maze
             std::unique_lock<std::mutex> lock(m_backgroundTasksMutex);
             m_backgroundThreadShutdown = true;
             m_backgroundTasks.clear();
-            backgroundThread = std::move(m_backgroundThread);
+            backgroundThread = eastl::move(m_backgroundThread);
         }
 
         m_backgroundTasksCondVar.notify_all();
@@ -175,7 +175,7 @@ namespace Maze
                 if (m_backgroundThreadShutdown)
                     return;
 
-                task = std::move(m_backgroundTasks.front());
+                task = eastl::move(m_backgroundTasks.front());
                 m_backgroundTasks.pop_front();
             }
 

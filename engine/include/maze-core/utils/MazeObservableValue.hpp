@@ -69,7 +69,7 @@ namespace Maze
 
         //////////////////////////////////////////
         ObservableValue(TValue&& _value)
-            : m_value(std::move(_value))
+            : m_value(eastl::move(_value))
         {}
 
         //////////////////////////////////////////

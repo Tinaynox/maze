@@ -505,9 +505,9 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsVec3 : std::false_type {};
+    struct IsVec3 : eastl::false_type {};
     template <class TValue>
-    struct IsVec3<Maze::Vec3<TValue>> : std::true_type {};
+    struct IsVec3<Maze::Vec3<TValue>> : eastl::true_type {};
 
 
     //////////////////////////////////////////

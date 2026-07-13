@@ -161,7 +161,7 @@ namespace Maze
         }
 
         StdString nameStr(_name, _len);
-        g_classUIDByName[classUID] = std::move(nameStr);
+        g_classUIDByName[classUID] = eastl::move(nameStr);
         g_classNameByUID[_name] = classUID;
 
         return classUID;

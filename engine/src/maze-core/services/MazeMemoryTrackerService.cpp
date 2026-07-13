@@ -146,7 +146,7 @@ namespace Maze
             CString allocType = alloc.type;
             Size allocBytes = alloc.bytes;
 
-            StdVector<StdPair<StdString, Size>>::iterator it2 = std::find_if(
+            StdVector<StdPair<StdString, Size>>::iterator it2 = eastl::find_if(
                 allocationByType.begin(),
                 allocationByType.end(),
                 [allocType](const StdPair< StdString, Size >& p) -> bool

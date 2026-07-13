@@ -471,16 +471,16 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <typename T, typename = int>
-    struct HasValueFromDataBlock : std::false_type { };
+    struct HasValueFromDataBlock : eastl::false_type { };
     template <typename T>
-    struct HasValueFromDataBlock <T, decltype(Maze::ValueFromDataBlock(std::declval<T&>(), std::declval<DataBlock>()), 0)> : std::true_type { };
+    struct HasValueFromDataBlock <T, decltype(Maze::ValueFromDataBlock(std::declval<T&>(), std::declval<DataBlock>()), 0)> : eastl::true_type { };
 
 
     //////////////////////////////////////////
     template <typename T, typename = int>
-    struct HasValueToDataBlock : std::false_type { };
+    struct HasValueToDataBlock : eastl::false_type { };
     template <typename T>
-    struct HasValueToDataBlock <T, decltype(Maze::ValueToDataBlock(std::declval<T>(), std::declval<DataBlock&>()), 0)> : std::true_type { };
+    struct HasValueToDataBlock <T, decltype(Maze::ValueToDataBlock(std::declval<T>(), std::declval<DataBlock&>()), 0)> : eastl::true_type { };
 
 
     //////////////////////////////////////////

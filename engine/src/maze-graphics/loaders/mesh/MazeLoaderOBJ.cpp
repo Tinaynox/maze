@@ -176,7 +176,7 @@ namespace Maze
                 case 1:
                 {
                     Vec3F finalPosition = GetElement(_positions, svert[0]);
-                    if (std::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
+                    if (eastl::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
                     {
                         Vec2F finalUV = Vec2F::c_zero;
                         noNormal = true;
@@ -191,7 +191,7 @@ namespace Maze
                 case 2:
                 {
                     Vec3F finalPosition = GetElement(_positions, svert[0]);
-                    if (std::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
+                    if (eastl::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
                     {
                         Vec2F finalUV = SubMeshHelper::NormalizeUV(GetElement(_uvs, svert[1]));
                         noNormal = true;
@@ -206,7 +206,7 @@ namespace Maze
                 case 3: 
                 {
                     Vec3F finalPosition = GetElement(_positions, svert[0]);
-                    if (std::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
+                    if (eastl::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
                     {
                         Vec2F finalUV = Vec2F::c_zero;
                         Vec3F finalNormal = GetElement(_normals, svert[2]);
@@ -222,7 +222,7 @@ namespace Maze
                 case 4:
                 {
                     Vec3F finalPosition = GetElement(_positions, svert[0]);
-                    if (std::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
+                    if (eastl::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
                     {
                         Vec2F finalUV = SubMeshHelper::NormalizeUV(GetElement(_uvs, svert[1]));
                         Vec3F finalNormal = GetElement(_normals, svert[2]);

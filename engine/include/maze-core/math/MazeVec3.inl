@@ -111,9 +111,9 @@ namespace Maze
     //////////////////////////////////////////
     template <class TValue>
     inline MAZE_CONSTEXPR Vec3<TValue>::Vec3(Vec3&& _vec) noexcept
-        : x(std::move(_vec.x))
-        , y(std::move(_vec.y))
-        , z(std::move(_vec.z))
+        : x(eastl::move(_vec.x))
+        , y(eastl::move(_vec.y))
+        , z(eastl::move(_vec.z))
     {
     }
 
@@ -246,9 +246,9 @@ namespace Maze
     template <class TValue>
     inline Vec3<TValue>& Vec3<TValue>::operator=(Vec3<TValue>&& _vec) noexcept
     {
-        x = std::move(_vec.x);
-        y = std::move(_vec.y);
-        z = std::move(_vec.z);
+        x = eastl::move(_vec.x);
+        y = eastl::move(_vec.y);
+        z = eastl::move(_vec.z);
             
         return *this;
     }

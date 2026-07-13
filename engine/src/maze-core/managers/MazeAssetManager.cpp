@@ -635,7 +635,7 @@ namespace Maze
                   it != end;)
         {
             Path const& fullPath = *it;
-            bool isSubDirectory = std::find_if(
+            bool isSubDirectory = eastl::find_if(
                 result.begin(),
                 result.end(),
                 [&fullPath](Path const& _fullPath)

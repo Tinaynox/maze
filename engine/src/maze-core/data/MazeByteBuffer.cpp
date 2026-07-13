@@ -68,9 +68,9 @@ namespace Maze
 
     //////////////////////////////////////////
     ByteBuffer::ByteBuffer(ByteBuffer&& _byteBuffer) noexcept
-        : m_data(std::move(_byteBuffer.m_data))
-        , m_size(std::move(_byteBuffer.m_size))
-        , m_capacity(std::move(_byteBuffer.m_capacity))
+        : m_data(eastl::move(_byteBuffer.m_data))
+        , m_size(eastl::move(_byteBuffer.m_size))
+        , m_capacity(eastl::move(_byteBuffer.m_capacity))
     {
         _byteBuffer.m_data = nullptr;
         _byteBuffer.m_size = 0;

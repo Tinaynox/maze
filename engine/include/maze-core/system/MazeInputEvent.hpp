@@ -266,35 +266,35 @@ namespace Maze
         //////////////////////////////////////////
         InputEvent(InputEventMouseData&& _event) noexcept
             : type(InputEventType::Mouse)
-            , mouse(std::move(_event))
+            , mouse(eastl::move(_event))
         {
         }
 
         //////////////////////////////////////////
         InputEvent(InputEventKeyboardData&& _event) noexcept
             : type(InputEventType::Keyboard)
-            , keyboard(std::move(_event))
+            , keyboard(eastl::move(_event))
         {
         }
 
         //////////////////////////////////////////
         InputEvent(InputEventTouchData&& _event) noexcept
             : type(InputEventType::Touch)
-            , touch(std::move(_event))
+            , touch(eastl::move(_event))
         {
         }
 
         //////////////////////////////////////////
         InputEvent(InputEventVirtualCursorData&& _event) noexcept
             : type(InputEventType::VirtualCursor)
-            , virtualCursor(std::move(_event))
+            , virtualCursor(eastl::move(_event))
         {
         }
 
         //////////////////////////////////////////
         InputEvent(InputEventTextData&& _event) noexcept
             : type(InputEventType::Text)
-            , text(std::move(_event))
+            , text(eastl::move(_event))
         {
         }
 

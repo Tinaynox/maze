@@ -179,7 +179,7 @@ namespace Maze
         template<typename... TArgs>
         void construct(pointer _p, TArgs&&... _args)
         {
-            new (static_cast<void*>(_p)) TValue(std::forward<TArgs>(_args)...);
+            new (static_cast<void*>(_p)) TValue(eastl::forward<TArgs>(_args)...);
         }
         
         //////////////////////////////////////////

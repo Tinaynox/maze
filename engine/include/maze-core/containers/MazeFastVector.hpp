@@ -274,7 +274,7 @@ namespace Maze
         inline void emplace_back(Args&&... _args)
         {
             growToFit(1);
-            new (&m_data[m_size]) T(std::forward<Args>(_args)...);
+            new (&m_data[m_size]) T(eastl::forward<Args>(_args)...);
             ++m_size;
         }
 
@@ -402,13 +402,13 @@ namespace Maze
         //////////////////////////////////////////
         inline iterator find(T const& _val)
         { 
-            return std::find(begin(), end(), _val); 
+            return eastl::find(begin(), end(), _val); 
         }
 
         //////////////////////////////////////////
         inline const_iterator find(T const& _val) const
         { 
-            return std::find(begin(), end(), _val); 
+            return eastl::find(begin(), end(), _val); 
         }
 
         //////////////////////////////////////////
@@ -527,7 +527,7 @@ namespace Maze
         {
             if (m_size + _newElements > m_capacity)
             {
-                m_capacity = std::max(m_size + _newElements, m_capacity + (m_capacity >> 1) + 1);
+                m_capacity = eastl::max(m_size + _newElements, m_capacity + (m_capacity >> 1) + 1);
 
 #if (MAZE_FAST_ARRAY_USE_CUSTOM_ALLOCATOR)
 #    if (MAZE_DEBUG_MEMORY)
@@ -565,7 +565,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class _Ty>
-    struct IsVector<Maze::FastVector<_Ty>> : std::true_type {};
+    struct IsVector<Maze::FastVector<_Ty>> : eastl::true_type {};
 
     
 } // namespace Maze

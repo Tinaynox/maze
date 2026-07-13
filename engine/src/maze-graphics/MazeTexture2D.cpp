@@ -300,7 +300,7 @@ namespace Maze
     {
         PixelSheet2D sheet;
         readAsPixelSheet(sheet, _outputFormat);
-        return std::move(sheet);
+        return eastl::move(sheet);
     }
 
 

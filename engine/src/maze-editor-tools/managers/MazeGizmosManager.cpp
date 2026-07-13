@@ -386,7 +386,7 @@ namespace Maze
             if (m_defaultGizmosSprites[(Size)spriteType])
             {
                 HashedString name = HashedString("DefaultGizmosSprite_" + DefaultGizmosSprite(spriteType).toString());
-                m_defaultGizmosSprites[(Size)spriteType]->setName(std::move(name));
+                m_defaultGizmosSprites[(Size)spriteType]->setName(eastl::move(name));
                 m_defaultGizmosSprites[(Size)spriteType]->updateTextureCoords();
             }
         }

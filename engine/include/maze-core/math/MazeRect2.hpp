@@ -200,9 +200,9 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsRect2 : std::false_type {};
+    struct IsRect2 : eastl::false_type {};
     template <class TValue>
-    struct IsRect2<Maze::Rect2<TValue>> : std::true_type {};
+    struct IsRect2<Maze::Rect2<TValue>> : eastl::true_type {};
 
 
     //////////////////////////////////////////

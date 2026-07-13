@@ -328,7 +328,7 @@ namespace Maze
         }
 
 
-        return std::move(db);
+        return eastl::move(db);
     }
 
 
@@ -400,7 +400,7 @@ namespace Maze
         }
 
 
-        return std::move(db);
+        return eastl::move(db);
     }
 
     //////////////////////////////////////////

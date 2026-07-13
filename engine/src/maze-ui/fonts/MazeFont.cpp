@@ -404,7 +404,7 @@ namespace Maze
             return it->second;
 
         Vector<FontGlyphStorageData>::iterator it2 =
-            std::find_if(
+            eastl::find_if(
                 m_glyphsData.begin(),
                 m_glyphsData.end(),
                 [_codePoint](FontGlyphStorageData const& _data) -> bool

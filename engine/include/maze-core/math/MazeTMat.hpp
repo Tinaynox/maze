@@ -326,9 +326,9 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsTMat : std::false_type {};
+    struct IsTMat : eastl::false_type {};
     template <>
-    struct IsTMat<Maze::TMat> : std::true_type {};
+    struct IsTMat<Maze::TMat> : eastl::true_type {};
 
 
     //////////////////////////////////////////

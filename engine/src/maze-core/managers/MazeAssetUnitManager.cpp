@@ -200,7 +200,7 @@ namespace Maze
             auto it = m_assetUnitsById.find(evt->getPrevAssetUnitId());
             if (it != m_assetUnitsById.end())
             {
-                AssetUnitPtr assetUnit = std::move(it->second);
+                AssetUnitPtr assetUnit = eastl::move(it->second);
                 
                 m_assetUnitsById.erase(it);
 
@@ -209,7 +209,7 @@ namespace Maze
                     m_assetUnitsById.emplace(
                         eastl::piecewise_construct,
                         eastl::forward_as_tuple(evt->getNewAssetUnitId()),
-                        eastl::forward_as_tuple(std::move(assetUnit)));
+                        eastl::forward_as_tuple(eastl::move(assetUnit)));
                 }
                 else
                 {
@@ -225,7 +225,7 @@ namespace Maze
             auto it = m_assetUnitsByName.find(evt->getPrevName());
             if (it != m_assetUnitsByName.end())
             {
-                AssetUnitPtr assetUnit = std::move(it->second);
+                AssetUnitPtr assetUnit = eastl::move(it->second);
 
                 m_assetUnitsByName.erase(it);
 
@@ -233,7 +233,7 @@ namespace Maze
                 {
                     m_assetUnitsByName.emplace(
                         evt->getNewName(),
-                        std::move(assetUnit));
+                        eastl::move(assetUnit));
                 }
                 else
                 {

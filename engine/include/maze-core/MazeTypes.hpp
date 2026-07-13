@@ -79,9 +79,9 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsString : std::false_type {};
+    struct IsString : eastl::false_type {};
     template <>
-    struct IsString<Maze::String> : std::true_type {};
+    struct IsString<Maze::String> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -109,9 +109,9 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsWString : std::false_type {};
+    struct IsWString : eastl::false_type {};
     template <>
-    struct IsWString<Maze::WString> : std::true_type {};
+    struct IsWString<Maze::WString> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -129,11 +129,11 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsArray : std::false_type {};
+    struct IsArray : eastl::false_type {};
     template <
         class _Ty,
         size_t _Size>
-    struct IsArray<Maze::Array<_Ty, _Size>> : std::true_type {};
+    struct IsArray<Maze::Array<_Ty, _Size>> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -145,9 +145,9 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsVector : std::false_type {};
+    struct IsVector : eastl::false_type {};
     template <class _Ty>
-    struct IsVector<Maze::Vector<_Ty>> : std::true_type {};
+    struct IsVector<Maze::Vector<_Ty>> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -159,9 +159,9 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsList : std::false_type {};
+    struct IsList : eastl::false_type {};
     template <class _Ty>
-    struct IsList<Maze::List<_Ty>> : std::true_type {};
+    struct IsList<Maze::List<_Ty>> : eastl::true_type {};
 
     //////////////////////////////////////////
     // Pair
@@ -174,11 +174,11 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsPair : std::false_type {};
+    struct IsPair : eastl::false_type {};
     template <
         class _Ty1,
         class _Ty2>
-    struct IsPair<Maze::Pair<_Ty1, _Ty2>> : std::true_type {};
+    struct IsPair<Maze::Pair<_Ty1, _Ty2>> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -193,12 +193,12 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsMap : std::false_type {};
+    struct IsMap : eastl::false_type {};
     template <
         class _Kty,
         class _Ty,
         class _Pr>
-        struct IsMap<Maze::Map<_Kty, _Ty, _Pr>> : std::true_type {};
+        struct IsMap<Maze::Map<_Kty, _Ty, _Pr>> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -213,12 +213,12 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsMultiMap : std::false_type {};
+    struct IsMultiMap : eastl::false_type {};
     template <
         class _Kty,
         class _Ty,
         class _Pr>
-        struct IsMultiMap<Maze::MultiMap<_Kty, _Ty, _Pr>> : std::true_type {};
+        struct IsMultiMap<Maze::MultiMap<_Kty, _Ty, _Pr>> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -234,13 +234,13 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsUnorderedMap : std::false_type {};
+    struct IsUnorderedMap : eastl::false_type {};
     template <
         class _Kty,
         class _Ty,
         class _Hasher,
         class _Keyeq>
-        struct IsUnorderedMap<Maze::UnorderedMap<_Kty, _Ty, _Hasher, _Keyeq>> : std::true_type {};
+        struct IsUnorderedMap<Maze::UnorderedMap<_Kty, _Ty, _Hasher, _Keyeq>> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -254,11 +254,11 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsSet : std::false_type {};
+    struct IsSet : eastl::false_type {};
     template <
         class _Kty,
         class _Pr>
-        struct IsSet<Maze::Set<_Kty, _Pr>> : std::true_type {};
+        struct IsSet<Maze::Set<_Kty, _Pr>> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -272,11 +272,11 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsMultiSet : std::false_type {};
+    struct IsMultiSet : eastl::false_type {};
     template <
         class _Kty,
         class _Pr>
-        struct IsMultiSet<Maze::MultiSet<_Kty, _Pr>> : std::true_type {};
+        struct IsMultiSet<Maze::MultiSet<_Kty, _Pr>> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -288,10 +288,10 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsDeque : std::false_type {};
+    struct IsDeque : eastl::false_type {};
     template <
         class _Ty>
-        struct IsDeque<Maze::Deque<_Ty>> : std::true_type {};
+        struct IsDeque<Maze::Deque<_Ty>> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -303,10 +303,10 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsStack : std::false_type {};
+    struct IsStack : eastl::false_type {};
     template <
         class _Ty>
-        struct IsStack<Maze::Stack<_Ty>> : std::true_type {};
+        struct IsStack<Maze::Stack<_Ty>> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -318,10 +318,10 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsQueue : std::false_type {};
+    struct IsQueue : eastl::false_type {};
     template <
         class _Ty>
-        struct IsQueue<Maze::Queue<_Ty>> : std::true_type {};
+        struct IsQueue<Maze::Queue<_Ty>> : eastl::true_type {};
 
 
     //////////////////////////////////////////
@@ -335,7 +335,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class _Ty, typename ...Args>
-    inline UniquePtr<_Ty> MakeUnique(Args&& ..._args) { return UniquePtr<_Ty>(new _Ty(std::forward<Args>(_args)...)); }
+    inline UniquePtr<_Ty> MakeUnique(Args&& ..._args) { return UniquePtr<_Ty>(new _Ty(eastl::forward<Args>(_args)...)); }
 
 
     //////////////////////////////////////////
@@ -347,9 +347,9 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsSharedPtr : std::false_type {};
+    struct IsSharedPtr : eastl::false_type {};
     template <class _Ty>
-    struct IsSharedPtr<Maze::SharedPtr<_Ty>> : std::true_type {};
+    struct IsSharedPtr<Maze::SharedPtr<_Ty>> : eastl::true_type {};
 
     //////////////////////////////////////////
     template <class _Ty>
@@ -357,16 +357,16 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsWeakPtr : std::false_type {};
+    struct IsWeakPtr : eastl::false_type {};
     template <class _Ty>
-    struct IsWeakPtr<Maze::WeakPtr<_Ty>> : std::true_type {};
+    struct IsWeakPtr<Maze::WeakPtr<_Ty>> : eastl::true_type {};
 
 
     //////////////////////////////////////////
     template <class T, class... Args>
     SharedPtr<T> MakeShared(Args&&... args)
     {
-        return eastl::allocate_shared<T>(GetDefaultEastlNedAllocator(), std::forward<Args>(args)...);
+        return eastl::allocate_shared<T>(GetDefaultEastlNedAllocator(), eastl::forward<Args>(args)...);
     }
 
 

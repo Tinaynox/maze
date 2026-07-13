@@ -912,9 +912,9 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename>
-    struct IsDataBlock : std::false_type {};
+    struct IsDataBlock : eastl::false_type {};
     template <>
-    struct IsDataBlock<DataBlock> : std::true_type {};
+    struct IsDataBlock<DataBlock> : eastl::true_type {};
 
 
 } // namespace Maze

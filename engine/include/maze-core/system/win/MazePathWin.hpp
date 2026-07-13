@@ -62,13 +62,13 @@ namespace Maze
         inline PathWin(PathWin const& _value) : ParentClass(_value) {}
 
         //////////////////////////////////////////
-        inline PathWin(PathWin&& _value) noexcept : ParentClass(std::move(_value)) {}
+        inline PathWin(PathWin&& _value) noexcept : ParentClass(eastl::move(_value)) {}
 
         //////////////////////////////////////////
         inline PathWin(WString const& _path) : ParentClass(_path) {}
 
         //////////////////////////////////////////
-        inline PathWin(WString&& _path) : ParentClass(std::move(_path)) {}
+        inline PathWin(WString&& _path) : ParentClass(eastl::move(_path)) {}
 
         //////////////////////////////////////////
         inline PathWin(ParentClass::CharType const* _path) : ParentClass(_path) {}
@@ -90,7 +90,7 @@ namespace Maze
         inline PathWin& operator=(PathWin const& _value) { return ParentClass::operator=(_value); }
 
         //////////////////////////////////////////
-        inline PathWin& operator=(PathWin&& _value) noexcept { return ParentClass::operator=(std::move(_value)); }
+        inline PathWin& operator=(PathWin&& _value) noexcept { return ParentClass::operator=(eastl::move(_value)); }
 
 
         //////////////////////////////////////////

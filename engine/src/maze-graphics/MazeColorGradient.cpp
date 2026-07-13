@@ -113,7 +113,7 @@ namespace Maze
         std::function<FastVector<Pair<F32, Vec4F>>::iterator(F32 _time)> findKeyframe =
             [&](F32 _time)
             {
-                return std::find_if(
+                return eastl::find_if(
                     result.begin(),
                     result.end(),
                     [_time](Pair<F32, Vec4F> const& _value)

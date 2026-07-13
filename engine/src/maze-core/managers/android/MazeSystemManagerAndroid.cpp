@@ -509,7 +509,7 @@ namespace Maze
 
         getJavaVM()->DetachCurrentThread();
 
-        return std::move(result);
+        return eastl::move(result);
     }
 
     ///////////////////////////////////////

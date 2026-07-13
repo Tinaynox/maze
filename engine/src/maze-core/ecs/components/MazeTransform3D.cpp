@@ -260,7 +260,7 @@ namespace Maze
 
         if (m_parent)
             m_parent->m_children.erase(
-                std::find(
+                eastl::find(
                     m_parent->m_children.begin(),
                     m_parent->m_children.end(),
                     this));

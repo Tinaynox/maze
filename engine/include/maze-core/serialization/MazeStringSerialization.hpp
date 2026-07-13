@@ -466,15 +466,15 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <typename T, typename = int>
-    struct HasValueFromString : std::false_type { };
+    struct HasValueFromString : eastl::false_type { };
     template <typename T>
-    struct HasValueFromString <T, decltype(Maze::ValueFromString(std::declval<T&>(), std::declval<CString>(), std::declval<Size>()), 0)> : std::true_type { };
+    struct HasValueFromString <T, decltype(Maze::ValueFromString(std::declval<T&>(), std::declval<CString>(), std::declval<Size>()), 0)> : eastl::true_type { };
 
     //////////////////////////////////////////
     template <typename T, typename = int>
-    struct HasValueToString : std::false_type { };
+    struct HasValueToString : eastl::false_type { };
     template <typename T>
-    struct HasValueToString <T, decltype(Maze::ValueToString(std::declval<T>(), std::declval<String&>()), 0)> : std::true_type { };
+    struct HasValueToString <T, decltype(Maze::ValueToString(std::declval<T>(), std::declval<String&>()), 0)> : eastl::true_type { };
 
 
     //////////////////////////////////////////

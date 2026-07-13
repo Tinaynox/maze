@@ -198,7 +198,7 @@ namespace Maze
         _entity->setEcsWorld(m_world);
 
 #if (MAZE_DEBUG)
-        MAZE_BP_IF(std::find(
+        MAZE_BP_IF(eastl::find(
             m_addingEntities.begin(),
             m_addingEntities.end(),
             _entity) != m_addingEntities.end());
@@ -235,7 +235,7 @@ namespace Maze
     //////////////////////////////////////////
     bool EcsWorldEventsQueue::addBroadcastEvent(EventUPtr&& _event)
     {
-        m_broadcastEvents.emplace(std::move(_event));
+        m_broadcastEvents.emplace(eastl::move(_event));
         m_eventTypes.push(EcsWorldEventType::Broadcast);
         return true;
     }
@@ -243,7 +243,7 @@ namespace Maze
     //////////////////////////////////////////
     bool EcsWorldEventsQueue::addUnicastEvent(EntityId _eid, EventUPtr&& _event)
     {
-        m_unicastEvents.emplace(_eid, std::move(_event));
+        m_unicastEvents.emplace(_eid, eastl::move(_event));
         m_eventTypes.push(EcsWorldEventType::Unicast);
         return true;
     }
@@ -454,7 +454,7 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("EcsWorldEventsQueue::invokeBroadcastEvent");
 
-        EventUPtr evt = std::move(m_broadcastEvents.front());
+        EventUPtr evt = eastl::move(m_broadcastEvents.front());
         m_broadcastEvents.pop();
 
         m_world->broadcastEventImmediate(evt.get());
@@ -465,7 +465,7 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("EcsWorldEventsQueue::invokeUnicastEvent");
 
-        std::pair<EntityId, EventUPtr> evt = std::move(m_unicastEvents.front());
+        std::pair<EntityId, EventUPtr> evt = eastl::move(m_unicastEvents.front());
         m_unicastEvents.pop();
 
         m_world->sendEventImmediate(evt.first, evt.second.get());

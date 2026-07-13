@@ -121,7 +121,7 @@ namespace Maze
         template <typename TInputEvent>
         inline void generateInputEvent(TInputEvent&& _event)
         {
-            m_inputEventsPool[m_inputEventsIndex].generateEvent(std::move(_event));
+            m_inputEventsPool[m_inputEventsIndex].generateEvent(eastl::move(_event));
         }
 
         //////////////////////////////////////////

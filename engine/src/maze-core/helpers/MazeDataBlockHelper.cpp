@@ -208,7 +208,7 @@ namespace Maze
             {
                 String properyStringValue;
                 _metaProperty->toString(_metaInstance, properyStringValue);
-                _dataBlock.setString(_propertyName, std::move(properyStringValue));
+                _dataBlock.setString(_propertyName, eastl::move(properyStringValue));
             }
         }
 

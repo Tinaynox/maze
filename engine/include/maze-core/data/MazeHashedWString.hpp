@@ -92,8 +92,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline HashedWString(HashedWString&& _other) noexcept
-            : m_string(std::move(_other.m_string))
-            , m_hash(std::move(_other.m_hash))
+            : m_string(eastl::move(_other.m_string))
+            , m_hash(eastl::move(_other.m_hash))
         {}
 
         //////////////////////////////////////////
@@ -137,8 +137,8 @@ namespace Maze
         //////////////////////////////////////////
         inline HashedWString& operator=(HashedWString&& _other) noexcept
         {
-            m_string = std::move(_other.m_string);
-            m_hash = std::move(_other.m_hash);
+            m_string = eastl::move(_other.m_string);
+            m_hash = eastl::move(_other.m_hash);
             return *this;
         }
 

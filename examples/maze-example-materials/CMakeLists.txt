@@ -47,10 +47,10 @@ set(EXAMPLE_MAZE_LIBS
 
 ##########################################
 # Compile the DX11 render system plugin for this example (if the DX SDK is available)
-set(MAZE_RENDER_SYSTEM_DX11_REQUESTED OFF)
+set(MAZE_RENDER_SYSTEM_DX11_REQUESTED ON)
 
 # Compile the Vulkan render system plugin for this example (if the Vulkan SDK is available)
-set(MAZE_RENDER_SYSTEM_VULKAN_REQUESTED OFF)
+set(MAZE_RENDER_SYSTEM_VULKAN_REQUESTED ON)
 
 
 ##########################################

@@ -458,7 +458,7 @@ namespace Maze
     //////////////////////////////////////////
     String DataBlock::toString(U32 _flags) const
     {
-        return std::move(DataBlockTextSerialization::SaveText(*this, _flags));
+        return eastl::move(DataBlockTextSerialization::SaveText(*this, _flags));
     }
 
     //////////////////////////////////////////
@@ -970,7 +970,7 @@ namespace Maze
                 result.push_back(getSharedCString((DataBlock::SharedStringId)param.value));
         }
 
-        return std::move(result);
+        return eastl::move(result);
     }
 
     //////////////////////////////////////////
@@ -999,7 +999,7 @@ namespace Maze
                 result.push_back(getSharedCString((DataBlock::SharedStringId)param.value));
         }
 
-        return std::move(result);
+        return eastl::move(result);
     }
 
     //////////////////////////////////////////
@@ -1028,7 +1028,7 @@ namespace Maze
                 result.insert(getSharedCString((DataBlock::SharedStringId)param.value));
         }
 
-        return std::move(result);
+        return eastl::move(result);
     }
 
     //////////////////////////////////////////

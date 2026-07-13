@@ -279,7 +279,7 @@ namespace Maze
                 return false;
 
             S32 point = 1;
-            return std::find_if(
+            return eastl::find_if(
                 it,
                 end,
                 [&point](S8 _c)
@@ -505,7 +505,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseS8(Char const* _str, Size _size, S8& _value)
         {
-            return ParseInteger<S8>(_str, std::min(_size, (Size)4u), _value);
+            return ParseInteger<S8>(_str, eastl::min(_size, (Size)4u), _value);
         }
 
         //////////////////////////////////////////
@@ -533,7 +533,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseU8(Char const* _str, Size _size, U8& _value)
         {
-            return ParseInteger<U8>(_str, std::min(_size, (Size)4u), _value);
+            return ParseInteger<U8>(_str, eastl::min(_size, (Size)4u), _value);
         }
 
         //////////////////////////////////////////
@@ -561,7 +561,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseS16(Char const* _str, Size _size, S16& _value)
         {
-            return ParseInteger<S16>(_str, std::min(_size, (Size)6u), _value);
+            return ParseInteger<S16>(_str, eastl::min(_size, (Size)6u), _value);
         }
 
         //////////////////////////////////////////
@@ -589,7 +589,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseU16(Char const* _str, Size _size, U16& _value)
         {
-            return ParseInteger<U16>(_str, std::min(_size, (Size)6u), _value);
+            return ParseInteger<U16>(_str, eastl::min(_size, (Size)6u), _value);
         }
 
         //////////////////////////////////////////
@@ -617,7 +617,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseS32(Char const* _str, Size _size, S32& _value)
         {
-            return ParseInteger<S32>(_str, std::min(_size, (Size)11u), _value);
+            return ParseInteger<S32>(_str, eastl::min(_size, (Size)11u), _value);
         }
 
         //////////////////////////////////////////
@@ -645,7 +645,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseU32(Char const* _str, Size _size, U32& _value)
         {
-            return ParseInteger<U32>(_str, std::min(_size, (Size)11u), _value);
+            return ParseInteger<U32>(_str, eastl::min(_size, (Size)11u), _value);
         }
 
         //////////////////////////////////////////
@@ -673,7 +673,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseS64(Char const* _str, Size _size, S64& _value)
         {
-            return ParseInteger<S64>(_str, std::min(_size, (Size)20u), _value);
+            return ParseInteger<S64>(_str, eastl::min(_size, (Size)20u), _value);
         }
 
         //////////////////////////////////////////
@@ -689,7 +689,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseU64(Char const* _str, Size _size, U64& _value)
         {
-            return ParseInteger<U64>(_str, std::min(_size, (Size)20u), _value);
+            return ParseInteger<U64>(_str, eastl::min(_size, (Size)20u), _value);
         }
 
         //////////////////////////////////////////
@@ -1355,7 +1355,7 @@ namespace Maze
         inline bool IsNumber(TString const& _s) noexcept
         {
             return !_s.empty()
-                && std::find_if(
+                && eastl::find_if(
                     _s.begin(),
                     _s.end(),
                     [](TChar _c)

@@ -225,7 +225,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderController::addRenderTarget(RenderTarget* _renderTarget)
     {
-        auto it = std::find(
+        auto it = eastl::find(
             m_renderTargets.begin(),
             m_renderTargets.end(),
             _renderTarget);
@@ -242,7 +242,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderController::removeRenderTarget(RenderTarget* _renderTarget)
     {
-        auto it = std::find(
+        auto it = eastl::find(
             m_renderTargets.begin(),
             m_renderTargets.end(),
             _renderTarget);

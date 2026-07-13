@@ -262,7 +262,7 @@ namespace Maze
         struct EntityData
         {
             Entity* entity = nullptr;
-            std::tuple<TComponents*...> components;
+            eastl::tuple<TComponents*...> components;
         };
 
     public:
@@ -477,16 +477,16 @@ namespace Maze
         template<std::size_t TIndex = 0>
         inline
         typename std::enable_if<TIndex == sizeof...(TComponents), void>::type
-        extractComponents(Entity* entity, std::tuple<TComponents*...>& _components)
+        extractComponents(Entity* entity, eastl::tuple<TComponents*...>& _components)
         {}
 
         template<std::size_t TIndex = 0>
         inline
         typename std::enable_if<TIndex < sizeof...(TComponents), void>::type
-        extractComponents(Entity* entity, std::tuple<TComponents*...>& _components)
+        extractComponents(Entity* entity, eastl::tuple<TComponents*...>& _components)
         {
-            using TComponentType = typename std::tuple_element<TIndex, std::tuple<TComponents...> >::type;
-            std::get<TIndex>(_components) = entity->getComponentRaw<TComponentType>();
+            using TComponentType = typename eastl::tuple_element<TIndex, eastl::tuple<TComponents...> >::type;
+            eastl::get<TIndex>(_components) = entity->getComponentRaw<TComponentType>();
 
             this->extractComponents<TIndex + 1>(entity, _components);
         }
@@ -495,20 +495,20 @@ namespace Maze
         inline void callQuery(
             QueryFunc _func,
             Entity* _entity,
-            std::tuple<TComponents*...>& _components,
+            eastl::tuple<TComponents*...>& _components,
             IndexesTuple<Idxs...> const&)
         {
-            _func(_entity, std::get<Idxs>(_components)...);
+            _func(_entity, eastl::get<Idxs>(_components)...);
         }
 
         template<S32 ...Idxs>
         inline bool callFindQuery(
             FindQueryFunc _func,
             Entity* _entity,
-            std::tuple<TComponents*...>& _components,
+            eastl::tuple<TComponents*...>& _components,
             IndexesTuple<Idxs...> const&)
         {
-            return _func(_entity, std::get<Idxs>(_components)...);
+            return _func(_entity, eastl::get<Idxs>(_components)...);
         }
 
         template<S32 ...Idxs>
@@ -516,10 +516,10 @@ namespace Maze
             Event* _event,
             ProcessEventFunc _func,
             Entity* _entity,
-            std::tuple<TComponents*...>& _components,
+            eastl::tuple<TComponents*...>& _components,
             IndexesTuple<Idxs...> const&)
         {
-            _func(*_event, _entity, std::get<Idxs>(_components)...);
+            _func(*_event, _entity, eastl::get<Idxs>(_components)...);
         }
 
 
@@ -554,7 +554,7 @@ namespace Maze
             IndexesTuple<Idxs...> const&)
         {
             eventEntityAdded(_entityData.entity);
-            eventEntityWithComponentsAdded(_entityData.entity, std::get<Idxs>(_entityData.components)...);
+            eventEntityWithComponentsAdded(_entityData.entity, eastl::get<Idxs>(_entityData.components)...);
         }
 
         //////////////////////////////////////////
@@ -564,7 +564,7 @@ namespace Maze
             IndexesTuple<Idxs...> const&)
         {
             eventEntityRemoved(_entityData.entity);
-            eventEntityWithComponentsRemoved(_entityData.entity, std::get<Idxs>(_entityData.components)...);
+            eventEntityWithComponentsRemoved(_entityData.entity, eastl::get<Idxs>(_entityData.components)...);
         }
 
     protected:

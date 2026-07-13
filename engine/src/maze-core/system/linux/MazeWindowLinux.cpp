@@ -1303,7 +1303,7 @@ namespace Maze
     {
         if (windowEvent.type == KeyRelease)
         {
-            Deque<XEvent>::iterator iter = std::find_if(
+            Deque<XEvent>::iterator iter = eastl::find_if(
                 m_events.begin(),
                 m_events.end(),
                 KeyRepeatFinder(windowEvent.xkey.keycode, windowEvent.xkey.time));

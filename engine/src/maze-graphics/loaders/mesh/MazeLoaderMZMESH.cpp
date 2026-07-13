@@ -86,7 +86,7 @@ namespace Maze
             _bytesRead += _fileData.read(_bytesRead, values.begin(), keysCount * sizeof(F32));
         }
 
-        return MeshSkeletonAnimationCurve(std::move(times), std::move(values));
+        return MeshSkeletonAnimationCurve(eastl::move(times), eastl::move(values));
     }
 
     //////////////////////////////////////////
@@ -106,7 +106,7 @@ namespace Maze
             _bytesRead += _fileData.read(_bytesRead, values.begin(), keysCount * sizeof(Quaternion));
         }
 
-        return MeshSkeletonRotationCurve(std::move(times), std::move(values));
+        return MeshSkeletonRotationCurve(eastl::move(times), eastl::move(values));
     }
 
 
@@ -285,7 +285,7 @@ namespace Maze
                         boneAnimation.scale[axis] = LoadMZMESHAnimationCurve(_fileData, bytesRead);
                 }
 
-                animation->setBoneAnimations(std::move(boneAnimations));
+                animation->setBoneAnimations(eastl::move(boneAnimations));
             }
 
             // End tag

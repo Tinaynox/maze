@@ -381,7 +381,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <>
-    struct IsVec4<Vec4B> : std::true_type {};
+    struct IsVec4<Vec4B> : eastl::true_type {};
 
 
     //////////////////////////////////////////

@@ -59,7 +59,7 @@ namespace Maze
     {
         if (spriteGlyph.texture)
         {
-            if (std::find(_result.begin(), _result.end(), spriteGlyph.texture) == _result.end())
+            if (eastl::find(_result.begin(), _result.end(), spriteGlyph.texture) == _result.end())
                 _result.push_back(spriteGlyph.texture);
         }
     }

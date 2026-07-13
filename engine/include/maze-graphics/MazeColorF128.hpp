@@ -162,7 +162,7 @@ namespace Maze
         //////////////////////////////////////////
         inline ColorF128& operator=(ColorF128&& _vec) noexcept
         {
-            value = std::move(_vec.value);
+            value = eastl::move(_vec.value);
             return *this;
         }
 

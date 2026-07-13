@@ -132,7 +132,7 @@ namespace Maze
             {
                 
                 Set<HashedString> const& tags = particleSystem->getEntityRaw()->getEcsWorld()->getTags();
-                if (std::find_if(
+                if (eastl::find_if(
                     tags.begin(),
                     tags.end(),
                     [](HashedString const& _str)

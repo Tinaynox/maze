@@ -407,7 +407,7 @@ namespace Maze
     //////////////////////////////////////////
     void InspectorManager::removeAddComponentCallback(String const& _menuName)
     {
-        auto it = std::find_if(
+        auto it = eastl::find_if(
             m_extraAddComponentCallbacks.begin(),
             m_extraAddComponentCallbacks.end(),
             [&](AddComponentCallback const& _callback)

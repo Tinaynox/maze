@@ -66,7 +66,7 @@ namespace Maze
     //////////////////////////////////////////
     void EditorActionActionsGroup::addAction(EditorActionPtr const& _action)
     {
-        MAZE_DEBUG_BP_RETURN_IF(std::find(m_actions.begin(), m_actions.end(), _action) != m_actions.end());
+        MAZE_DEBUG_BP_RETURN_IF(eastl::find(m_actions.begin(), m_actions.end(), _action) != m_actions.end());
 
         m_actions.push_back(_action);
     }

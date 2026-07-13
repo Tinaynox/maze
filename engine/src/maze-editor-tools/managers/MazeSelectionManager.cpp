@@ -134,7 +134,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SelectionManager::isObjectSelected(EntityPtr const& _object) const
     {
-        Set<EntityPtr>::const_iterator it = std::find(
+        Set<EntityPtr>::const_iterator it = eastl::find(
             m_selectedEntities.begin(),
             m_selectedEntities.end(),
             _object);
@@ -145,7 +145,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SelectionManager::isObjectSelected(EntityId _eid) const
     {
-        Set<EntityPtr>::const_iterator it = std::find_if(
+        Set<EntityPtr>::const_iterator it = eastl::find_if(
             m_selectedEntities.begin(),
             m_selectedEntities.end(),
             [_eid](EntityPtr const& _entity) { return _entity->getId() == _eid; });
@@ -213,7 +213,7 @@ namespace Maze
         EntityPtr const& _object,
         bool _throwEvent)
     {
-        Set<EntityPtr>::const_iterator it = std::find(
+        Set<EntityPtr>::const_iterator it = eastl::find(
             m_selectedEntities.begin(),
             m_selectedEntities.end(),
             _object);
@@ -254,7 +254,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SelectionManager::isObjectSelected(ObjectPtr const& _object) const
     {
-        Set<ObjectPtr>::const_iterator it = std::find(
+        Set<ObjectPtr>::const_iterator it = eastl::find(
             m_selectedObjects.begin(),
             m_selectedObjects.end(),
             _object);
@@ -309,7 +309,7 @@ namespace Maze
         ObjectPtr const& _object,
         bool _throwEvent)
     {
-        Set<ObjectPtr>::const_iterator it = std::find(
+        Set<ObjectPtr>::const_iterator it = eastl::find(
             m_selectedObjects.begin(),
             m_selectedObjects.end(),
             _object);

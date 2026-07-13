@@ -70,8 +70,8 @@ namespace Maze
         inline MeshSkeletonAnimationCurve(
             FastVector<F32>&& _times,
             FastVector<F32>&& _values)
-            : m_times(std::move(_times))
-            , m_values(std::move(_values))
+            : m_times(eastl::move(_times))
+            , m_values(eastl::move(_values))
         {
             MAZE_DEBUG_ASSERT(m_times.size() == m_values.size());
         }
@@ -81,8 +81,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline MeshSkeletonAnimationCurve(MeshSkeletonAnimationCurve&& _value)
-            : m_times(std::move(_value.m_times))
-            , m_values(std::move(_value.m_values))
+            : m_times(eastl::move(_value.m_times))
+            , m_values(eastl::move(_value.m_values))
         {}
 
         //////////////////////////////////////////
@@ -97,8 +97,8 @@ namespace Maze
         //////////////////////////////////////////
         inline MeshSkeletonAnimationCurve& operator=(MeshSkeletonAnimationCurve&& _value)
         {
-            m_times = std::move(_value.m_times);
-            m_values = std::move(_value.m_values);
+            m_times = eastl::move(_value.m_times);
+            m_values = eastl::move(_value.m_values);
 
             return *this;
         }
@@ -118,8 +118,8 @@ namespace Maze
             FastVector<F32>&& _times,
             FastVector<F32>&& _values)
         {
-            m_times = std::move(_times);
-            m_values = std::move(_values);
+            m_times = eastl::move(_times);
+            m_values = eastl::move(_values);
         }
 
         //////////////////////////////////////////
@@ -186,8 +186,8 @@ namespace Maze
         inline MeshSkeletonRotationCurve(
             FastVector<F32>&& _times,
             FastVector<Quaternion>&& _values)
-            : m_times(std::move(_times))
-            , m_values(std::move(_values))
+            : m_times(eastl::move(_times))
+            , m_values(eastl::move(_values))
         {
             MAZE_DEBUG_ASSERT(m_times.size() == m_values.size());
         }
@@ -197,8 +197,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline MeshSkeletonRotationCurve(MeshSkeletonRotationCurve&& _value)
-            : m_times(std::move(_value.m_times))
-            , m_values(std::move(_value.m_values))
+            : m_times(eastl::move(_value.m_times))
+            , m_values(eastl::move(_value.m_values))
         {}
 
         //////////////////////////////////////////
@@ -213,8 +213,8 @@ namespace Maze
         //////////////////////////////////////////
         inline MeshSkeletonRotationCurve& operator=(MeshSkeletonRotationCurve&& _value)
         {
-            m_times = std::move(_value.m_times);
-            m_values = std::move(_value.m_values);
+            m_times = eastl::move(_value.m_times);
+            m_values = eastl::move(_value.m_values);
 
             return *this;
         }
@@ -234,8 +234,8 @@ namespace Maze
             FastVector<F32>&& _times,
             FastVector<Quaternion>&& _values)
         {
-            m_times = std::move(_times);
-            m_values = std::move(_values);
+            m_times = eastl::move(_times);
+            m_values = eastl::move(_values);
         }
 
         //////////////////////////////////////////
@@ -295,7 +295,7 @@ namespace Maze
         //////////////////////////////////////////
         inline MeshSkeletonAnimationBone(MeshSkeletonAnimationBone&& _value)
         {
-            this->operator=(std::move(_value));
+            this->operator=(eastl::move(_value));
         }
 
         //////////////////////////////////////////
@@ -316,10 +316,10 @@ namespace Maze
         {
             for (S32 i = 0; i < 3; ++i)
             {
-                translation[i] = std::move(_value.translation[i]);
-                scale[i] = std::move(_value.scale[i]);
+                translation[i] = eastl::move(_value.translation[i]);
+                scale[i] = eastl::move(_value.scale[i]);
             }
-            rotation = std::move(_value.rotation);
+            rotation = eastl::move(_value.rotation);
 
             return *this;
         }
@@ -371,7 +371,7 @@ namespace Maze
         inline void setBoneAnimations(Vector<MeshSkeletonAnimationBone> const& _boneAnimations) { m_boneAnimations = _boneAnimations; }
 
         //////////////////////////////////////////
-        inline void setBoneAnimations(Vector<MeshSkeletonAnimationBone>&& _boneAnimations) { m_boneAnimations = std::move(_boneAnimations); }
+        inline void setBoneAnimations(Vector<MeshSkeletonAnimationBone>&& _boneAnimations) { m_boneAnimations = eastl::move(_boneAnimations); }
 
 
         //////////////////////////////////////////

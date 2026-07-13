@@ -71,7 +71,7 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_FORCEINLINE IdWithGeneration(IdWithGeneration&& _value)
-            : m_id(std::move(_value.m_id))
+            : m_id(eastl::move(_value.m_id))
         {}
 
         //////////////////////////////////////////
@@ -88,7 +88,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_FORCEINLINE void operator=(IdWithGeneration&& _value)
         {
-            m_id = std::move(_value.m_id);
+            m_id = eastl::move(_value.m_id);
         }
 
         //////////////////////////////////////////

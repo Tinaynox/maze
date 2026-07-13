@@ -78,7 +78,7 @@ namespace Maze
             {
                 _processDataFromUICb(_world, _instance, _prop, _drawer->castRaw<TDrawer>());
             };
-        return std::move(callbacks);
+        return eastl::move(callbacks);
     }
 
 
@@ -101,7 +101,7 @@ namespace Maze
             {
                 _processDataFromUICb(_world, _instance, _prop, _drawer->castRaw<TDrawer>());
             };
-        return std::move(callbacks);
+        return eastl::move(callbacks);
     }
 
 

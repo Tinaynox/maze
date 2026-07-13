@@ -163,7 +163,7 @@ namespace Maze
         }
 
         _pixelSheets.resize(1);
-        _pixelSheets[0] = std::move(pixelSheet);
+        _pixelSheets[0] = eastl::move(pixelSheet);
 
         return true;
     }
