@@ -70,15 +70,31 @@ namespace Maze
         U32 depthKey = scaledSqrDistance < 4294967040.0f ? U32(scaledSqrDistance)
                                                          : 0xFFFFFFFFu; // Also catches NaN
 
+        ShaderPtr const& shader = _unit.renderPass->getShader();
+        U64 shaderKey = shader ? (U64(shader->getResourceId().getIndex()) & 0xFFF) : 0u;
+
+        // Identical passes share a pointer, so a folded pointer groups them.
+        // Collisions only cost some batching, never correctness
+        U64 passPtr = reinterpret_cast<U64>(_unit.renderPass);
+        U64 passKey = ((passPtr >> 4) ^ (passPtr >> 16)) & 0xFFF;
+
         if (_unit.renderPass->getRenderQueueIndex() < (S32)RenderQueueIndex::Transparent)
         {
-            key |= (U64(_unit.sortIndex) & 0xFFFF) << 40;
-            key |= U64(depthKey);
+            // Opaque: group by state to minimize pass switches and keep
+            // same-VAO units adjacent for instanced merging, then coarse
+            // front-to-back within a group for early-z
+            key |= shaderKey << 44;
+            key |= passKey << 32;
+            key |= (U64(_unit.sortIndex) & 0xFFFF) << 16;
+            key |= U64(depthKey >> 16);
         }
         else
         {
-            // Reverse distance for transparent
-            key |= U64(0xFFFFFFFFu - depthKey);
+            // Transparent: back-to-front is required for correctness, state
+            // grouping is only a tiebreak for units at equal depth
+            key |= U64(0xFFFFFFFFu - depthKey) << 24;
+            key |= shaderKey << 12;
+            key |= passKey;
         }
 
         return key;
@@ -208,7 +224,7 @@ namespace Maze
             if (_params.drawFlag)
             {
                 m_renderData.clear();
-                Vector<RenderUnit*> renderDataSorted;
+                m_renderDataSorted.clear();
 
                 {
                     MAZE_PROFILE_EVENT("3D Default GatherRenderUnits");
@@ -220,12 +236,12 @@ namespace Maze
                 {
                     MAZE_PROFILE_EVENT("3D Prepare Render Queue");
 
-                    renderDataSorted.reserve(renderDataSize);
+                    m_renderDataSorted.reserve(renderDataSize);
 
                     for (S32 i = 0; i < renderDataSize; ++i)
                     {
                         RenderUnit& data = m_renderData[i];
-                        renderDataSorted.push_back(&m_renderData[i]);
+                        m_renderDataSorted.push_back(&m_renderData[i]);
                         data.sqrDistanceToCamera = (cameraPosition - data.worldPosition).squaredLength();
                         data.sortKey = BuildRenderUnitSortKey(data);
                     }
@@ -235,8 +251,8 @@ namespace Maze
                     MAZE_PROFILE_EVENT("3D Sort Render Queue");
                     // Sort render queue
                     eastl::sort(
-                        renderDataSorted.begin(),
-                        renderDataSorted.end(),
+                        m_renderDataSorted.begin(),
+                        m_renderDataSorted.end(),
                         [](RenderUnit const* _a, RenderUnit const* _b)
                         {
                             return _a->sortKey < _b->sortKey;
@@ -247,18 +263,14 @@ namespace Maze
                 if (_beginDrawCallback)
                     _beginDrawCallback(renderQueue);
 
-                U8 prevRenderQueueIndex = 0;
-
                 {
                     MAZE_PROFILE_EVENT("3D Default Render Queue");
                     for (S32 i = 0; i < renderDataSize; ++i)
                     {
-                        RenderUnit const& renderUnit = *renderDataSorted[i];
+                        RenderUnit const& renderUnit = *m_renderDataSorted[i];
 
                         RenderPass* renderPass = renderUnit.renderPass;
                         ShaderPtr const& shader = renderPass->getShader();
-
-                        U8 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
 
                         // These are GlobalUniforms UBO fields on the Vulkan
                         // backend - see ShaderUniform::setAlwaysForceUpdate()'s
@@ -280,8 +292,6 @@ namespace Maze
                         renderQueue->addSelectRenderPassCommand(renderPass);
 
                         renderUnit.drawer->drawDefaultPass(renderQueue, _params, renderUnit);
-
-                        prevRenderQueueIndex = currentRenderQueueIndex;
                     }
                 }
 
@@ -350,12 +360,7 @@ namespace Maze
                 {
                     RenderUnit const& renderUnit = m_renderData[i];
 
-                    RenderPass* renderPass = renderUnit.renderPass;
-                    ShaderPtr const& shader = renderPass->getShader();
-
-                    S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
-
-                    renderQueue->addSelectRenderPassCommand(renderPass);
+                    renderQueue->addSelectRenderPassCommand(renderUnit.renderPass);
 
                     renderUnit.drawer->drawShadowPass(renderQueue, _params, renderUnit);
                 }

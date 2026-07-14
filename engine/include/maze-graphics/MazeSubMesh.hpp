@@ -45,6 +45,7 @@
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/containers/MazeFastVector.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
+#include "maze-core/math/MazeAABB3D.hpp"
 
 
 //////////////////////////////////////////
@@ -285,6 +286,9 @@ namespace Maze
 
         //////////////////////////////////////////
         F32 calculateBoundingSphereRadius() const;
+
+        //////////////////////////////////////////
+        bool calculateAABB(AABB3D& _outAABB) const;
 
         //////////////////////////////////////////
         bool traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t) const;

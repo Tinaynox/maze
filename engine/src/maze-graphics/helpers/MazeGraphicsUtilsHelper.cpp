@@ -584,6 +584,30 @@ namespace Maze
             _outFrustum.planes[5] = makePlane(rowW - rowZ); // Far
         }
 
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void CalculateWorldBoundingSphere(
+            AABB3D const& _localAABB,
+            TMat const& _worldTransform,
+            Vec3F& _outCenter,
+            F32& _outRadius)
+        {
+            Vec3F center = (_localAABB.getMin() + _localAABB.getMax()) * 0.5f;
+            Vec3F halfSize = (_localAABB.getMax() - _localAABB.getMin()) * 0.5f;
+
+            _outCenter = _worldTransform.transform(center);
+
+            // World-space half extents of the rotated/scaled box: abs(basis) * halfSize
+            Vec3F const& axisX = _worldTransform[0];
+            Vec3F const& axisY = _worldTransform[1];
+            Vec3F const& axisZ = _worldTransform[2];
+            Vec3F worldHalfSize(
+                Math::Abs(axisX.x) * halfSize.x + Math::Abs(axisY.x) * halfSize.y + Math::Abs(axisZ.x) * halfSize.z,
+                Math::Abs(axisX.y) * halfSize.x + Math::Abs(axisY.y) * halfSize.y + Math::Abs(axisZ.y) * halfSize.z,
+                Math::Abs(axisX.z) * halfSize.x + Math::Abs(axisY.z) * halfSize.y + Math::Abs(axisZ.z) * halfSize.z);
+
+            _outRadius = worldHalfSize.length();
+        }
+
     } // namespace GraphicsUtilsHelper
     //////////////////////////////////////////
 

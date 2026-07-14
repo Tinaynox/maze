@@ -411,6 +411,43 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool SubMesh::calculateAABB(AABB3D& _outAABB) const
+    {
+        MeshVertexAttributeDescription const& positionData = m_vertexData[(Size)VertexAttributeSemantic::Position];
+        ByteBufferPtr const& positionBuffer = positionData.byteBuffer;
+        if (!positionBuffer || positionData.count == 0)
+            return false;
+
+        switch (positionData.description.type)
+        {
+            case VertexAttributeType::F32:
+            {
+                Vec3F minPoint = Vec3F(F32_MAX, F32_MAX, F32_MAX);
+                Vec3F maxPoint = Vec3F(-F32_MAX, -F32_MAX, -F32_MAX);
+                positionBuffer->iterateAs<Vec3F>(
+                    [&minPoint, &maxPoint](Vec3F const& _value)
+                    {
+                        minPoint.x = Math::Min(minPoint.x, _value.x);
+                        minPoint.y = Math::Min(minPoint.y, _value.y);
+                        minPoint.z = Math::Min(minPoint.z, _value.z);
+                        maxPoint.x = Math::Max(maxPoint.x, _value.x);
+                        maxPoint.y = Math::Max(maxPoint.y, _value.y);
+                        maxPoint.z = Math::Max(maxPoint.z, _value.z);
+                    });
+
+                _outAABB.setMin(minPoint);
+                _outAABB.setMax(maxPoint);
+                return true;
+            }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+                return false;
+            }
+        }
+    }
+
+    //////////////////////////////////////////
     bool SubMesh::traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t) const
     {
         if (m_renderDrawTopology != RenderDrawTopology::Triangles)

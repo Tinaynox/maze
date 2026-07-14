@@ -189,6 +189,7 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(!_mesh, "Mesh is null!");
 
         m_mesh = _mesh;
+        m_aabbValid = m_mesh->calculateAABB(m_aabb);
 
         Size currentVaoCount = m_vertexArrayObjects.size();
         Size requiredVaoCount = _mesh->getSubMeshesCount();
@@ -221,6 +222,7 @@ namespace Maze
 
         m_vertexArrayObjects.clear();
         m_mesh.reset();
+        m_aabbValid = false;
     }
 
     //////////////////////////////////////////

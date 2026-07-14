@@ -46,6 +46,7 @@
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
+#include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
@@ -263,14 +264,28 @@ namespace Maze
 
         if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
         {
-            // #TODO: we need real bounding radius here
-            // if (!_event.getPassParams()->cameraFrustum.containsSphere(_transform3D->getWorldPosition(), 3.0f))
-            //    return;
-
             if (_meshRenderer->getRenderMesh())
             {
+                RenderMeshPtr const& renderMesh = _meshRenderer->getRenderMesh();
+
+                // Frustum culling (render meshes built from raw VAOs have no
+                // CPU-side bounds and are always drawn)
+                if (renderMesh->isAABBValid())
+                {
+                    Vec3F boundsCenterWS;
+                    F32 boundsRadiusWS;
+                    GraphicsUtilsHelper::CalculateWorldBoundingSphere(
+                        renderMesh->getAABB(),
+                        _transform3D->getWorldTransform(),
+                        boundsCenterWS,
+                        boundsRadiusWS);
+
+                    if (!_event.getPassParams()->cameraFrustum.containsSphere(boundsCenterWS, boundsRadiusWS))
+                        return;
+                }
+
                 Vector<MaterialAssetRef> const& materials = _meshRenderer->getMaterialRefs();
-                Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+                Vector<VertexArrayObjectPtr> const& vaos = renderMesh->getVertexArrayObjects();
 
                 if (vaos.empty())
                     return;
@@ -327,8 +342,25 @@ namespace Maze
         {
             if (_meshRenderer->getRenderMesh())
             {
+                RenderMeshPtr const& renderMesh = _meshRenderer->getRenderMesh();
+
+                // Frustum culling against the shadow casting volume
+                if (renderMesh->isAABBValid())
+                {
+                    Vec3F boundsCenterWS;
+                    F32 boundsRadiusWS;
+                    GraphicsUtilsHelper::CalculateWorldBoundingSphere(
+                        renderMesh->getAABB(),
+                        _transform3D->getWorldTransform(),
+                        boundsCenterWS,
+                        boundsRadiusWS);
+
+                    if (!_event.getPassParams()->mainLightFrustum.containsSphere(boundsCenterWS, boundsRadiusWS))
+                        return;
+                }
+
                 Vector<MaterialAssetRef> const& materials = _meshRenderer->getMaterialRefs();
-                Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+                Vector<VertexArrayObjectPtr> const& vaos = renderMesh->getVertexArrayObjects();
 
                 if (vaos.empty())
                     return;

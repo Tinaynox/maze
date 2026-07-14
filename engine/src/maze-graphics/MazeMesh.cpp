@@ -209,6 +209,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool Mesh::calculateAABB(AABB3D& _outAABB) const
+    {
+        bool valid = false;
+        for (SubMeshPtr const& subMesh : m_subMeshes)
+        {
+            AABB3D subMeshAABB;
+            if (subMesh->calculateAABB(subMeshAABB))
+            {
+                if (valid)
+                    _outAABB.applyUnion(subMeshAABB);
+                else
+                    _outAABB = subMeshAABB;
+                valid = true;
+            }
+        }
+        return valid;
+    }
+
+    //////////////////////////////////////////
     bool Mesh::traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t) const
     {
         bool result = false;

@@ -34,6 +34,7 @@
 #include "maze-graphics/MazePixelSheet2D.hpp"
 #include "maze-graphics/MazeFrustum.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/math/MazeAABB3D.hpp"
 
 
 //////////////////////////////////////////
@@ -120,6 +121,13 @@ namespace Maze
         MAZE_GRAPHICS_API void CalculateCameraFrustum(
             Mat4F const& _viewProjectionMatrix,
             Frustum& _outFrustum);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void CalculateWorldBoundingSphere(
+            AABB3D const& _localAABB,
+            TMat const& _worldTransform,
+            Vec3F& _outCenter,
+            F32& _outRadius);
 
     } // namespace GraphicsUtilsHelper
     //////////////////////////////////////////

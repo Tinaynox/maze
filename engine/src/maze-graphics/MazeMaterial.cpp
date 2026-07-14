@@ -165,6 +165,7 @@ namespace Maze
         m_uniforms.resize(_material->m_uniforms.size());
         for (Size i = 0, in = _material->m_uniforms.size(); i < in; ++i)
             m_uniforms[i] = MakeShared<ShaderUniformVariant>(*_material->m_uniforms[i].get());
+        rebuildUniformIndices();
 
         for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
         {
@@ -248,6 +249,7 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(m_readOnly, "This material is readonly! Name=%s", getName().c_str());
 
         m_uniforms.clear();
+        m_uniformIndicesByNameHash.clear();
     }
 
     //////////////////////////////////////////
@@ -369,6 +371,7 @@ namespace Maze
             else
                 m_uniforms[i] = MakeShared<ShaderUniformVariant>(*_material->m_uniforms[i].get());
         }
+        rebuildUniformIndices();
 
         for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
         {
@@ -555,10 +558,21 @@ namespace Maze
     {
         static ShaderUniformVariantPtr const nullPointer;
 
-        for (ShaderUniformVariantPtr const& uniform : m_uniforms)
+        auto it = m_uniformIndicesByNameHash.find(_uniformName.hash);
+        if (it != m_uniformIndicesByNameHash.end())
+        {
+            ShaderUniformVariantPtr const& uniform = m_uniforms[it->second];
             if (uniform->getName() == _uniformName)
                 return uniform;
-        
+
+            MAZE_ERROR(
+                "Material uniform name hash collision: '%s' vs '%s' (hash=%u)! Material='%s'",
+                uniform->getName().c_str(),
+                _uniformName.str,
+                _uniformName.hash,
+                getName().c_str());
+        }
+
         return nullPointer;
     }
 
@@ -573,6 +587,7 @@ namespace Maze
             return uniform;
 
         m_uniforms.push_back(MakeShared<ShaderUniformVariant>(m_renderSystem, _type, _uniformName));
+        m_uniformIndicesByNameHash[_uniformName.hash] = m_uniforms.size() - 1;
         dirtyRenderPassShaderUniforms();
 
         return m_uniforms.back();
@@ -586,9 +601,21 @@ namespace Maze
             m_uniforms.end(),
             [_uniformName](ShaderUniformVariantPtr const& _variant) { return (_variant->getName() == _uniformName); });
         if (it != m_uniforms.end())
+        {
             m_uniforms.erase(it);
-        
+            rebuildUniformIndices();
+        }
+
         dirtyRenderPassShaderUniforms();
+    }
+
+    //////////////////////////////////////////
+    void Material::rebuildUniformIndices()
+    {
+        m_uniformIndicesByNameHash.clear();
+        for (Size i = 0, in = m_uniforms.size(); i < in; ++i)
+            if (m_uniforms[i])
+                m_uniformIndicesByNameHash[m_uniforms[i]->getName().getHash()] = i;
     }
 
     //////////////////////////////////////////

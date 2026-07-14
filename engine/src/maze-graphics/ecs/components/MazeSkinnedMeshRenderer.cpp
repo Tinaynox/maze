@@ -50,6 +50,7 @@
 #include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-graphics/MazeMeshSkeletonAnimator.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
+#include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeRenderCommands.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
@@ -65,7 +66,8 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(skeleton, Skeleton),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderMeshAssetRef, renderMesh, RenderMeshAssetRef(), getRenderMeshRef, setRenderMeshRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<MaterialAssetRef>, materials, Vector<MaterialAssetRef>(), getMaterialRefs, setMaterialRefs),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, true, getEnabled, setEnabled));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, true, getEnabled, setEnabled),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, boundsInflation, 2.0f, getBoundsInflation, setBoundsInflation));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SkinnedMeshRenderer);
@@ -348,14 +350,29 @@ namespace Maze
             if (!_meshRenderer->getSkeleton()->getAnimator() || _meshRenderer->getSkeleton()->getAnimator()->getBonesSkinningTransforms().empty())
                 return;
 
-            // #TODO: we need real bounding radius here
-            if (!_event.getPassParams()->cameraFrustum.containsSphere(_transform3D->getWorldPosition(), 3.0f))
-                return;
-
             if (_meshRenderer->getRenderMesh())
             {
+                RenderMeshPtr const& renderMesh = _meshRenderer->getRenderMesh();
+
+                // Frustum culling with the inflated rest-pose bounds
+                if (renderMesh->isAABBValid())
+                {
+                    Vec3F boundsCenterWS;
+                    F32 boundsRadiusWS;
+                    GraphicsUtilsHelper::CalculateWorldBoundingSphere(
+                        renderMesh->getAABB(),
+                        _transform3D->getWorldTransform(),
+                        boundsCenterWS,
+                        boundsRadiusWS);
+
+                    if (!_event.getPassParams()->cameraFrustum.containsSphere(
+                        boundsCenterWS,
+                        boundsRadiusWS * _meshRenderer->getBoundsInflation()))
+                        return;
+                }
+
                 Vector<MaterialAssetRef> const& materials = _meshRenderer->getMaterialRefs();
-                Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+                Vector<VertexArrayObjectPtr> const& vaos = renderMesh->getVertexArrayObjects();
 
                 if (vaos.empty())
                     return;
@@ -413,14 +430,30 @@ namespace Maze
             if (!_meshRenderer->getSkeleton()->getAnimator() || _meshRenderer->getSkeleton()->getAnimator()->getBonesSkinningTransforms().empty())
                 return;
 
-            // #TODO: we need real bounding radius here
-            if (!_event.getPassParams()->mainLightFrustum.containsSphere(_transform3D->getWorldPosition(), 3.0f))
-                return;
-
             if (_meshRenderer->getRenderMesh())
             {
+                RenderMeshPtr const& renderMesh = _meshRenderer->getRenderMesh();
+
+                // Frustum culling against the shadow casting volume with the
+                // inflated rest-pose bounds
+                if (renderMesh->isAABBValid())
+                {
+                    Vec3F boundsCenterWS;
+                    F32 boundsRadiusWS;
+                    GraphicsUtilsHelper::CalculateWorldBoundingSphere(
+                        renderMesh->getAABB(),
+                        _transform3D->getWorldTransform(),
+                        boundsCenterWS,
+                        boundsRadiusWS);
+
+                    if (!_event.getPassParams()->mainLightFrustum.containsSphere(
+                        boundsCenterWS,
+                        boundsRadiusWS * _meshRenderer->getBoundsInflation()))
+                        return;
+                }
+
                 Vector<MaterialAssetRef> const& materials = _meshRenderer->getMaterialRefs();
-                Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+                Vector<VertexArrayObjectPtr> const& vaos = renderMesh->getVertexArrayObjects();
 
                 if (vaos.empty())
                     return;

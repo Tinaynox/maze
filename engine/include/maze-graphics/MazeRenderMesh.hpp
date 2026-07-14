@@ -44,6 +44,7 @@
 #include "maze-core/MazeObject.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/containers/MazeFastVector.hpp"
+#include "maze-core/math/MazeAABB3D.hpp"
 #include <functional>
 
 
@@ -158,6 +159,15 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // Local-space AABB baked at loadFromMesh time. Invalid for render
+        // meshes built from raw VAOs (no CPU-side positions available)
+        inline AABB3D const& getAABB() const { return m_aabb; }
+
+        //////////////////////////////////////////
+        inline bool isAABBValid() const { return m_aabbValid; }
+
+
+        //////////////////////////////////////////
         void clear();
 
 
@@ -211,6 +221,9 @@ namespace Maze
 
         MeshPtr m_mesh;
         HashedString m_name;
+
+        AABB3D m_aabb;
+        bool m_aabbValid = false;
 
         Vector<VertexArrayObjectPtr> m_vertexArrayObjects;
     };

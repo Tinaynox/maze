@@ -164,6 +164,15 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // Rest-pose AABB scale factor used for frustum culling (animation can
+        // move vertices outside the rest-pose bounds)
+        inline void setBoundsInflation(F32 _boundsInflation) { m_boundsInflation = _boundsInflation; }
+
+        //////////////////////////////////////////
+        inline F32 getBoundsInflation() const { return m_boundsInflation; }
+
+
+        //////////////////////////////////////////
         MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(SkinnedMeshSkeleton, skeleton, Skeleton);
 
     protected:
@@ -210,6 +219,7 @@ namespace Maze
         RenderMaskPtr m_renderMask;
 
         bool m_enabled = true;
+        F32 m_boundsInflation = 2.0f;
     };
 
 

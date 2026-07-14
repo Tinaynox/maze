@@ -311,6 +311,9 @@ namespace Maze
         //////////////////////////////////////////
         void addUniform(ShaderUniformVariant const& _shaderUniformVariant);
 
+        //////////////////////////////////////////
+        void rebuildUniformIndices();
+
 
     protected:
         RenderSystem* m_renderSystem;
@@ -320,6 +323,7 @@ namespace Maze
         Vector<RenderPassPtr> m_passes[RenderPassType::MAX];
 
         FastVector<ShaderUniformVariantPtr> m_uniforms;
+        FlatHashMap<U32, Size> m_uniformIndicesByNameHash;
 
         bool m_readOnly = false;
     };
