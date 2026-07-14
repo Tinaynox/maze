@@ -35,6 +35,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeAlignment2D.hpp"
 #include "maze-graphics/ecs/components/MazeAbstractTextRenderer2D.hpp"
+#include "maze-core/containers/MazeFastVector.hpp"
 #include "maze-ui/fonts/MazeFont.hpp"
 #include "maze-ui/fonts/MazeFontMaterial.hpp"
 
@@ -353,6 +354,16 @@ namespace Maze
             Vector<F32>& _outRowLengths);
 
     protected:
+
+        //////////////////////////////////////////
+        struct TempGlyphData
+        {
+            FontGlyphStorageData* glyphStorageData = nullptr;
+            FontGlyph const* glyph = nullptr;
+            FontGlyph const* outlineThicknessGlyph = nullptr;
+        };
+
+    protected:
         FontMaterialAssetRef m_fontMaterialRef;
 
         U32 m_styles = TextRenderer2DStyle::ColorTags;
@@ -375,6 +386,12 @@ namespace Maze
         bool m_hasActiveColorTags = false;
 
         Vec2F m_lastGlyphOffset = Vec2F::c_zero;
+
+        // Scratch buffers reused between mesh rebuilds (updateMeshDataNow)
+        String m_finalTextScratch;
+        Deque<Pair<Size, ColorF128>> m_colorTagsScratch;
+        Vector<TempGlyphData> m_glyphsScratch;
+        FastVector<F32> m_rowLengthsScratch;
     };
 
 

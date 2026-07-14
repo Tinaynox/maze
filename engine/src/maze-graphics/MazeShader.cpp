@@ -829,7 +829,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::toDataBlock(DataBlock& _dataBlock) const
     {
-        MAZE_TODO;
+        MAZE_NOT_IMPLEMENTED;
     }
 
     //////////////////////////////////////////
@@ -841,7 +841,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::setString(CString _data, Size _count)
     {
-        MAZE_TODO;
+        MAZE_NOT_IMPLEMENTED;
     }
 
     //////////////////////////////////////////

@@ -389,21 +389,23 @@ namespace Maze
             Maze::Size delegatesCount = m_delegatesList.size();
             if (delegatesCount == 0)
                 return;
-            
+
             m_containsEmptyDelegates = false;
 
             ++m_callLock;
             for (Maze::Size i = 0; i < delegatesCount;)
             {
-                auto& delegate = m_delegatesList[i];
-
-                if (!delegate)
+                if (!m_delegatesList[i])
                 {
                     ((&m_delegatesList)->*m_delegatesListErase)(m_delegatesList.begin() + i);
                     --delegatesCount;
                 }
                 else
                 {
+                    // Invoke through a copy: the callee may subscribe
+                    // (reallocating the list) or unsubscribe this very
+                    // delegate (releasing its functor store) mid-call
+                    DelegateType delegate = m_delegatesList[i];
                     delegate(::eastl::forward<TArgs>(_args)...);
                     ++i;
                 }

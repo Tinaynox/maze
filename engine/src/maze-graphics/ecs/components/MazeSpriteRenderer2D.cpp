@@ -537,9 +537,12 @@ namespace Maze
             return;
 
         Size elementsCount = m_meshRenderer->getUV0().size();
-        // #TODO: optimize with memcpy
-        for (Size i = 0; i < elementsCount; ++i)
-            m_meshRenderer->setUV0(i, m_localUV0s[i]);
+        MAZE_DEBUG_ERROR_IF(elementsCount != m_localUV0s.size(), "Invalid elements count!");
+        if (elementsCount > 0)
+            memcpy(
+                m_meshRenderer->getUV0DataRW(),
+                m_localUV0s.data(),
+                elementsCount * sizeof(Vec4F));
 
         disableFlag(SpriteRenderer2D::Flags::UV0Dirty);
     }

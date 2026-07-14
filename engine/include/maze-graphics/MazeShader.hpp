@@ -357,7 +357,7 @@ namespace Maze
         HashedString m_name;
 
         bool m_subscribedToGlobalUniforms = false;
-        Map<ResourceId, U32> m_uniformsPerGlobalUniform;
+        VectorMap<ResourceId, U32> m_uniformsPerGlobalUniform;
 
         UnorderedMap<U32, ShaderUniformPtr> m_uniforms;
 

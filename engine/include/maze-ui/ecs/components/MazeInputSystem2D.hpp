@@ -57,7 +57,6 @@ namespace Maze
     MAZE_USING_SHARED_PTR(MeshRenderer);
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(EditBox2D);
-    MAZE_USING_SHARED_PTR(Dropdown2D);
     MAZE_USING_SHARED_PTR(HorizontalLayout2D);
     MAZE_USING_SHARED_PTR(VerticalLayout2D);
     MAZE_USING_SHARED_PTR(SizePolicy2D);
@@ -264,7 +263,6 @@ namespace Maze
         SharedPtr<GenericInclusiveEntitiesSample<CanvasScaler>> m_canvasScalersSample;
         SharedPtr<GenericInclusiveEntitiesSample<UIElement2D>> m_UIElements2DSample;
         SharedPtr<GenericInclusiveEntitiesSample<EditBox2D>> m_systemTextEditBoxesSample;
-        SharedPtr<GenericInclusiveEntitiesSample<Dropdown2D>> m_systemTextDropdownsSample;
         SharedPtr<GenericInclusiveEntitiesSample<HorizontalLayout2D>> m_horizontalLayouts2D;
         SharedPtr<GenericInclusiveEntitiesSample<VerticalLayout2D>> m_verticalLayouts2D;
         SharedPtr<GenericInclusiveEntitiesSample<SizePolicy2D, Transform2D>> m_sizePolicy2D;
@@ -273,6 +271,7 @@ namespace Maze
         Vector<Canvas*> m_sortedCanvases;
 
         bool m_sortedCanvasDataDirty;
+        U32 m_hierarchyVersion = 0u;
         Vector<CanvasData> m_sortedCanvasData;
 
         std::function<Vec2F(Window*, Vec2F const&)> m_coordsConverter = DefaultCoordsConverter;

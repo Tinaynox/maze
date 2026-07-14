@@ -27,6 +27,7 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 
 
 //////////////////////////////////////////
@@ -56,7 +57,10 @@ namespace Maze
     //////////////////////////////////////////
     ColorU32 ColorU32::Random()
     {
-        return ColorU32(rand()%255, rand()%255, rand()%255);
+        return ColorU32(
+            (U8)Random::RangeRandomMT(0, 256),
+            (U8)Random::RangeRandomMT(0, 256),
+            (U8)Random::RangeRandomMT(0, 256));
     }
 
     //////////////////////////////////////////

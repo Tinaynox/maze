@@ -756,7 +756,7 @@ namespace Maze
     //////////////////////////////////////////
     void Material::setString(CString _data, Size _count)
     {
-        MAZE_TODO;
+        MAZE_NOT_IMPLEMENTED;
     }
 
 

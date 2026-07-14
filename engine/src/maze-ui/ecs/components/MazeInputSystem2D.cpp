@@ -46,7 +46,6 @@
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeWindowManager.hpp"
 #include "maze-ui/ecs/components/MazeEditBox2D.hpp"
-#include "maze-ui/ecs/components/MazeDropdown2D.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
@@ -60,7 +59,6 @@ namespace Maze
     F32 const c_doubleClickShiftThresholdSq = 5.0f * 5.0f;
     U32 const c_clickTimeMS = 170u;
     F32 const c_clickShiftThresholdSq = 5.0f * 5.0f;
-    Vec2F const c_outCanvasCursorPosition = Vec2F(-1e6f, -1e6f);
 
 
     //////////////////////////////////////////
@@ -110,12 +108,15 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Templated on the callback so per-event lambdas are inlined instead of
+    // being wrapped into allocating std::functions
+    template <typename TCallback>
     inline Vector<InputSystem2D::UIElementData>::const_iterator ProcessUIElementData(
         Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
         Vector<InputSystem2D::UIElementData>::const_iterator const& _it,
         Vector<InputSystem2D::UIElementData>::const_iterator& _end,
         CursorInputEvent& _cursorInputEvent,
-        std::function<void(UIElement2D*)> _cb)
+        TCallback const& _cb)
     {
         InputSystem2D::UIElementData const& elementData = *_it;
 
@@ -156,10 +157,11 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    template <typename TCallback>
     inline void ProcessUIElementsInput(
         Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
         CursorInputEvent& _cursorInputEvent,
-        std::function<void(UIElement2D*)> _cb)
+        TCallback const& _cb)
     {
         if (_cursorInputEvent.isCaptured())
             return;
@@ -173,13 +175,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    template <typename TCallbackValid, typename TCallbackInvalid>
     inline Vector<InputSystem2D::UIElementData>::const_iterator ProcessUIElementDataMoveEvent(
         Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
         Vector<InputSystem2D::UIElementData>::const_iterator const& _it,
         Vector<InputSystem2D::UIElementData>::const_iterator& _end,
         CursorInputEvent& _cursorInputEvent,
-        std::function<void(UIElement2D*)> _cbValid,
-        std::function<void(UIElement2D*)> _cbInvalid)
+        TCallbackValid const& _cbValid,
+        TCallbackInvalid const& _cbInvalid)
     {
         InputSystem2D::UIElementData const& elementData = *_it;
 
@@ -222,11 +225,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    template <typename TCallbackValid, typename TCallbackInvalid>
     inline void ProcessUIElementsMoveInput(
         Vector<InputSystem2D::UIElementData> const& _sortedUIElements2D,
         CursorInputEvent& _cursorInputEvent,
-        std::function<void(UIElement2D*)> _cbValid,
-        std::function<void(UIElement2D*)> _cbInvalid)
+        TCallbackValid const& _cbValid,
+        TCallbackInvalid const& _cbInvalid)
     {
         for (Vector<InputSystem2D::UIElementData>::const_iterator it = _sortedUIElements2D.begin(),
             end = _sortedUIElements2D.end();
@@ -295,6 +299,62 @@ namespace Maze
         }
 
         return nextIt;
+    }
+
+
+    //////////////////////////////////////////
+    static void CollectCanvasUIElements(
+        Transform2D* _transform,
+        Canvas* _canvas,
+        InputSystem2D::CanvasData& _canvasData)
+    {
+        if (!_transform)
+            return;
+
+        // The hierarchy-version trigger can start a rebuild while entities are
+        // mid-add/mid-remove (scene loading, teardown) - skip them like the
+        // render traversal does
+        Entity* entity = _transform->getEntityRaw();
+        if (!entity || entity->getAdding() || entity->getRemoving())
+            return;
+
+        if (!entity->getActiveInHierarchy())
+            return;
+
+        if (_transform->getParent())
+        {
+            Canvas* canvas = entity->getComponentRaw<Canvas>();
+            if (canvas && canvas != _canvas)
+                return;
+        }
+
+        S32 elementIndex = -1;
+
+        UIElement2D* element = entity->getComponentRaw<UIElement2D>();
+        if (element && element->getEntityRaw())
+        {
+            elementIndex = (S32)_canvasData.sortedUIElements2D.size();
+
+            InputSystem2D::UIElementData data;
+            data.element = element;
+            data.scissorMask = entity->getComponentRaw<ScissorMask2D>();
+            _canvasData.sortedUIElements2D.emplace_back(data);
+        }
+
+        // Match the render traversal order (children sorted by Z)
+        _transform->updateChildrenOrder();
+
+        for (auto it = _transform->getChildren().rbegin(),
+                  end = _transform->getChildren().rend();
+                  it != end;
+                  ++it)
+            CollectCanvasUIElements(*it, _canvas, _canvasData);
+
+        if (elementIndex != -1)
+        {
+            S32 currentElementSize = (S32)_canvasData.sortedUIElements2D.size();
+            _canvasData.sortedUIElements2D[elementIndex].childrenCount = Size(currentElementSize - elementIndex - 1);
+        }
     }
 
 
@@ -385,7 +445,6 @@ namespace Maze
         m_UIElements2DSample->eventEntityRemoved.subscribe(this, &InputSystem2D::processUIElement2DEntityRemoved);
 
         m_systemTextEditBoxesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<EditBox2D>();
-        m_systemTextDropdownsSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Dropdown2D>();
         m_horizontalLayouts2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<HorizontalLayout2D>();
         m_verticalLayouts2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<VerticalLayout2D>();
         m_sizePolicy2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<SizePolicy2D, Transform2D>();
@@ -487,15 +546,6 @@ namespace Maze
                 [&](Entity* _entity, EditBox2D* _editBox)
             {
                 _editBox->update(dt);
-            });
-        }
-
-        {
-            MAZE_PROFILE_EVENT("systemTextDropdownsQueue");
-            m_systemTextDropdownsSample->query(
-                [&](Entity* _entity, Dropdown2D* _dropdown)
-            {
-                _dropdown->update(dt);
             });
         }
 
@@ -1103,6 +1153,7 @@ namespace Maze
             if (canvasData.rootCanvas)
                 cursorInputEvent.position = canvasData.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
             else
+            if (canvasData.canvas)
                 cursorInputEvent.position = canvasData.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
 
             for (Vector<UIElementData>::const_iterator it2 = sortedUIElements2D.begin(),
@@ -1136,6 +1187,14 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::updateSortedUIElements2DList()
     {
+        // Reparenting/z-order changes don't touch component samples, so they
+        // are detected via the global hierarchy version instead
+        if (m_hierarchyVersion != Transform2D::GetHierarchyVersion())
+        {
+            m_hierarchyVersion = Transform2D::GetHierarchyVersion();
+            m_sortedCanvasDataDirty = true;
+        }
+
         if (!m_sortedCanvasDataDirty)
             return;
 
@@ -1143,56 +1202,28 @@ namespace Maze
 
         for (Canvas* _canvas : m_sortedCanvases)
         {
+            // Canvases in inconsistent states (mid-add/mid-remove entities,
+            // detached transforms) are skipped until the next rebuild
+            Transform2DPtr const& canvasTransform = _canvas->getTransform();
+            if (!canvasTransform)
+                continue;
+
+            Entity* canvasEntity = _canvas->getEntityRaw();
+            if (!canvasEntity || canvasEntity->getAdding() || canvasEntity->getRemoving())
+                continue;
+
             CanvasData canvasData;
             canvasData.canvas = _canvas;
 
-            if (_canvas->getTransform()->getParent())
-                canvasData.rootCanvas = _canvas->getTransform()->getRootTransform()->getEntityRaw()->getComponentRaw<Canvas>();
-            else
-                canvasData.rootCanvas = _canvas;
+            canvasData.rootCanvas = _canvas;
+            if (canvasTransform->getParent())
+            {
+                Entity* rootEntity = canvasTransform->getRootTransform()->getEntityRaw();
+                if (rootEntity)
+                    canvasData.rootCanvas = rootEntity->getComponentRaw<Canvas>();
+            }
 
-            std::function<void(Transform2D*)> processElementFunc = 
-                [&](Transform2D* _transform)
-                {
-                    Entity* entity = _transform->getEntityRaw();
-
-                    if (entity->getActiveInHierarchy())
-                    {
-                        if (_transform->getParent())
-                        {
-                            Canvas* canvas = entity->getComponentRaw<Canvas>();
-                            if (canvas && canvas != _canvas)
-                                return;
-                        }
-
-                        S32 elementIndex = -1;
-
-                        UIElement2D* element = entity->getComponentRaw<UIElement2D>();
-                        if (element && element->getEntityRaw())
-                        {
-                            elementIndex = (S32)canvasData.sortedUIElements2D.size();
-
-                            UIElementData data;
-                            data.element = element;
-                            data.scissorMask = entity->getComponentRaw<ScissorMask2D>();
-                            canvasData.sortedUIElements2D.emplace_back(data);
-                        }
-
-                        for (auto it = _transform->getChildren().rbegin(),
-                                  end = _transform->getChildren().rend();
-                                  it != end;
-                                  ++it)
-                            processElementFunc(*it);
-
-                        if (elementIndex != -1)
-                        {
-                            S32 currentElementSize = (S32)canvasData.sortedUIElements2D.size();
-                            canvasData.sortedUIElements2D[elementIndex].childrenCount = Size(currentElementSize - elementIndex - 1);
-                        }
-                    }
-                };
-
-            processElementFunc(_canvas->getTransform().get());
+            CollectCanvasUIElements(canvasTransform.get(), _canvas, canvasData);
 
             m_sortedCanvasData.emplace_back(canvasData);
         }

@@ -219,7 +219,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Set<RenderWindow*> const& getRenderWindows() const { return m_renderWindows; }
+        inline VectorSet<RenderWindow*> const& getRenderWindows() const { return m_renderWindows; }
 
 
         //////////////////////////////////////////
@@ -273,7 +273,7 @@ namespace Maze
         MaterialManagerPtr m_materialManager;
         SystemFontManagerPtr m_systemFontManager;
 
-        Set<RenderWindow*> m_renderWindows;
+        VectorSet<RenderWindow*> m_renderWindows;
 
         S32 m_drawCalls;
         S32 m_drawCallsLimit;

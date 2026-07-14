@@ -77,30 +77,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Struct TempGlyphData
-    //
-    //////////////////////////////////////////
-    struct TempGlyphData
-    {
-        //////////////////////////////////////////
-        TempGlyphData(
-            FontGlyphStorageData* _glyphStorageData = nullptr,
-            FontGlyph const* _glyph = nullptr,
-            FontGlyph const* _outlineThicknessGlyph = nullptr)
-            : glyphStorageData(_glyphStorageData)
-            , glyph(_glyph)
-            , outlineThicknessGlyph(_outlineThicknessGlyph)
-        {
-
-        }
-
-        FontGlyphStorageData* glyphStorageData;
-        FontGlyph const* glyph;
-        FontGlyph const* outlineThicknessGlyph;
-    };
-
-
-    //////////////////////////////////////////
     TextRenderer2D::TextRenderer2D()
     {
         m_fontSize = 18u;
@@ -513,10 +489,13 @@ namespace Maze
         TrueTypeFontPtr const& defaultFont = font->getDefaultFont();
         Vec2F const& size = m_transform->getSize();
 
-        String finalText = m_text;
+        // Scratch members keep their capacity between rebuilds
+        String& finalText = m_finalTextScratch;
+        finalText = m_text;
 
         // Process color tags
-        Deque<Pair<Size, ColorF128>> colorTags;
+        Deque<Pair<Size, ColorF128>>& colorTags = m_colorTagsScratch;
+        colorTags.clear();
         m_hasActiveColorTags = false;
         if (getColorTags())
         {
@@ -539,13 +518,15 @@ namespace Maze
         F32 vSpace = linespace;
 
 
-        Vector<TempGlyphData> glyphs;
+        Vector<TempGlyphData>& glyphs = m_glyphsScratch;
+        glyphs.clear();
         glyphs.reserve(TextHelper::GetSymbolsCountUTF8(finalText));
 
         Size quadsCount = 0u;
         Size outlineQuadsCount = 0u;
 
-        FastVector<F32> rowLengths;
+        FastVector<F32>& rowLengths = m_rowLengthsScratch;
+        rowLengths.clear();
         F32 rowLengthMax = 0.0f;
         {
             F32 x = 0.0f;

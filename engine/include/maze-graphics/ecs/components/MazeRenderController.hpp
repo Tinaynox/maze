@@ -161,9 +161,9 @@ namespace Maze
         RenderControllerModule2DPtr m_module2D;
 
         SharedPtr<GenericInclusiveEntitiesSample<Canvas>> m_canvasesSample;
-        Set<CanvasPtr> m_canvases;
+        VectorSet<CanvasPtr> m_canvases;
         SharedPtr<GenericInclusiveEntitiesSample<Camera3D>> m_cameras3DSample;
-        Set<Camera3DPtr> m_cameras3D;
+        VectorSet<Camera3DPtr> m_cameras3D;
 
         bool m_renderTargetsDirty;
         Vector<RenderTarget*> m_renderTargets;

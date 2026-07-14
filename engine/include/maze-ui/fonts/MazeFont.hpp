@@ -187,7 +187,9 @@ namespace Maze
 
         Vector<FontGlyphStorageData> m_glyphsData;
         FontGlyphStorageData m_defaultGlyphsData;
-        Map<U32, FontGlyphStorageData*> m_glyphsMap;
+        // Codepoint -> storage cache, hit once per character during text
+        // meshing. Values are pointers into m_glyphsData (cleared together)
+        FlatHashMap<U32, FontGlyphStorageData*> m_glyphsMap;
     };
     
 

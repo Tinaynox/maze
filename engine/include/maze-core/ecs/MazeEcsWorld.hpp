@@ -335,10 +335,20 @@ namespace Maze
         inline void broadcastEventImmediate(TEvent* _event, EcsEventParams _params = EcsEventParams())
         {
             ClassUID eventUID = _event->getEventUID();
-            Vector<ComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
 
-            for (ComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
-                _eventHandler->processEvent(_event, _params);
+            // find() instead of operator[] so unhandled events don't insert
+            // empty vectors. UnorderedMap is node-based, so the mapped vector
+            // reference survives other handlers being registered during
+            // dispatch; iterating by index survives reallocation of this
+            // vector itself (handlers registered right now are not called)
+            auto it = m_eventHandlers.find(eventUID);
+            if (it == m_eventHandlers.end())
+                return;
+
+            Vector<ComponentSystemEventHandlerPtr> const& eventHandlers = it->second;
+            Size eventHandlersCount = eventHandlers.size();
+            for (Size i = 0; i < eventHandlersCount && i < eventHandlers.size(); ++i)
+                eventHandlers[i]->processEvent(_event, _params);
         }
 
         //////////////////////////////////////////
@@ -383,10 +393,16 @@ namespace Maze
         inline void sendEventImmediate(EntityId _entityId, TEvent* _event, EcsEventParams _params = EcsEventParams())
         {
             ClassUID eventUID = _event->getEventUID();
-            Vector<ComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
 
-            for (ComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
-                _eventHandler->processEvent(_entityId, _event, _params);
+            // See broadcastEventImmediate for the find() + index iteration rationale
+            auto it = m_eventHandlers.find(eventUID);
+            if (it == m_eventHandlers.end())
+                return;
+
+            Vector<ComponentSystemEventHandlerPtr> const& eventHandlers = it->second;
+            Size eventHandlersCount = eventHandlers.size();
+            for (Size i = 0; i < eventHandlersCount && i < eventHandlers.size(); ++i)
+                eventHandlers[i]->processEvent(_entityId, _event, _params);
         }
         
         //////////////////////////////////////////

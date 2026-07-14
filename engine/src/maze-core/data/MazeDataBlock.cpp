@@ -50,6 +50,41 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_CORE_API extern DataBlockParamTypeInfo const c_dataBlockParamTypeInfo[(Size)DataBlockParamType::MAX] =
+    {
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING(""), 0u),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("S8"), sizeof(S8)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("S16"), sizeof(S16)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("S32"), sizeof(S32)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("S64"), sizeof(S64)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("U8"), sizeof(U8)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("U16"), sizeof(U16)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("U32"), sizeof(U32)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("U64"), sizeof(U64)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("F32"), sizeof(F32)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("F64"), sizeof(F64)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Bool"), sizeof(Bool)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4S8"), sizeof(Vec4S8)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4U8"), sizeof(Vec4U8)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2S"), sizeof(Vec2S)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3S"), sizeof(Vec3S)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4S"), sizeof(Vec4S)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2U"), sizeof(Vec2U)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3U"), sizeof(Vec3U)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4U"), sizeof(Vec4U)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2F"), sizeof(Vec2F)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3F"), sizeof(Vec3F)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4F"), sizeof(Vec4F)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2B"), sizeof(Vec2B)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3B"), sizeof(Vec3B)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4B"), sizeof(Vec4B)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Mat3F"), sizeof(Mat3F)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Mat4F"), sizeof(Mat4F)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("TMat"), sizeof(TMat)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("String"), 0u)
+    };
+
+    //////////////////////////////////////////
     MAZE_FORCEINLINE static DataBlock::ParamIndex FindParamIndex(
         DataBlock::SharedStringId _nameId,
         DataBlock::Param const* __restrict _start,

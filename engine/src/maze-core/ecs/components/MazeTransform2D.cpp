@@ -57,6 +57,9 @@ namespace Maze
     U32 Transform2D::s_globalOrderOfArrival = 1;
 
     //////////////////////////////////////////
+    U32 Transform2D::s_hierarchyVersion = 0u;
+
+    //////////////////////////////////////////
     Transform2D::Transform2D()
     {
     }
@@ -352,6 +355,7 @@ namespace Maze
         m_parent = _parent;
 
         m_flags |= ParentChangedCurrentFrame;
+        IncrementHierarchyVersion();
 
         dirtyWorldTransform(
             Flags::WorldTransformDirty | 
@@ -422,6 +426,8 @@ namespace Maze
 
         if (m_parent)
             m_parent->m_flags |= ChildrenOrderDirty;
+
+        IncrementHierarchyVersion();
     }
 
     //////////////////////////////////////////
@@ -540,6 +546,8 @@ namespace Maze
         eastl::swap(m_children[_index0], m_children[_index1]);
         eastl::swap(m_children[_index0]->m_z, m_children[_index1]->m_z);
         eastl::swap(m_children[_index0]->m_orderOfArrival, m_children[_index1]->m_orderOfArrival);
+
+        IncrementHierarchyVersion();
 
         return true;
     }

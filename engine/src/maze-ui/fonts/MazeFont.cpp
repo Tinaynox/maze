@@ -399,7 +399,7 @@ namespace Maze
     //////////////////////////////////////////
     FontGlyphStorageData* Font::getGlyphStorageData(U32 _codePoint)
     {
-        Map<U32, FontGlyphStorageData*>::iterator it = m_glyphsMap.find(_codePoint);
+        auto it = m_glyphsMap.find(_codePoint);
         if (it != m_glyphsMap.end())
             return it->second;
 

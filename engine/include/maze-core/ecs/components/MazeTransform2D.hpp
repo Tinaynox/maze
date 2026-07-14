@@ -495,6 +495,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // Incremented on every structural 2D hierarchy change (reparenting,
+        // z-order change, children swap) - cheap way to detect stale
+        // hierarchy-derived caches
+        static inline U32 GetHierarchyVersion() { return s_hierarchyVersion; }
+
+        //////////////////////////////////////////
+        static inline void IncrementHierarchyVersion() { ++s_hierarchyVersion; }
+
+
+        //////////////////////////////////////////
         void removeAllChildren();
 
         //////////////////////////////////////////
@@ -695,6 +705,9 @@ namespace Maze
 
         S32 m_z = 0;
         U32 m_orderOfArrival = 0u;
+
+    private:
+        static U32 s_hierarchyVersion;
     };
 
 

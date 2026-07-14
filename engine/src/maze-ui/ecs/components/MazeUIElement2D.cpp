@@ -115,7 +115,7 @@ namespace Maze
                 return;
             }
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
+            Vec2F positionOS = convertWorldCoordsToLocalCoords(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -150,7 +150,7 @@ namespace Maze
             if (!m_bounds->getBounds().contains(positionWS))
                 return;
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
+            Vec2F positionOS = convertWorldCoordsToLocalCoords(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -178,7 +178,7 @@ namespace Maze
             if (!m_bounds->getBounds().contains(positionWS))
                 return;
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
+            Vec2F positionOS = convertWorldCoordsToLocalCoords(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -217,7 +217,7 @@ namespace Maze
                 return;
             }
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
+            Vec2F positionOS = convertWorldCoordsToLocalCoords(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y ||
@@ -255,7 +255,7 @@ namespace Maze
         if (!m_bounds->getBounds().contains(positionWS))
             return false;
 
-        Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
+        Vec2F positionOS = convertWorldCoordsToLocalCoords(positionWS);
 
         if (positionOS.x < 0 || positionOS.y < 0 ||
             positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -289,7 +289,7 @@ namespace Maze
                 return;
             }
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
+            Vec2F positionOS = convertWorldCoordsToLocalCoords(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -333,7 +333,7 @@ namespace Maze
                 return;
             }
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
+            Vec2F positionOS = convertWorldCoordsToLocalCoords(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -364,7 +364,7 @@ namespace Maze
             if (!m_bounds->getBounds().contains(positionWS))
                 return;
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
+            Vec2F positionOS = convertWorldCoordsToLocalCoords(positionWS);
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
             {
@@ -407,7 +407,20 @@ namespace Maze
         eventPressedChanged(m_pressed);
         getEntityRaw()->getEcsWorld()->sendEvent<UIElementPressedChangedEvent>(getEntityId(), m_pressed);
     }
-    
+
+    //////////////////////////////////////////
+    Vec2F UIElement2D::convertWorldCoordsToLocalCoords(Vec2F const& _positionWS)
+    {
+        TMat const& worldTransform = m_transform->getWorldTransform();
+        if (memcmp(&m_invWorldTransformSource, &worldTransform, sizeof(TMat)) != 0)
+        {
+            m_invWorldTransformSource = worldTransform;
+            m_invWorldTransform = worldTransform.inversed();
+        }
+
+        return m_invWorldTransform.transform(_positionWS);
+    }
+
 
 
     //////////////////////////////////////////

@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/math/MazeTMat.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 
@@ -194,6 +195,11 @@ namespace Maze
         //////////////////////////////////////////
         inline bool getFlag(Flags _flag) { return m_flags & _flag; }
 
+        //////////////////////////////////////////
+        // Cursor events hit this for every element under the cursor - cache
+        // the inverse world transform instead of inverting per event
+        Vec2F convertWorldCoordsToLocalCoords(Vec2F const& _positionWS);
+
     protected:
         Transform2DPtr m_transform;
         Bounds2DPtr m_bounds;
@@ -203,6 +209,9 @@ namespace Maze
         S32 m_cursorIndex;
         bool m_focused;
         bool m_pressed;
+
+        TMat m_invWorldTransform = TMat::c_identity;
+        TMat m_invWorldTransformSource = TMat::c_identity;
     };
 
 

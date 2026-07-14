@@ -434,6 +434,15 @@ namespace Maze
     {
         F32 dt = _dt;
 
+        // Version check makes the reorder signal independent from who calls
+        // updateChildrenOrder() first (InputSystem2D sorts during its rebuild
+        // too, which consumes the ChildrenOrderDirty flag)
+        if (m_hierarchyVersion != Transform2D::GetHierarchyVersion())
+        {
+            m_hierarchyVersion = Transform2D::GetHierarchyVersion();
+            m_sortedMeshRenderersDirty = true;
+        }
+
         m_transform2Ds->query(
             [&](Entity* _entity, Transform2D* _transform)
             {

@@ -100,7 +100,7 @@ namespace Maze
     //////////////////////////////////////////
     void SystemFont::setString(CString _data, Size _count)
     {
-        MAZE_TODO;
+        MAZE_NOT_IMPLEMENTED;
     }
 
 } // namespace Maze

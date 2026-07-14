@@ -170,6 +170,9 @@ namespace Maze
         inline Vec4F const* getUV0Data() const { return &m_uv0[0]; }
 
         //////////////////////////////////////////
+        inline Vec4F* getUV0DataRW() { return &m_uv0[0]; }
+
+        //////////////////////////////////////////
         inline Vector<Vec4F> const& getUV0() const { return m_uv0; }
 
         //////////////////////////////////////////

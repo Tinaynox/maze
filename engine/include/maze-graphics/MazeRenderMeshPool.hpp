@@ -82,7 +82,7 @@ namespace Maze
 
         Mutex m_mutex;
 
-        Map<S32, Stack<RenderMesh*>> m_renderMeshPools;
+        VectorMap<S32, Stack<RenderMesh*>> m_renderMeshPools;
         S32 m_activeMeshes;
     };
 

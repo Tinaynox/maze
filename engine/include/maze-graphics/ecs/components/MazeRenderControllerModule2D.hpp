@@ -220,6 +220,7 @@ namespace Maze
         Vector<Canvas*> m_sortedCanvases;
 
         bool m_sortedMeshRenderersDirty;
+        U32 m_hierarchyVersion = 0u;
         Vector<CanvasRenderData> m_sortedCanvasRenderData;
     };
 

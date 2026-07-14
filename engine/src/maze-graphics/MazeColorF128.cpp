@@ -27,6 +27,7 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 
 
 //////////////////////////////////////////
@@ -57,9 +58,9 @@ namespace Maze
     ColorF128 ColorF128::Random()
     {
         return ColorF128(
-            (rand()%255) * 0.00390625f,
-            (rand()%255) * 0.00390625f,
-            (rand()%255) * 0.00390625f);
+            Random::RangeRandomMT(0, 256) * (1.0f / 255.0f),
+            Random::RangeRandomMT(0, 256) * (1.0f / 255.0f),
+            Random::RangeRandomMT(0, 256) * (1.0f / 255.0f));
     }
 
     //////////////////////////////////////////

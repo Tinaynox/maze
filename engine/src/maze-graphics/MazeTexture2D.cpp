@@ -292,7 +292,7 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2D::setString(CString _data, Size _count)
     {
-        MAZE_TODO;
+        MAZE_NOT_IMPLEMENTED;
     }
 
     //////////////////////////////////////////

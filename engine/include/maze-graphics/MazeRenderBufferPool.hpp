@@ -83,7 +83,7 @@ namespace Maze
 
         Mutex m_mutex;
 
-        Map<RenderBufferSpecification, Stack<RenderBuffer*>> m_renderBufferPools;
+        VectorMap<RenderBufferSpecification, Stack<RenderBuffer*>> m_renderBufferPools;
     };
 
 } // namespace Maze

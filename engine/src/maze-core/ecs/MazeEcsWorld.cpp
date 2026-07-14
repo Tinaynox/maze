@@ -548,13 +548,17 @@ namespace Maze
             return;
 
         ClassUID eventUID = _system->getEventUID();
-        Vector<ComponentSystemEventHandlerPtr>& eventHandlers = m_eventHandlers[eventUID];
-        for (Size i = 0, in = eventHandlers.size(); i < in; ++i)
+        auto eventHandlersIt = m_eventHandlers.find(eventUID);
+        if (eventHandlersIt != m_eventHandlers.end())
         {
-            if (eventHandlers[i] == _system)
+            Vector<ComponentSystemEventHandlerPtr>& eventHandlers = eventHandlersIt->second;
+            for (Size i = 0, in = eventHandlers.size(); i < in; ++i)
             {
-                eventHandlers.erase(eventHandlers.begin() + i);
-                break;
+                if (eventHandlers[i] == _system)
+                {
+                    eventHandlers.erase(eventHandlers.begin() + i);
+                    break;
+                }
             }
         }
 

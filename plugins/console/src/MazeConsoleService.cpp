@@ -348,7 +348,7 @@ namespace Maze
         if (m_renderWindow)
             return;
 
-        Set<RenderWindow*> const& renderWindows = m_renderSystem->getRenderWindows();
+        VectorSet<RenderWindow*> const& renderWindows = m_renderSystem->getRenderWindows();
         if (renderWindows.empty())
             return;
 
