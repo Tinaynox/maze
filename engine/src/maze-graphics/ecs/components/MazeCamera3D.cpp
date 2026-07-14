@@ -180,7 +180,7 @@ namespace Maze
         Mat4F projectionMatrix = calculateProjectionMatrix(getRenderTarget());
 
         Vec2F p = _positionV / ((Vec2F)renderTargetSize * getViewport().size);
-        Vec4F positionNDC = Vec4F((p * 2.0f - 1.0f), -1.0f, 0.0f);
+        Vec4F positionNDC = Vec4F((p * 2.0f - 1.0f), 1.0f, 0.0f);
 
         Vec4F positionCS = positionNDC;
         
@@ -208,8 +208,8 @@ namespace Maze
 
         Vec2F p = _positionV / ((Vec2F)renderTargetSize * getViewport().size);
         Vec2F positionNDC = (p * 2.0f - 1.0f);
-        Vec4F positionCSNear = Vec4F(positionNDC.x, positionNDC.y, 1.0f, 1.0f);
-        Vec4F positionCSFar = Vec4F(positionNDC.x, positionNDC.y, -1.0f, 1.0f);
+        Vec4F positionCSNear = Vec4F(positionNDC.x, positionNDC.y, -1.0f, 1.0f);
+        Vec4F positionCSFar = Vec4F(positionNDC.x, positionNDC.y, 1.0f, 1.0f);
 
         Vec4F positionHVSNear = positionCSNear * invProjectionMatrix;
         Vec4F positionHVSFar = positionCSFar * invProjectionMatrix;

@@ -580,8 +580,8 @@ namespace Maze
             _outFrustum.planes[1] = makePlane(rowW + rowX); // Right
             _outFrustum.planes[2] = makePlane(rowW - rowY); // Bottom
             _outFrustum.planes[3] = makePlane(rowW + rowY); // Top
-            _outFrustum.planes[4] = makePlane(rowW - rowZ); // Near
-            _outFrustum.planes[5] = makePlane(rowW + rowZ); // Far
+            _outFrustum.planes[4] = makePlane(rowW + rowZ); // Near
+            _outFrustum.planes[5] = makePlane(rowW - rowZ); // Far
         }
 
     } // namespace GraphicsUtilsHelper
