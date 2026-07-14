@@ -646,7 +646,12 @@ namespace Maze
             else
             if (readCharNoRewind() == '=')
             {
-                MAZE_TODO;
+                // Untyped params ('name = value') are not supported - fail
+                // instead of looping forever on the unconsumed '='
+                processSyntaxError(
+                    "Param '%s' has no type - expected 'name:Type = value'",
+                    nameText.c_str());
+                return false;
             }
             else
             {

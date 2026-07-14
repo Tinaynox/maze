@@ -63,15 +63,22 @@ namespace Maze
 
         key |= (U64(_unit.renderPass->getRenderQueueIndex()) & 0xFF) << 56;
 
+        // Saturate before converting: float -> unsigned conversion of a value
+        // above the target range is UB, and even a wrap would break ordering
+        // for distances beyond ~2072 units (sqrDistance * 1000 > 2^32)
+        F32 scaledSqrDistance = _unit.sqrDistanceToCamera * 1000.0f;
+        U32 depthKey = scaledSqrDistance < 4294967040.0f ? U32(scaledSqrDistance)
+                                                         : 0xFFFFFFFFu; // Also catches NaN
+
         if (_unit.renderPass->getRenderQueueIndex() < (S32)RenderQueueIndex::Transparent)
         {
             key |= (U64(_unit.sortIndex) & 0xFFFF) << 40;
-            key |= (U64(_unit.sqrDistanceToCamera * 1000.0f) & 0xFFFFFFFF);
+            key |= U64(depthKey);
         }
         else
         {
             // Reverse distance for transparent
-            key |= (U64(0xFFFFFFFF - U32(_unit.sqrDistanceToCamera * 1000.0f)));
+            key |= U64(0xFFFFFFFFu - depthKey);
         }
 
         return key;

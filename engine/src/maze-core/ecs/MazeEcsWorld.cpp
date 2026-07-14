@@ -898,6 +898,10 @@ namespace Maze
         entityData.entity->setEcsScene(nullptr);
         m_freeEntityIndices.push(index);
         m_entities[index].entity.reset();
+
+        // Invalidate stale EntityId handles: the slot keeps its index but any
+        // id stored by game code stops matching once the slot is recycled
+        m_entities[index].id.incrementGeneration();
     }
 
     //////////////////////////////////////////

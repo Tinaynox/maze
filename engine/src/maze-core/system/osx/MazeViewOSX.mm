@@ -468,7 +468,16 @@
             const char* characters = [[_event characters] UTF8String];
             if (characters)
             {
-                strcpy(eventData.textUtf8, characters);
+                // textUtf8 is a single codepoint buffer (4 bytes + NUL) while
+                // characters may hold a whole composed/IME string - truncate
+                // without splitting a UTF-8 sequence
+                Maze::Size srcLen = strlen(characters);
+                Maze::Size maxLen = sizeof(eventData.textUtf8) - 1;
+                Maze::Size len = srcLen < maxLen ? srcLen : maxLen;
+                while (len > 0 && len < srcLen && (characters[len] & 0xC0) == 0x80)
+                    --len;
+                memcpy(eventData.textUtf8, characters, len);
+                eventData.textUtf8[len] = '\0';
             }
         }
     }

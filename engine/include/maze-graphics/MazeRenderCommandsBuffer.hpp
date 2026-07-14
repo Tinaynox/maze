@@ -76,13 +76,17 @@ namespace Maze
         template <typename TCommand, typename ...TArgs>
         inline TCommand* createCommand(TArgs... _args)
         {
-            
-#if (MAZE_DEBUG)
-            Size const c_TCommandSize = sizeof(TCommand);
-            MAZE_ERROR_IF(c_TCommandSize > c_renderCommandFixedSize, "RenderCommand size exceeded => %u!", c_TCommandSize);
-            MAZE_ERROR_IF(m_commandsCount >= c_renderCommandsCountMax - 1, "Render commands count exceeded!");
-#endif
+            static_assert(
+                sizeof(TCommand) <= c_renderCommandFixedSize,
+                "RenderCommand size exceeds c_renderCommandFixedSize!");
 
+            if (m_commandsCount >= (S32)c_renderCommandsCountMax)
+            {
+                // Drop the command instead of writing past the buffer end.
+                // The scratch slot keeps the returned pointer safe to write through
+                MAZE_ERROR("Render commands count exceeded (%d)! Command dropped.", (S32)c_renderCommandsCountMax);
+                return new (m_overflowScratch) TCommand(_args...);
+            }
 
             U8* pointer = m_commandsBufferData + m_commandsCount * c_renderCommandFixedSize;
             ++m_commandsCount;
@@ -93,6 +97,12 @@ namespace Maze
         //////////////////////////////////////////
         inline void appendCommand(RenderCommand const& _command)
         {
+            if (m_commandsCount >= (S32)c_renderCommandsCountMax)
+            {
+                MAZE_ERROR("Render commands count exceeded (%d)! Command dropped.", (S32)c_renderCommandsCountMax);
+                return;
+            }
+
             Size pointerOffset = m_commandsCount * c_renderCommandFixedSize;
 
             ++m_commandsCount;
@@ -105,13 +115,23 @@ namespace Maze
         //////////////////////////////////////////
         inline void appendCommands(RenderCommandsBuffer const& _buffer)
         {
+            S32 count = _buffer.getCommandsCount();
+            S32 freeCount = (S32)c_renderCommandsCountMax - m_commandsCount;
+            if (count > freeCount)
+            {
+                MAZE_ERROR("Render commands count exceeded (%d)! %d command(s) dropped.", (S32)c_renderCommandsCountMax, count - freeCount);
+                count = freeCount;
+                if (count <= 0)
+                    return;
+            }
+
             Size pointerOffset = m_commandsCount * c_renderCommandFixedSize;
 
-            m_commandsCount += _buffer.getCommandsCount();
+            m_commandsCount += count;
             memcpy(
                 &m_commandsBufferData[pointerOffset],
                 _buffer.getCommandsBufferData(),
-                c_renderCommandFixedSize * _buffer.getCommandsCount());
+                c_renderCommandFixedSize * count);
         }
 
         //////////////////////////////////////////
@@ -137,7 +157,8 @@ namespace Maze
 
 
     public:
-        U8 m_commandsBufferData[c_renderCommandFixedSize * c_renderCommandsCountMax];
+        alignas(16) U8 m_commandsBufferData[c_renderCommandFixedSize * c_renderCommandsCountMax];
+        alignas(16) U8 m_overflowScratch[c_renderCommandFixedSize];
         S32 m_commandsCount;
     };
        

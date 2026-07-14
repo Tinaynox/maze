@@ -143,7 +143,20 @@ namespace Maze
 
         UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniforms.find(_uniformName.hash);
         if (it != m_uniforms.end())
+        {
+#if (MAZE_DEBUG)
+            // Uniforms are keyed by the 32-bit name hash only, so a hash
+            // collision between two different names silently aliases them
+            MAZE_ERROR_IF(
+                it->second && strcmp(it->second->getName().c_str(), _uniformName.str) != 0,
+                "Shader uniform name hash collision: '%s' vs '%s' (hash=%u)! Shader='%s'",
+                it->second->getName().c_str(),
+                _uniformName.str,
+                _uniformName.hash,
+                getName().c_str());
+#endif
             return it->second;
+        }
 
         return nullPointer;
     }

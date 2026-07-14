@@ -109,7 +109,7 @@ namespace Maze
     {
         S32 offset = m_instanceStreamModelMatrix->getOffset();
 
-        MAZE_DEBUG_ERROR_RETURN_IF(offset >= (S32)m_instanceStreamModelMatrix->getDataSize(),
+        MAZE_ERROR_RETURN_IF(offset >= (S32)m_instanceStreamModelMatrix->getDataSize(),
             "Index is out of bounds! offset=%d, dataSize=%d", offset, (S32)m_instanceStreamModelMatrix->getDataSize());
 
         m_instanceStreamModelMatrix->setData(offset, _modelMatrix);
@@ -123,7 +123,7 @@ namespace Maze
     {
         S32 offset = m_instanceStreamModelMatrix->getOffset();
 
-        MAZE_DEBUG_ERROR_RETURN_IF(offset + _count > (S32)m_instanceStreamModelMatrix->getDataSize(),
+        MAZE_ERROR_RETURN_IF(offset + _count > (S32)m_instanceStreamModelMatrix->getDataSize(),
             "Index is out of bounds! offset=%d, _count=%d, dataSize=%d", offset, _count, (S32)m_instanceStreamModelMatrix->getDataSize());
 
         m_instanceStreamModelMatrix->setData(offset, _modelMatricies, _count);
@@ -136,7 +136,7 @@ namespace Maze
     {
         S32 offset = m_instanceStreamColor->getOffset();
 
-        MAZE_DEBUG_ERROR_RETURN_IF(offset >= (S32)m_instanceStreamColor->getDataSize(),
+        MAZE_ERROR_RETURN_IF(offset >= (S32)m_instanceStreamColor->getDataSize(),
             "Index is out of bounds! offset=%d, dataSize=%d", offset, (S32)m_instanceStreamColor->getDataSize());
 
         m_instanceStreamColor->setData(offset, _color);
@@ -150,7 +150,7 @@ namespace Maze
     {
         S32 offset = m_instanceStreamColor->getOffset();
 
-        MAZE_DEBUG_ERROR_RETURN_IF(offset + _count > (S32)m_instanceStreamColor->getDataSize(),
+        MAZE_ERROR_RETURN_IF(offset + _count > (S32)m_instanceStreamColor->getDataSize(),
             "Index is out of bounds! offset=%d, _count=%d, dataSize=%d", offset, _count, (S32)m_instanceStreamColor->getDataSize());
 
         m_instanceStreamColor->setData(offset, _colors, _count);
@@ -164,7 +164,7 @@ namespace Maze
     {
         S32 offset = m_instanceStreamUVs[_index]->getOffset();
 
-        MAZE_DEBUG_ERROR_RETURN_IF(offset >= (S32)m_instanceStreamUVs[_index]->getDataSize(),
+        MAZE_ERROR_RETURN_IF(offset >= (S32)m_instanceStreamUVs[_index]->getDataSize(),
             "Index is out of bounds! offset=%d, dataSize=%d", offset, (S32)m_instanceStreamUVs[_index]->getDataSize());
 
         m_instanceStreamUVs[_index]->setData(offset, _uv);
@@ -179,7 +179,7 @@ namespace Maze
     {
         S32 offset = m_instanceStreamUVs[_index]->getOffset();
 
-        MAZE_DEBUG_ERROR_RETURN_IF(offset + _count > (S32)m_instanceStreamUVs[_index]->getDataSize(),
+        MAZE_ERROR_RETURN_IF(offset + _count > (S32)m_instanceStreamUVs[_index]->getDataSize(),
             "Index is out of bounds! offset=%d, _count=%d, dataSize=%d", offset, _count, (S32)m_instanceStreamUVs[_index]->getDataSize());
 
         m_instanceStreamUVs[_index]->setData(offset, _uvs, _count);
