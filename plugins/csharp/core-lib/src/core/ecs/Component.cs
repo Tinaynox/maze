@@ -23,12 +23,19 @@ namespace Maze.Core
         {
             return InternalCalls.ComponentGetEntityId(NativeComponentPtr);
         }
+        public int EntityId => GetEntityId();
 
         public Entity GetEntity()
         {
             return new Entity(InternalCalls.ComponentGetEntity(NativeComponentPtr));
         }
         public Entity Entity => GetEntity();
+
+        public bool EntityActive
+        {
+            get { InternalCalls.EntityGetActive(InternalCalls.ComponentGetEntity(NativeComponentPtr), out bool active); return active; }
+            set { InternalCalls.EntitySetActive(InternalCalls.ComponentGetEntity(NativeComponentPtr), value); }
+        }
 
         public T GetComponent<T>() where T : class
         {

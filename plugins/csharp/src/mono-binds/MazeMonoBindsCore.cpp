@@ -519,13 +519,13 @@ namespace Maze
     //////////////////////////////////////////
     inline Entity* ComponentGetEntity(Component* _component)
     {
-        return _component->getEntityRaw();
+        return _component ? _component->getEntityRaw() : nullptr;
     }
 
     //////////////////////////////////////////
     inline Entity* ComponentGetEntityById(Component* _component, S32 _eid)
     {
-        Entity* entity = _component->getEntityRaw();
+        Entity* entity = _component ? _component->getEntityRaw() : nullptr;
         if (!entity)
             return nullptr;
 

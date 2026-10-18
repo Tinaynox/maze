@@ -225,6 +225,8 @@ namespace Maze
         if (!m_monoInstance)
             return;
 
+        m_monoInstance->setPropertyValue(MAZE_HCS("NativeComponentPtr"), (Component*)nullptr);
+
         m_monoInstance->destroy();
         m_monoInstance.reset();
     }

@@ -221,7 +221,7 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerEntityPtr::setValue(EntityPtr const& _value)
     {
-        m_worldId = _value ? _value->getEcsWorld()->getId() : EcsWorldId(0);
+        m_worldId = _value && _value->getEcsWorld() ? _value->getEcsWorld()->getId() : EcsWorldId(0);
         m_entityId = _value ? _value->getId() : c_invalidEntityId;
         CString name = _value ? EcsHelper::GetName(_value.get()) : "None";
 
