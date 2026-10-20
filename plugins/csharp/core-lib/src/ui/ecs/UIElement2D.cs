@@ -33,5 +33,11 @@ namespace Maze.UI
         {
             return InternalCalls.UIElement2DTraceElement(NativeComponentPtr, ref renderTargetCoords, ignoreEntityIds);
         }
+
+        // Re-evaluates Focused without requiring an actual mouse move
+        public void RefreshCursorFocus()
+        {
+            InternalCalls.UIElement2DRefreshCursorFocus(NativeComponentPtr);
+        }
     }
 }

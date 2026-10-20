@@ -31,6 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
+#include "maze-core/utils/MazeIndexedResource.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
@@ -167,6 +168,10 @@ namespace Maze
         //////////////////////////////////////////
         inline void dirtySortedCanvasData() { m_sortedCanvasDataDirty = true; }
 
+        //////////////////////////////////////////
+        // Re-evaluates hover/focus without requiring an actual mouse move
+        void refreshCursorFocus();
+
     protected:
 
         //////////////////////////////////////////
@@ -281,6 +286,10 @@ namespace Maze
         U32 m_firstCursorReleaseTime = 0u;
         ClickData m_clickData;
         bool m_processClick = false;
+
+        ResourceId m_lastMouseMoveWindowId = c_invalidResourceId;
+        S32 m_lastMouseMoveButtonIndex = 0;
+        bool m_hasLastMouseMove = false;
 
     private:
         bool m_sortedCanvasDataLocked = false;

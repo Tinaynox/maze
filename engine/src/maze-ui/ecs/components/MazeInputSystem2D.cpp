@@ -610,6 +610,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void InputSystem2D::refreshCursorFocus()
+    {
+        if (!m_hasLastMouseMove)
+            return;
+
+        Window* window = Window::GetResourceFast(m_lastMouseMoveWindowId);
+        if (!window)
+            return;
+
+        Vec2F cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
+        Vec2F renderTargetCoords = m_coordsConverter(window, cursorPosition);
+
+        processCursorMove(
+            window,
+            0,
+            m_lastMouseMoveButtonIndex,
+            renderTargetCoords,
+            CursorInputSource::Mouse);
+    }
+
+    //////////////////////////////////////////
     void InputSystem2D::processCanvasEntityAdded(Entity* _entity)
     {
         updateSortedCanvasesList();
@@ -674,6 +695,10 @@ namespace Maze
             }
             case InputEventMouseType::Move:
             {
+                m_lastMouseMoveWindowId = window ? window->getResourceId() : c_invalidResourceId;
+                m_lastMouseMoveButtonIndex = _mouseData.buttonId;
+                m_hasLastMouseMove = true;
+
                 processCursorMove(window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
                 break;
             }

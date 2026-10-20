@@ -131,6 +131,22 @@ namespace Maze
         return result;
     }
 
+    //////////////////////////////////////////
+    inline void UIElement2DRefreshCursorFocus(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(UIElement2D);
+
+        EcsWorld* ecsWorld = _component->getEntityRaw()->getEcsWorld();
+        if (!ecsWorld)
+            return;
+
+        ecsWorld->requestInclusiveSample<InputSystem2D>()->query(
+            [&](Entity*, InputSystem2D* _inputSystem)
+            {
+                _inputSystem->refreshCursorFocus();
+            });
+    }
+
 
     //////////////////////////////////////////
     inline MonoString* TextRenderer2DGetText(Component* _component)
@@ -460,6 +476,7 @@ namespace Maze
         MAZE_UI_MONO_BIND_FUNC(UIElement2DSetPressed);
         MAZE_UI_MONO_BIND_FUNC(UIElement2DGetPressed);
         MAZE_UI_MONO_BIND_FUNC(UIElement2DTraceElement);
+        MAZE_UI_MONO_BIND_FUNC(UIElement2DRefreshCursorFocus);
 
         // TextRenderer2D
         MAZE_UI_MONO_BIND_FUNC(TextRenderer2DGetText);
