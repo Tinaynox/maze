@@ -214,6 +214,10 @@ namespace Maze
     void EditorManager::clearMode()
     {
         setSceneMode(EditorSceneMode::None);
+
+        // Deselect before destroying the workspace to avoid a stale Inspector reference
+        SelectionManager::GetInstancePtr()->unselectObjects();
+
         m_editorWorkspaceManager->clearWorkspace();
         m_editorPlaytestManager->clearWorkspace();
 
