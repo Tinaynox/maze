@@ -59,4 +59,14 @@ namespace Maze.UI
     {
         public bool pressed;
     }
+
+    public class UITweenTransitionShowCompleteEvent : NativeEvent
+    {
+        public int tweenEid;
+    }
+
+    public class UITweenTransitionHideCompleteEvent : NativeEvent
+    {
+        public int tweenEid;
+    }
 }

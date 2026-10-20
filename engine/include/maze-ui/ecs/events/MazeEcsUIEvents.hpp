@@ -166,6 +166,71 @@ namespace Maze
     };
 
 
+    //////////////////////////////////////////
+    // Class UITweenTransitionShowCompleteEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UITweenTransitionShowCompleteEvent
+        : public GenericEvent<UITweenTransitionShowCompleteEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UITweenTransitionShowCompleteEvent, Event);
+
+
+        //////////////////////////////////////////
+        UITweenTransitionShowCompleteEvent() = default;
+
+        //////////////////////////////////////////
+        UITweenTransitionShowCompleteEvent(
+            EntityId const& _tweenEid)
+            : tweenEid(_tweenEid)
+        {}
+
+        //////////////////////////////////////////
+        inline EntityId const& getTweenEid() const { return tweenEid; }
+
+        //////////////////////////////////////////
+        inline void setTweenEid(EntityId const& _value) { tweenEid = _value; }
+
+    public:
+        EntityId tweenEid;
+    };
+
+
+    //////////////////////////////////////////
+    // Class UITweenTransitionHideCompleteEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API UITweenTransitionHideCompleteEvent
+        : public GenericEvent<UITweenTransitionHideCompleteEvent>
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UITweenTransitionHideCompleteEvent, Event);
+
+
+        //////////////////////////////////////////
+        UITweenTransitionHideCompleteEvent() = default;
+
+        //////////////////////////////////////////
+        UITweenTransitionHideCompleteEvent(
+            EntityId const& _tweenEid)
+            : tweenEid(_tweenEid)
+        {}
+
+        //////////////////////////////////////////
+        inline EntityId const& getTweenEid() const { return tweenEid; }
+
+        //////////////////////////////////////////
+        inline void setTweenEid(EntityId const& _value) { tweenEid = _value; }
+
+    public:
+        EntityId tweenEid;
+    };
+
 
 } // namespace Maze
 //////////////////////////////////////////

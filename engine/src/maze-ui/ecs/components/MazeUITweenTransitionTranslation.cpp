@@ -27,6 +27,8 @@
 #include "MazeUIHeader.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionTranslation.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/ecs/events/MazeEcsUIEvents.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
@@ -149,6 +151,7 @@ namespace Maze
                 m_hidingProgress = 1.0f;
 
                 eventHideComplete();
+                broadcastHideCompleteEvent();
 
                 if (m_onHideComplete)
                 {
@@ -167,6 +170,7 @@ namespace Maze
                 m_hidingProgress = 0.0f;
 
                 eventShowComplete();
+                broadcastShowCompleteEvent();
 
                 if (m_onShowComplete)
                 {
@@ -203,6 +207,7 @@ namespace Maze
         updateTransform();
 
         eventShowComplete();
+        broadcastShowCompleteEvent();
 
         if (m_onShowComplete)
         {
@@ -219,6 +224,7 @@ namespace Maze
         updateTransform();
 
         eventHideComplete();
+        broadcastHideCompleteEvent();
 
         if (m_onHideComplete)
         {
@@ -259,6 +265,20 @@ namespace Maze
             m_hideSpeed = m_showSpeed / m_hideKoef;
         else
             m_hideSpeed = m_showSpeed;
+    }
+
+    //////////////////////////////////////////
+    void UITweenTransitionTranslation::broadcastShowCompleteEvent()
+    {
+        if (EcsWorld* world = getEntityRaw() ? getEntityRaw()->getEcsWorld() : nullptr)
+            world->broadcastEvent<UITweenTransitionShowCompleteEvent>(getEntityId());
+    }
+
+    //////////////////////////////////////////
+    void UITweenTransitionTranslation::broadcastHideCompleteEvent()
+    {
+        if (EcsWorld* world = getEntityRaw() ? getEntityRaw()->getEcsWorld() : nullptr)
+            world->broadcastEvent<UITweenTransitionHideCompleteEvent>(getEntityId());
     }
 
 

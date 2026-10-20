@@ -188,6 +188,12 @@ namespace Maze
         //////////////////////////////////////////
         void updateHideSpeed();
 
+        //////////////////////////////////////////
+        void broadcastShowCompleteEvent();
+
+        //////////////////////////////////////////
+        void broadcastHideCompleteEvent();
+
     protected:
         Transform2DPtr m_transform;
 

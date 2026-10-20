@@ -46,6 +46,14 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(EntityId, editBoxEid, c_invalidEntityId, getEditBoxEid, setEditBoxEid),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Bool, selected, false, getSelected, setSelected));
 
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UITweenTransitionShowCompleteEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(EntityId, tweenEid, c_invalidEntityId, getTweenEid, setTweenEid));
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UITweenTransitionHideCompleteEvent, Event,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(EntityId, tweenEid, c_invalidEntityId, getTweenEid, setTweenEid));
+
 
 } // namespace Maze
 //////////////////////////////////////////
