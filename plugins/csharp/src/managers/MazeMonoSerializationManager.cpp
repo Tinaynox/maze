@@ -108,6 +108,53 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    // Rejects a resolved ScriptableObject that isn't assignable to the field's type
+    static ScriptableObjectPtr ResolveScriptableObjectParam(
+        DataBlock const& _dataBlock,
+        DataBlock::ParamIndex _paramIndex,
+        HashedCString _name,
+        MonoType* _expectedMonoType)
+    {
+        DataBlock::Param const& param = _dataBlock.getParam(_paramIndex);
+
+        ScriptableObjectPtr scriptableObject;
+        if (param.type == U8(DataBlockParamType::ParamU32))
+        {
+            U32 auid = _dataBlock.getU32(_paramIndex);
+            scriptableObject = ScriptableObjectManager::GetInstancePtr()->getOrLoadScriptableObject(auid, true);
+        }
+        else
+        if (param.type == U8(DataBlockParamType::ParamString))
+        {
+            String const& name = _dataBlock.getString(_paramIndex);
+            scriptableObject = ScriptableObjectManager::GetInstancePtr()->getOrLoadScriptableObject(MAZE_HASHED_CSTRING(name.c_str()), true);
+        }
+        else
+        {
+            MAZE_ERROR("Unsupported type for ScriptableObject field '%s': %d", _name.str, U8(param.type));
+            return nullptr;
+        }
+
+        if (!scriptableObject || !scriptableObject->getScriptInstance())
+            return scriptableObject;
+
+        MonoClass* expectedClass = mono_type_get_class(_expectedMonoType);
+        MonoClass* actualClass = scriptableObject->getScriptInstance()->getMonoClass()->getMonoClass();
+        if (expectedClass && actualClass && actualClass != expectedClass &&
+            !mono_class_is_subclass_of(actualClass, expectedClass, false))
+        {
+            MAZE_ERROR("ScriptableObject '%s' assigned to '%s' is a %s, not a %s - ignoring!",
+                scriptableObject->getName().c_str(),
+                _name.str,
+                mono_class_get_name(actualClass),
+                mono_class_get_name(expectedClass));
+            return nullptr;
+        }
+
+        return scriptableObject;
+    }
+
+    //////////////////////////////////////////
     void MonoSerializationManager::notifyEvent(ClassUID _eventUID, Event* _event)
     {
         if (_eventUID == ClassInfo<CSharpCoreAssemblyLoadedEvent>::UID())
@@ -514,26 +561,18 @@ namespace Maze
                 [](EcsWorld* _world, ScriptInstance& _instance, ScriptPropertyPtr const& _prop, DataBlock const& _dataBlock)
                 {
                     DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(_prop->getName());
-                    if (paramIndex >= 0)
+                    if (paramIndex < 0)
+                        return;
+
+                    ScriptableObjectPtr scriptableObject = ResolveScriptableObjectParam(
+                        _dataBlock, paramIndex, _prop->getName(), _prop->getMonoType());
+                    if (scriptableObject && scriptableObject->getScriptInstance())
                     {
-                        DataBlock::Param const& param = _dataBlock.getParam(paramIndex);
-                        if (param.type == U8(DataBlockParamType::ParamU32))
-                        {
-                            U32 auid = _dataBlock.getU32(paramIndex);
-                            ScriptableObjectPtr const& scriptableObject = ScriptableObjectManager::GetInstancePtr()->getOrLoadScriptableObject(auid, true);
-                            if (scriptableObject && scriptableObject->getScriptInstance())
-                            {
-                                MAZE_ERROR_IF(!scriptableObject->getScriptInstance()->getInstance(), "ScriptableObject is not loaded - %s!", scriptableObject->getName().c_str());
-                                _instance.setPropertyValue(_prop, scriptableObject->getScriptInstance()->getInstance());
-                            }
-                            else
-                                _instance.resetPropertyValue(_prop);
-                        }
-                        else
-                        {
-                            MAZE_ERROR("Unsupported type: %d", U8(param.type));
-                        }
+                        MAZE_ERROR_IF(!scriptableObject->getScriptInstance()->getInstance(), "ScriptableObject is not loaded - %s!", scriptableObject->getName().c_str());
+                        _instance.setPropertyValue(_prop, scriptableObject->getScriptInstance()->getInstance());
                     }
+                    else
+                        _instance.resetPropertyValue(_prop);
                 },
                 [](EcsWorld* _world, ScriptInstance const& _instance, ScriptFieldPtr const& _field, DataBlock& _dataBlock)
                 {
@@ -544,26 +583,18 @@ namespace Maze
                 [](EcsWorld* _world, ScriptInstance& _instance, ScriptFieldPtr const& _field, DataBlock const& _dataBlock)
                 {
                     DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(_field->getName());
-                    if (paramIndex >= 0)
+                    if (paramIndex < 0)
+                        return;
+
+                    ScriptableObjectPtr scriptableObject = ResolveScriptableObjectParam(
+                        _dataBlock, paramIndex, _field->getName(), _field->getMonoType());
+                    if (scriptableObject && scriptableObject->getScriptInstance())
                     {
-                        DataBlock::Param const& param = _dataBlock.getParam(paramIndex);
-                        if (param.type == U8(DataBlockParamType::ParamU32))
-                        {
-                            U32 auid = _dataBlock.getU32(paramIndex);
-                            ScriptableObjectPtr const& scriptableObject = ScriptableObjectManager::GetInstancePtr()->getOrLoadScriptableObject(auid, true);
-                            if (scriptableObject && scriptableObject->getScriptInstance())
-                            {
-                                MAZE_ERROR_IF(!scriptableObject->getScriptInstance()->getInstance(), "ScriptableObject is not loaded - %s!", scriptableObject->getName().c_str());
-                                _instance.setFieldValue(_field, scriptableObject->getScriptInstance()->getInstance());
-                            }
-                            else
-                                _instance.resetFieldValue(_field);
-                        }
-                        else
-                        {
-                            MAZE_ERROR("Unsupported type: %d", U8(param.type));
-                        }
+                        MAZE_ERROR_IF(!scriptableObject->getScriptInstance()->getInstance(), "ScriptableObject is not loaded - %s!", scriptableObject->getName().c_str());
+                        _instance.setFieldValue(_field, scriptableObject->getScriptInstance()->getInstance());
                     }
+                    else
+                        _instance.resetFieldValue(_field);
                 });
 
 

@@ -315,7 +315,14 @@ namespace Maze
 
 
         m_transitionFlags &= ~static_cast<U8>(TransitionFlags::AwakeForbidden);
-        tryAwake();
+
+        // Awaken only after the remap above runs, otherwise a child's OnAwake
+        // fires with unmapped cross-entity serialized fields
+        _copyData.getPendingAwake().push_back(this);
+
+        if (_copyData.getStackDepth() == 0)
+            for (Entity* entity : _copyData.getPendingAwake())
+                entity->tryAwake();
 
         return true;
     }

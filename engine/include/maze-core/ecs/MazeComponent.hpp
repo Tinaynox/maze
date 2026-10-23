@@ -136,6 +136,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        // Deferred until the whole copied hierarchy is remapped - see Entity::init
+        inline Vector<Entity*>& getPendingAwake()
+        {
+            return m_storage->pendingAwake;
+        }
+
+        //////////////////////////////////////////
         inline S32 getStackDepth() const { return m_stackDepth; }
 
         //////////////////////////////////////////
@@ -169,6 +176,7 @@ namespace Maze
             VectorMap<Component*, Component*> components;
             Vector<ComponentPropertyData> componentProperties;
             Vector<EntityPropertyData> entityProperties;
+            Vector<Entity*> pendingAwake;
         };
 
         SharedPtr<Storage> m_storage;

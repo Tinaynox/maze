@@ -404,12 +404,15 @@ namespace Maze
     //////////////////////////////////////////
     inline void EntityGetActive(Entity* _entity, bool& _outValue)
     {
-        _outValue = _entity->getActiveSelf();
+        _outValue = _entity ? _entity->getActiveSelf() : false;
     }
 
     //////////////////////////////////////////
     inline void EntitySetActive(Entity* _entity, bool _value)
     {
+        if (!_entity)
+            return;
+
         _entity->setActiveSelf(_value);
     }
 
