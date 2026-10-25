@@ -40,7 +40,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ConsoleSettings, Settings,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, active, false, getActive, setActive));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, active, false, getActive, setActive),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<String>, lastCommands, Vector<String>(), getLastCommands, setLastCommands));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(ConsoleSettings);

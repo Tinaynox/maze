@@ -81,9 +81,18 @@ namespace Maze
         //////////////////////////////////////////
         inline void switchActive() { setActive(!getActive()); }
 
+
+        //////////////////////////////////////////
+        inline void setLastCommands(Vector<String> const& _value) { m_lastCommands = _value; }
+
+        //////////////////////////////////////////
+        inline Vector<String> const& getLastCommands() const { return m_lastCommands; }
+
     protected:
 
         ObservableValue<bool> m_active = true;
+
+        Vector<String> m_lastCommands;
     };
 
 

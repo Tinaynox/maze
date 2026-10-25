@@ -218,6 +218,12 @@ namespace Maze
         {
             unloadPlugin(m_pluginLibs.begin()->first);
         }
+
+        // MAZE_STATIC plugins skip m_pluginLibs entirely - uninstall whatever remains.
+        while (!m_plugins.empty())
+        {
+            uninstallPlugin(m_plugins.back().get());
+        }
     }
 
     //////////////////////////////////////////

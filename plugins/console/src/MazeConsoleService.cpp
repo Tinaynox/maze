@@ -228,6 +228,9 @@ namespace Maze
         ConsoleSettings* consoleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ConsoleSettings>();
         consoleSettings->getActiveChangedEvent().subscribe(this, &ConsoleService::notifyConsoleActiveChanged);
 
+        for (String const& command : consoleSettings->getLastCommands())
+            m_lastCommands.push_back(command);
+
         if (GraphicsManager::GetInstancePtr())
         {
             GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemWillBeChanged.subscribe(this, &ConsoleService::notifyDefaultRenderSystemWillBeChanged);
@@ -266,6 +269,9 @@ namespace Maze
         {
             ConsoleSettings* consoleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ConsoleSettings>();
             consoleSettings->getActiveChangedEvent().unsubscribe(this);
+
+            consoleSettings->setLastCommands(Vector<String>(m_lastCommands.begin(), m_lastCommands.end()));
+            SettingsManager::GetInstancePtr()->saveSettings();
 
             SettingsManager::GetInstancePtr()->clearSettings<ConsoleSettings>();
         }
