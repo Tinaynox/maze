@@ -170,6 +170,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void Clear();
+
+        //////////////////////////////////////////
+        bool ConvertEntityToPrefab(EntityPtr const& _entity);
     };
 
 

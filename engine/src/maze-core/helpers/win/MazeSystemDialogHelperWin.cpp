@@ -44,11 +44,12 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API String OpenFile(
             CString _filter,
-            Window const* _modalToWindow)
+            Window const* _modalToWindow,
+            CString _initialDir)
         {
             OPENFILENAMEA ofn;
             CHAR szFile[MAX_PATH] = { 0 };
-            
+
             ZeroMemory(&ofn, sizeof(OPENFILENAME));
             ofn.lStructSize = sizeof(OPENFILENAME);
             ofn.hwndOwner = _modalToWindow ? _modalToWindow->castRaw<WindowWin>()->getHandle() : NULL;
@@ -56,6 +57,14 @@ namespace Maze
             ofn.nMaxFile = sizeof(szFile);
 
             CHAR currentDir[MAX_PATH] = { 0 };
+            String initialDir;
+            if (_initialDir && _initialDir[0] != '\0')
+            {
+                initialDir = _initialDir;
+                StringHelper::ReplaceSubstring(initialDir, "/", "\\");
+                ofn.lpstrInitialDir = initialDir.c_str();
+            }
+            else
             if (GetCurrentDirectoryA(256, currentDir))
                 ofn.lpstrInitialDir = currentDir;
 
@@ -72,7 +81,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API String SaveFile(
             CString _filter,
-            Window const* _modalToWindow)
+            Window const* _modalToWindow,
+            CString _initialDir)
         {
             OPENFILENAMEA ofn;
             CHAR szFile[MAX_PATH] = { 0 };
@@ -84,6 +94,14 @@ namespace Maze
             ofn.nMaxFile = sizeof(szFile);
 
             CHAR currentDir[MAX_PATH] = { 0 };
+            String initialDir;
+            if (_initialDir && _initialDir[0] != '\0')
+            {
+                initialDir = _initialDir;
+                StringHelper::ReplaceSubstring(initialDir, "/", "\\");
+                ofn.lpstrInitialDir = initialDir.c_str();
+            }
+            else
             if (GetCurrentDirectoryA(256, currentDir))
                 ofn.lpstrInitialDir = currentDir;
 

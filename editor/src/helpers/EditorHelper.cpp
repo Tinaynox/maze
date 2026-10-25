@@ -37,6 +37,8 @@
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/components/MazePrefabInstance.hpp"
+#include "maze-core/assets/MazeAssetUnitEntityPrefab.hpp"
 #include "maze-core/helpers/MazeSystemDialogHelper.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -93,6 +95,7 @@
 #include "managers/EditorPrefabManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
 #include "managers/EditorSceneManager.hpp"
+#include "helpers/EditorProjectHelper.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "scenes/SceneEditor.hpp"
@@ -625,6 +628,43 @@ namespace Maze
             EditorWorkspaceManager::GetInstancePtr()->clearWorkspace();
 
             EditorManager::GetInstancePtr()->setSceneMode(EditorSceneMode::Scene);
+        }
+
+        //////////////////////////////////////////
+        bool ConvertEntityToPrefab(EntityPtr const& _entity)
+        {
+            if (!_entity)
+                return false;
+
+            if (_entity->getComponentRaw<PrefabInstance>())
+                return false;
+
+            String assetsDirectory = GetProjectAssetsFolder().toUTF8();
+
+            String fullPath = SystemDialogHelper::SaveFile(
+                "Maze Prefab (*.mzprefab)\0*.mzprefab\0",
+                Editor::GetInstancePtr()->getMainRenderWindow()->getWindow().get(),
+                assetsDirectory.c_str());
+
+            if (fullPath.empty())
+                return false;
+
+            if (!EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(_entity, fullPath))
+                return false;
+
+            AssetManager::GetInstancePtr()->updateAssets();
+
+            AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(fullPath);
+            if (!assetFile)
+                return false;
+
+            AssetUnitEntityPrefabPtr assetUnit = assetFile->getAssetUnit<AssetUnitEntityPrefab>();
+            if (!assetUnit)
+                return false;
+
+            _entity->createComponent<PrefabInstance>(assetUnit->getAssetUnitId());
+
+            return true;
         }
     };
 

@@ -635,6 +635,22 @@ namespace Maze
                         }
                     });
 
+                    if (!entity->getComponentRaw<PrefabInstance>())
+                    {
+                        _menuListTree->addItem(
+                            "Convert To Prefab",
+                            [controllerWeak, entityWeak](String const& _text)
+                        {
+                            EditorHierarchyControllerPtr controller = controllerWeak.lock();
+                            EntityPtr entity = entityWeak.lock();
+                            if (controller && entity)
+                            {
+                                if (EditorHelper::ConvertEntityToPrefab(entity))
+                                    controller->updateEntity(entity);
+                            }
+                        });
+                    }
+
                     Transform3D* transform3D = entity->getComponentRaw<Transform3D>();
                     if (transform3D)
                     {

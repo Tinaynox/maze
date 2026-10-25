@@ -55,12 +55,14 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API extern String OpenFile(
             CString _filter,
-            Window const* _modalToWindow = nullptr);
+            Window const* _modalToWindow = nullptr,
+            CString _initialDir = nullptr);
 
         //////////////////////////////////////////
         MAZE_CORE_API extern String SaveFile(
             CString _filter,
-            Window const* _modalToWindow = nullptr);
+            Window const* _modalToWindow = nullptr,
+            CString _initialDir = nullptr);
 
         //////////////////////////////////////////
         MAZE_CORE_API extern String OpenFolder(

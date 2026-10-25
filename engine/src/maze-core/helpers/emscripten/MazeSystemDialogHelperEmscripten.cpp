@@ -40,7 +40,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API String OpenFile(
             CString _filter,
-            Window const* _modalToWindow)
+            Window const* _modalToWindow,
+            CString _initialDir)
         {
             MAZE_NOT_IMPLEMENTED;
 
@@ -50,7 +51,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API String SaveFile(
             CString _filter,
-            Window const* _modalToWindow)
+            Window const* _modalToWindow,
+            CString _initialDir)
         {
             MAZE_NOT_IMPLEMENTED;
 
