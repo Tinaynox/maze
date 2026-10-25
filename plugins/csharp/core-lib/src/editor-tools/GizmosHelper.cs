@@ -330,5 +330,15 @@ namespace Maze.EditorTools
         {
             InternalCalls.DrawSolidTorus(position, forward, radius, color.ToVec4F(), duration, (int)gizmosMode, (int)renderMode);
         }
+
+        public static void DrawLabel(
+            Vec3F position,
+            string text,
+            ColorF128 color,
+            float fontSize = 16.0f,
+            GizmosMode gizmosMode = GizmosMode.Debug)
+        {
+            InternalCalls.DrawLabel(position, text, color.ToVec4F(), fontSize, (int)gizmosMode);
+        }
     }
 }

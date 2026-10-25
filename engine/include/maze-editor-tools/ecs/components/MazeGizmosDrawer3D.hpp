@@ -39,6 +39,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
 #include "maze-graphics/ecs/components/MazeGizmoBillboard3D.hpp"
+#include "maze-graphics/ecs/components/MazeSystemTextRenderer3D.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/utils/MazeSharedObjectPool.hpp"
 
@@ -123,6 +124,16 @@ namespace Maze
             Vec3F point;
             SpritePtr sprite;
             ColorF128 color;
+        };
+
+        //////////////////////////////////////////
+        struct LabelData
+        {
+            Vec3F point;
+            String text;
+            ColorF128 color;
+            F32 fontSize;
+            GizmosMode gizmosMode;
         };
 
     public:
@@ -668,6 +679,14 @@ namespace Maze
             SpritePtr const& _sprite,
             ColorF128 const& _color);
 
+        //////////////////////////////////////////
+        void drawLabel(
+            Vec3F const& _point,
+            String const& _text,
+            ColorF128 const& _color = ColorF128::c_white,
+            F32 _fontSize = 16.0f,
+            GizmosMode _gizmosMode = GizmosMode::Debug);
+
 
         //////////////////////////////////////////
         inline void setColor(ColorF128 const& _color) { m_color = _color; }
@@ -687,6 +706,11 @@ namespace Maze
 
         //////////////////////////////////////////
         void rebuildMeshes();
+
+        //////////////////////////////////////////
+        // Re-orients pooled billboards/labels to face the given camera; called once per Camera3D
+        // so each one is correct even when multiple cameras render the scene in the same frame.
+        void orientBillboardsAndLabels(TMat const& _cameraWorldTransform);
 
     protected:
 
@@ -715,6 +739,10 @@ namespace Maze
         UniquePtr<SharedObjectPool<GizmoBillboard3D>> m_gizmoBillboardPool;
         Vector<BillboardData> m_billboardsData;
         Vector<GizmoBillboard3DPtr> m_billboards;
+
+        UniquePtr<SharedObjectPool<SystemTextRenderer3D>> m_gizmoLabelPool;
+        Vector<LabelData> m_labelsData;
+        Vector<SystemTextRenderer3DPtr> m_labels;
     };
 
 

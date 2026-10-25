@@ -32,6 +32,7 @@
 #include "maze-editor-tools/ecs/events/MazeEcsEditorToolsEvents.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
@@ -234,6 +235,20 @@ namespace Maze
         _entity->getEcsWorld()->broadcastEventImmediate<DrawGizmosEvent>(_event.getDt());
 
         _gizmosController->drawGizmos(_event.getDt(), haveGizmosMask);
+    }
+
+    //////////////////////////////////////////
+    // Fires once per Camera3D, synchronously right before that camera submits its draw calls -
+    // reorienting here (not once per frame) keeps billboards/labels correct with multiple cameras.
+    COMPONENT_SYSTEM_EVENT_HANDLER(GizmosSystemOrientForCamera,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
+        Render3DDefaultPrePassEvent const& _event,
+        Entity* _entity,
+        GizmosController* _gizmosController)
+    {
+        if (_gizmosController->getDrawer())
+            _gizmosController->getDrawer()->orientBillboardsAndLabels(_event.getPassParams()->cameraTransform);
     }
 
     //////////////////////////////////////////

@@ -249,6 +249,14 @@ namespace Maze.EditorTools
             int gizmosMode,
             int renderMode);
 
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void DrawLabel(
+            Vec3F position,
+            string text,
+            Vec4F color,
+            float fontSize,
+            int gizmosMode);
+
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool IsEntitySelected(int entityId);

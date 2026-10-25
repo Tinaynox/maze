@@ -29,6 +29,7 @@
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
@@ -37,6 +38,7 @@
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeMeshManager.hpp"
+#include "maze-graphics/managers/MazeSystemFontManager.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
@@ -204,6 +206,35 @@ namespace Maze
                         _gizmoBillboard->getEntityRaw()->removeFromEcsWorld();
                 }));
 
+        m_gizmoLabelPool.reset(
+            new SharedObjectPool<SystemTextRenderer3D>(
+                [this]() -> SystemTextRenderer3DPtr
+                {
+                    EntityPtr entity = Entity::Create();
+                    m_world->addEntity(entity);
+
+                    entity->ensureComponent<StaticName>("Gizmo Label");
+
+                    SystemTextRenderer3DPtr label = entity->ensureComponent<SystemTextRenderer3D>();
+                    label->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault3DOutlined());
+                    label->getMeshRenderer()->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
+
+                    return label;
+                },
+                [](SystemTextRenderer3DPtr const& _label)
+                {
+                    _label->getEntityRaw()->setActiveSelf(true);
+                },
+                [](SystemTextRenderer3DPtr const& _label)
+                {
+                    _label->getEntityRaw()->setActiveSelf(false);
+                },
+                [](SystemTextRenderer3DPtr const& _label)
+                {
+                    if (_label->getEntityRaw())
+                        _label->getEntityRaw()->removeFromEcsWorld();
+                }));
+
         return true;
     }
 
@@ -227,6 +258,7 @@ namespace Maze
         }
 
         m_billboardsData.clear();
+        m_labelsData.clear();
     }
 
     //////////////////////////////////////////
@@ -1140,6 +1172,35 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void GizmosDrawer3D::drawLabel(
+        Vec3F const& _point,
+        String const& _text,
+        ColorF128 const& _color,
+        F32 _fontSize,
+        GizmosMode _gizmosMode)
+    {
+        if (SettingsManager::GetInstancePtr())
+        {
+            EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+            if (debbugerSettings)
+            {
+                if (!debbugerSettings->getGizmosLabels())
+                    return;
+            }
+        }
+
+        m_labelsData.emplace_back(
+            LabelData
+            {
+                transformPoint(_point),
+                _text,
+                _color,
+                _fontSize,
+                _gizmosMode
+            });
+    }
+
+    //////////////////////////////////////////
     void GizmosDrawer3D::pushTransform(TMat const& _tm)
     {
         if (!m_transformStack.empty())
@@ -1269,14 +1330,32 @@ namespace Maze
                     }
 
                     material->setUniform(MAZE_HCS("u_color"), gizmoBillboardData.color.value);
-
-                    TMat mat = TMat::CreateLookAt(
-                        gizmoBillboardData.point,
-                        gizmoBillboardData.point - camera3D->getTransform()->getWorldForwardDirection(),
-                        camera3D->getTransform()->getWorldUpDirection());
-
-                    gizmoBillboard->getTransform()->setLocalTransform(mat);
                 }
+
+                while (m_labels.size() < m_labelsData.size())
+                    m_labels.emplace_back(m_gizmoLabelPool->fetch());
+
+                while (m_labels.size() > m_labelsData.size())
+                {
+                    m_gizmoLabelPool->release(m_labels.back());
+                    m_labels.pop_back();
+                }
+
+                for (Size i = 0, in = m_labels.size(); i < in; ++i)
+                {
+                    SystemTextRenderer3DPtr const& label = m_labels[i];
+                    LabelData const& labelData = m_labelsData[i];
+
+                    label->setText(labelData.text);
+                    label->setFontSize((U32)labelData.fontSize);
+                    label->setColor(labelData.color.getColorU32());
+
+                    DefaultRenderMask renderMask = (labelData.gizmosMode == GizmosMode::CustomGeometry) ? DefaultRenderMask::CustomGeometry : DefaultRenderMask::Gizmos;
+                    label->getMeshRenderer()->getRenderMask()->setMask(renderMask);
+                }
+
+                // Fallback for this frame; per-camera reorientation happens via Render3DDefaultPrePassEvent (GizmosController.cpp)
+                orientBillboardsAndLabels(camera3D->getTransform()->getWorldTransform());
             }
             else
             {
@@ -1285,7 +1364,34 @@ namespace Maze
                     m_gizmoBillboardPool->release(m_billboards.back());
                     m_billboards.pop_back();
                 }
+
+                while (!m_labels.empty())
+                {
+                    m_gizmoLabelPool->release(m_labels.back());
+                    m_labels.pop_back();
+                }
             }
+        }
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer3D::orientBillboardsAndLabels(TMat const& _cameraWorldTransform)
+    {
+        Vec3F forward = _cameraWorldTransform[2].normalizedCopy();
+        Vec3F up = _cameraWorldTransform[1].normalizedCopy();
+
+        for (Size i = 0, in = m_billboards.size(); i < in; ++i)
+        {
+            Vec3F const& point = m_billboardsData[i].point;
+            TMat mat = TMat::CreateLookAt(point, point - forward, up);
+            m_billboards[i]->getTransform()->setLocalTransform(mat);
+        }
+
+        for (Size i = 0, in = m_labels.size(); i < in; ++i)
+        {
+            Vec3F const& point = m_labelsData[i].point;
+            TMat mat = TMat::CreateLookAt(point, point - forward, up);
+            m_labels[i]->getTransform()->setLocalTransform(mat);
         }
     }
 

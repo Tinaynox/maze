@@ -507,6 +507,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void DrawLabel(
+        Vec3F const& _position,
+        MonoString* _text,
+        Vec4F const& _color,
+        F32 _fontSize = 16.0f,
+        S32 _gizmosMode = 0)
+    {
+        Char* cstr = mono_string_to_utf8(_text);
+        GizmosHelper::DrawLabel(
+            _position,
+            String(cstr),
+            ColorF128(_color),
+            _fontSize,
+            GizmosDrawer3D::GizmosMode(_gizmosMode));
+        mono_free(cstr);
+    }
+
+    //////////////////////////////////////////
     bool MAZE_PLUGIN_CSHARP_API IsEntitySelected(S32 _entityId)
     {
         return SelectionManager::GetInstancePtr()->isObjectSelected(EntityId(_entityId));
@@ -543,6 +561,7 @@ namespace Maze
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(DrawSolidCone);
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(DrawSolidCylinder);
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(DrawSolidTorus);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(DrawLabel);
 
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(IsEntitySelected);
     }

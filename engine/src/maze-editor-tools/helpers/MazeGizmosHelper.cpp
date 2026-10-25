@@ -480,6 +480,19 @@ namespace Maze
                 drawer->drawTorus(_position, _forward, _radius, _color, _duration, _gizmosMode, _renderMode);
         }
 
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawLabel(
+            Vec3F const& _position,
+            String const& _text,
+            ColorF128 const& _color,
+            F32 _fontSize,
+            GizmosDrawer3D::GizmosMode _gizmosMode)
+        {
+            GizmosDrawer3DPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawLabel(_position, _text, _color, _fontSize, _gizmosMode);
+        }
+
 
     } // namespace GizmosHelper
     //////////////////////////////////////////

@@ -363,6 +363,14 @@ namespace Maze
             GizmosDrawer3D::GizmosMode _gizmosMode = GizmosDrawer3D::GizmosMode::Debug,
             GizmosDrawer3D::MeshRenderMode _renderMode = GizmosDrawer3D::MeshRenderMode::Opaque);
 
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawLabel(
+            Vec3F const& _position,
+            String const& _text,
+            ColorF128 const& _color = ColorF128::c_white,
+            F32 _fontSize = 16.0f,
+            GizmosDrawer3D::GizmosMode _gizmosMode = GizmosDrawer3D::GizmosMode::Debug);
+
     } // namespace GizmosHelper
     //////////////////////////////////////////
 

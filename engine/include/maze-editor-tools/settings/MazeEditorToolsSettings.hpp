@@ -132,6 +132,19 @@ namespace Maze
         //////////////////////////////////////////
         inline void switchGizmosBillboards() { setGizmosBillboards(!getGizmosBillboards()); }
 
+
+        //////////////////////////////////////////
+        void setGizmosLabels(bool _value) { m_gizmosLabels = _value; }
+
+        //////////////////////////////////////////
+        inline bool getGizmosLabels() const { return m_gizmosLabels.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<bool const&>& getGizmosLabelsChangedEvent() { return m_gizmosLabels.eventValueChanged; }
+
+        //////////////////////////////////////////
+        inline void switchGizmosLabels() { setGizmosLabels(!getGizmosLabels()); }
+
     protected:
 
         ObservableValue<bool> m_active = true;
@@ -140,6 +153,7 @@ namespace Maze
         ObservableValue<bool> m_gizmoWorldSpace = false;
 
         ObservableValue<bool> m_gizmosBillboards = true;
+        ObservableValue<bool> m_gizmosLabels = true;
     };
 
 
