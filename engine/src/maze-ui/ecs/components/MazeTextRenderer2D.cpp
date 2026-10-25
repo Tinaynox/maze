@@ -217,7 +217,9 @@ namespace Maze
 
         TrueTypeFontPtr const& defaultFont = font->getDefaultFont();
 
-        String finalText = m_text;
+        // Not re-entrant with updateMeshDataNow, so sharing its scratch string is safe
+        String& finalText = m_finalTextScratch;
+        finalText = m_text;
 
         // WordWrap must run before color-tag extraction - see updateMeshDataNow
         if (m_widthPolicy == TextRenderer2DWidthPolicy::WordWrap && m_transform && m_transform->getSize().x > 0.0f)
@@ -230,7 +232,9 @@ namespace Maze
         // Keep the text transforms in sync with updateMeshDataNow
         if (getColorTags())
         {
-            Deque<Pair<Size, ColorF128>> colorTags;
+            // Result is unused here, only the color-tag stripping side effect on finalText matters
+            Deque<Pair<Size, ColorF128>>& colorTags = m_colorTagsScratch;
+            colorTags.clear();
             TextRenderer2DHelper::ExtractColorTags(
                 finalText,
                 ColorF128(m_color.toVec4F32()),
@@ -313,8 +317,8 @@ namespace Maze
         if (!fontMaterial || !fontMaterial->getFont() || !fontMaterial->getFont()->getDefaultFont() || !m_transform)
             return Vec2F::c_zero;
 
-        Vector<Pair<S32, F32>> slots;
-        Vector<F32> rowLengths;
+        Vector<Pair<S32, F32>>& slots = m_symbolSlotsScratch;
+        Vector<F32>& rowLengths = m_symbolRowLengthsScratch;
         calculateSymbolSlots(slots, rowLengths);
 
         if (_symbolIndex >= slots.size())
@@ -347,8 +351,8 @@ namespace Maze
         if (!fontMaterial || !fontMaterial->getFont() || !fontMaterial->getFont()->getDefaultFont() || !m_transform || m_text.empty())
             return m_text.size();
 
-        Vector<Pair<S32, F32>> slots;
-        Vector<F32> rowLengths;
+        Vector<Pair<S32, F32>>& slots = m_symbolSlotsScratch;
+        Vector<F32>& rowLengths = m_symbolRowLengthsScratch;
         calculateSymbolSlots(slots, rowLengths);
 
         Vec2F const& size = m_transform->getSize();

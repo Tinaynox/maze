@@ -395,6 +395,9 @@ namespace Maze
 
         // Shared ApplyWordWrap output buffer, used by all three callers in the .cpp
         String m_wordWrapScratch;
+
+        Vector<Pair<S32, F32>> m_symbolSlotsScratch;
+        Vector<F32> m_symbolRowLengthsScratch;
     };
 
 
