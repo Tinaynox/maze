@@ -29,6 +29,10 @@
 #include "maze-graphics/MazeColorU32.hpp"
 #include "maze-core/helpers/MazeTextHelper.hpp"
 #include "maze-core/math/MazeMath.hpp"
+#include "maze-ui/fonts/MazeFont.hpp"
+#include "maze-ui/fonts/MazeTrueTypeFont.hpp"
+#include "maze-ui/fonts/MazeFontGlyph.hpp"
+#include <cstring>
 
 
 //////////////////////////////////////////
@@ -142,6 +146,145 @@ namespace Maze
             }
 
             return 0.0f;
+        }
+
+        //////////////////////////////////////////
+        MAZE_UI_API void ApplyWordWrap(
+            CString _text,
+            Font* _font,
+            U32 _fontSize,
+            bool _bold,
+            bool _colorTagsEnabled,
+            F32 _maxWidth,
+            String& _outResult)
+        {
+            _outResult.clear();
+
+            if (!_text || !*_text || !_font || _maxWidth <= 0.0f)
+            {
+                if (_text)
+                    _outResult = _text;
+                return;
+            }
+
+            TrueTypeFontPtr const& defaultFont = _font->getDefaultFont();
+            if (!defaultFont)
+            {
+                _outResult = _text;
+                return;
+            }
+
+            auto ttfPage = &defaultFont->ensureTTFPage(_fontSize, _bold);
+            F32 hSpace = static_cast<F32>(defaultFont->ensureGlyph(L' ', _fontSize, _bold, *ttfPage).advance);
+
+            Size textLen = strlen(_text);
+
+            String& result = _outResult;
+            result.reserve(textLen + 8);
+
+            F32 lineWidth = 0.0f;
+            bool lineHasWord = false;
+
+            // Pending space/tab run since the last word - dropped if the next word breaks
+            Size pendingSpaceStart = String::npos;
+            F32 pendingSpaceWidth = 0.0f;
+
+            String word;
+            F32 wordWidth = 0.0f;
+            U32 prevChar = 0;
+
+            auto flushWord = [&]()
+            {
+                if (word.empty())
+                    return;
+
+                if (lineHasWord && (lineWidth + pendingSpaceWidth + wordWidth > _maxWidth))
+                {
+                    result.resize(pendingSpaceStart);
+                    result += '\n';
+                    lineWidth = wordWidth;
+                }
+                else
+                {
+                    lineWidth += pendingSpaceWidth + wordWidth;
+                }
+
+                result.append(word);
+                lineHasWord = true;
+
+                word.clear();
+                wordWidth = 0.0f;
+                pendingSpaceWidth = 0.0f;
+                pendingSpaceStart = String::npos;
+            };
+
+            CString it = _text;
+            CString end = _text + textLen;
+            while (it != end)
+            {
+                CString charStart = it;
+                U32 curChar = utf8::next(it, end);
+
+                // Color tag - zero width, kept verbatim, never a break point
+                if (_colorTagsEnabled && curChar == '#' && it != end && *it == '{')
+                {
+                    while (it != end && *it != '}')
+                        ++it;
+                    if (it != end)
+                        ++it;
+
+                    word.append(charStart, it);
+                    prevChar = 0;
+                    continue;
+                }
+
+                if (curChar == '\n')
+                {
+                    flushWord();
+                    result += '\n';
+                    lineWidth = 0.0f;
+                    lineHasWord = false;
+                    // flushWord() only resets these when word is non-empty - do it here too
+                    pendingSpaceStart = String::npos;
+                    pendingSpaceWidth = 0.0f;
+                    prevChar = 0;
+                    continue;
+                }
+
+                if (curChar == ' ' || curChar == '\t')
+                {
+                    flushWord();
+
+                    if (pendingSpaceStart == String::npos)
+                        pendingSpaceStart = result.size();
+
+                    result += (char)curChar;
+                    pendingSpaceWidth += (curChar == ' ') ? hSpace : hSpace * 4.0f;
+                    prevChar = 0;
+                    continue;
+                }
+
+                F32 kerning = _font->getKerning(prevChar, curChar, _fontSize);
+                prevChar = curChar;
+
+                FontGlyphStorageData* glyphStorageData = _font->getGlyphStorageData(curChar);
+                if (glyphStorageData && glyphStorageData->getTrueTypeFont())
+                    ttfPage = &glyphStorageData->getTrueTypeFont()->ensureTTFPage(_fontSize, _bold);
+                else
+                    ttfPage = &defaultFont->ensureTTFPage(_fontSize, _bold);
+
+                FontGlyph const& glyph = _font->ensureGlyphFromStorage(glyphStorageData, curChar, _fontSize, _bold, *ttfPage);
+
+                wordWidth += kerning + glyph.advance;
+                if (glyphStorageData &&
+                    (glyphStorageData->type == FontGlyphStorageType::Sprite ||
+                     glyphStorageData->type == FontGlyphStorageType::Entity))
+                    wordWidth = Math::Round(wordWidth);
+
+                word.append(charStart, it);
+            }
+
+            flushWord();
         }
 
         //////////////////////////////////////////

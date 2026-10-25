@@ -219,6 +219,14 @@ namespace Maze
 
         String finalText = m_text;
 
+        // WordWrap must run before color-tag extraction - see updateMeshDataNow
+        if (m_widthPolicy == TextRenderer2DWidthPolicy::WordWrap && m_transform && m_transform->getSize().x > 0.0f)
+        {
+            TextRenderer2DHelper::ApplyWordWrap(
+                finalText.c_str(), font, m_fontSize, m_bold, getColorTags(), m_transform->getSize().x, m_wordWrapScratch);
+            finalText.swap(m_wordWrapScratch);
+        }
+
         // Keep the text transforms in sync with updateMeshDataNow
         if (getColorTags())
         {
@@ -492,6 +500,15 @@ namespace Maze
         // Scratch members keep their capacity between rebuilds
         String& finalText = m_finalTextScratch;
         finalText = m_text;
+
+        // WordWrap must run before color-tag extraction - it inserts '\n's that
+        // ExtractColorTags' recorded offsets need to already account for
+        if (m_widthPolicy == TextRenderer2DWidthPolicy::WordWrap && size.x > 0.0f)
+        {
+            TextRenderer2DHelper::ApplyWordWrap(
+                finalText.c_str(), font, m_fontSize, m_bold, getColorTags(), size.x, m_wordWrapScratch);
+            finalText.swap(m_wordWrapScratch);
+        }
 
         // Process color tags
         Deque<Pair<Size, ColorF128>>& colorTags = m_colorTagsScratch;
@@ -896,6 +913,14 @@ namespace Maze
 
         F32 hSpace = static_cast<F32>(defaultFont->ensureGlyph(L' ', m_fontSize, m_bold, *ttfPage).advance);
         F32 linespace = font->getLineSpacing(m_fontSize) * getLineSpacingScale();
+
+        // Wrap against the same width updateMeshDataNow uses, so the size matches
+        if (m_widthPolicy == TextRenderer2DWidthPolicy::WordWrap && m_transform && m_transform->getSize().x > 0.0f)
+        {
+            TextRenderer2DHelper::ApplyWordWrap(
+                _text, font.get(), m_fontSize, m_bold, getColorTags(), m_transform->getSize().x, m_wordWrapScratch);
+            _text = m_wordWrapScratch.c_str();
+        }
 
         F32 rowLengthMax = 0.0f;
         F32 x = 0.0f;

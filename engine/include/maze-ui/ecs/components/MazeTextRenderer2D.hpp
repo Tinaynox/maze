@@ -392,6 +392,9 @@ namespace Maze
         Deque<Pair<Size, ColorF128>> m_colorTagsScratch;
         Vector<TempGlyphData> m_glyphsScratch;
         FastVector<F32> m_rowLengthsScratch;
+
+        // Shared ApplyWordWrap output buffer, used by all three callers in the .cpp
+        String m_wordWrapScratch;
     };
 
 

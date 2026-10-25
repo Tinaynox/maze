@@ -67,6 +67,19 @@ namespace Maze
             F32 _rowLength);
 
         //////////////////////////////////////////
+        // Inserts '\n' at word boundaries so no row exceeds _maxWidth (never inside
+        // a word or a '#{...}' tag; an overlong single word just overflows). Writes
+        // into _outResult - pass a persistent scratch string to avoid reallocating.
+        MAZE_UI_API void ApplyWordWrap(
+            CString _text,
+            Font* _font,
+            U32 _fontSize,
+            bool _bold,
+            bool _colorTagsEnabled,
+            F32 _maxWidth,
+            String& _outResult);
+
+        //////////////////////////////////////////
         MAZE_UI_API F32 CalculateTextPositionY(
             VerticalAlignment2D _verticalAlignment,
             F32 _areaHeight,
