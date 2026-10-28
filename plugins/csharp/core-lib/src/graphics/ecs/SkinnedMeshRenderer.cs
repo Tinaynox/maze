@@ -26,5 +26,25 @@ namespace Maze.Graphics
         {
             InternalCalls.SkinnedMeshRendererSetMaterialAssetUnit(NativeComponentPtr, auid);
         }
+
+        public void SetMaterial(int idx, AssetUnitId auid)
+        {
+            InternalCalls.SkinnedMeshRendererSetMaterialAssetUnitAt(NativeComponentPtr, idx, auid);
+        }
+
+        public void SetMaterial(int idx, int resourceId)
+        {
+            InternalCalls.SkinnedMeshRendererSetMaterialResourceIdAt(NativeComponentPtr, idx, resourceId);
+        }
+
+        public void SetMaterial(int idx, Material material)
+        {
+            SetMaterial(idx, material?.ResourceId ?? -1);
+        }
+
+        public void ResizeMaterialsCount(uint count)
+        {
+            InternalCalls.SkinnedMeshRendererResizeMaterialsCount(NativeComponentPtr, count);
+        }
     }
 }

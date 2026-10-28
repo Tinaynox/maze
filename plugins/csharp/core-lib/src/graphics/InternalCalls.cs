@@ -56,6 +56,15 @@ namespace Maze.Graphics
 
         #region SkinnedMeshRenderer
         [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void SkinnedMeshRendererResizeMaterialsCount(NativePtr nativeComponentPtr, uint count);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void SkinnedMeshRendererSetMaterialAssetUnitAt(NativePtr nativeComponentPtr, int index, AssetUnitId material);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void SkinnedMeshRendererSetMaterialResourceIdAt(NativePtr nativeComponentPtr, int index, int materialResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void SkinnedMeshRendererSetMaterialAssetUnit(NativePtr nativeComponentPtr, AssetUnitId material);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

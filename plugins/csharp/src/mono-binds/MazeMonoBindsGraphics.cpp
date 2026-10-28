@@ -213,6 +213,46 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void SkinnedMeshRendererResizeMaterialsCount(Component* _component, U32 _count)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
+
+        Vector<MaterialAssetRef> materials = _component->castRaw<SkinnedMeshRenderer>()->getMaterialRefs();
+        materials.resize(_count);
+        _component->castRaw<SkinnedMeshRenderer>()->setMaterialRefs(materials);
+    }
+
+    //////////////////////////////////////////
+    inline void SkinnedMeshRendererSetMaterialAssetUnitAt(Component* _component, S32 _index, AssetUnitId _auid)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
+
+        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getOrLoadMaterial(_auid);
+        Vector<MaterialAssetRef> materials = _component->castRaw<SkinnedMeshRenderer>()->getMaterialRefs();
+
+        if (_index >= materials.size())
+            materials.resize(_index + 1);
+        materials[_index] = { MaterialAssetRef(material) };
+
+        _component->castRaw<SkinnedMeshRenderer>()->setMaterialRefs(materials);
+    }
+
+    //////////////////////////////////////////
+    inline void SkinnedMeshRendererSetMaterialResourceIdAt(Component* _component, S32 _index, S32 _resourceId)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
+
+        Material* material = Material::GetResourceFast(_resourceId);
+        Vector<MaterialAssetRef> materials = _component->castRaw<SkinnedMeshRenderer>()->getMaterialRefs();
+
+        if (_index >= materials.size())
+            materials.resize(_index + 1);
+        materials[_index] = { MaterialAssetRef(material) };
+
+        _component->castRaw<SkinnedMeshRenderer>()->setMaterialRefs(materials);
+    }
+
+    //////////////////////////////////////////
     inline void SkinnedMeshRendererSetMaterialAssetUnit(Component* _component, AssetUnitId _auid)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
@@ -1484,6 +1524,9 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedSetColor);
 
         // SkinnedMeshRenderer
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererResizeMaterialsCount);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetMaterialAssetUnitAt);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetMaterialResourceIdAt);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetMaterialAssetUnit);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetMaterial);
