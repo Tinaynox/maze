@@ -414,8 +414,6 @@ namespace Maze
         if (!m_animation)
             return;
 
-        _dt *= m_speedMult;
-
         switch (m_state)
         {
             case State::In:
@@ -447,7 +445,7 @@ namespace Maze
         bool frozenWhileStopping = m_pauseOnStop && m_state == State::Out;
         if (m_state != State::None && m_state != State::Pause && !frozenWhileStopping)
         {
-            m_currentTime += _dt;
+            m_currentTime += _dt * m_speedMult;
             if (m_currentTime >= m_animation->getAnimationTime())
             {
                 if (m_looped)
