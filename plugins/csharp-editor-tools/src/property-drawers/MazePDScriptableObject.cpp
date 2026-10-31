@@ -45,6 +45,8 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
+#include "maze-plugin-csharp/mono/MazeMonoEngine.hpp"
+#include "maze-plugin-csharp/mono/MazeScriptClass.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
@@ -97,7 +99,32 @@ namespace Maze
         if (!PropertyDrawer::init(_dataBlock))
             return false;
 
+        m_scriptableObjectClassName = _dataBlock.getHashedString(MAZE_HCS("scriptableObjectClassName"));
+
         return true;
+    }
+
+    //////////////////////////////////////////
+    bool PropertyDrawerScriptableObject::isScriptableObjectClassValid(ScriptableObjectPtr const& _scriptableObject) const
+    {
+        if (m_scriptableObjectClassName.empty())
+            return true;
+
+        if (!_scriptableObject)
+            return true;
+
+        ScriptClassPtr const& targetClass = MonoEngine::GetScriptableObjectSubClass(m_scriptableObjectClassName.asHashedCString());
+        if (!targetClass)
+            return true;
+
+        ScriptClassPtr const& objectClass = _scriptableObject->getScriptClass();
+        if (!objectClass)
+            return false;
+
+        if (objectClass->getMonoClass() == targetClass->getMonoClass())
+            return true;
+
+        return mono_class_is_subclass_of(objectClass->getMonoClass(), targetClass->getMonoClass(), false) != 0;
     }
 
     //////////////////////////////////////////
@@ -171,6 +198,9 @@ namespace Maze
                     if (!scriptableObject)
                         return;
 
+                    if (!isScriptableObjectClassValid(scriptableObject))
+                        return;
+
                     _outDropAllowed = true;
                 }
             });
@@ -186,6 +216,9 @@ namespace Maze
 
                     ScriptableObjectPtr const& scriptableObject = ScriptableObjectManager::GetInstancePtr()->getOrLoadScriptableObject(assetFile);
                     if (!scriptableObject)
+                        return;
+
+                    if (!isScriptableObjectClassValid(scriptableObject))
                         return;
 
                     setValue(scriptableObject);
@@ -240,6 +273,9 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerScriptableObject::setValue(ScriptableObjectPtr const& _value)
     {
+        if (!isScriptableObjectClassValid(_value))
+            return;
+
         m_scriptableObject = _value;
 
         m_scriptableObjectIcon->getMeshRenderer()->setEnabled(m_scriptableObject != nullptr);

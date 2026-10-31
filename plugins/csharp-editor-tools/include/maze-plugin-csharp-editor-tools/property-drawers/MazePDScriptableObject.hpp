@@ -36,6 +36,7 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
+#include "maze-core/data/MazeHashedString.hpp"
 #include "maze-plugin-csharp/mono/MazeScriptableObject.hpp"
 #include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
@@ -105,6 +106,9 @@ namespace Maze
         //////////////////////////////////////////
         void notifySelectAssetClick(Button2D* _button, CursorInputEvent& _event);
 
+        //////////////////////////////////////////
+        bool isScriptableObjectClassValid(ScriptableObjectPtr const& _scriptableObject) const;
+
     protected:
         ClickButton2DPtr m_scriptableObjectButton;
         SpriteRenderer2DPtr m_dragAndDropFrame;
@@ -114,6 +118,8 @@ namespace Maze
         ScriptableObjectPtr m_scriptableObject;
 
         ClickButton2DPtr m_selectAssetButton;
+
+        HashedString m_scriptableObjectClassName;
     };
 
 

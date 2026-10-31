@@ -137,6 +137,16 @@ namespace Maze
                         ComponentId componentId = GetComponentIdByName(fullClassName.c_str());
                         data.setS32(MAZE_HCS("componentId"), componentId);
                     }
+                    else
+                    if (mono_class_is_subclass_of(
+                        fieldTypeMonoClass,
+                        MonoEngine::GetScriptableObjectClass()->getMonoClass(),
+                        false))
+                    {
+                        HashedString fullClassName = MonoHelper::BuildMonoClassFullName(fieldTypeMonoClassNamespace, fieldTypeMonoClassName);
+
+                        data.setString(MAZE_HCS("scriptableObjectClassName"), fullClassName.c_str());
+                    }
 
                     ScriptFieldDrawerPtr propertyDrawer = ScriptFieldDrawer::Create(_field, callbacks, data);
                     if (propertyDrawer)
@@ -183,6 +193,16 @@ namespace Maze
 
                         ComponentId componentId = GetComponentIdByName(fullClassName.c_str());
                         data.setS32(MAZE_HCS("componentId"), componentId);
+                    }
+                    else
+                    if (mono_class_is_subclass_of(
+                        fieldTypeMonoClass,
+                        MonoEngine::GetScriptableObjectClass()->getMonoClass(),
+                        false))
+                    {
+                        HashedString fullClassName = MonoHelper::BuildMonoClassFullName(fieldTypeMonoClassNamespace, fieldTypeMonoClassName);
+
+                        data.setString(MAZE_HCS("scriptableObjectClassName"), fullClassName.c_str());
                     }
 
                     ScriptPropertyDrawerPtr propertyDrawer = ScriptPropertyDrawer::Create(_prop, callbacks, data);
