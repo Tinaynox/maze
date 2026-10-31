@@ -175,9 +175,10 @@ namespace Maze
         bool looped = _startParams.flags & U8(MeshSkeletonAnimationStartFlags::Looped);
         bool additive = _startParams.flags & U8(MeshSkeletonAnimationStartFlags::Additive);
         bool pauseEnding = _startParams.flags & U8(MeshSkeletonAnimationStartFlags::PauseEnding);
+        bool pauseOnStop = _startParams.flags & U8(MeshSkeletonAnimationStartFlags::PauseOnStop);
         bool stopCurrentAnimations = _startParams.flags & U8(MeshSkeletonAnimationStartFlags::StopCurrentAnimations);
 
-        player->play(animation, looped, additive, pauseEnding);
+        player->play(animation, looped, additive, pauseEnding, pauseOnStop);
         player->setWeightMult(_startParams.weight);
         player->setWeightSpeed(blendWeightSpeed);
         player->setSpeedMult(_startParams.speed);
@@ -443,7 +444,8 @@ namespace Maze
                 break;
         }
 
-        if (m_state != State::None && m_state != State::Pause)
+        bool frozenWhileStopping = m_pauseOnStop && m_state == State::Out;
+        if (m_state != State::None && m_state != State::Pause && !frozenWhileStopping)
         {
             m_currentTime += _dt;
             if (m_currentTime >= m_animation->getAnimationTime())
@@ -489,7 +491,8 @@ namespace Maze
         MeshSkeletonAnimationPtr const& _animation,
         bool _loop,
         bool _additive,
-        bool _pauseEnding)
+        bool _pauseEnding,
+        bool _pauseOnStop)
     {
         // if (m_state != State::Active)
         //    setState(State::In);
@@ -503,6 +506,7 @@ namespace Maze
         m_looped = _loop;
         m_additive = _additive;
         m_pauseEnding = _pauseEnding;
+        m_pauseOnStop = _pauseOnStop;
     }
 
     //////////////////////////////////////////

@@ -335,7 +335,8 @@ namespace Maze
         bool _additive,
         bool _stopCurrentAnimations,
         bool _important,
-        bool _pauseEnding)
+        bool _pauseEnding,
+        bool _pauseOnStop)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshSkeleton, -1);
 
@@ -349,7 +350,8 @@ namespace Maze
             (_additive ? U8(MeshSkeletonAnimationStartFlags::Additive) : 0u) |
             (_stopCurrentAnimations ? U8(MeshSkeletonAnimationStartFlags::StopCurrentAnimations) : 0u) |
             (_important ? U8(MeshSkeletonAnimationStartFlags::Important) : 0u) |
-            (_pauseEnding ? U8(MeshSkeletonAnimationStartFlags::PauseEnding) : 0u);
+            (_pauseEnding ? U8(MeshSkeletonAnimationStartFlags::PauseEnding) : 0u) |
+            (_pauseOnStop ? U8(MeshSkeletonAnimationStartFlags::PauseOnStop) : 0u);
         S32 playerIndex = _component->castRaw<SkinnedMeshSkeleton>()->playAnimation(HashedCString(cstr), params);
         mono_free(cstr);
 

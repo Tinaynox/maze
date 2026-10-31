@@ -68,7 +68,8 @@ namespace Maze
         Additive                    = MAZE_BIT(1),
         StopCurrentAnimations       = MAZE_BIT(2),
         Important                   = MAZE_BIT(3),
-        PauseEnding                 = MAZE_BIT(4)
+        PauseEnding                 = MAZE_BIT(4),
+        PauseOnStop                 = MAZE_BIT(5)
     };
 
     //////////////////////////////////////////
@@ -222,7 +223,8 @@ namespace Maze
             MeshSkeletonAnimationPtr const& _animation,
             bool _loop = true,
             bool _additive = false,
-            bool _pauseEnding = false);
+            bool _pauseEnding = false,
+            bool _pauseOnStop = false);
 
         //////////////////////////////////////////
         void stop(F32 _weightSpeedOverride = -1.0f);
@@ -298,6 +300,7 @@ namespace Maze
         bool m_looped = true;
         bool m_additive = false;
         bool m_pauseEnding = false;
+        bool m_pauseOnStop = false;
 
         F32 m_speedMult = 1.0f;
 

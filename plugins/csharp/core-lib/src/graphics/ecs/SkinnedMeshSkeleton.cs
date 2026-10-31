@@ -10,6 +10,7 @@ namespace Maze.Graphics
         StopCurrentAnimations       = 1 << (2),
         Important                   = 1 << (3),
         PauseEnding                 = 1 << (4),
+        PauseOnStop                 = 1 << (5),
     };
 
     public struct MeshSkeletonAnimationStartParams
@@ -63,7 +64,8 @@ namespace Maze.Graphics
             bool additive = false,
             bool stopCurrentAnimations = true,
             bool important = true,
-            bool pauseEnding = false)
+            bool pauseEnding = false,
+            bool pauseOnStop = false)
         {
             return InternalCalls.SkinnedMeshSkeletonPlayAnimation(
                 NativeComponentPtr,
@@ -75,7 +77,8 @@ namespace Maze.Graphics
                 additive,
                 stopCurrentAnimations,
                 important,
-                pauseEnding);
+                pauseEnding,
+                pauseOnStop);
         }
 
         public int PlayAnimation(
@@ -92,7 +95,8 @@ namespace Maze.Graphics
                 (param.Flags & MeshSkeletonAnimationStartFlags.Additive) != 0u,
                 (param.Flags & MeshSkeletonAnimationStartFlags.StopCurrentAnimations) != 0u,
                 (param.Flags & MeshSkeletonAnimationStartFlags.Important) != 0u,
-                (param.Flags & MeshSkeletonAnimationStartFlags.PauseEnding) != 0u);
+                (param.Flags & MeshSkeletonAnimationStartFlags.PauseEnding) != 0u,
+                (param.Flags & MeshSkeletonAnimationStartFlags.PauseOnStop) != 0u);
         }
 
         public float GetPlayerAnimationTime(int playerIndex)

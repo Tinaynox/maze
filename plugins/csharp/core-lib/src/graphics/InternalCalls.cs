@@ -97,7 +97,8 @@ namespace Maze.Graphics
             bool additive,
             bool stopCurrentAnimations,
             bool important,
-            bool pauseEnding);
+            bool pauseEnding,
+            bool pauseOnStop);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool SkinnedMeshSkeletonGetPlayerAnimationTime(
