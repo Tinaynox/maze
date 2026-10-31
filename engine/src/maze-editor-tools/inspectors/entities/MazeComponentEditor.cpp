@@ -34,6 +34,9 @@
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
+#include "maze-core/encoding/MazeEncodingBase64.hpp"
+#include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
@@ -134,6 +137,62 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    static inline bool IsComponentReferenceProperty(MetaProperty* _metaProperty)
+    {
+        MetaClass const* metaPropertyMetaClass = _metaProperty->getMetaClass();
+        if (!metaPropertyMetaClass)
+            return false;
+
+        return metaPropertyMetaClass->isInheritedFrom<Component>() ||
+               metaPropertyMetaClass->isInheritedFrom<Entity>();
+    }
+
+    //////////////////////////////////////////
+    static DataBlock BuildComponentDataBlock(Component* _component)
+    {
+        DataBlock dataBlock;
+
+        MetaClass const* metaClass = _component->getMetaClass();
+        MetaInstance metaInstance = _component->getMetaInstance();
+
+        for (MetaClass* metaClass : metaClass->getAllSuperMetaClasses())
+        {
+            for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+            {
+                MetaProperty* metaProperty = metaClass->getProperty(i);
+                if (IsComponentReferenceProperty(metaProperty))
+                    continue;
+
+                DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, dataBlock);
+            }
+        }
+
+        return dataBlock;
+    }
+
+    //////////////////////////////////////////
+    static void ApplyComponentDataBlock(Component* _component, DataBlock const& _dataBlock)
+    {
+        if (!_component)
+            return;
+
+        MetaClass const* metaClass = _component->getMetaClass();
+        MetaInstance metaInstance = _component->getMetaInstance();
+
+        for (MetaClass* metaClass : metaClass->getAllSuperMetaClasses())
+        {
+            for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+            {
+                MetaProperty* metaProperty = metaClass->getProperty(i);
+                if (IsComponentReferenceProperty(metaProperty))
+                    continue;
+
+                DataBlockHelper::DeserializeMetaPropertyFromDataBlock(metaInstance, metaProperty, _dataBlock);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
     Transform2DPtr ComponentEditor::createDefaultTitle(Transform2DPtr const& _parent)
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
@@ -215,6 +274,24 @@ namespace Maze
                 if (SelectionManager::GetInstancePtr()->getSelectedEntities().size() == 1)
                 {
                     _menuListTree->addItem(
+                        "Copy",
+                        [this, componentId](String const& _item)
+                        {
+                            Set<EntityPtr> const& selectedEntites = SelectionManager::GetInstancePtr()->getSelectedEntities();
+                            if (selectedEntites.size() == 1)
+                            {
+                                ComponentPtr component = (*selectedEntites.begin())->getComponentById(componentId);
+                                if (component)
+                                {
+                                    DataBlock dataBlock = BuildComponentDataBlock(component.get());
+                                    ByteBufferPtr byteBuffer = dataBlock.saveBinary();
+                                    if (byteBuffer)
+                                        SystemManager::GetInstancePtr()->setClipboardString(EncodeBase64(*byteBuffer));
+                                }
+                            }
+                        });
+
+                    _menuListTree->addItem(
                         "Copy as string",
                         [this, componentId](String const& _item)
                         {
@@ -224,40 +301,50 @@ namespace Maze
                                 ComponentPtr component = (*selectedEntites.begin())->getComponentById(componentId);
                                 if (component)
                                 {
-                                    String result;
-
-                                    MetaClass const* metaClass = component->getMetaClass();
-                                    MetaInstance metaInstance = component->getMetaInstance();
-
-                                    for (MetaClass* metaClass : metaClass->getAllSuperMetaClasses())
-                                    {
-                                        for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
-                                        {
-                                            MetaProperty* metaProperty = metaClass->getProperty(i);
-
-                                            CString propertyName = metaProperty->getName();
-
-                                            MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
-                                            if (metaPropertyMetaClass)
-                                            {
-                                                if (metaPropertyMetaClass->isInheritedFrom<Component>() || metaPropertyMetaClass->isInheritedFrom<Entity>())
-                                                    continue;
-                                            }
-
-                                            String properyStringValue;
-                                            metaProperty->toString(metaInstance, properyStringValue);
-
-                                            if (!result.empty())
-                                                result += " ";
-                                            result += propertyName + String("=\"") + properyStringValue + "\"";
-                                        }
-                                    }
-
-                                    SystemManager::GetInstancePtr()->setClipboardString(result);
+                                    DataBlock dataBlock = BuildComponentDataBlock(component.get());
+                                    SystemManager::GetInstancePtr()->setClipboardString(dataBlock.toString());
                                 }
                             }
                         });
                 }
+
+                _menuListTree->addItem(
+                    "Paste",
+                    [this, componentId](String const& _item)
+                    {
+                        String const clipboardText = SystemManager::GetInstancePtr()->getClipboardAsString();
+                        if (clipboardText.empty())
+                            return;
+
+                        Vector<U8> const bytes = DecodeBase64(clipboardText);
+                        if (bytes.empty())
+                            return;
+
+                        DataBlock dataBlock;
+                        if (!dataBlock.loadBinary(ByteBuffer(bytes.data(), bytes.size())))
+                            return;
+
+                        Set<EntityPtr> selectedEntites = SelectionManager::GetInstancePtr()->getSelectedEntities();
+                        for (EntityPtr const& entity : selectedEntites)
+                            ApplyComponentDataBlock(entity->getComponentById(componentId).get(), dataBlock);
+                    });
+
+                _menuListTree->addItem(
+                    "Paste as string",
+                    [this, componentId](String const& _item)
+                    {
+                        String const clipboardText = SystemManager::GetInstancePtr()->getClipboardAsString();
+                        if (clipboardText.empty())
+                            return;
+
+                        DataBlock dataBlock;
+                        if (!dataBlock.loadText(ByteBuffer((U8 const*)clipboardText.data(), clipboardText.size())))
+                            return;
+
+                        Set<EntityPtr> selectedEntites = SelectionManager::GetInstancePtr()->getSelectedEntities();
+                        for (EntityPtr const& entity : selectedEntites)
+                            ApplyComponentDataBlock(entity->getComponentById(componentId).get(), dataBlock);
+                    });
 
                 auto const& options = InspectorManager::GetInstancePtr()->getInspectorComponentContextMenuOptions(componentId);
                 for (auto const& optionData : options)
