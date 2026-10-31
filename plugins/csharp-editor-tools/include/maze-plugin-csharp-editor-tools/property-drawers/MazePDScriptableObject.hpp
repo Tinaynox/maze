@@ -53,6 +53,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(PropertyDrawerScriptableObjectAssetRef);
     MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
+    MAZE_USING_SHARED_PTR(ContextMenu2D);
 
 
     //////////////////////////////////////////
@@ -118,6 +119,8 @@ namespace Maze
         ScriptableObjectPtr m_scriptableObject;
 
         ClickButton2DPtr m_selectAssetButton;
+
+        ContextMenu2DPtr m_contextMenu;
 
         HashedString m_scriptableObjectClassName;
     };

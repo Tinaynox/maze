@@ -39,6 +39,8 @@
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
+#include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
+#include "maze-ui/ecs/components/MazeMenuListTree2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/managers/MazeSpritePickerManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -226,6 +228,18 @@ namespace Maze
                 this->m_dragAndDropFrame->getMeshRenderer()->setEnabled(_active);
             });
 
+        m_contextMenu = m_textureRenderer->getEntityRaw()->ensureComponent<ContextMenu2D>();
+        m_contextMenu->setCallbackFunction(
+            [this](MenuListTree2DPtr const& _menuListTree)
+            {
+                _menuListTree->addItem(
+                    "Clear",
+                    [this](String const& _item)
+                    {
+                        setValue(nullptr);
+                        eventUIData();
+                    });
+            });
     }
 
     //////////////////////////////////////////

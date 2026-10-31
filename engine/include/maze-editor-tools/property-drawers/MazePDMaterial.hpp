@@ -51,6 +51,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(PropertyDrawerMaterialAssetRef);
     MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
+    MAZE_USING_SHARED_PTR(ContextMenu2D);
 
 
     //////////////////////////////////////////
@@ -113,6 +114,8 @@ namespace Maze
         MaterialPtr m_material;
 
         ClickButton2DPtr m_selectAssetButton;
+
+        ContextMenu2DPtr m_contextMenu;
     };
 
 

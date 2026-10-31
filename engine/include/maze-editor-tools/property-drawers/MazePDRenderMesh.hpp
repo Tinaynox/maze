@@ -51,6 +51,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(DragAndDropZone);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
+    MAZE_USING_SHARED_PTR(ContextMenu2D);
 
 
     //////////////////////////////////////////
@@ -113,6 +114,8 @@ namespace Maze
         RenderMeshPtr m_renderMesh;
 
         ClickButton2DPtr m_selectAssetButton;
+
+        ContextMenu2DPtr m_contextMenu;
     };
 
 

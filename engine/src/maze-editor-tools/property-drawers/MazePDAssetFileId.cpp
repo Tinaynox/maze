@@ -43,6 +43,8 @@
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
+#include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
+#include "maze-ui/ecs/components/MazeMenuListTree2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -208,6 +210,19 @@ namespace Maze
             [this](bool _active)
             {
                 this->m_dragAndDropFrame->getMeshRenderer()->setEnabled(_active);
+            });
+
+        m_contextMenu = m_panelRenderer->getEntityRaw()->ensureComponent<ContextMenu2D>();
+        m_contextMenu->setCallbackFunction(
+            [this](MenuListTree2DPtr const& _menuListTree)
+            {
+                _menuListTree->addItem(
+                    "Clear",
+                    [this](String const& _item)
+                    {
+                        setValue(c_invalidAssetFileId);
+                        eventUIData();
+                    });
             });
 
         m_text = EditorToolsUIHelper::CreateText(

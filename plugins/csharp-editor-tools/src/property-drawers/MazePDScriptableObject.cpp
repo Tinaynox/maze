@@ -42,6 +42,8 @@
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeDragAndDropZone.hpp"
+#include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
+#include "maze-ui/ecs/components/MazeMenuListTree2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-plugin-csharp/managers/MazeScriptableObjectManager.hpp"
@@ -231,6 +233,19 @@ namespace Maze
                 this->m_dragAndDropFrame->getMeshRenderer()->setEnabled(_active);
             });
 
+        m_contextMenu = m_scriptableObjectButton->getEntityRaw()->ensureComponent<ContextMenu2D>();
+        m_contextMenu->setCallbackFunction(
+            [this](MenuListTree2DPtr const& _menuListTree)
+            {
+                _menuListTree->addItem(
+                    "Clear",
+                    [this](String const& _item)
+                    {
+                        setValue(nullptr);
+                        eventUIData();
+                    });
+            });
+
         m_selectAssetButton = UIHelper::CreateClickButton(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::SelectAsset),
             Vec2F(18, 18),
@@ -295,6 +310,9 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerScriptableObject::notifyScriptableObjectButtonClick(Button2D* _button, CursorInputEvent& _event)
     {
+        if (_event.button != 0)
+            return;
+
         if (m_scriptableObject)
         {
             ScriptableObjectLibraryData const* libraryData = ScriptableObjectManager::GetInstancePtr()->getScriptableObjectLibraryData(
