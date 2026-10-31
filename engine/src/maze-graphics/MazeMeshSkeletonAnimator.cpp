@@ -187,7 +187,7 @@ namespace Maze
             for (S32 i = 0; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
             {
                 if (m_players[i] != player && m_players[i]->isActive() && !m_players[i]->getAdditive())
-                    m_players[i]->stop();
+                    m_players[i]->stop(blendWeightSpeed);
             }
         }
 
@@ -513,10 +513,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MeshSkeletonAnimatorPlayer::stop()
+    void MeshSkeletonAnimatorPlayer::stop(F32 _weightSpeedOverride)
     {
         if (m_state != State::None)
+        {
+            if (_weightSpeedOverride >= 0.0f)
+                m_weightSpeed = _weightSpeedOverride;
+
             setState(State::Out);
+        }
     }
 
     //////////////////////////////////////////

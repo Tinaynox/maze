@@ -225,7 +225,7 @@ namespace Maze
             bool _pauseEnding = false);
 
         //////////////////////////////////////////
-        void stop();
+        void stop(F32 _weightSpeedOverride = -1.0f);
 
         //////////////////////////////////////////
         void pause();
