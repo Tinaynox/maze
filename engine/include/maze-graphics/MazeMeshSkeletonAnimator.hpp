@@ -56,7 +56,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    #define MESH_SKELETON_ANIMATOR_PLAYERS_COUNT (3)
+    #define MESH_SKELETON_ANIMATOR_PLAYERS_COUNT (4)
     
 
     //////////////////////////////////////////
@@ -170,6 +170,11 @@ namespace Maze
         FastVector<bool> m_bonesTransformsDirty;
 
         Vector<TMat> m_bonesSkinningTransforms; // Animation delta, Mesh space
+
+        // Bind pose in bone local (parent) space - reference pose for additive animations
+        Vector<Vec3F> m_bonesBindTranslations;
+        Vector<Quaternion> m_bonesBindRotations;
+        Vector<Vec3F> m_bonesBindScales;
 
         MeshSkeletonAnimatorPlayerPtr m_players[MESH_SKELETON_ANIMATOR_PLAYERS_COUNT];
         F32 m_playersBlendWeights[MESH_SKELETON_ANIMATOR_PLAYERS_COUNT];

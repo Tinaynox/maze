@@ -103,6 +103,9 @@ namespace Maze
         Bone& getBone(BoneIndex _index) { return m_bones[_index]; }
 
         //////////////////////////////////////////
+        Bone const& getBone(BoneIndex _index) const { return m_bones[_index]; }
+
+        //////////////////////////////////////////
         BoneIndex findBoneIndex(HashedCString _name);
 
         //////////////////////////////////////////

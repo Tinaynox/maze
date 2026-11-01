@@ -30,6 +30,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeMeshSkeleton.hpp"
 #include "maze-graphics/MazeMeshSkeletonAnimation.hpp"
+#include "maze-graphics/helpers/MazeMeshSkeletonHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -135,12 +136,20 @@ namespace Maze
 
             m_bonesTransformsDirty.resize(m_skeleton->getBonesCount());
 
+            MeshSkeletonHelper::CalculateBindPoseLocalTransforms(
+                *m_skeleton,
+                m_bonesBindTranslations,
+                m_bonesBindRotations,
+                m_bonesBindScales);
         }
         else
         {
             m_bonesGlobalTransforms.clear();
             m_bonesSkinningTransforms.clear();
             m_bonesTransformsDirty.clear();
+            m_bonesBindTranslations.clear();
+            m_bonesBindRotations.clear();
+            m_bonesBindScales.clear();
         }
     }
 
@@ -200,26 +209,22 @@ namespace Maze
     {
         static MeshSkeletonAnimatorPlayerPtr nullPointer;
 
-        S32 playerIndex = 0;
-        F32 bestWeight = m_players[playerIndex]->getTotalWeight();
-        if (m_players[playerIndex]->isActive() && bestWeight == 1.0f)
-            return m_players[playerIndex];
-
-        // Find best active player
-        for (S32 i = 1; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
+        S32 playerIndex = -1;
+        F32 bestWeight = 0.0f;
+        for (S32 i = 0; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
         {
-            if ((!m_players[playerIndex]->isActive() && m_players[i]->isActive()) ||
-                m_players[i]->getTotalWeight() > bestWeight)
+            MeshSkeletonAnimatorPlayerPtr const& player = m_players[i];
+            if (!player->isActive() || player->getAdditive())
+                continue;
+
+            if (playerIndex < 0 || player->getTotalWeight() > bestWeight)
             {
                 playerIndex = i;
-                bestWeight = m_players[i]->getTotalWeight();
-
-                if (m_players[playerIndex]->isActive() && bestWeight == 1.0f)
-                    return m_players[playerIndex];
+                bestWeight = player->getTotalWeight();
             }
         }
 
-        if (!m_players[playerIndex]->isActive())
+        if (playerIndex < 0)
             return nullPointer;
 
         return m_players[playerIndex];
@@ -240,11 +245,9 @@ namespace Maze
             F32 accumulatedRotationWeight = 0.0f;
 
             // Additive layer
-            //Vec3F additiveBoneTranslationFinal = Vec3F::c_zero;
-            //Quaternion additiveBoneRotationFinal = Quaternion::c_identity;
-            //Vec3F additiveBoneScaleFinal = Vec3F::c_one;
-            //bool additiveFirstRotation = true;
-            //F32 additiveAccumulatedRotationWeight = 0.0f;
+            Vec3F additiveTranslation = Vec3F::c_zero;
+            Quaternion additiveRotation = Quaternion::c_identity;
+            Vec3F additiveScale = Vec3F::c_one;
 
 
             for (S32 i = 0; i < MESH_SKELETON_ANIMATOR_PLAYERS_COUNT; ++i)
@@ -257,15 +260,14 @@ namespace Maze
                 Quaternion boneRotation(0.0f, 0.0f, 0.0f, 0.0f);
                 Vec3F boneScale;
 
-                m_players[i]->evaluateBoneTransform(
-                    _i,
-                    boneTranslation,
-                    boneRotation,
-                    boneScale);
-
-
                 if (!m_players[i]->getAdditive())
                 {
+                    m_players[i]->evaluateBoneTransform(
+                        _i,
+                        boneTranslation,
+                        boneRotation,
+                        boneScale);
+
                     boneTranslationFinal += boneTranslation * weight;
                     boneScaleFinal += boneScale * weight;
 
@@ -284,36 +286,26 @@ namespace Maze
                 }
                 else
                 {
-                    // #TODO:
-                    /*
-                    additiveBoneTranslationFinal += (boneTranslation + bone.inversedBindPoseTransformMS[3]) * weight;
-                    // additiveBoneScaleFinal += boneScale * weight;
+                    m_players[i]->evaluateBoneTransform(
+                        _i,
+                        boneTranslation,
+                        boneRotation,
+                        boneScale);
 
-                    if (additiveFirstRotation)
-                    {
-                        additiveBoneRotationFinal = boneRotation;
-                        additiveFirstRotation = false;
-                        additiveAccumulatedRotationWeight = weight;
-                    }
-                    else
-                    {
-                        F32 t = weight / (weight + additiveAccumulatedRotationWeight);
-                        additiveBoneRotationFinal = Quaternion::Slerp(t, additiveBoneRotationFinal, boneRotation);
-                        additiveAccumulatedRotationWeight += weight;
-                    }
-                    */
+                    MeshSkeletonHelper::AccumulateAdditiveDelta(
+                        weight,
+                        boneTranslation, boneRotation, boneScale,
+                        m_bonesBindTranslations[_i], m_bonesBindRotations[_i], m_bonesBindScales[_i],
+                        additiveTranslation, additiveRotation, additiveScale);
                 }
             }
 
+            boneTranslationFinal += additiveTranslation;
+            boneRotationFinal = boneRotationFinal * additiveRotation;
+            boneScaleFinal *= additiveScale;
 
             TMat boneRotationMatrix;
-
-            //additiveBoneRotationFinal.toRotationMatrix(boneRotationMatrix);
-            //TMat additiveMat = TMat::CreateTranslation(additiveBoneTranslationFinal).transform(
-            //    boneRotationMatrix).transform(
-            //        TMat::CreateScale(additiveBoneScaleFinal));
-
-            (boneRotationFinal).toRotationMatrix(boneRotationMatrix);
+            boneRotationFinal.toRotationMatrix(boneRotationMatrix);
             m_bonesGlobalTransforms[_i] = TMat::CreateTranslation(boneTranslationFinal).transform(
                 boneRotationMatrix).transform(
                     TMat::CreateScale(boneScaleFinal));
