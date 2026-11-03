@@ -398,19 +398,6 @@ namespace Maze
                     }
                 }
             }
-            else
-            if (_keyboardData.keyCode == KeyCode::V)
-            {
-                if (m_edit->getSelected())
-                {
-                    if (_keyboardData.isControlDown())
-                    {
-                        String string = SystemManager::GetInstancePtr()->getClipboardAsString();
-                        string.erase(std::remove(string.begin(), string.end(), '\n'), string.end());
-                        m_edit->setText(m_edit->getText() + string);
-                    }
-                }
-            }
 
             break;
         }
