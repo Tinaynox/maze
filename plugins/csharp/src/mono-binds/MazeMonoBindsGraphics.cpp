@@ -661,6 +661,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void Camera3DConvertWorldCoordsToViewportCoords(Component* _component, Vec3F const& _positionWS, Vec2F& _outPositionV)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(Camera3D);
+
+        _outPositionV = _component->castRaw<Camera3D>()->convertWorldCoordsToViewportCoords(_positionWS);
+    }
+
+    //////////////////////////////////////////
     inline void Light3DGetRadius(Component* _component, F32& _outValue)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(Light3D);
@@ -1570,6 +1578,7 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DGetRenderTarget);
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DSetRenderTarget);
         MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DConvertViewportCoordsToRay);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Camera3DConvertWorldCoordsToViewportCoords);
 
         // Light3D
         MAZE_GRAPHICS_MONO_BIND_FUNC(Light3DGetRadius);

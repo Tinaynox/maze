@@ -41,6 +41,12 @@ namespace Maze.UI
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void TextRenderer2DCalculateRequiredSizeForText(NativePtr nativeComponentPtr, string text, out Vec2F outSize);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void TextRenderer2DGetColor(NativePtr nativeComponentPtr, out uint outColor);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void TextRenderer2DSetColor(NativePtr nativeComponentPtr, uint color);
         #endregion
 
         #region EditBox2D

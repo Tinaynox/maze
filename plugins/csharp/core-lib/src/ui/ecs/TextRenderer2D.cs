@@ -1,4 +1,5 @@
 using Maze.Core;
+using Maze.Graphics;
 
 namespace Maze.UI
 {
@@ -8,6 +9,12 @@ namespace Maze.UI
         {
             get => InternalCalls.TextRenderer2DGetText(NativeComponentPtr);
             set => InternalCalls.TextRenderer2DSetText(NativeComponentPtr, value);
+        }
+
+        public ColorU32 Color
+        {
+            get { InternalCalls.TextRenderer2DGetColor(NativeComponentPtr, out uint res); return new ColorU32(res); }
+            set { InternalCalls.TextRenderer2DSetColor(NativeComponentPtr, value.ToUInt()); }
         }
 
         public TextRenderer2D(NativePtr nativeComponentPtr)

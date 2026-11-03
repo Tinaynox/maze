@@ -175,6 +175,20 @@ namespace Maze
         mono_free(cstr);
     }
 
+    //////////////////////////////////////////
+    inline void TextRenderer2DGetColor(Component* _component, U32& _outColor)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(TextRenderer2D);
+        _outColor = _component->castRaw<TextRenderer2D>()->getColor().toRGBA_U8();
+    }
+
+    //////////////////////////////////////////
+    inline void TextRenderer2DSetColor(Component* _component, U32 _color)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(TextRenderer2D);
+        _component->castRaw<TextRenderer2D>()->setColor(ColorU32(_color));
+    }
+
 
     //////////////////////////////////////////
     inline MonoString* EditBox2DGetText(Component* _component)
@@ -482,6 +496,8 @@ namespace Maze
         MAZE_UI_MONO_BIND_FUNC(TextRenderer2DGetText);
         MAZE_UI_MONO_BIND_FUNC(TextRenderer2DSetText);
         MAZE_UI_MONO_BIND_FUNC(TextRenderer2DCalculateRequiredSizeForText);
+        MAZE_UI_MONO_BIND_FUNC(TextRenderer2DGetColor);
+        MAZE_UI_MONO_BIND_FUNC(TextRenderer2DSetColor);
 
         // EditBox2D
         MAZE_UI_MONO_BIND_FUNC(EditBox2DGetText);

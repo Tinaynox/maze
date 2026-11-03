@@ -206,6 +206,9 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void Camera3DConvertViewportCoordsToRay(NativePtr nativeComponentPtr, ref Vec2F positionViewport, out Ray ray);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void Camera3DConvertWorldCoordsToViewportCoords(NativePtr nativeComponentPtr, ref Vec3F positionWS, out Vec2F outPositionViewport);
         #endregion
 
         #region Light3D
