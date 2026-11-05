@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -620,6 +621,15 @@ namespace Maze
                             else
                                 entity->removeFromEcsWorld();
                         }
+                    });
+
+                    _menuListTree->addItem(
+                        "Copy Name",
+                        [hierarchyLineWeak](String const& _text)
+                    {
+                        HierarchyLinePtr hierarchyLine = hierarchyLineWeak.lock();
+                        if (hierarchyLine)
+                            SystemManager::GetInstancePtr()->setClipboardString(hierarchyLine->getText());
                     });
 
                     _menuListTree->addItem(

@@ -144,6 +144,9 @@ namespace Maze
         /////////////////////////////////////////
         void setText(String const& _text);
 
+        /////////////////////////////////////////
+        String const& getText() const;
+
 
         //////////////////////////////////////////
         void setSelected(bool _value);

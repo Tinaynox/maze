@@ -171,8 +171,16 @@ namespace Maze
     /////////////////////////////////////////
     void HierarchyLine::setText(String const& _text)
     {
+        m_text = _text;
+
         if (m_textRenderer)
             m_textRenderer->setText(_text);
+    }
+
+    //////////////////////////////////////////
+    String const& HierarchyLine::getText() const
+    {
+        return m_text;
     }
 
     //////////////////////////////////////////
