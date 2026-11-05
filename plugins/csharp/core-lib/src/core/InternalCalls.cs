@@ -105,6 +105,9 @@ namespace Maze.Core
         internal extern static void EntityGetActive(NativePtr nativeEntityPtr, out bool outValue);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EntityGetActiveInHierarchy(NativePtr nativeEntityPtr, out bool outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void EntitySetActive(NativePtr nativeEntityPtr, bool value);
         #endregion
 

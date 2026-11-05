@@ -17,6 +17,11 @@ namespace Maze.Core
             set { InternalCalls.EntitySetActive(NativeEntityPtr, value); }
         }
 
+        public bool ActiveInHierarchy
+        {
+            get { InternalCalls.EntityGetActiveInHierarchy(NativeEntityPtr, out bool active); return active; }
+        }
+
         public string Name
         {
             get => GetComponent<Name>()?.Title ?? string.Empty;

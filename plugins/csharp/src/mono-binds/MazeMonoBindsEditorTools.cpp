@@ -31,6 +31,7 @@
 #include "maze-core/assets/MazeAssetUnitId.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
 
 
 
@@ -530,6 +531,13 @@ namespace Maze
         return SelectionManager::GetInstancePtr()->isObjectSelected(EntityId(_entityId));
     }
 
+    //////////////////////////////////////////
+    void MAZE_PLUGIN_CSHARP_API MarkEditorChanged()
+    {
+        if (EditorToolsActionManager::GetInstancePtr())
+            EditorToolsActionManager::GetInstancePtr()->markChanged();
+    }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsEditorTools()
@@ -564,6 +572,7 @@ namespace Maze
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(DrawLabel);
 
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(IsEntitySelected);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(MarkEditorChanged);
     }
 
 } // namespace Maze

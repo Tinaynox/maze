@@ -260,6 +260,9 @@ namespace Maze.EditorTools
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool IsEntitySelected(int entityId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static void MarkEditorChanged();
         #endregion
     }
 }

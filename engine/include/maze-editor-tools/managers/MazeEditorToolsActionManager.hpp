@@ -119,6 +119,10 @@ namespace Maze
         //////////////////////////////////////////
         inline MultiDelegate<U32 const&>& getLastChangeTimestampChangedEvent() { return m_lastChangeTimestamp.eventValueChanged; }
 
+        //////////////////////////////////////////
+        // For changes made outside of EditorActions (e.g. by C# editor tools), enables saving of the edited scene/prefab
+        inline void markChanged() { m_lastChangeTimestamp = EditorAction::GetCurrentTimestamp(); }
+
     protected:
 
         //////////////////////////////////////////

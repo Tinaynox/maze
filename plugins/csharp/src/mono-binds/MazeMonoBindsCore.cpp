@@ -408,6 +408,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void EntityGetActiveInHierarchy(Entity* _entity, bool& _outValue)
+    {
+        _outValue = _entity ? _entity->getActiveInHierarchy() : false;
+    }
+
+    //////////////////////////////////////////
     inline void EntitySetActive(Entity* _entity, bool _value)
     {
         if (!_entity)
@@ -1066,6 +1072,7 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(EntityRemoveFromEcsWorld);
         MAZE_CORE_MONO_BIND_FUNC(EntityRemoveComponent);
         MAZE_CORE_MONO_BIND_FUNC(EntityGetActive);
+        MAZE_CORE_MONO_BIND_FUNC(EntityGetActiveInHierarchy);
         MAZE_CORE_MONO_BIND_FUNC(EntitySetActive);
 
         // Component
