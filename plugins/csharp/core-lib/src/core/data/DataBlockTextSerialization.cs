@@ -1092,7 +1092,7 @@ namespace Maze.Core
                 }
                 ++i;
                 if (i < value.Count)
-                    value.RemoveRange(i, value.Count - 1);
+                    value.RemoveRange(i, value.Count - i);
             }
 
             value.Add(0);
@@ -1175,7 +1175,11 @@ namespace Maze.Core
 
             if (type == DataBlockParamType.ParamString)
             {
-                dataBlock.AddString(name, Encoding.ASCII.GetString(value.ToArray()));
+                // ReadValue null-terminates the buffer for the numeric parsers - it must not get into the string
+                int length = value.Count;
+                while (length > 0 && value[length - 1] == 0)
+                    --length;
+                dataBlock.AddString(name, Encoding.ASCII.GetString(value.ToArray(), 0, length));
             }
             else
             {
