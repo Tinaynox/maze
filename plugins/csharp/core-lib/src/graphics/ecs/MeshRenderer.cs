@@ -16,6 +16,12 @@ namespace Maze.Graphics
             set { InternalCalls.MeshRendererSetMaterial(NativeComponentPtr, value.ResourceId); }
         }
 
+        public bool Enabled
+        {
+            get => InternalCalls.MeshRendererGetEnabled(NativeComponentPtr);
+            set => InternalCalls.MeshRendererSetEnabled(NativeComponentPtr, value);
+        }
+
         public MeshRenderer(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
         {  

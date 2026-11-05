@@ -26,6 +26,12 @@ namespace Maze.Graphics
         internal extern static void MeshRendererSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void MeshRendererGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void MeshRendererSetEnabled(NativePtr nativeComponentPtr, bool enabled);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool MeshRendererGetEnabled(NativePtr nativeComponentPtr);
         #endregion
 
         #region MeshRendererInstanced
@@ -78,6 +84,12 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void SkinnedMeshRendererGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void SkinnedMeshRendererSetEnabled(NativePtr nativeComponentPtr, bool enabled);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool SkinnedMeshRendererGetEnabled(NativePtr nativeComponentPtr);
         #endregion
 
         #region SkinnedMeshSkeleton
@@ -413,6 +425,9 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void GlobalShaderUniformSetColorF128(int globalShaderUniformId, ref ColorF128 value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void GlobalShaderUniformSetTexture2D(int globalShaderUniformId, int textureId);
         #endregion
 
         #region Material
@@ -542,6 +557,21 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void Texture2DLoad(int textureId, int pixelSheetId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool Texture2DLoadEmpty(int textureId, int width, int height, int pixelFormat);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void Texture2DGetSize(int textureId, out Vec2S outSize);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void Texture2DSetFilters(int textureId, int minFilter, int magFilter);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void Texture2DSetWrap(int textureId, int wrapS, int wrapT);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void Texture2DCopyImageFrom(int textureId, byte[] pixels, int pixelFormat, int width, int height, int x, int y);
         #endregion
 
         #region Sprite

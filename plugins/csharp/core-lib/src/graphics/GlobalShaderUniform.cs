@@ -51,5 +51,6 @@ namespace Maze.Graphics
         public void Set(Mat4F value) { InternalCalls.GlobalShaderUniformSetMat4F(m_Id.Id, ref value); }
         public void Set(TMat value) { InternalCalls.GlobalShaderUniformSetTMat(m_Id.Id, ref value); }
         public void Set(ColorF128 value) { InternalCalls.GlobalShaderUniformSetColorF128(m_Id.Id, ref value); }
+        public void Set(Texture2D value) { InternalCalls.GlobalShaderUniformSetTexture2D(m_Id.Id, value?.ResourceId ?? -1); }
     }
 }

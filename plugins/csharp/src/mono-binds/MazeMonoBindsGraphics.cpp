@@ -143,6 +143,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void MeshRendererSetEnabled(Component* _component, bool _enabled)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRenderer);
+        _component->castRaw<MeshRenderer>()->setEnabled(_enabled);
+    }
+
+    //////////////////////////////////////////
+    inline bool MeshRendererGetEnabled(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(MeshRenderer, false);
+        return _component->castRaw<MeshRenderer>()->getEnabled();
+    }
+
+    //////////////////////////////////////////
     inline void MeshRendererInstancedSetMaterial(Component* _component, S32 _resourceId)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRendererInstanced);
@@ -301,6 +315,20 @@ namespace Maze
             _outResourceId = renderMesh->getResourceId();
         else
             _outResourceId = c_invalidResourceId;
+    }
+
+    //////////////////////////////////////////
+    inline void SkinnedMeshRendererSetEnabled(Component* _component, bool _enabled)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(SkinnedMeshRenderer);
+        _component->castRaw<SkinnedMeshRenderer>()->setEnabled(_enabled);
+    }
+
+    //////////////////////////////////////////
+    inline bool SkinnedMeshRendererGetEnabled(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshRenderer, false);
+        return _component->castRaw<SkinnedMeshRenderer>()->getEnabled();
     }
 
     //////////////////////////////////////////
@@ -1100,6 +1128,13 @@ namespace Maze
             uniform->setValue(ColorF128(_value));
     }
 
+    //////////////////////////////////////////
+    inline void GlobalShaderUniformSetTexture2D(S32 _id, S32 _texture2DId)
+    {
+        if (GlobalShaderUniform* uniform = GlobalShaderUniform::GetResourceFast(_id))
+            uniform->setValue(Texture2D::GetResourceFast(_texture2DId));
+    }
+
 
     //////////////////////////////////////////
     inline bool MaterialIsValid(S32 _materialId)
@@ -1274,6 +1309,77 @@ namespace Maze
         if (Texture2D* texture = Texture2D::GetResourceFast(_textureId))
             if (PixelSheet2D const* pixelSheet = PixelSheet2D::GetResourceFast(_pixelSheetId))
                 texture->loadTexture(*pixelSheet);
+    }
+
+    //////////////////////////////////////////
+    inline bool Texture2DLoadEmpty(S32 _textureId, S32 _width, S32 _height, S32 _pixelFormat)
+    {
+        MAZE_ERROR_RETURN_VALUE_IF(_width <= 0 || _height <= 0, false, "Invalid texture size: %dx%d", _width, _height);
+
+        if (Texture2D* texture = Texture2D::GetResourceFast(_textureId))
+            return texture->loadEmpty((U32)_width, (U32)_height, (PixelFormat::Enum)_pixelFormat);
+
+        return false;
+    }
+
+    //////////////////////////////////////////
+    inline void Texture2DGetSize(S32 _textureId, Vec2S& _outSize)
+    {
+        if (Texture2D* texture = Texture2D::GetResourceFast(_textureId))
+            _outSize = texture->getSize();
+        else
+            _outSize = Vec2S::c_zero;
+    }
+
+    //////////////////////////////////////////
+    inline void Texture2DSetFilters(S32 _textureId, S32 _minFilter, S32 _magFilter)
+    {
+        if (Texture2D* texture = Texture2D::GetResourceFast(_textureId))
+        {
+            texture->setMinFilter(TextureFilter((TextureFilter::Enum)_minFilter));
+            texture->setMagFilter(TextureFilter((TextureFilter::Enum)_magFilter));
+        }
+    }
+
+    //////////////////////////////////////////
+    inline void Texture2DSetWrap(S32 _textureId, S32 _wrapS, S32 _wrapT)
+    {
+        if (Texture2D* texture = Texture2D::GetResourceFast(_textureId))
+        {
+            texture->setWrapS(TextureWrap((TextureWrap::Enum)_wrapS));
+            texture->setWrapT(TextureWrap((TextureWrap::Enum)_wrapT));
+        }
+    }
+
+    //////////////////////////////////////////
+    // Uploads a tightly packed _width x _height block of _pixels into the texture at (_x, _y)
+    inline void Texture2DCopyImageFrom(
+        S32 _textureId,
+        MonoArray* _pixels,
+        S32 _pixelFormat,
+        S32 _width,
+        S32 _height,
+        S32 _x,
+        S32 _y)
+    {
+        MAZE_ERROR_RETURN_IF(!_pixels, "Pixels array is null!");
+        MAZE_ERROR_RETURN_IF(_width <= 0 || _height <= 0 || _x < 0 || _y < 0, "Invalid copy rect!");
+
+        Texture2D* texture = Texture2D::GetResourceFast(_textureId);
+        if (!texture)
+            return;
+
+        Size requiredBytes = (Size)_width * (Size)_height * (Size)PixelFormat::GetBytesPerPixel((PixelFormat::Enum)_pixelFormat);
+        Size arrayBytes = (Size)mono_array_length(_pixels);
+        MAZE_ERROR_RETURN_IF(requiredBytes == 0 || arrayBytes < requiredBytes, "Pixels array is too small: %u < %u", (U32)arrayBytes, (U32)requiredBytes);
+
+        texture->copyImageFrom(
+            mono_array_addr(_pixels, U8, 0),
+            (PixelFormat::Enum)_pixelFormat,
+            (U32)_width,
+            (U32)_height,
+            (U32)_x,
+            (U32)_y);
     }
 
 
@@ -1522,6 +1628,8 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetRenderMesh);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetEnabled);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetEnabled);
 
         // MeshRendererInstanced
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedSetMaterial);
@@ -1542,6 +1650,8 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetRenderMesh);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetEnabled);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetEnabled);
 
         // SkinnedMeshSkeleton
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonSetRenderMesh);
@@ -1657,6 +1767,7 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetMat4F);
         MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetTMat);
         MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetColorF128);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetTexture2D);
 
         // Material
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialIsValid);
@@ -1691,6 +1802,11 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(DestroyTexture2D);
         MAZE_GRAPHICS_MONO_BIND_FUNC(Texture2DReadAsPixelSheet);
         MAZE_GRAPHICS_MONO_BIND_FUNC(Texture2DLoad);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Texture2DLoadEmpty);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Texture2DGetSize);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Texture2DSetFilters);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Texture2DSetWrap);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(Texture2DCopyImageFrom);
         
         // PixelSheet2D
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreatePixelSheet2D);

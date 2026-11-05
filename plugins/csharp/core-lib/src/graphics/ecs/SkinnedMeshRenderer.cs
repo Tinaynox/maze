@@ -17,6 +17,12 @@ namespace Maze.Graphics
             set { InternalCalls.SkinnedMeshRendererSetMaterial(NativeComponentPtr, value.ResourceId); }
         }
 
+        public bool Enabled
+        {
+            get => InternalCalls.SkinnedMeshRendererGetEnabled(NativeComponentPtr);
+            set => InternalCalls.SkinnedMeshRendererSetEnabled(NativeComponentPtr, value);
+        }
+
         public SkinnedMeshRenderer(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
         {  

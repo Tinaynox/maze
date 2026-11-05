@@ -2,8 +2,37 @@ using Maze.Core;
 
 namespace Maze.Graphics
 {
+    // Mirrors Maze::TextureFilter (MazeTexture.hpp)
+    public enum TextureFilter
+    {
+        None = 0,
+        Nearest,
+        Linear,
+        NearestMipmapNearest,
+        LinearMipmapNearest,
+        NearestMipmapLinear,
+        LinearMipmapLinear
+    }
+
+    // Mirrors Maze::TextureWrap (MazeTexture.hpp)
+    public enum TextureWrap
+    {
+        None = 0,
+        Repeat,
+        MirroredRepeat,
+        ClampToEdge,
+        ClampToBorder
+    }
+
     public class Texture2D : IndexedResource
     {
+        public Vec2S Size
+        {
+            get { InternalCalls.Texture2DGetSize(m_ResourceId, out Vec2S size); return size; }
+        }
+        public int Width => Size.X;
+        public int Height => Size.Y;
+
         public Texture2D()
         {
             m_ResourceId = InternalCalls.CreateTexture2D();
@@ -49,6 +78,28 @@ namespace Maze.Graphics
         public void LoadTexture(PixelSheet2D pixelSheet)
         {
             InternalCalls.Texture2DLoad(m_ResourceId, pixelSheet.ResourceId);
+        }
+
+        public bool LoadEmpty(int width, int height, PixelFormat pixelFormat)
+        {
+            return InternalCalls.Texture2DLoadEmpty(m_ResourceId, width, height, (int)pixelFormat);
+        }
+
+        public void SetFilters(TextureFilter minFilter, TextureFilter magFilter)
+        {
+            InternalCalls.Texture2DSetFilters(m_ResourceId, (int)minFilter, (int)magFilter);
+        }
+
+        public void SetWrap(TextureWrap wrapS, TextureWrap wrapT)
+        {
+            InternalCalls.Texture2DSetWrap(m_ResourceId, (int)wrapS, (int)wrapT);
+        }
+
+        // Uploads a tightly packed width x height block of pixels into the texture at (x, y).
+        // pixels may be larger than required (only the first width * height * bpp bytes are read)
+        public void CopyImageFrom(byte[] pixels, PixelFormat pixelFormat, int width, int height, int x, int y)
+        {
+            InternalCalls.Texture2DCopyImageFrom(m_ResourceId, pixels, (int)pixelFormat, width, height, x, y);
         }
     }
 }
