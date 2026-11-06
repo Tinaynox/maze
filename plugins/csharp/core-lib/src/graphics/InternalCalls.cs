@@ -428,6 +428,9 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void GlobalShaderUniformSetTexture2D(int globalShaderUniformId, int textureId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void GlobalShaderUniformApplyImmediate(int globalShaderUniformId);
         #endregion
 
         #region Material

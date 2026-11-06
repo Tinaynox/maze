@@ -102,6 +102,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void GlobalShaderUniform::applyImmediate()
+    {
+        // The Added handler also binds the uniform for shaders that haven't received the deferred Added event yet
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->broadcastEventImmediate<GlobalShaderUniformAddedEvent>(getResourceId());
+    }
+
+    //////////////////////////////////////////
     void GlobalShaderUniform::setValue(Vec3F const* _vec, U32 _size)
     {
         U32 size = _size * U32(sizeof(Vec3F));

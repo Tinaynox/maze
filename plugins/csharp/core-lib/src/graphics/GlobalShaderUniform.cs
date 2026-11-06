@@ -52,5 +52,8 @@ namespace Maze.Graphics
         public void Set(TMat value) { InternalCalls.GlobalShaderUniformSetTMat(m_Id.Id, ref value); }
         public void Set(ColorF128 value) { InternalCalls.GlobalShaderUniformSetColorF128(m_Id.Id, ref value); }
         public void Set(Texture2D value) { InternalCalls.GlobalShaderUniformSetTexture2D(m_Id.Id, value?.ResourceId ?? -1); }
+
+        // Set() reaches the shaders on the next events flush - call this when the value must be used in the current frame
+        public void ApplyImmediate() { InternalCalls.GlobalShaderUniformApplyImmediate(m_Id.Id); }
     }
 }

@@ -81,6 +81,10 @@ namespace Maze
         //////////////////////////////////////////
         void setVariantImmediate(ShaderUniformVariant const& _variant);
 
+        //////////////////////////////////////////
+        // Pushes the current value into all shaders right now (setValue/setVariant apply on the next events flush)
+        void applyImmediate();
+
 
 
         //////////////////////////////////////////

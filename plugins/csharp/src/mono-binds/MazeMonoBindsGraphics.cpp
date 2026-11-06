@@ -1137,6 +1137,14 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    inline void GlobalShaderUniformApplyImmediate(S32 _id)
+    {
+        if (GlobalShaderUniform* uniform = GlobalShaderUniform::GetResourceFast(_id))
+            uniform->applyImmediate();
+    }
+
+
+    //////////////////////////////////////////
     inline bool MaterialIsValid(S32 _materialId)
     {
         Material* material = Material::GetResourceFast(_materialId);
@@ -1768,6 +1776,7 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetTMat);
         MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetColorF128);
         MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformSetTexture2D);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(GlobalShaderUniformApplyImmediate);
 
         // Material
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialIsValid);
