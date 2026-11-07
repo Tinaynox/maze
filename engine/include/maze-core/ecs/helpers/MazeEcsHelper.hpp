@@ -34,6 +34,7 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsTypes.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 
 
 //////////////////////////////////////////
@@ -55,6 +56,11 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API EntityId GetEntityParentId(Entity const* _entity);
+
+
+        // Asks the entity for the size its content needs (PreferredSize2DQueryEvent).
+        // Returns false if nothing answered, _outSize is the current Transform2D size then
+        MAZE_CORE_API bool CalculatePreferredSize2D(Entity* _entity, Vec2F& _outSize);
 
 
         //////////////////////////////////////////

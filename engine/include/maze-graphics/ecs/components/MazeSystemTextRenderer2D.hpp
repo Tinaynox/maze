@@ -52,6 +52,18 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Enum TextOverflow2D
+    // What happens with text that doesn't fit the Transform2D size (None - it is drawn outside)
+    //
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_GRAPHICS_API, TextOverflow2D,
+        Truncate,
+        Ellipsis,
+        Wrap,
+        Shrink);
+
+
+    //////////////////////////////////////////
     // Class SystemTextRenderer2D
     //
     //////////////////////////////////////////
@@ -83,6 +95,17 @@ namespace Maze
 
         //////////////////////////////////////////
         void setSystemFont(SystemFontPtr const& _systemFont);
+
+
+        //////////////////////////////////////////
+        inline TextOverflow2D getOverflow() const { return m_overflow; }
+
+        //////////////////////////////////////////
+        void setOverflow(TextOverflow2D _value);
+
+
+        //////////////////////////////////////////
+        virtual Vec2F calculatePreferredSize() MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
@@ -119,8 +142,32 @@ namespace Maze
         //////////////////////////////////////////
         virtual Vec4F calculateMeshColor() const MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        // m_text after the overflow policy and the font scale it is drawn with
+        void updateDisplayText();
+
+        //////////////////////////////////////////
+        Vec2F measureText(CString _text, F32 _fontScale) const;
+
+        //////////////////////////////////////////
+        // Wrap is constrained by the width unless the width follows the text (autoSize)
+        bool isWrapConstrained() const;
+
+        //////////////////////////////////////////
+        S32 calculateWrapColumns(F32 _fontScale) const;
+
+        //////////////////////////////////////////
+        Vec2F calculateRowShift(S32 _rowsCount, S32 _rowColumnsCount) const;
+
     protected:
         SystemFontPtr m_systemFont;
+
+        TextOverflow2D m_overflow = TextOverflow2D::None;
+
+        String m_displayText;
+        F32 m_displayFontScale = 0.0f;
+        String m_measureScratch;
     };
 
 

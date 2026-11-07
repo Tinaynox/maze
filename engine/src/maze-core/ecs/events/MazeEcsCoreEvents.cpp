@@ -53,6 +53,7 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EcsWorldWillBeDestroyedEvent, Event);
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityParentChangedEvent, Event);
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityPostCopyEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PreferredSize2DQueryEvent, Event);
 
     
 } // namespace Maze

@@ -86,6 +86,187 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_GRAPHICS_API F32 CalculateSystemFontScale(
+            SystemFont const& _systemFont,
+            U32 _fontSize)
+        {
+            S32 glyphWidth = _systemFont.charSize.x - _systemFont.outline * 2;
+            if (glyphWidth <= 0)
+                return 0.0f;
+
+            return (F32)_fontSize / (F32)glyphWidth;
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API F32 CalculateSystemTextColumnAdvance(SystemFont const& _systemFont)
+        {
+            return F32(_systemFont.charSize.x - _systemFont.outline);
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API F32 CalculateSystemTextRowAdvance(
+            SystemFont const& _systemFont,
+            F32 _lineSpacingScale)
+        {
+            return F32(_systemFont.charSize.y - _systemFont.outline) * _lineSpacingScale;
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API Vec2F CalculateSystemTextSize(
+            SystemFont const& _systemFont,
+            F32 _lineSpacingScale,
+            S32 _rowsCount,
+            S32 _maxColumnsCount)
+        {
+            if (_rowsCount <= 0)
+                return Vec2F::c_zero;
+
+            F32 width = _maxColumnsCount > 0
+                ? F32(_maxColumnsCount) * CalculateSystemTextColumnAdvance(_systemFont) + F32(_systemFont.outline)
+                : 0.0f;
+            F32 height = F32(_rowsCount - 1) * CalculateSystemTextRowAdvance(_systemFont, _lineSpacingScale) + F32(_systemFont.charSize.y);
+
+            return Vec2F(width, height);
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API S32 CalculateSystemTextColumnsFit(
+            SystemFont const& _systemFont,
+            F32 _fontScale,
+            F32 _areaWidth)
+        {
+            F32 advance = CalculateSystemTextColumnAdvance(_systemFont) * _fontScale;
+            if (advance <= 0.0f)
+                return 0;
+
+            F32 width = _areaWidth - F32(_systemFont.outline) * _fontScale;
+            return Math::Max(0, (S32)Math::Floor(width / advance + 1e-4f));
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API S32 CalculateSystemTextRowsFit(
+            SystemFont const& _systemFont,
+            F32 _fontScale,
+            F32 _lineSpacingScale,
+            F32 _areaHeight)
+        {
+            F32 rowHeight = F32(_systemFont.charSize.y) * _fontScale;
+            if (rowHeight <= 0.0f || _areaHeight + 1e-4f < rowHeight)
+                return 0;
+
+            F32 advance = CalculateSystemTextRowAdvance(_systemFont, _lineSpacingScale) * _fontScale;
+            if (advance <= 0.0f)
+                return 1;
+
+            return 1 + (S32)Math::Floor((_areaHeight - rowHeight) / advance + 1e-4f);
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void ApplySystemTextWordWrap(
+            CString _text,
+            S32 _maxColumns,
+            String& _outText)
+        {
+            _outText.clear();
+            if (!_text)
+                return;
+
+            if (_maxColumns <= 0)
+            {
+                _outText = _text;
+                return;
+            }
+
+            CString rowStart = _text;
+            while (true)
+            {
+                CString rowEnd = rowStart + CalculateSystemTextRowColumns(rowStart);
+
+                CString p = rowStart;
+                while (rowEnd - p > _maxColumns)
+                {
+                    CString breakAt = nullptr;
+                    for (CString s = p + _maxColumns; s > p; --s)
+                    {
+                        if (*s == ' ')
+                        {
+                            breakAt = s;
+                            break;
+                        }
+                    }
+
+                    if (breakAt)
+                    {
+                        _outText.append(p, breakAt);
+                        p = breakAt + 1;
+                    }
+                    else
+                    {
+                        _outText.append(p, p + _maxColumns);
+                        p += _maxColumns;
+                    }
+
+                    _outText.push_back('\n');
+                }
+
+                _outText.append(p, rowEnd);
+
+                if (*rowEnd == 0)
+                    break;
+
+                _outText.push_back('\n');
+                rowStart = rowEnd + 1;
+            }
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void ApplySystemTextTruncate(
+            CString _text,
+            S32 _maxColumns,
+            S32 _maxRows,
+            bool _ellipsis,
+            String& _outText)
+        {
+            _outText.clear();
+            if (!_text || _maxRows <= 0)
+                return;
+
+            static CString const c_ellipsis = "...";
+            S32 const ellipsisLength = 3;
+            _maxColumns = Math::Max(0, _maxColumns);
+
+            CString rowStart = _text;
+            for (S32 row = 0; row < _maxRows; ++row)
+            {
+                S32 rowColumns = CalculateSystemTextRowColumns(rowStart);
+                CString rowEnd = rowStart + rowColumns;
+                bool lastRow = (*rowEnd == 0);
+                bool rowsCut = !lastRow && (row == _maxRows - 1);
+                bool columnsCut = rowColumns > _maxColumns;
+
+                if (row > 0)
+                    _outText.push_back('\n');
+
+                if (_ellipsis && (columnsCut || rowsCut))
+                {
+                    S32 dots = Math::Min(ellipsisLength, _maxColumns);
+                    S32 keep = Math::Min(rowColumns, _maxColumns - dots);
+                    _outText.append(rowStart, rowStart + keep);
+                    _outText.append(c_ellipsis, c_ellipsis + dots);
+                }
+                else
+                {
+                    _outText.append(rowStart, rowStart + Math::Min(rowColumns, _maxColumns));
+                }
+
+                if (lastRow)
+                    break;
+
+                rowStart = rowEnd + 1;
+            }
+        }
+
+        //////////////////////////////////////////
         MAZE_GRAPHICS_API Vec2F CalculateSystemTextShift(
             SystemFontPtr const& _systemFont,
             HorizontalAlignment2D _horizontalAlignment,
@@ -101,10 +282,8 @@ namespace Maze
             if (!_systemFont)
                 return shift;
 
-            F32 const rowWidth = F32(_columnsCount * (_systemFont->charSize.x - _systemFont->outline) + _systemFont->outline);
-            F32 const rowHeightUnit = F32(_systemFont->charSize.y - _systemFont->outline);
-            F32 const totalTextHeight = (F32(_rowsCount - 1) * rowHeightUnit * _lineSpacingScale + rowHeightUnit + F32(_systemFont->outline));
-            F32 const rowSize = (F32)_systemFont->charSize.y;
+            F32 const rowWidth = CalculateSystemTextSize(*_systemFont, _lineSpacingScale, 1, _columnsCount).x;
+            F32 const totalTextHeight = CalculateSystemTextSize(*_systemFont, _lineSpacingScale, _rowsCount, 1).y;
 
             switch (_horizontalAlignment)
             {
@@ -118,7 +297,7 @@ namespace Maze
             {
                 case VerticalAlignment2D::Top: shift.y = _areaSize.y; break;
                 case VerticalAlignment2D::Middle: shift.y = (_areaSize.y + totalTextHeight * _fontScale) * 0.5f; break;
-                case VerticalAlignment2D::Bottom: shift.y = (F32(_rowsCount - 1) * rowSize * _lineSpacingScale + rowSize) * _fontScale; break;
+                case VerticalAlignment2D::Bottom: shift.y = totalTextHeight * _fontScale; break;
                 default: break;
             }
 

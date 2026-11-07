@@ -31,6 +31,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/helpers/MazeEcsHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -55,7 +56,8 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(VerticalAlignment2D, verticalAlignment, VerticalAlignment2D::Top, getVerticalAlignment, setVerticalAlignment),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, reverseOrder, false, getReverseOrder, setReverseOrder),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, autoWidth, false, getAutoWidth, setAutoWidth),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, autoHeight, false, getAutoHeight, setAutoHeight));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, autoHeight, false, getAutoHeight, setAutoHeight),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, useChildrenPreferredSize, false, getUseChildrenPreferredSize, setUseChildrenPreferredSize));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Layout2D);
@@ -98,6 +100,13 @@ namespace Maze
     void Layout2D::update()
     {
         bool alignmentDirty = m_dirty || m_transform->isSizeChanged();
+
+        // Content (e.g. a label text) may change without touching any transform, so it is re-queried every update
+        if (m_useChildrenPreferredSize && applyChildrenPreferredSize())
+            alignmentDirty = true;
+
+        if (!alignmentDirty && (m_autoWidth || m_autoHeight) && calculatePreferredSize() != m_transform->getSize())
+            alignmentDirty = true;
 
         if (!alignmentDirty)
         {
@@ -145,6 +154,41 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Vec2F Layout2D::getChildLayoutSize(Transform2D* _childTransform)
+    {
+        if (!m_useChildrenPreferredSize)
+            return _childTransform->getSize();
+
+        Vec2F preferredSize;
+        if (!EcsHelper::CalculatePreferredSize2D(_childTransform->getEntityRaw(), preferredSize))
+            return _childTransform->getSize();
+
+        if (getControlsChildWidth())
+            preferredSize.x = _childTransform->getWidth();
+
+        if (getControlsChildHeight())
+            preferredSize.y = _childTransform->getHeight();
+
+        return preferredSize;
+    }
+
+    bool Layout2D::applyChildrenPreferredSize()
+    {
+        bool changed = false;
+        processChildren(
+            [&](Transform2D* _childTransform)
+            {
+                Vec2F size = getChildLayoutSize(_childTransform);
+                if (size == _childTransform->getSize())
+                    return;
+
+                _childTransform->setSize(size);
+                changed = true;
+            });
+
+        return changed;
+    }
+
     Size Layout2D::getActiveChildrenCount()
     {
         Size result = 0;

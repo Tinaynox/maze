@@ -79,6 +79,15 @@ namespace Maze
         //////////////////////////////////////////
         virtual void alignChildren() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual Vec2F calculatePreferredSize() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual bool getControlsChildWidth() const MAZE_OVERRIDE { return m_controlChildWidth; }
+
+        //////////////////////////////////////////
+        virtual bool getControlsChildHeight() const MAZE_OVERRIDE { return m_controlChildHeight; }
+
 
         //////////////////////////////////////////
         inline F32 getSpacing() const { return m_spacing; }

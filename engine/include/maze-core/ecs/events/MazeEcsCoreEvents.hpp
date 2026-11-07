@@ -452,6 +452,42 @@ namespace Maze
     };
 
 
+    //////////////////////////////////////////
+    // Class PreferredSize2DQueryEvent
+    // Sent immediately to an entity to ask the 2D size its content needs (see EcsHelper::CalculatePreferredSize2D).
+    // Any component that knows it calls answer(), several answers are combined per axis (max)
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API PreferredSize2DQueryEvent
+        : public GenericEvent<PreferredSize2DQueryEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PreferredSize2DQueryEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline void answer(Vec2F const& _size)
+        {
+            if (handled)
+            {
+                size.x = _size.x > size.x ? _size.x : size.x;
+                size.y = _size.y > size.y ? _size.y : size.y;
+            }
+            else
+            {
+                size = _size;
+                handled = true;
+            }
+        }
+
+    public:
+        Vec2F size = Vec2F::c_zero;
+        bool handled = false;
+    };
+
+
 
 } // namespace Maze
 //////////////////////////////////////////

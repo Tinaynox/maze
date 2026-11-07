@@ -52,11 +52,16 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(TextAutoSize2D);
+
+
+    //////////////////////////////////////////
     // Class AbstractTextRenderer2D
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AbstractTextRenderer2D, AbstractTextRenderer,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Bool, pixelPerfect, true, getPixelPerfect, setPixelPerfect));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Bool, pixelPerfect, true, getPixelPerfect, setPixelPerfect),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(TextAutoSize2D, autoSize, TextAutoSize2D::None, getAutoSize, setAutoSize));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(AbstractTextRenderer2D);
@@ -146,6 +151,49 @@ namespace Maze
         enableFlag(Flags::MeshDataDirty);
         enableFlag(Flags::MaterialDirty);
         prepareForRender();
+    }
+
+    //////////////////////////////////////////
+    Vec2F AbstractTextRenderer2D::calculatePreferredSize()
+    {
+        prepareForRender();
+        return m_boundingSize;
+    }
+
+    //////////////////////////////////////////
+    void AbstractTextRenderer2D::setAutoSize(TextAutoSize2D _value)
+    {
+        if (m_autoSize == _value)
+            return;
+
+        m_autoSize = _value;
+
+        enableFlag(Flags::MeshDataDirty);
+    }
+
+    //////////////////////////////////////////
+    bool AbstractTextRenderer2D::applyAutoSize()
+    {
+        if (m_autoSize == TextAutoSize2D::None || !m_transform)
+            return false;
+
+        Vec2F preferredSize = calculatePreferredSize();
+        Vec2F size = m_transform->getSize();
+
+        if (isAutoSizedWidth())
+            size.x = preferredSize.x;
+
+        if (isAutoSizedHeight())
+            size.y = preferredSize.y;
+
+        if (size == m_transform->getSize())
+            return false;
+
+        m_transform->setSize(size);
+
+        // Alignment depends on the size
+        enableFlag(Flags::MeshDataDirty);
+        return true;
     }
 
     //////////////////////////////////////////

@@ -47,6 +47,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/helpers/MazeTextHelper.hpp"
 
@@ -983,6 +984,17 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(TextRenderer2DPreferredSize2DQuery,
+        {},
+        {},
+        PreferredSize2DQueryEvent& _event,
+        Entity* _entity,
+        TextRenderer2D* _textRenderer2D)
+    {
+        _event.answer(_textRenderer2D->calculatePreferredSize());
+    }
+
+    //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(TextRenderer2DSystem,
         MAZE_ECS_TAGS(MAZE_HS("render")),
         {},
@@ -999,6 +1011,7 @@ namespace Maze
         if (_textRenderer2D->getCanvasRenderer()->isAlphaDirty())
             _textRenderer2D->enableFlag(TextRenderer2D::Flags::ColorDirty);
 
+        _textRenderer2D->applyAutoSize();
         _textRenderer2D->prepareForRender();
     }
 

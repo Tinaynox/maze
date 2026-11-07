@@ -32,6 +32,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -89,50 +90,46 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    Vec2F HorizontalLayout2D::calculatePreferredSize()
+    {
+        Vec2F size = m_transform->getSize();
+        if (!m_autoWidth && !m_autoHeight)
+            return size;
+
+        Vec2F content = Vec2F::c_zero;
+        Size childrenCount = 0;
+        processChildren(
+            [&](Transform2D* _childTransform)
+            {
+                Vec2F childSize = getChildLayoutSize(_childTransform);
+                content.x += childSize.x;
+                content.y = Math::Max(content.y, childSize.y);
+                ++childrenCount;
+            });
+
+        if (childrenCount > 1)
+            content.x += m_spacing * F32(childrenCount - 1);
+
+        if (m_autoWidth)
+            size.x = content.x + m_paddingLeft + m_paddingRight;
+
+        if (m_autoHeight)
+            size.y = content.y + m_paddingBottom + m_paddingTop;
+
+        return size;
+    }
+
+    //////////////////////////////////////////
     void HorizontalLayout2D::alignChildren()
     {
         Size childrenCount = getActiveChildrenCount();
 
+        m_transform->setSize(calculatePreferredSize());
+
         if (childrenCount == 0)
         {
-            Vec2F targetLayoutSize = m_transform->getSize();
-
-            if (m_autoWidth)
-                targetLayoutSize.x = m_paddingLeft + m_paddingRight;
-
-            if (m_autoHeight)
-                targetLayoutSize.y = m_paddingBottom + m_paddingTop;
-
-            m_transform->setSize(targetLayoutSize);
-
             m_dirty = false;
-
             return;
-        }
-
-        if (m_autoWidth || m_autoHeight)
-        {
-            Vec2F targetLayoutSize = m_transform->getSize();
-
-            F32 totalWidth = 0.0f;
-            F32 maxHeight = 0.0f;
-            processChildren(
-                [&](Transform2D* _childTransform)
-                {
-                    Vec2F const& childSize = _childTransform->getSize();
-                    totalWidth += childSize.x;
-                    maxHeight = Math::Max(childSize.y, maxHeight);
-                });
-
-            totalWidth += m_spacing * (childrenCount - 1);
-
-            if (m_autoWidth)
-                targetLayoutSize.x = totalWidth + m_paddingLeft + m_paddingRight;
-
-            if (m_autoHeight)
-                targetLayoutSize.y = maxHeight + m_paddingBottom + m_paddingTop;
-
-            m_transform->setSize(targetLayoutSize);
         }
 
         Vec2F const& layoutSize = m_transform->getSize();
@@ -162,7 +159,7 @@ namespace Maze
 
 
         F32 activeWidth = 0.0f;
-        if (m_expand)
+        if (m_expand && childrenCount > 1)
         {
             F32 extraSpacing = Math::Max(0.0f, paddedWidth - totalChildrenWidth) / (childrenCount - 1);
             spacing += extraSpacing;
@@ -232,6 +229,18 @@ namespace Maze
         m_dirty = false;
     }
 
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(HorizontalLayout2DPreferredSize2DQuery,
+        {},
+        {},
+        PreferredSize2DQueryEvent& _event,
+        Entity* _entity,
+        HorizontalLayout2D* _layout)
+    {
+        if (_layout->getTransform() && (_layout->getAutoWidth() || _layout->getAutoHeight()))
+            _event.answer(_layout->calculatePreferredSize());
+    }
 
     //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(HorizontalLayout2DActiveChanged,

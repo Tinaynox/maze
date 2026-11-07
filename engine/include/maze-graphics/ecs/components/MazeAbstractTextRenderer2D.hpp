@@ -52,6 +52,17 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Enum TextAutoSize2D
+    // Axes of the Transform2D size that follow the preferred size of the text
+    //
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_GRAPHICS_API, TextAutoSize2D,
+        Width,
+        Height,
+        Both);
+
+
+    //////////////////////////////////////////
     // Class AbstractTextRenderer2D
     //
     //////////////////////////////////////////
@@ -98,7 +109,30 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // Size of the text as it is currently laid out (after wrap/truncation/shrink)
         inline Vec2F const& getBoundingSize() const { return m_boundingSize; }
+
+        //////////////////////////////////////////
+        // Size the text needs: untruncated and at the full font size.
+        // Wrapping text keeps the current width (height for width)
+        virtual Vec2F calculatePreferredSize();
+
+
+        //////////////////////////////////////////
+        inline TextAutoSize2D getAutoSize() const { return m_autoSize; }
+
+        //////////////////////////////////////////
+        void setAutoSize(TextAutoSize2D _value);
+
+        //////////////////////////////////////////
+        inline bool isAutoSizedWidth() const { return m_autoSize == TextAutoSize2D::Width || m_autoSize == TextAutoSize2D::Both; }
+
+        //////////////////////////////////////////
+        inline bool isAutoSizedHeight() const { return m_autoSize == TextAutoSize2D::Height || m_autoSize == TextAutoSize2D::Both; }
+
+        //////////////////////////////////////////
+        // Returns true if the size changed
+        bool applyAutoSize();
 
 
         //////////////////////////////////////////
@@ -215,6 +249,8 @@ namespace Maze
         Vec2F m_boundingSize = Vec2F::c_zero;
 
         bool m_pixelPerfect = true;
+
+        TextAutoSize2D m_autoSize = TextAutoSize2D::None;
 
         Vector<TMat> m_localMatrices;
         Vector<Vec4F> m_localColors;

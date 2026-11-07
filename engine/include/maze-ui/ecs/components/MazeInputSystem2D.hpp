@@ -60,6 +60,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(HorizontalLayout2D);
     MAZE_USING_SHARED_PTR(VerticalLayout2D);
+    MAZE_USING_SHARED_PTR(OverlayLayout2D);
+    MAZE_USING_SHARED_PTR(TextRenderer2D);
     MAZE_USING_SHARED_PTR(SizePolicy2D);
     MAZE_USING_SHARED_PTR(ScissorMask2D);
 
@@ -270,6 +272,9 @@ namespace Maze
         SharedPtr<GenericInclusiveEntitiesSample<EditBox2D>> m_systemTextEditBoxesSample;
         SharedPtr<GenericInclusiveEntitiesSample<HorizontalLayout2D>> m_horizontalLayouts2D;
         SharedPtr<GenericInclusiveEntitiesSample<VerticalLayout2D>> m_verticalLayouts2D;
+        SharedPtr<GenericInclusiveEntitiesSample<OverlayLayout2D>> m_overlayLayouts2D;
+        SharedPtr<GenericInclusiveEntitiesSample<SystemTextRenderer2D>> m_systemTextRenderers2D;
+        SharedPtr<GenericInclusiveEntitiesSample<TextRenderer2D>> m_textRenderers2D;
         SharedPtr<GenericInclusiveEntitiesSample<SizePolicy2D, Transform2D>> m_sizePolicy2D;
         SharedPtr<GenericInclusiveEntitiesSample<ScrollRect2D>> m_scrollRects2D;
 

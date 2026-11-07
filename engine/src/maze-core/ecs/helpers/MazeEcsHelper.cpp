@@ -32,6 +32,7 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazePrefabInstance.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 
@@ -62,6 +63,29 @@ namespace Maze
         {
             _entity->removeComponent<StaticName>();
             _entity->ensureComponent<Name>()->setName(_name);
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool CalculatePreferredSize2D(Entity* _entity, Vec2F& _outSize)
+        {
+            _outSize = Vec2F::c_zero;
+            if (!_entity)
+                return false;
+
+            PreferredSize2DQueryEvent query;
+            if (EcsWorld* world = _entity->getEcsWorld())
+                world->sendEventImmediate(_entity->getId(), &query);
+
+            if (query.handled)
+            {
+                _outSize = query.size;
+                return true;
+            }
+
+            if (Transform2D* transform = _entity->getComponentRaw<Transform2D>())
+                _outSize = transform->getSize();
+
+            return false;
         }
 
         //////////////////////////////////////////

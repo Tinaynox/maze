@@ -48,6 +48,8 @@
 #include "maze-ui/ecs/components/MazeEditBox2D.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeOverlayLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeTextRenderer2D.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
@@ -447,6 +449,9 @@ namespace Maze
         m_systemTextEditBoxesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<EditBox2D>();
         m_horizontalLayouts2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<HorizontalLayout2D>();
         m_verticalLayouts2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<VerticalLayout2D>();
+        m_overlayLayouts2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<OverlayLayout2D>();
+        m_systemTextRenderers2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<SystemTextRenderer2D>();
+        m_textRenderers2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<TextRenderer2D>();
         m_sizePolicy2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<SizePolicy2D, Transform2D>();
         m_scrollRects2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<ScrollRect2D>();
     }
@@ -475,43 +480,64 @@ namespace Maze
             }
         }
 
-        struct Layout2DSortData
+        // Children are sized before their parents, auto-sized texts before layouts of the same entity
+        struct SizingSortData
         {
+            AbstractTextRenderer2D* text;
             Layout2D* layout;
             U64 sortKey;
         };
 
-        Vector<Layout2DSortData> layouts;
+        auto calculateSortKey =
+            [](Transform2D* _transform)
+            {
+                Size nestingLevel = _transform->getNestingLevel();
+                S32 zOrder = _transform->getZ();
+                U32 orderOfArrival = _transform->getOrderOfArrival();
+                return (static_cast<U64>(nestingLevel) << 40) | (static_cast<U64>(zOrder) << 20) | orderOfArrival;
+            };
+
+        Vector<SizingSortData> sizingQueue;
         {
             MAZE_PROFILE_EVENT("Layouts sort");
-            m_horizontalLayouts2D->query(
-                [&](Entity* _entity, HorizontalLayout2D* _layout)
-                {
-                    Size nestingLevel = _layout->getTransform()->getNestingLevel();
-                    S32 zOrder = _layout->getTransform()->getZ();
-                    U32 orderOfArrival = _layout->getTransform()->getOrderOfArrival();
-                    U64 sortKey = (static_cast<U64>(nestingLevel) << 40) | (static_cast<U64>(zOrder) << 20) | orderOfArrival;
 
-                    layouts.emplace_back(Layout2DSortData { _layout, sortKey });
-                });
+            auto addLayout =
+                [&](Layout2D* _layout)
+                {
+                    sizingQueue.emplace_back(SizingSortData{ nullptr, _layout, calculateSortKey(_layout->getTransform().get()) });
+                };
+
+            m_horizontalLayouts2D->query(
+                [&](Entity* _entity, HorizontalLayout2D* _layout) { addLayout(_layout); });
 
             m_verticalLayouts2D->query(
-                [&](Entity* _entity, VerticalLayout2D* _layout)
-                {
-                    Size nestingLevel = _layout->getTransform()->getNestingLevel();
-                    S32 zOrder = _layout->getTransform()->getZ();
-                    U32 orderOfArrival = _layout->getTransform()->getOrderOfArrival();
-                    U64 sortKey = (static_cast<U64>(nestingLevel) << 40) | (static_cast<U64>(zOrder) << 20) | orderOfArrival;
+                [&](Entity* _entity, VerticalLayout2D* _layout) { addLayout(_layout); });
 
-                    layouts.emplace_back(Layout2DSortData{ _layout, sortKey });
-                });
+            m_overlayLayouts2D->query(
+                [&](Entity* _entity, OverlayLayout2D* _layout) { addLayout(_layout); });
+
+            auto addAutoSizedText =
+                [&](AbstractTextRenderer2D* _text)
+                {
+                    if (_text->getAutoSize() != TextAutoSize2D::None && _text->getTransform())
+                        sizingQueue.emplace_back(SizingSortData{ _text, nullptr, calculateSortKey(_text->getTransform().get()) });
+                };
+
+            m_systemTextRenderers2D->query(
+                [&](Entity* _entity, SystemTextRenderer2D* _text) { addAutoSizedText(_text); });
+
+            m_textRenderers2D->query(
+                [&](Entity* _entity, TextRenderer2D* _text) { addAutoSizedText(_text); });
 
             eastl::sort(
-                layouts.begin(),
-                layouts.end(),
-                [](Layout2DSortData const& _layoutData0, Layout2DSortData const& _layoutData1)
+                sizingQueue.begin(),
+                sizingQueue.end(),
+                [](SizingSortData const& _data0, SizingSortData const& _data1)
                 {
-                    return _layoutData0.sortKey > _layoutData1.sortKey;
+                    if (_data0.sortKey != _data1.sortKey)
+                        return _data0.sortKey > _data1.sortKey;
+
+                    return _data0.text && !_data1.text;
                 });
         }
 
@@ -536,8 +562,13 @@ namespace Maze
 
         {
             MAZE_PROFILE_EVENT("Layouts update");
-            for (Layout2DSortData const& layoutData : layouts)
-                layoutData.layout->update();
+            for (SizingSortData const& data : sizingQueue)
+            {
+                if (data.text)
+                    data.text->applyAutoSize();
+                else
+                    data.layout->update();
+            }
         }
 
         {

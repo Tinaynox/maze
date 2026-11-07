@@ -203,6 +203,27 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // Children that answer PreferredSize2DQueryEvent (texts, auto-sized layouts...) get that size
+        inline bool getUseChildrenPreferredSize() const { return m_useChildrenPreferredSize; }
+
+        //////////////////////////////////////////
+        inline void setUseChildrenPreferredSize(bool _value)
+        {
+            if (m_useChildrenPreferredSize == _value)
+                return;
+
+            m_useChildrenPreferredSize = _value;
+
+            dirty();
+        }
+
+
+        //////////////////////////////////////////
+        // Size the layout needs for its children along the auto axes (the current size along the others)
+        virtual Vec2F calculatePreferredSize() MAZE_ABSTRACT;
+
+
+        //////////////////////////////////////////
         inline bool getAutoWidth() const { return m_autoWidth; }
 
         //////////////////////////////////////////
@@ -251,6 +272,21 @@ namespace Maze
         //////////////////////////////////////////
         Size getActiveChildrenCount();
 
+        //////////////////////////////////////////
+        // Preferred size if m_useChildrenPreferredSize and the child answers, its current size otherwise
+        Vec2F getChildLayoutSize(Transform2D* _childTransform);
+
+        //////////////////////////////////////////
+        // Axes the layout sizes itself (they must not take the child preferred size)
+        virtual bool getControlsChildWidth() const { return false; }
+
+        //////////////////////////////////////////
+        virtual bool getControlsChildHeight() const { return false; }
+
+        //////////////////////////////////////////
+        // Returns true if any child size changed
+        bool applyChildrenPreferredSize();
+
     protected:
         Transform2DPtr m_transform;
 
@@ -268,6 +304,8 @@ namespace Maze
 
         bool m_autoWidth;
         bool m_autoHeight;
+
+        bool m_useChildrenPreferredSize = false;
     };
 
 

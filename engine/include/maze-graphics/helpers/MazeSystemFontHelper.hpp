@@ -55,6 +55,58 @@ namespace Maze
         MAZE_GRAPHICS_API S32 CalculateSystemTextRowColumns(CString _rowStart);
 
         //////////////////////////////////////////
+        // Font units -> pixels. _fontSize is the glyph width without the outline
+        MAZE_GRAPHICS_API F32 CalculateSystemFontScale(
+            SystemFont const& _systemFont,
+            U32 _fontSize);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API F32 CalculateSystemTextColumnAdvance(SystemFont const& _systemFont);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API F32 CalculateSystemTextRowAdvance(
+            SystemFont const& _systemFont,
+            F32 _lineSpacingScale);
+
+        //////////////////////////////////////////
+        // Size of a text block in font units (multiply by the font scale to get pixels)
+        MAZE_GRAPHICS_API Vec2F CalculateSystemTextSize(
+            SystemFont const& _systemFont,
+            F32 _lineSpacingScale,
+            S32 _rowsCount,
+            S32 _maxColumnsCount);
+
+        //////////////////////////////////////////
+        // _areaWidth/_areaHeight are in pixels
+        MAZE_GRAPHICS_API S32 CalculateSystemTextColumnsFit(
+            SystemFont const& _systemFont,
+            F32 _fontScale,
+            F32 _areaWidth);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API S32 CalculateSystemTextRowsFit(
+            SystemFont const& _systemFont,
+            F32 _fontScale,
+            F32 _lineSpacingScale,
+            F32 _areaHeight);
+
+        //////////////////////////////////////////
+        // Breaks rows longer than _maxColumns at the last space (mid-word if there is none)
+        MAZE_GRAPHICS_API void ApplySystemTextWordWrap(
+            CString _text,
+            S32 _maxColumns,
+            String& _outText);
+
+        //////////////////////////////////////////
+        // Cuts rows to _maxColumns and drops rows after _maxRows, optionally marking the cut with "..."
+        MAZE_GRAPHICS_API void ApplySystemTextTruncate(
+            CString _text,
+            S32 _maxColumns,
+            S32 _maxRows,
+            bool _ellipsis,
+            String& _outText);
+
+        //////////////////////////////////////////
         // Alignment shift of a system text row inside the area
         MAZE_GRAPHICS_API Vec2F CalculateSystemTextShift(
             SystemFontPtr const& _systemFont,
