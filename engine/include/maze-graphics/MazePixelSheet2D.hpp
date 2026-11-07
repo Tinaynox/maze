@@ -290,7 +290,7 @@ namespace Maze
         PixelSheet2D& operator=(PixelSheet2D const& _copy);
 
         //////////////////////////////////////////
-        PixelSheet2D& operator==(PixelSheet2D&& _copy) noexcept;
+        PixelSheet2D& operator=(PixelSheet2D&& _copy) noexcept;
 
         //////////////////////////////////////////
         PixelSheet2D upscaledCopy(S32 _scale);

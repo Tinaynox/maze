@@ -50,6 +50,13 @@ namespace Maze.Graphics
         }
 
 
+        // Non-owning
+        public Texture2D GetTexture2D(string uniformName)
+        {
+            int textureId = InternalCalls.MaterialGetUniformTexture2D(m_ResourceId, uniformName);
+            return textureId != -1 ? new Texture2D(textureId) : null;
+        }
+
         public int EnsureUniformIndex(string name)
         {
             return InternalCalls.MaterialEnsureUniformIndex(m_ResourceId, name);

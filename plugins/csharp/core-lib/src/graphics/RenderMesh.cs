@@ -65,5 +65,11 @@ namespace Maze.Graphics
         {
             return InternalCalls.RenderMeshTraceRay(m_ResourceId, ref origin, ref dir, ref t);
         }
+
+        // Ray is in mesh local space
+        public bool TraceRay(Vec3F origin, Vec3F dir, ref float t, out Vec2F texCoords0)
+        {
+            return InternalCalls.RenderMeshTraceRayTexCoords0(m_ResourceId, ref origin, ref dir, ref t, out texCoords0);
+        }
     }
 }

@@ -29,6 +29,8 @@
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-ui/ecs/components/MazeMenuBar2D.hpp"
+#include "maze-graphics/MazePixelSheet2D.hpp"
+#include "maze-plugin-loader-png/loaders/MazeLoaderPNG.hpp"
 #include "scenes/SceneEditor.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorSceneManager.hpp"
@@ -118,6 +120,20 @@ namespace Maze
         return mono_string_new(mono_domain_get(), EditorHelper::GetProjectAssetsFolder().toUTF8().c_str());
     }
 
+    //////////////////////////////////////////
+    inline bool EditorSavePixelSheet2DAsPNG(S32 _sheet2DId, MonoString* _filePath)
+    {
+        PixelSheet2D const* sheet = PixelSheet2D::GetResourceFast(_sheet2DId);
+        if (!sheet || !_filePath)
+            return false;
+
+        Char* cstr = mono_string_to_utf8(_filePath);
+        bool result = SavePNGFile(Path(cstr), *sheet);
+        mono_free(cstr);
+
+        return result;
+    }
+
 
     //////////////////////////////////////////
     void BindCppFunctionsEditor()
@@ -129,6 +145,7 @@ namespace Maze
         MAZE_EDITOR_MONO_BIND_FUNC(GetEditorMainRenderWindow);
         MAZE_EDITOR_MONO_BIND_FUNC(GetEditorPlaytestModeEnabled);
         MAZE_EDITOR_MONO_BIND_FUNC(GetEditorProjectAssetsFolder);
+        MAZE_EDITOR_MONO_BIND_FUNC(EditorSavePixelSheet2DAsPNG);
     }
 
 

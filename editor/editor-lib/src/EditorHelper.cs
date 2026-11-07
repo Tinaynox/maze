@@ -28,5 +28,11 @@ namespace Maze.Editor
         {
             return InternalCalls.GetEditorProjectAssetsFolder();
         }
+
+        // PixelSheet2D must be RGB_U8 or RGBA_U8
+        public static bool SavePixelSheet2DAsPNG(PixelSheet2D pixelSheet, string filePath)
+        {
+            return InternalCalls.EditorSavePixelSheet2DAsPNG(pixelSheet.ResourceId, filePath);
+        }
     }
 }

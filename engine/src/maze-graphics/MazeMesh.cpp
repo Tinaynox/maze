@@ -228,11 +228,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool Mesh::traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t) const
+    bool Mesh::traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t, Vec2F* _outTexCoords0) const
     {
         bool result = false;
         for (SubMeshPtr const& subMesh : m_subMeshes)
-            result |= subMesh->traceRay(_origin, _direction, _t);
+            result |= subMesh->traceRay(_origin, _direction, _t, _outTexCoords0);
         return result;
     }
 

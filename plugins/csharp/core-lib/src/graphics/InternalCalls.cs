@@ -313,6 +313,9 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static bool RenderMeshTraceRay(int renderMeshId, ref Vec3F origin, ref Vec3F dir, ref float t);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool RenderMeshTraceRayTexCoords0(int renderMeshId, ref Vec3F origin, ref Vec3F dir, ref float t, out Vec2F texCoords0);
         #endregion
 
         #region RenderWindow
@@ -511,6 +514,9 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void MaterialUniformSetTexture2D(int materialId, int uniformIndex, int textureId); 
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static int MaterialGetUniformTexture2D(int materialId, string uniformName);
         #endregion
 
         #region PixelSheet2D
@@ -519,6 +525,18 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void DestroyPixelSheet2D(int sheetId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static int CreatePixelSheet2DFromAssetFile(string assetFileName);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static int PixelSheet2DGetDataSize(int sheetId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool PixelSheet2DCopyDataTo(int sheetId, byte[] bytes);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool PixelSheet2DCopyDataFrom(int sheetId, byte[] bytes);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void PixelSheet2DSaveToFileAsTGA(int sheetId, string filename, bool resetAlpha);
@@ -575,6 +593,12 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void Texture2DCopyImageFrom(int textureId, byte[] pixels, int pixelFormat, int width, int height, int x, int y);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static string Texture2DGetName(int textureId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void Texture2DReload(int textureId);
         #endregion
 
         #region Sprite

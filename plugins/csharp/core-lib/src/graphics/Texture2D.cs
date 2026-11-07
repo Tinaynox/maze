@@ -33,6 +33,9 @@ namespace Maze.Graphics
         public int Width => Size.X;
         public int Height => Size.Y;
 
+        // Asset textures are named after their asset file
+        public string Name => InternalCalls.Texture2DGetName(m_ResourceId);
+
         public Texture2D()
         {
             m_ResourceId = InternalCalls.CreateTexture2D();
@@ -83,6 +86,11 @@ namespace Maze.Graphics
         public bool LoadEmpty(int width, int height, PixelFormat pixelFormat)
         {
             return InternalCalls.Texture2DLoadEmpty(m_ResourceId, width, height, (int)pixelFormat);
+        }
+
+        public void Reload()
+        {
+            InternalCalls.Texture2DReload(m_ResourceId);
         }
 
         public void SetFilters(TextureFilter minFilter, TextureFilter magFilter)

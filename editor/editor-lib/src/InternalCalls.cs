@@ -28,5 +28,10 @@ namespace Maze.Editor
         public extern static string GetEditorProjectAssetsFolder();
         #endregion
 
+        #region Images
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool EditorSavePixelSheet2DAsPNG(int sheetId, string filePath);
+        #endregion
+
     }
 }

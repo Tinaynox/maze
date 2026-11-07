@@ -101,7 +101,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PixelSheet2D& PixelSheet2D::operator==(PixelSheet2D&& _copy) noexcept
+    PixelSheet2D& PixelSheet2D::operator=(PixelSheet2D&& _copy) noexcept
     {
         m_size = eastl::move(_copy.m_size);
         m_data = eastl::move(_copy.m_data);

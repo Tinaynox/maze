@@ -273,12 +273,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool RenderMesh::traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t) const
+    bool RenderMesh::traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t, Vec2F* _outTexCoords0) const
     {
         if (!m_mesh)
             return false;
 
-        return m_mesh->traceRay(_origin, _direction, _t);
+        return m_mesh->traceRay(_origin, _direction, _t, _outTexCoords0);
     }
 
 

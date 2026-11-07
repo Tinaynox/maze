@@ -448,9 +448,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool SubMesh::traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t) const
+    bool SubMesh::traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t, Vec2F* _outTexCoords0) const
     {
-        if (m_renderDrawTopology != RenderDrawTopology::Triangles)
+        if (m_renderDrawTopology != RenderDrawTopology::Triangles &&
+            m_renderDrawTopology != RenderDrawTopology::TrianglesFan)
             return false;
 
         MeshVertexAttributeDescription const& positionData =
@@ -489,12 +490,21 @@ namespace Maze
 
         F32 bestT = _t;
         bool found = false;
+        F32 bestU = 0.0f;
+        F32 bestV = 0.0f;
+        Size bestI0 = 0;
+        Size bestI1 = 0;
+        Size bestI2 = 0;
 
         constexpr F32 c_epsilon = 1e-7f;
 
         auto testTriangle = 
-            [&](Vec3F const& v0, Vec3F const& v1, Vec3F const& v2)
+            [&](Size _i0, Size _i1, Size _i2)
             {
+                Vec3F const& v0 = positions[_i0];
+                Vec3F const& v1 = positions[_i1];
+                Vec3F const& v2 = positions[_i2];
+
                 Vec3F edge1 = v1 - v0;
                 Vec3F edge2 = v2 - v0;
 
@@ -524,6 +534,11 @@ namespace Maze
 
                 bestT  = t;
                 found  = true;
+                bestU  = u;
+                bestV  = v;
+                bestI0 = _i0;
+                bestI1 = _i1;
+                bestI2 = _i2;
             };
 
         switch (m_renderDrawTopology)
@@ -539,7 +554,7 @@ namespace Maze
                     Size i2 = getIndex(i * 3 + 2);
                     if (i0 >= vertexCount || i1 >= vertexCount || i2 >= vertexCount)
                         continue;
-                    testTriangle(positions[i0], positions[i1], positions[i2]);
+                    testTriangle(i0, i1, i2);
                 }
                 break;
             }
@@ -556,7 +571,7 @@ namespace Maze
                     Size i2 = getIndex(i + 1);
                     if (i1 >= vertexCount || i2 >= vertexCount)
                         continue;
-                    testTriangle(positions[hub], positions[i1], positions[i2]);
+                    testTriangle(hub, i1, i2);
                 }
                 break;
             }
@@ -566,7 +581,32 @@ namespace Maze
         }
 
         if (found)
+        {
             _t = bestT;
+
+            if (_outTexCoords0)
+            {
+                MeshVertexAttributeDescription const& uvData =
+                    m_vertexData[(Size)VertexAttributeSemantic::TexCoords0];
+
+                if (uvData.byteBuffer &&
+                    uvData.description.type == VertexAttributeType::F32 &&
+                    uvData.description.count >= 2 &&
+                    bestI0 < uvData.count && bestI1 < uvData.count && bestI2 < uvData.count)
+                {
+                    F32 const* uvs = reinterpret_cast<F32 const*>(uvData.byteBuffer->getDataRO());
+                    Size stride = (Size)uvData.description.count;
+                    Vec2F uv0(uvs[bestI0 * stride], uvs[bestI0 * stride + 1]);
+                    Vec2F uv1(uvs[bestI1 * stride], uvs[bestI1 * stride + 1]);
+                    Vec2F uv2(uvs[bestI2 * stride], uvs[bestI2 * stride + 1]);
+                    *_outTexCoords0 = uv0 * (1.0f - bestU - bestV) + uv1 * bestU + uv2 * bestV;
+                }
+                else
+                {
+                    *_outTexCoords0 = Vec2F::c_zero;
+                }
+            }
+        }
 
         return found;
     }

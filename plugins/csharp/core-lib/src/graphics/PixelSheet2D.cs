@@ -33,6 +33,14 @@ namespace Maze.Graphics
             m_OwnsResourceId = ownsResourceId;
         }
 
+        public static PixelSheet2D LoadFromAssetFile(string assetFileName)
+        {
+            int sheetId = InternalCalls.CreatePixelSheet2DFromAssetFile(assetFileName);
+            return sheetId != -1 ? new PixelSheet2D(sheetId, true) : null;
+        }
+
+        public int DataSize => InternalCalls.PixelSheet2DGetDataSize(m_ResourceId);
+
         ~PixelSheet2D()
         {
             ReleaseResource();
@@ -62,6 +70,10 @@ namespace Maze.Graphics
         {
             InternalCalls.PixelSheet2DSaveToFileAsTGA(m_ResourceId, filename, resetAlpha);
         }
+
+        // Raw pixel data, rows stored bottom-up (row 0 = UV v=0)
+        public bool CopyDataTo(byte[] bytes) => InternalCalls.PixelSheet2DCopyDataTo(m_ResourceId, bytes);
+        public bool CopyDataFrom(byte[] bytes) => InternalCalls.PixelSheet2DCopyDataFrom(m_ResourceId, bytes);
 
         public uint GetPixelU32(int x, int y) => InternalCalls.PixelSheet2DGetPixelU32(m_ResourceId, x, y);
         public void SetPixelU32(int x, int y, uint pixel) => InternalCalls.PixelSheet2DSetPixelU32(m_ResourceId, x, y, pixel);

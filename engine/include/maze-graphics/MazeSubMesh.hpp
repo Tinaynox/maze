@@ -291,7 +291,8 @@ namespace Maze
         bool calculateAABB(AABB3D& _outAABB) const;
 
         //////////////////////////////////////////
-        bool traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t) const;
+        // _outTexCoords0 is only written on hit
+        bool traceRay(Vec3F const& _origin, Vec3F const& _direction, F32 &_t, Vec2F* _outTexCoords0 = nullptr) const;
 
     protected:
 

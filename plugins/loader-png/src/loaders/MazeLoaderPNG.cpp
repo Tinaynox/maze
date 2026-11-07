@@ -246,7 +246,10 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("SavePNGFile");
 
-        MAZE_ERROR_RETURN_VALUE_IF(_pixelSheet.getFormat() != PixelFormat::RGBA_U8, false, "Usupported PixelSheet2D=%s!", ToString(_pixelSheet.getFormat()).c_str());
+        MAZE_ERROR_RETURN_VALUE_IF(
+            _pixelSheet.getFormat() != PixelFormat::RGBA_U8 && _pixelSheet.getFormat() != PixelFormat::RGB_U8,
+            false, "Usupported PixelSheet2D=%s!", ToString(_pixelSheet.getFormat()).c_str());
+        S32 colorType = _pixelSheet.getFormat() == PixelFormat::RGB_U8 ? PNG_COLOR_TYPE_RGB : PNG_COLOR_TYPE_RGBA;
 
         MAZE_ERROR_RETURN_VALUE_IF(_pixelSheet.getWidth() == 0 || _pixelSheet.getHeight() == 0, false, "Invalid pixelSheet!");
 
@@ -264,7 +267,7 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!file, false, "Failed to open file %s!", _filePath.toUTF8().c_str());
         png_init_io(pngPtr, file);
 
-        png_set_IHDR(pngPtr, infoPtr, _pixelSheet.getWidth(), _pixelSheet.getHeight(), 8, PNG_COLOR_TYPE_RGBA,
+        png_set_IHDR(pngPtr, infoPtr, _pixelSheet.getWidth(), _pixelSheet.getHeight(), 8, colorType,
             PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
         png_write_info(pngPtr, infoPtr);

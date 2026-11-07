@@ -297,6 +297,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline MonoString* AssetFileGetFullPath(U32 _assetFileId)
+    {
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_assetFileId);
+        if (!assetFile)
+            return nullptr;
+
+        return mono_string_new(mono_domain_get(), assetFile->getFullPath().toUTF8().c_str());
+    }
+
+    //////////////////////////////////////////
+    inline U32 AssetManagerGetAssetFileIdByFileName(MonoString* _fileName)
+    {
+        if (!AssetManager::GetInstancePtr() || !_fileName)
+            return (U32)c_invalidAssetFileId;
+
+        Char* cstr = mono_string_to_utf8(_fileName);
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(Path(cstr));
+        mono_free(cstr);
+
+        return assetFile ? (U32)assetFile->getAssetFileId() : (U32)c_invalidAssetFileId;
+    }
+
+    //////////////////////////////////////////
     inline MonoString* AssetFileReadAsString(U32 _assetFileId)
     {
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_assetFileId);
@@ -1146,6 +1169,8 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(AssetFileReadAsDataBlock);
         MAZE_CORE_MONO_BIND_FUNC(AssetManagerGetAssetFilesWithExtension);
         MAZE_CORE_MONO_BIND_FUNC(AssetFileGetFileName);
+        MAZE_CORE_MONO_BIND_FUNC(AssetFileGetFullPath);
+        MAZE_CORE_MONO_BIND_FUNC(AssetManagerGetAssetFileIdByFileName);
         MAZE_CORE_MONO_BIND_FUNC(AssetFileReadAsString);
 
         // ScriptableObject

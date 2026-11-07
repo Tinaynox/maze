@@ -47,9 +47,19 @@ namespace Maze.Core
             return ByteBuffer.LoadBytes(bytes, size);
         }
 
+        public static AssetFile GetByFileName(string fileName)
+        {
+            return Get(new AssetFileId(InternalCalls.AssetManagerGetAssetFileIdByFileName(fileName)));
+        }
+
         public string GetFileName()
         {
             return InternalCalls.AssetFileGetFileName(m_Id.Id);
+        }
+
+        public string GetFullPath()
+        {
+            return InternalCalls.AssetFileGetFullPath(m_Id.Id);
         }
 
         public string ReadAsString()

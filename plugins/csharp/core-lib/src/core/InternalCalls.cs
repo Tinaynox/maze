@@ -308,6 +308,12 @@ namespace Maze.Core
         public extern static string AssetFileGetFileName(uint assetFileId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static string AssetFileGetFullPath(uint assetFileId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static uint AssetManagerGetAssetFileIdByFileName(string fileName);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static string AssetFileReadAsString(uint assetFileId);
         #endregion
 
