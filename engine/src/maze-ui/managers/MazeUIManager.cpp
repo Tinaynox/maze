@@ -38,6 +38,7 @@
 #include "maze-ui/ecs/components/MazeContextMenuCanvas2D.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeOverlayLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeSystemTooltip2D.hpp"
 #include "maze-ui/ecs/components/MazeLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeMenuBar2D.hpp"
 #include "maze-ui/ecs/components/MazeMenuList2D.hpp"
@@ -154,6 +155,7 @@ namespace Maze
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<HorizontalLayout2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<VerticalLayout2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<OverlayLayout2D>("UI");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SystemTooltip2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MenuBar2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MenuList2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MenuListItem2D>("UI");
