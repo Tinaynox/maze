@@ -278,6 +278,16 @@ namespace Maze
             }
         }
 
+        // Every render target defaults to order 0 and RenderController collects canvas targets before
+        // camera targets, so without this the window composites last frame's 3D image (1 frame lag)
+        {
+            S32 offscreenOrder = m_renderTarget->getOrder() - 1;
+            m_renderBuffer->setOrder(offscreenOrder);
+            if (m_renderBufferMSAA)
+                m_renderBufferMSAA->setOrder(offscreenOrder);
+            m_distortionRenderBuffer->setOrder(offscreenOrder);
+        }
+
         EntityPtr distortionCameraEntity = createEntity("DistortionCamera");
         m_distortionCamera3D = distortionCameraEntity->createComponent<Camera3D>();
         m_distortionCamera3D->setRenderMask((S32)DefaultRenderMask::UserMask0);
