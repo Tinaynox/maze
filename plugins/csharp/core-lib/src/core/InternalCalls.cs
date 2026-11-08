@@ -260,6 +260,9 @@ namespace Maze.Core
         internal extern static void Transform3DSetParent(NativePtr nativeComponentPtr, NativePtr parentPtr);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static NativePtr Transform3DGetParent(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void Transform3DGetLocalTransform(NativePtr nativeComponentPtr, out TMat outTMat);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -276,6 +279,11 @@ namespace Maze.Core
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void Transform3DGetChild(NativePtr nativeComponentPtr, int index, out NativePtr outChild);
+        #endregion
+
+        #region PrefabInstance
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static uint PrefabInstanceGetAssetUnitId(NativePtr nativeComponentPtr);
         #endregion
 
         #region Name

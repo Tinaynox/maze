@@ -263,6 +263,33 @@ namespace Maze.EditorTools
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern static void MarkEditorChanged();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EditorUndoGroupBegin();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EditorUndoGroupEnd();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool EditorUndoRecordEntityAdded(NativePtr entityPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool EditorUndoRemoveEntity(NativePtr entityPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EditorUndo();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static int EditorUndoGenerateActionId();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool EditorUndoRecordMonoAction(int id);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void EditorRedo();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static uint EditorGetUndoHistoryVersion();
         #endregion
     }
 }

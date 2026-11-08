@@ -72,6 +72,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EditorActionActionsGroup::addAppliedAction(EditorActionPtr const& _action)
+    {
+        MAZE_DEBUG_BP_RETURN_IF(!_action || !_action->getApplied());
+        MAZE_DEBUG_BP_RETURN_IF(eastl::find(m_actions.begin(), m_actions.end(), _action) != m_actions.end());
+
+        m_actions.push_back(_action);
+        setApplied(true);
+    }
+
+    //////////////////////////////////////////
     void EditorActionActionsGroup::applyImpl()
     {
         for (Size i = 0, in = m_actions.size(); i < in; ++i)

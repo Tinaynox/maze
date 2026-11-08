@@ -151,7 +151,7 @@ namespace Maze
 
         updatePrefabAssetFile();
 
-        m_prefabAssetFileSaveTimestamp = EditorAction::GetCurrentTimestamp();
+        m_prefabAssetFileSaveTimestamp = EditorToolsActionManager::GetInstancePtr()->getLastChangeTimestamp();
 
         eventPrefabAssetFileChanged(m_prefabAssetFile);
     }
@@ -188,7 +188,7 @@ namespace Maze
         EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(
             m_prefabEntity, m_prefabAssetFile->getFullPath());
 
-        m_prefabAssetFileSaveTimestamp = EditorAction::GetCurrentTimestamp();
+        m_prefabAssetFileSaveTimestamp = EditorToolsActionManager::GetInstancePtr()->getLastChangeTimestamp();
 
         AssetUnitEntityPrefabPtr assetUnit = m_prefabAssetFile->getAssetUnit<AssetUnitEntityPrefab>();
         if (assetUnit)

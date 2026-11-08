@@ -47,6 +47,9 @@ namespace Maze
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsEditorTools();
 
+    //////////////////////////////////////////
+    void MAZE_PLUGIN_CSHARP_API FlushEditorUndoGroup();
+
 } // namespace Maze
 //////////////////////////////////////////
 

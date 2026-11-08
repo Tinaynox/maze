@@ -99,35 +99,68 @@ namespace Maze
         }
 
         m_currentHistoryIndex = _index;
+        ++m_historyVersion;
 
         // Security check
         m_historyIndexSetting = false;
 
         Debug::Log("%d/%d", m_currentHistoryIndex + 1, (S32)m_history.size());
 
-        m_lastChangeTimestamp = EditorAction::GetCurrentTimestamp();
+        markChanged();
     }
 
     //////////////////////////////////////////
-    void EditorToolsActionManager::applyAction(EditorActionPtr const& _action)
+    bool EditorToolsActionManager::pushToHistory(EditorActionPtr const& _action)
     {
         if (!_action)
-            return;
+            return false;
+
+        MAZE_ERROR_RETURN_VALUE_IF(m_historyIndexSetting, false, "Editor action is recorded while the history is being applied!");
 
         Vector<EditorActionPtr>::iterator it = eastl::find(m_history.begin(), m_history.end(), _action);
-        MAZE_DEBUG_BP_RETURN_IF(it != m_history.end());
+        MAZE_DEBUG_BP_RETURN_VALUE_IF(it != m_history.end(), false);
 
         m_history.erase(m_history.begin() + (m_currentHistoryIndex + 1), m_history.end());
 
         if (m_history.size() >= m_historyMaxCapacity)
         {
-            m_history.erase(m_history.begin() + 1, m_history.begin() + 2);
+            m_history.erase(m_history.begin());
             --m_currentHistoryIndex;
 
         }
 
         m_history.push_back(_action);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void EditorToolsActionManager::applyAction(EditorActionPtr const& _action)
+    {
+        if (!pushToHistory(_action))
+            return;
+
         setCurrentHistoryIndex((S32)m_history.size() - 1);
+    }
+
+    //////////////////////////////////////////
+    void EditorToolsActionManager::addAppliedAction(EditorActionPtr const& _action)
+    {
+        MAZE_DEBUG_BP_RETURN_IF(_action && !_action->getApplied());
+
+        if (!pushToHistory(_action))
+            return;
+
+        m_currentHistoryIndex = (S32)m_history.size() - 1;
+        ++m_historyVersion;
+        markChanged();
+    }
+
+    //////////////////////////////////////////
+    void EditorToolsActionManager::markChanged()
+    {
+        U32 now = (U32)EditorAction::GetCurrentTimestamp();
+        U32 previous = m_lastChangeTimestamp.getValue();
+        m_lastChangeTimestamp = now > previous ? now : previous + 1u;
     }
 
     //////////////////////////////////////////
@@ -183,6 +216,7 @@ namespace Maze
     {
         m_history.clear();
         m_currentHistoryIndex = -1;
+        ++m_historyVersion;
     }
 
     ////////////////////////////////////
@@ -209,7 +243,10 @@ namespace Maze
                     {
                         if (_data.isControlDown())
                         {
-                            undoAction();
+                            if (_data.isShiftDown())
+                                redoAction();
+                            else
+                                undoAction();
                         }
 
                         break;

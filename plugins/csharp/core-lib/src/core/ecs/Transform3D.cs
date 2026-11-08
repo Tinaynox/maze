@@ -47,6 +47,12 @@ namespace Maze.Core
             set { InternalCalls.Transform3DSetWorldTransform(NativeComponentPtr, value); }
         }
 
+        public Transform3D Parent
+        {
+            get => GetParent();
+            set => SetParent(value);
+        }
+
         public int ChildrenCount => InternalCalls.Transform3DGetChildrenCount(NativeComponentPtr);
 
         public Transform3D(NativePtr nativeComponentPtr)
@@ -83,7 +89,16 @@ namespace Maze.Core
 
         public void SetParent(Transform3D parent)
         {
-            InternalCalls.Transform3DSetParent(NativeComponentPtr, parent.NativeComponentPtr);
+            InternalCalls.Transform3DSetParent(NativeComponentPtr, parent != null ? parent.NativeComponentPtr : NativePtr.Zero);
+        }
+
+        public Transform3D GetParent()
+        {
+            NativePtr nativePtr = InternalCalls.Transform3DGetParent(NativeComponentPtr);
+            if (nativePtr == NativePtr.Zero)
+                return null;
+
+            return new Transform3D(nativePtr);
         }
     }
 }

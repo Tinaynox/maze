@@ -761,6 +761,8 @@ namespace Maze
         EventManager::GetInstancePtr()->broadcastEventImmediate<MonoPreShutdownEvent>();
         EventManager::GetInstancePtr()->broadcastEventImmediate<MonoShutdownEvent>();
 
+        FlushEditorUndoGroup();
+
         // C#-side sample handles die with the domain
         ClearMonoEntitiesSamples();
 
@@ -964,6 +966,12 @@ namespace Maze
         EventManager::GetInstancePtr()->broadcastEventImmediate<CSharpAssemblyLoadedEvent>();
 
         return assemblyData->assembly;
+    }
+
+    //////////////////////////////////////////
+    bool MonoEngine::IsInitialized()
+    {
+        return g_monoEngineData != nullptr && g_monoEngineData->appDomain != nullptr;
     }
 
     //////////////////////////////////////////

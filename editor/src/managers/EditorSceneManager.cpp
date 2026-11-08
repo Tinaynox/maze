@@ -155,7 +155,7 @@ namespace Maze
 
         updateSceneAssetFile();
 
-        m_sceneAssetFileSaveTimestamp = EditorAction::GetCurrentTimestamp();
+        m_sceneAssetFileSaveTimestamp = EditorToolsActionManager::GetInstancePtr()->getLastChangeTimestamp();
 
         eventSceneAssetFileChanged(m_sceneAssetFile);
     }
@@ -198,7 +198,7 @@ namespace Maze
         EntitySerializationManager::GetInstancePtr()->saveSceneToDataBlockFile(
             m_scene, m_sceneAssetFile->getFullPath());
 
-        m_sceneAssetFileSaveTimestamp = EditorAction::GetCurrentTimestamp();
+        m_sceneAssetFileSaveTimestamp = EditorToolsActionManager::GetInstancePtr()->getLastChangeTimestamp();
     }
 
     //////////////////////////////////////////

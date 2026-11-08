@@ -66,6 +66,10 @@ namespace Maze
         void addAction(EditorActionPtr const& _action);
 
         //////////////////////////////////////////
+        // For actions applied while they were recorded (e.g. a brush stroke), the group becomes applied too
+        void addAppliedAction(EditorActionPtr const& _action);
+
+        //////////////////////////////////////////
         inline Size getActionsCount() const { return m_actions.size(); }
 
     protected:

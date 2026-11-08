@@ -39,6 +39,7 @@
 #include "maze-core/managers/MazeSystemCursorManager.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/components/MazePrefabInstance.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
@@ -798,8 +799,15 @@ namespace Maze
     inline void Transform3DSetParent(Component* _component, Component* _parent)
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(Transform3D);
-        MAZE_ERROR_RETURN_IF(_parent->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
+        MAZE_ERROR_RETURN_IF(_parent && _parent->getClassUID() != ClassInfo<Transform3D>::UID(), "Component is not Transform3D!");
         _component->castRaw<Transform3D>()->setParent(_parent ? _parent->cast<Transform3D>() : nullptr);
+    }
+
+    //////////////////////////////////////////
+    inline Transform3D* Transform3DGetParent(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(Transform3D, nullptr);
+        return _component->castRaw<Transform3D>()->getParent().get();
     }
 
     //////////////////////////////////////////
@@ -879,6 +887,13 @@ namespace Maze
         _component->castRaw<Transform3D>()->setWorldTransform(_tm);
     }
 
+
+    //////////////////////////////////////////
+    inline U32 PrefabInstanceGetAssetUnitId(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(PrefabInstance, (U32)c_invalidAssetUnitId);
+        return (U32)_component->castRaw<PrefabInstance>()->getAssetUnitId();
+    }
 
     //////////////////////////////////////////
     inline MonoString* NameGetName(Component* _component)
@@ -1145,6 +1160,7 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(Transform3DTranslate);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DRotate);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetParent);
+        MAZE_CORE_MONO_BIND_FUNC(Transform3DGetParent);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetPosition);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetPosition);
         MAZE_CORE_MONO_BIND_FUNC(Transform3DGetWorldPosition);
@@ -1158,6 +1174,7 @@ namespace Maze
         MAZE_CORE_MONO_BIND_FUNC(Transform3DSetWorldTransform);
 
         // Name
+        MAZE_CORE_MONO_BIND_FUNC(PrefabInstanceGetAssetUnitId);
         MAZE_CORE_MONO_BIND_FUNC(NameGetName);
         MAZE_CORE_MONO_BIND_FUNC(NameSetName);
 

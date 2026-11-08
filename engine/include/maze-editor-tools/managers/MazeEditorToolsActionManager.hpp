@@ -79,6 +79,9 @@ namespace Maze
         void applyAction(EditorActionPtr const& _action);
 
         //////////////////////////////////////////
+        void addAppliedAction(EditorActionPtr const& _action);
+
+        //////////////////////////////////////////
         void applyActions(
             EditorActionPtr const& _action0,
             EditorActionPtr const& _action1);
@@ -121,7 +124,12 @@ namespace Maze
 
         //////////////////////////////////////////
         // For changes made outside of EditorActions (e.g. by C# editor tools), enables saving of the edited scene/prefab
-        inline void markChanged() { m_lastChangeTimestamp = EditorAction::GetCurrentTimestamp(); }
+        //////////////////////////////////////////
+        // Strictly increases on every change, so changes within one second (e.g. right after a save) are not lost
+        void markChanged();
+
+        //////////////////////////////////////////
+        inline U32 getHistoryVersion() const { return m_historyVersion; }
 
     protected:
 
@@ -133,6 +141,8 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifyKeyboard(InputEventKeyboardData const& _data);
+
+        bool pushToHistory(EditorActionPtr const& _action);
 
     protected:
         static EditorToolsActionManager* s_instance;
@@ -147,6 +157,8 @@ namespace Maze
         bool m_historyIndexSetting = false;
 
         ObservableValue<U32> m_lastChangeTimestamp = 0u;
+
+        U32 m_historyVersion = 0u;
     };
 
 } // namespace Maze

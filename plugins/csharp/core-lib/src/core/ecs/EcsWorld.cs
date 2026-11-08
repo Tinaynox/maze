@@ -16,7 +16,7 @@ namespace Maze.Core
 
         public override bool Equals(object obj)
         {
-            return m_Id.Equals(obj);
+            return obj is EcsWorld other && m_Id == other.m_Id;
         }
 
         public override int GetHashCode()

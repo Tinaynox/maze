@@ -32,6 +32,12 @@
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionActionsGroup.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionEntityAdd.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionEntityRemove.hpp"
+#include "maze-editor-tools/editor-actions/MazeEditorActionCustom.hpp"
+#include "maze-plugin-csharp/helpers/MazeMonoHelper.hpp"
+#include "maze-core/ecs/MazeEntity.hpp"
 
 
 
@@ -538,6 +544,185 @@ namespace Maze
             EditorToolsActionManager::GetInstancePtr()->markChanged();
     }
 
+    //////////////////////////////////////////
+    // Undo group being recorded from C# (e.g. a brush stroke), its actions are applied immediately.
+    // Nested Begin/End pairs extend the outermost group
+    static EditorActionActionsGroupPtr s_recordingActionsGroup;
+    static S32 s_recordingActionsGroupDepth = 0;
+
+    //////////////////////////////////////////
+    void MAZE_PLUGIN_CSHARP_API EditorUndoGroupBegin()
+    {
+        if (s_recordingActionsGroupDepth++ == 0)
+            s_recordingActionsGroup = EditorActionActionsGroup::Create();
+    }
+
+    //////////////////////////////////////////
+    void MAZE_PLUGIN_CSHARP_API EditorUndoGroupEnd()
+    {
+        MAZE_ERROR_RETURN_IF(s_recordingActionsGroupDepth == 0, "Undo group is not begun!");
+        if (--s_recordingActionsGroupDepth > 0)
+            return;
+
+        EditorActionActionsGroupPtr group = s_recordingActionsGroup;
+        s_recordingActionsGroup.reset();
+
+        if (!group || group->getActionsCount() == 0)
+            return;
+
+        if (EditorToolsActionManager::GetInstancePtr())
+            EditorToolsActionManager::GetInstancePtr()->addAppliedAction(group);
+    }
+
+    //////////////////////////////////////////
+    void MAZE_PLUGIN_CSHARP_API FlushEditorUndoGroup()
+    {
+        if (s_recordingActionsGroupDepth == 0)
+            return;
+
+        s_recordingActionsGroupDepth = 1;
+        EditorUndoGroupEnd();
+    }
+
+    //////////////////////////////////////////
+    inline void RecordAppliedEditorAction(EditorActionPtr const& _action)
+    {
+        if (s_recordingActionsGroup)
+            s_recordingActionsGroup->addAppliedAction(_action);
+        else
+        if (EditorToolsActionManager::GetInstancePtr())
+            EditorToolsActionManager::GetInstancePtr()->addAppliedAction(_action);
+    }
+
+    //////////////////////////////////////////
+    bool MAZE_PLUGIN_CSHARP_API EditorUndoRecordEntityAdded(Entity* _entity)
+    {
+        if (!_entity || !_entity->getEcsWorld())
+            return false;
+
+        EditorActionEntityAddPtr action = EditorActionEntityAdd::Create(_entity->getSharedPtr());
+        if (!action)
+            return false;
+
+        // The entity is in the world already, so applying only marks the action as applied
+        action->apply();
+        RecordAppliedEditorAction(action);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool MAZE_PLUGIN_CSHARP_API EditorUndoRemoveEntity(Entity* _entity)
+    {
+        if (!_entity || !_entity->getEcsWorld())
+            return false;
+
+        EditorActionEntityRemovePtr action = EditorActionEntityRemove::Create(_entity->getSharedPtr());
+        if (!action)
+            return false;
+
+        action->apply();
+        RecordAppliedEditorAction(action);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    // C# undo actions (IEditorUndoAction) are kept by Maze.EditorTools.EditorUndoRegistry under native ids.
+    // The class is looked up on every call, so the ids keep working (as no-ops) after assemblies reload
+    static void InvokeEditorUndoRegistry(CString _methodName, S32 _id)
+    {
+        if (!MonoEngine::IsInitialized())
+            return;
+
+        MonoImage* image = MonoEngine::GetCoreAssemblyImage();
+        if (!image)
+            return;
+
+        MonoClass* monoClass = mono_class_from_name(image, "Maze.EditorTools", "EditorUndoRegistry");
+        MAZE_ERROR_RETURN_IF(!monoClass, "Maze.EditorTools.EditorUndoRegistry is not found!");
+
+        MonoMethod* method = mono_class_get_method_from_name(monoClass, _methodName, 1);
+        MAZE_ERROR_RETURN_IF(!method, "EditorUndoRegistry.%s is not found!", _methodName);
+
+        void* params[] = { &_id };
+        MonoHelper::InvokeMethod(nullptr, method, params);
+    }
+
+    //////////////////////////////////////////
+    struct MonoUndoActionToken
+    {
+        S32 id = 0;
+
+        // The action is recorded already applied
+        bool skipApply = true;
+
+        ~MonoUndoActionToken()
+        {
+            InvokeEditorUndoRegistry("Release", id);
+        }
+    };
+
+    //////////////////////////////////////////
+    static S32 s_lastMonoUndoActionId = 0;
+
+    //////////////////////////////////////////
+    S32 MAZE_PLUGIN_CSHARP_API EditorUndoGenerateActionId()
+    {
+        return ++s_lastMonoUndoActionId;
+    }
+
+    //////////////////////////////////////////
+    bool MAZE_PLUGIN_CSHARP_API EditorUndoRecordMonoAction(S32 _id)
+    {
+        SharedPtr<MonoUndoActionToken> token = MakeShared<MonoUndoActionToken>();
+        token->id = _id;
+
+        EditorActionCustomPtr action = EditorActionCustom::Create(
+            [token]()
+            {
+                if (token->skipApply)
+                {
+                    token->skipApply = false;
+                    return;
+                }
+
+                InvokeEditorUndoRegistry("Redo", token->id);
+            },
+            [token]()
+            {
+                InvokeEditorUndoRegistry("Undo", token->id);
+            });
+
+        if (!action)
+            return false;
+
+        action->apply();
+        RecordAppliedEditorAction(action);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void MAZE_PLUGIN_CSHARP_API EditorUndo()
+    {
+        if (EditorToolsActionManager::GetInstancePtr())
+            EditorToolsActionManager::GetInstancePtr()->undoAction();
+    }
+
+    //////////////////////////////////////////
+    void MAZE_PLUGIN_CSHARP_API EditorRedo()
+    {
+        if (EditorToolsActionManager::GetInstancePtr())
+            EditorToolsActionManager::GetInstancePtr()->redoAction();
+    }
+
+    //////////////////////////////////////////
+    U32 MAZE_PLUGIN_CSHARP_API EditorGetUndoHistoryVersion()
+    {
+        if (EditorToolsActionManager::GetInstancePtr())
+            return EditorToolsActionManager::GetInstancePtr()->getHistoryVersion();
+
+        return 0u;
+    }
+
 
     //////////////////////////////////////////
     void MAZE_PLUGIN_CSHARP_API BindCppFunctionsEditorTools()
@@ -573,6 +758,15 @@ namespace Maze
 
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(IsEntitySelected);
         MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(MarkEditorChanged);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(EditorUndoGroupBegin);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(EditorUndoGroupEnd);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(EditorUndoRecordEntityAdded);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(EditorUndoRemoveEntity);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(EditorUndoGenerateActionId);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(EditorUndoRecordMonoAction);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(EditorUndo);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(EditorRedo);
+        MAZE_EDITOR_TOOLS_MONO_BIND_FUNC(EditorGetUndoHistoryVersion);
     }
 
 } // namespace Maze

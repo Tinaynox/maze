@@ -102,6 +102,12 @@ namespace Maze
                 m_entityData.push_back(entityData);
             }
         }
+        else
+        {
+            EntityData entityData;
+            entityData.entity = m_entity;
+            m_entityData.push_back(entityData);
+        }
 
 
         return true;
