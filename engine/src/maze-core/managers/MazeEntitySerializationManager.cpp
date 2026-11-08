@@ -102,6 +102,37 @@ namespace Maze
         VectorMap<AssetUnitId, EntityPtr>& _outIdentityPrefabs,
         EcsWorldPtr& _outIdentityPrefabsWorld)
     {
+        if (!_prefabs.empty())
+            _outIdentityPrefabsWorld = EcsWorld::Create(
+                MAZE_HS("PrefabSerialization"),
+                false);
+
+        for (auto& prefabInstanceData : _prefabs)
+        {
+            PrefabInstance* prefabInstance = prefabInstanceData.prefabInstance;
+
+            auto it = _outIdentityPrefabs.find(prefabInstance->getAssetUnitId());
+            if (it == _outIdentityPrefabs.end())
+            {
+                // #TODO: Optimize
+                HashedString const& prefabName = AssetUnitManager::GetInstancePtr()->getAssetUnitName(
+                    prefabInstance->getAssetUnitId());
+
+                EntityPtr identityPrefab = EntitySerializationManager::GetInstancePtr()->loadPrefab(
+                    prefabName.getString(),
+                    _outIdentityPrefabsWorld.get());
+
+                MAZE_ERROR_IF(!identityPrefab, "Prefab '%s' (auid=%u) is not found!",
+                    prefabName.getString().c_str(),
+                    prefabInstance->getAssetUnitId());
+
+                _outIdentityPrefabs.emplace(
+                    eastl::piecewise_construct,
+                    eastl::forward_as_tuple(prefabInstance->getAssetUnitId()),
+                    eastl::forward_as_tuple(identityPrefab));
+            }
+        }
+
         // Sort entities
         {
             Vector<Entity*> unassignedEntities;
@@ -174,6 +205,34 @@ namespace Maze
                     _outPointerIndices[prefabEntity] = prefabEntity->getSerializationId();
                     _outEntityIndices[prefabEntity->getId()] = prefabEntity->getSerializationId();
                 }
+
+                auto identityIt = _outIdentityPrefabs.find(prefabData.prefabInstance->getAssetUnitId());
+                Entity* identityPrefabEntity = identityIt != _outIdentityPrefabs.end() ? identityIt->second.get() : nullptr;
+                for (auto const& componentData : prefabData.prefabInstance->getEntityRaw()->getComponents())
+                {
+                    if (componentData.first == ClassInfo<PrefabInstance>::UID())
+                        continue;
+
+                    if (identityPrefabEntity && identityPrefabEntity->getComponentById(componentData.first))
+                        continue;
+
+                    Component* component = componentData.second.get();
+                    if (component->getSerializationId() != c_invalidSerializationId)
+                    {
+                        if (usedIds.count(component->getSerializationId()) == 0)
+                            usedIds.insert(component->getSerializationId());
+                        else
+                            component->setSerializationId(c_invalidSerializationId);
+                    }
+
+                    if (component->getSerializationId() == c_invalidSerializationId)
+                        unassginedComponents.push_back(component);
+                    else
+                    {
+                        maxSerializationId = Math::Max(maxSerializationId, component->getSerializationId());
+                        _outPointerIndices[component] = component->getSerializationId();
+                    }
+                }
             }
 
             // Assign serialization ids for unassigned
@@ -214,43 +273,6 @@ namespace Maze
                 {
                     return _first.prefabInstance->getEntityRaw()->getSerializationId() < _second.prefabInstance->getEntityRaw()->getSerializationId();
                 });
-        }
-
-
-        if (!_prefabs.empty())
-            _outIdentityPrefabsWorld = EcsWorld::Create(
-                MAZE_HS("PrefabSerialization"),
-                false);
-
-        for (auto& prefabInstanceData : _prefabs)
-        {
-            PrefabInstance* prefabInstance = prefabInstanceData.prefabInstance;
-            /*
-            S32 entityIndex = ++indexCounter;
-            _outPointerIndices[prefabInstance->getEntityRaw()] = entityIndex;
-            _outEntityIndices[prefabInstance->getEntityId()] = entityIndex;
-            */
-
-            auto it = _outIdentityPrefabs.find(prefabInstance->getAssetUnitId());
-            if (it == _outIdentityPrefabs.end())
-            {
-                // #TODO: Optimize
-                HashedString const& prefabName = AssetUnitManager::GetInstancePtr()->getAssetUnitName(
-                    prefabInstance->getAssetUnitId());
-
-                EntityPtr identityPrefab = EntitySerializationManager::GetInstancePtr()->loadPrefab(
-                    prefabName.getString(),
-                    _outIdentityPrefabsWorld.get());
-
-                MAZE_ERROR_IF(!identityPrefab, "Prefab '%s' (auid=%u) is not found!",
-                    prefabName.getString().c_str(),
-                    prefabInstance->getAssetUnitId());
-
-                _outIdentityPrefabs.emplace(
-                    eastl::piecewise_construct,
-                    eastl::forward_as_tuple(prefabInstance->getAssetUnitId()),
-                    eastl::forward_as_tuple(identityPrefab));
-            }
         }
     }
 

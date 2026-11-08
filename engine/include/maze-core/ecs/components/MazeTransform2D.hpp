@@ -281,7 +281,12 @@ namespace Maze
         Transform2DPtr const& getParent() const { return m_parent; }
 
         //////////////////////////////////////////
-        inline void setParent(ComponentPtr _value) { setParent(_value ? _value->cast<Transform2D>() : nullptr); }
+        inline void setParent(ComponentPtr _value)
+        {
+            MAZE_DEBUG_ERROR_RETURN_IF(_value && _value->getComponentId() != ClassInfo<Transform2D>::UID(),
+                "Transform2D parent must be a Transform2D, got '%s'!", _value->getClassName().str);
+            setParent(_value ? _value->cast<Transform2D>() : nullptr);
+        }
 
         //////////////////////////////////////////
         inline ComponentPtr getParentComponent() const { return m_parent; }
