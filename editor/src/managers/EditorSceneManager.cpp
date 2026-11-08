@@ -64,6 +64,7 @@
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
+#include "maze-graphics/foliage/MazeFoliageData.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
@@ -108,6 +109,9 @@ namespace Maze
         if (EditorToolsActionManager::GetInstancePtr())
             EditorToolsActionManager::GetInstancePtr()->getLastChangeTimestampChangedEvent().unsubscribe(this);
 
+        // Kept data holds render-independent memory only, but must not outlive the managers it was loaded with
+        FoliageData::SetKeepLoaded(false);
+
         s_instance = nullptr;
     }
 
@@ -124,7 +128,9 @@ namespace Maze
             this, &EditorSceneManager::notifyLastChangeTimestampChanged);
         m_sceneAssetFileSaveTimestamp.eventValueChanged.subscribe(
             this, &EditorSceneManager::notifySceneAssetFileSaveTimestampChanged);
-        
+
+        FoliageData::SetKeepLoaded(true);
+
         return true;
     }
 
@@ -194,6 +200,9 @@ namespace Maze
     {
         if (!m_sceneAssetFile || !m_scene)
             return;
+
+        // Foliage instances live in their own binary files, referenced by the scene
+        FoliageData::SaveAllDirty();
 
         EntitySerializationManager::GetInstancePtr()->saveSceneToDataBlockFile(
             m_scene, m_sceneAssetFile->getFullPath());

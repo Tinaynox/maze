@@ -60,6 +60,49 @@ namespace Maze.Graphics
         internal extern static void MeshRendererInstancedSetColor(NativePtr nativeComponentPtr, int index, ref Vec4F color);
         #endregion
 
+        #region FoliageData
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool FoliageDataAddInstance(uint assetFileId, uint prefabAuid, ref Vec3F position, ref Vec4F rotation, float scale);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool FoliageDataRemoveInstance(uint assetFileId, uint prefabAuid, ref Vec3F position);
+        #endregion
+
+        #region FoliageRenderer
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static uint FoliageRendererGetDataFileId(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void FoliageRendererSetDataFileId(NativePtr nativeComponentPtr, uint assetFileId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool FoliageRendererHasData(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool FoliageRendererCreateDataFile(NativePtr nativeComponentPtr, string fullPath);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool FoliageRendererAddInstanceWorld(NativePtr nativeComponentPtr, uint prefabAuid, ref TMat worldTransform, out Vec3F outPosition, out Vec4F outRotation, out float outScale);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool FoliageRendererAddInstance(NativePtr nativeComponentPtr, uint prefabAuid, ref Vec3F position, ref Vec4F rotation, float scale);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool FoliageRendererRemoveInstance(NativePtr nativeComponentPtr, uint prefabAuid, ref Vec3F position);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static int FoliageRendererGetLayersCount(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static uint FoliageRendererGetLayerPrefabAuid(NativePtr nativeComponentPtr, int layerIndex);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static int FoliageRendererGetInstancesCount(NativePtr nativeComponentPtr, uint prefabAuid);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static int FoliageRendererCopyInstances(NativePtr nativeComponentPtr, uint prefabAuid, float[] values);
+        #endregion
+
         #region SkinnedMeshRenderer
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void SkinnedMeshRendererResizeMaterialsCount(NativePtr nativeComponentPtr, uint count);

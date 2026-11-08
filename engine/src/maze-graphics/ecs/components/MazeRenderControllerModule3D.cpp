@@ -355,7 +355,24 @@ namespace Maze
             S32 renderDataSize = (S32)m_renderData.size();
 
             {
-                MAZE_PROFILE_EVENT("3D Default Render Queue");
+                MAZE_PROFILE_EVENT("3D Sort Shadow Render Queue");
+
+                // Grouped by pass and VAO, otherwise interleaved materials switch the pass
+                // on every unit and break instanced merging
+                for (RenderUnit& renderUnit : m_renderData)
+                    renderUnit.sortKey = BuildRenderUnitSortKey(renderUnit);
+
+                eastl::sort(
+                    m_renderData.begin(),
+                    m_renderData.end(),
+                    [](RenderUnit const& _a, RenderUnit const& _b)
+                    {
+                        return _a.sortKey < _b.sortKey;
+                    });
+            }
+
+            {
+                MAZE_PROFILE_EVENT("3D Shadow Render Queue");
                 for (S32 i = 0; i < renderDataSize; ++i)
                 {
                     RenderUnit const& renderUnit = m_renderData[i];

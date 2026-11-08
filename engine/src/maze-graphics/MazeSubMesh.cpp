@@ -306,6 +306,74 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void SubMesh::transform(TMat const& _transform)
+    {
+        TMat inversed = _transform.inversed();
+
+        for (VertexAttributeSemantic s = VertexAttributeSemantic(0);
+            s < VertexAttributeSemantic::MAX;
+            s = VertexAttributeSemantic((S32)s + 1))
+        {
+            if (s != VertexAttributeSemantic::Position &&
+                s != VertexAttributeSemantic::Normal &&
+                s != VertexAttributeSemantic::Tangent &&
+                s != VertexAttributeSemantic::Bitangent)
+                continue;
+
+            MeshVertexAttributeDescription const& data = m_vertexData[(Size)s];
+            if (!data.byteBuffer || data.count == 0)
+                continue;
+
+            S32 componentsCount = (S32)data.description.count;
+            MAZE_ERROR_CONTINUE_IF(
+                data.description.type != VertexAttributeType::F32 || componentsCount < 3,
+                "Unsupported vertex attribute format for transform: %s", GetVertexAttributeName(s));
+
+            MAZE_ERROR_CONTINUE_IF(
+                data.byteBuffer->getSize() < data.count * componentsCount * sizeof(F32),
+                "Vertex attribute buffer is too small: %s", GetVertexAttributeName(s));
+
+            F32* values = reinterpret_cast<F32*>(data.byteBuffer->getDataRW());
+            for (Size i = 0; i < data.count; ++i, values += componentsCount)
+            {
+                Vec3F v(values[0], values[1], values[2]);
+                Vec3F r;
+
+                switch (s)
+                {
+                    case VertexAttributeSemantic::Position:
+                    {
+                        r = _transform.transform(v);
+                        break;
+                    }
+                    case VertexAttributeSemantic::Normal:
+                    {
+                        r = Vec3F(
+                            v.x * inversed[0].x + v.y * inversed[0].y + v.z * inversed[0].z,
+                            v.x * inversed[1].x + v.y * inversed[1].y + v.z * inversed[1].z,
+                            v.x * inversed[2].x + v.y * inversed[2].y + v.z * inversed[2].z);
+                        r.normalize();
+                        break;
+                    }
+                    default:
+                    {
+                        r = Vec3F(
+                            v.x * _transform[0].x + v.y * _transform[1].x + v.z * _transform[2].x,
+                            v.x * _transform[0].y + v.y * _transform[1].y + v.z * _transform[2].y,
+                            v.x * _transform[0].z + v.y * _transform[1].z + v.z * _transform[2].z);
+                        r.normalize();
+                        break;
+                    }
+                }
+
+                values[0] = r.x;
+                values[1] = r.y;
+                values[2] = r.z;
+            }
+        }
+    }
+
+    //////////////////////////////////////////
     bool SubMesh::mergeWith(SubMeshPtr const& _otherSubMesh)
     {
         if (m_renderDrawTopology != _otherSubMesh->m_renderDrawTopology)

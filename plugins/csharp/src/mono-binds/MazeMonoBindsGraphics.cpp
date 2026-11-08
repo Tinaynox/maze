@@ -34,6 +34,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
+#include "maze-graphics/ecs/components/MazeFoliageRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeSkinnedMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeSkinnedMeshSkeleton.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -225,6 +226,192 @@ namespace Maze
     {
         MAZE_MONO_BIND_VALIDATE_COMPONENT(MeshRendererInstanced);
         _component->castRaw<MeshRendererInstanced>()->setColor(_index, _color);
+    }
+
+    //////////////////////////////////////////
+    inline void FoliageInstanceToMono(FoliageInstance const& _instance, Vec3F& _outPosition, Vec4F& _outRotation, F32& _outScale)
+    {
+        Quaternion rotation = _instance.getRotation();
+        _outPosition = _instance.position;
+        _outRotation = Vec4F(rotation.x, rotation.y, rotation.z, rotation.w);
+        _outScale = _instance.scale;
+    }
+
+    //////////////////////////////////////////
+    inline FoliageInstance FoliageInstanceFromMono(Vec3F const& _position, Vec4F const& _rotation, F32 _scale)
+    {
+        FoliageInstance instance;
+        instance.position = _position;
+        instance.scale = _scale;
+        instance.setRotation(Quaternion(_rotation.w, _rotation.x, _rotation.y, _rotation.z));
+        return instance;
+    }
+
+    //////////////////////////////////////////
+    inline bool FoliageDataAddInstance(
+        U32 _assetFileId,
+        U32 _prefabAuid,
+        Vec3F const& _position,
+        Vec4F const& _rotation,
+        F32 _scale)
+    {
+        FoliageDataPtr data = FoliageData::GetLoaded(_assetFileId);
+        if (!data)
+            return false;
+
+        data->addInstance(_prefabAuid, FoliageInstanceFromMono(_position, _rotation, _scale));
+        return true;
+    }
+
+    //////////////////////////////////////////
+    inline bool FoliageDataRemoveInstance(U32 _assetFileId, U32 _prefabAuid, Vec3F const& _position)
+    {
+        FoliageDataPtr data = FoliageData::GetLoaded(_assetFileId);
+        return data ? data->removeInstance(_prefabAuid, _position) : false;
+    }
+
+    //////////////////////////////////////////
+    inline U32 FoliageRendererGetDataFileId(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(FoliageRenderer, c_invalidAssetFileId);
+        return _component->castRaw<FoliageRenderer>()->getDataFileId();
+    }
+
+    //////////////////////////////////////////
+    inline void FoliageRendererSetDataFileId(Component* _component, U32 _assetFileId)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(FoliageRenderer);
+        _component->castRaw<FoliageRenderer>()->setDataFileId(_assetFileId);
+    }
+
+    //////////////////////////////////////////
+    inline bool FoliageRendererHasData(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(FoliageRenderer, false);
+        return _component->castRaw<FoliageRenderer>()->getData() != nullptr;
+    }
+
+    //////////////////////////////////////////
+    inline bool FoliageRendererCreateDataFile(Component* _component, MonoString* _fullPath)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(FoliageRenderer, false);
+
+        Char* cstr = mono_string_to_utf8(_fullPath);
+        bool result = _component->castRaw<FoliageRenderer>()->createDataFile(Path(cstr));
+        mono_free(cstr);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    inline bool FoliageRendererAddInstanceWorld(
+        Component* _component,
+        U32 _prefabAuid,
+        TMat const& _worldTransform,
+        Vec3F& _outPosition,
+        Vec4F& _outRotation,
+        F32& _outScale)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(FoliageRenderer, false);
+
+        FoliageInstance instance;
+        if (!_component->castRaw<FoliageRenderer>()->addInstance(_prefabAuid, _worldTransform, instance))
+            return false;
+
+        FoliageInstanceToMono(instance, _outPosition, _outRotation, _outScale);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    inline bool FoliageRendererAddInstance(
+        Component* _component,
+        U32 _prefabAuid,
+        Vec3F const& _position,
+        Vec4F const& _rotation,
+        F32 _scale)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(FoliageRenderer, false);
+        return _component->castRaw<FoliageRenderer>()->addInstance(
+            _prefabAuid,
+            FoliageInstanceFromMono(_position, _rotation, _scale));
+    }
+
+    //////////////////////////////////////////
+    inline bool FoliageRendererRemoveInstance(Component* _component, U32 _prefabAuid, Vec3F const& _position)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(FoliageRenderer, false);
+        return _component->castRaw<FoliageRenderer>()->removeInstance(_prefabAuid, _position);
+    }
+
+    //////////////////////////////////////////
+    inline S32 FoliageRendererGetLayersCount(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(FoliageRenderer, 0);
+
+        FoliageDataPtr const& data = _component->castRaw<FoliageRenderer>()->getData();
+        return data ? data->getLayersCount() : 0;
+    }
+
+    //////////////////////////////////////////
+    inline U32 FoliageRendererGetLayerPrefabAuid(Component* _component, S32 _layerIndex)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(FoliageRenderer, c_invalidAssetUnitId);
+
+        FoliageDataPtr const& data = _component->castRaw<FoliageRenderer>()->getData();
+        if (!data || _layerIndex < 0 || _layerIndex >= data->getLayersCount())
+            return c_invalidAssetUnitId;
+
+        return data->getLayer(_layerIndex).prefabAuid;
+    }
+
+    //////////////////////////////////////////
+    inline S32 FoliageRendererGetInstancesCount(Component* _component, U32 _prefabAuid)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(FoliageRenderer, 0);
+
+        FoliageDataPtr const& data = _component->castRaw<FoliageRenderer>()->getData();
+        return data ? (S32)data->getInstancesCount(_prefabAuid) : 0;
+    }
+
+    //////////////////////////////////////////
+    // 8 floats per instance: local position (3), rotation quaternion x y z w (4), scale (1)
+    inline S32 FoliageRendererCopyInstances(Component* _component, U32 _prefabAuid, MonoArray* _values)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(FoliageRenderer, 0);
+
+        FoliageDataPtr const& data = _component->castRaw<FoliageRenderer>()->getData();
+        if (!data || !_values)
+            return 0;
+
+        S32 layerIndex = data->findLayerIndex(_prefabAuid);
+        if (layerIndex < 0)
+            return 0;
+
+        Size capacity = (Size)mono_array_length(_values) / 8u;
+        F32* out = mono_array_addr(_values, F32, 0);
+
+        Size written = 0u;
+        for (auto const& chunkData : data->getLayer(layerIndex).chunks)
+        {
+            for (FoliageInstance const& instance : chunkData.second.instances)
+            {
+                if (written >= capacity)
+                    return (S32)written;
+
+                Quaternion rotation = instance.getRotation();
+                F32* values = out + written * 8u;
+                values[0] = instance.position.x;
+                values[1] = instance.position.y;
+                values[2] = instance.position.z;
+                values[3] = rotation.x;
+                values[4] = rotation.y;
+                values[5] = rotation.z;
+                values[6] = rotation.w;
+                values[7] = instance.scale;
+                ++written;
+            }
+        }
+
+        return (S32)written;
     }
 
     //////////////////////////////////////////
@@ -1747,6 +1934,23 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedSetModelMatrix);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedResizeColors);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererInstancedSetColor);
+
+        // FoliageData
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageDataAddInstance);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageDataRemoveInstance);
+
+        // FoliageRenderer
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageRendererGetDataFileId);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageRendererSetDataFileId);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageRendererHasData);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageRendererCreateDataFile);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageRendererAddInstanceWorld);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageRendererAddInstance);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageRendererRemoveInstance);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageRendererGetLayersCount);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageRendererGetLayerPrefabAuid);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageRendererGetInstancesCount);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(FoliageRendererCopyInstances);
 
         // SkinnedMeshRenderer
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererResizeMaterialsCount);

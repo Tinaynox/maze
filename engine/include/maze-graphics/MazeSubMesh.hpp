@@ -46,6 +46,7 @@
 #include "maze-core/containers/MazeFastVector.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-core/math/MazeAABB3D.hpp"
+#include "maze-core/math/MazeTMat.hpp"
 
 
 //////////////////////////////////////////
@@ -280,6 +281,11 @@ namespace Maze
 
         //////////////////////////////////////////
         void scale(F32 _scale);
+
+        //////////////////////////////////////////
+        // Positions are transformed as points, normals with the inverse-transpose,
+        // tangents and bitangents as directions. Only F32 attributes are supported
+        void transform(TMat const& _transform);
 
         //////////////////////////////////////////
         bool mergeWith(SubMeshPtr const& _otherSubMesh);
