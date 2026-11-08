@@ -19,6 +19,9 @@ namespace Maze.Engine
         public extern static bool IsEngineMainRenderWindowFocused();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern static bool IsCursorOverEngineMainRenderWindow();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void SetSystemCursor(int systemCursorId);
         #endregion
 

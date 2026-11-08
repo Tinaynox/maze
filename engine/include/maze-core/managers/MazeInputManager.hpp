@@ -137,6 +137,10 @@ namespace Maze
         inline Vec2F const& getCursorPosition(S32 _cursorId) const { return m_cursorPositions[_cursorId]; }
 
         //////////////////////////////////////////
+        // Window (ResourceId) the cursor position belongs to - the one that sent the last move/press
+        inline S32 getCursorWindowId(S32 _cursorId) const { return m_cursorWindowIds[_cursorId]; }
+
+        //////////////////////////////////////////
         static inline InputManager* GetInstancePtr() { return s_instance; }
 
         //////////////////////////////////////////
@@ -174,6 +178,7 @@ namespace Maze
         bool m_cachedKeyStates[(Size)KeyCode::MAX];
         bool m_cursorStates[c_cursorsCountMax][c_cursorButtonsCountMax];
         Vec2F m_cursorPositions[c_cursorsCountMax];
+        S32 m_cursorWindowIds[c_cursorsCountMax];
     };
 
 

@@ -50,7 +50,10 @@ namespace Maze
         , m_cursorStates{ {false} }
         , m_cursorPositions{ Vec2F::c_zero }
     {
-        s_instance = this;        
+        s_instance = this;
+
+        for (S32& windowId : m_cursorWindowIds)
+            windowId = c_invalidResourceId;
     }
 
     //////////////////////////////////////////
@@ -100,6 +103,7 @@ namespace Maze
                         {
                             if (event.mouse.buttonId < c_cursorButtonsCountMax)
                                 m_cursorStates[0][event.mouse.buttonId] = true;
+                            m_cursorWindowIds[0] = event.mouse.windowId;
                             break;
                         }
                         case InputEventMouseType::ButtonUp:
@@ -111,6 +115,7 @@ namespace Maze
                         case InputEventMouseType::Move:
                         {
                             m_cursorPositions[0] = Vec2F((F32)event.mouse.x, (F32)event.mouse.y);
+                            m_cursorWindowIds[0] = event.mouse.windowId;
                             break;
                         }
                         default:

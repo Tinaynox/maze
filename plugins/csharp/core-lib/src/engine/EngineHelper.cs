@@ -59,6 +59,12 @@ namespace Maze.Engine
             return InternalCalls.IsEngineMainRenderWindowFocused();
         }
 
+        // Input.GetCursorPosition is in the coordinates of whichever window got the last mouse move
+        public static bool IsCursorOverMainRenderWindow()
+        {
+            return InternalCalls.IsCursorOverEngineMainRenderWindow();
+        }
+
         public static void SetSystemCursor(SystemCursor systemCursor)
         {
             InternalCalls.SetSystemCursor(systemCursor?.ResourceId ?? -1);
