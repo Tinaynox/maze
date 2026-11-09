@@ -40,6 +40,7 @@
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/utils/MazeStringPerfectHashGenerator.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-graphics/MazeShader.hpp"
 
 
 //////////////////////////////////////////
@@ -206,6 +207,24 @@ namespace Maze
 
         //////////////////////////////////////////
         bool removeShaderFromLibrary(ShaderPtr const& _shader);
+
+
+        //////////////////////////////////////////
+        // Returns _baseShader compiled with _features applied on top of its own features.
+        // Variants are compiled once and cached in the shaders library.
+        // Returns _baseShader itself if _features change nothing.
+        ShaderPtr const& ensureShaderVariant(
+            ShaderPtr const& _baseShader,
+            ShaderFeatures const& _features);
+
+        //////////////////////////////////////////
+        // Asset file the shader was loaded from (null for built-in and runtime shaders)
+        AssetFilePtr findShaderAssetFile(Shader const* _shader);
+
+        //////////////////////////////////////////
+        static String BuildShaderVariantName(
+            HashedString const& _baseShaderName,
+            StringKeyMap<String> const& _features);
 
 
         //////////////////////////////////////////

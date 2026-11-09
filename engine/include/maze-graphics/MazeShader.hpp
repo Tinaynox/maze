@@ -58,7 +58,57 @@ namespace Maze
     MAZE_USING_MANAGED_SHARED_PTR(ShaderUniform);
     MAZE_USING_MANAGED_SHARED_PTR(AssetFile);
     MAZE_USING_MANAGED_SHARED_PTR(Texture2D);
-    
+
+
+    //////////////////////////////////////////
+    // Struct ShaderFeature
+    //
+    // Per-material shader feature override.
+    // Enabled - "#define name value" (value defaults to "(1)"),
+    // disabled - the define is removed, even if the base shader declares it.
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API ShaderFeature
+    {
+        //////////////////////////////////////////
+        static CString const c_defaultValue;
+
+        //////////////////////////////////////////
+        inline CString getDefineValue() const { return value.empty() ? c_defaultValue : value.c_str(); }
+
+        //////////////////////////////////////////
+        bool isBool() const;
+
+        //////////////////////////////////////////
+        inline bool operator==(ShaderFeature const& _other) const
+        {
+            return name == _other.name && value == _other.value && enabled == _other.enabled;
+        }
+
+        //////////////////////////////////////////
+        inline bool operator!=(ShaderFeature const& _other) const { return !(*this == _other); }
+
+
+        //////////////////////////////////////////
+        // Reads every "feature" sub-block of _dataBlock
+        static void LoadFromDataBlock(Vector<ShaderFeature>& _features, DataBlock const& _dataBlock);
+
+        //////////////////////////////////////////
+        // Writes every feature as a "feature" sub-block of _dataBlock
+        static void ToDataBlock(Vector<ShaderFeature> const& _features, DataBlock& _dataBlock);
+
+        //////////////////////////////////////////
+        static void Apply(Vector<ShaderFeature> const& _features, StringKeyMap<String>& _defines);
+
+
+        String name;
+        String value;
+        bool enabled = true;
+    };
+
+    //////////////////////////////////////////
+    using ShaderFeatures = Vector<ShaderFeature>;
+
 
     //////////////////////////////////////////
     // Class Shader
@@ -269,6 +319,28 @@ namespace Maze
         void removeLocalFeature(CString _name);
 
         //////////////////////////////////////////
+        inline StringKeyMap<String> const& getLocalFeatures() const { return m_localFeatures; }
+
+
+        //////////////////////////////////////////
+        // Turns this shader into a variant of _baseShader with _features applied on top of base features
+        void setVariantData(ShaderPtr const& _baseShader, ShaderFeatures const& _features);
+
+        //////////////////////////////////////////
+        // (Re)builds the variant from its base shader
+        bool loadVariant();
+
+        //////////////////////////////////////////
+        inline bool isVariant() const { return m_isVariant; }
+
+        //////////////////////////////////////////
+        inline ShaderPtr getVariantBaseShader() const { return m_variantBaseShader.lock(); }
+
+        //////////////////////////////////////////
+        inline ShaderFeatures const& getVariantFeatures() const { return m_variantFeatures; }
+
+
+        //////////////////////////////////////////
         void reload();
 
         //////////////////////////////////////////
@@ -353,6 +425,9 @@ namespace Maze
         //////////////////////////////////////////
         void notifyEvent(ClassUID _eventUID, Event* _event);
 
+        //////////////////////////////////////////
+        void applyVariantFeatures();
+
     protected:
         HashedString m_name;
 
@@ -362,6 +437,10 @@ namespace Maze
         UnorderedMap<U32, ShaderUniformPtr> m_uniforms;
 
         StringKeyMap<String> m_localFeatures;
+
+        bool m_isVariant = false;
+        ShaderWPtr m_variantBaseShader;
+        ShaderFeatures m_variantFeatures;
 
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;

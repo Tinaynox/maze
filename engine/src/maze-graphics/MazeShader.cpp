@@ -46,6 +46,81 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    // Struct ShaderFeature
+    //
+    //////////////////////////////////////////
+    CString const ShaderFeature::c_defaultValue = "(1)";
+
+    //////////////////////////////////////////
+    bool ShaderFeature::isBool() const
+    {
+        return
+            value.empty() ||
+            value == "(1)" ||
+            value == "1" ||
+            value == "true";
+    }
+
+    //////////////////////////////////////////
+    void ShaderFeature::LoadFromDataBlock(Vector<ShaderFeature>& _features, DataBlock const& _dataBlock)
+    {
+        _features.clear();
+
+        for (DataBlock::DataBlockIndex i = 0; i < _dataBlock.getDataBlocksCount(); ++i)
+        {
+            DataBlock const* subBlock = _dataBlock.getDataBlock(i);
+            if (subBlock->getName() != MAZE_HCS("feature"))
+                continue;
+
+            CString name = subBlock->getCString(MAZE_HCS("name"));
+            if (!name || name[0] == '\0')
+                continue;
+
+            ShaderFeature feature;
+            feature.name = name;
+            if (CString value = subBlock->getCString(MAZE_HCS("value")))
+                feature.value = value;
+            feature.enabled = subBlock->getBool(MAZE_HCS("enabled"), true);
+            _features.emplace_back(eastl::move(feature));
+        }
+    }
+
+    //////////////////////////////////////////
+    void ShaderFeature::ToDataBlock(Vector<ShaderFeature> const& _features, DataBlock& _dataBlock)
+    {
+        for (ShaderFeature const& feature : _features)
+        {
+            DataBlock* featureBlock = _dataBlock.addNewDataBlock(MAZE_HCS("feature"));
+            featureBlock->setString(MAZE_HCS("name"), feature.name);
+            if (!feature.value.empty())
+                featureBlock->setString(MAZE_HCS("value"), feature.value);
+            if (!feature.enabled)
+                featureBlock->setBool(MAZE_HCS("enabled"), false);
+        }
+    }
+
+    //////////////////////////////////////////
+    void ShaderFeature::Apply(Vector<ShaderFeature> const& _features, StringKeyMap<String>& _defines)
+    {
+        for (ShaderFeature const& feature : _features)
+        {
+            if (feature.name.empty())
+                continue;
+
+            if (feature.enabled)
+            {
+                _defines[feature.name.c_str()] = feature.getDefineValue();
+            }
+            else
+            {
+                auto it = _defines.find(feature.name.c_str());
+                if (it != _defines.end())
+                    _defines.erase(it);
+            }
+        }
+    }
+
 
     //////////////////////////////////////////
     // Class Shader
@@ -632,6 +707,8 @@ namespace Maze
             shaderNode = shaderNode->NextSibling();
         }
 
+        applyVariantFeatures();
+
         return processLoadShader(
             shaderFile,
             vertexShaderFile,
@@ -758,6 +835,55 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Shader::setVariantData(ShaderPtr const& _baseShader, ShaderFeatures const& _features)
+    {
+        m_isVariant = true;
+        m_variantBaseShader = _baseShader;
+        m_variantFeatures = _features;
+    }
+
+    //////////////////////////////////////////
+    bool Shader::loadVariant()
+    {
+        MAZE_ERROR_RETURN_VALUE_IF(!m_isVariant, false, "Shader is not a variant! Shader=%s", getName().c_str());
+
+        ShaderPtr baseShader = m_variantBaseShader.lock();
+        MAZE_ERROR_RETURN_VALUE_IF(!baseShader, false, "Variant base shader is expired! Shader=%s", getName().c_str());
+
+        HashedString variantName = m_name;
+        m_localFeatures = baseShader->m_localFeatures;
+
+        bool result = false;
+
+        // Asset based shader - recompile from the source file, so the uniform defaults
+        // of the feature-dependent uniforms (absent in the base program) are applied too
+        AssetFilePtr assetFile = m_renderSystemRaw->getShaderManager()->findShaderAssetFile(baseShader.get());
+        if (assetFile)
+        {
+            result = loadFromAssetFile(assetFile);
+        }
+        else
+        {
+            applyVariantFeatures();
+            recompile();
+            result = isValid();
+        }
+
+        setName(variantName);
+
+        return result;
+    }
+
+    //////////////////////////////////////////
+    void Shader::applyVariantFeatures()
+    {
+        if (!m_isVariant)
+            return;
+
+        ShaderFeature::Apply(m_variantFeatures, m_localFeatures);
+    }
+
+    //////////////////////////////////////////
     void Shader::reload()
     {
         ShaderLibraryData const* libraryData = m_renderSystemRaw->getShaderManager()->getShaderLibraryData(
@@ -818,6 +944,8 @@ namespace Maze
                 uniformsData.push_back(uniformData);
             }
         }
+
+        applyVariantFeatures();
 
         return processLoadShader(
             shaderFile,

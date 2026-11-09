@@ -40,6 +40,7 @@
 #include "maze-editor-tools/inspectors/MazeInspector.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
+#include "maze-graphics/MazeShader.hpp"
 #include <functional>
 
 
@@ -62,6 +63,8 @@ namespace Maze
     MAZE_USING_MANAGED_SHARED_PTR(Material);
     MAZE_USING_SHARED_PTR(Shader);
     MAZE_USING_SHARED_PTR(MetaPropertyDrawer);
+    MAZE_USING_SHARED_PTR(EditBox2D);
+
     
 
     //////////////////////////////////////////
@@ -115,6 +118,29 @@ namespace Maze
         //////////////////////////////////////////
         void setShader(ShaderPtr const& _shader);
 
+
+        //////////////////////////////////////////
+        void updateShaderFeaturesUI();
+
+        //////////////////////////////////////////
+        void rebuildShaderFeaturesUI(Vector<ShaderFeature> const& _features);
+
+        //////////////////////////////////////////
+        void changeShaderFeature(
+            String const& _name,
+            std::function<void(ShaderFeature&)> const& _modify);
+
+    protected:
+
+        //////////////////////////////////////////
+        struct ShaderFeatureRow
+        {
+            String name;
+            Transform2DPtr root;
+            ToggleButton2DPtr enabledToggle;
+            EditBox2DPtr valueEditBox;
+        };
+
     protected:
         Transform2DPtr m_transform;
 
@@ -128,6 +154,12 @@ namespace Maze
         Set<MaterialPtr> m_materials;
 
         Vector<MetaPropertyDrawerPtr> m_propertyDrawers;
+
+        Transform2DPtr m_shaderFeaturesBlock;
+        Vector<Transform2DPtr> m_shaderFeaturesBlockChildren;
+        Vector<String> m_shaderFeaturesSignature;
+        Vector<ShaderFeatureRow> m_shaderFeatureRows;
+        bool m_processingShaderFeaturesDataToUI = false;
     };
 
 

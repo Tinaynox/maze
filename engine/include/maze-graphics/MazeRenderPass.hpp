@@ -118,10 +118,12 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // Sets the base shader (the effective shader is rebuilt with the pass shader features)
         void setShader(ShaderPtr const& _shader);
 
         //////////////////////////////////////////
-        inline ShaderPtr const& getShader() const { return m_shaderRef.getShader(); }
+        // Effective shader - the base shader variant with the pass shader features applied
+        inline ShaderPtr const& getShader() const { return m_shader; }
 
         //////////////////////////////////////////
         void setShader(Path const& _shaderResourceName);
@@ -129,12 +131,35 @@ namespace Maze
         //////////////////////////////////////////
         HashedString const& getShaderName() const;
 
+        //////////////////////////////////////////
+        inline ShaderPtr const& getBaseShader() const { return m_shaderRef.getShader(); }
+
 
         //////////////////////////////////////////
         inline ShaderAssetRef const& getShaderRef() const { return m_shaderRef; }
 
         //////////////////////////////////////////
-        inline void setShaderRef(ShaderAssetRef const& _value) { m_shaderRef.setShader(_value.getShader()); }
+        void setShaderRef(ShaderAssetRef const& _value);
+
+
+        //////////////////////////////////////////
+        inline ShaderFeatures const& getShaderFeatures() const { return m_shaderFeatures; }
+
+        //////////////////////////////////////////
+        void setShaderFeatures(ShaderFeatures const& _features);
+
+        //////////////////////////////////////////
+        // Adds the feature or updates the existing one with the same name
+        void setShaderFeature(ShaderFeature const& _feature);
+
+        //////////////////////////////////////////
+        void setShaderFeatureEnabled(String const& _name, bool _enabled);
+
+        //////////////////////////////////////////
+        void removeShaderFeature(String const& _name);
+
+        //////////////////////////////////////////
+        ShaderFeature const* getShaderFeature(String const& _name) const;
 
 
         //////////////////////////////////////////
@@ -289,6 +314,9 @@ namespace Maze
         //////////////////////////////////////////
         void setMaterial(Material* _material);
 
+        //////////////////////////////////////////
+        void updateShader();
+
 
         
 
@@ -302,6 +330,8 @@ namespace Maze
         U8 m_renderQueueIndex;
 
         ShaderAssetRef m_shaderRef;
+        ShaderFeatures m_shaderFeatures;
+        ShaderPtr m_shader;
         FastVector<ShaderUniformPtr> m_shaderUniforms;
         bool m_shaderUniformsDirty = true;
 

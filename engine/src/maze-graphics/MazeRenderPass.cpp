@@ -97,6 +97,10 @@ namespace Maze
             _renderPass->getMetaInstance()))
             return false;
 
+        m_shaderFeatures = _renderPass->m_shaderFeatures;
+        m_shader = _renderPass->m_shader;
+        dirtyShaderUniforms();
+
         return true;
     }
 
@@ -107,6 +111,9 @@ namespace Maze
         m_passType = _renderPass.m_passType;
         m_renderQueueIndex = _renderPass.m_renderQueueIndex;
         m_shaderRef = _renderPass.m_shaderRef;
+        m_shaderFeatures = _renderPass.m_shaderFeatures;
+        m_shader = _renderPass.m_shader;
+        dirtyShaderUniforms();
         m_blendOperation = _renderPass.m_blendOperation;
         m_blendSrcFactor = _renderPass.m_blendSrcFactor;
         m_blendDestFactor = _renderPass.m_blendDestFactor;
@@ -128,6 +135,9 @@ namespace Maze
     //////////////////////////////////////////
     bool RenderPass::isEqual(RenderPass const& _renderPass) const
     {
+        if (m_shaderFeatures != _renderPass.m_shaderFeatures)
+            return false;
+
         return MetaClassHelper::IsEqual(getMetaInstance(), _renderPass.getMetaInstance());
     }
 
@@ -138,6 +148,90 @@ namespace Maze
             return;
 
         m_shaderRef.setShader(_shader);
+        updateShader();
+    }
+
+    //////////////////////////////////////////
+    void RenderPass::setShaderRef(ShaderAssetRef const& _value)
+    {
+        setShader(_value.getShader());
+    }
+
+    //////////////////////////////////////////
+    void RenderPass::setShaderFeatures(ShaderFeatures const& _features)
+    {
+        if (m_shaderFeatures == _features)
+            return;
+
+        m_shaderFeatures = _features;
+        updateShader();
+    }
+
+    //////////////////////////////////////////
+    void RenderPass::setShaderFeature(ShaderFeature const& _feature)
+    {
+        MAZE_ERROR_RETURN_IF(_feature.name.empty(), "Shader feature name is empty!");
+
+        ShaderFeatures features = m_shaderFeatures;
+        auto it = eastl::find_if(
+            features.begin(),
+            features.end(),
+            [&_feature](ShaderFeature const& _f) { return _f.name == _feature.name; });
+        if (it != features.end())
+            *it = _feature;
+        else
+            features.push_back(_feature);
+
+        setShaderFeatures(features);
+    }
+
+    //////////////////////////////////////////
+    void RenderPass::setShaderFeatureEnabled(String const& _name, bool _enabled)
+    {
+        ShaderFeature const* feature = getShaderFeature(_name);
+        MAZE_ERROR_RETURN_IF(!feature, "Undefined shader feature: %s", _name.c_str());
+
+        ShaderFeature newFeature = *feature;
+        newFeature.enabled = _enabled;
+        setShaderFeature(newFeature);
+    }
+
+    //////////////////////////////////////////
+    void RenderPass::removeShaderFeature(String const& _name)
+    {
+        ShaderFeatures features = m_shaderFeatures;
+        auto it = eastl::find_if(
+            features.begin(),
+            features.end(),
+            [&_name](ShaderFeature const& _f) { return _f.name == _name; });
+        if (it == features.end())
+            return;
+
+        features.erase(it);
+        setShaderFeatures(features);
+    }
+
+    //////////////////////////////////////////
+    ShaderFeature const* RenderPass::getShaderFeature(String const& _name) const
+    {
+        for (ShaderFeature const& feature : m_shaderFeatures)
+            if (feature.name == _name)
+                return &feature;
+
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
+    void RenderPass::updateShader()
+    {
+        ShaderPtr shader = m_shaderRef.getShader();
+        if (shader && !m_shaderFeatures.empty() && m_renderSystem)
+            shader = m_renderSystem->getShaderManager()->ensureShaderVariant(shader, m_shaderFeatures);
+
+        if (m_shader == shader)
+            return;
+
+        m_shader = shader;
         dirtyShaderUniforms();
     }
 
@@ -182,20 +276,23 @@ namespace Maze
         if (!m_material)
             return;
 
-        if (!m_shaderRef.getShader())
-            return;
-
+        // Keep the sizes in sync even without a shader - applyRenderPassUniforms indexes by material uniform
         FastVector<ShaderUniformVariantPtr> const& uniforms = m_material->getUniforms();
         m_shaderUniforms.resize(uniforms.size());
+        m_shaderUniformsDirty = false;
+
+        if (!m_shader)
+        {
+            MAZE_ERROR("RenderPass has no shader! Material=%s", m_material->getName().c_str());
+            return;
+        }
 
         for (Size i = 0, in = uniforms.size(); i != in; ++i)
         {
             ShaderUniformVariantPtr const& uniformVariant = uniforms[i];
             if (uniformVariant)
-                m_shaderUniforms[i] = m_shaderRef.getShader()->getUniform(uniformVariant->getName());
+                m_shaderUniforms[i] = m_shader->getUniform(uniformVariant->getName());
         }
-
-        m_shaderUniformsDirty = false;
     }
 
     //////////////////////////////////////////
@@ -203,10 +300,10 @@ namespace Maze
     {
         static HashedString nullValue;
 
-        if (!m_shaderRef.getShader())
+        if (!m_shader)
             return nullValue;
 
-        return m_shaderRef.getShader()->getName();
+        return m_shader->getName();
 
     }
 
@@ -226,6 +323,10 @@ namespace Maze
     bool RenderPass::loadFromDataBlock(DataBlock const& _dataBlock)
     {
         DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+
+        ShaderFeature::LoadFromDataBlock(m_shaderFeatures, _dataBlock);
+        updateShader();
+
         return true;
     }
 
@@ -233,6 +334,7 @@ namespace Maze
     void RenderPass::toDataBlock(DataBlock& _dataBlock) const
     {
         DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        ShaderFeature::ToDataBlock(m_shaderFeatures, _dataBlock);
     }
 
     //////////////////////////////////////////
@@ -249,7 +351,7 @@ namespace Maze
         crc32 = Hash::CalculateCRC32((Char const*)&m_passType, sizeof(m_passType), crc32);
         crc32 = Hash::CalculateCRC32((Char const*)&m_renderQueueIndex, sizeof(m_renderQueueIndex), crc32);
 
-        Shader* const shaderRaw = m_shaderRef.getShader().get();
+        Shader* const shaderRaw = m_shader.get();
         crc32 = Hash::CalculateCRC32((Char const*)&shaderRaw, sizeof(Shader*), crc32);
 
         crc32 = Hash::CalculateCRC32((Char const*)&m_blendOperation, sizeof(m_blendOperation), crc32);
@@ -273,10 +375,10 @@ namespace Maze
     //////////////////////////////////////////
     bool RenderPass::hasUniform(HashedCString _uniformName)
     {
-        if (!m_shaderRef.getShader())
+        if (!m_shader)
             return false;
 
-        return m_shaderRef.getShader()->hasUniform(_uniformName);
+        return m_shader->hasUniform(_uniformName);
     }
 
 } // namespace Maze

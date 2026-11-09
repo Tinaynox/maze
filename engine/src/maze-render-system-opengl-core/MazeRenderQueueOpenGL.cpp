@@ -185,7 +185,8 @@ namespace Maze
                     {
                         MAZE_PROFILE_EVENT("BindTextures");
 
-                        m_context->getCurrentShader()->castRaw<ShaderOpenGL>()->bindTextures();
+                        if (Shader* currentShader = m_context->getCurrentShader())
+                            currentShader->castRaw<ShaderOpenGL>()->bindTextures();
                         break;
                     }
                     case RenderCommandType::DrawVAOInstanced:
@@ -485,14 +486,14 @@ namespace Maze
 
 
         // Shader
-        ShaderOpenGL* shaderOpenGL = _renderPass->getShader()->castRaw<ShaderOpenGL>();
+        ShaderOpenGL* shaderOpenGL = _renderPass->getShader() ? _renderPass->getShader()->castRaw<ShaderOpenGL>() : nullptr;
         m_context->setCurrentShader(shaderOpenGL);
 
         // Shader uniforms
         _renderPass->applyRenderPassUniforms();
 
         // Bind textures
-        if (_bindTextures)
+        if (_bindTextures && shaderOpenGL)
             shaderOpenGL->bindTextures();
 
 

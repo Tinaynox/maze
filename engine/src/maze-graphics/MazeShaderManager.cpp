@@ -181,6 +181,148 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ShaderPtr const& ShaderManager::ensureShaderVariant(
+        ShaderPtr const& _baseShader,
+        ShaderFeatures const& _features)
+    {
+        if (!_baseShader || _features.empty())
+            return _baseShader;
+
+        StringKeyMap<String> const& baseFeatures = _baseShader->getLocalFeatures();
+        StringKeyMap<String> variantFeatures = baseFeatures;
+        ShaderFeature::Apply(_features, variantFeatures);
+
+        bool changed = (variantFeatures.size() != baseFeatures.size());
+        if (!changed)
+        {
+            for (auto const& featureData : variantFeatures)
+            {
+                auto it = baseFeatures.find(featureData.first);
+                if (it == baseFeatures.end() || it->second != featureData.second)
+                {
+                    changed = true;
+                    break;
+                }
+            }
+        }
+
+        if (!changed)
+            return _baseShader;
+
+        String variantName = BuildShaderVariantName(_baseShader->getName(), variantFeatures);
+
+        ShaderLibraryData const* cachedData = getShaderLibraryData(HashedCString(variantName.c_str()));
+        if (cachedData)
+            return cachedData->shader;
+
+        // Runtime/built-in shaders have no source file to reload from, so the variant
+        // starts as a copy (keeps the sources) and gets recompiled with the new features
+        ShaderPtr variant = findShaderAssetFile(_baseShader.get()) ? createShader() : _baseShader->createCopy();
+        MAZE_ERROR_RETURN_VALUE_IF(!variant, _baseShader, "Failed to create shader variant %s!", variantName.c_str());
+
+        variant->setName(HashedString(variantName));
+        variant->setVariantData(_baseShader, _features);
+        if (!variant->loadVariant())
+        {
+            MAZE_ERROR("Failed to load shader variant %s!", variantName.c_str());
+            return _baseShader;
+        }
+
+        ShaderLibraryDataCallbacks callbacks;
+        callbacks.requestReload =
+            [variantWeak = (ShaderWPtr)variant](bool _immediate)
+            {
+                if (ShaderPtr variant = variantWeak.lock())
+                    variant->loadVariant();
+            };
+        callbacks.hasAnyOfTags =
+            [baseShaderWeak = (ShaderWPtr)_baseShader](Set<String> const& _tags)
+            {
+                ShaderManagerPtr const& shaderManager = ShaderManager::GetCurrentInstancePtr();
+                ShaderPtr baseShader = baseShaderWeak.lock();
+                if (!shaderManager || !baseShader)
+                    return false;
+
+                ShaderLibraryData const* baseData = shaderManager->getShaderLibraryData(
+                    HashedCString(baseShader->getName().c_str()));
+                if (baseData && baseData->callbacks.hasAnyOfTags)
+                    return baseData->callbacks.hasAnyOfTags(_tags);
+
+                return false;
+            };
+
+        DataBlock info;
+        info.setBool(MAZE_HCS("variant"), true);
+        info.setString(MAZE_HCS("baseShader"), _baseShader->getName());
+
+        ShaderLibraryData* data = addShaderToLibrary(variant, callbacks, info);
+        MAZE_ERROR_RETURN_VALUE_IF(!data, _baseShader, "Failed to add shader variant %s to the library!", variantName.c_str());
+
+        return data->shader;
+    }
+
+    //////////////////////////////////////////
+    AssetFilePtr ShaderManager::findShaderAssetFile(Shader const* _shader)
+    {
+        if (!_shader || _shader->isVariant())
+            return nullptr;
+
+        ShaderLibraryData const* libraryData = getShaderLibraryData(HashedCString(_shader->getName().c_str()));
+        if (!libraryData || libraryData->shader.get() != _shader)
+            return nullptr;
+
+        if (AssetUnitManager::GetInstancePtr())
+        {
+            AssetUnitId auid = libraryData->data.getU32(MAZE_HCS("auid"), c_invalidAssetUnitId);
+            if (auid != c_invalidAssetUnitId)
+            {
+                AssetUnitPtr const& assetUnit = AssetUnitManager::GetInstancePtr()->getAssetUnit(auid);
+                if (assetUnit)
+                    return assetUnit->getAssetFile();
+            }
+        }
+
+        if (AssetManager::GetInstancePtr())
+            return AssetManager::GetInstancePtr()->getAssetFileByFileName(Path(_shader->getName().c_str()));
+
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
+    String ShaderManager::BuildShaderVariantName(
+        HashedString const& _baseShaderName,
+        StringKeyMap<String> const& _features)
+    {
+        Vector<Pair<String, String>> sortedFeatures;
+        sortedFeatures.reserve(_features.size());
+        for (auto const& featureData : _features)
+            sortedFeatures.emplace_back(String(featureData.first), featureData.second);
+
+        eastl::sort(
+            sortedFeatures.begin(),
+            sortedFeatures.end(),
+            [](Pair<String, String> const& _a, Pair<String, String> const& _b) { return _a.first < _b.first; });
+
+        String result = _baseShaderName.getString();
+        result += '{';
+        for (Size i = 0, in = sortedFeatures.size(); i < in; ++i)
+        {
+            if (i > 0)
+                result += ';';
+
+            result += sortedFeatures[i].first;
+            if (sortedFeatures[i].second != ShaderFeature::c_defaultValue)
+            {
+                result += '=';
+                result += sortedFeatures[i].second;
+            }
+        }
+        result += '}';
+
+        return result;
+    }
+
+    //////////////////////////////////////////
     void ShaderManager::addGlobalFeature(CString _name, CString _value)
     {
         MAZE_ERROR_RETURN_IF(!_name, "Name is null!");

@@ -46,6 +46,10 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeShaderManager.hpp"
+#include "maze-graphics/MazeRenderPass.hpp"
+#include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
+#include "maze-ui/ecs/components/MazeEditBox2D.hpp"
+#include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
@@ -214,6 +218,9 @@ namespace Maze
                     for (auto const& shaderData : shadersLibrary)
                     {
                         ShaderPtr const& shader = shaderData.second.shader;
+                        if (!shader || shader->isVariant())
+                            continue;
+
                         ShaderWPtr shaderWeak = shader;
 
                         _listTree->addItem(
@@ -283,6 +290,21 @@ namespace Maze
             propertyDrawer->buildUI(m_topBlock, "Cull Mode");
             m_propertyDrawers.push_back(propertyDrawer);
         }
+
+        m_shaderFeaturesBlock = SpriteHelper::CreateTransform2D(
+            Vec2F(m_transform->getWidth() - 16.0f, 0.0f),
+            Vec2F(8.0f, 0.0f),
+            m_transform,
+            m_transform->getEntityRaw()->getEcsScene());
+        SizePolicy2DPtr shaderFeaturesSizePolicy = m_shaderFeaturesBlock->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        shaderFeaturesSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
+        shaderFeaturesSizePolicy->setSizeDelta(-16.0f, 0.0f);
+
+        VerticalLayout2DPtr shaderFeaturesLayout = m_shaderFeaturesBlock->getEntityRaw()->ensureComponent<VerticalLayout2D>();
+        shaderFeaturesLayout->setVerticalAlignment(VerticalAlignment2D::Middle);
+        shaderFeaturesLayout->setAutoHeight(true);
+        shaderFeaturesLayout->setPaddingBottom(10.0f);
+        shaderFeaturesLayout->setSpacing(2.0f);
     }
 
     //////////////////////////////////////////
@@ -309,7 +331,7 @@ namespace Maze
             RenderPassPtr const& renderPass = material->getRenderPass(m_renderPassType, m_renderPassIndex);
             if (renderPass)
             {
-                ShaderPtr const& shader = renderPass->getShader();
+                ShaderPtr const& shader = renderPass->getBaseShader();
                 if (shader)
                     m_topBlockShaderNameText->setText(shader->getName());
                 else
@@ -331,7 +353,208 @@ namespace Maze
             propertyDrawer->linkMetaInstances(renderPassMetaInstances);
             propertyDrawer->processDataToUI();
         }
-        
+
+        updateShaderFeaturesUI();
+    }
+
+    //////////////////////////////////////////
+    void MaterialsRenderPassDrawer::updateShaderFeaturesUI()
+    {
+        if (!m_shaderFeaturesBlock)
+            return;
+
+        static ShaderFeatures const c_noFeatures;
+
+        // #TODO: Multi material editor
+        RenderPassPtr renderPass;
+        if (m_materials.size() == 1)
+            renderPass = (*m_materials.begin())->getRenderPass(m_renderPassType, m_renderPassIndex);
+
+        ShaderFeatures const& features = renderPass ? renderPass->getShaderFeatures() : c_noFeatures;
+
+        Vector<String> signature;
+        signature.reserve(features.size());
+        for (ShaderFeature const& feature : features)
+            signature.emplace_back(feature.isBool() ? feature.name : (feature.name + "="));
+
+        if (signature != m_shaderFeaturesSignature)
+        {
+            m_shaderFeaturesSignature = signature;
+            rebuildShaderFeaturesUI(features);
+        }
+
+        m_processingShaderFeaturesDataToUI = true;
+        for (ShaderFeatureRow const& row : m_shaderFeatureRows)
+        {
+            ShaderFeature const* feature = renderPass ? renderPass->getShaderFeature(row.name) : nullptr;
+            if (!feature)
+                continue;
+
+            if (row.enabledToggle->getChecked() != feature->enabled)
+                row.enabledToggle->setChecked(feature->enabled);
+
+            if (row.valueEditBox && !row.valueEditBox->getSelected() && row.valueEditBox->getText() != feature->value)
+                row.valueEditBox->setText(feature->value);
+        }
+        m_processingShaderFeaturesDataToUI = false;
+    }
+
+    //////////////////////////////////////////
+    void MaterialsRenderPassDrawer::rebuildShaderFeaturesUI(ShaderFeatures const& _features)
+    {
+        for (Transform2DPtr const& child : m_shaderFeaturesBlockChildren)
+            if (child && child->getEntityRaw())
+                child->getEntityRaw()->removeFromEcsWorld();
+        m_shaderFeaturesBlockChildren.clear();
+        m_shaderFeatureRows.clear();
+
+        if (_features.empty())
+            return;
+
+        EcsScene* ecsScene = m_transform->getEntityRaw()->getEcsScene();
+
+        AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
+            "Shader Features",
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+            12,
+            HorizontalAlignment2D::Left,
+            VerticalAlignment2D::Middle,
+            Vec2F(50.0f, 18.0f),
+            Vec2F::c_zero,
+            m_shaderFeaturesBlock,
+            ecsScene);
+        titleText->setColor(ColorU32::c_black);
+        m_shaderFeaturesBlockChildren.push_back(titleText->getEntityRaw()->getComponent<Transform2D>());
+
+        MaterialsRenderPassDrawerWPtr drawerWeak = cast<MaterialsRenderPassDrawer>();
+
+        for (ShaderFeature const& feature : _features)
+        {
+            ShaderFeatureRow row;
+            row.name = feature.name;
+
+            HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                Vec2F(m_shaderFeaturesBlock->getWidth(), 18.0f),
+                Vec2F::c_zero,
+                m_shaderFeaturesBlock,
+                ecsScene,
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
+            layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
+            layout->setAutoWidth(false);
+            layout->setExpand(true);
+            row.root = layout->getTransform();
+
+            AbstractTextRenderer2DPtr nameText = EditorToolsUIHelper::CreateText(
+                feature.name.c_str(),
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                Vec2F(8.0f, 18.0f),
+                Vec2F::c_zero,
+                layout->getTransform(),
+                ecsScene,
+                Vec2F(0.0f, 0.5f),
+                Vec2F::c_zero);
+            nameText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
+
+            row.enabledToggle = UIHelper::CreateDefaultToggleButton(
+                Vec2F::c_zero,
+                layout->getTransform(),
+                ecsScene,
+                Vec2F(0.5f, 0.5f),
+                Vec2F::c_zero);
+            row.enabledToggle->setChecked(feature.enabled);
+            row.enabledToggle->eventCheckedChanged.subscribe(
+                [drawerWeak, name = feature.name](ToggleButton2D* _button, bool _checked)
+                {
+                    MaterialsRenderPassDrawerPtr drawer = drawerWeak.lock();
+                    if (!drawer || drawer->m_processingShaderFeaturesDataToUI)
+                        return;
+
+                    drawer->changeShaderFeature(
+                        name,
+                        [_checked](ShaderFeature& _feature) { _feature.enabled = _checked; });
+                });
+
+            if (!feature.isBool())
+            {
+                row.valueEditBox = UIHelper::CreateDefaultEditBox(
+                    feature.value.c_str(),
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
+                    Vec2F(100.0f, 18.0f),
+                    Vec2F::c_zero,
+                    layout->getTransform(),
+                    ecsScene,
+                    Vec2F(0.5f, 0.5f),
+                    Vec2F::c_zero);
+
+                // Applied on commit only - every intermediate value would compile a new shader variant
+                row.valueEditBox->eventSelectedChanged.subscribe(
+                    [drawerWeak, name = feature.name](EditBox2D* _editBox, bool _selected)
+                    {
+                        if (_selected)
+                            return;
+
+                        MaterialsRenderPassDrawerPtr drawer = drawerWeak.lock();
+                        if (!drawer || drawer->m_processingShaderFeaturesDataToUI)
+                            return;
+
+                        drawer->changeShaderFeature(
+                            name,
+                            [value = _editBox->getText()](ShaderFeature& _feature) { _feature.value = value; });
+                    });
+            }
+
+            m_shaderFeaturesBlockChildren.push_back(row.root);
+            m_shaderFeatureRows.emplace_back(eastl::move(row));
+        }
+    }
+
+    //////////////////////////////////////////
+    void MaterialsRenderPassDrawer::changeShaderFeature(
+        String const& _name,
+        std::function<void(ShaderFeature&)> const& _modify)
+    {
+        EditorActionActionsGroupPtr group;
+        if (EditorToolsActionManager::GetInstancePtr())
+            group = EditorActionActionsGroup::Create();
+
+        for (MaterialPtr const& material : m_materials)
+        {
+            RenderPassPtr const& renderPass = material->getRenderPass(m_renderPassType, m_renderPassIndex);
+            if (!renderPass)
+                continue;
+
+            ShaderFeature const* feature = renderPass->getShaderFeature(_name);
+            if (!feature)
+                continue;
+
+            ShaderFeature oldFeature = *feature;
+            ShaderFeature newFeature = oldFeature;
+            _modify(newFeature);
+            if (newFeature == oldFeature)
+                continue;
+
+            if (group)
+            {
+                group->addAction(
+                    EditorActionCustom::Create(
+                        [renderPass, newFeature]() { renderPass->setShaderFeature(newFeature); },
+                        [renderPass, oldFeature]() { renderPass->setShaderFeature(oldFeature); }));
+            }
+            else
+            {
+                renderPass->setShaderFeature(newFeature);
+            }
+        }
+
+        if (group && group->getActionsCount() > 0)
+            EditorToolsActionManager::GetInstancePtr()->applyAction(group);
     }
 
     //////////////////////////////////////////
@@ -349,7 +572,7 @@ namespace Maze
                     group->addAction(
                         EditorActionCustom::Create(
                             [renderPass, newShader = (ShaderPtr)_shader]() { renderPass->setShader(newShader); },
-                            [renderPass, oldShader = renderPass->getShader()]() { renderPass->setShader(oldShader); }));
+                            [renderPass, oldShader = renderPass->getBaseShader()]() { renderPass->setShader(oldShader); }));
                 }
             }
 
