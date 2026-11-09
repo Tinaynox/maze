@@ -423,6 +423,9 @@ namespace Maze
         virtual void processShaderLoaded();
 
         //////////////////////////////////////////
+        void applyGlobalShaderUniforms();
+
+        //////////////////////////////////////////
         void notifyEvent(ClassUID _eventUID, Event* _event);
 
         //////////////////////////////////////////

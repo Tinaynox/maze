@@ -807,7 +807,10 @@ namespace Maze
 
         for (ShaderUniformVariant const& uniformData : _uniformsData)
             setUniform(uniformData);
-        
+
+        // .mzshader defaults of u_global_* are only fallbacks - the live global values win
+        applyGlobalShaderUniforms();
+
 
         return true;
     }
@@ -1053,40 +1056,49 @@ namespace Maze
     {
         bool haveGU = haveGlobalUniforms();
 
-        m_uniformsPerGlobalUniform.clear();
-
         if (EventManager::GetInstancePtr())
         {
             if (haveGU && !m_subscribedToGlobalUniforms)
             {
                 EventManager::GetInstancePtr()->subscribeEvent<GlobalShaderUniformChangedEvent>(this, &Shader::notifyEvent);
                 m_subscribedToGlobalUniforms = true;
-
-                auto const& shaderManager = ShaderManager::GetCurrentInstancePtr();
-                for (auto const& uniformData : m_uniforms)
-                {
-                    if (!uniformData.second)
-                        continue;
-
-                    if (StringHelper::IsStartsWith(uniformData.second->getName().c_str(), "u_global_"))
-                    {
-                        GlobalShaderUniformPtr const& shaderUniform = shaderManager->getGlobalShaderUniform(
-                            uniformData.second->getName());
-
-                        if (shaderUniform)
-                        {
-                            m_uniformsPerGlobalUniform[shaderUniform->getResourceId()] = uniformData.first;
-                            uniformData.second->set(
-                                shaderUniform->getVariant());
-                        }
-                    }
-                }
             }
             else
             if(!haveGU && m_subscribedToGlobalUniforms)
             {
                 EventManager::GetInstancePtr()->unsubscribeEvent<GlobalShaderUniformChangedEvent>(this);
                 m_subscribedToGlobalUniforms = false;
+            }
+        }
+
+        // Every (re)compile recreates the uniforms, so the mapping and the values must be refreshed each time
+        applyGlobalShaderUniforms();
+    }
+
+    //////////////////////////////////////////
+    void Shader::applyGlobalShaderUniforms()
+    {
+        m_uniformsPerGlobalUniform.clear();
+
+        ShaderManagerPtr const& shaderManager = ShaderManager::GetCurrentInstancePtr();
+        if (!shaderManager)
+            return;
+
+        for (auto const& uniformData : m_uniforms)
+        {
+            if (!uniformData.second)
+                continue;
+
+            if (!StringHelper::IsStartsWith(uniformData.second->getName().c_str(), "u_global_"))
+                continue;
+
+            GlobalShaderUniformPtr const& shaderUniform = shaderManager->getGlobalShaderUniform(
+                uniformData.second->getName());
+
+            if (shaderUniform)
+            {
+                m_uniformsPerGlobalUniform[shaderUniform->getResourceId()] = uniformData.first;
+                uniformData.second->set(shaderUniform->getVariant());
             }
         }
     }
