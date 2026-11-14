@@ -44,6 +44,7 @@
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMPDEnumClass.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -245,7 +246,19 @@ namespace Maze
                 for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
                 {
                     MetaProperty* metaProperty = metaClass->getProperty(i);
-                    MetaPropertyDrawerPtr propertyDrawer = InspectorManager::GetInstancePtr()->createMetaPropertyDrawer(metaProperty);
+
+                    MetaPropertyDrawerPtr propertyDrawer;
+                    if (metaProperty->getName() == MAZE_HCS("magFilter"))
+                    {
+                        propertyDrawer = MetaPropertyDrawerEnumClass::Create(
+                            metaProperty,
+                            {
+                                TextureFilter(TextureFilter::Nearest).toString(),
+                                TextureFilter(TextureFilter::Linear).toString()
+                            });
+                    }
+                    else
+                        propertyDrawer = InspectorManager::GetInstancePtr()->createMetaPropertyDrawer(metaProperty);
                     if (propertyDrawer)
                     {
                         propertyDrawer->buildUI(verticalLayout->getTransform());
