@@ -365,6 +365,19 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_CORE_API bool IsRootExternalParentRef(
+            Entity const* _rootEntity,
+            Component const* _component,
+            Entity const* _refOwner)
+        {
+            if (!_rootEntity || !_refOwner || _component->getEntityRaw() != _rootEntity)
+                return false;
+
+            EntityId parentId = GetEntityParentId(_rootEntity);
+            return parentId != c_invalidEntityId && parentId == _refOwner->getId();
+        }
+
+        //////////////////////////////////////////
         MAZE_CORE_API S32 BuildPrefabSidChain(
             Entity* _entity,
             FlatHashMap<EntityId, EcsSerializationId> const& _entityIndices,

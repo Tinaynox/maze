@@ -67,6 +67,7 @@ namespace Maze
     {
         //////////////////////////////////////////
         EcsWorld* ecsWorld = nullptr;
+        Entity* rootEntity = nullptr;
         Vector<EntitySerializationData> entityComponents;
         Vector<PrefabSerializationData> prefabs;
         FlatHashMap<void*, EcsSerializationId> pointerIndices;

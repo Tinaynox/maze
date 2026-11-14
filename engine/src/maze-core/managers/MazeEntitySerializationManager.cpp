@@ -317,6 +317,9 @@ namespace Maze
                                     Component* refComponent = static_cast<Component*>(propertyValuePointer);
                                     Entity* refOwner = refComponent->getEntityRaw();
 
+                                    if (EcsHelper::IsRootExternalParentRef(_context.rootEntity, _component.get(), refOwner))
+                                        continue;
+
                                     EcsSerializationId chain[EcsHelper::c_maxPrefabRefDepth];
                                     S32 chainCount = refOwner ? EcsHelper::BuildPrefabSidChain(refOwner, _context.entityIndices, chain) : 0;
                                     if (chainCount > 0 &&
@@ -467,6 +470,9 @@ namespace Maze
                                     refComponent = static_cast<Component*>(propertyValuePointer);
                                     refOwner = refComponent->getEntityRaw();
                                 }
+
+                                if (EcsHelper::IsRootExternalParentRef(_context.rootEntity, _component.get(), refOwner))
+                                    continue;
 
                                 EcsSerializationId chain[EcsHelper::c_maxPrefabRefDepth];
                                 S32 chainCount = refOwner ? EcsHelper::BuildPrefabSidChain(refOwner, _context.entityIndices, chain) : 0;
@@ -747,6 +753,7 @@ namespace Maze
 
         EntitiesToDataBlockContext context;
         context.ecsWorld = _entity->getEcsWorld();
+        context.rootEntity = _entity.get();
         collectEntityComponentsMap(_entity, context.entityComponents, context.prefabs);
 
         EcsWorldPtr identityPrefabsWorld;

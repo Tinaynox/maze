@@ -153,6 +153,12 @@ namespace Maze
         MAZE_CORE_API Entity* GetEnclosingPrefabInstanceRootEntity(Entity* _entity);
 
         //////////////////////////////////////////
+        MAZE_CORE_API bool IsRootExternalParentRef(
+            Entity const* _rootEntity,
+            Component const* _component,
+            Entity const* _refOwner);
+
+        //////////////////////////////////////////
         // Builds the chain of prefab instance sids leading from the serialized document
         // down to _entity's prefab space (outermost first). Each hop sid belongs to the
         // sid space of the previous hop's prefab. Returns the hops count, or 0 if _entity
