@@ -97,7 +97,11 @@ namespace Maze
     //////////////////////////////////////////
     void SelectionManager::unselectObjects()
     {
-        selectObject(EntityPtr());
+        m_selectedEntities.clear();
+        m_selectedObjects.clear();
+        m_selectionType = SelectionType::None;
+
+        eventSelectionChanged();
     }
 
     //////////////////////////////////////////

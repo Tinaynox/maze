@@ -84,6 +84,7 @@
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsActionManager.hpp"
 #include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
 #include "events/EditorEvents.hpp"
 #include "settings/MazeEditorSettings.hpp"
@@ -382,6 +383,11 @@ namespace Maze
 
         // Reset selection
         SelectionManager::GetInstancePtr()->unselectObjects();
+
+        // Undo actions hold strong refs to runtime objects (e.g. Mono-created materials) - release them
+        // while their owners (scenes, Mono world, contexts) are still alive
+        if (EditorToolsActionManager::GetInstancePtr())
+            EditorToolsActionManager::GetInstancePtr()->clearHistory();
 
 
         if (m_playtestModeEnabled)

@@ -368,6 +368,11 @@ namespace Maze
     void InspectorController::notifySelectionChanged()
     {
         m_editorsDirty = true;
+
+        // Drop the inspected objects right away - a deferred rebuild would keep runtime objects
+        // (e.g. Mono-created materials) alive past playtest teardown
+        if (SelectionManager::GetInstancePtr()->getSelectionType() == SelectionType::None)
+            clearEditor();
     }
 
     //////////////////////////////////////////
