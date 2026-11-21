@@ -1295,83 +1295,64 @@ namespace Maze
             }
         }
 
-        if (GizmosManager::GetInstancePtr())
+        while (m_billboards.size() < m_billboardsData.size())
+            m_billboards.emplace_back(m_gizmoBillboardPool->fetch());
+
+        while (m_billboards.size() > m_billboardsData.size())
         {
-            Camera3DPtr const& camera3D = GizmosManager::GetInstancePtr()->getCamera();
-            if (camera3D)
+            m_gizmoBillboardPool->release(m_billboards.back());
+            m_billboards.pop_back();
+        }
+
+        for (Size i = 0, in = m_billboards.size(); i < in; ++i)
+        {
+            GizmoBillboard3DPtr const& gizmoBillboard = m_billboards[i];
+            BillboardData const& gizmoBillboardData = m_billboardsData[i];
+
+            MaterialPtr const& material = gizmoBillboard->getMeshRenderer()->getMaterial();
+
+            if (gizmoBillboardData.sprite)
             {
-                while (m_billboards.size() < m_billboardsData.size())
-                    m_billboards.emplace_back(m_gizmoBillboardPool->fetch());
-
-                while (m_billboards.size() > m_billboardsData.size())
-                {
-                    m_gizmoBillboardPool->release(m_billboards.back());
-                    m_billboards.pop_back();
-                }
-
-                for (Size i = 0, in = m_billboards.size(); i < in; ++i)
-                {
-                    GizmoBillboard3DPtr const& gizmoBillboard = m_billboards[i];
-                    BillboardData const& gizmoBillboardData = m_billboardsData[i];
-
-                    MaterialPtr const& material = gizmoBillboard->getMeshRenderer()->getMaterial();
-
-                    if (gizmoBillboardData.sprite)
-                    {
-                        material->setUniform(MAZE_HCS("u_baseMap"), gizmoBillboardData.sprite->getTexture());
-                        material->setUniform(MAZE_HCS("u_uv0"), gizmoBillboardData.sprite->getTextureCoordLB());
-                        material->setUniform(MAZE_HCS("u_uv1"), gizmoBillboardData.sprite->getTextureCoordRT());
-                    }
-                    else
-                    {
-                        material->setUniform(MAZE_HCS("u_baseMap"), renderSystem->getTextureManager()->getErrorTexture());
-                        material->setUniform(MAZE_HCS("u_uv0"), Vec2F::c_zero);
-                        material->setUniform(MAZE_HCS("u_uv1"), Vec2F::c_one);
-                    }
-
-                    material->setUniform(MAZE_HCS("u_color"), gizmoBillboardData.color.value);
-                }
-
-                while (m_labels.size() < m_labelsData.size())
-                    m_labels.emplace_back(m_gizmoLabelPool->fetch());
-
-                while (m_labels.size() > m_labelsData.size())
-                {
-                    m_gizmoLabelPool->release(m_labels.back());
-                    m_labels.pop_back();
-                }
-
-                for (Size i = 0, in = m_labels.size(); i < in; ++i)
-                {
-                    SystemTextRenderer3DPtr const& label = m_labels[i];
-                    LabelData const& labelData = m_labelsData[i];
-
-                    label->setText(labelData.text);
-                    label->setFontSize((U32)labelData.fontSize);
-                    label->setColor(labelData.color.getColorU32());
-
-                    DefaultRenderMask renderMask = (labelData.gizmosMode == GizmosMode::CustomGeometry) ? DefaultRenderMask::CustomGeometry : DefaultRenderMask::Gizmos;
-                    label->getMeshRenderer()->getRenderMask()->setMask(renderMask);
-                }
-
-                // Fallback for this frame; per-camera reorientation happens via Render3DDefaultPrePassEvent (GizmosController.cpp)
-                orientBillboardsAndLabels(camera3D->getTransform()->getWorldTransform());
+                material->setUniform(MAZE_HCS("u_baseMap"), gizmoBillboardData.sprite->getTexture());
+                material->setUniform(MAZE_HCS("u_uv0"), gizmoBillboardData.sprite->getTextureCoordLB());
+                material->setUniform(MAZE_HCS("u_uv1"), gizmoBillboardData.sprite->getTextureCoordRT());
             }
             else
             {
-                while (!m_billboards.empty())
-                {
-                    m_gizmoBillboardPool->release(m_billboards.back());
-                    m_billboards.pop_back();
-                }
-
-                while (!m_labels.empty())
-                {
-                    m_gizmoLabelPool->release(m_labels.back());
-                    m_labels.pop_back();
-                }
+                material->setUniform(MAZE_HCS("u_baseMap"), renderSystem->getTextureManager()->getErrorTexture());
+                material->setUniform(MAZE_HCS("u_uv0"), Vec2F::c_zero);
+                material->setUniform(MAZE_HCS("u_uv1"), Vec2F::c_one);
             }
+
+            material->setUniform(MAZE_HCS("u_color"), gizmoBillboardData.color.value);
         }
+
+        while (m_labels.size() < m_labelsData.size())
+            m_labels.emplace_back(m_gizmoLabelPool->fetch());
+
+        while (m_labels.size() > m_labelsData.size())
+        {
+            m_gizmoLabelPool->release(m_labels.back());
+            m_labels.pop_back();
+        }
+
+        for (Size i = 0, in = m_labels.size(); i < in; ++i)
+        {
+            SystemTextRenderer3DPtr const& label = m_labels[i];
+            LabelData const& labelData = m_labelsData[i];
+
+            label->setText(labelData.text);
+            label->setFontSize((U32)labelData.fontSize);
+            label->setColor(labelData.color.getColorU32());
+
+            DefaultRenderMask renderMask = (labelData.gizmosMode == GizmosMode::CustomGeometry) ? DefaultRenderMask::CustomGeometry : DefaultRenderMask::Gizmos;
+            label->getMeshRenderer()->getRenderMask()->setMask(renderMask);
+        }
+
+        // Fallback for this frame; per-camera reorientation happens via Render3DDefaultPrePassEvent (GizmosController.cpp)
+        if (GizmosManager::GetInstancePtr())
+            if (Camera3DPtr const& camera3D = GizmosManager::GetInstancePtr()->getCamera())
+                orientBillboardsAndLabels(camera3D->getTransform()->getWorldTransform());
     }
 
     //////////////////////////////////////////

@@ -66,7 +66,8 @@ namespace Maze
         if (GizmosManager::GetInstancePtr())
             GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.unsubscribe(this);
 
-        if (EditorToolsManager::GetInstancePtr())
+        if (EditorToolsManager::GetInstancePtr() &&
+            EditorToolsManager::GetInstancePtr()->getGizmosController() == this)
             EditorToolsManager::GetInstancePtr()->setGizmosController(nullptr);
     }
 
