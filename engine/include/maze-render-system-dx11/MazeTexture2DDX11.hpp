@@ -120,7 +120,8 @@ namespace Maze
             U32 _width,
             U32 _height,
             U32 _x,
-            U32 _y) MAZE_OVERRIDE;
+            U32 _y,
+            bool _sync = true) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void saveToFileAsTGA(

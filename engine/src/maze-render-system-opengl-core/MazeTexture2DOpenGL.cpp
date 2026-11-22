@@ -795,10 +795,15 @@ namespace Maze
         U32 _width,
         U32 _height,
         U32 _x,
-        U32 _y)
+        U32 _y,
+        bool _sync)
     {
+        MAZE_PROFILE_EVENT("Texture2DOpenGL::copyImageFrom");
+
         MAZE_ERROR_RETURN_IF((S32)_x + (S32)_width > m_size.x, "Can't copy image!");
         MAZE_ERROR_RETURN_IF((S32)_y + (S32)_height > m_size.y, "Can't copy image!");
+
+        bool foreignContext = m_context->getRenderSystemRaw()->getCurrentContext() != m_context;
 
         ContextOpenGLScopeBind contextScopedBind(m_context);
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
@@ -809,8 +814,17 @@ namespace Maze
 
         MAZE_GL_CALL(mzglTexSubImage2D(MAZE_GL_TEXTURE_2D, 0, _x, _y, _width, _height, originFormat, dataType, _pixels));
 
-        // Brute GPU synchronization
-        MAZE_GL_CALL(mzglFinish());
+        if (_sync)
+        {
+            // Brute GPU synchronization
+            MAZE_GL_CALL(mzglFinish());
+        }
+        else
+        if (foreignContext)
+        {
+            // Commands of the same context are ordered anyway, other (shared) contexts need them submitted
+            MAZE_GL_CALL(mzglFlush());
+        }
 
         generateMipmaps();
     }

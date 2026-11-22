@@ -198,7 +198,9 @@ namespace Maze
             U32 _width,
             U32 _height,
             U32 _x,
-            U32 _y) MAZE_ABSTRACT;
+            U32 _y,
+            // false - no CPU-GPU synchronization after the upload (for frequently updated, non-critical textures)
+            bool _sync = true) MAZE_ABSTRACT;
 
         
 

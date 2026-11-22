@@ -1602,7 +1602,8 @@ namespace Maze
         S32 _width,
         S32 _height,
         S32 _x,
-        S32 _y)
+        S32 _y,
+        bool _sync)
     {
         MAZE_ERROR_RETURN_IF(!_pixels, "Pixels array is null!");
         MAZE_ERROR_RETURN_IF(_width <= 0 || _height <= 0 || _x < 0 || _y < 0, "Invalid copy rect!");
@@ -1621,7 +1622,8 @@ namespace Maze
             (U32)_width,
             (U32)_height,
             (U32)_x,
-            (U32)_y);
+            (U32)_y,
+            _sync);
     }
 
 

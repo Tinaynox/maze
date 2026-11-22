@@ -104,10 +104,11 @@ namespace Maze.Graphics
         }
 
         // Uploads a tightly packed width x height block of pixels into the texture at (x, y).
-        // pixels may be larger than required (only the first width * height * bpp bytes are read)
-        public void CopyImageFrom(byte[] pixels, PixelFormat pixelFormat, int width, int height, int x, int y)
+        // pixels may be larger than required (only the first width * height * bpp bytes are read).
+        // sync = false skips the CPU-GPU synchronization after the upload (for frequently updated, non-critical textures)
+        public void CopyImageFrom(byte[] pixels, PixelFormat pixelFormat, int width, int height, int x, int y, bool sync = true)
         {
-            InternalCalls.Texture2DCopyImageFrom(m_ResourceId, pixels, (int)pixelFormat, width, height, x, y);
+            InternalCalls.Texture2DCopyImageFrom(m_ResourceId, pixels, (int)pixelFormat, width, height, x, y, sync);
         }
     }
 }

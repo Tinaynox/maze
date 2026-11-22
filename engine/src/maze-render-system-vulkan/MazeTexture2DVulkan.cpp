@@ -531,7 +531,8 @@ namespace Maze
         U32 _width,
         U32 _height,
         U32 _x,
-        U32 _y)
+        U32 _y,
+        bool _sync)
     {
         MAZE_ERROR_RETURN_IF(!m_image, "Texture is not loaded!");
         MAZE_ERROR_RETURN_IF(

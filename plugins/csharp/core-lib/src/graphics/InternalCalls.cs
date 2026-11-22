@@ -635,7 +635,7 @@ namespace Maze.Graphics
         internal extern static void Texture2DSetWrap(int textureId, int wrapS, int wrapT);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal extern static void Texture2DCopyImageFrom(int textureId, byte[] pixels, int pixelFormat, int width, int height, int x, int y);
+        internal extern static void Texture2DCopyImageFrom(int textureId, byte[] pixels, int pixelFormat, int width, int height, int x, int y, bool sync);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static string Texture2DGetName(int textureId);
