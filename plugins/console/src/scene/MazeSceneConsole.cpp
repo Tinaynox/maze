@@ -37,6 +37,8 @@
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/ecs/components/MazeTextRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-plugin-console/MazeConsoleService.hpp"
@@ -188,7 +190,19 @@ namespace Maze
             this,
             Vec2F(0.0f, 0.0f),
             Vec2F(0.0f, 1.0f));
-        m_hintText->setColor(ColorU32(100, 100, 100, 255));
+        m_hintText->setColor(ColorU32(255, 255, 255, 255));
+        if (m_hintText->getClassUID() == ClassInfo<TextRenderer2D>::UID())
+        {
+            TextRenderer2D* hintText = m_hintText->castRaw<TextRenderer2D>();
+            hintText->setOutlineThickness(1.0f);
+            hintText->setOutlineColor(ColorU32(20, 20, 20, 255));
+        }
+        else
+        if (m_hintText->getClassUID() == ClassInfo<SystemTextRenderer2D>::UID())
+        {
+            m_hintText->castRaw<SystemTextRenderer2D>()->setSystemFont(
+                SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
+        }
 
         updateHintText();
     }
