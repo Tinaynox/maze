@@ -39,6 +39,7 @@
 #include "maze-graphics/ecs/components/MazeLineRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSimpleLineRenderer2D.hpp"
 #include "maze-ui/ecs/components/MazeEditBox2D.hpp"
+#include "maze-ui/MazeCursorInputEvent.hpp"
 
 
 //////////////////////////////////////////
@@ -108,6 +109,18 @@ namespace Maze
         void updateLogText();
 
         //////////////////////////////////////////
+        Vec2F calculateLogViewportSize() const;
+
+        //////////////////////////////////////////
+        void updateLogLayout();
+
+        //////////////////////////////////////////
+        void scrollLog(F32 _delta);
+
+        //////////////////////////////////////////
+        void notifyBackgroundCursorWheel(CursorWheelInputEvent const& _event);
+
+        //////////////////////////////////////////
         void updateHintText();
 
         //////////////////////////////////////////
@@ -123,12 +136,17 @@ namespace Maze
 
         SpriteRenderer2DPtr m_background;
         UIElement2DPtr m_backgroundElement;
+        Transform2DPtr m_logViewport;
         AbstractTextRenderer2DPtr m_consoleText;
         EditBox2DPtr m_edit;
         AbstractTextRenderer2DPtr m_hintText;
 
 
         S32 m_lastCommandIndex = -1;
+
+        F32 m_logScrollFromBottom = 0.0f;
+        F32 m_logContentHeight = 0.0f;
+        F32 m_logLineHeight = 14.0f;
     };
 
 

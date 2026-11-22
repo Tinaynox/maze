@@ -36,6 +36,7 @@
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/components/MazeTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
@@ -49,6 +50,9 @@ namespace Maze
 {
     //////////////////////////////////////////
     static F32 const c_consoleHeightKoef = 0.5f;
+    static F32 const c_editBoxHeight = 18.0f;
+    static F32 const c_logPadding = 1.0f;
+    static S32 const c_wheelScrollLines = 3;
 
 
     //////////////////////////////////////////
@@ -74,7 +78,10 @@ namespace Maze
             m_renderTarget->eventRenderTargetResized.unsubscribe(this);
 
         if (m_backgroundElement)
+        {
             m_backgroundElement->eventClick.unsubscribe(this);
+            m_backgroundElement->eventCursorWheel.unsubscribe(this);
+        }
 
         if (m_edit)
         {
@@ -118,6 +125,9 @@ namespace Maze
         {
             m_firstFrame = false;
             m_edit->setSelected(true);
+
+            // Text renderers can't measure until their entities are awakened
+            updateLogLayout();
         }
     }
 
@@ -145,19 +155,29 @@ namespace Maze
         m_backgroundElement->setCaptureCursorHits(true);
         m_backgroundElement->eventClick.subscribe(this, &SceneConsole::notifyBackgroundClick);
 
+        m_backgroundElement->eventCursorWheel.subscribe(this, &SceneConsole::notifyBackgroundCursorWheel);
+
+        m_logViewport = SpriteHelper::CreateTransform2D(
+            calculateLogViewportSize(),
+            Vec2F(c_logPadding, c_editBoxHeight + c_logPadding),
+            m_background->getTransform(),
+            this,
+            Vec2F::c_zero,
+            Vec2F::c_zero);
+        m_logViewport->getEntityRaw()->ensureComponent<ScissorMask2D>();
+
         m_consoleText = UIHelper::CreateTextOrSystemText(
             "",
             FontMaterialPtr(),
             12,
             HorizontalAlignment2D::Left,
-            VerticalAlignment2D::Bottom,
-            m_background->getTransform()->getSize() - Vec2F(2.0f, 2.0f),
-            Vec2F(1.0f, 19.0f),
-            m_background->getTransform(),
+            VerticalAlignment2D::Top,
+            m_logViewport->getSize(),
+            Vec2F::c_zero,
+            m_logViewport,
             this,
-            Vec2F(0.0f, 0.0f),
-            Vec2F(0.0f, 0.0f));
-        m_consoleText->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
 
         updateLogText();
 
@@ -165,7 +185,7 @@ namespace Maze
             "",
             FontMaterialPtr(),
             12,
-            Vec2F(m_canvas->getTransform()->getWidth(), 18.0f),
+            Vec2F(m_canvas->getTransform()->getWidth(), c_editBoxHeight),
             Vec2F(0.0f, 0.0f),
             m_background->getTransform(),
             this,
@@ -214,6 +234,57 @@ namespace Maze
             Vec2F(
                 m_canvas->getTransform()->getWidth(),
                 m_canvas->getTransform()->getHeight() * c_consoleHeightKoef));
+
+        m_logViewport->setSize(calculateLogViewportSize());
+        updateLogLayout();
+    }
+
+    //////////////////////////////////////////
+    Vec2F SceneConsole::calculateLogViewportSize() const
+    {
+        Vec2F size = m_background->getTransform()->getSize() - Vec2F(c_logPadding * 2.0f, c_editBoxHeight + c_logPadding * 2.0f);
+        return Vec2F(Math::Max(size.x, 0.0f), Math::Max(size.y, 0.0f));
+    }
+
+    //////////////////////////////////////////
+    void SceneConsole::updateLogLayout()
+    {
+        Vec2F const& viewportSize = m_logViewport->getSize();
+
+        Transform2DPtr const& textTransform = m_consoleText->getTransform();
+        textTransform->setWidth(viewportSize.x);
+
+        F32 contentHeight = m_consoleText->calculatePreferredSize().y;
+        textTransform->setHeight(contentHeight);
+
+        S32 linesCount = 1;
+        for (Char ch : m_consoleText->getText())
+            if (ch == '\n')
+                ++linesCount;
+        if (contentHeight > 0.0f)
+            m_logLineHeight = contentHeight / (F32)linesCount;
+
+        if (m_logScrollFromBottom > 0.0f && contentHeight > m_logContentHeight)
+            m_logScrollFromBottom += contentHeight - m_logContentHeight;
+        m_logContentHeight = contentHeight;
+
+        F32 overflow = Math::Max(contentHeight - viewportSize.y, 0.0f);
+        m_logScrollFromBottom = Math::Clamp(m_logScrollFromBottom, 0.0f, overflow);
+
+        textTransform->setLocalPosition(0.0f, overflow - m_logScrollFromBottom);
+    }
+
+    //////////////////////////////////////////
+    void SceneConsole::scrollLog(F32 _delta)
+    {
+        m_logScrollFromBottom += _delta;
+        updateLogLayout();
+    }
+
+    //////////////////////////////////////////
+    void SceneConsole::notifyBackgroundCursorWheel(CursorWheelInputEvent const& _event)
+    {
+        scrollLog(Math::Sign(_event.deltaWheel) * m_logLineHeight * (F32)c_wheelScrollLines);
     }
 
     //////////////////////////////////////////
@@ -230,7 +301,8 @@ namespace Maze
 
         if (command.empty())
             return;
-        
+
+        m_logScrollFromBottom = 0.0f;
         ConsoleService::GetInstancePtr()->executeCommand(command);
 
         m_lastCommandIndex = -1;
@@ -262,6 +334,8 @@ namespace Maze
             m_consoleText->setText(String(log.begin(), log.end() - 1));
         else
             m_consoleText->setText(log);
+
+        updateLogLayout();
     }
 
     //////////////////////////////////////////
@@ -398,6 +472,24 @@ namespace Maze
                                 m_edit->setText(lastCommand);
                         }
                     }
+                }
+            }
+            else
+            if (_keyboardData.keyCode == KeyCode::PageUp || _keyboardData.keyCode == KeyCode::PageDown)
+            {
+                if (m_edit->getSelected())
+                {
+                    F32 page = Math::Max(m_logViewport->getHeight() - m_logLineHeight, m_logLineHeight);
+                    scrollLog(_keyboardData.keyCode == KeyCode::PageUp ? page : -page);
+                }
+            }
+            else
+            if (_keyboardData.keyCode == KeyCode::Home || _keyboardData.keyCode == KeyCode::End)
+            {
+                if (m_edit->getSelected() && _keyboardData.isControlDown())
+                {
+                    m_logScrollFromBottom = _keyboardData.keyCode == KeyCode::Home ? m_logContentHeight : 0.0f;
+                    updateLogLayout();
                 }
             }
             else
