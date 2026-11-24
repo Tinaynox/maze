@@ -7,7 +7,13 @@ namespace Maze.Core
         public static int Clamp(int value, int min, int max) { return Math.Max(min, Math.Min(max, value)); }
         public static float Clamp(float value, float min, float max) { return Math.Max(min, Math.Min(max, value)); }
 
-        public static float Lerp(float v0, float v1, float s) 
+        public static float SmoothStep(float edge0, float edge1, float x)
+        {
+            float t = Clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+            return t * t * (3.0f - 2.0f * t);
+        }
+
+        public static float Lerp(float v0, float v1, float s)
         {
             return v0 + (v1 - v0) * s;
         }
