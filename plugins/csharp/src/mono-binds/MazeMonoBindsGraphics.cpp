@@ -53,6 +53,7 @@
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeGlobalShaderUniform.hpp"
 #include "maze-graphics/MazeShaderManager.hpp"
+#include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeMeshSkeletonAnimator.hpp"
 #include "maze-graphics/MazeMeshSkeletonAnimation.hpp"
 #include "maze-graphics/helpers/MazePixelSheet2DHelper.hpp"
@@ -121,6 +122,25 @@ namespace Maze
             _outResourceId = material->getResourceId();
         else
             _outResourceId = c_invalidResourceId;
+    }
+
+    //////////////////////////////////////////
+    inline S32 MeshRendererGetMaterialsCount(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(MeshRenderer, 0);
+        return (S32)_component->castRaw<MeshRenderer>()->getMaterialRefs().size();
+    }
+
+    //////////////////////////////////////////
+    inline S32 MeshRendererGetMaterialResourceIdAt(Component* _component, S32 _index)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(MeshRenderer, c_invalidResourceId);
+
+        Vector<MaterialAssetRef> const& materials = _component->castRaw<MeshRenderer>()->getMaterialRefs();
+        if (_index < 0 || _index >= (S32)materials.size() || !materials[_index].getMaterial())
+            return c_invalidResourceId;
+
+        return materials[_index].getMaterial()->getResourceId();
     }
 
     //////////////////////////////////////////
@@ -482,6 +502,25 @@ namespace Maze
             _outResourceId = material->getResourceId();
         else
             _outResourceId = c_invalidResourceId;
+    }
+
+    //////////////////////////////////////////
+    inline S32 SkinnedMeshRendererGetMaterialsCount(Component* _component)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshRenderer, 0);
+        return (S32)_component->castRaw<SkinnedMeshRenderer>()->getMaterialRefs().size();
+    }
+
+    //////////////////////////////////////////
+    inline S32 SkinnedMeshRendererGetMaterialResourceIdAt(Component* _component, S32 _index)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT_RETURN_VALUE(SkinnedMeshRenderer, c_invalidResourceId);
+
+        Vector<MaterialAssetRef> const& materials = _component->castRaw<SkinnedMeshRenderer>()->getMaterialRefs();
+        if (_index < 0 || _index >= (S32)materials.size() || !materials[_index].getMaterial())
+            return c_invalidResourceId;
+
+        return materials[_index].getMaterial()->getResourceId();
     }
 
     //////////////////////////////////////////
@@ -1495,6 +1534,44 @@ namespace Maze
         return result;
     }
 
+    //////////////////////////////////////////
+    inline void MaterialSetShaderFeatureEnabled(S32 _materialId, MonoString* _name, bool _enabled)
+    {
+        Material* material = Material::GetResourceFast(_materialId);
+        if (!material || !_name)
+            return;
+
+        Char* cstr = mono_string_to_utf8(_name);
+        ShaderFeature feature;
+        feature.name = cstr;
+        feature.enabled = _enabled;
+        mono_free(cstr);
+
+        for (Size i = 0, in = material->getRenderPassesCount(RenderPassType::Default); i < in; ++i)
+            if (RenderPassPtr const& renderPass = material->getRenderPass(RenderPassType::Default, i))
+                renderPass->setShaderFeature(feature);
+    }
+
+    //////////////////////////////////////////
+    inline bool MaterialIsShaderFeatureEnabled(S32 _materialId, MonoString* _name)
+    {
+        Material* material = Material::GetResourceFast(_materialId);
+        if (!material || !_name)
+            return false;
+
+        Char* cstr = mono_string_to_utf8(_name);
+        String name = cstr;
+        mono_free(cstr);
+
+        for (Size i = 0, in = material->getRenderPassesCount(RenderPassType::Default); i < in; ++i)
+            if (RenderPassPtr const& renderPass = material->getRenderPass(RenderPassType::Default, i))
+                if (ShaderFeature const* feature = renderPass->getShaderFeature(name))
+                    if (feature->enabled)
+                        return true;
+
+        return false;
+    }
+
 
     //////////////////////////////////////////
     inline S32 CreateTexture2D()
@@ -1922,6 +1999,8 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetMaterialResourceId);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetMaterial);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetMaterialsCount);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetMaterialResourceIdAt);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererGetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MeshRendererSetEnabled);
@@ -1961,6 +2040,8 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetMaterialAssetUnit);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetMaterial);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetMaterial);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetMaterialsCount);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetMaterialResourceIdAt);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererGetRenderMesh);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshRendererSetEnabled);
@@ -2112,6 +2193,8 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetColorF128);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialUniformSetTexture2D);
         MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialGetUniformTexture2D);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialSetShaderFeatureEnabled);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(MaterialIsShaderFeatureEnabled);
 
         // Texture2D
         MAZE_GRAPHICS_MONO_BIND_FUNC(CreateTexture2D);

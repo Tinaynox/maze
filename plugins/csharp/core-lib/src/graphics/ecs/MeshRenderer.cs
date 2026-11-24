@@ -22,6 +22,13 @@ namespace Maze.Graphics
             set => InternalCalls.MeshRendererSetEnabled(NativeComponentPtr, value);
         }
 
+        public int MaterialsCount => InternalCalls.MeshRendererGetMaterialsCount(NativeComponentPtr);
+
+        public Material GetMaterial(int idx)
+        {
+            return Material.Get(InternalCalls.MeshRendererGetMaterialResourceIdAt(NativeComponentPtr, idx));
+        }
+
         public MeshRenderer(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
         {  

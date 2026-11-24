@@ -23,6 +23,13 @@ namespace Maze.Graphics
             set => InternalCalls.SkinnedMeshRendererSetEnabled(NativeComponentPtr, value);
         }
 
+        public int MaterialsCount => InternalCalls.SkinnedMeshRendererGetMaterialsCount(NativeComponentPtr);
+
+        public Material GetMaterial(int idx)
+        {
+            return Material.Get(InternalCalls.SkinnedMeshRendererGetMaterialResourceIdAt(NativeComponentPtr, idx));
+        }
+
         public SkinnedMeshRenderer(NativePtr nativeComponentPtr)
             : base(nativeComponentPtr)
         {  

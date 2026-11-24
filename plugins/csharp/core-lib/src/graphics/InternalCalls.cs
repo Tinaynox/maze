@@ -23,6 +23,12 @@ namespace Maze.Graphics
         internal extern static void MeshRendererGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static int MeshRendererGetMaterialsCount(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static int MeshRendererGetMaterialResourceIdAt(NativePtr nativeComponentPtr, int index);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void MeshRendererSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void MeshRendererGetRenderMesh(NativePtr nativeComponentPtr, out int outRenderMeshResourceId);
@@ -121,6 +127,12 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void SkinnedMeshRendererGetMaterial(NativePtr nativeComponentPtr, out int outMaterialResourceId);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static int SkinnedMeshRendererGetMaterialsCount(NativePtr nativeComponentPtr);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static int SkinnedMeshRendererGetMaterialResourceIdAt(NativePtr nativeComponentPtr, int index);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void SkinnedMeshRendererSetRenderMesh(NativePtr nativeComponentPtr, int renderMeshResourceId);
@@ -560,6 +572,12 @@ namespace Maze.Graphics
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static int MaterialGetUniformTexture2D(int materialId, string uniformName);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void MaterialSetShaderFeatureEnabled(int materialId, string name, bool enabled);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool MaterialIsShaderFeatureEnabled(int materialId, string name);
         #endregion
 
         #region PixelSheet2D

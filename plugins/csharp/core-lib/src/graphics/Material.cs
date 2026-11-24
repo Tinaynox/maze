@@ -57,6 +57,16 @@ namespace Maze.Graphics
             return textureId != -1 ? new Texture2D(textureId) : null;
         }
 
+        public void SetShaderFeatureEnabled(string name, bool enabled)
+        {
+            InternalCalls.MaterialSetShaderFeatureEnabled(m_ResourceId, name, enabled);
+        }
+
+        public bool IsShaderFeatureEnabled(string name)
+        {
+            return InternalCalls.MaterialIsShaderFeatureEnabled(m_ResourceId, name);
+        }
+
         public int EnsureUniformIndex(string name)
         {
             return InternalCalls.MaterialEnsureUniformIndex(m_ResourceId, name);
