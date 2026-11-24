@@ -1016,6 +1016,8 @@ namespace Maze
     {
         for (auto const& uniformData : m_cachedUniformVariants)
             setUniform(uniformData);
+
+        applyGlobalShaderUniforms();
     }
 
     //////////////////////////////////////////
