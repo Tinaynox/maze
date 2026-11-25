@@ -417,6 +417,8 @@ namespace Maze
             if (_renderTarget != renderTarget.get())
                 continue;
 
+            camera->eventCameraWillRender(camera);
+
             DefaultPassParams defaultParams;
 
             defaultParams.renderMask = camera->getRenderMask();

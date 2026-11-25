@@ -245,6 +245,9 @@ namespace Maze
         //////////////////////////////////////////
         MultiDelegate<Camera3D*, RenderTargetPtr const&> eventRenderTargetChanged;
 
+        //////////////////////////////////////////
+        MultiDelegate<Camera3D*> eventCameraWillRender;
+
     protected:
 
         //////////////////////////////////////////

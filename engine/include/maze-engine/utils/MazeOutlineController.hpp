@@ -111,10 +111,10 @@ namespace Maze
         void updateSceneDepthUniforms();
 
         //////////////////////////////////////////
-        void updateCompositeUniforms();
+        void notifyMaskRenderBufferEndDraw(RenderBuffer* _renderBuffer);
 
         //////////////////////////////////////////
-        void notifyMaskRenderBufferEndDraw(RenderBuffer* _renderBuffer);
+        void notifyMaskCameraWillRender(Camera3D* _camera);
 
     protected:
         EcsScene* m_scene = nullptr;

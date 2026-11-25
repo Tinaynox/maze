@@ -58,6 +58,9 @@ namespace Maze
         if (m_maskRenderBuffer)
             m_maskRenderBuffer->eventRenderBufferEndDraw.unsubscribe(this);
 
+        if (m_maskCamera)
+            m_maskCamera->eventCameraWillRender.unsubscribe(this);
+
         if (m_screenSpaceUniform)
             m_screenSpaceUniform->setValue(0.0f);
     }
@@ -125,8 +128,6 @@ namespace Maze
         m_compositeSprite->setPixelPerfect(true);
         m_compositeSprite->getEntityRaw()->setActiveSelf(false);
 
-        updateCompositeUniforms();
-
         return true;
     }
 
@@ -150,14 +151,20 @@ namespace Maze
 
         if (m_maskCamera->getEntityRaw()->getActiveSelf() != maskEnabled)
             m_maskCamera->getEntityRaw()->setActiveSelf(maskEnabled);
+    }
 
-        m_maskCamera->setProjectionMode(m_sourceCamera->getProjectionMode());
-        m_maskCamera->setFOV(m_sourceCamera->getFOV());
-        m_maskCamera->setOrthographicSize(m_sourceCamera->getOrthographicSize());
-        m_maskCamera->setNearZ(m_sourceCamera->getNearZ());
-        m_maskCamera->setFarZ(m_sourceCamera->getFarZ());
+    //////////////////////////////////////////
+    void OutlineController::notifyMaskCameraWillRender(Camera3D* _camera)
+    {
+        if (!m_sourceCamera)
+            return;
 
-        m_maskCamera->setRenderMask(m_sourceCamera->getRenderMask());
+        _camera->setProjectionMode(m_sourceCamera->getProjectionMode());
+        _camera->setFOV(m_sourceCamera->getFOV());
+        _camera->setOrthographicSize(m_sourceCamera->getOrthographicSize());
+        _camera->setNearZ(m_sourceCamera->getNearZ());
+        _camera->setFarZ(m_sourceCamera->getFarZ());
+        _camera->setRenderMask(m_sourceCamera->getRenderMask());
     }
 
     //////////////////////////////////////////
@@ -210,6 +217,7 @@ namespace Maze
         m_maskCamera->setClearSkyBoxFlag(false);
         m_maskCamera->setViewport(Rect2F(0.0f, 0.0f, 1.0f, 1.0f));
         m_maskCamera->setSortOrder(m_sourceCamera->getSortOrder() + 200);
+        m_maskCamera->eventCameraWillRender.subscribe(this, &OutlineController::notifyMaskCameraWillRender);
 
         maskCameraTransform->setParent(m_sourceCamera->getEntityRaw()->ensureComponent<Transform3D>());
     }
@@ -232,7 +240,6 @@ namespace Maze
 
         m_maskRenderBuffer->setSize(_size);
         updateSceneDepthUniforms();
-        updateCompositeUniforms();
     }
 
     //////////////////////////////////////////
@@ -264,18 +271,6 @@ namespace Maze
             m_sceneDepthMapUniform->setValue(renderSystem->getTextureManager()->getWhiteTexture());
             m_sceneDepthParamsUniform->setValue(Vec4F::c_zero);
         }
-    }
-
-    //////////////////////////////////////////
-    void OutlineController::updateCompositeUniforms()
-    {
-        if (!m_compositeSprite || !m_compositeSprite->getMaterial())
-            return;
-
-        Vec2F32 size = (Vec2F32)m_maskRenderBuffer->getSize();
-        m_compositeSprite->getMaterial()->setUniform(
-            MAZE_HCS("u_baseMapTexelSize"),
-            Vec2F32(1.0f / Math::Max(size.x, 1.0f), 1.0f / Math::Max(size.y, 1.0f)));
     }
 
 
