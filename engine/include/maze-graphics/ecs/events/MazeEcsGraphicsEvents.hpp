@@ -40,6 +40,7 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/config/MazeGraphicsConfig.hpp"
 #include "maze-graphics/MazeFrustum.hpp"
+#include "maze-graphics/MazeRenderPassType.hpp"
 
 
 //////////////////////////////////////////
@@ -52,6 +53,7 @@ namespace Maze
     struct MAZE_GRAPHICS_API DefaultPassParams
     {
         S32 renderMask = 0;
+        RenderPassType passType = RenderPassType::Default;
         TMat cameraTransform = TMat::c_identity;
         TMat viewMatrix = TMat::c_identity;
         Mat4F projectionMatrix = Mat4F::c_identity;

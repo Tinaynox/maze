@@ -32,6 +32,7 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
 #include "maze-core/hash/MazeHashCRC.hpp"
 
 
@@ -606,6 +607,21 @@ namespace Maze
                 Math::Abs(axisX.z) * halfSize.x + Math::Abs(axisY.z) * halfSize.y + Math::Abs(axisZ.z) * halfSize.z);
 
             _outRadius = worldHalfSize.length();
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API bool HasRenderPass(
+            Vector<MaterialAssetRef> const& _materials,
+            RenderPassType _passType)
+        {
+            for (MaterialAssetRef const& materialRef : _materials)
+            {
+                MaterialPtr const& material = materialRef.getMaterial();
+                if (material && material->getRenderPassesCount(_passType) > 0)
+                    return true;
+            }
+
+            return false;
         }
 
     } // namespace GraphicsUtilsHelper

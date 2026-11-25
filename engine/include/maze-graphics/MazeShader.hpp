@@ -358,6 +358,9 @@ namespace Maze
         void cacheUniformVariants();
 
         //////////////////////////////////////////
+        inline Vector<ShaderUniformVariant> const& getUniformDefaults() const { return m_uniformDefaults; }
+
+        //////////////////////////////////////////
         void applyCachedUniformVariants();
 
     public:
@@ -398,6 +401,19 @@ namespace Maze
         //////////////////////////////////////////
         virtual ShaderUniformPtr const& createUniformFromShader(HashedCString _uniformName, ShaderUniformType _type = ShaderUniformType::None) MAZE_ABSTRACT;
     
+        //////////////////////////////////////////
+        struct EngineUniform
+        {
+            HashedCString name;
+            ShaderUniformPtr Shader::* member;
+        };
+
+        //////////////////////////////////////////
+        static EngineUniform const* GetEngineUniforms(Size& _outCount);
+
+        //////////////////////////////////////////
+        static bool IsEngineDrivenUniform(HashedCString _name);
+
         //////////////////////////////////////////
         void assignDefaultUniforms();
 
@@ -465,6 +481,8 @@ namespace Maze
         ShaderUniformPtr m_mainLightShadowMapUniform;
 
         Vector<ShaderUniformVariant> m_cachedUniformVariants;
+
+        Vector<ShaderUniformVariant> m_uniformDefaults;
 
     protected:
         // static Shader* s_instancesList;

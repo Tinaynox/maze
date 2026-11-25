@@ -387,6 +387,9 @@ namespace Maze
         LineRenderer3D* _lineRenderer,
         Transform3D* _transform3D)
     {
+        if (_event.getPassParams()->passType != RenderPassType::Default)
+            return;
+
         if (_lineRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
         {
             if (_lineRenderer->getRenderMesh())

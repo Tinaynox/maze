@@ -92,7 +92,8 @@ namespace Maze
                 [&](Entity* _entity, Camera3D* _camera)
                 {
                     if (_camera->getRenderMask() & (S32)DefaultRenderMask::Gizmos ||
-                        !(_camera->getRenderMask() & (S32)DefaultRenderMask::Default))
+                        !(_camera->getRenderMask() & (S32)DefaultRenderMask::Default) ||
+                        _camera->getRenderPassType() != RenderPassType::Default)
                         return false;
 
                     setCurrentCamera3D(_camera->cast<Camera3D>());

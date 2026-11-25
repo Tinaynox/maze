@@ -35,6 +35,7 @@
 #include "maze-graphics/MazeFrustum.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/math/MazeAABB3D.hpp"
+#include "maze-graphics/MazeRenderPassType.hpp"
 
 
 //////////////////////////////////////////
@@ -42,6 +43,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_MANAGED_SHARED_PTR(Mesh);
+    class MaterialAssetRef;
 
     //////////////////////////////////////////
     namespace GraphicsUtilsHelper
@@ -128,6 +130,11 @@ namespace Maze
             TMat const& _worldTransform,
             Vec3F& _outCenter,
             F32& _outRadius);
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API bool HasRenderPass(
+            Vector<MaterialAssetRef> const& _materials,
+            RenderPassType _passType);
 
     } // namespace GraphicsUtilsHelper
     //////////////////////////////////////////

@@ -61,6 +61,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Rotor3D);
     MAZE_USING_SHARED_PTR(SystemTextRenderer3D);
     MAZE_USING_SHARED_PTR(BloomController);
+    MAZE_USING_SHARED_PTR(OutlineController);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(Light3D);
 
@@ -71,6 +72,7 @@ namespace Maze
         RenderTargetPtr renderTarget;
         String bloomMaterialName;
         String postFXMaterialName;
+        String outlineMaterialName;
     };
 
 
@@ -162,6 +164,7 @@ namespace Maze
         RenderBufferPtr m_renderBuffer;
         RenderBufferPtr m_renderBufferMSAA;
         BloomControllerPtr m_bloomController;
+        OutlineControllerPtr m_outlineController;
     };
 
 

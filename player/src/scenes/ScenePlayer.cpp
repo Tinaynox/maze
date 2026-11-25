@@ -132,6 +132,7 @@ namespace Maze
         config.renderTarget = Player::GetInstancePtr()->getMainRenderWindow();
         config.bloomMaterialName = PlayerManager::GetInstancePtr()->getPlayerConfig().getString(MAZE_HCS("bloomMaterial"));
         config.postFXMaterialName = PlayerManager::GetInstancePtr()->getPlayerConfig().getString(MAZE_HCS("postFXMaterial"));
+        config.outlineMaterialName = PlayerManager::GetInstancePtr()->getPlayerConfig().getString(MAZE_HCS("outlineMaterial"));
 
         if (!ScenePlayerBase::init(config))
             return false;

@@ -335,6 +335,13 @@ namespace Maze
         FastVector<ShaderUniformPtr> m_shaderUniforms;
         bool m_shaderUniformsDirty = true;
 
+        struct ShaderDefaultUniform
+        {
+            ShaderUniformPtr uniform;
+            ShaderUniformVariant value;
+        };
+        Vector<ShaderDefaultUniform> m_shaderDefaultUniforms;
+
         BlendOperation m_blendOperation = BlendOperation::Add;
         BlendFactor m_blendSrcFactor = BlendFactor::One;
         BlendFactor m_blendDestFactor = BlendFactor::Zero;

@@ -745,40 +745,62 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Shader::EngineUniform const* Shader::GetEngineUniforms(Size& _outCount)
+    {
+        static EngineUniform const c_uniforms[] =
+        {
+            { MAZE_HCS("u_clipDistance0"), &Shader::m_clipDistance0Uniform },
+            { MAZE_HCS("u_clipDistanceEnable"), &Shader::m_clipDistanceEnableUniform },
+            { MAZE_HCS("u_projectionMatrix"), &Shader::m_projectionMatrixUniform },
+            { MAZE_HCS("u_projectionParams"), &Shader::m_projectionParamsUniform },
+            { MAZE_HCS("u_viewMatrix"), &Shader::m_viewMatrixUniform },
+            { MAZE_HCS("u_modelMatrices"), &Shader::m_modelMatricesUniform },
+            { MAZE_HCS("u_modelMatricesTexture"), &Shader::m_modelMatricesTextureUniform },
+            { MAZE_HCS("u_modelMatricesTextureSize"), &Shader::m_modelMatricesTextureSizeUniform },
+            { MAZE_HCS("u_modelMatriciesOffset"), &Shader::m_modelMatriciesOffsetUniform },
+            { MAZE_HCS("u_viewPosition"), &Shader::m_viewPositionUniform },
+            { MAZE_HCS("u_time"), &Shader::m_timeUniform },
+            { MAZE_HCS("u_mainLightColor"), &Shader::m_mainLightColorUniform },
+            { MAZE_HCS("u_mainLightDirection"), &Shader::m_mainLightDirectionUniform },
+            { MAZE_HCS("u_mainLightViewProjectionMatrix"), &Shader::m_mainLightViewProjectionMatrixUniform },
+            { MAZE_HCS("u_mainLightShadowMap"), &Shader::m_mainLightShadowMapUniform },
+            { MAZE_HCS("u_boneSkinningTransforms"), nullptr }
+        };
+
+        _outCount = sizeof(c_uniforms) / sizeof(c_uniforms[0]);
+        return c_uniforms;
+    }
+
+    //////////////////////////////////////////
+    bool Shader::IsEngineDrivenUniform(HashedCString _name)
+    {
+        Size count;
+        EngineUniform const* uniforms = GetEngineUniforms(count);
+        for (Size i = 0; i < count; ++i)
+            if (uniforms[i].name.hash == _name.hash && strcmp(uniforms[i].name.str, _name.str) == 0)
+                return true;
+
+        return false;
+    }
+
+    //////////////////////////////////////////
     void Shader::assignDefaultUniforms()
     {
-        m_clipDistance0Uniform = getUniform(MAZE_HCS("u_clipDistance0"));
-        m_clipDistanceEnableUniform = getUniform(MAZE_HCS("u_clipDistanceEnable"));
-        m_projectionMatrixUniform = getUniform(MAZE_HCS("u_projectionMatrix"));
-        m_projectionParamsUniform = getUniform(MAZE_HCS("u_projectionParams"));
-        m_viewMatrixUniform = getUniform(MAZE_HCS("u_viewMatrix"));
-        m_modelMatricesUniform = getUniform(MAZE_HCS("u_modelMatrices"));
-        m_modelMatricesTextureUniform = getUniform(MAZE_HCS("u_modelMatricesTexture"));
-        m_modelMatricesTextureSizeUniform = getUniform(MAZE_HCS("u_modelMatricesTextureSize"));
-        m_modelMatriciesOffsetUniform = getUniform(MAZE_HCS("u_modelMatriciesOffset"));
-        m_viewPositionUniform = getUniform(MAZE_HCS("u_viewPosition"));
-        m_timeUniform = getUniform(MAZE_HCS("u_time"));
-        m_mainLightColorUniform = getUniform(MAZE_HCS("u_mainLightColor"));
-        m_mainLightDirectionUniform = getUniform(MAZE_HCS("u_mainLightDirection"));
-        m_mainLightViewProjectionMatrixUniform = getUniform(MAZE_HCS("u_mainLightViewProjectionMatrix"));
-        m_mainLightShadowMapUniform = getUniform(MAZE_HCS("u_mainLightShadowMap"));
+        Size count;
+        EngineUniform const* uniforms = GetEngineUniforms(count);
+        for (Size i = 0; i < count; ++i)
+            if (uniforms[i].member)
+                this->*uniforms[i].member = getUniform(uniforms[i].name);
     }
 
     //////////////////////////////////////////
     void Shader::resetDefaultUniforms()
     {
-        m_projectionMatrixUniform.reset();
-        m_viewMatrixUniform.reset();
-        m_modelMatricesUniform.reset();
-        m_modelMatricesTextureUniform.reset();
-        m_modelMatricesTextureSizeUniform.reset();
-        m_modelMatriciesOffsetUniform.reset();
-        m_viewPositionUniform.reset();
-        m_timeUniform.reset();
-        m_mainLightColorUniform.reset();
-        m_mainLightDirectionUniform.reset();
-        m_mainLightViewProjectionMatrixUniform.reset();
-        m_mainLightShadowMapUniform.reset();
+        Size count;
+        EngineUniform const* uniforms = GetEngineUniforms(count);
+        for (Size i = 0; i < count; ++i)
+            if (uniforms[i].member)
+                (this->*uniforms[i].member).reset();
     }
 
     //////////////////////////////////////////
@@ -805,8 +827,15 @@ namespace Maze
         }
 
 
+        m_uniformDefaults.clear();
         for (ShaderUniformVariant const& uniformData : _uniformsData)
+        {
             setUniform(uniformData);
+
+            HashedCString name(uniformData.getName().c_str(), uniformData.getName().getHash());
+            if (!StringHelper::IsStartsWith(name.str, "u_global_") && !IsEngineDrivenUniform(name))
+                m_uniformDefaults.push_back(uniformData);
+        }
 
         // .mzshader defaults of u_global_* are only fallbacks - the live global values win
         applyGlobalShaderUniforms();
@@ -867,6 +896,7 @@ namespace Maze
         }
         else
         {
+            m_uniformDefaults = baseShader->m_uniformDefaults;
             applyVariantFeatures();
             recompile();
             result = isValid();

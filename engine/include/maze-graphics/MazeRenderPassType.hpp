@@ -45,9 +45,10 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_GRAPHICS_API, RenderPassType,
+    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_GRAPHICS_API, RenderPassType,
         Default,
-        Shadow);
+        Shadow,
+        Outline);
 
 } // namespace Maze
 //////////////////////////////////////////

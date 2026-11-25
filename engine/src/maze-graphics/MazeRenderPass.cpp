@@ -266,12 +266,16 @@ namespace Maze
                 shaderUniform->set(*uniformVariant.get());
         }
 
+        for (ShaderDefaultUniform const& defaultUniform : m_shaderDefaultUniforms)
+            defaultUniform.uniform->set(defaultUniform.value);
+
     }
 
     //////////////////////////////////////////
     void RenderPass::updateShaderUniforms()
     {
         m_shaderUniforms.clear();
+        m_shaderDefaultUniforms.clear();
 
         if (!m_material)
             return;
@@ -292,6 +296,17 @@ namespace Maze
             ShaderUniformVariantPtr const& uniformVariant = uniforms[i];
             if (uniformVariant)
                 m_shaderUniforms[i] = m_shader->getUniform(uniformVariant->getName());
+        }
+
+        for (ShaderUniformVariant const& defaultValue : m_shader->getUniformDefaults())
+        {
+            HashedCString name(defaultValue.getName().c_str(), defaultValue.getName().getHash());
+            if (m_material->hasUniform(name))
+                continue;
+
+            ShaderUniformPtr const& shaderUniform = m_shader->getUniform(name);
+            if (shaderUniform)
+                m_shaderDefaultUniforms.push_back({ shaderUniform, defaultValue });
         }
     }
 

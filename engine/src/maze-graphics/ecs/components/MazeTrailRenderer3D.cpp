@@ -468,6 +468,9 @@ namespace Maze
         if (_trailRenderer->getEdgesCount() == 0)
             return;
 
+        if (_event.getPassParams()->passType != RenderPassType::Default)
+            return;
+
         if (_trailRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
         {
             if (_trailRenderer->getRenderMesh())

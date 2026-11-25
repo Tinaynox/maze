@@ -39,6 +39,7 @@
 #include "maze-graphics/MazeFrustum.hpp"
 #include "maze-graphics/ecs/MazeLightingSettings.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
+#include "maze-graphics/MazeRenderPassType.hpp"
 
 
 //////////////////////////////////////////
@@ -203,6 +204,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline RenderPassType getRenderPassType() const { return m_renderPassType; }
+
+        //////////////////////////////////////////
+        inline void setRenderPassType(RenderPassType _value) { m_renderPassType = _value; }
+
+
+        //////////////////////////////////////////
         inline bool getClipViewport() const { return m_clipViewport; }
 
         //////////////////////////////////////////
@@ -286,6 +294,8 @@ namespace Maze
 #endif
 
         S32 m_renderMask = ~S32(DefaultRenderMask::Gizmos);
+
+        RenderPassType m_renderPassType = RenderPassType::Default;
 
         S32 m_sortOrder = 0;
     };

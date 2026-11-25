@@ -262,10 +262,16 @@ namespace Maze
         if (!_meshRenderer->getEnabled())
             return;
 
+        RenderPassType passType = _event.getPassParams()->passType;
+
         if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
         {
             if (_meshRenderer->getRenderMesh())
             {
+                if (passType != RenderPassType::Default &&
+                    !GraphicsUtilsHelper::HasRenderPass(_meshRenderer->getMaterialRefs(), passType))
+                    return;
+
                 RenderMeshPtr const& renderMesh = _meshRenderer->getRenderMesh();
 
                 // Frustum culling (render meshes built from raw VAOs have no
@@ -299,9 +305,14 @@ namespace Maze
                         material = &materials[i % materials.size()].getMaterial();
 
                     if (!material || !*material)
-                        material = &_meshRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial();
+                    {
+                        if (passType != RenderPassType::Default)
+                            continue;
 
-                    RenderPassPtr const& firstRenderPass = (*material)->getFirstRenderPass();
+                        material = &_meshRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial();
+                    }
+
+                    RenderPassPtr const& firstRenderPass = (*material)->getFirstRenderPass(passType);
                     if (!firstRenderPass)
                         continue;
 

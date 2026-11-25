@@ -163,6 +163,9 @@ namespace Maze
         if (!_outlineRenderer->getEnabled())
             return;
 
+        if (_event.getPassParams()->passType != RenderPassType::Default)
+            return;
+
         if (!_meshRenderer->getRenderMask() || !(_meshRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask))
             return;
 

@@ -126,6 +126,9 @@ namespace Maze
         if (!m_enabled)
             return;
 
+        if (_params.passType != RenderPassType::Default)
+            return;
+
         if (!m_reflectionBuffer || !m_refractionBuffer)
         {
             createBuffers(_renderTarget->getRenderTargetSize());

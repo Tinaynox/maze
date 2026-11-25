@@ -90,6 +90,7 @@
 #include "MazeEngine.hpp"
 #include "settings/MazePlayerSettings.hpp"
 #include "utils/MazeBloomController.hpp"
+#include "utils/MazeOutlineController.hpp"
 
 
 //////////////////////////////////////////
@@ -281,7 +282,7 @@ namespace Maze
         // Every render target defaults to order 0 and RenderController collects canvas targets before
         // camera targets, so without this the window composites last frame's 3D image (1 frame lag)
         {
-            S32 offscreenOrder = m_renderTarget->getOrder() - 1;
+            S32 offscreenOrder = m_renderTarget->getOrder() - 2;
             m_renderBuffer->setOrder(offscreenOrder);
             if (m_renderBufferMSAA)
                 m_renderBufferMSAA->setOrder(offscreenOrder);
@@ -295,6 +296,17 @@ namespace Maze
         m_bloomController = BloomController::Create(
             m_renderBuffer,
             HashedCString(m_config.bloomMaterialName.c_str()));
+
+        if (!m_config.outlineMaterialName.empty())
+        {
+            m_outlineController = OutlineController::Create(
+                this,
+                m_canvas->getTransform(),
+                renderBufferSize,
+                HashedCString(m_config.outlineMaterialName.c_str()));
+            if (m_outlineController)
+                m_outlineController->setOrder(m_renderTarget->getOrder() - 1);
+        }
 
         updateRenderTarget();
 
@@ -336,6 +348,9 @@ namespace Maze
     {
         EcsRenderScene::update(_dt);
 
+        if (m_outlineController)
+            m_outlineController->update(_dt);
+
         PlayerSettings* playerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<PlayerSettings>();
 
         if (playerSettings->getBloomEnabled())
@@ -366,6 +381,9 @@ namespace Maze
             m_renderBufferMSAA->setSize(renderWindowSize);
 
         m_distortionRenderBuffer->setSize(renderWindowSize / DISTORTION_BUFFER_DIV);
+
+        if (m_outlineController)
+            m_outlineController->setSize(Vec2U32(renderWindowSize));
 
         /*if (m_shadowBuffer)
             m_shadowBuffer->setSize(renderWindowSize / SHADOW_BUFFER_DIV);*/
@@ -409,6 +427,14 @@ namespace Maze
             m_renderColorSprite->getEntityRaw()->setActiveSelf(false);
             m_enginePlayer->getCurrentCamera3D()->setRenderTarget(
                 m_renderTarget);
+        }
+
+        if (m_outlineController)
+        {
+            m_outlineController->setSourceCamera(m_enginePlayer->getCurrentCamera3D());
+
+            m_outlineController->setSceneDepthBuffer(
+                playerSettings->getBloomEnabled() ? m_renderBuffer : nullptr);
         }
 
         updateRenderTargetViewport();

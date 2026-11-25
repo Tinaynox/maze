@@ -420,6 +420,7 @@ namespace Maze
             DefaultPassParams defaultParams;
 
             defaultParams.renderMask = camera->getRenderMask();
+            defaultParams.passType = camera->getRenderPassType();
             defaultParams.cameraTransform = camera->getTransform()->getWorldTransform();
             defaultParams.viewMatrix = defaultParams.cameraTransform.inversed();
             defaultParams.projectionMatrix = camera->calculateProjectionMatrix(renderTarget);
@@ -493,7 +494,9 @@ namespace Maze
                 }
             }
 
-            if (defaultParams.drawFlag && camera->getShadowBuffer() && mainLight && mainLight->getShadowCast())
+            if (defaultParams.drawFlag &&
+                defaultParams.passType == RenderPassType::Default &&
+                camera->getShadowBuffer() && mainLight && mainLight->getShadowCast())
             {
                 ShadowPassParams shadowParams;
                 shadowParams.renderMask = defaultParams.renderMask;

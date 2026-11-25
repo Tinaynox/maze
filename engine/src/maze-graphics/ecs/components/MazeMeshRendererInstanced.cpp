@@ -260,12 +260,23 @@ namespace Maze
         {
             if (_meshRenderer->getRenderMesh())
             {
+                RenderPassType passType = _event.getPassParams()->passType;
+
                 Material const* material = _meshRenderer->getMaterial().get();
                 if (!material)
+                {
+                    if (passType != RenderPassType::Default)
+                        return;
+
                     material = _event.getRenderTarget()->getRenderSystem()->getMaterialManager()->getErrorMaterial().get();
+                }
+
+                RenderPassPtr const& firstRenderPass = material->getFirstRenderPass(passType);
+                if (!firstRenderPass)
+                    return;
 
 #if (MAZE_DEBUG)
-                if (!material->getFirstRenderPass()->getShader())
+                if (!firstRenderPass->getShader())
                 {
                     Debug::LogError("Mesh Instanced(EID: %u): Shader is null!", _entity->getId());
                     return;
@@ -279,7 +290,7 @@ namespace Maze
                 VertexArrayObjectPtr const& vao = vaos[0];
 
                 _event.getRenderUnits()->emplace_back(
-                    material->getFirstRenderPass().get(),
+                    firstRenderPass.get(),
                     _transform3D->getWorldPosition(),
                     _meshRenderer,
                     -1, 0u, vao->getResourceId().getIndex());

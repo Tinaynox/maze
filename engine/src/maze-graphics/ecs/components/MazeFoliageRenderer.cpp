@@ -546,6 +546,9 @@ namespace Maze
         if (!_foliageRenderer->getEnabled())
             return;
 
+        if (_event.getPassParams()->passType != RenderPassType::Default)
+            return;
+
         if (!_foliageRenderer->getRenderMask() || !(_foliageRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask))
             return;
 

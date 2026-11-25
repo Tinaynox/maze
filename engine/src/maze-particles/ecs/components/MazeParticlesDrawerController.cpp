@@ -138,6 +138,9 @@ namespace Maze
         Entity* _entity,
         ParticlesDrawerController* _particlesDrawerController)
     {
+        if (_event.getPassParams()->passType != RenderPassType::Default)
+            return;
+
         Vec3F cameraPosition = _event.getPassParams()->cameraTransform.getTranslation();
         TMat cameraTransform = _event.getPassParams()->cameraTransform;
         cameraTransform.setTranslation(Vec3F::c_zero);

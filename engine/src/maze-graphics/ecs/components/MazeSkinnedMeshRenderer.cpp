@@ -345,6 +345,8 @@ namespace Maze
         if (!_meshRenderer->getSkeleton())
             return;
 
+        RenderPassType passType = _event.getPassParams()->passType;
+
         if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
         {
             if (!_meshRenderer->getSkeleton()->getAnimator() || _meshRenderer->getSkeleton()->getAnimator()->getBonesSkinningTransforms().empty())
@@ -352,6 +354,10 @@ namespace Maze
 
             if (_meshRenderer->getRenderMesh())
             {
+                if (passType != RenderPassType::Default &&
+                    !GraphicsUtilsHelper::HasRenderPass(_meshRenderer->getMaterialRefs(), passType))
+                    return;
+
                 RenderMeshPtr const& renderMesh = _meshRenderer->getRenderMesh();
 
                 // Frustum culling with the inflated rest-pose bounds
@@ -386,11 +392,18 @@ namespace Maze
                         material = &materials[i % materials.size()].getMaterial();
 
                     if (!material || !*material)
-                        material = &_meshRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial();
+                    {
+                        if (passType != RenderPassType::Default)
+                            continue;
 
-                    RenderPassPtr const& firstRenderPass = (*material)->getFirstRenderPass();
+                        material = &_meshRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial();
+                    }
+
+                    RenderPassPtr const& firstRenderPass = (*material)->getFirstRenderPass(passType);
+                    if (!firstRenderPass)
+                        continue;
 #if (MAZE_DEBUG)
-                    if (!firstRenderPass || !firstRenderPass->getShader())
+                    if (!firstRenderPass->getShader())
                     {
                         Debug::LogError("Mesh(EID: %u): Shader is null!", _entity->getId());
                         return;
