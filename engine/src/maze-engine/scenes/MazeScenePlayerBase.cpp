@@ -116,17 +116,6 @@ namespace Maze
     //////////////////////////////////////////
     ScenePlayerBase::~ScenePlayerBase()
     {
-
-        if (m_canvas)
-        {
-            UIElement2D* canvasUIElement = m_canvas->getEntityRaw()->getComponentRaw<UIElement2D>();
-            if (canvasUIElement)
-            {
-                canvasUIElement->eventCursorPressIn.unsubscribe(this);
-                canvasUIElement->eventCursorDrag.unsubscribe(this);
-            }
-        }
-
         if (SettingsManager::GetInstancePtr())
         {
             PlayerSettings* playerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<PlayerSettings>();
