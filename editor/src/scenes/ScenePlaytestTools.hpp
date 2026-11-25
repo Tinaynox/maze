@@ -82,10 +82,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
 
-
-        //////////////////////////////////////////
-        void setPlaytestCamera(Camera3DPtr const& _playtestCamera);
-
     protected:
 
         //////////////////////////////////////////
@@ -117,7 +113,6 @@ namespace Maze
         Rect2F getPlaytestViewport() const;
 
     protected:
-        Camera3DPtr m_playtestCamera;
         EditorPlaytestToolsPtr m_editorPlaytestTools;
     };
 

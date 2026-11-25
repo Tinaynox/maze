@@ -485,6 +485,7 @@ namespace Maze
             hierarchyController->addIgnoreScene(SceneWorkspace::GetMetaClass()->getClassUID());
             hierarchyController->addIgnoreScene(SceneWorkspaceTools::GetMetaClass()->getClassUID());
             hierarchyController->addIgnoreScene(ScenePlaytest::GetMetaClass()->getClassUID());
+            hierarchyController->addIgnoreScene(ScenePlaytestPlayer::GetMetaClass()->getClassUID());
             hierarchyController->addIgnoreScene(ScenePlaytestTools::GetMetaClass()->getClassUID());
         }
 

@@ -45,6 +45,9 @@
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
+#include "maze-graphics/MazeGlobalShaderUniform.hpp"
+#include "maze-engine/scenes/MazeScenePlayerBase.hpp"
 #include "scenes/SceneMain.hpp"
 
 
@@ -53,7 +56,56 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(ScenePlaytest);
-    MAZE_USING_SHARED_PTR(SceneEnginePlayer);
+    MAZE_USING_SHARED_PTR(ScenePlaytestPlayer);
+
+
+    //////////////////////////////////////////
+    // Class ScenePlaytestPlayer
+    //
+    //////////////////////////////////////////
+    class ScenePlaytestPlayer
+        : public ScenePlayerBase
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(ScenePlaytestPlayer, ScenePlayerBase);
+
+    public:
+
+        //////////////////////////////////////////
+        static ScenePlaytestPlayerPtr Create();
+
+        //////////////////////////////////////////
+        virtual ~ScenePlaytestPlayer();
+
+        //////////////////////////////////////////
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
+
+    protected:
+
+        //////////////////////////////////////////
+        ScenePlaytestPlayer();
+
+        //////////////////////////////////////////
+        virtual bool init() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual Rect2F getMainViewport() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        void applyGlobalShaderUniformDefaults(DataBlock const& _playerConfig);
+
+    protected:
+        Rect2F m_lastViewport = Rect2F::c_zero;
+
+        struct GlobalUniformBackup
+        {
+            GlobalShaderUniformPtr uniform;
+            ShaderUniformVariant value;
+        };
+        Vector<GlobalUniformBackup> m_globalUniformBackups;
+    };
 
 
     //////////////////////////////////////////
@@ -93,7 +145,7 @@ namespace Maze
         virtual EcsWorld* assignWorld() MAZE_OVERRIDE;
 
     protected:
-        SceneEnginePlayerPtr m_sceneEnginePlayer;
+        ScenePlaytestPlayerPtr m_scenePlayer;
         
     };
 

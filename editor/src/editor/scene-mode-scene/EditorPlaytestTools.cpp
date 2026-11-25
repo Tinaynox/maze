@@ -69,24 +69,5 @@ namespace Maze
     }
 
 
-    //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(EditorPlaytestToolsOnEnginePlayerCurrentCameraChanged,
-        {},
-        {},
-        EnginePlayerCurrentCameraChangedEvent const& _event,
-        Entity* _entity,
-        EditorPlaytestTools* _editorPlaytest)
-    {
-        EntityPtr const& cameraEntity = _entity->getEcsWorld()->getEntity(_event.cameraEid);
-        if (cameraEntity)
-        {
-            Camera3DPtr const& camera = cameraEntity->getComponent<Camera3D>();
-            ScenePlaytestToolsPtr scene = SceneManager::GetInstancePtr()->getScene<ScenePlaytestTools>();
-            if (scene)
-                scene->setPlaytestCamera(camera);
-        }
-    }
-
-    
 } // namespace Maze
 //////////////////////////////////////////

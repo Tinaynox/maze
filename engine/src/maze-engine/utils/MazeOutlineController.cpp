@@ -63,6 +63,12 @@ namespace Maze
 
         if (m_screenSpaceUniform)
             m_screenSpaceUniform->setValue(0.0f);
+
+        if (m_sceneDepthParamsUniform)
+            m_sceneDepthParamsUniform->setValue(Vec4F::c_zero);
+
+        if (m_sceneDepthMapUniform && GraphicsManager::GetInstancePtr())
+            m_sceneDepthMapUniform->setValue(GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager()->getWhiteTexture());
     }
 
     //////////////////////////////////////////

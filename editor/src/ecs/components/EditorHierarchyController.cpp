@@ -996,7 +996,7 @@ namespace Maze
             if (!_entity->getEcsScene() ||
                 (_entity->getEcsScene()->getClassUID() != ClassInfo<SceneWorkspace>::UID() &&
                 _entity->getEcsScene()->getClassUID() != ClassInfo<ScenePlaytest>::UID() &&
-                _entity->getEcsScene()->getClassUID() != ClassInfo<SceneEnginePlayer>::UID()))
+                _entity->getEcsScene()->getClassUID() != ClassInfo<ScenePlaytestPlayer>::UID()))
                 return;
         }
 

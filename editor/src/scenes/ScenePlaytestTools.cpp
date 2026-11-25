@@ -430,11 +430,6 @@ namespace Maze
 
         if (m_mainCanvas)
             m_mainCanvas->setViewport(sceneRect);
-
-        if (m_playtestCamera)
-            m_playtestCamera->setViewport(
-                EditorLayout::CalculateWorkViewport(
-                    EditorLayout::c_sceneViewport));
     }
 
     //////////////////////////////////////////
@@ -462,21 +457,6 @@ namespace Maze
             return EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
     }
 
-    //////////////////////////////////////////
-    void ScenePlaytestTools::setPlaytestCamera(Camera3DPtr const& _playtestCamera)
-    {
-        if (m_playtestCamera == _playtestCamera)
-            return;
-
-        m_playtestCamera = _playtestCamera;
-
-        if (m_playtestCamera)
-        {
-            m_playtestCamera->setRenderTarget(m_renderTarget);
-            updateViewports();
-        }
-    }
-    
 
 
 } // namespace Maze

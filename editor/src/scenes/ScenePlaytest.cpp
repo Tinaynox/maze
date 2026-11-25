@@ -71,7 +71,11 @@
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-editor-tools/managers/MazeColorPickerManager.hpp"
-#include "maze-engine/ecs/scenes/MazeSceneEnginePlayer.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
+#include "maze-graphics/MazeShaderUniformVariant.hpp"
+#include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-engine/ecs/components/MazeEnginePlayer.hpp"
+#include "helpers/EditorProjectHelper.hpp"
 #include "maze-ui/ecs/components/MazeExperimental.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
@@ -83,6 +87,121 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    // Class ScenePlaytestPlayer
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ScenePlaytestPlayer, ScenePlayerBase);
+
+    //////////////////////////////////////////
+    ScenePlaytestPlayer::ScenePlaytestPlayer()
+    {
+    }
+
+    //////////////////////////////////////////
+    ScenePlaytestPlayer::~ScenePlaytestPlayer()
+    {
+        for (GlobalUniformBackup const& backup : m_globalUniformBackups)
+        {
+            backup.uniform->setVariant(backup.value);
+            backup.uniform->applyImmediate();
+        }
+    }
+
+    //////////////////////////////////////////
+    ScenePlaytestPlayerPtr ScenePlaytestPlayer::Create()
+    {
+        ScenePlaytestPlayerPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ScenePlaytestPlayer, object, init());
+        return object;
+    }
+
+    //////////////////////////////////////////
+    bool ScenePlaytestPlayer::init()
+    {
+        DataBlock playerConfig;
+        Path playerConfigPath = EditorHelper::GetProjectFolder() + Path("/Player.mzcfg");
+        if (FileHelper::IsFileExists(playerConfigPath))
+            playerConfig.loadRegularFile(playerConfigPath);
+
+        applyGlobalShaderUniformDefaults(playerConfig);
+
+        ScenePlayerBaseConfig config;
+        config.renderTarget = Editor::GetInstancePtr()->getMainRenderWindow();
+        config.bloomMaterialName = playerConfig.getString(MAZE_HCS("bloomMaterial"));
+        config.postFXMaterialName = playerConfig.getString(MAZE_HCS("postFXMaterial"));
+        config.outlineMaterialName = playerConfig.getString(MAZE_HCS("outlineMaterial"));
+
+        m_lastViewport = getMainViewport();
+
+        if (!ScenePlayerBase::init(config))
+            return false;
+
+        m_canvas->setSortOrder(-500000);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void ScenePlaytestPlayer::update(F32 _dt)
+    {
+        Rect2F viewport = getMainViewport();
+        if (viewport != m_lastViewport)
+        {
+            m_lastViewport = viewport;
+            updateViewport(true);
+        }
+
+        ScenePlayerBase::update(_dt);
+
+        if (!m_enginePlayer->getCurrentCamera3D() && m_renderColorSprite->getEntityRaw()->getActiveSelf())
+            m_renderColorSprite->getEntityRaw()->setActiveSelf(false);
+    }
+
+    //////////////////////////////////////////
+    Rect2F ScenePlaytestPlayer::getMainViewport()
+    {
+        return EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
+    }
+
+    //////////////////////////////////////////
+    void ScenePlaytestPlayer::applyGlobalShaderUniformDefaults(DataBlock const& _playerConfig)
+    {
+        DataBlock const* uniformsBlock = _playerConfig.getDataBlock(MAZE_HCS("globalShaderUniforms"));
+        if (!uniformsBlock)
+            return;
+
+        RenderSystem* renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
+        ShaderManagerPtr const& shaderManager = renderSystem->getShaderManager();
+
+        for (DataBlock::DataBlockIndex i = 0; i < (DataBlock::DataBlockIndex)uniformsBlock->getDataBlocksCount(); ++i)
+        {
+            DataBlock const* uniformBlock = uniformsBlock->getDataBlock(i);
+            if (uniformBlock->getName() != MAZE_HCS("uniform"))
+                continue;
+
+            ShaderUniformVariant variant(renderSystem);
+            if (!variant.loadFromDataBlock(*uniformBlock) || variant.getName().empty())
+            {
+                MAZE_ERROR("Invalid global shader uniform in the player config!");
+                continue;
+            }
+
+            HashedCString name = variant.getName().asHashedCString();
+            GlobalShaderUniformPtr const& existingUniform = shaderManager->getGlobalShaderUniform(name);
+            if (existingUniform)
+                m_globalUniformBackups.push_back({ existingUniform, existingUniform->getVariant() });
+
+            GlobalShaderUniformPtr const& uniform = shaderManager->ensureGlobalShaderUniform(name);
+            if (!uniform)
+                continue;
+
+            uniform->setVariant(variant);
+            uniform->applyImmediate();
+        }
+    }
+
+
     //////////////////////////////////////////
     // Class ScenePlaytest
     //
@@ -99,10 +218,10 @@ namespace Maze
     //////////////////////////////////////////
     ScenePlaytest::~ScenePlaytest()
     {
-        if (m_sceneEnginePlayer)
+        if (m_scenePlayer)
         {
-            SceneManager::GetInstancePtr()->destroyScene(m_sceneEnginePlayer);
-            m_sceneEnginePlayer.reset();
+            SceneManager::GetInstancePtr()->destroyScene(m_scenePlayer);
+            m_scenePlayer.reset();
         }
     }
 
@@ -123,9 +242,7 @@ namespace Maze
 
         makeMainScene();
 
-        SceneEnginePlayerInitConfig config;
-        config.renderTarget = Editor::GetInstancePtr()->getMainRenderWindow();
-        m_sceneEnginePlayer = SceneManager::GetInstancePtr()->loadScene<SceneEnginePlayer>(true, config);
+        m_scenePlayer = SceneManager::GetInstancePtr()->loadScene<ScenePlaytestPlayer>(true);
 
 
         return true;
