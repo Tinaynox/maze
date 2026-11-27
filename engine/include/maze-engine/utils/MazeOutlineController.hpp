@@ -131,7 +131,6 @@ namespace Maze
 
         GlobalShaderUniformPtr m_sceneDepthMapUniform;
         GlobalShaderUniformPtr m_sceneDepthParamsUniform;
-        GlobalShaderUniformPtr m_screenSpaceUniform;
         GlobalShaderUniformPtr m_maskEnabledUniform;
     };
 

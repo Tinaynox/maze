@@ -61,9 +61,6 @@ namespace Maze
         if (m_maskCamera)
             m_maskCamera->eventCameraWillRender.unsubscribe(this);
 
-        if (m_screenSpaceUniform)
-            m_screenSpaceUniform->setValue(0.0f);
-
         if (m_sceneDepthParamsUniform)
             m_sceneDepthParamsUniform->setValue(Vec4F::c_zero);
 
@@ -115,9 +112,6 @@ namespace Maze
         m_sceneDepthMapUniform = shaderManager->ensureGlobalShaderUniform(MAZE_HCS("u_global_outlineSceneDepthMap"));
         m_sceneDepthParamsUniform = shaderManager->ensureGlobalShaderUniform(MAZE_HCS("u_global_outlineSceneDepthParams"));
         updateSceneDepthUniforms();
-
-        m_screenSpaceUniform = shaderManager->ensureGlobalShaderUniform(MAZE_HCS("u_global_outlineScreenSpace"));
-        m_screenSpaceUniform->setValue(1.0f);
 
         m_maskEnabledUniform = shaderManager->ensureGlobalShaderUniform(MAZE_HCS("u_global_outlineMaskEnabled"));
 
