@@ -43,6 +43,9 @@
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
+#include <cstring>
 
 
 //////////////////////////////////////////
@@ -83,30 +86,43 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    static F32 const c_lineRendererEpsilon = 1e-6f;
+
+
+    //////////////////////////////////////////
     // Class LineRenderer2D
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(LineRenderer2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, width, 1.0f, getWidth, setWidth),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, featherWidth, 0.0f, getFeatherWidth, setFeatherWidth),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorGradient, color, ColorGradient(), getColor, setColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec2F>, positions, Vector<Vec2F>(), getPositions, setPositions));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(LineRenderer2D);
 
+    //////////////////////////////////////////
+    F32 const LineRenderer2D::c_miterLimit = 4.0f;
+
+    //////////////////////////////////////////
+    Size const LineRenderer2D::c_maxPositionsCount = 65535 / 4;
+
 
     //////////////////////////////////////////
     LineRenderer2D::LineRenderer2D()
         : m_renderSystem(nullptr)
         , m_width(1.0f)
+        , m_featherWidth(0.0f)
         , m_color((Vec4F)ColorF128::c_white)
+        , m_meshDirty(true)
     {
     }
 
     //////////////////////////////////////////
     LineRenderer2D::~LineRenderer2D()
     {
-        
+
     }
 
     //////////////////////////////////////////
@@ -124,7 +140,7 @@ namespace Maze
             _renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
 
         m_renderSystem = _renderSystem;
-        
+
         return true;
     }
 
@@ -142,154 +158,270 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void LineRenderer2D::setWidth(F32 _width)
+    {
+        if (m_width == _width)
+            return;
+
+        m_width = _width;
+        m_meshDirty = true;
+    }
+
+    //////////////////////////////////////////
+    void LineRenderer2D::setFeatherWidth(F32 _featherWidth)
+    {
+        _featherWidth = Math::Max(_featherWidth, 0.0f);
+        if (m_featherWidth == _featherWidth)
+            return;
+
+        m_featherWidth = _featherWidth;
+        m_meshDirty = true;
+    }
+
+    //////////////////////////////////////////
+    void LineRenderer2D::setColor(ColorF128 const& _color)
+    {
+        setColor(ColorGradient(0.0f, _color.toVec4F32()));
+    }
+
+    //////////////////////////////////////////
+    void LineRenderer2D::setColor(ColorGradient const& _color)
+    {
+        m_color = _color;
+        m_meshDirty = true;
+    }
+
+    //////////////////////////////////////////
+    void LineRenderer2D::resizePositions(Size _size)
+    {
+        if (m_positions.size() == _size)
+            return;
+
+        m_positions.resize(_size);
+        m_meshDirty = true;
+    }
+
+    //////////////////////////////////////////
+    void LineRenderer2D::setPosition(Size _i, Vec2F const& _position)
+    {
+        MAZE_ERROR_RETURN_IF(_i >= m_positions.size(), "Position index %u is out of range (%u)!", (U32)_i, (U32)m_positions.size());
+
+        if (m_positions[_i] == _position)
+            return;
+
+        m_positions[_i] = _position;
+        m_meshDirty = true;
+    }
+
+    //////////////////////////////////////////
+    void LineRenderer2D::setPositions(Vec2F const* _positions, Size _count)
+    {
+        if (m_positions.size() == _count &&
+            (_count == 0 || memcmp(m_positions.data(), _positions, _count * sizeof(Vec2F)) == 0))
+            return;
+
+        m_positions.assign(_positions, _positions + _count);
+        m_meshDirty = true;
+    }
+
+    //////////////////////////////////////////
+    void LineRenderer2D::prepareForRender()
+    {
+        if (m_meshDirty)
+            rebuildMesh();
+    }
+
+    //////////////////////////////////////////
+    bool LineRenderer2D::calculateSegmentDirections(Size _pointsCount)
+    {
+        Size segmentsCount = _pointsCount - 1;
+
+        m_segmentDirections.resize(segmentsCount);
+        m_pointDistances.resize(_pointsCount);
+        m_pointDistances[0] = 0.0f;
+
+        S32 firstValidSegment = -1;
+        for (Size i = 0; i < segmentsCount; ++i)
+        {
+            Vec2F delta = m_positions[i + 1] - m_positions[i];
+            F32 length = delta.length();
+            m_pointDistances[i + 1] = m_pointDistances[i] + length;
+
+            if (length > c_lineRendererEpsilon)
+            {
+                m_segmentDirections[i] = delta / length;
+                if (firstValidSegment < 0)
+                    firstValidSegment = (S32)i;
+            }
+            else
+            {
+                m_segmentDirections[i] = (i > 0) ? m_segmentDirections[i - 1] : Vec2F::c_zero;
+            }
+        }
+
+        if (firstValidSegment < 0)
+            return false;
+
+        for (S32 i = 0; i < firstValidSegment; ++i)
+            m_segmentDirections[i] = m_segmentDirections[firstValidSegment];
+
+        return true;
+    }
+
+    //////////////////////////////////////////
     void LineRenderer2D::rebuildMesh()
     {
         if (!m_vao)
             return;
 
-        S32 quadsCount = (S32)m_positions.size() - 1;
-        if (quadsCount <= 0 || m_width <= 0.0f)
+        m_meshDirty = false;
+
+        if (m_positions.size() > c_maxPositionsCount)
+            MAZE_ERROR("LineRenderer2D positions count %u exceeds the limit %u, the line is truncated!", (U32)m_positions.size(), (U32)c_maxPositionsCount);
+
+        Size pointsCount = Math::Min(m_positions.size(), c_maxPositionsCount);
+        if (pointsCount < 2 || m_width <= 0.0f || !calculateSegmentDirections(pointsCount))
         {
             m_vao->clear();
             return;
         }
 
-        struct EdgeData
-        {
-            F32 progress;
-            Vec2F direction;
-            F32 halfWidth;
-            F32 distanceToNextEdge;
-        };
+        bool const feathered = m_featherWidth > 0.0f;
+        U32 const verticesPerPoint = feathered ? 4u : 2u;
+        U32 const lanesCount = verticesPerPoint - 1u;
+        U32 const verticesCount = verticesPerPoint * (U32)pointsCount;
+        U32 const indicesCount = 6u * lanesCount * (U32)(pointsCount - 1);
 
-        F32 totalLength = 0.0f;
+        F32 const halfWidth = m_width * 0.5f;
+        F32 const outerHalfWidth = halfWidth + m_featherWidth;
+        F32 const innerV = feathered ? (m_featherWidth / (2.0f * outerHalfWidth)) : 0.0f;
 
-        Vector<EdgeData> edges;
-        edges.resize((Size)quadsCount);
-        for (S32 i = 0, in = quadsCount; i < in; ++i)
-        {
-            EdgeData& edge = edges[i];
+        F32 const totalLength = m_pointDistances[pointsCount - 1];
+        F32 const invTotalLength = totalLength > c_lineRendererEpsilon ? (1.0f / totalLength) : 0.0f;
 
-            Vec2F toNextEdge = m_positions[i + 1] - m_positions[i];
-            F32 toNextEdgeLength = toNextEdge.length();
-            edge.direction = (toNextEdgeLength != 0.0f) ? (toNextEdge / toNextEdgeLength) : Vec2F::c_zero;
-
-            if (i >= 1)
-            {
-                Vec2F prevDirection = (m_positions[i] - m_positions[i - 1]).normalizedCopy();
-                edge.direction = ((prevDirection + edge.direction) * 0.5f).normalizedCopy();
-            }
-
-            edge.distanceToNextEdge = toNextEdgeLength;
-
-            totalLength += toNextEdgeLength;
-        }
-
-        F32 l = 0.0f;
-        for (S32 i = 0, in = quadsCount; i < in; ++i)
-        {
-            EdgeData& edge = edges[i];
-
-            edge.progress = l / totalLength;
-            edge.halfWidth = getTrailWidth(edge.progress);
-
-            l += edge.distanceToNextEdge;
-        }
-
-
-        U32 verticesCount = 2 * quadsCount + 2;
-        U32 indicesCount = 6 * quadsCount;
+        F32 const alpha = m_canvasRenderer ? m_canvasRenderer->getAlpha() : 1.0f;
 
         m_vertices.resize(verticesCount);
         m_uvs.resize(verticesCount);
         m_colors.resize(verticesCount);
 
         U32 vertex = 0;
-        U32 index = 0;
-
-        Vec2F direction;
-        Vec2F perpendicular;
-        Vec2F vertexA;
-        Vec2F vertexB;
-        F32 width;
-        F32 halfWidth;
-        ColorF128 color;
-
-        Vec2F currentPosition = m_positions[0];
-        Vec2F nextPosition;
-        for (S32 i = 0; i < (S32)(quadsCount); ++i)
+        for (Size i = 0; i < pointsCount; ++i)
         {
-            EdgeData& edge = edges[i];
+            Vec2F normal;
+            F32 miterScale = 1.0f;
 
-            width = getTrailWidth(edge.progress);
-            color = ColorF128(m_color.evaluate(edge.progress));
-            halfWidth = width * 0.5f;
+            if (i == 0)
+            {
+                normal = m_segmentDirections[0].perpendicular();
+            }
+            else
+            if (i == pointsCount - 1)
+            {
+                normal = m_segmentDirections[i - 1].perpendicular();
+            }
+            else
+            {
+                Vec2F prevNormal = m_segmentDirections[i - 1].perpendicular();
+                Vec2F nextNormal = m_segmentDirections[i].perpendicular();
+                Vec2F miter = prevNormal + nextNormal;
+                F32 miterLength = miter.length();
 
-            nextPosition = m_positions[i + 1];
-            direction = edge.direction;
-            
-            perpendicular = direction.perpendicular();
-            vertexA = currentPosition + perpendicular * halfWidth;
-            vertexB = currentPosition - perpendicular * halfWidth;
+                if (miterLength > c_lineRendererEpsilon)
+                {
+                    normal = miter / miterLength;
+                    F32 cosHalfAngle = normal.dotProduct(nextNormal);
+                    miterScale = Math::Min(1.0f / Math::Max(cosHalfAngle, c_lineRendererEpsilon), c_miterLimit);
+                }
+                else
+                {
+                    normal = nextNormal;
+                }
+            }
 
-            m_vertices[vertex] = vertexA;
-            m_uvs[vertex] = Vec2F(edge.progress, 0.0f);
-            m_colors[vertex] = color.toVec4F32();
-            ++vertex;
+            Vec2F const& position = m_positions[i];
+            Vec2F const coreOffset = normal * (halfWidth * miterScale);
 
-            m_vertices[vertex] = vertexB;
-            m_uvs[vertex] = Vec2F(edge.progress, 1.0f);
-            m_colors[vertex] = color.toVec4F32();
-            ++vertex;
+            F32 const progress = m_pointDistances[i] * invTotalLength;
+            Vec4F color = m_color.evaluate(progress);
+            color.w *= alpha;
 
-            
-            currentPosition = nextPosition;
+            if (feathered)
+            {
+                Vec2F const outerOffset = normal * (outerHalfWidth * miterScale);
+                Vec4F const transparentColor(color.x, color.y, color.z, 0.0f);
+
+                m_vertices[vertex] = Vec3F(position + outerOffset, 0.0f);
+                m_uvs[vertex] = Vec2F(progress, 0.0f);
+                m_colors[vertex++] = transparentColor;
+
+                m_vertices[vertex] = Vec3F(position + coreOffset, 0.0f);
+                m_uvs[vertex] = Vec2F(progress, innerV);
+                m_colors[vertex++] = color;
+
+                m_vertices[vertex] = Vec3F(position - coreOffset, 0.0f);
+                m_uvs[vertex] = Vec2F(progress, 1.0f - innerV);
+                m_colors[vertex++] = color;
+
+                m_vertices[vertex] = Vec3F(position - outerOffset, 0.0f);
+                m_uvs[vertex] = Vec2F(progress, 1.0f);
+                m_colors[vertex++] = transparentColor;
+            }
+            else
+            {
+                m_vertices[vertex] = Vec3F(position + coreOffset, 0.0f);
+                m_uvs[vertex] = Vec2F(progress, 0.0f);
+                m_colors[vertex++] = color;
+
+                m_vertices[vertex] = Vec3F(position - coreOffset, 0.0f);
+                m_uvs[vertex] = Vec2F(progress, 1.0f);
+                m_colors[vertex++] = color;
+            }
         }
-        
-        width = getTrailWidth(1.0f);
-        color = ColorF128(m_color.evaluate(1.0f));
-        halfWidth = width * 0.5f;
-        direction = (m_positions.back() - m_positions[m_positions.size() - 2]).normalizedCopy();
-        perpendicular = direction.perpendicular();
-        vertexA = currentPosition + perpendicular * halfWidth;
-        vertexB = currentPosition - perpendicular * halfWidth;
-
-        m_vertices[vertex] = vertexA;
-        m_uvs[vertex] = Vec2F(1.0f, 0.0f);
-        m_colors[vertex] = color.toVec4F32();
-        ++vertex;
-
-        m_vertices[vertex] = vertexB;
-        m_uvs[vertex] = Vec2F(1.0f, 1.0f);
-        m_colors[vertex] = color.toVec4F32();
-        ++vertex;
-
-        m_vao->setVerticesData((U8 const*)&m_vertices[0], c_positionDescription, verticesCount);
-        m_vao->setVerticesData((U8 const*)&m_uvs[0], c_uvDescription, verticesCount);
-        m_vao->setVerticesData((U8 const*)&m_colors[0], c_colorDescription, verticesCount);
 
         m_indices.resize(indicesCount);
-        for (S32 i = 0; i < quadsCount; i++)
+        U32 index = 0;
+        for (U32 i = 0, in = (U32)pointsCount - 1u; i < in; ++i)
         {
-            U16 i2 = i * 2;
-            m_indices[index++] = 0 + i2;
-            m_indices[index++] = 1 + i2;
-            m_indices[index++] = 2 + i2;
-            m_indices[index++] = 1 + i2;
-            m_indices[index++] = 3 + i2;
-            m_indices[index++] = 2 + i2;
-        }
-        
-        m_vao->setIndices((U8 const*)&m_indices[0], VertexAttributeType::U16, indicesCount);
+            for (U32 lane = 0; lane < lanesCount; ++lane)
+            {
+                U16 const a = (U16)(i * verticesPerPoint + lane);
+                U16 const b = (U16)(a + 1u);
+                U16 const c = (U16)(a + verticesPerPoint);
+                U16 const d = (U16)(c + 1u);
 
+                m_indices[index++] = a;
+                m_indices[index++] = b;
+                m_indices[index++] = c;
+                m_indices[index++] = b;
+                m_indices[index++] = d;
+                m_indices[index++] = c;
+            }
+        }
+
+        m_vao->setVerticesData((U8 const*)m_vertices.data(), c_positionDescription, verticesCount);
+        m_vao->setVerticesData((U8 const*)m_uvs.data(), c_uvDescription, verticesCount);
+        m_vao->setVerticesData((U8 const*)m_colors.data(), c_colorDescription, verticesCount);
+        m_vao->setIndices((U8 const*)m_indices.data(), VertexAttributeType::U16, indicesCount);
+    }
+
+    //////////////////////////////////////////
+    void LineRenderer2D::ensureRequiredComponents()
+    {
+        if (!m_renderMask)
+            m_renderMask = getEntityRaw()->ensureComponent<RenderMask>();
+        if (!m_transform)
+            m_transform = getEntityRaw()->ensureComponent<Transform2D>();
+        if (!m_meshRenderer)
+            m_meshRenderer = getEntityRaw()->ensureComponent<MeshRenderer>();
+        if (!m_canvasRenderer)
+            m_canvasRenderer = getEntityRaw()->ensureComponent<CanvasRenderer>();
     }
 
     //////////////////////////////////////////
     void LineRenderer2D::processEntityAwakened()
     {
-        m_renderMask = getEntityRaw()->ensureComponent<RenderMask>();
-        m_transform = getEntityRaw()->ensureComponent<Transform2D>();
-        m_meshRenderer = getEntityRaw()->ensureComponent<MeshRenderer>();
+        ensureRequiredComponents();
     }
 
     //////////////////////////////////////////
@@ -302,6 +434,8 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(!getEntityRaw()->getEcsScene()->getMetaClass()->isInheritedFrom<EcsRenderScene>(), "Entity Scene is not Render Scene");
 #endif
 
+        ensureRequiredComponents();
+
         RenderTargetPtr const& renderTarget = getEntityRaw()->getEcsScene()->castRaw<EcsRenderScene>()->getRenderTarget();
 
         m_vao = VertexArrayObject::Create(m_renderSystem);
@@ -309,7 +443,11 @@ namespace Maze
         m_renderMesh->setVertexArrayObject(m_vao);
         m_meshRenderer->setRenderMesh(m_renderMesh);
 
-        rebuildMesh();
+        if (m_meshRenderer->getMaterialRefs().empty())
+            m_meshRenderer->setMaterial(m_renderSystem->getMaterialManager()->getColorMaterial());
+
+        m_meshDirty = true;
+        prepareForRender();
     }
 
     //////////////////////////////////////////
@@ -317,19 +455,15 @@ namespace Maze
     {
         m_renderMesh.reset();
     }
-    
-    //////////////////////////////////////////
-    F32 LineRenderer2D::getTrailWidth(F32 _progress)
-    {
-        return m_width;
-    }
-    
+
     //////////////////////////////////////////
     void LineRenderer2D::clear()
     {
+        if (m_positions.empty())
+            return;
+
         m_positions.clear();
-        if (m_vao)
-            m_vao->clear();        
+        m_meshDirty = true;
     }
 
 
@@ -355,6 +489,20 @@ namespace Maze
     {
         // Release render mesh before RenderMeshPool will be destroyed
         _lineRenderer->processEntityRemoved();
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(LineRenderer2DSystem,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
+        Render2DPostUpdateEvent& _event,
+        Entity* _entity,
+        LineRenderer2D* _lineRenderer)
+    {
+        if (_lineRenderer->getCanvasRenderer() && _lineRenderer->getCanvasRenderer()->isAlphaDirty())
+            _lineRenderer->markMeshDirty();
+
+        _lineRenderer->prepareForRender();
     }
 
 } // namespace Maze

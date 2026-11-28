@@ -52,6 +52,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(CanvasRenderer);
+
+
+    //////////////////////////////////////////
     // Class LineRenderer2D
     //
     //////////////////////////////////////////
@@ -74,54 +78,62 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        static F32 const c_miterLimit;
+
+        //////////////////////////////////////////
+        static Size const c_maxPositionsCount;
+
+    public:
+
+        //////////////////////////////////////////
         virtual ~LineRenderer2D();
 
         //////////////////////////////////////////
         static LineRenderer2DPtr Create(RenderSystem* _renderSystem = nullptr);
 
 
-        
         //////////////////////////////////////////
         RenderMeshPtr const& getRenderMesh() const { return m_renderMesh; }
 
+
         //////////////////////////////////////////
-        inline void setWidth(F32 _width) { m_width = _width; rebuildMesh(); }
+        void setWidth(F32 _width);
 
         //////////////////////////////////////////
         inline F32 getWidth() const { return m_width; }
 
 
         //////////////////////////////////////////
-        inline void setColor(ColorF128 const& _color, bool _rebuildMesh = true)
-        {
-            setColor(ColorGradient(0.0f, _color.toVec3F32()), _rebuildMesh);
-        }
+        void setFeatherWidth(F32 _featherWidth);
 
         //////////////////////////////////////////
-        inline void setColor(ColorGradient const& _color, bool _rebuildMesh) { m_color = _color; if (_rebuildMesh) { rebuildMesh(); } }
+        inline F32 getFeatherWidth() const { return m_featherWidth; }
+
 
         //////////////////////////////////////////
-        inline void setColor(ColorGradient const& _color) { setColor(_color, true); }
+        void setColor(ColorF128 const& _color);
+
+        //////////////////////////////////////////
+        void setColor(ColorGradient const& _color);
 
         //////////////////////////////////////////
         inline ColorGradient const& getColor() const { return m_color; }
 
 
         //////////////////////////////////////////
-        inline void resizePositions(Size _size) { m_positions.resize(_size); }
-
-
-        //////////////////////////////////////////
-        inline void setPosition(Size _i, Vec2F const& _position) { m_positions[_i] = _position; }
-
+        void resizePositions(Size _size);
 
         //////////////////////////////////////////
-        inline void setPositions(Vector<Vec2F> const& _positions) { m_positions = _positions; rebuildMesh(); }
+        void setPosition(Size _i, Vec2F const& _position);
+
+        //////////////////////////////////////////
+        void setPositions(Vec2F const* _positions, Size _count);
+
+        //////////////////////////////////////////
+        inline void setPositions(Vector<Vec2F> const& _positions) { setPositions(_positions.data(), _positions.size()); }
 
         //////////////////////////////////////////
         inline Vector<Vec2F> const& getPositions() const { return m_positions; }
-
-
 
 
         //////////////////////////////////////////
@@ -134,11 +146,17 @@ namespace Maze
         RenderMaskPtr const& getRenderMask() const { return m_renderMask; }
 
         //////////////////////////////////////////
+        CanvasRendererPtr const& getCanvasRenderer() const { return m_canvasRenderer; }
+
+        //////////////////////////////////////////
         void clear();
 
 
         //////////////////////////////////////////
-        void rebuildMesh();
+        inline void markMeshDirty() { m_meshDirty = true; }
+
+        //////////////////////////////////////////
+        void prepareForRender();
 
 
     protected:
@@ -167,10 +185,15 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processSceneSet() MAZE_OVERRIDE;
 
-        
+        //////////////////////////////////////////
+        void ensureRequiredComponents();
+
 
         //////////////////////////////////////////
-        F32 getTrailWidth(F32 _progress);
+        void rebuildMesh();
+
+        //////////////////////////////////////////
+        bool calculateSegmentDirections(Size _pointsCount);
 
 
     protected:
@@ -179,14 +202,20 @@ namespace Maze
         RenderMaskPtr m_renderMask;
         Transform2DPtr m_transform;
         MeshRendererPtr m_meshRenderer;
+        CanvasRendererPtr m_canvasRenderer;
 
         F32 m_width;
+        F32 m_featherWidth;
         ColorGradient m_color;
 
         VertexArrayObjectPtr m_vao;
         RenderMeshPtr m_renderMesh;
 
         Vector<Vec2F> m_positions;
+        bool m_meshDirty;
+
+        FastVector<Vec2F> m_segmentDirections;
+        FastVector<F32> m_pointDistances;
 
         FastVector<Vec3F> m_vertices;
         FastVector<Vec2F> m_uvs;

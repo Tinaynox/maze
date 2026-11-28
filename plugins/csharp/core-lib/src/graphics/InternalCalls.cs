@@ -216,6 +216,29 @@ namespace Maze.Graphics
             out Vec3F outPosition);
         #endregion
 
+        #region LineRenderer2D
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void LineRenderer2DGetWidth(NativePtr nativeComponentPtr, out float outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void LineRenderer2DSetWidth(NativePtr nativeComponentPtr, float value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void LineRenderer2DGetFeatherWidth(NativePtr nativeComponentPtr, out float outValue);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void LineRenderer2DSetFeatherWidth(NativePtr nativeComponentPtr, float value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void LineRenderer2DGetColor(NativePtr nativeComponentPtr, out uint outColor);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void LineRenderer2DSetColor(NativePtr nativeComponentPtr, uint color);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static void LineRenderer2DSetPositions(NativePtr nativeComponentPtr, Vec2F[] positions, int count);
+        #endregion
+
         #region SpriteRenderer2D
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal extern static void SpriteRenderer2DSetMaterial(NativePtr nativeComponentPtr, int materialResourceId);

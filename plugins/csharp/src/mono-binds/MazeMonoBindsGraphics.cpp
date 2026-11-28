@@ -44,6 +44,7 @@
 #include "maze-graphics/ecs/components/MazeAbstractTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeAbstractTextRenderer3D.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeLineRenderer2D.hpp"
 #include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
@@ -773,6 +774,65 @@ namespace Maze
             return false;
 
         return SkinnedMeshSkeletonGetBoneWorldPositionByIndex(_component, boneIndex, _outPosition);
+    }
+
+
+    //////////////////////////////////////////
+    inline void LineRenderer2DGetWidth(Component* _component, F32& _outValue)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(LineRenderer2D);
+        _outValue = _component->castRaw<LineRenderer2D>()->getWidth();
+    }
+
+    //////////////////////////////////////////
+    inline void LineRenderer2DSetWidth(Component* _component, F32 _value)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(LineRenderer2D);
+        _component->castRaw<LineRenderer2D>()->setWidth(_value);
+    }
+
+    //////////////////////////////////////////
+    inline void LineRenderer2DGetFeatherWidth(Component* _component, F32& _outValue)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(LineRenderer2D);
+        _outValue = _component->castRaw<LineRenderer2D>()->getFeatherWidth();
+    }
+
+    //////////////////////////////////////////
+    inline void LineRenderer2DSetFeatherWidth(Component* _component, F32 _value)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(LineRenderer2D);
+        _component->castRaw<LineRenderer2D>()->setFeatherWidth(_value);
+    }
+
+    //////////////////////////////////////////
+    inline void LineRenderer2DGetColor(Component* _component, U32& _outColor)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(LineRenderer2D);
+        _outColor = ColorU32::FromVec4F32(_component->castRaw<LineRenderer2D>()->getColor().evaluate(0.0f)).toRGBA_U8();
+    }
+
+    //////////////////////////////////////////
+    inline void LineRenderer2DSetColor(Component* _component, U32 _color)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(LineRenderer2D);
+        _component->castRaw<LineRenderer2D>()->setColor(ColorF128(ColorU32(_color)));
+    }
+
+    //////////////////////////////////////////
+    inline void LineRenderer2DSetPositions(Component* _component, MonoArray* _positions, S32 _count)
+    {
+        MAZE_MONO_BIND_VALIDATE_COMPONENT(LineRenderer2D);
+
+        LineRenderer2D* lineRenderer = _component->castRaw<LineRenderer2D>();
+        if (!_positions || _count <= 0)
+        {
+            lineRenderer->clear();
+            return;
+        }
+
+        Size count = Math::Min((Size)_count, (Size)mono_array_length(_positions));
+        lineRenderer->setPositions(mono_array_addr(_positions, Vec2F, 0), count);
     }
 
 
@@ -2060,6 +2120,15 @@ namespace Maze
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonGetBoneWorldPosition);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonFindBoneIndex);
         MAZE_GRAPHICS_MONO_BIND_FUNC(SkinnedMeshSkeletonGetBoneWorldPositionByIndex);
+
+        // LineRenderer2D
+        MAZE_GRAPHICS_MONO_BIND_FUNC(LineRenderer2DGetWidth);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(LineRenderer2DSetWidth);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(LineRenderer2DGetFeatherWidth);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(LineRenderer2DSetFeatherWidth);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(LineRenderer2DGetColor);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(LineRenderer2DSetColor);
+        MAZE_GRAPHICS_MONO_BIND_FUNC(LineRenderer2DSetPositions);
 
         // SpriteRenderer2D
         MAZE_GRAPHICS_MONO_BIND_FUNC(SpriteRenderer2DSetMaterial);

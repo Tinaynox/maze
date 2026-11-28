@@ -238,9 +238,21 @@ namespace Maze
         }
         
         //////////////////////////////////////////
+        inline T* data()
+        {
+            return m_data;
+        }
+
+        //////////////////////////////////////////
+        inline T const* data() const
+        {
+            return m_data;
+        }
+
+        //////////////////////////////////////////
         inline iterator begin()
-        { 
-            return m_data; 
+        {
+            return m_data;
         }
         
         //////////////////////////////////////////
