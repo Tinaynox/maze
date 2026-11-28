@@ -99,7 +99,7 @@ namespace Maze
         static WindowParamsPtr Create(
             Vec2U _clientSize = Vec2U(640, 480),
             U32 _bpp = 32,
-            CString _windowTitle = "Window",
+            CString _windowTitleUtf8 = "Window",
             WindowMode _windowMode = WindowMode::Windowed,
             bool _minimized = false,
             S32 _iconBig = 0,
@@ -118,7 +118,7 @@ namespace Maze
 
         bool minimized;
 
-        String title;
+        String titleUtf8;
 
         S32 iconBig;
         S32 iconSmall;
@@ -134,7 +134,7 @@ namespace Maze
         bool init(
             Vec2U _clientSize = Vec2U(640, 480),
             U32 _bpp = 32,
-            CString _windowTitle = "Window",
+            CString _windowTitleUtf8 = "Window",
             WindowMode _windowMode = WindowMode::Windowed,
             bool _minimized = false,
             S32 _iconBig = 0,
@@ -173,10 +173,10 @@ namespace Maze
         virtual bool setCursor(SystemCursorPtr const& _cursor);
 
         //////////////////////////////////////////
-        virtual bool setTitle(String const& _title);
+        virtual bool setTitle(String const& _titleUtf8);
 
         //////////////////////////////////////////
-        inline String const& getTitle() const { return m_params->title; }
+        inline String const& getTitle() const { return m_params->titleUtf8; }
 
         //////////////////////////////////////////
         virtual bool setFullscreen(bool _fullscreen);

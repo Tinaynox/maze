@@ -35,6 +35,7 @@
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
+#include "maze-core/helpers/MazeTextHelper.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-ui/ecs/events/MazeEcsUIEvents.hpp"
@@ -137,15 +138,7 @@ namespace Maze
         {
             case InputEventTextType::Input:
             {
-                if (_event.textUtf8[1] == 0)
-                {
-                    S8 c = _event.textUtf8[0];
-                    if (c >= 32 && c < 127)
-                    {
-                        addChar(c);
-                    }
-                }
-
+                insertTextAtCursor(_event.textUtf8, strlen(_event.textUtf8));
                 break;
             }
             default:
@@ -194,20 +187,20 @@ namespace Maze
                     }
                     case KeyCode::End:
                     {
-                        setCursorPosition(m_text.size());
+                        setCursorPosition(m_textUtf8.size());
                         break;
                     }
                     case KeyCode::C:
                     {
                         if (_event.isControlDown() && SystemManager::GetInstancePtr())
-                            SystemManager::GetInstancePtr()->setClipboardString(m_text);
+                            SystemManager::GetInstancePtr()->setClipboardString(m_textUtf8);
                         break;
                     }
                     case KeyCode::X:
                     {
                         if (_event.isControlDown() && SystemManager::GetInstancePtr())
                         {
-                            SystemManager::GetInstancePtr()->setClipboardString(m_text);
+                            SystemManager::GetInstancePtr()->setClipboardString(m_textUtf8);
                             setText(String());
                         }
                         break;
@@ -291,7 +284,8 @@ namespace Maze
         Vec2F positionWS = m_transform->getWorldTransform().transform(_positionOS);
         Vec2F positionTextLocal = m_textRenderer->getTransform()->getWorldTransform().inversed().transform(positionWS);
 
-        setCursorPosition(m_textRenderer->getSymbolIndexAtPosition(positionTextLocal));
+        Size symbolIndex = m_textRenderer->getSymbolIndexAtPosition(positionTextLocal);
+        setCursorPosition(TextHelper::GetOffsetOfSymbolIndexUTF8(m_textUtf8, symbolIndex));
     }
 
     //////////////////////////////////////////
@@ -366,13 +360,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditBox2D::setText(String const& _text)
+    void EditBox2D::setText(String const& _textUtf8)
     {
-        if (m_text == _text)
+        if (m_textUtf8 == _textUtf8)
             return;
 
-        m_text = _text;
-        m_cursorPosition = m_text.size();
+        m_textUtf8 = _textUtf8;
+        m_cursorPosition = m_textUtf8.size();
 
         processTextChanged();
     }
@@ -380,7 +374,7 @@ namespace Maze
     //////////////////////////////////////////
     void EditBox2D::setCursorPosition(Size _position)
     {
-        m_cursorPosition = Math::Min(_position, m_text.size());
+        m_cursorPosition = TextHelper::SnapToSymbolOffsetUTF8(m_textUtf8, _position);
 
         resetBlinkTimer();
         updateCursorRendererPosition();
@@ -388,20 +382,30 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditBox2D::insertTextAtCursor(String const& _text)
+    void EditBox2D::insertTextAtCursor(CString _textUtf8, Size _size)
     {
-        String filteredText;
-        filteredText.reserve(_text.size());
-        for (S8 c : _text)
-            if (c >= 32 && c < 127)
-                filteredText.push_back(c);
+        m_cursorPosition = TextHelper::SnapToSymbolOffsetUTF8(m_textUtf8, m_cursorPosition);
+        Size insertStart = m_cursorPosition;
 
-        if (filteredText.empty())
+        CString it = _textUtf8;
+        CString end = _textUtf8 + _size;
+        while (it < end)
+        {
+            U32 codepoint = 0;
+            it = TextHelper::DecodeUTF8ToUTF32(it, end, codepoint);
+
+            bool isControl = codepoint < 32 || (codepoint >= 127 && codepoint < 160);
+            if (isControl || !utf8::internal::is_code_point_valid(codepoint))
+                continue;
+
+            Char encoded[4];
+            Size encodedSize = Size(utf8::append(codepoint, encoded) - encoded);
+            m_textUtf8.insert(m_cursorPosition, encoded, encodedSize);
+            m_cursorPosition += encodedSize;
+        }
+
+        if (m_cursorPosition == insertStart)
             return;
-
-        m_cursorPosition = Math::Min(m_cursorPosition, m_text.size());
-        m_text.insert(m_cursorPosition, filteredText);
-        m_cursorPosition += filteredText.size();
 
         processTextChanged();
     }
@@ -409,12 +413,13 @@ namespace Maze
     //////////////////////////////////////////
     void EditBox2D::deleteSymbolBeforeCursor()
     {
-        m_cursorPosition = Math::Min(m_cursorPosition, m_text.size());
+        m_cursorPosition = TextHelper::SnapToSymbolOffsetUTF8(m_textUtf8, m_cursorPosition);
         if (m_cursorPosition == 0)
             return;
 
-        m_text.erase(m_cursorPosition - 1, 1);
-        --m_cursorPosition;
+        Size prevSymbolOffset = TextHelper::GetPrevSymbolOffsetUTF8(m_textUtf8, m_cursorPosition);
+        m_textUtf8.erase(prevSymbolOffset, m_cursorPosition - prevSymbolOffset);
+        m_cursorPosition = prevSymbolOffset;
 
         processTextChanged();
     }
@@ -422,11 +427,12 @@ namespace Maze
     //////////////////////////////////////////
     void EditBox2D::deleteSymbolAtCursor()
     {
-        m_cursorPosition = Math::Min(m_cursorPosition, m_text.size());
-        if (m_cursorPosition >= m_text.size())
+        m_cursorPosition = TextHelper::SnapToSymbolOffsetUTF8(m_textUtf8, m_cursorPosition);
+        if (m_cursorPosition >= m_textUtf8.size())
             return;
 
-        m_text.erase(m_cursorPosition, 1);
+        Size nextSymbolOffset = TextHelper::GetNextSymbolOffsetUTF8(m_textUtf8, m_cursorPosition);
+        m_textUtf8.erase(m_cursorPosition, nextSymbolOffset - m_cursorPosition);
 
         processTextChanged();
     }
@@ -434,27 +440,27 @@ namespace Maze
     //////////////////////////////////////////
     void EditBox2D::moveCursor(S32 _delta, bool _wordJump)
     {
-        Size pos = Math::Min(m_cursorPosition, m_text.size());
+        Size pos = TextHelper::SnapToSymbolOffsetUTF8(m_textUtf8, m_cursorPosition);
 
         if (_wordJump)
         {
             if (_delta < 0)
             {
-                while (pos > 0 && m_text[pos - 1] == ' ') --pos;
-                while (pos > 0 && m_text[pos - 1] != ' ') --pos;
+                while (pos > 0 && m_textUtf8[pos - 1] == ' ') --pos;
+                while (pos > 0 && m_textUtf8[pos - 1] != ' ') --pos;
             }
             else if (_delta > 0)
             {
-                while (pos < m_text.size() && m_text[pos] != ' ') ++pos;
-                while (pos < m_text.size() && m_text[pos] == ' ') ++pos;
+                while (pos < m_textUtf8.size() && m_textUtf8[pos] != ' ') ++pos;
+                while (pos < m_textUtf8.size() && m_textUtf8[pos] == ' ') ++pos;
             }
         }
         else
         {
-            if (_delta < 0 && pos > 0)
-                --pos;
-            else if (_delta > 0 && pos < m_text.size())
-                ++pos;
+            if (_delta < 0)
+                pos = TextHelper::GetPrevSymbolOffsetUTF8(m_textUtf8, pos);
+            else if (_delta > 0)
+                pos = TextHelper::GetNextSymbolOffsetUTF8(m_textUtf8, pos);
         }
 
         setCursorPosition(pos);
@@ -466,7 +472,7 @@ namespace Maze
         if (!m_textRenderer)
             return;
 
-        m_textRenderer->setText(m_text);
+        m_textRenderer->setText(m_textUtf8);
     
     }
 
@@ -479,7 +485,8 @@ namespace Maze
         if (!m_textRenderer)
             return;
 
-        Vec2F cursorPosition = m_textRenderer->getSymbolPosition(Math::Min(m_cursorPosition, m_text.size()));
+        Size symbolIndex = TextHelper::GetSymbolIndexAtOffsetUTF8(m_textUtf8, m_cursorPosition);
+        Vec2F cursorPosition = m_textRenderer->getSymbolPosition(symbolIndex);
         if (m_cursorRenderer->getTransform())
             m_cursorRenderer->getTransform()->setLocalPosition(cursorPosition);
     }
@@ -509,7 +516,7 @@ namespace Maze
         updateCursorRendererPosition();
         updateCursorRendererEnabled();
 
-        eventTextChanged(this, m_text);
+        eventTextChanged(this, m_textUtf8);
 
         if (getEntityRaw() && getEntityRaw()->getEcsWorld())
         {

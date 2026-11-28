@@ -117,6 +117,15 @@ namespace Maze
         }
         
         //////////////////////////////////////////
+        MAZE_CORE_API bool ConvertUTF8ToUCS2(CString _text, WChar* _buffer, Size _bufferSize)
+        {
+            if (!_text || !_buffer || _bufferSize == 0)
+                return false;
+
+            return MultiByteToWideChar(CP_UTF8, 0, _text, -1, _buffer, (int)_bufferSize) != 0;
+        }
+
+        //////////////////////////////////////////
         MAZE_CORE_API WString ConvertUTF8ToUCS2(CString _text, Size _size)
         {
             //String w(_text, _size);

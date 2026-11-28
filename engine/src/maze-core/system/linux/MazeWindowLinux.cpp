@@ -274,7 +274,7 @@ namespace Maze
             CString begin = reinterpret_cast<CString>(data);
             CString end = begin + numItems;
 
-            g_xWindowManagerName = TextHelper::ConvertUTF8ToUTF32(begin, end);
+            g_xWindowManagerName.assign(begin, end);
         }
 
         if (result == Success)
@@ -746,7 +746,7 @@ namespace Maze
         hint->res_name = &windowInstance[0];
 
 
-        String ansiTitle = m_params->title;
+        String ansiTitle = m_params->titleUtf8;
         Vector<Char> windowClass(ansiTitle.size() + 1, 0);
         std::copy(ansiTitle.begin(), ansiTitle.end(), windowClass.begin());
         hint->res_class = &windowClass[0];
@@ -939,7 +939,7 @@ namespace Maze
     bool WindowLinux::updateTitle()
     {
         std::basic_string<U8> utf8Title;
-        for (S8 c : m_params->title)
+        for (S8 c : m_params->titleUtf8)
             utf8Title.push_back(c);
 
         Atom useUtf8 = GetAtom("UTF8_STRING", false);
@@ -971,8 +971,8 @@ namespace Maze
         Xutf8SetWMProperties(
             m_xDisplay,
             m_xWindow,
-            m_params->title.c_str(),
-            m_params->title.c_str(),
+            m_params->titleUtf8.c_str(),
+            m_params->titleUtf8.c_str(),
             NULL,
             0,
             NULL,
@@ -984,8 +984,8 @@ namespace Maze
         XmbSetWMProperties(
             m_xDisplay,
             m_xWindow,
-            m_params->title.c_str(),
-            m_params->title.c_str(),
+            m_params->titleUtf8.c_str(),
+            m_params->titleUtf8.c_str(),
             NULL,
             0,
             NULL,

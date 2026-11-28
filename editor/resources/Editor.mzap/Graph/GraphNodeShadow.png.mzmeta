@@ -1,0 +1,22 @@
+afid:U32 = 1138
+
+assetUnits
+{
+  texture2d
+  {
+    minFilter:String = Linear
+    magFilter:String = Linear
+  }
+  sprite
+  {
+    auid:U32 = 138
+
+    sliceBorder
+    {
+      left:F32 = 48.0
+      bottom:F32 = 48.0
+      right:F32 = 48.0
+      top:F32 = 48.0
+    }
+  }
+}

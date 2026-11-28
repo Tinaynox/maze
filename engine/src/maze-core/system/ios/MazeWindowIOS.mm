@@ -243,7 +243,7 @@ namespace Maze
     {
         close();
         
-        setTitle(m_params->title);
+        setTitle(m_params->titleUtf8);
             
         CGRect mainDisplayRect = [[UIScreen mainScreen] bounds];
         m_windowDelegateIOS = [[WindowDelegateIOS alloc] initWithFrame: mainDisplayRect];

@@ -60,7 +60,7 @@ namespace Maze
         static Out EncodeUTF8ToUTF32(U32 _input, Out _output, U8 _replacement);
 
         //////////////////////////////////////////
-        MAZE_CORE_API String ConvertUTF8ToUTF32(CString _begin, CString _end);
+        MAZE_CORE_API Vector<U32> ConvertUTF8ToUTF32(CString _begin, CString _end);
 
         //////////////////////////////////////////
         template <typename In>
@@ -134,6 +134,69 @@ namespace Maze
         inline Size GetSymbolsCountUTF8(String const& _text) noexcept
         {
             return utf8::distance(_text.begin(), _text.end());
+        }
+
+        //////////////////////////////////////////
+        inline bool IsUTF8ContinuationByte(Char _c) noexcept
+        {
+            return (U8(_c) & 0xC0) == 0x80;
+        }
+
+        //////////////////////////////////////////
+        inline Size SnapToSymbolOffsetUTF8(String const& _text, Size _offset) noexcept
+        {
+            if (_offset >= _text.size())
+                return _text.size();
+
+            while (_offset > 0 && IsUTF8ContinuationByte(_text[_offset]))
+                --_offset;
+
+            return _offset;
+        }
+
+        //////////////////////////////////////////
+        inline Size GetPrevSymbolOffsetUTF8(String const& _text, Size _offset) noexcept
+        {
+            _offset = SnapToSymbolOffsetUTF8(_text, _offset);
+            if (_offset == 0)
+                return 0;
+
+            return SnapToSymbolOffsetUTF8(_text, _offset - 1);
+        }
+
+        //////////////////////////////////////////
+        inline Size GetNextSymbolOffsetUTF8(String const& _text, Size _offset) noexcept
+        {
+            if (_offset >= _text.size())
+                return _text.size();
+
+            ++_offset;
+            while (_offset < _text.size() && IsUTF8ContinuationByte(_text[_offset]))
+                ++_offset;
+
+            return _offset;
+        }
+
+        //////////////////////////////////////////
+        inline Size GetSymbolIndexAtOffsetUTF8(String const& _text, Size _offset) noexcept
+        {
+            Size end = _offset < _text.size() ? _offset : _text.size();
+            Size symbolIndex = 0;
+            for (Size i = 0; i < end; ++i)
+                if (!IsUTF8ContinuationByte(_text[i]))
+                    ++symbolIndex;
+
+            return symbolIndex;
+        }
+
+        //////////////////////////////////////////
+        inline Size GetOffsetOfSymbolIndexUTF8(String const& _text, Size _symbolIndex) noexcept
+        {
+            Size offset = 0;
+            for (Size i = 0; i < _symbolIndex && offset < _text.size(); ++i)
+                offset = GetNextSymbolOffsetUTF8(_text, offset);
+
+            return offset;
         }
 
 

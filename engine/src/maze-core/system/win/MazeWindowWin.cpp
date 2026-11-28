@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeWindowManager.hpp"
 #include "maze-core/helpers/win/MazeInputHelperWin.hpp"
+#include "maze-core/helpers/win/MazeTextHelperWin.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
 #include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/system/win/MazeSystemCursorWin.hpp"
@@ -66,12 +67,13 @@ namespace Maze
     static String const c_WindowClassName = "EngineWindow";
     static S32 c_snapshotHotKeyId = 0;
     static S32 c_altSnapshotHotKeyId = 1;
+    static Size const c_wideTextBufferSize = 512;
     
 
     //////////////////////////////////////////
     LRESULT CALLBACK WndProc(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam)
     {
-        WindowWin* window = _hWnd ? reinterpret_cast<WindowWin*>(GetWindowLongPtr(_hWnd, GWLP_USERDATA)) : nullptr;
+        WindowWin* window = _hWnd ? reinterpret_cast<WindowWin*>(GetWindowLongPtrW(_hWnd, GWLP_USERDATA)) : nullptr;
 
         if (window)
         {
@@ -79,7 +81,7 @@ namespace Maze
                 return 0;
         }
 
-        return DefWindowProc(_hWnd, _msg, _wParam, _lParam);
+        return DefWindowProcW(_hWnd, _msg, _wParam, _lParam);
     }
 
 
@@ -250,7 +252,11 @@ namespace Maze
         if (!isOpened())
             return true;
 
-        SetWindowTextA((HWND)m_handle, m_params->title.c_str());
+        WChar titleUtf16[c_wideTextBufferSize];
+        if (TextHelper::ConvertUTF8ToUCS2(m_params->titleUtf8.c_str(), titleUtf16, c_wideTextBufferSize))
+            SetWindowTextW((HWND)m_handle, titleUtf16);
+        else
+            SetWindowTextW((HWND)m_handle, TextHelper::ConvertUTF8ToUCS2(m_params->titleUtf8.c_str()).c_str());
 
         return false;
     }
@@ -665,9 +671,10 @@ namespace Maze
                 {
                     if ((character >= 0xDC00) && (character <= 0xDFFF))
                     {
-                        U16 utf16[] = { m_surrogateCharacter, static_cast<U16>(character) };
+                        if (m_surrogateCharacter == 0)
+                            break;
 
-                        utf8::utf16to8(&utf16[0], &utf16[0], &character);
+                        character = 0x10000u + ((U32(m_surrogateCharacter) - 0xD800u) << 10) + (character - 0xDC00u);
                         m_surrogateCharacter = 0;
                     }
                     
@@ -925,12 +932,12 @@ namespace Maze
     //////////////////////////////////////////
     bool WindowWin::registerClass()
     {        
-        WNDCLASSEXA wc;
-        memset(&wc, 0, sizeof(WNDCLASSEXA));
+        WNDCLASSEXW wc;
+        memset(&wc, 0, sizeof(WNDCLASSEXW));
 
         HINSTANCE hinstance = GetModuleHandle(0);
 
-        wc.cbSize        = sizeof(WNDCLASSEXA);
+        wc.cbSize        = sizeof(WNDCLASSEXW);
         wc.style         = CS_OWNDC | CS_HREDRAW | CS_VREDRAW ;
         wc.lpfnWndProc   = WndProc;
         wc.cbClsExtra    = 0;
@@ -964,10 +971,14 @@ namespace Maze
         static S32 s_classNumber = 0;
 
         m_className = c_WindowClassName + StringHelper::ToString(++s_classNumber) + '\0';
-        wc.lpszClassName = &m_className[0];
+        WChar classNameUtf16[c_wideTextBufferSize];
+        if (!TextHelper::ConvertUTF8ToUCS2(m_className.c_str(), classNameUtf16, c_wideTextBufferSize))
+            return false;
+
+        wc.lpszClassName = classNameUtf16;
         wc.hIconSm = LoadIconA(NULL, IDI_APPLICATION);
 
-        if (!RegisterClassExA(&wc))
+        if (!RegisterClassExW(&wc))
             return false;
         
         return true;
@@ -1003,13 +1014,21 @@ namespace Maze
 
 
         // Save title
-        setTitle(m_params->title);
+        setTitle(m_params->titleUtf8);
 
         // Create
-        m_handle = CreateWindowExA(
+        WChar classNameUtf16[c_wideTextBufferSize];
+        if (!TextHelper::ConvertUTF8ToUCS2(m_className.c_str(), classNameUtf16, c_wideTextBufferSize))
+            return false;
+
+        WChar titleUtf16[c_wideTextBufferSize];
+        if (!TextHelper::ConvertUTF8ToUCS2(m_params->titleUtf8.c_str(), titleUtf16, c_wideTextBufferSize))
+            titleUtf16[0] = 0;
+
+        m_handle = CreateWindowExW(
                         dwExStyle,
-                        &m_className[0],
-                        m_params->title.c_str(),
+                        classNameUtf16,
+                        titleUtf16,
                         dwStyle,
                         CW_USEDEFAULT, CW_USEDEFAULT, 
                         m_params->clientSize.x  + (isFullscreen ? (GetSystemMetrics(SM_CXFIXEDFRAME) * 2) : 0), 
@@ -1030,11 +1049,14 @@ namespace Maze
         }
 
                 
-        SetWindowLongPtrA((HWND)m_handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+        SetWindowLongPtrW((HWND)m_handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
         
         if (m_handle == 0)
             return false;
+
+        if (titleUtf16[0] == 0 && !m_params->titleUtf8.empty())
+            updateTitle();
 
         HWND hwnd = (HWND)m_handle;
         

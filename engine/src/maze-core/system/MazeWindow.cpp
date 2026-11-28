@@ -42,7 +42,7 @@ namespace Maze
     WindowParamsPtr WindowParams::Create(
         Vec2U _clientSize,
         U32 _bpp,
-        CString _windowTitle,
+        CString _windowTitleUtf8,
         WindowMode _windowMode,
         bool _minimized,
         S32 _iconBig,
@@ -54,7 +54,7 @@ namespace Maze
         if (!object->init(
                 _clientSize,
                 _bpp,
-                _windowTitle,
+                _windowTitleUtf8,
                 _windowMode,
                 _minimized,
                 _iconBig,
@@ -80,7 +80,7 @@ namespace Maze
     bool WindowParams::init(
         Vec2U _clientSize,
         U32 _bpp,
-        CString _windowTitle,
+        CString _windowTitleUtf8,
         WindowMode _windowMode,
         bool _minimized,
         S32 _iconBig,
@@ -91,7 +91,7 @@ namespace Maze
         bpp = _bpp;
         windowMode = _windowMode;
         minimized = _minimized;
-        title = _windowTitle;
+        titleUtf8 = _windowTitleUtf8;
         iconBig = _iconBig;
         iconSmall = _iconSmall;
         flags = _flags;
@@ -107,7 +107,7 @@ namespace Maze
         bpp = _windowParams->bpp;
         windowMode = _windowParams->windowMode;
         minimized = _windowParams->minimized;
-        title = _windowParams->title;
+        titleUtf8 = _windowParams->titleUtf8;
         iconBig = _windowParams->iconBig;
         iconSmall = _windowParams->iconSmall;
         flags = _windowParams->flags;
@@ -182,12 +182,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool Window::setTitle(String const& _title)
+    bool Window::setTitle(String const& _titleUtf8)
     {
-        if (m_params->title == _title)
+        if (m_params->titleUtf8 == _titleUtf8)
             return true;
 
-        m_params->title = _title;
+        m_params->titleUtf8 = _titleUtf8;
 
         return updateTitle();
     }

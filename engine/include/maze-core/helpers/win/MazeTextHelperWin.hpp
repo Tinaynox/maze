@@ -53,6 +53,9 @@ namespace Maze
         MAZE_CORE_API WString ConvertUTF8ToUCS2(CString _text, Size _size);
 
         //////////////////////////////////////////
+        MAZE_CORE_API bool ConvertUTF8ToUCS2(CString _text, WChar* _buffer, Size _bufferSize);
+
+        //////////////////////////////////////////
         MAZE_CORE_API String UTF8StringToLower(String const& _string);
 
         //////////////////////////////////////////

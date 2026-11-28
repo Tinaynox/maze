@@ -37,11 +37,12 @@ namespace Maze
     namespace TextHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API String ConvertUTF8ToUTF32(CString _begin, CString _end)
+        MAZE_CORE_API Vector<U32> ConvertUTF8ToUTF32(CString _begin, CString _end)
         {
-            String string;
-            ConvertUTF8ToUTF32(_begin, _end, std::back_inserter(string));
-            return string;
+            Vector<U32> codepoints;
+            codepoints.reserve(_end - _begin);
+            ConvertUTF8ToUTF32(_begin, _end, std::back_inserter(codepoints));
+            return codepoints;
         }
         
     } // namespace TextHelper

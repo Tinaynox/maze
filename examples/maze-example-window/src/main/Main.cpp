@@ -80,7 +80,7 @@ void OnInit()
     window0Params->flags |= Maze::WindowStyleFlags::MinimizeButton;
     window0Params->flags |= Maze::WindowStyleFlags::MaximizeButton;
     
-    window0Params->title = "MinMax";
+    window0Params->titleUtf8 = "MinMax";
     g_window0 = Maze::Window::Create(window0Params);
     if (g_window0)
     {
@@ -96,7 +96,7 @@ void OnInit()
     Maze::WindowParamsPtr window1Params = Maze::WindowParams::Create();
     window1Params->flags &= ~Maze::WindowStyleFlags::Background;
     window1Params->flags |= Maze::WindowStyleFlags::Resizable;
-    window1Params->title = "NoBackground|Resizable";
+    window1Params->titleUtf8 = "NoBackground|Resizable";
     g_window1 = Maze::Window::Create(window1Params);
     if (g_window1)
     {

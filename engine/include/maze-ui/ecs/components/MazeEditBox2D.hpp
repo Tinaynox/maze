@@ -189,13 +189,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setText(String const& _text);
+        void setText(String const& _textUtf8);
 
         //////////////////////////////////////////
-        inline void setText(CString _text) { setText(String(_text)); }
+        inline void setText(CString _textUtf8) { setText(String(_textUtf8)); }
 
         //////////////////////////////////////////
-        inline String const& getText() const { return m_text; }
+        inline String const& getText() const { return m_textUtf8; }
 
 
         //////////////////////////////////////////
@@ -205,7 +205,10 @@ namespace Maze
         void setCursorPosition(Size _position);
 
         //////////////////////////////////////////
-        void insertTextAtCursor(String const& _text);
+        void insertTextAtCursor(CString _textUtf8, Size _size);
+
+        //////////////////////////////////////////
+        inline void insertTextAtCursor(String const& _textUtf8) { insertTextAtCursor(_textUtf8.c_str(), _textUtf8.size()); }
 
         //////////////////////////////////////////
         void deleteSymbolBeforeCursor();
@@ -218,7 +221,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void addChar(char _char) { insertTextAtCursor(String(1, _char)); }
+        inline void addChar(char _char) { insertTextAtCursor(&_char, 1); }
 
         //////////////////////////////////////////
         inline void popChar() { deleteSymbolBeforeCursor(); }
@@ -330,7 +333,7 @@ namespace Maze
         AbstractTextRenderer2DPtr m_textRenderer;
         SpriteRenderer2DPtr m_cursorRenderer;
 
-        String m_text;
+        String m_textUtf8;
         Size m_cursorPosition = 0;
 
         bool m_selected;

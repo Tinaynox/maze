@@ -204,7 +204,7 @@ namespace Maze
         if (!m_windowDelegateOSX)
             return false;
         
-        [m_windowDelegateOSX setTitle: [NSString stringWithUTF8String: m_params->title.c_str()]];
+        [m_windowDelegateOSX setTitle: [NSString stringWithUTF8String: m_params->titleUtf8.c_str()]];
         
         return true;
     }
@@ -313,7 +313,7 @@ namespace Maze
         [m_windowDelegateOSX setHidesOnDeactivate: NO];
         [m_windowDelegateOSX setAutodisplay:YES];
         [m_windowDelegateOSX initialise];
-        [m_windowDelegateOSX setTitle: [NSString stringWithUTF8String: m_params->title.c_str()]];
+        [m_windowDelegateOSX setTitle: [NSString stringWithUTF8String: m_params->titleUtf8.c_str()]];
         [m_windowDelegateOSX setBackgroundColor:[NSColor grayColor]];
         [m_windowDelegateOSX setAcceptsMouseMovedEvents:YES];
         [m_windowDelegateOSX setIgnoresMouseEvents:NO];

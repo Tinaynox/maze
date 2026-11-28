@@ -1,0 +1,14 @@
+afid:U32 = 1142
+
+assetUnits
+{
+  texture2d
+  {
+    minFilter:String = Linear
+    magFilter:String = Linear
+  }
+  sprite
+  {
+    auid:U32 = 142
+  }
+}

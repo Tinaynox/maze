@@ -57,11 +57,11 @@ namespace Maze
                 _output = 0;
                 switch (trailingBytes)
                 {
+                    case 5: _output += static_cast<U8>(*_begin++); _output <<= 6;
                     case 4: _output += static_cast<U8>(*_begin++); _output <<= 6;
                     case 3: _output += static_cast<U8>(*_begin++); _output <<= 6;
                     case 2: _output += static_cast<U8>(*_begin++); _output <<= 6;
                     case 1: _output += static_cast<U8>(*_begin++); _output <<= 6;
-                    case 5: _output += static_cast<U8>(*_begin++); _output <<= 6;
                     case 0: _output += static_cast<U8>(*_begin++);
                 }
 
@@ -102,7 +102,7 @@ namespace Maze
             };
 
             // Encode the character
-            if ((_input > 0x0010FFFF) || ((_input >= 0xD800) && (_input <= 0xDBFF)))
+            if ((_input > 0x0010FFFF) || ((_input >= 0xD800) && (_input <= 0xDFFF)))
             {
                 // Invalid character
 

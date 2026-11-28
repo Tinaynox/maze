@@ -222,7 +222,7 @@ void OnInit()
 
     RenderWindowParams params;
     params.windowParams = WindowParams::Create();
-    params.windowParams->title = "RenderWindow0";
+    params.windowParams->titleUtf8 = "RenderWindow0";
     params.windowParams->clientSize = Vec2U32(640, 480);
     params.windowParams->flags |= WindowStyleFlags::MinimizeButton;
     params.windowParams->flags |= WindowStyleFlags::MaximizeButton;
@@ -247,7 +247,7 @@ void OnInit()
     || (MAZE_PLATFORM == MAZE_PLATFORM_LINUX)) && 0
 
     params.windowParams = WindowParams::Create();
-    params.windowParams->title = "RenderWindow1";
+    params.windowParams->titleUtf8 = "RenderWindow1";
     g_main->renderWindow1 = RenderWindow::Create(params);
 
     if (g_main->renderWindow1)
