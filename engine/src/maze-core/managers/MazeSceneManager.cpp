@@ -85,8 +85,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneManager::destroyScene(EcsSceneId _sceneId)
     {
-        if (_sceneId.getIndex() < (S32)m_scenes.size())
-            destroyScene(m_scenes[_sceneId.getIndex()].scene);
+        destroyScene(getScene(_sceneId));
     }
 
     //////////////////////////////////////////
@@ -130,8 +129,9 @@ namespace Maze
     {
         static EcsScenePtr const nullPointer;
 
-        if (_sceneId.getIndex() < (S32)m_scenes.size())
-            return m_scenes[_sceneId.getIndex()].scene;
+        S32 index = _sceneId.getIndex();
+        if (index >= 0 && index < (S32)m_scenes.size() && m_scenes[index].id == _sceneId)
+            return m_scenes[index].scene;
 
         return nullPointer;
     }
