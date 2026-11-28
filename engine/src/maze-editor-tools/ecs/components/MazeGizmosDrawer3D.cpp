@@ -1373,6 +1373,7 @@ namespace Maze
             Vec3F const& point = m_labelsData[i].point;
             TMat mat = TMat::CreateLookAt(point, point - forward, up);
             m_labels[i]->getTransform()->setLocalTransform(mat);
+            m_labels[i]->updateMeshRendererModelMatrices();
         }
     }
 
